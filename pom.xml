@@ -273,15 +273,39 @@
           <outputFormats>XML,HTML</outputFormats>
           <verbose>true</verbose>
           <targetClasses>
-            <param>io.jenkins.plugins.analysis.*</param>
+            <param>io.jenkins.plugins.analysis.core.*</param>
           </targetClasses>
           <targetTests>
-            <param>io.jenkins.plugins.analysis.*</param>
+            <param>io.jenkins.plugins.analysis.core.*</param>
           </targetTests>
           <excludedTestClasses>
             <param>*ITest</param>
           </excludedTestClasses>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco-maven-plugin.version}</version>
+        <configuration>
+          <includes>
+            <include>io/jenkins/plugins/analysis/core/**/*</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>

@@ -1,5 +1,13 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:i="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
+
+  <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
+
+  <i:hr title="${%File Encoding}"/>
+
+  <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}">
+    <f:combobox field="sourceCodeEncoding"/>
+  </f:entry>
 
   <i:publish-parameters/>
 

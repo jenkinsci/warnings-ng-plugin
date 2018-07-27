@@ -26,7 +26,6 @@ import jenkins.MasterToSlaveFileCallable;
 import hudson.FilePath;
 import hudson.console.ConsoleNote;
 import hudson.model.Computer;
-import hudson.plugins.analysis.util.FileFinder;
 import hudson.remoting.VirtualChannel;
 
 /**

@@ -2,16 +2,14 @@ package io.jenkins.plugins.analysis.core.views;
 
 import java.nio.charset.Charset;
 
+import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import hudson.model.Run;
-import hudson.plugins.analysis.Messages;
-
-import edu.hm.hafner.analysis.Report;
 
 /**
- * Result object to visualize the fixed issues in a build/run.
+ * Result object to visualize the fixed issues in a build.
  *
  * @author Ulli Hafner
  */
@@ -34,9 +32,10 @@ public class FixedWarningsDetail extends IssuesDetail {
      * @param sourceEncoding
      *         the encoding to use when displaying source files
      */
+    // TODO: display name should be from label provider to make it overridable
     public FixedWarningsDetail(final Run<?, ?> owner, final AnalysisResult result, final Report fixedIssues,
             final String url, final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
-        super(owner, result, fixedIssues, fixedIssues, NO_ISSUES, NO_ISSUES, Messages.FixedWarningsDetail_Name(),
+        super(owner, result, fixedIssues, fixedIssues, NO_ISSUES, NO_ISSUES, Messages.FixedIssues_View_Name(),
                 url, labelProvider, sourceEncoding);
     }
 }

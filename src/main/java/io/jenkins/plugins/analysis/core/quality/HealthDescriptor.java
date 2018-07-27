@@ -13,7 +13,7 @@ public class HealthDescriptor implements Serializable {
     private static final long serialVersionUID = -2509226746813680432L;
 
     private final int healthy;
-    private final int unHealthy;
+    private final int unhealthy;
     private final Priority minimumPriority;
 
     /**
@@ -21,14 +21,14 @@ public class HealthDescriptor implements Serializable {
      *
      * @param healthy
      *         the healthy threshold, i.e. when health is reported as 100%.
-     * @param unHealthy
+     * @param unhealthy
      *         the unhealthy threshold, i.e. when health is reported as 0%.
      * @param minimumPriority
      *         the minimum priority that should be considered when computing build health
      */
-    public HealthDescriptor(final int healthy, final int unHealthy, final Priority minimumPriority) {
+    public HealthDescriptor(final int healthy, final int unhealthy, final Priority minimumPriority) {
         this.healthy = healthy;
-        this.unHealthy = unHealthy;
+        this.unhealthy = unhealthy;
         this.minimumPriority = minimumPriority;
     }
 
@@ -46,8 +46,8 @@ public class HealthDescriptor implements Serializable {
      *
      * @return the 0% unhealthiness
      */
-    public int getUnHealthy() {
-        return unHealthy;
+    public int getUnhealthy() {
+        return unhealthy;
     }
 
     /**
@@ -66,7 +66,7 @@ public class HealthDescriptor implements Serializable {
      * @return {@code true} if  health reporting is enabled, {@code false} otherwise
      */
     public boolean isEnabled() {
-        return healthy > 0 || unHealthy > 0;
+        return healthy > 0 || unhealthy > 0;
     }
 
     /**
@@ -75,11 +75,11 @@ public class HealthDescriptor implements Serializable {
      * @return {@code true} if  health reporting is enabled, {@code false} otherwise
      */
     public boolean isValid() {
-        return healthy > 0 && unHealthy > healthy;
+        return healthy > 0 && unhealthy > healthy;
     }
 
     @Override
     public String toString() {
-        return String.format("Healthy=%d, Unhealthy=%d, Minimum Priority=%s", healthy, unHealthy, minimumPriority);
+        return String.format("Healthy=%d, Unhealthy=%d, Minimum Priority=%s", healthy, unhealthy, minimumPriority);
     }
 }

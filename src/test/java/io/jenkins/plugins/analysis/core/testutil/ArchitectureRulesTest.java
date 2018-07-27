@@ -28,6 +28,15 @@ public class ArchitectureRulesTest {
     private static final DescribedPredicate<JavaCall<?>> ACCESS_IS_RESTRICTED_TO_TESTS = new AccessRestrictedToTests();
 
     /**
+     * Returns the classes that should be checked.
+     *
+     * @return the classes that should be checked
+     */
+    protected JavaClasses getAllClasses() {
+        return new ClassFileImporter().importPackages("io.jenkins.plugins.analysis.core");
+    }
+
+    /**
      * Digester must not be used directly, rather use a SecureDigester instance.
      */
     @Test
@@ -76,33 +85,27 @@ public class ArchitectureRulesTest {
     }
 
     /**
-     * Prevents that deprecated classes from transitive dependencies are called.
+     * Prevents that classes use visible but forbidden API.
      */
     @Test
-    void shouldNotCallCommonsLang() {
+    void shouldNotUseForbiddenModules() {
         JavaClasses classes = getAllClasses();
 
-        ArchRule noTestApiCalled = noClasses()
-                .should().accessClassesThat().resideInAPackage("org.apache.commons.lang..");
+        ArchRule restrictedApi = noClasses()
+                .should().accessClassesThat().resideInAnyPackage("org.apache.commons.lang.."
+//                        , "com.google.common.."
+//                        , "hudson.plugins.analysis.."
+                );
 
-        noTestApiCalled.check(classes);
+        restrictedApi.check(classes);
     }
 
     /**
-     * Returns the classes that should be checked.
-     *
-     * @return the classes that should be checked
-     */
-    protected JavaClasses getAllClasses() {
-        return new ClassFileImporter().importPackages("io.jenkins.plugins.analysis");
-    }
-
-    /**
-     * Matches if a call from outside the defining class uses a method or constructor annotated with
-     * {@link VisibleForTesting}. There are two exceptions:
+     * Matches if a call from outside the defining class uses a method or constructor annotated with {@link
+     * VisibleForTesting}. There are two exceptions:
      * <ul>
-     *     <li>The method is called on the same class</li>
-     *     <li>The method is called in a method also annotated with {@link VisibleForTesting}</li>
+     * <li>The method is called on the same class</li>
+     * <li>The method is called in a method also annotated with {@link VisibleForTesting}</li>
      * </ul>
      */
     private static class AccessRestrictedToTests extends DescribedPredicate<JavaCall<?>> {

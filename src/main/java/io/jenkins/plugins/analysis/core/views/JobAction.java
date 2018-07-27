@@ -12,24 +12,24 @@ import org.kohsuke.stapler.StaplerResponse;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.graphs.BuildResultGraph;
-import io.jenkins.plugins.analysis.core.graphs.DefaultGraphConfigurationView;
-import io.jenkins.plugins.analysis.core.graphs.DifferenceGraph;
-import io.jenkins.plugins.analysis.core.graphs.EmptyGraph;
-import io.jenkins.plugins.analysis.core.graphs.GraphConfiguration;
-import io.jenkins.plugins.analysis.core.graphs.GraphConfigurationView;
-import io.jenkins.plugins.analysis.core.graphs.HealthGraph;
-import io.jenkins.plugins.analysis.core.graphs.NewVersusFixedGraph;
-import io.jenkins.plugins.analysis.core.graphs.NullGraph;
-import io.jenkins.plugins.analysis.core.graphs.PriorityGraph;
-import io.jenkins.plugins.analysis.core.graphs.TotalsGraph;
-import io.jenkins.plugins.analysis.core.graphs.TrendDetails;
-import io.jenkins.plugins.analysis.core.graphs.UserGraphConfigurationView;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.history.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
+import io.jenkins.plugins.analysis.graphs.BuildResultGraph;
+import io.jenkins.plugins.analysis.graphs.DefaultGraphConfigurationView;
+import io.jenkins.plugins.analysis.graphs.DifferenceGraph;
+import io.jenkins.plugins.analysis.graphs.EmptyGraph;
+import io.jenkins.plugins.analysis.graphs.GraphConfiguration;
+import io.jenkins.plugins.analysis.graphs.GraphConfigurationView;
+import io.jenkins.plugins.analysis.graphs.HealthGraph;
+import io.jenkins.plugins.analysis.graphs.NewVersusFixedGraph;
+import io.jenkins.plugins.analysis.graphs.NullGraph;
+import io.jenkins.plugins.analysis.graphs.PriorityGraph;
+import io.jenkins.plugins.analysis.graphs.TotalsGraph;
+import io.jenkins.plugins.analysis.graphs.TrendDetails;
+import io.jenkins.plugins.analysis.graphs.UserGraphConfigurationView;
 import jenkins.model.Jenkins;
 
 import hudson.model.Action;

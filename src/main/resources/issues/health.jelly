@@ -8,12 +8,12 @@
   <i:hr title="${%Health Report Configuration}"/>
 
   <j:set var="healthyIcon" value="${resURL}/images/24x24/health-80plus.png"/>
-  <j:set var="unHealthyIcon" value="${resURL}/images/24x24/health-00to19.png"/>
+  <j:set var="unhealthyIcon" value="${resURL}/images/24x24/health-00to19.png"/>
 
   <f:entry title="${%Healthy threshold}" description="${%description.healthy(healthyIcon)}" field="healthy">
     <i:number/>
   </f:entry>
-  <f:entry title="${%Unhealthy threshold}" description="${%description.unhealthy(unHealthyIcon)}" field="unHealthy">
+  <f:entry title="${%Unhealthy threshold}" description="${%description.unhealthy(unhealthyIcon)}" field="unhealthy">
     <i:number/>
   </f:entry>
   <f:entry title="${%Health priorities}" description="${%description.health.priorities}" field="minimumPriority">

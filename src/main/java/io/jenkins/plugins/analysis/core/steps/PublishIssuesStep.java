@@ -1,22 +1,20 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Report;
@@ -37,7 +35,9 @@ import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.util.ComboBoxModel;
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 
 /**
  * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in the
@@ -51,21 +51,22 @@ public class PublishIssuesStep extends Step {
 
     private final Report[] reports;
 
+    private String sourceCodeEncoding;
+    
     private boolean ignoreAnalysisResult;
     private boolean overallResultMustBeSuccess;
-
-    private String defaultEncoding;
+    private String referenceJobName;
 
     private int healthy;
-    private int unHealthy;
+    private int unhealthy;
     private Priority minimumPriority = DEFAULT_MINIMUM_PRIORITY;
     private final Thresholds thresholds = new Thresholds();
 
+    private List<RegexpFilter> filters = new ArrayList<>();
+    
     private String id;
     private String name;
-    private String referenceJobName;
     
-    private List<RegexpFilter> filters = Lists.newArrayList();
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -162,19 +163,19 @@ public class PublishIssuesStep extends Step {
     }
 
     @CheckForNull
-    public String getDefaultEncoding() {
-        return defaultEncoding;
+    public String getSourceCodeEncoding() {
+        return sourceCodeEncoding;
     }
 
     /**
-     * Sets the default encoding used to read files (warnings, source code, etc.).
+     * Sets the encoding to use to read source files.
      *
-     * @param defaultEncoding
+     * @param sourceCodeEncoding
      *         the encoding, e.g. "ISO-8859-1"
      */
     @DataBoundSetter
-    public void setDefaultEncoding(final String defaultEncoding) {
-        this.defaultEncoding = defaultEncoding;
+    public void setSourceCodeEncoding(final String sourceCodeEncoding) {
+        this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
     @CheckForNull
@@ -194,19 +195,19 @@ public class PublishIssuesStep extends Step {
     }
 
     @CheckForNull
-    public int getUnHealthy() {
-        return unHealthy;
+    public int getUnhealthy() {
+        return unhealthy;
     }
 
     /**
      * Sets the healthy threshold, i.e. the number of issues when health is reported as 0%.
      *
-     * @param unHealthy
+     * @param unhealthy
      *         the number of issues when health is reported as 0%
      */
     @DataBoundSetter
-    public void setUnHealthy(final int unHealthy) {
-        this.unHealthy = unHealthy;
+    public void setUnhealthy(final int unhealthy) {
+        this.unhealthy = unhealthy;
     }
 
     @CheckForNull
@@ -422,8 +423,8 @@ public class PublishIssuesStep extends Step {
             ignoreAnalysisResult = step.getIgnoreAnalysisResult();
             overallResultMustBeSuccess = step.getOverallResultMustBeSuccess();
             referenceJobName = step.getReferenceJobName();
-            sourceCodeEncoding = step.getDefaultEncoding();
-            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnHealthy(),
+            sourceCodeEncoding = step.getSourceCodeEncoding();
+            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                     step.getMinimumPriorityAsPriority());
 
             thresholds = step.getThresholds();
@@ -449,17 +450,13 @@ public class PublishIssuesStep extends Step {
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, filters, healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess,
-                    getSourceCodeCharset(), getLogger());
+                    getCharset(sourceCodeEncoding), getLogger());
             return publisher.attachAction();
         }
 
         private LogHandler getLogger() throws InterruptedException {
             String toolName = new LabelProviderFactory().create(report.getId(), name).getName();
             return new LogHandler(getTaskListener(), toolName, report);
-        }
-
-        private Charset getSourceCodeCharset() {
-            return EncodingValidator.defaultCharset(sourceCodeEncoding);
         }
     }
 
@@ -468,9 +465,11 @@ public class PublishIssuesStep extends Step {
      */
     @Extension
     public static class Descriptor extends StepDescriptor {
+        private final JobConfigurationModel model = new JobConfigurationModel();
+
         @Override
         public Set<Class<?>> getRequiredContext() {
-            return ImmutableSet.of(Run.class, TaskListener.class);
+            return Sets.immutable.of(Run.class, TaskListener.class).castToSet();
         }
 
         @Override
@@ -482,6 +481,85 @@ public class PublishIssuesStep extends Step {
         @Override
         public String getDisplayName() {
             return Messages.PublishIssues_DisplayName();
+        }
+
+        /**
+         * Returns a model with all available charsets.
+         *
+         * @return a model with all available charsets
+         */
+        public ComboBoxModel doFillSourceCodeEncodingItems() {
+            return model.getAllCharsets();
+        }
+
+        /**
+         * Returns a model with all available priority filters.
+         *
+         * @return a model with all available priority filters
+         */
+        public ListBoxModel doFillMinimumPriorityItems() {
+            return model.getAllSeverityFilters();
+        }
+
+        /**
+         * Returns the model with the possible reference jobs.
+         *
+         * @return the model with the possible reference jobs
+         */
+        public ComboBoxModel doFillReferenceJobNameItems() {
+            return model.getAllJobs();
+        }
+
+        /**
+         * Performs on-the-fly validation of the reference job.
+         *
+         * @param referenceJobName
+         *         the reference job
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
+            return model.validateJob(referenceJobName);
+        }
+
+        /**
+         * Performs on-the-fly validation on the character encoding.
+         *
+         * @param sourceCodeEncoding
+         *         the character encoding
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
+            return model.validateCharset(sourceCodeEncoding);
+        }
+
+        /**
+         * Performs on-the-fly validation of the health report thresholds.
+         *
+         * @param healthy
+         *         the healthy threshold
+         * @param unhealthy
+         *         the unhealthy threshold
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+            return model.validateHealthy(healthy, unhealthy);
+        }
+
+        /**
+         * Performs on-the-fly validation of the health report thresholds.
+         *
+         * @param healthy
+         *         the healthy threshold
+         * @param unhealthy
+         *         the unhealthy threshold
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+            return model.validateUnhealthy(healthy, unhealthy);
         }
     }
 }

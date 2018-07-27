@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Optional;
 
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -115,4 +116,18 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         }
         return TaskListener.NULL;
     }
+
+    /**
+     * Returns the default charset for the specified encoding string. If the default encoding is empty or {@code null},
+     * or if the charset is not valid then the default encoding of the platform is returned.
+     *
+     * @param charset
+     *         identifier of the character set
+     *
+     * @return the default charset for the specified encoding string
+     */
+    protected Charset getCharset(final String charset) {
+        return new JobConfigurationModel().getCharset(charset);
+    }
+
 }

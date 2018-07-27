@@ -20,7 +20,7 @@ public class HealthReportBuilder {
     /**
      * Computes the healthiness of a build based on the specified results. Reports a health of 100% when the specified
      * counter is less than {@link HealthDescriptor#getHealthy()}. Reports a health of 0% when the specified counter is
-     * greater than {@link HealthDescriptor#getUnHealthy()}. The computation takes only annotations of the specified
+     * greater than {@link HealthDescriptor#getUnhealthy()}. The computation takes only annotations of the specified
      * severity into account.
      *
      * @param healthDescriptor
@@ -49,12 +49,12 @@ public class HealthReportBuilder {
                 percentage = 100;
             }
             else {
-                int unHealthy = healthDescriptor.getUnHealthy();
-                if (relevantIssuesSize > unHealthy) {
+                int unhealthy = healthDescriptor.getUnhealthy();
+                if (relevantIssuesSize > unhealthy) {
                     percentage = 0;
                 }
                 else {
-                    percentage = 100 - ((relevantIssuesSize - healthy) * 100 / (unHealthy - healthy));
+                    percentage = 100 - ((relevantIssuesSize - healthy) * 100 / (unhealthy - healthy));
                 }
             }
 

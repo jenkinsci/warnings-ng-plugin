@@ -11,9 +11,9 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.steps.JobConfigurationModel;
 import jenkins.MasterToSlaveFileCallable;
 
-import hudson.plugins.analysis.util.EncodingValidator;
 import hudson.remoting.VirtualChannel;
 
 /**
@@ -91,7 +91,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
 
     private void aggregateIssuesOfFile(final File file, final Report report) {
         try {
-            Report result = parser.parse(file, EncodingValidator.defaultCharset(encoding));
+            Report result = parser.parse(file, new JobConfigurationModel().getCharset(encoding));
             result.setId(id);
             report.addAll(result);
             report.logInfo("Successfully parsed file %s", file);

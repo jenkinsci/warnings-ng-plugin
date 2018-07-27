@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.Set;
 
@@ -12,6 +11,7 @@ import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -25,7 +25,8 @@ import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.util.EncodingValidator;
+import hudson.util.ComboBoxModel;
+import hudson.util.FormValidation;
 
 /**
  * Scan files or the console log for issues.
@@ -86,7 +87,7 @@ public class ScanForIssuesStep extends Step {
     }
 
     /**
-     * Sets the default encoding used to read the log files that contain the warnings.
+     * Sets the encoding to use to read the log files that contain the warnings.
      *
      * @param reportEncoding
      *         the encoding, e.g. "ISO-8859-1"
@@ -102,7 +103,7 @@ public class ScanForIssuesStep extends Step {
     }
 
     /**
-     * Sets the default encoding used to read the log files that contain the warnings.
+     * Sets the encoding to use to read source files.
      *
      * @param sourceCodeEncoding
      *         the encoding, e.g. "ISO-8859-1"
@@ -145,18 +146,10 @@ public class ScanForIssuesStep extends Step {
 
         @Override
         protected Report run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), getReportCharset(),
-                    getSourceCodeCharset(), new FilePath(getRun().getRootDir()), 
+            IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), getCharset(reportEncoding),
+                    getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()), 
                     new LogHandler(getTaskListener(), tool.getName()));
             return issuesScanner.scan(pattern, getRun().getLogFile());
-        }
-
-        private Charset getSourceCodeCharset() {
-            return EncodingValidator.defaultCharset(sourceCodeEncoding);
-        }
-
-        private Charset getReportCharset() {
-            return EncodingValidator.defaultCharset(reportEncoding);
         }
     }
 
@@ -165,6 +158,8 @@ public class ScanForIssuesStep extends Step {
      */
     @Extension
     public static class Descriptor extends StepDescriptor {
+        private final JobConfigurationModel model = new JobConfigurationModel();
+
         @Override
         public Set<Class<?>> getRequiredContext() {
             return Sets.immutable.of(FilePath.class, EnvVars.class, TaskListener.class, Run.class).castToSet();
@@ -183,6 +178,48 @@ public class ScanForIssuesStep extends Step {
 
         public Collection<? extends StaticAnalysisToolDescriptor> getAvailableTools() {
             return Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
+        }
+
+        /**
+         * Returns a model with all available charsets.
+         *
+         * @return a model with all available charsets
+         */
+        public ComboBoxModel doFillReportEncodingItems() {
+            return model.getAllCharsets();
+        }
+
+        /**
+         * Returns a model with all available charsets.
+         *
+         * @return a model with all available charsets
+         */
+        public ComboBoxModel doFillSourceCodeEncodingItems() {
+            return model.getAllCharsets();
+        }
+
+        /**
+         * Performs on-the-fly validation of the character encoding.
+         *
+         * @param reportEncoding
+         *         the character encoding
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+            return model.validateCharset(reportEncoding);
+        }
+
+        /**
+         * Performs on-the-fly validation on the character encoding.
+         *
+         * @param sourceCodeEncoding
+         *         the character encoding
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
+            return model.validateCharset(sourceCodeEncoding);
         }
     }
 }

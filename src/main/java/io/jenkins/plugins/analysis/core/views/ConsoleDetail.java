@@ -11,7 +11,6 @@ import edu.hm.hafner.analysis.IssueParser;
 import hudson.console.ConsoleNote;
 import hudson.model.ModelObject;
 import hudson.model.Run;
-import hudson.plugins.analysis.Messages;
 
 /**
  * Renders a section of the console log.
@@ -90,7 +89,7 @@ public class ConsoleDetail implements ModelObject {
 
     @Override
     public String getDisplayName() {
-        return Messages.ConsoleLog_Title(start, end);
+        return Messages.ConsoleLog_View_Title(start, end);
     }
 
     /**
