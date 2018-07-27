@@ -6,10 +6,13 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.html.HtmlCheckBoxInput;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlNumberInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
+import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.ExcludeFile;
@@ -40,25 +43,82 @@ import hudson.model.Run;
  */
 public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     /**
-     * Verifies that the reference job name can be set to another job.
+     * Verifies that the properties of an {@link IssuesRecorder} instance created via API are correctly shown in the job
+     * configuration screen. Then these properties are changed in the HTML form, submitted to Jenkins, and verified in
+     * the recorder instance.
      */
     @Test
-    public void shouldInitializeAndStoreReferenceJobName() {
+    public void shouldInitializeAndStorePropertiesInJobConfiguration() {
         FreeStyleProject job = createFreeStyleProject();
-        String initialization = "Reference Job";
-        enableEclipseWarnings(job, tool -> tool.setReferenceJobName(initialization));
+        enableEclipseWarnings(job, tool -> {
+            tool.setReportEncoding("reportEncoding");
+            tool.setSourceCodeEncoding("sourceCodeEncoding");
+
+            tool.setIgnoreAnalysisResult(true);
+            tool.setOverallResultMustBeSuccess(true);
+            tool.setReferenceJobName("referenceJobName");
+
+            tool.setHealthy(10);
+            tool.setUnhealthy(20);
+            // TODO: add validation of minimum priority
+            tool.setMinimumPriority(Priority.HIGH.name());
+
+            tool.setEnabledForFailure(true);
+            tool.setAggregatingResults(true);
+        });
 
         HtmlPage configPage = getWebPage(job, "configure");
         HtmlForm form = configPage.getFormByName("config");
-        HtmlTextInput referenceJob = form.getInputByName("_.referenceJobName");
-        assertThat(referenceJob.getText()).isEqualTo(initialization);
 
-        String update = "New Reference Job";
-        referenceJob.setText(update);
+        verifyAndChangeEntry(form, "reportEncoding", "reportEncoding");
+        verifyAndChangeEntry(form, "sourceCodeEncoding", "sourceCodeEncoding");
+
+        verifyAndChangeEntry(form, "ignoreAnalysisResult", true);
+        verifyAndChangeEntry(form, "overallResultMustBeSuccess", true);
+        verifyAndChangeEntry(form, "referenceJobName", "referenceJobName");
+        
+        verifyAndChangeEntry(form, "healthy", 10);
+        verifyAndChangeEntry(form, "unhealthy", 20);
+
+        verifyAndChangeEntry(form, "enabledForFailure", true);
+        verifyAndChangeEntry(form, "aggregatingResults", true);
 
         submit(form);
 
-        assertThat(getRecorder(job).getReferenceJobName()).isEqualTo(update);
+        IssuesRecorder recorder = getRecorder(job);
+        assertThat(recorder.getReportEncoding()).isEqualTo("new-reportEncoding");
+        assertThat(recorder.getSourceCodeEncoding()).isEqualTo("new-sourceCodeEncoding");
+
+        assertThat(recorder.getReferenceJobName()).isEqualTo("new-referenceJobName");
+        assertThat(recorder.getOverallResultMustBeSuccess()).isFalse();
+        assertThat(recorder.getIgnoreAnalysisResult()).isFalse();
+
+        assertThat(recorder.getHealthy()).isEqualTo(15);
+        assertThat(recorder.getUnhealthy()).isEqualTo(25);
+        
+        assertThat(recorder.getEnabledForFailure()).isFalse();
+        assertThat(recorder.getAggregatingResults()).isFalse();
+    }
+
+    private void verifyAndChangeEntry(final HtmlForm form, final String id, final String expectedValue) {
+        HtmlTextInput textField = form.getInputByName("_." + id);
+        assertThat(textField.getText()).isEqualTo(expectedValue);
+
+        textField.setText("new-" + id);
+    }
+
+    private void verifyAndChangeEntry(final HtmlForm form, final String id, final boolean expectedValue) {
+        HtmlCheckBoxInput checkBox = form.getInputByName("_." + id);
+        assertThat(checkBox.isChecked()).isEqualTo(expectedValue);
+
+        checkBox.setChecked(!expectedValue);
+    }
+
+    private void verifyAndChangeEntry(final HtmlForm form, final String id, final int expectedValue) {
+        HtmlNumberInput checkBox = form.getInputByName("_." + id);
+        assertThat(checkBox.getText()).isEqualTo(String.valueOf(expectedValue));
+
+        checkBox.setText(String.valueOf(expectedValue + 5));
     }
 
     /**
@@ -180,7 +240,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldHaveOriginsIfBuildContainsWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
-        enableWarnings(project, 
+        enableWarnings(project,
                 recorder -> {
                     recorder.setAggregatingResults(true);
                     recorder.setFilters(Collections.singletonList(new RegexpFilter(".*", new ExcludeFile())));
@@ -250,8 +310,8 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         SummaryBox baselineSummary = new SummaryBox(buildPage, "eclipse");
         assertThat(baselineSummary.exists()).isTrue();
         assertThat(baselineSummary.getTitle()).isEqualTo("Eclipse ECJ: 8 warnings");
-        assertThat(baselineSummary.getItems()).isEmpty(); 
-        
+        assertThat(baselineSummary.getItems()).isEmpty();
+
         // Second build: actual result
         recorder.setTool(createEclipse("eclipse_5_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -354,9 +414,9 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
-        
+
         buildWithStatus(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
-        
+
         IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "**/checkstyle1*"));
 
         AnalysisResult baseline = scheduleBuildAndAssertStatus(project, Result.SUCCESS);

@@ -140,7 +140,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
         FreeStyleProject project = createJobWithWorkspaceFiles("eclipse-healthReport.txt");
         enableWarnings(project, publisher -> {
                     publisher.setHealthy(health);
-                    publisher.setUnHealthy(unhealthy);
+                    publisher.setUnhealthy(unhealthy);
                 },
                 new ToolConfiguration(new Eclipse(), "**/*issues.txt")
         );
@@ -156,7 +156,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
         FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle-healthReport.xml");
         enableWarnings(project, publisher -> {
                     publisher.setHealthy(10);
-                    publisher.setUnHealthy(15);
+                    publisher.setUnhealthy(15);
                     publisher.setMinimumPriority(priority.name());
                 },
                 new ToolConfiguration(new CheckStyle(), "**/*issues.txt")
