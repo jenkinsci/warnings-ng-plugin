@@ -3,18 +3,13 @@ package io.jenkins.plugins.analysis.core.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
-
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -29,9 +24,7 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  */
 public class AffectedFilesResolver {
-    private static final String SLASH = "/";
     private static final String AFFECTED_FILES_FOLDER_NAME = "files-with-issues";
-    private static final Charset DEFAULT_ENCODING = StandardCharsets.UTF_8;
 
     /**
      * Returns whether the affected file in Jenkins' build folder does exist and is readable.
@@ -46,7 +39,7 @@ public class AffectedFilesResolver {
     public static boolean hasAffectedFile(final Run<?, ?> run, final Issue issue) {
         return canAccess(getFile(run, issue.getFileName()));
     }
-    
+
     private static boolean canAccess(final Path file) {
         return Files.isReadable(file);
     }
@@ -57,8 +50,8 @@ public class AffectedFilesResolver {
      * @param build
      *         the build
      * @param fileName
-     *         the file name of the file to read from the build folder
-     *^ 
+     *         the file name of the file to read from the build folder ^
+     *
      * @return the file
      * @throws IOException
      *         if the file could not be found
@@ -93,32 +86,33 @@ public class AffectedFilesResolver {
      * @param workspace
      *         local directory of the workspace, all source files must be part of this directory
      *
-     * @throws IOException
-     *         if the files could not be written
      * @throws InterruptedException
      *         if the user cancels the processing
      */
     public void copyFilesWithAnnotationsToBuildFolder(final Report report,
             final FilePath jenkinsBuildRoot, final File workspace)
-            throws IOException, InterruptedException {
+            throws InterruptedException {
         int copied = 0;
         int notFound = 0;
         int notInWorkspace = 0;
         int error = 0;
 
+        List<String> errorLog = new ArrayList<>();
         Set<String> files = report.getFiles();
         for (String file : files) {
             if (exists(file)) {
                 if (isInWorkspace(file, workspace)) {
-                    FilePath remoteBuildFolderCopy = createBuildDirectory(jenkinsBuildRoot).child(getTempName(file));
-                    FilePath localSourceFile = new FilePath(Paths.get(file).toFile());
                     try {
-                        localSourceFile.copyTo(remoteBuildFolderCopy);
+                        copy(jenkinsBuildRoot, file);
                         copied++;
                     }
                     catch (IOException exception) {
-                        // TODO same logging and error handling as in other files
-                        logExceptionToFile(exception, remoteBuildFolderCopy, localSourceFile);
+                        if (error < 5) {
+                            errorLog.add(String.format("- '%s', IO exception has been thrown: %s", file, exception));
+                        }
+                        else if (error == 5) {
+                            errorLog.add("  ... skipped logging of additional file errors ...");
+                        }
                         error++;
                     }
                 }
@@ -133,6 +127,16 @@ public class AffectedFilesResolver {
 
         report.logInfo("-> %d copied, %d not in workspace, %d not-found, %d with I/O error",
                 copied, notInWorkspace, notFound, error);
+        if (error > 0) {
+            report.logError("Can't copy %d affected files:", error);
+            errorLog.forEach(report::logError);
+        }
+    }
+
+    private void copy(final FilePath jenkinsBuildRoot, final String file) throws IOException, InterruptedException {
+        FilePath remoteBuildFolderCopy = createBuildDirectory(jenkinsBuildRoot).child(getTempName(file));
+        FilePath localSourceFile = new FilePath(Paths.get(file).toFile());
+        localSourceFile.copyTo(remoteBuildFolderCopy);
     }
 
     /**
@@ -187,49 +191,5 @@ public class AffectedFilesResolver {
      */
     private static String getTempName(final String fileName) {
         return Integer.toHexString(fileName.hashCode()) + ".tmp";
-    }
-
-    private void logExceptionToFile(final IOException exception, final FilePath masterFile,
-            final FilePath affectedFile) throws InterruptedException {
-        OutputStream outputStream = null;
-        try {
-            outputStream = masterFile.write();
-            print(outputStream,
-                    "Copying the source file '%s' from the workspace to the build folder '%s' on the Jenkins master failed.%n",
-                    affectedFile, masterFile.getName());
-            String affectedFileOnAgent = affectedFile.getName();
-            if (!affectedFileOnAgent.startsWith(SLASH) && !affectedFileOnAgent.contains(":")) {
-                print(outputStream,
-                        "Seems that the path is relative, however an absolute path is required when copying the sources.%n");
-                String base;
-                if (affectedFileOnAgent.contains(SLASH)) {
-                    base = StringUtils.substringAfterLast(affectedFileOnAgent, SLASH);
-                }
-                else {
-                    base = affectedFileOnAgent;
-                }
-                print(outputStream,
-                        "Is the file '%s' contained more than once in your workspace?%n", base);
-            }
-            print(outputStream, "Is the file '%s' a valid filename?%n", affectedFile);
-            print(outputStream,
-                    "If you are building on a slave: please check if the file is accessible under '$JENKINS_HOME/[job-name]/%s'%n",
-                    affectedFile);
-            print(outputStream,
-                    "If you are building on the master: please check if the file is accessible under '$JENKINS_HOME/[job-name]/workspace/%s'%n",
-                    affectedFile);
-            exception.printStackTrace(new PrintStream(outputStream, false, DEFAULT_ENCODING.name()));
-        }
-        catch (IOException ignore) {
-            // ignore
-        }
-        finally {
-            IOUtils.closeQuietly(outputStream);
-        }
-    }
-
-    private void print(final OutputStream outputStream, final String message,
-            final Object... arguments) throws IOException {
-        IOUtils.write(String.format(message, arguments), outputStream, DEFAULT_ENCODING);
     }
 }

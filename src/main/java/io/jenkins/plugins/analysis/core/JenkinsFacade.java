@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
-import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -74,18 +73,14 @@ public class JenkinsFacade implements Serializable {
      *         the encoding to use when reading the file
      *
      * @return the affected file
+     * @throws IOException if the file could not be read
      */
     @MustBeClosed
-    public Reader readBuildFile(final Run<?, ?> build, final String fileName, final Charset sourceEncoding) {
-        try {
-            InputStream inputStream = AffectedFilesResolver.asStream(build, fileName);
+    public Reader readBuildFile(final Run<?, ?> build, final String fileName, final Charset sourceEncoding)
+            throws IOException {
+        InputStream inputStream = AffectedFilesResolver.asStream(build, fileName);
 
-            return new InputStreamReader(inputStream, sourceEncoding);
-        }
-        catch (IOException e) {
-            return new StringReader(
-                    String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)));
-        }
+        return new InputStreamReader(inputStream, sourceEncoding);
     }
 
     /**

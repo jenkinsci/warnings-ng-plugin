@@ -1,13 +1,17 @@
 package io.jenkins.plugins.analysis.core.views;
 
+import java.io.IOException;
 import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -95,12 +99,19 @@ public class DetailFactory {
         if (link.startsWith("source.")) {
             Issue issue = allIssues.findById(UUID.fromString(plainLink));
             if (ConsoleDetail.isInConsoleLog(issue)) {
-                return new ConsoleDetail(owner, jenkins.readConsoleLog(owner), issue.getLineStart(), issue.getLineEnd());
+                try (Stream<String> consoleLog = jenkins.readConsoleLog(owner)) {
+                    return new ConsoleDetail(owner, consoleLog, issue.getLineStart(), issue.getLineEnd());
+                }
             }
             else {
-                Reader affectedFile = jenkins.readBuildFile(owner, issue.getFileName(), sourceEncoding);
-
-                return new SourceDetail(owner, affectedFile, issue);
+                try (Reader affectedFile = jenkins.readBuildFile(owner, issue.getFileName(), sourceEncoding)) {
+                    return new SourceDetail(owner, affectedFile, issue);
+                }
+                catch (IOException e) {
+                    StringReader fallback = new StringReader(
+                            String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)));
+                    return new SourceDetail(owner, fallback, issue);
+                }
             }
         }
 

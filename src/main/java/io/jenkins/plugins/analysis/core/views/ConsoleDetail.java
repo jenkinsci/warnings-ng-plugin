@@ -54,7 +54,7 @@ public class ConsoleDetail implements ModelObject {
      * @param to
      *         last line in the console log
      */
-    public ConsoleDetail(final Run<?, ?> owner, final Stream<String> consoleLog, final int from, final int to) {
+    public ConsoleDetail(final Run<?, ?> owner,  final Stream<String> consoleLog, final int from, final int to) {
         this.owner = owner;
         this.from = from;
         this.to = to;
@@ -83,8 +83,6 @@ public class ConsoleDetail implements ModelObject {
         console.append("</table>\n");
 
         sourceCode = ConsoleNote.removeNotes(console.toString());
-
-        consoleLog.close();
     }
 
     @Override

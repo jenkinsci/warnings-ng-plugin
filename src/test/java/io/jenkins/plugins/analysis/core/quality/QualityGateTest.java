@@ -104,7 +104,7 @@ class QualityGateTest extends SerializableTest<QualityGate> {
         FormattedLogger logger = mock(FormattedLogger.class);
         QualityGateStatus qualityGateStatus = qualityGate.evaluate(run, logger);
         assertThat(qualityGateStatus).isEqualTo(QualityGateStatus.PASSED);
-        verify(logger, never()).print(anyString(), anyString());
+        verifyZeroInteractions(logger);
     }
     
     @Test

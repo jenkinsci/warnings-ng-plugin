@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.views;
 
+import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -167,7 +168,7 @@ class DetailFactoryTest {
      * Checks that a link to a source, returns a SourceDetail-View.
      */
     @Test
-    void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() {
+    void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() throws IOException {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.readBuildFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
         

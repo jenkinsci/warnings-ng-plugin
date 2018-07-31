@@ -21,7 +21,7 @@ import edu.hm.hafner.util.VisibleForTesting;
  * @author Ullrich Hafner
  */
 public class AbsolutePathGenerator {
-    static final String NOTHING_TO_DO = "-> Affected files for all issues already have absolute paths";
+    static final String NOTHING_TO_DO = "-> affected files for all issues already have absolute paths";
 
     private final FileSystem fileSystem;
 
