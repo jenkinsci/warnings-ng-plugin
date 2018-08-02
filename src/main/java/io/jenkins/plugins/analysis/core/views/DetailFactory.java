@@ -37,7 +37,7 @@ public class DetailFactory {
 
     private final JenkinsFacade jenkins;
 
-    /** 
+    /**
      * Creates a new instance of {@link DetailFactory}.
      */
     public DetailFactory() {
@@ -81,13 +81,13 @@ public class DetailFactory {
         StaticAnalysisLabelProvider labelProvider = parent.getLabelProvider();
 
         if (link.contains(LINK_SEPARATOR)) {
-            return createFilteredView(link, owner, 
-                    result, allIssues, newIssues, outstandingIssues, fixedIssues, 
+            return createFilteredView(link, owner,
+                    result, allIssues, newIssues, outstandingIssues, fixedIssues,
                     sourceEncoding, parent, labelProvider);
         }
         else {
-            return createNewDetailView(link, owner, 
-                    result, allIssues, newIssues, outstandingIssues, fixedIssues, 
+            return createNewDetailView(link, owner,
+                    result, allIssues, newIssues, outstandingIssues, fixedIssues,
                     sourceEncoding, parent, labelProvider);
         }
     }
@@ -119,16 +119,11 @@ public class DetailFactory {
         String property = StringUtils.substringBefore(link, ".");
         Predicate<Issue> filter = createPropertyFilter(plainLink, property);
         Report selectedIssues = allIssues.filter(filter);
-        if (selectedIssues.isEmpty()) {
-            return parent; // fallback TODO: empty element view
-        }
-        else {
-            return new IssuesDetail(owner, result,
-                    selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
-                    fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url,
-                    labelProvider, sourceEncoding);
-        }
-    }
+        return new IssuesDetail(owner, result,
+                selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
+                fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url,
+                labelProvider, sourceEncoding);
+    } 
 
     private Object createNewDetailView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
@@ -136,7 +131,7 @@ public class DetailFactory {
         String url = parent.getUrl() + "/" + link;
 
         if ("all".equals(link)) {
-            return new IssuesDetail(owner, result, allIssues, newIssues, outstandingIssues, fixedIssues, 
+            return new IssuesDetail(owner, result, allIssues, newIssues, outstandingIssues, fixedIssues,
                     labelProvider.getLinkName(), url, labelProvider, sourceEncoding);
         }
         if ("fixed".equals(link)) {
@@ -159,7 +154,7 @@ public class DetailFactory {
                 Predicate<Issue> severityFilter = Issue.bySeverity(severity);
                 return new IssuesDetail(owner, result,
                         allIssues.filter(severityFilter), outstandingIssues.filter(severityFilter),
-                        newIssues.filter(severityFilter), fixedIssues.filter(severityFilter), 
+                        newIssues.filter(severityFilter), fixedIssues.filter(severityFilter),
                         LocalizedSeverity.getLongLocalizedString(severity), url,
                         labelProvider, sourceEncoding);
             }
