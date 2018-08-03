@@ -1,0 +1,7 @@
+*.xml
+!checkstyle-idea.xml
+!codeStyleConfig.xml
+!Project.xml
+
+libraries
+scopes
