@@ -18,8 +18,12 @@ import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.FilePath;
+import hudson.Launcher;
+import hudson.matrix.MatrixAggregator;
+import hudson.matrix.MatrixBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.BuildListener;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.analysis.core.AnnotationsClassifier;
@@ -297,7 +301,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
 
     @Override
     protected BuildResult perform(final Run<?, ?> run, final FilePath workspace, final PluginLogger logger)
-            throws IOException {
+            throws InterruptedException, IOException {
         try {
             if (!hasConsoleParsers() && !hasFileParsers()) {
                 throw new IOException("Error: No warning parsers defined in the job configuration.");
@@ -444,6 +448,12 @@ public class WarningsPublisher extends HealthAwarePublisher {
     @Override
     public WarningsDescriptor getDescriptor() {
         return (WarningsDescriptor)super.getDescriptor();
+    }
+
+    @Override
+    public MatrixAggregator createAggregator(final MatrixBuild run, final Launcher launcher, final BuildListener listener) {
+        return new WarningsAnnotationsAggregator(run, launcher, listener, this, getDefaultEncoding(),
+                usePreviousBuildAsReference(), useOnlyStableBuildsAsReference());
     }
 
     /** Name of parsers to use for scanning the logs. */
