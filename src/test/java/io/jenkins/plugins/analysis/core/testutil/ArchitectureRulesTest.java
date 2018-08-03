@@ -33,7 +33,7 @@ public class ArchitectureRulesTest {
      * @return the classes that should be checked
      */
     protected JavaClasses getAllClasses() {
-        return new ClassFileImporter().importPackages("io.jenkins.plugins.analysis.core");
+        return new ClassFileImporter().importPackages("io.jenkins.plugins.analysis");
     }
 
     /**
