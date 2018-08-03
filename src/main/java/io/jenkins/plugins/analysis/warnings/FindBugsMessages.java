@@ -18,7 +18,6 @@ import edu.hm.hafner.analysis.SecureDigester;
  *
  * @author Ulli Hafner
  */
-// TODO: when there are more translations available we should generalize that approach into a map of maps
 public final class FindBugsMessages {
     private static final String NO_MESSAGE_FOUND = "no message found";
 
