@@ -1,0 +1,18 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:i="/issues" >
+
+  <st:documentation>
+    Provides all required input fields to scan for issues.
+  </st:documentation>
+
+  <i:hr title="${%File Encoding}"/>
+
+  <f:entry title="${%title.reportEncoding}" description="${%description.reportEncoding}">
+    <f:combobox field="reportEncoding"/>
+  </f:entry>
+
+  <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}">
+    <f:combobox field="sourceCodeEncoding"/>
+  </f:entry>
+
+</j:jelly>

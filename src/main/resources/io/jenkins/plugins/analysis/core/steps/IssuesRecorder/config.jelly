@@ -1,0 +1,23 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form" xmlns:u="/util">
+
+  <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
+
+  <f:entry title="${%title.tool}" description="${%description.tool}">
+    <u:repeatable minimum="1" field="tools" />
+  </f:entry>
+
+  <f:entry title="${%title.aggregatingResults}" description="${%description.aggregatingResults}" field="aggregatingResults">
+    <f:checkbox />
+  </f:entry>
+
+  <f:entry title="${%title.enabledForFailure}" description="${%description.enabledForFailure}" field="enabledForFailure">
+    <f:checkbox />
+  </f:entry>
+
+  <f:advanced>
+    <i:scan-parameters/>
+    <i:publish-parameters/>
+  </f:advanced>
+
+</j:jelly>

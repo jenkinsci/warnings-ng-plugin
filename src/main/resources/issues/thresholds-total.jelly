@@ -1,0 +1,58 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Defines the quality gate for the total number of issues.
+  </st:documentation>
+
+  <table>
+    <thead>
+      <tr>
+        <td/>
+        <td>${%All priorities}</td>
+        <td>${%Priority high}</td>
+        <td>${%Priority normal}</td>
+        <td>${%Priority low}</td>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="vertical-align: middle;">
+          <img src="${resURL}/images/24x24/yellow.png" alt="100%" class="icon-yellow icon-lg"
+               title="${%description.unstableTotal}"/>
+        </td>
+        <td>
+          <i:number field="unstableTotalAll"/>
+        </td>
+        <td>
+          <i:number field="unstableTotalHigh"/>
+        </td>
+        <td>
+          <i:number field="unstableTotalNormal"/>
+        </td>
+        <td>
+          <i:number field="unstableTotalLow"/>
+        </td>
+      </tr>
+      <tr>
+        <td style="vertical-align: middle;">
+          <img src="${resURL}/images/24x24/red.png" alt="100%" class="icon-red icon-lg"
+               title="${%description.failedTotal}"/>
+        </td>
+        <td>
+          <i:number field="failedTotalAll"/>
+        </td>
+        <td>
+          <i:number field="failedTotalHigh"/>
+        </td>
+        <td>
+          <i:number field="failedTotalNormal"/>
+        </td>
+        <td>
+          <i:number field="failedTotalLow"/>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</j:jelly>

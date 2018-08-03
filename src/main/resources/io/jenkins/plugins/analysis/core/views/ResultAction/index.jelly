@@ -1,0 +1,15 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
+  <l:layout title="${%Static Analysis Results}" norefresh="true">
+    <st:include it="${it.run}" page="sidepanel.jelly" />
+    <l:main-panel>
+
+      <h1>${it.displayName}</h1>
+
+      <issues:trend-chart />
+      <issues:priorities-chart />
+      <issues:details />
+
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

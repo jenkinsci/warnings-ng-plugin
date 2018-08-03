@@ -1,0 +1,23 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <st:documentation>
+    Navigation link for a tab showing the distribution of issues per property.
+    The property must be one of the supported issue properties.
+    <st:attribute name="property" use="required" type="String">
+      The property to render.
+    </st:attribute>
+    <st:attribute name="name" use="required" type="String">
+      The name of the property tab.
+    </st:attribute>
+    <st:attribute name="elements" use="required" type="String">
+      The elements to render.
+    </st:attribute>
+  </st:documentation>
+
+  <j:if test="${size(elements) > 1}">
+    <li class="nav-item">
+      <a class="nav-link" role="tab" data-toggle="tab" href="#${property}Content">${name}</a>
+    </li>
+  </j:if>
+
+</j:jelly>

@@ -1,0 +1,90 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
+
+  <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+  <l:layout title="${it.displayName}" norefresh="true">
+
+    <st:include it="${it.owner}" page="sidepanel.jelly"/>
+
+    <l:main-panel>
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.3/css/tether.min.css"/>
+      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+            crossorigin="anonymous"/>
+      <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
+
+      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome/css/all.css"/>
+
+      <!-- FIXME: replace libraries with local bundles -->
+      <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+              integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"/>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+              integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+              crossorigin="anonymous"/>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.3/js/tether.min.js"/>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+              integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+              crossorigin="anonymous"/>
+      <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.js"/>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.js"/>
+
+      <j:set var="i" value="${it.issues}"/>
+
+      <j:if test="${i.isNotEmpty()}">
+        
+        <div class="fluid-container">
+
+          <h3>${it.displayName}</h3>
+
+          <div class="row py-3">
+            <issues:trend-chart/>
+            <issues:priorities-chart/>
+          </div>
+
+          <div class="row py-3">
+            <issues:details/>
+          </div>
+
+        </div>
+
+        <script>var view = <st:bind value="${it}"/></script>
+        <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/issues-detail.js"/>
+
+      </j:if>
+
+      <j:if test="${i.isEmpty()}">
+
+        <div class="fluid-container">
+
+        <h3>${it.displayName}</h3>
+
+          <div class="row py-1">
+            <div class="col">
+              <div id="congratulations">
+                <div class="card">
+                  <div class="card-body">
+                    <div class="text-center">
+                      <h5 class="card-title">${%congratulations}</h5>
+                    </div>
+                    <div class="text-center">
+                      <i class="fa fa-check-double banner" aria-hidden="true"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
+
+        </div>
+
+      </j:if>
+
+    </l:main-panel>
+
+  </l:layout>
+
+</j:jelly>

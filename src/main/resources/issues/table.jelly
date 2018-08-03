@@ -1,0 +1,34 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <st:documentation>
+    Renders issues in a table.
+    <st:attribute name="issues" use="required" type="edu.hm.hafner.analysis.Report">
+      The issues to show.
+    </st:attribute>
+    <st:attribute name="labelProvider" use="required"
+                  type="io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider">
+      The issues to show.
+    </st:attribute>
+  </st:documentation>
+
+  <div role="tabpanel" id="issuesContent" class="tab-pane fade">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped" id="issues">
+        <colgroup>
+          <j:forEach var="width" items="${labelProvider.getTableWidths(issues)}">
+            <col class="col-width-${width}"/>
+          </j:forEach>
+        </colgroup>
+        <thead>
+          <tr>
+            <j:forEach var="label" items="${labelProvider.getTableHeaders(issues)}">
+              <th>${label}</th>
+            </j:forEach>
+          </tr>
+        </thead>
+      </table>
+    </div>
+
+  </div>
+
+</j:jelly>
