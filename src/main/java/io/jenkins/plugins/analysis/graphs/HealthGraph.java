@@ -9,7 +9,6 @@ import org.jfree.data.category.CategoryDataset;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
-import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.AreaRenderer;
 import hudson.plugins.analysis.util.SerializableToolTipGenerator;
 import hudson.plugins.analysis.util.SerializableUrlGenerator;

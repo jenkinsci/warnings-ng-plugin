@@ -19,7 +19,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 
-import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.Pair;
 
 /**

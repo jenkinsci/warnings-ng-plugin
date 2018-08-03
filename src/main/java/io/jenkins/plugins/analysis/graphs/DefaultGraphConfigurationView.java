@@ -11,7 +11,6 @@ import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 
 import hudson.model.Job;
-import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**

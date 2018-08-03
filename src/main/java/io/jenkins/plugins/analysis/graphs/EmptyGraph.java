@@ -7,8 +7,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 
-import hudson.plugins.analysis.Messages;
-
 /**
  * Empty graph. Null object: this graph does not render anything.
  *

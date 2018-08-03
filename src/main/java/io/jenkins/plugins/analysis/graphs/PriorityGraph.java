@@ -8,7 +8,6 @@ import org.jfree.data.category.CategoryDataset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.AreaRenderer;
 import hudson.plugins.analysis.util.ToolTipAreaRenderer;
 import hudson.plugins.analysis.util.ToolTipBuilder;

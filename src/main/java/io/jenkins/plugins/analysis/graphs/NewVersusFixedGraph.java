@@ -6,7 +6,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import hudson.plugins.analysis.Messages;
 import hudson.plugins.analysis.util.BoxRenderer;
 import hudson.plugins.analysis.util.ToolTipBoxRenderer;
 import hudson.plugins.analysis.util.ToolTipBuilder;

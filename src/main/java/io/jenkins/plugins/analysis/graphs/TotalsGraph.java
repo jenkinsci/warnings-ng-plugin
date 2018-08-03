@@ -6,8 +6,6 @@ import org.jfree.chart.JFreeChart;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
 import org.jfree.data.category.CategoryDataset;
 
-import hudson.plugins.analysis.Messages;
-
 /**
  * Builds a graph showing the total of warnings in a scaled line graph.
  *

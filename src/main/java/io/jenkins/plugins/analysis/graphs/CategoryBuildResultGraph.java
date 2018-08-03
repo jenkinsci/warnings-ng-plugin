@@ -16,8 +16,6 @@ import org.jfree.data.category.CategoryDataset;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 
-import hudson.plugins.analysis.Messages;
-
 /**
  * A build result graph using a {@link CategoryPlot}. Uses a template method to create a graph based on a series of
  * build results.
