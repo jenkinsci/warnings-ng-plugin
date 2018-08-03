@@ -3,10 +3,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.jvnet.hudson.plugins</groupId>
-    <artifactId>analysis-pom</artifactId>
-    <version>2.0.0-SNAPSHOT</version>
-    <relativePath>../analysis-pom</relativePath>
+    <groupId>org.jenkins-ci.plugins</groupId>
+    <artifactId>plugin</artifactId>
+    <version>3.9</version>
+    <relativePath/>
   </parent>
 
   <artifactId>warnings</artifactId>
@@ -14,13 +14,77 @@
   <name>Warnings Plug-in</name>
   <version>5.0.0-SNAPSHOT</version>
   <url>https://wiki.jenkins.io/x/G4CGAQ</url>
-  <description>This plug-in reads the compiler warnings from the console log file and generates a trend report.
+  <description>Jenkins plug-in to scan the console log or a compiler log file for warnings.
   </description>
 
+  <prerequisites>
+    <maven>3.3</maven>
+  </prerequisites>
+
   <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Override properties defined in parent POM -->
+    <jenkins.version>2.89.1</jenkins.version>
+    <java.level>8</java.level>
+    <jenkins-test-harness.version>2.40-20180612.101324-2</jenkins-test-harness.version>
+
+    <!-- Project Dependencies Configuration -->
+    <analysis-model.version>1.0.0-20180725.091543-42</analysis-model.version>
+    <analysis-config.version>2.0.0</analysis-config.version>
+
+    <commons.lang.version>3.7</commons.lang.version>
+    <commons.io.version>2.6</commons.io.version>
+    <commons.digester.version>3.2</commons.digester.version>
+    <commons.text.version>1.4</commons.text.version>
+    <eclipse-collections.version>9.2.0</eclipse-collections.version>
+    <j2html.version>1.3.0</j2html.version>
+
+    <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
+    <json.version>20180130</json.version>
+
+    <!-- Test Library Dependencies Versions -->
+    <junit.version>5.2.0</junit.version>
+    <mockito.version>2.19.0</mockito.version>
+    <assertj.version>3.10.0</assertj.version>
+    <archunit.version>0.8.2</archunit.version>
+    <json-unit-fluent.version>2.0.0.RC1</json-unit-fluent.version>
+
+    <!-- Jenkins Plug-in Dependencies Versions -->
+    <analysis-core.version>1.95</analysis-core.version>
+    <dashboard-view.version>2.9.11</dashboard-view.version>
+    <token-macro.version>2.5</token-macro.version>
+    <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
+    <matrix-project.version>1.13</matrix-project.version>
+    <junit-plugin.version>1.24</junit-plugin.version>
+
+    <!-- Maven plug-in versions -->
+    <maven-pmd-plugin.version>3.10.0</maven-pmd-plugin.version>
     <pmd.version>6.5.0</pmd.version>
-    <commons-digester3.version>3.2</commons-digester3.version>
-    <analysis-core.version>2.0.0-SNAPSHOT</analysis-core.version>
+    <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+    <checkstyle.version>8.11</checkstyle.version>
+    <findbugs-maven-plugin.version>3.0.5</findbugs-maven-plugin.version>
+    <spotbugs-maven-plugin.version>3.1.5</spotbugs-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.1</jacoco-maven-plugin.version>
+    <maven-surefire.plugin>2.22.0</maven-surefire.plugin>
+    <junit-surefire-provider.version>1.2.0</junit-surefire-provider.version>
+    <jar.maven.plugin>3.0.2</jar.maven.plugin>
+    <error-prone.maven.plugin>2.8.2</error-prone.maven.plugin>
+    <error.prone.version>2.2.0</error.prone.version>
+    <versions-maven-plugin.version>2.5</versions-maven-plugin.version>
+    <depgraph-maven-plugin.version>3.1.0</depgraph-maven-plugin.version>
+    <animal-sniffer-maven-plugin.version>1.17</animal-sniffer-maven-plugin.version>
+    <maven-hpi-plugin.version>2.5</maven-hpi-plugin.version>
+    <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
+    <maven-jar-plugin.version>3.1.0</maven-jar-plugin.version>
+    <pitest-maven.plugin>1.4.0</pitest-maven.plugin>
+    <pitest-maven.junit5.plugin>0.5</pitest-maven.junit5.plugin>
+
+    <!-- Enabled while there are fatal Findbugs issues -->
+    <findbugs.failOnError>false</findbugs.failOnError>
+
+    <!-- Maven Surefire ArgLine -->
+    <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
   </properties>
 
   <licenses>
@@ -46,13 +110,76 @@
     <license>
       <name>Creative Commons Attribution 3.0</name>
       <url>https://creativecommons.org/licenses/by/3.0</url>
-      <comments>Go mascot and logo were designed by Renée French and are covered by the Creative Commons Attribution 3.0
+      <comments>Go mascot and logo were designed by Renée French and are covered by the Creative Commons
+        Attribution 3.0
         license.
       </comments>
     </license>
   </licenses>
 
   <dependencies>
+    <!-- Project Dependencies -->
+    <dependency>
+      <groupId>edu.hm.hafner</groupId>
+      <artifactId>analysis-model</artifactId>
+      <version>${analysis-model.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.collections</groupId>
+      <artifactId>eclipse-collections-api</artifactId>
+      <version>${eclipse-collections.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.collections</groupId>
+      <artifactId>eclipse-collections</artifactId>
+      <version>${eclipse-collections.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons.lang.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons.io.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-digester3</artifactId>
+      <version>${commons.digester.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>${commons.text.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <version>1.6</version>
+    </dependency>
+    <dependency>
+      <groupId>de.java2html</groupId>
+      <artifactId>java2html</artifactId>
+      <version>5.0</version>
+    </dependency>
+    <dependency>
+      <groupId>xerces</groupId>
+      <artifactId>xercesImpl</artifactId>
+      <version>2.11.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${json.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.j2html</groupId>
+      <artifactId>j2html</artifactId>
+      <version>${j2html.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>jenkins-test-harness-tools</artifactId>
@@ -63,18 +190,6 @@
       <groupId>org.jvnet.hudson.plugins</groupId>
       <artifactId>analysis-core</artifactId>
       <version>${analysis-core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jvnet.hudson.plugins</groupId>
-      <artifactId>analysis-core</artifactId>
-      <version>${analysis-core.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-digester3</artifactId>
-      <version>${commons-digester3.version}</version>
     </dependency>
 
     <!-- PMD Messages -->
@@ -105,6 +220,119 @@
       </exclusions>
     </dependency>
 
+    <!-- Jenkins Plug-in Dependencies -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>matrix-project</artifactId>
+      <version>${matrix-project.version}</version>
+      <optional>true</optional>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jenkins-ci.plugins</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jenkins-ci.plugins</groupId>
+          <artifactId>script-security</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>maven-plugin</artifactId>
+      <version>${jenkins-maven-plugin.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>commons-net</groupId>
+          <artifactId>commons-net</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>dashboard-view</artifactId>
+      <version>${dashboard-view.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>token-macro</artifactId>
+      <version>${token-macro.version}</version>
+      <optional>true</optional>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jenkins-ci.plugins.workflow</groupId>
+          <artifactId>workflow-job</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-step-api</artifactId>
+      <version>2.13</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+      <version>1.10</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>antisamy-markup-formatter</artifactId>
+      <version>1.5</version>
+    </dependency>
+
+    <!-- Test Dependencies -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit</artifactId>
+      <version>${archunit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit</artifactId>
+      <version>${archunit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>net.javacrumbs.json-unit</groupId>
+      <artifactId>json-unit-fluent</artifactId>
+      <version>${json-unit-fluent.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>edu.hm.hafner</groupId>
+      <artifactId>analysis-model</artifactId>
+      <version>${analysis-model.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
     <!-- Integration Test Dependencies -->
     <!-- WorkflowJob -->
     <dependency>
@@ -119,6 +347,12 @@
       <artifactId>workflow-cps</artifactId>
       <version>2.42</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jenkins-ci.plugins</groupId>
+          <artifactId>scm-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- stage -->
     <dependency>
@@ -126,6 +360,13 @@
       <artifactId>pipeline-stage-step</artifactId>
       <version>2.3</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jenkins-ci.plugins</groupId>
+          <artifactId>scm-api</artifactId>
+        </exclusion>
+      </exclusions>
+
     </dependency>
     <!-- node -->
     <dependency>
@@ -134,7 +375,7 @@
       <version>2.16</version>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- XML Unit -->
     <dependency>
       <groupId>xmlunit</groupId>
@@ -144,6 +385,356 @@
     </dependency>
 
   </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven-surefire.plugin}</version>
+        <configuration>
+          <includes>
+            <include>**/*ITest.*</include>
+            <include>**/*InjectedTest.*</include>
+          </includes>
+          <reuseForks>false</reuseForks>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${versions-maven-plugin.version}</version>
+      </plugin>
+      <plugin>
+        <groupId>com.github.ferstl</groupId>
+        <artifactId>depgraph-maven-plugin</artifactId>
+        <version>${depgraph-maven-plugin.version}</version>
+        <configuration>
+          <graphFormat>puml</graphFormat>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>findbugs-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>findbugs</id>
+            <phase>none</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin.version}</version>
+        <configuration>
+          <additionalOptions>-Xdoclint:all</additionalOptions>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <!-- As soon as possible but after required generate-sources phase -->
+            <phase>process-sources</phase>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
+        <version>2.1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-assertions</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <packages>
+            <package>io.jenkins.plugins.analysis.core.history</package>
+            <package>io.jenkins.plugins.analysis.core.model</package>
+            <package>io.jenkins.plugins.analysis.core.quality</package>
+          </packages>
+          <excludes>
+            <exclude>.*ITest</exclude>
+          </excludes>
+          <cleanTargetDir>true</cleanTargetDir>
+          <hierarchical>false</hierarchical>
+          <generateBddAssertions>false</generateBddAssertions>
+          <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
+          <templates>
+            <templatesDirectory>${project.basedir}/etc/templates/</templatesDirectory>
+            <assertionsEntryPointClass>analysis_core_assertions_entry_point_class_template.txt
+            </assertionsEntryPointClass>
+          </templates>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.pitest</groupId>
+        <artifactId>pitest-maven</artifactId>
+        <version>${pitest-maven.plugin}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>${pitest-maven.junit5.plugin}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <outputFormats>XML,HTML</outputFormats>
+          <verbose>true</verbose>
+          <targetClasses>
+            <param>io.jenkins.plugins.analysis.core.*</param>
+          </targetClasses>
+          <targetTests>
+            <param>io.jenkins.plugins.analysis.core.*</param>
+          </targetTests>
+          <excludedTestClasses>
+            <param>*ITest</param>
+          </excludedTestClasses>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco-maven-plugin.version}</version>
+        <configuration>
+          <includes>
+            <include>io/jenkins/plugins/analysis/**/*</include>
+          </includes>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${maven-jar-plugin.version}</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Built-By>Ullrich Hafner</Built-By>
+                <Url>${project.scm.url}</Url>
+                <Jenkins-ClassFilter-Whitelisted>true</Jenkins-ClassFilter-Whitelisted>
+              </manifestEntries>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>animal-sniffer-maven-plugin</artifactId>
+          <version>${animal-sniffer-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-enforcer-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>display-info</id>
+              <configuration>
+                <rules>
+                  <enforceBytecodeVersion>
+                    <ignoreClasses>
+                      <!-- asm dependency from PMD contains a java9 module-info.class -->
+                      <ignoreClass>module-info</ignoreClass>
+                    </ignoreClasses>
+                  </enforceBytecodeVersion>
+                </rules>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire.plugin}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.junit.platform</groupId>
+              <artifactId>junit-platform-surefire-provider</artifactId>
+              <version>${junit-surefire-provider.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.junit.jupiter</groupId>
+              <artifactId>junit-jupiter-engine</artifactId>
+              <version>${junit.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>org.junit.vintage</groupId>
+              <artifactId>junit-vintage-engine</artifactId>
+              <version>${junit.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <excludes>
+              <exclude>**/*ITest.*</exclude>
+              <exclude>**/InjectedTest.*</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>${jacoco-maven-plugin.version}</version>
+          <configuration>
+            <includes>
+              <include>io/jenkins/plugins/analysis/**/*</include>
+            </includes>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>prepare-agent</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>report</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>report</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-checkstyle-plugin</artifactId>
+          <version>${maven-checkstyle-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.jvnet.hudson.plugins</groupId>
+              <artifactId>analysis-config</artifactId>
+              <version>${analysis-config.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>com.puppycrawl.tools</groupId>
+              <artifactId>checkstyle</artifactId>
+              <version>${checkstyle.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <configLocation>checkstyle-configuration.xml</configLocation>
+            <includeTestSourceDirectory>true</includeTestSourceDirectory>
+            <excludes>hudson/**/*</excludes>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>${maven-pmd-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.jvnet.hudson.plugins</groupId>
+              <artifactId>analysis-config</artifactId>
+              <version>${analysis-config.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>net.sourceforge.pmd</groupId>
+              <artifactId>pmd-core</artifactId>
+              <version>${pmd.version}</version>
+            </dependency>
+            <dependency>
+              <groupId>net.sourceforge.pmd</groupId>
+              <artifactId>pmd-java</artifactId>
+              <version>${pmd.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <rulesets>
+              <ruleset>pmd-configuration.xml</ruleset>
+            </rulesets>
+            <excludeRoots>
+              <excludeRoot>target/generated-sources/localizer</excludeRoot>
+              <excludeRoot>target/generated-test-sources/assertj-assertions</excludeRoot>
+            </excludeRoots>
+            <includeTests>true</includeTests>
+            <excludes>hudson/**/*</excludes>
+            <minimumTokens>50</minimumTokens>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>findbugs-maven-plugin</artifactId>
+          <version>${findbugs-maven-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.jvnet.hudson.plugins</groupId>
+              <artifactId>analysis-config</artifactId>
+              <version>${analysis-config.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <xmlOutput>true</xmlOutput>
+            <findbugsXmlOutput>true</findbugsXmlOutput>
+            <threshold>Low</threshold>
+            <effort>Max</effort>
+            <relaxed>false</relaxed>
+            <fork>false</fork>
+            <excludeFilterFile>findbugs-exclusion-filter.xml</excludeFilterFile>
+            <includeTests>true</includeTests>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-maven-plugin</artifactId>
+          <version>${spotbugs-maven-plugin.version}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.jvnet.hudson.plugins</groupId>
+              <artifactId>analysis-config</artifactId>
+              <version>${analysis-config.version}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <xmlOutput>true</xmlOutput>
+            <threshold>Low</threshold>
+            <effort>Max</effort>
+            <relaxed>false</relaxed>
+            <fork>true</fork>
+            <excludeFilterFile>findbugs-exclusion-filter.xml</excludeFilterFile>
+            <includeTests>true</includeTests>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>skip-javadoc-with-tests</id>
+      <activation>
+        <property>
+          <name>skipTests</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <properties>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+      </properties>
+    </profile>
+  </profiles>
 
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
