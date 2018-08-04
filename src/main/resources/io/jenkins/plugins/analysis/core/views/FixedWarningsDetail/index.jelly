@@ -14,9 +14,9 @@
             crossorigin="anonymous"/>
       <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.16/datatables.min.css"/>
 
-      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/custom-styles/custom-style.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome/css/all.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/material-blue-grey.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-styles/custom-style.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/all.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/material-blue-grey.css"/>
 
       <!-- FIXME: replace libraries with local bundles -->
       <script src="https://code.jquery.com/jquery-3.3.1.min.js"
@@ -76,7 +76,7 @@
             </j:forEach>
           </tbody>
         </table>
-        <script type="text/javascript" src="${resURL}/plugin/analysis-core/js/jQuery-noConflict.js"/>
+        <script type="text/javascript" src="${resURL}/plugin/warnings/js/jQuery-noConflict.js"/>
 
       </div>
 

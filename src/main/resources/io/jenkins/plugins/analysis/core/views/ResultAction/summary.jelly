@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core"
          xmlns:t="/lib/hudson">
-  <link rel="stylesheet" href="${resURL}/plugin/analysis-core/css/font-awesome/css/all.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/all.css"/>
 
   <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">
     <j:out value="${it.summary}" />

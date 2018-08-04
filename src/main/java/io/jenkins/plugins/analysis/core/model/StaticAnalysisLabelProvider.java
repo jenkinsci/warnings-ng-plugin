@@ -35,7 +35,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  * @author Ullrich Hafner
  */
 public class StaticAnalysisLabelProvider {
-    private static final String ICONS_PREFIX = "/plugin/analysis-core/icons/";
+    private static final String ICONS_PREFIX = "/plugin/warnings/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
 
