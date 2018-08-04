@@ -24,6 +24,7 @@ import j2html.tags.UnescapedText;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
+import hudson.model.BallColor;
 import hudson.model.Run;
 import hudson.plugins.analysis.util.ToolTipProvider;
 
@@ -462,10 +463,12 @@ public class StaticAnalysisLabelProvider {
     }
 
     private UnescapedText getResultIcon(final QualityGateStatus qualityGateStatus) {
-        return join(i().withClasses("fa", qualityGateStatus.getIconName())
-                        .withAlt(qualityGateStatus.getDescription())
-                        .withTitle(qualityGateStatus.getDescription()),
-                qualityGateStatus.getDescription());
+        BallColor color = qualityGateStatus.getColor();
+        return join(img().withSrc(jenkins.getImagePath(color))
+                        .withClasses(color.getIconClassName(), "icon-lg")
+                        .withAlt(color.getDescription())
+                        .withTitle(color.getDescription()),
+                color.getDescription());
     }
 
     public ToolTipProvider getToolTipProvider() {

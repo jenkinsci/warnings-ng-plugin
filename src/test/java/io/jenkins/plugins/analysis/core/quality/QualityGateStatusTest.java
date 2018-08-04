@@ -18,16 +18,16 @@ class QualityGateStatusTest {
     void shouldIdentifySuccessfulStatus() {
         assertThat(QualityGateStatus.PASSED)
                 .isSuccessful()
-                .hasDescription(Result.SUCCESS.color.getDescription());
+                .hasColor(Result.SUCCESS.color);
         assertThat(QualityGateStatus.INACTIVE)
                 .isSuccessful()
-                .hasDescription(Result.NOT_BUILT.color.getDescription());
+                .hasColor(Result.NOT_BUILT.color);
         assertThat(QualityGateStatus.WARNING)
                 .isNotSuccessful()
-                .hasDescription(Result.UNSTABLE.color.getDescription());
+                .hasColor(Result.UNSTABLE.color);
         assertThat(QualityGateStatus.FAILED)
                 .isNotSuccessful()
-                .hasDescription(Result.FAILURE.color.getDescription());
+                .hasColor(Result.FAILURE.color);
     }
     
     @Test
