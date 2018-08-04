@@ -14,7 +14,7 @@
       <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/all.css"/>
 
       <script src="${resURL}/plugin/warnings/js/libs/jquery-3.3.1.slim.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/popper-1.14.4.min.js"/>
+      <script src="${resURL}/plugin/warnings/js/libs/popper-1.14.3.min.js"/>
       <script src="${resURL}/plugin/warnings/js/libs/bootstrap-4.1.3.min.js"/>
       <script src="${resURL}/plugin/warnings/js/libs/jquery.dataTables-1.10.18.min.js"/>
       <script src="${resURL}/plugin/warnings/js/libs/dataTables-1.10.18.bootstrap4.min.js"/>
