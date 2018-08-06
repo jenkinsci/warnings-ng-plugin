@@ -32,6 +32,49 @@ import hudson.model.Run;
 @SuppressWarnings({"ParameterNumber", "PMD.UnusedPrivateMethod"})
 @SuppressFBWarnings("UPM")
 class AnalysisHistoryTest {
+    /**
+     * Creates a sequence of three failing builds. Verifies that the history contains all of these builds. 
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-41598">Issue 41598</a>
+     */
+    @Test
+    void issue41598() {
+        Run last = createFailingBuild();
+
+        ResultAction lastAction = mock(ResultAction.class);
+        AnalysisResult lastResult = mock(AnalysisResult.class);
+        when(lastAction.getResult()).thenReturn(lastResult);
+        when(lastAction.getOwner()).thenReturn(last);
+        
+        Run middle = createFailingBuild();
+        ResultAction middleAction = mock(ResultAction.class);
+        AnalysisResult middleResult = mock(AnalysisResult.class);
+        when(middleAction.getResult()).thenReturn(middleResult);
+        when(middleAction.getOwner()).thenReturn(middle);
+
+        Run first = createFailingBuild();
+        ResultAction firstAction = mock(ResultAction.class);
+        AnalysisResult firstResult = mock(AnalysisResult.class);
+        when(firstAction.getResult()).thenReturn(firstResult);
+        when(firstAction.getOwner()).thenReturn(first);
+        
+        when(last.getPreviousBuild()).thenReturn(middle);
+        when(middle.getPreviousBuild()).thenReturn(first);
+        
+        ResultSelector resultSelector = mock(ResultSelector.class);
+        when(resultSelector.get(last)).thenReturn(Optional.of(lastAction));
+        when(resultSelector.get(middle)).thenReturn(Optional.of(middleAction));
+        when(resultSelector.get(first)).thenReturn(Optional.of(firstAction));
+        
+        AnalysisHistory history = new AnalysisHistory(last, resultSelector);
+        
+        assertThat(history.iterator()).containsExactly(lastResult, middleResult, firstResult);
+    }
+
+    private Run createFailingBuild() {
+        return createBuildWithResult(Result.FAILURE);
+    }
+
     @Test
     void baselineShouldHaveNoPreviousResult() {
         Run baseline = mock(Run.class);
@@ -128,8 +171,7 @@ class AnalysisHistoryTest {
 
     private Run createBuild(final boolean hasResult, final QualityGateStatus qualityGateStatus, final Result jobStatus,
             final ResultSelector resultSelector, final ExpectedResult resultId) {
-        Run baseline = mock(Run.class);
-        when(baseline.getResult()).thenReturn(jobStatus);
+        Run baseline = createBuildWithResult(jobStatus);
 
         if (hasResult) {
             AnalysisResult result = mock(AnalysisResult.class);
@@ -144,6 +186,12 @@ class AnalysisHistoryTest {
         else {
             when(resultSelector.get(baseline)).thenReturn(Optional.empty());
         }
+        return baseline;
+    }
+
+    private Run createBuildWithResult(final Result jobStatus) {
+        Run baseline = mock(Run.class);
+        when(baseline.getResult()).thenReturn(jobStatus);
         return baseline;
     }
 
