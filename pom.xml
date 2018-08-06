@@ -522,6 +522,9 @@
           <includes>
             <include>io/jenkins/plugins/analysis/**/*</include>
           </includes>
+          <excludes>
+            <exclude>io/jenkins/plugins/analysis/graphs/**/*</exclude>
+          </excludes>
         </configuration>
         <executions>
           <execution>
