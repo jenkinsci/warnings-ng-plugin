@@ -29,7 +29,7 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"ParameterNumber", "PMD.UnusedPrivateMethod"})
+@SuppressWarnings({"ParameterNumber", "PMD.UnusedPrivateMethod", "unchecked"})
 @SuppressFBWarnings("UPM")
 class AnalysisHistoryTest {
     /**
