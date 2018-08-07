@@ -73,5 +73,10 @@ public class SpotBugs extends FindBugs {
         public String getPattern() {
             return "**/target/spotbugsXml.xml";
         }
+
+        @Override
+        public String getUrl() {
+            return "https://spotbugs.github.io";
+        }
     }
 }

@@ -96,5 +96,10 @@ public class CheckStyle extends StaticAnalysisTool {
         public String getPattern() {
             return "**/checkstyle-result.xml";
         }
+
+        @Override
+        public String getUrl() {
+            return "https://checkstyle.org";
+        }
     }
 }

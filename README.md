@@ -1,10 +1,10 @@
-The Jenkins 'warnings' plug-in collects compiler warnings of the project modules and visualizes the results. 
-It has built-in support for numerous static analysis tools (including several compilers), see the 
-[warning package](src/main/java/io/jenkins/plugins/analysis/warnings) 
-for a complete list of supported formats. If your tool is not yet supported you can either define a new parser in the
-user interface or provide a parser within a new small plug-in. If the parser is useful for other teams please share it 
-and provide pull requests for the [warnings plug-in](https://github.com/jenkinsci/warnings-plugin/pulls) and 
-the [analysis parsers library](https://github.com/jenkinsci/analysis-model/).
+The Jenkins 'warnings' plug-in collects compiler warnings or issues reported by static analysis tools and visualizes the 
+results. It has built-in support for numerous static analysis tools (including several compilers), see the list of
+[supported report formats](SUPPORTED-REPORT-FORMATS.md). If your tool is not yet supported you can either define a new 
+Groovy based parser in the user interface or provide a parser within a new small plug-in. If the parser is useful for 
+other teams as well please share it and provide pull requests for the 
+[warnings plug-in](https://github.com/jenkinsci/warnings-plugin/pulls) and 
+the [analysis parsers library](https://github.com/jenkinsci/analysis-model/). 
 
 For more details please refer to the corresponding [Jenkins wiki page](https://wiki.jenkins.io/x/G4CGAQ).
 

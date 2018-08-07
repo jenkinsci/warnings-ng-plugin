@@ -38,7 +38,7 @@ public class DupFinder extends DuplicateCodeScanner {
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DryLabelProvider {
         LabelProvider() {
-            super(ID);
+            super(ID, Messages.Warnings_DupFinder_ParserName());
         }
     }
 

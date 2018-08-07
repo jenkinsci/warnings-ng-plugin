@@ -95,6 +95,11 @@ public class Pmd extends StaticAnalysisTool {
         public String getPattern() {
             return "**/pmd.xml";
         }
+
+        @Override
+        public String getUrl() {
+            return "https://pmd.github.io";
+        }
     }
 }
 

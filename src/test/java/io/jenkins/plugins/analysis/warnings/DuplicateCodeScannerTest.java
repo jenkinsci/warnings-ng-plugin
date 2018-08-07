@@ -42,7 +42,7 @@ class DuplicateCodeScannerTest {
         group.add(issue);
         group.add(duplicate);
 
-        DryLabelProvider labelProvider = new DryLabelProvider("id");
+        DryLabelProvider labelProvider = new DryLabelProvider("id", "name");
 
         Report report = mock(Report.class);
 
