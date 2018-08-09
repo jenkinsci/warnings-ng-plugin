@@ -92,15 +92,6 @@
       <name>MIT license</name>
       <comments>All source code is under the MIT license.</comments>
     </license>
-    <license>
-      <name>LGPL</name>
-      <comments>All icons are made by Carlitus (Carles Carbonell Bernado) and are under the LGPL.</comments>
-    </license>
-    <license>
-      <name>BSD license</name>
-      <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.
-      </comments>
-    </license>
   </licenses>
 
   <dependencies>
