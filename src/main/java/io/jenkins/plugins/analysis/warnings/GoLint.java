@@ -66,5 +66,10 @@ public class GoLint extends StaticAnalysisTool {
         public String getDisplayName() {
             return Messages.Warnings_GoLintParser_ParserName();
         }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new LabelProvider();
+        }
     }
 }

@@ -8,7 +8,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
-import static hudson.plugins.warnings.WarningsDescriptor.IMAGE_PREFIX;
+import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
@@ -68,6 +68,11 @@ public class Scala extends StaticAnalysisToolSuite {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_ScalaParser_ParserName();
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new LabelProvider();
         }
     }
 }
