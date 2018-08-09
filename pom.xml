@@ -101,20 +101,6 @@
       <comments>All YUI source code is under the BSD license. Duke, the Java mascot also is under the BSD license.
       </comments>
     </license>
-    <license>
-      <name>Scala License</name>
-      <url>http://www.scala-lang.org/license.html</url>
-      <comments>Scala icons are made by converting of http://www.scala-lang.org/resources/img/smooth-spiral.png
-      </comments>
-    </license>
-    <license>
-      <name>Creative Commons Attribution 3.0</name>
-      <url>https://creativecommons.org/licenses/by/3.0</url>
-      <comments>Go mascot and logo were designed by Renée French and are covered by the Creative Commons
-        Attribution 3.0
-        license.
-      </comments>
-    </license>
   </licenses>
 
   <dependencies>

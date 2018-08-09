@@ -83,5 +83,10 @@ public class Pit extends StaticAnalysisTool {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new LabelProvider();
         }
+
+        @Override
+        public String getUrl() {
+            return "http://pitest.org";
+        }
     }
 }

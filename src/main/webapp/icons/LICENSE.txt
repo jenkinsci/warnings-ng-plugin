@@ -77,3 +77,23 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------------------------------------------------------------------------------
+
+License for Android
+
+The Android robot is reproduced or modified from work created and shared by Google 
+and used according to terms described in the Creative Commons 3.0 Attribution License.
+
+------------------------------------------------------------------------------
+
+License for Scale
+
+http://www.scala-lang.org/license.html
+Scala icons are made by converting of http://www.scala-lang.org/resources/img/smooth-spiral.png
+
+------------------------------------------------------------------------------
+
+License for Go
+
+Go mascot and logo were designed by Renée French and are covered by the Creative Commons Attribution 3.0 license.
