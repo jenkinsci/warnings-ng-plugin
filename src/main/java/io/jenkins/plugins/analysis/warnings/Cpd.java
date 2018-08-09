@@ -61,5 +61,10 @@ public class Cpd extends DuplicateCodeScanner {
         public String getPattern() {
             return "**/cpd.xml";
         }
+
+        @Override
+        public String getUrl() {
+            return "https://pmd.github.io/pmd-6.6.0/pmd_userdocs_cpd.html";
+        }
     }
 }
