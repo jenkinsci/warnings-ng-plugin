@@ -67,6 +67,11 @@ public class ErrorProne extends StaticAnalysisTool {
         }
 
         @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new LabelProvider();
+        }
+
+        @Override
         public String getUrl() {
             return "https://errorprone.info";
         }
