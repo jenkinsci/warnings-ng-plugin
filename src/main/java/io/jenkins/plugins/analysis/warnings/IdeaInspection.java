@@ -43,7 +43,7 @@ public class IdeaInspection extends StaticAnalysisTool {
         private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
 
         LabelProvider() {
-            super(ID, hudson.plugins.warnings.parser.Messages.Warnings_IdeaInspection_ParserName());
+            super(ID, Messages.Warnings_IdeaInspection_ParserName());
         }
 
         @Override
