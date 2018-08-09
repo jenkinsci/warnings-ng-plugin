@@ -8,6 +8,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
+import static hudson.plugins.warnings.WarningsDescriptor.IMAGE_PREFIX;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
@@ -32,6 +34,26 @@ public class Scala extends StaticAnalysisToolSuite {
     @Override
     protected Collection<? extends AbstractParser> getParsers() {
         return asList(new ScalacParser(), new SbtScalacParser());
+    }
+
+    /** Provides the labels for the static analysis tool. */
+    private static class LabelProvider extends StaticAnalysisLabelProvider {
+        private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
+        private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
+
+        LabelProvider() {
+            super(ID, Messages.Warnings_ScalaParser_ParserName());
+        }
+
+        @Override
+        public String getSmallIconUrl() {
+            return SMALL_ICON_URL;
+        }
+
+        @Override
+        public String getLargeIconUrl() {
+            return LARGE_ICON_URL;
+        }
     }
 
     /** Descriptor for this static analysis tool. */
