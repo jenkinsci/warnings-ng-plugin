@@ -465,7 +465,7 @@ public class StaticAnalysisLabelProvider {
     private UnescapedText getResultIcon(final QualityGateStatus qualityGateStatus) {
         BallColor color = qualityGateStatus.getColor();
         return join(img().withSrc(jenkins.getImagePath(color))
-                        .withClasses(color.getIconClassName(), "icon-lg")
+                        .withClasses(color.getIconClassName())
                         .withAlt(color.getDescription())
                         .withTitle(color.getDescription()),
                 color.getDescription());
