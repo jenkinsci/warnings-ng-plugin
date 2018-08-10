@@ -62,7 +62,7 @@ public class FileNameRenderer {
      * @return the link (if the file is accessible)
      */
     public DomContent createAffectedFileLink(final Issue issue) {
-        if (facade.canAccessAffectedFileOf(issue)) {
+        if (IssueParser.isSelfReference(issue) || facade.canAccessAffectedFileOf(issue))  {
             return a().withHref(getSourceCodeUrl(issue)).withText(getFileNameAtLine(issue));
         }
         else {

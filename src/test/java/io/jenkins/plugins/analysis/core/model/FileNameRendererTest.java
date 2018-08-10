@@ -57,4 +57,13 @@ class FileNameRendererTest {
         assertThat(renderer.getFileNameAtLine(another)).isEqualTo("FindBugsParser.java:1");       
         assertThat(renderer.getSourceCodeUrl(another)).contains("#1").contains(another.getId().toString());      
     }
+    
+    @Test
+    void shouldCreateLinkToConsoleLog() {
+        FileNameRenderer renderer = new FileNameRenderer(createBuildFolderStub(false));
+
+        Issue issue = new IssueBuilder().setFileName(IssueParser.SELF).setLineStart(20).build();
+        assertThat(renderer.renderAffectedFileLink(issue)).matches("<a href=\"source\\.[0-9a-f-]+/#20\">Console Output:20</a>");
+        assertThat(renderer.renderAffectedFileLink(issue)).contains(issue.getId().toString());
+    }
 }

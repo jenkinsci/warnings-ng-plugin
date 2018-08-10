@@ -10,7 +10,7 @@ For more details please refer to the corresponding [Jenkins wiki page](https://w
 
 All source code is licensed under the MIT license.
 
-[![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/3.0/badge/icon)](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/3.0/)
+[![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/5.0/badge/icon)](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/5.0/)
 [![Travis](https://img.shields.io/travis/jenkinsci/warnings-plugin.svg)](https://travis-ci.org/jenkinsci/warnings-plugin)
 [![Codecov](https://img.shields.io/codecov/c/github/jenkinsci/warnings-plugin/5.0.svg)](https://codecov.io/gh/jenkinsci/warnings-plugin/branch/5.0)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/warnings-plugin.svg)](https://github.com/jenkinsci/warnings-plugin/pulls)
