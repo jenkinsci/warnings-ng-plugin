@@ -12,7 +12,7 @@
         <div class="card">
           <div class="card-body">
             <h5 class="card-title">${%Details}
-              <i class="fa fa-search icon-right fa-2x" aria-hidden="true"/>
+              <img class="icon-right" src="${it.labelProvider.largeIconUrl}"></img>
             </h5>
 
             <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
@@ -27,10 +27,6 @@
               <j:if test="${i.isNotEmpty()}">
                 <li class="nav-item">
                   <a class="nav-link" role="tab" data-toggle="tab" href="#issuesContent">${l.issues}</a>
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" role="tab" data-toggle="tab" href="#warningsDetails">${l.details}</a>
                 </li>
               </j:if>
 
@@ -47,7 +43,6 @@
 
               <j:if test="${i.isNotEmpty()}">
                 <issues:table issues="${i}" labelProvider="${it.labelProvider}"/>
-                <issues:list issues="${i}" labelProvider="${it.labelProvider}"/>
               </j:if>
 
             </div>

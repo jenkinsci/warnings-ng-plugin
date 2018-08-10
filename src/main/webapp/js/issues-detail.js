@@ -117,7 +117,7 @@
     var issues = $('#issues');
     var table = issues.DataTable({
         pagingType: 'numbers',  // Page number button only
-        order: [[ 1, 'asc' ]],
+        order: [[1, 'asc']],
         columnDefs: [{
             targets: 0,         // First column contains details button
             orderable: false
@@ -139,14 +139,32 @@
             tr.addClass('shown');
         }
     });
+    // $('#expand').on('click', function () {
+    //     table.rows().every(function () {
+    //         var tr = $(this.node());
+    //         var description = $(tr).find("div.details-control").data('description');
+    //         this.child(description).show();
+    //         tr.addClass('shown');
+    //     });
+    // });
+    // $('#hide').on('click', function () {
+    //     table.rows().every(function () {
+    //         table.rows().every(function () {
+    //             var tr = $(this.node());
+    //             this.child().hide();
+    //             tr.removeClass('shown');
+    //         });
+    //     });
+    // });
 
     /**
-     * Issues are loaded on demand: if the active tab shows the issues table, then the content is loaded using an Ajax call.
+     * Issues are loaded on demand: if the active tab shows the issues table, then the content is loaded using an
+     * Ajax call.
      */
     var tabToggleLink = $('a[data-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
         var activeTab = $(e.target).attr('href');
-        if (activeTab === '#issuesContent' && table.data().length === 0 ) {
+        if (activeTab === '#issuesContent' && table.data().length === 0) {
             view.getTableModel(function (t) {
                 (function ($) {
                     var table = $('#issues').DataTable();
