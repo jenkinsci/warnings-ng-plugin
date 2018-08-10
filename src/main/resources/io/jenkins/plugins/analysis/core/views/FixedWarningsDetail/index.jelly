@@ -42,8 +42,8 @@
           <tbody>
             <j:forEach var="issue" items="${it.issues}">
               <tr>
-                <td class="pane" id="file">${it.getFileDisplayName(issue)}</td>
-                <td class="pane" id="line">
+                <td class="pane">${it.getFileDisplayName(issue)}</td>
+                <td class="pane">
                   <j:choose>
                     <j:when test="${issue.lineStart &lt; 1}">
                       -
@@ -53,14 +53,13 @@
                     </j:otherwise>
                   </j:choose>
                 </td>
-                <td class="pane" id="severity">${it.getLocalizedSeverity(issue.severity)}</td>
-                <td class="pane" id="type">${issue.type}</td>
-                <td class="pane" id="category">${issue.category}</td>
+                <td class="pane">${it.getLocalizedSeverity(issue.severity)}</td>
+                <td class="pane">${issue.type}</td>
+                <td class="pane">${issue.category}</td>
               </tr>
             </j:forEach>
           </tbody>
         </table>
-
       </div>
 
     </l:main-panel>
