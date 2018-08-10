@@ -10,7 +10,7 @@ import hudson.model.Run;
 /**
  * Result object to visualize the logging messages and errors during a static analysis run.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class InfoErrorDetail implements ModelObject {
     private final Run<?, ?> owner;

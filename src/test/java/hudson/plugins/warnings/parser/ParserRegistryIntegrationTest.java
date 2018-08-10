@@ -30,7 +30,7 @@ import hudson.plugins.warnings.GroovyParserTest;
 /**
  * Tests the class {@link ParserRegistry} in context of a running Jenkins instance.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class ParserRegistryIntegrationTest {
     /** If you add a new parser then this value needs to be adapted. */

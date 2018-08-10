@@ -41,7 +41,7 @@ import hudson.util.Graph;
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
  * trend via its associated 'floatingBox.jelly' view.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class JobAction implements Action {
     private static final Logger LOGGER = Logger.getLogger(JobAction.class.getName());

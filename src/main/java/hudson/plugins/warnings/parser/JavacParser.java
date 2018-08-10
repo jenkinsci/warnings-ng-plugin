@@ -9,7 +9,7 @@ import hudson.plugins.warnings.WarningsDescriptor;
 /**
  * A parser for the javac compiler warnings.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @Extension
 public class JavacParser extends RegexpLineParser {

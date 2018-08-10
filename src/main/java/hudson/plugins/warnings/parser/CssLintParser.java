@@ -5,7 +5,7 @@ import hudson.Extension;
 /**
  * A parser for CSS-Lint checks warnings.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @Extension
 public class CssLintParser extends LintParser {

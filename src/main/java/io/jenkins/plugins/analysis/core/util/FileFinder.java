@@ -14,7 +14,7 @@ import hudson.remoting.VirtualChannel;
 /**
  * Scans the workspace and finds all files matching a given ant pattern.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class FileFinder extends MasterToSlaveFileCallable<String[]> {
     private static final long serialVersionUID = 2970029366847565970L;

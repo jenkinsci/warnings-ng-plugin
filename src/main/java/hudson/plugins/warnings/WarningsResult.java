@@ -16,7 +16,7 @@ import hudson.plugins.warnings.parser.Warning;
  * Represents the results of the warning analysis. One instance of this class is persisted for
  * each build via an XML file.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class WarningsResult extends BuildResult {
     private static final String FILENAME_SUFFIX = "-warnings.xml";
@@ -130,7 +130,7 @@ public class WarningsResult extends BuildResult {
     /**
      * Provides a way to hide file system access during testing.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     static class FileChecker {
         private final File root;

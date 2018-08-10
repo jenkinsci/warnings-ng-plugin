@@ -17,7 +17,7 @@ import net.sourceforge.pmd.RuleSetNotFoundException;
 /**
  * Provides access to rule descriptions and examples.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class PmdMessages {
     private static final String ERROR_MESSAGE = "Installation problem: can't access PMD messages.";

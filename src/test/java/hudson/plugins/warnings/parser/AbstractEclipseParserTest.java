@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.Priority;
 /**
  * Basic tests for the Eclipse parser.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public abstract class AbstractEclipseParserTest extends ParserTester {
     /**

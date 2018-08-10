@@ -9,7 +9,7 @@ import hudson.plugins.analysis.util.SerializableUrlGenerator;
  * Builds a URL for the links in a clickable map. The URL is composed of the
  * build number, a slash, the plug-in name, and an optional detail URL.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class CategoryUrlBuilder implements SerializableUrlGenerator {
     /** Unique ID of this class. */

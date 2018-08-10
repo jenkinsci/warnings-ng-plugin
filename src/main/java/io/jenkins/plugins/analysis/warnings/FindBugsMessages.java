@@ -16,7 +16,7 @@ import edu.hm.hafner.analysis.SecureDigester;
 /**
  * Parses the FindBugs pattern descriptions and provides access to these HTML messages.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public final class FindBugsMessages {
     private static final String NO_MESSAGE_FOUND = "no message found";
@@ -145,7 +145,7 @@ public final class FindBugsMessages {
     /**
      * Bug pattern describing a bug type.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     public static class Pattern {
         private String type;

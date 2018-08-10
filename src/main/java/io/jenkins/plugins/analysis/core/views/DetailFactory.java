@@ -28,7 +28,7 @@ import hudson.model.Run;
  * Creates detail objects for the selected link in the issues detail view. Each link might be visualized by a
  * specialized view.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @SuppressWarnings("ParameterNumber")
 public class DetailFactory {

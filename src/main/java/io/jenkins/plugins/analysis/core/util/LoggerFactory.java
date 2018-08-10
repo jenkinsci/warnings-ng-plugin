@@ -61,7 +61,7 @@ public class LoggerFactory {
     /**
      * A simple logger that prefixes each message with the name of the static analysis tool.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     private static class PrintStreamLogger implements Logger {
         private final String toolName;

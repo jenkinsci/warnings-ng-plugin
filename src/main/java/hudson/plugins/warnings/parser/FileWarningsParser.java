@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 /**
  * Uses a collection of {@link AbstractWarningsParser parsers} to scans a set of files for warnings.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class FileWarningsParser implements AnnotationParser {
     private static final long serialVersionUID = -262047528431480332L;

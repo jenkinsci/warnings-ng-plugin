@@ -11,7 +11,7 @@ import hudson.plugins.analysis.util.model.Priority;
 /**
  * A parser for Oracle Invalids.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @Extension
 public class InvalidsParser extends RegexpLineParser {

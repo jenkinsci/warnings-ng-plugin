@@ -24,7 +24,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * Aggregates {@link WarningsResultAction}s of {@link MatrixRun}s into
  * {@link MatrixBuild}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class WarningsAnnotationsAggregator extends MatrixAggregator {
     private final HealthDescriptor healthDescriptor;

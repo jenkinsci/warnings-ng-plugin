@@ -42,7 +42,7 @@ import hudson.model.Run;
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and
  * saving of issues (all, new, and fixed) and delta computation.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @ExportedBean
 @SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")

@@ -13,7 +13,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 /**
  * Parses an input stream for compiler warnings using the provided regular expression.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @SuppressWarnings("deprecation")
 public abstract class RegexpParser extends AbstractWarningsParser {

@@ -15,7 +15,7 @@ import hudson.plugins.warnings.WarningsProjectAction;
 /**
  * A portlet that shows the warnings of the last build by user and priority.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public final class WarningsUserGraphPortlet extends AbstractWarningsGraphPortlet {
     /**
@@ -55,7 +55,7 @@ public final class WarningsUserGraphPortlet extends AbstractWarningsGraphPortlet
     /**
      * Extension point registration.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     @Extension(optional = true)
     public static class WarningsGraphDescriptor extends Descriptor<DashboardPortlet> {

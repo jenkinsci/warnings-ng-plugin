@@ -22,7 +22,7 @@ import hudson.plugins.warnings.parser.ParserRegistry;
  * Drawing of the graph is delegated to the associated
  * {@link WarningsResultAction}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class WarningsProjectAction extends AbstractProjectAction<WarningsResultAction> {
     private final String parser;

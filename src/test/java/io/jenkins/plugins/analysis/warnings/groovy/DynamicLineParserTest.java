@@ -6,7 +6,7 @@ import edu.hm.hafner.analysis.parser.Pep8ParserTest;
 /**
  * Test the class {@link DynamicLineParser}. Creates a new Pep8 parser in Groovy. All Pep8 test cases are reused.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 class DynamicLineParserTest extends Pep8ParserTest {
     @Override

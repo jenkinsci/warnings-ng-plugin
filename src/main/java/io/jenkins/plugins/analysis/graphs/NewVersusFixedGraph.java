@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
 /**
  * Builds a new versus fixed issues graph.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class NewVersusFixedGraph extends CategoryBuildResultGraph {
     @Override

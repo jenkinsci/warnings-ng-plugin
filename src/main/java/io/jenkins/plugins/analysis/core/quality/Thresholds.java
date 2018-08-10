@@ -8,7 +8,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 /**
  * Data object that simply stores the thresholds.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @SuppressWarnings("all")
 @ExportedBean

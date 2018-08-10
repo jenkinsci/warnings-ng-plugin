@@ -21,7 +21,7 @@ import hudson.remoting.VirtualChannel;
  * Report issues} instance. This callable will be invoked on a slave agent so all fields and the returned issues need to
  * be {@link Serializable}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private static final long serialVersionUID = -4242755766101768715L;

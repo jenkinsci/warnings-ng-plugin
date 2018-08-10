@@ -15,7 +15,7 @@ import hudson.plugins.analysis.util.model.Priority;
 /**
  * Tests the class {@link CppLintParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class CppLintParserTest extends ParserTester {
     @Override

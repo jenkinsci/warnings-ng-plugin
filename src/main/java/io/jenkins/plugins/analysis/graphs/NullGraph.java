@@ -4,7 +4,7 @@ package io.jenkins.plugins.analysis.graphs;
  * Empty graph. Null object: this graph does not render anything. Additionally,
  * there is no enable graph link presented in the UI.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class NullGraph extends EmptyGraph {
     @Override

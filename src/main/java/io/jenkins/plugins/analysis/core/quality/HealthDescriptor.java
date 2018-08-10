@@ -7,7 +7,7 @@ import edu.hm.hafner.analysis.Priority;
 /**
  * A health descriptor defines the parameters to create the build health.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class HealthDescriptor implements Serializable {
     private static final long serialVersionUID = -2509226746813680432L;

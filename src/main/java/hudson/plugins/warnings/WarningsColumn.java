@@ -11,7 +11,7 @@ import hudson.views.ListViewColumnDescriptor;
 /**
  * A column that shows the total number of compiler warnings in a job.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class WarningsColumn extends WarningsCountColumn<AggregatedWarningsProjectAction> {
     /**

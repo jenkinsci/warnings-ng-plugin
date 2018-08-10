@@ -7,7 +7,7 @@ import hudson.plugins.warnings.AggregatedWarningsResultAction;
 /**
  * Provides a token that evaluates to the number of fixed warnings.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @Extension(optional = true)
 public class FixedWarningsTokenMacro extends AbstractFixedAnnotationsTokenMacro {

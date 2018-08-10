@@ -14,7 +14,7 @@ import hudson.plugins.warnings.Messages;
 /**
  * A portlet that shows the warnings trend graph of fixed versus new warnings.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public final class WarningsNewVersusFixedGraphPortlet extends AbstractTrendPortlet {
     /**
@@ -47,7 +47,7 @@ public final class WarningsNewVersusFixedGraphPortlet extends AbstractTrendPortl
     /**
      * Extension point registration.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     @Extension(optional = true)
     public static class WarningsGraphDescriptor extends Descriptor<DashboardPortlet> {

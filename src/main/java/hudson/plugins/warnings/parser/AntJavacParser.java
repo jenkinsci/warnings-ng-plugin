@@ -9,7 +9,7 @@ import hudson.Extension;
 /**
  * A parser for the ant javac compiler warnings.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @Extension
 public class AntJavacParser extends RegexpLineParser {

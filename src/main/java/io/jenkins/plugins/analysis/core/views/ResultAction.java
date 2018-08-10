@@ -32,7 +32,7 @@ import hudson.model.Run;
  * action also provides access to the static analysis details: these are rendered using a new {@link IssuesDetail}
  * instance.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE", justification = "transient field owner ist restored using a Jenkins callback")
 public class ResultAction implements HealthReportingAction, LastBuildAction, RunAction2, StaplerProxy, Serializable {

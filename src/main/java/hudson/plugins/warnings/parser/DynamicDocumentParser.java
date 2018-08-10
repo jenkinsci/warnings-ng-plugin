@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
  * A multi-line parser that uses a configurable regular expression and Groovy
  * script to parse warnings.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class DynamicDocumentParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -690643673847390322L;

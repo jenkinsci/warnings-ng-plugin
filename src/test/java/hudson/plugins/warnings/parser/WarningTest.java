@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 /**
  * Tests the class {@link Warning}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class WarningTest {
     /**

@@ -9,7 +9,7 @@ import hudson.plugins.analysis.util.model.Priority;
 /**
  * A parser for C++ Lint compiler warnings.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @Extension
 public class CppLintParser extends RegexpLineParser {

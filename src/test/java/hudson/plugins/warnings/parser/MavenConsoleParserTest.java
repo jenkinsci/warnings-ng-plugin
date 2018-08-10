@@ -16,7 +16,7 @@ import hudson.plugins.analysis.util.model.Priority;
 /**
  * Tests the class {@link MavenConsoleParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class MavenConsoleParserTest extends ParserTester {
     /**

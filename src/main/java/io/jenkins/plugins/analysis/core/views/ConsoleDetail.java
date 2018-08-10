@@ -12,7 +12,7 @@ import hudson.model.Run;
 /**
  * Renders a section of the console log.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class ConsoleDetail implements ModelObject {
     /** File name of the console log in Jenkins'build folder. */

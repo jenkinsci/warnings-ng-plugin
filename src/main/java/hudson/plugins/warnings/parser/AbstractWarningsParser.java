@@ -27,7 +27,7 @@ import hudson.plugins.warnings.WarningsDescriptor;
  * @see GccParser example
  * @see JavacParser example
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  * @since 4.0
  */
 public abstract class AbstractWarningsParser implements ExtensionPoint, Serializable {

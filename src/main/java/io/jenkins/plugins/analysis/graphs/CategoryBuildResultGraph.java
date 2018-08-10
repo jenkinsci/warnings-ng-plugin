@@ -20,7 +20,7 @@ import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
  * A build result graph using a {@link CategoryPlot}. Uses a template method to create a graph based on a series of
  * build results.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public abstract class CategoryBuildResultGraph extends BuildResultGraph {
     private static final Font LEGEND_FONT = new Font("SansSerif", Font.PLAIN, 10); // NOCHECKSTYLE

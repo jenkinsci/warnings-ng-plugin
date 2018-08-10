@@ -12,7 +12,7 @@ import hudson.Extension;
 /**
  * Defines a filter criteria for {@link Report}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class IncludeModule extends IssuesFilter {
     private static final long serialVersionUID = -7987177949039781041L;
@@ -34,7 +34,7 @@ public class IncludeModule extends IssuesFilter {
     /**
      * Dummy descriptor for {@link IncludeModule}.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     @Extension
     public static class DescriptorImpl extends IncludeFilterDescriptor {

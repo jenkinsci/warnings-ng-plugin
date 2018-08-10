@@ -23,7 +23,7 @@ import hudson.plugins.warnings.parser.ParserRegistry;
  * Moreover, this class renders the warnings result trend.
  * </p>
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class WarningsResultAction extends AbstractResultAction<WarningsResult> {
     private final String parserName;

@@ -28,7 +28,7 @@ import hudson.util.FormValidation;
  * Descriptor for the class {@link WarningsPublisher}. Used as a singleton. The
  * class is marked as public so that it can be accessed from views.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @Extension(ordinal = 100) @Symbol("warnings")
 public final class WarningsDescriptor extends PluginDescriptor implements StaplerProxy {

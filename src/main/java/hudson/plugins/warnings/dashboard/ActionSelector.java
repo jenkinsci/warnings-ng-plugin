@@ -12,7 +12,7 @@ import hudson.plugins.warnings.WarningsProjectAction;
 /**
  * Selects a specific action from the available set of actions.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class ActionSelector {
     private final String parserName;

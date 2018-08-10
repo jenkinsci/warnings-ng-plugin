@@ -18,7 +18,7 @@ import hudson.plugins.warnings.WarningsProjectAction;
 /**
  * A portlet that shows a table with the number of warnings in a job.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class WarningsTablePortlet extends AbstractWarningsTablePortlet {
     private final ActionSelector actionSelector;
@@ -63,7 +63,7 @@ public class WarningsTablePortlet extends AbstractWarningsTablePortlet {
     /**
      * Extension point registration.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     @Extension(optional = true)
     public static class WarningsPerJobDescriptor extends Descriptor<DashboardPortlet> {

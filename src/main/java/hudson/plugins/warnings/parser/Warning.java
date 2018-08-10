@@ -12,7 +12,7 @@ import hudson.plugins.analysis.util.model.Priority;
  * Note: this class has a natural ordering that is inconsistent with equals.
  * </p>
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class Warning extends AbstractAnnotation {

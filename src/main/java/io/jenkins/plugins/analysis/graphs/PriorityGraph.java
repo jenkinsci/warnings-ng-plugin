@@ -16,7 +16,7 @@ import hudson.plugins.analysis.util.model.Priority;
 /**
  * Builds a graph showing all issues by priority.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class PriorityGraph extends CategoryBuildResultGraph {
     @Override

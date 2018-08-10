@@ -28,7 +28,7 @@ public abstract class IssuesFilter extends AbstractDescribableImpl<IssuesFilter>
     /**
      * Base class of a descriptor for an {@link IssuesFilter}.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     public static class IncludeFilterDescriptor extends Descriptor<IssuesFilter> {
         // Required for Jenkins

@@ -14,7 +14,7 @@ import hudson.plugins.warnings.Messages;
 /**
  * A portlet that shows the warnings trend graph by priority.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public final class WarningsTotalsGraphPortlet extends AbstractTrendPortlet {
     /**
@@ -47,7 +47,7 @@ public final class WarningsTotalsGraphPortlet extends AbstractTrendPortlet {
     /**
      * Extension point registration.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     @Extension(optional = true)
     public static class WarningsGraphDescriptor extends Descriptor<DashboardPortlet> {

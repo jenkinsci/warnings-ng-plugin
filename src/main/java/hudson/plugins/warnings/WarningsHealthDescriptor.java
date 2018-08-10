@@ -9,7 +9,7 @@ import hudson.plugins.analysis.util.model.AnnotationProvider;
 /**
  * A health descriptor for warnings build results.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class WarningsHealthDescriptor extends AbstractHealthDescriptor {
     private static final long serialVersionUID = -3404826986876607396L;

@@ -29,7 +29,7 @@ import hudson.util.ShiftedCategoryAxis;
 /**
  * Base class for build results graphs.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public abstract class BuildResultGraph {
     private String rootUrl = StringUtils.EMPTY;

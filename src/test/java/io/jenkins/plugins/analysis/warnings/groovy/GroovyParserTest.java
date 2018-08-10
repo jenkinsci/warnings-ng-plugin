@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 /**
  * Tests the class {@link GroovyParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 class GroovyParserTest extends SerializableTest<GroovyParser> {
     private static final String SINGLE_LINE_EXAMPLE = "file/name/relative/unix:42:evil: this is a warning message";

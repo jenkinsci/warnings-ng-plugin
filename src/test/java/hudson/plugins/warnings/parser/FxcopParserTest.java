@@ -19,7 +19,7 @@ import hudson.plugins.warnings.parser.fxcop.FxCopParser;
 /**
  * Tests the class {@link FxCopParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class FxcopParserTest extends ParserTester {
     /**

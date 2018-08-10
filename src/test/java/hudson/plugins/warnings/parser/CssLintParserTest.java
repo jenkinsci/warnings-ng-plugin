@@ -12,7 +12,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 /**
  * Tests the class {@link JSLintParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class CssLintParserTest extends ParserTester {
     /**

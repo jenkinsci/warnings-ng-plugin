@@ -25,7 +25,7 @@ import hudson.util.ListBoxModel;
 /**
  * Defines the configuration to parse a set of files using a predefined parser.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class ParserConfiguration extends AbstractDescribableImpl<ParserConfiguration> {
     private final String pattern;
@@ -90,7 +90,7 @@ public class ParserConfiguration extends AbstractDescribableImpl<ParserConfigura
     /**
      * Dummy descriptor for {@link ParserConfiguration}.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<ParserConfiguration> {

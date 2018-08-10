@@ -22,7 +22,7 @@ import hudson.util.FormValidation.Kind;
 /**
  * Tests the class {@link GroovyParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class GroovyParserTest {
     @ClassRule

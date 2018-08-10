@@ -24,7 +24,7 @@ import hudson.model.Run;
 /**
  * Renders a source file containing an issue for the whole file or a specific line number.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class SourceDetail implements ModelObject {

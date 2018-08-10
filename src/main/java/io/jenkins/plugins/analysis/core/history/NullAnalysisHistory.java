@@ -7,7 +7,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 /**
  * Empty build history.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class NullAnalysisHistory extends AnalysisHistory {
     /**

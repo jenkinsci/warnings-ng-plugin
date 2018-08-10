@@ -7,7 +7,7 @@ import org.jvnet.hudson.test.JenkinsRule;
 /**
  * Tests the class {@link DynamicDocumentParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class DynamicDocumentParserTest extends AbstractEclipseParserTest {
     @Rule

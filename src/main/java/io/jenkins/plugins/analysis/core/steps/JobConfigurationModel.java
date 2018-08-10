@@ -19,7 +19,7 @@ import hudson.util.ListBoxModel;
 /**
  * Validates a file encoding. The encoding must be an encoding ID supported by the underlying Java platform.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class JobConfigurationModel {
     /** All available character sets. */

@@ -9,7 +9,7 @@ import org.jfree.data.category.CategoryDataset;
 /**
  * Builds a graph showing the total of warnings in a scaled line graph.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class TotalsGraph extends CategoryBuildResultGraph {
     @Override

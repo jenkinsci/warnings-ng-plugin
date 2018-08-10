@@ -12,7 +12,7 @@ import edu.hm.hafner.util.NoSuchElementException;
  * Groups issue by a specified property, like package name or origin. Provides statistics for this property in order to
  * draw graphs or show the result in tables.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class PropertyStatistics {
     private final Map<String, ? extends Report> issuesByProperty;

@@ -11,7 +11,7 @@ import hudson.model.Run;
 /**
  * Selects actions using the specific ID of an action.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class ByIdResultSelector implements ResultSelector {
     private final String id;

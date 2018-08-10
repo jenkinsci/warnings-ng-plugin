@@ -14,7 +14,7 @@ import hudson.model.Descriptor;
 /**
  * Defines a filter criteria based on a regular expression for {@link Report}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implements Serializable {
     private static final long serialVersionUID = 1892735849628260157L;
@@ -68,7 +68,7 @@ public class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implemen
     /**
      * Dummy descriptor for {@link RegexpFilter}.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<RegexpFilter> {

@@ -8,7 +8,7 @@ import hudson.util.Graph;
 /**
  * Details trend graph.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class TrendDetails {
     private final Graph trendGraph;

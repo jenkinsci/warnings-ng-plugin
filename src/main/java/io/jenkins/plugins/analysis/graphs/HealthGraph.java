@@ -17,7 +17,7 @@ import hudson.plugins.analysis.util.ToolTipAreaRenderer;
 /**
  * Builds a graph showing all warnings by health descriptor.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class HealthGraph extends CategoryBuildResultGraph {
     /** The health descriptor. */

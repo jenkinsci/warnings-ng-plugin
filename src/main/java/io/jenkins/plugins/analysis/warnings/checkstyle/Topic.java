@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings.checkstyle;
 /**
  * Java Bean class representing a DocBook subsection.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class Topic {
     /** The name of this topic. */

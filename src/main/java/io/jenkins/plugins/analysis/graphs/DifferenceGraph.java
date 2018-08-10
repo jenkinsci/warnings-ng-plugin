@@ -24,7 +24,7 @@ import hudson.plugins.analysis.util.Pair;
 /**
  * Builds a graph with the difference between new and fixed warnings for a specified result action.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class DifferenceGraph extends BuildResultGraph {
     private final ResultTime resultTime = new ResultTime();

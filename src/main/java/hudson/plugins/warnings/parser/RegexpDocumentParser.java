@@ -16,7 +16,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * Parses an input stream as a whole document for compiler warnings using the provided
  * regular expression.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public abstract class RegexpDocumentParser extends RegexpParser {
     private static final long serialVersionUID = -4985090860783261124L;

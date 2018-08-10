@@ -15,7 +15,7 @@ import hudson.plugins.warnings.parser.gendarme.GendarmeParser;
 /**
  * Tests the class {@link GendarmeParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class GendarmeParserTest extends ParserTester {
     /**

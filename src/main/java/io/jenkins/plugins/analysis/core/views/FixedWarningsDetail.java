@@ -11,7 +11,7 @@ import hudson.model.Run;
 /**
  * Result object to visualize the fixed issues in a build.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class FixedWarningsDetail extends IssuesDetail {
     private static final Report NO_ISSUES = new Report();

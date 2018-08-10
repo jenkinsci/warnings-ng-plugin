@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Graph label showing the build date.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class LocalDateLabel implements Comparable<LocalDateLabel> {
     private final LocalDate date;

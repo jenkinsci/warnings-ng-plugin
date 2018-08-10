@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 /**
  * Describes a parser.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class ParserDescription implements Comparable<ParserDescription> {
     private final String group;

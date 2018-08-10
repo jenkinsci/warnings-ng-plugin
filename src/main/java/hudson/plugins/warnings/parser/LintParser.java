@@ -18,7 +18,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
 /**
  * Base class for parsers based on {@link JSLintXMLSaxParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public abstract class LintParser extends AbstractWarningsParser {
     private static final long serialVersionUID = 3341424685245834156L;

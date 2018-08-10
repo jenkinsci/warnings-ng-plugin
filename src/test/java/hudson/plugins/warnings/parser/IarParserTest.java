@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.Priority;
 /**
  * Tests the class {@link IarParser}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class IarParserTest extends ParserTester {
     private static final String TYPE = new IarParser().getGroup();

@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Java Bean class representing a Checkstyle rule.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class Rule {
     /** Description to indicate that the rules stored in this plug-in don't match with the generators version. */

@@ -11,7 +11,7 @@ import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.ThresholdValida
 /**
  * Tests the class {@link ThresholdValidation}.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 class DryThresholdValidationTest {
     @ParameterizedTest(name = "{index} => high={0}, normal={1}")

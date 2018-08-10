@@ -18,7 +18,7 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * regular expression. Multi-line regular expressions are not supported, each
  * warning has to be one a single line.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public abstract class RegexpLineParser extends RegexpParser {
     private static final long serialVersionUID = 5932670979793111138L;

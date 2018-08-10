@@ -14,7 +14,7 @@ import hudson.plugins.analysis.util.model.Priority;
  * warnings.
  *
  * @author Claus Klein
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  * @author Kay van der Zander
  */
 @Extension

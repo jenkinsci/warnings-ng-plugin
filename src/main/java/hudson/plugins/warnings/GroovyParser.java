@@ -29,7 +29,7 @@ import hudson.util.FormValidation.Kind;
  * Defines the properties of a warnings parser that uses a Groovy script to
  * parse the warnings log.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     private static final int MAX_EXAMPLE_SIZE = 4096;
@@ -220,7 +220,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     /**
      * Descriptor to validate {@link GroovyParser}.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<GroovyParser> {

@@ -9,7 +9,7 @@ import hudson.plugins.analysis.core.BuildHistory;
 /**
  * A build history for warnings results. Picks the right action using the parser group.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class WarningsBuildHistory extends BuildHistory {
     private final String group;

@@ -9,7 +9,7 @@ import hudson.plugins.analysis.core.AbstractProjectAction;
  * Aggregated warnings results. This action shows the aggregated results of all active parsers.
  * Currently, these aggregated results are not shown in the UI.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class AggregatedWarningsProjectAction extends AbstractProjectAction<AggregatedWarningsResultAction> {
     /**

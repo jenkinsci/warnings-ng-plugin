@@ -20,7 +20,7 @@ import hudson.util.FormValidation;
 /**
  * Defines the configuration to parse a set of files using a predefined parser.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration> {
     private final String pattern;
@@ -79,7 +79,7 @@ public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration
     /**
      * Dummy descriptor for {@link ToolConfiguration}.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<ToolConfiguration> {

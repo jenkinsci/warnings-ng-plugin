@@ -21,7 +21,7 @@ import edu.hm.hafner.analysis.SecureDigester;
 /**
  * Reads the meta data of the Checkstyle rules from the DocBook files of the Checkstyle distribution.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class CheckStyleRules {
     private final Map<String, Rule> rulesByName = new HashMap<>();

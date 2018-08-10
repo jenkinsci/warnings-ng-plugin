@@ -13,7 +13,7 @@ import hudson.model.HealthReport;
 /**
  * Creates a health report for integer values based on healthy and unhealthy thresholds.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  * @see HealthReport
  */
 public class HealthReportBuilder {

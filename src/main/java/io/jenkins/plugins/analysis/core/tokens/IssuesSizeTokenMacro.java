@@ -19,7 +19,7 @@ import hudson.model.TaskListener;
 /**
  * Provides a token that evaluates to the number of issues.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 @Extension(optional = true)
 public class IssuesSizeTokenMacro extends DataBoundTokenMacro {

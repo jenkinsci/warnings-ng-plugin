@@ -10,7 +10,7 @@ import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 /**
  * Empty graph. Null object: this graph does not render anything.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class EmptyGraph extends BuildResultGraph {
     @Override

@@ -9,7 +9,7 @@ import edu.hm.hafner.analysis.RegexpLineParser;
 /**
  * A line parser that uses a configurable regular expression and Groovy script to parse warnings.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class DynamicLineParser extends RegexpLineParser {
     private static final long serialVersionUID = -4450779127190928924L;

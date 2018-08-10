@@ -20,7 +20,7 @@ import hudson.util.ListBoxModel;
 /**
  * Defines the configuration to parse the console log using a predefined parser.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class ConsoleParser extends AbstractDescribableImpl<ConsoleParser> {
     private final String parserName;
@@ -67,7 +67,7 @@ public class ConsoleParser extends AbstractDescribableImpl<ConsoleParser> {
     /**
      * Dummy descriptor for {@link ConsoleParser}.
      *
-     * @author Ulli Hafner
+     * @author Ullrich Hafner
      */
    @Extension
    public static class DescriptorImpl extends Descriptor<ConsoleParser> {
