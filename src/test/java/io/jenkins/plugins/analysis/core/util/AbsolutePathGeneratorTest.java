@@ -8,7 +8,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator.FileSystem;
@@ -94,7 +93,7 @@ class AbsolutePathGeneratorTest {
         Report report = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin(ID));
         Issue issueWithAbsolutePath = ISSUE_BUILDER.setFileName("/absolute/path.txt").build();
         report.add(issueWithAbsolutePath);
-        Issue issueWithSelfReference = ISSUE_BUILDER.setFileName(IssueParser.SELF).build();
+        Issue issueWithSelfReference = ISSUE_BUILDER.setFileName("/jenkins/log").build();
         report.add(issueWithSelfReference);
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);

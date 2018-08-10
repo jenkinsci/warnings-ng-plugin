@@ -98,7 +98,7 @@ public class DetailFactory {
         String plainLink = removePropertyPrefix(link);
         if (link.startsWith("source.")) {
             Issue issue = allIssues.findById(UUID.fromString(plainLink));
-            if (ConsoleDetail.isInConsoleLog(issue)) {
+            if (ConsoleDetail.isInConsoleLog(issue.getFileName())) {
                 try (Stream<String> consoleLog = jenkins.readConsoleLog(owner)) {
                     return new ConsoleDetail(owner, consoleLog, issue.getLineStart(), issue.getLineEnd());
                 }

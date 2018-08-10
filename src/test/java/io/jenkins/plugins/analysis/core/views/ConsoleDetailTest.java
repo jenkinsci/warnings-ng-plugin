@@ -18,6 +18,16 @@ import hudson.model.Run;
  */
 class ConsoleDetailTest {
     @Test
+    void shouldDetectConsoleLog() {
+        assertThat(ConsoleDetail.isInConsoleLog("/path/to/log")).isTrue();        
+        assertThat(ConsoleDetail.isInConsoleLog("/my/log")).isTrue();        
+        assertThat(ConsoleDetail.isInConsoleLog("C:/build/log")).isTrue();        
+    
+        assertThat(ConsoleDetail.isInConsoleLog("logger")).isFalse();        
+        assertThat(ConsoleDetail.isInConsoleLog("blog")).isFalse();        
+    }
+    
+    @Test
     void shouldShowLinesOfConsoleLogStartAtBeginning() {
         ConsoleDetail consoleDetail = new ConsoleDetail(mock(Run.class), createLines(1, 20), 1, 2);
         

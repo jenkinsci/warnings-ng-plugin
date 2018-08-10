@@ -245,7 +245,7 @@ public class IssuesDetail implements ModelObject {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public boolean canDisplayFile(final Issue issue) {
-        return ConsoleDetail.isInConsoleLog(issue)
+        return ConsoleDetail.isInConsoleLog(issue.getFileName())
                 || AffectedFilesResolver.hasAffectedFile(owner, issue)
                 || new File(issue.getFileName()).exists();
     }

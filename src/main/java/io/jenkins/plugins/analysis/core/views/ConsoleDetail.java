@@ -5,9 +5,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
-
 import hudson.console.ConsoleNote;
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -18,19 +15,22 @@ import hudson.model.Run;
  * @author Ulli Hafner
  */
 public class ConsoleDetail implements ModelObject {
+    /** File name of the console log in Jenkins'build folder. */
+    public static final String JENKINS_CONSOLE_LOG = "/log";
+    
     private int lineCount;
 
     /**
      * Returns whether the specified issue refers to a line in the console log.
      *
-     * @param issue
-     *         the issue to check
+     * @param fileName
+     *         the affected file
      *
      * @return {@code true} if the issue refers to a line in the console log, {@code false} if the issue refers to a
      *         source code file in the workspace
      */
-    public static boolean isInConsoleLog(final Issue issue) {
-        return IssueParser.isSelfReference(issue);
+    public static boolean isInConsoleLog(final String fileName) {
+        return fileName.endsWith(JENKINS_CONSOLE_LOG);
     }
 
     /** The rendered source file. */
@@ -54,7 +54,7 @@ public class ConsoleDetail implements ModelObject {
      * @param to
      *         last line in the console log
      */
-    public ConsoleDetail(final Run<?, ?> owner,  final Stream<String> consoleLog, final int from, final int to) {
+    public ConsoleDetail(final Run<?, ?> owner, final Stream<String> consoleLog, final int from, final int to) {
         this.owner = owner;
         this.from = from;
         this.to = to;

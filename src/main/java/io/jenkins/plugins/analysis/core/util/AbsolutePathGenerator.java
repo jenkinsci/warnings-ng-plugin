@@ -11,9 +11,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+import io.jenkins.plugins.analysis.core.views.ConsoleDetail;
 
 /**
  * Resolves absolute paths of the affected files of a set of issues.
@@ -48,7 +48,7 @@ public class AbsolutePathGenerator {
     public void run(final Report report, final File workspace) {
         Set<String> relativeFileNames = report.getFiles()
                 .stream()
-                .filter(fileName -> fileSystem.isRelative(fileName) && !IssueParser.SELF.equals(fileName))
+                .filter(fileName -> fileSystem.isRelative(fileName) && !ConsoleDetail.isInConsoleLog(fileName))
                 .collect(Collectors.toSet());
 
         if (relativeFileNames.isEmpty()) {
