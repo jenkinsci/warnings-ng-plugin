@@ -200,7 +200,7 @@ class SummaryTest {
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).containsPattern(
                 createWarningsLink(
-                        "Quality gate: <img src=\"color\" class=\"icon-blue icon-lg\" alt=\"Success\" title=\"Success\"> Success"));
+                        "Quality gate: <img src=\"color\" class=\"icon-blue\" alt=\"Success\" title=\"Success\"> Success"));
     }
 
     /**
@@ -257,7 +257,7 @@ class SummaryTest {
         assertThat(actualSummary).containsPattern(
                 createWarningsLink("<a href=\"testResult/fixed\">.*2 fixed warnings.*</a>"));
         assertThat(actualSummary).contains(
-                "Quality gate: <img src=\"color\" class=\"icon-blue icon-lg\" alt=\"Success\" title=\"Success\"> Success");
+                "Quality gate: <img src=\"color\" class=\"icon-blue\" alt=\"Success\" title=\"Success\"> Success");
         assertThat(actualSummary).contains("Reference build: <a href=\"absoluteUrl\">Job #15</a>");
     }
 
