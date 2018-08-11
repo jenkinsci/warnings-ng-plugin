@@ -29,7 +29,9 @@ import hudson.plugins.warnings.WarningsDescriptor;
  *
  * @author Ullrich Hafner
  * @since 4.0
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public abstract class AbstractWarningsParser implements ExtensionPoint, Serializable {
     private static final long serialVersionUID = 8466657735514387654L;
 
