@@ -19,7 +19,9 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * warning has to be one a single line.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public abstract class RegexpLineParser extends RegexpParser {
     private static final long serialVersionUID = 5932670979793111138L;
 

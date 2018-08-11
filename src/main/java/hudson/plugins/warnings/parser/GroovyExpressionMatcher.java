@@ -17,7 +17,9 @@ import hudson.plugins.warnings.WarningsDescriptor;
  * Creates a warning based on a regular expression match and groovy script.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public class GroovyExpressionMatcher implements Serializable {
     private static final long serialVersionUID = -2218299240520838315L;
 

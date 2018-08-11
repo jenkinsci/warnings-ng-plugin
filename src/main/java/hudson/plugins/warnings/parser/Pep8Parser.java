@@ -9,7 +9,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the Pep8 compiler warnings.
  *
  * @author Marvin Schütz
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class Pep8Parser extends RegexpLineParser {
     private static final long serialVersionUID = -8444940209330966997L;

@@ -21,7 +21,9 @@ import hudson.util.ListBoxModel;
  * Defines the configuration to parse the console log using a predefined parser.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class ConsoleParser extends AbstractDescribableImpl<ConsoleParser> {
     private final String parserName;
 

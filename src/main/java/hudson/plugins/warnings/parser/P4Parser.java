@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for Perforce execution.
  *
  * @author Adrian Deccico
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class P4Parser extends RegexpLineParser {
     private static final long serialVersionUID = -8106854254745366432L;

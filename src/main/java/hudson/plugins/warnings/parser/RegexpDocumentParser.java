@@ -17,7 +17,9 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * regular expression.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public abstract class RegexpDocumentParser extends RegexpParser {
     private static final long serialVersionUID = -4985090860783261124L;
 

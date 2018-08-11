@@ -8,7 +8,9 @@ import hudson.Extension;
  * A parser for the Acu Cobol compile.
  *
  * @author jerryshea
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class AcuCobolParser extends RegexpLineParser {
     private static final long serialVersionUID = -894639209290549425L;

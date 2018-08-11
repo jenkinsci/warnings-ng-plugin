@@ -17,7 +17,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for Cadence Incisive Enterprise Simulator.
  *
  * @author Andrew 'Necromant' Andrianov
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class CadenceIncisiveParser extends RegexpLineParser {
     private static final String SLASH = "/";

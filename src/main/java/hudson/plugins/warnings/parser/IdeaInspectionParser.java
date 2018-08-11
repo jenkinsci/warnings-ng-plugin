@@ -27,7 +27,9 @@ import hudson.plugins.warnings.util.XmlElementUtil;
  * A parser for IntelliJ IDEA inspections.
  *
  * @author Alex Lopashev, alexlopashev@gmail.com
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class IdeaInspectionParser extends AbstractWarningsParser {
     private static final long serialVersionUID = 3307389086106375473L;

@@ -1,34 +1,34 @@
 package hudson.plugins.warnings.parser;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
 
+import org.jvnet.localizer.Localizable;
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.jvnet.localizer.Localizable;
 
 import hudson.Extension;
-
 import hudson.plugins.analysis.util.model.Priority;
-import hudson.plugins.warnings.util.XmlElementUtil;
 import hudson.plugins.warnings.WarningsDescriptor;
+import hudson.plugins.warnings.util.XmlElementUtil;
 
 /**
  * A parser for the Resharper InspectCode compiler warnings.
  *
  * @author Rafal Jasica
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class ResharperInspectCodeParser extends RegexpLineParser {
     private static final String RESHAPER_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "resharper-24x24.png";

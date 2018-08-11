@@ -26,7 +26,9 @@ import hudson.plugins.warnings.util.XmlElementUtil;
  * Parses a StyleCop (http://code.msdn.microsoft.com/sourceanalysis/) xml report file.
  *
  * @author Sebastian Seidl
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class StyleCopParser extends AbstractWarningsParser {
     private static final long serialVersionUID = 1L;

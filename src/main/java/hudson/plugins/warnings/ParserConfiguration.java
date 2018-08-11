@@ -26,7 +26,9 @@ import hudson.util.ListBoxModel;
  * Defines the configuration to parse a set of files using a predefined parser.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class ParserConfiguration extends AbstractDescribableImpl<ParserConfiguration> {
     private final String pattern;
     private final String parserName;

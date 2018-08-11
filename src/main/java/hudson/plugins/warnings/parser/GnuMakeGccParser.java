@@ -11,7 +11,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * know where compilation are run.
  *
  * @author vichak
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class GnuMakeGccParser extends RegexpLineParser {
     private static final String SLASH = "/";

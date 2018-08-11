@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.AnnotationProvider;
  * A health descriptor for warnings build results.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class WarningsHealthDescriptor extends AbstractHealthDescriptor {
     private static final long serialVersionUID = -3404826986876607396L;
     private Localizable name;

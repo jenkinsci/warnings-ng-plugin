@@ -1,26 +1,25 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.console.ConsoleNote;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import hudson.Extension;
+import hudson.console.ConsoleNote;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A Parser for Linux Kernel Output detecting WARN() and BUGS().
  *
  * @author Benedikt Spranger
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class LinuxKernelOutputParser extends RegexpParser {
     private static final long serialVersionUID = 7580943036264863780L;

@@ -30,7 +30,9 @@ import hudson.util.FormValidation.Kind;
  * parse the warnings log.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> {
     private static final int MAX_EXAMPLE_SIZE = 4096;
 

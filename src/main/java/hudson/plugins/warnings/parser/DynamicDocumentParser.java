@@ -7,7 +7,9 @@ import java.util.regex.Matcher;
  * script to parse warnings.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public class DynamicDocumentParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -690643673847390322L;
     private final GroovyExpressionMatcher expressionMatcher;

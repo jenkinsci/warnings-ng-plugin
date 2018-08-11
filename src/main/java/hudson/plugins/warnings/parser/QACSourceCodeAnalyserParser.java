@@ -9,7 +9,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for PRQA QA-C Sourcecode Analyser warnings.
  *
  * @author Sven Lübke
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class QACSourceCodeAnalyserParser extends RegexpLineParser {
     /** Pattern of QA-C Sourcecode Analyser warnings. */

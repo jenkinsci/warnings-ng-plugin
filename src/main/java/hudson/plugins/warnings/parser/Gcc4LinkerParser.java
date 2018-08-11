@@ -12,7 +12,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for gcc 4.x linker warnings.
  *
  * @author Frederic Chateau
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class Gcc4LinkerParser extends RegexpLineParser {
     private static final long serialVersionUID = -2792019431810134790L;

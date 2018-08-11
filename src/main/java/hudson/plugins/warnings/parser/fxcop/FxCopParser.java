@@ -34,7 +34,9 @@ import hudson.plugins.warnings.util.XmlElementUtil;
  * <p>
  * Note that instances of this parser are not thread safe.
  * </p>
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @SuppressWarnings("unused")
 @Extension
 public class FxCopParser extends AbstractWarningsParser {

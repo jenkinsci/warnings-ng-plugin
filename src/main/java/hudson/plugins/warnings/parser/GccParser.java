@@ -11,7 +11,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the gcc compiler warnings.
  *
  * @author Greg Roth
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class GccParser extends RegexpLineParser {
     private static final long serialVersionUID = 2020182274225690532L;

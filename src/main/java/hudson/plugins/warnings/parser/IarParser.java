@@ -16,7 +16,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * @author Claus Klein
  * @author Ullrich Hafner
  * @author Kay van der Zander
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class IarParser extends RegexpLineParser {
     private static final long serialVersionUID = 7695540852439013425L;

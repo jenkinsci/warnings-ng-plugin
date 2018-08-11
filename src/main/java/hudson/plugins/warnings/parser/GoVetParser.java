@@ -4,13 +4,13 @@ import java.util.regex.Matcher;
 
 import hudson.Extension;
 
-import hudson.plugins.warnings.WarningsDescriptor;
-
 /**
  * A parser for the go vet tool in the Go toolchain
  *
  * @author Ryan Cox
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class GoVetParser extends GoBaseParser {
 

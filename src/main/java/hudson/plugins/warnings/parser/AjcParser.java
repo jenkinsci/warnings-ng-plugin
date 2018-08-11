@@ -1,8 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -10,12 +7,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import hudson.Extension;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+
 
 /**
  * A parser for AspectJ (ajc) compiler warnings.
  *
  * @author Tom Diamond
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class AjcParser extends AbstractWarningsParser {
     private static final long serialVersionUID = -9123765511497052454L;

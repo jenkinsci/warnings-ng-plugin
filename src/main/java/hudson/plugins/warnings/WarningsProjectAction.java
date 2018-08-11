@@ -23,7 +23,9 @@ import hudson.plugins.warnings.parser.ParserRegistry;
  * {@link WarningsResultAction}.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class WarningsProjectAction extends AbstractProjectAction<WarningsResultAction> {
     private final String parser;
 

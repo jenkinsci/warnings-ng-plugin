@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the SUN Studio C++ compiler warnings.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class SunCParser extends RegexpLineParser {
     private static final long serialVersionUID = -1251248150596418456L;

@@ -1,12 +1,5 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.console.ConsoleNote;
-import hudson.plugins.analysis.util.model.FileAnnotation;
-import hudson.plugins.analysis.util.model.Priority;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -15,6 +8,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.LineIterator;
+
+import hudson.Extension;
+import hudson.console.ConsoleNote;
+import hudson.plugins.analysis.util.model.FileAnnotation;
+import hudson.plugins.analysis.util.model.Priority;
+
 /**
  * A parser for <a href="http://robotframework.org/">Robot Framework</a>
  * Parse output from <a href="https://github.com/boakley/robotframework-lint">robotframework-lint</a>
@@ -22,7 +23,9 @@ import java.util.regex.Pattern;
  * cmd$ pip install robotframework-lint
  * cmd$ rflint path/to/test.robot
  * Created by traitanit on 3/27/2017 AD.
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class RFLintParser extends RegexpLineParser {
 

@@ -13,7 +13,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * </p>
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @SuppressWarnings("PMD.CyclomaticComplexity")
 public class Warning extends AbstractAnnotation {
     /** Unique identifier of this class. */

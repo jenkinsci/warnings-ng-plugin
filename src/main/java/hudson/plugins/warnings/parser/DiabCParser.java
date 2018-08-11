@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the Diab C++ compiler warnings.
  *
  * @author Yuta Namiki
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class DiabCParser extends RegexpLineParser {
     private static final long serialVersionUID = -1251248150596418456L;

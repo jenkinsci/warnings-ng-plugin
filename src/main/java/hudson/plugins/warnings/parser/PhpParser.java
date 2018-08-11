@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for PHP runtime errors and warnings.
  *
  * @author Shimi Kiviti
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class PhpParser extends RegexpLineParser {
     private static final long serialVersionUID = -5154327854315791181L;

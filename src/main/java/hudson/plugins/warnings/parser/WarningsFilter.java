@@ -1,9 +1,9 @@
 package hudson.plugins.warnings.parser;
 
+import javax.annotation.CheckForNull;
 import java.util.Collection;
 import java.util.Set;
 import java.util.regex.Pattern;
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -16,7 +16,9 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * Filters warnings by exclude and include patterns.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public class WarningsFilter {
     private final Set<Pattern> includePatterns = Sets.newHashSet();
     private final Set<Pattern> excludePatterns = Sets.newHashSet();

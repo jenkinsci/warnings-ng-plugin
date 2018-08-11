@@ -14,7 +14,9 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * Parses an input stream for compiler warnings using the provided regular expression.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @SuppressWarnings("deprecation")
 public abstract class RegexpParser extends AbstractWarningsParser {
     private static final long serialVersionUID = -82635675595933170L;

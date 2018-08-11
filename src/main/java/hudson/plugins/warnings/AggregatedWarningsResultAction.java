@@ -14,7 +14,9 @@ import hudson.plugins.analysis.core.PluginDescriptor;
  *
  * @author Marvin Schütz
  * @author Sebastian Hansbauer
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class AggregatedWarningsResultAction extends AbstractResultAction<AggregatedWarningsResult> {
     private static final NullHealthDescriptor NULL_HEALTH_DESCRIPTOR = new NullHealthDescriptor();
 

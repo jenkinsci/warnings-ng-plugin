@@ -11,7 +11,9 @@ import hudson.plugins.warnings.WarningsDescriptor;
  * You should use -feature and -deprecation compiler opts.
  *
  * @author Hochak Hung
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class SbtScalacParser extends RegexpLineParser {
     private static final String SCALA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "scala-24x24.png";

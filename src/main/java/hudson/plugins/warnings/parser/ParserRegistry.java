@@ -39,7 +39,9 @@ import hudson.util.ListBoxModel;
  * Registry of parsers that are available for the warnings plug-in.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 // CHECKSTYLE:COUPLING-OFF
 public class ParserRegistry {
     private final List<AbstractWarningsParser> parsers;

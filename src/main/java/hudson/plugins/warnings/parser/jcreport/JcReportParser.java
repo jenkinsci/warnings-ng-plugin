@@ -24,7 +24,9 @@ import hudson.plugins.warnings.parser.Warning;
  * JcReportParser-Class. This class parses from the jcReport.xml and creates warnings from its content.
  *
  * @author Johann Vierthaler, johann.vierthaler@web.de
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class JcReportParser extends AbstractWarningsParser {
     private static final long serialVersionUID = -1302787609831475403L;

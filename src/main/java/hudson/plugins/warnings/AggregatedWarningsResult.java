@@ -15,7 +15,9 @@ import hudson.plugins.warnings.parser.Warning;
  *
  * @author Marvin Schütz
  * @author Sebastian Hansbauer
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class AggregatedWarningsResult extends BuildResult {
     private static final long serialVersionUID = 4572019928324067680L;
 

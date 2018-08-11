@@ -17,7 +17,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for maven console warnings.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class MavenConsoleParser extends RegexpLineParser {
     private static final String CONSOLE = "";

@@ -10,7 +10,9 @@ import hudson.plugins.warnings.WarningsDescriptor;
  * A parser for the javac compiler warnings.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class JavacParser extends RegexpLineParser {
     static final String JAVA_SMALL_ICON = WarningsDescriptor.IMAGE_PREFIX + "java-24x24.png";

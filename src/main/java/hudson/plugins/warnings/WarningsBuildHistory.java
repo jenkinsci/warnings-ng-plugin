@@ -10,7 +10,9 @@ import hudson.plugins.analysis.core.BuildHistory;
  * A build history for warnings results. Picks the right action using the parser group.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class WarningsBuildHistory extends BuildHistory {
     private final String group;
 

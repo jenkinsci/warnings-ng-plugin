@@ -7,7 +7,9 @@ import java.util.regex.Matcher;
  * to parse warnings.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public class DynamicParser extends RegexpLineParser {
     private static final long serialVersionUID = 2964204816541183471L;
     private final GroovyExpressionMatcher expressionMatcher;

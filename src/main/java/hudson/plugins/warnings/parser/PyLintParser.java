@@ -10,7 +10,9 @@ import hudson.Extension;
  * A parser for the PyLint compiler warnings.
  *
  * @author Sebastian Hansbauer
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class PyLintParser extends RegexpLineParser {
     private static final long serialVersionUID = 4464053085862883240L;

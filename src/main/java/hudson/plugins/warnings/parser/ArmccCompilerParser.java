@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for armcc compiler warnings.
  *
  * @author Emanuele Zattin
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class ArmccCompilerParser extends RegexpLineParser {
     private static final long serialVersionUID = -2677728927938443703L;

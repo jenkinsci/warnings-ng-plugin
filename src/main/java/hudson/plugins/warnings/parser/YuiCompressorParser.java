@@ -9,7 +9,9 @@ import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for the YUI Compressor warnings.
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class YuiCompressorParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -4807932429496693096L;

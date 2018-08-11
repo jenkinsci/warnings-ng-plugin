@@ -6,7 +6,9 @@ import hudson.Extension;
  * A parser for JSLint checks warnings.
  *
  * @author Gavin Mogan
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class JSLintParser extends LintParser {
     private static final long serialVersionUID = 8613418992526753095L;

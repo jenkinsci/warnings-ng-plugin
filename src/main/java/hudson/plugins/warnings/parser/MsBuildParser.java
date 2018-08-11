@@ -13,7 +13,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the MSBuild/PcLint compiler warnings.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class MsBuildParser extends RegexpLineParser {
     private static final long serialVersionUID = -2141974437420906595L;

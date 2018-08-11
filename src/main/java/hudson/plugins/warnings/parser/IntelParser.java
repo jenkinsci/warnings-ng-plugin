@@ -13,7 +13,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for messages from the Intel C and Fortran compilers.
  *
  * @author Vangelis Livadiotis
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class IntelParser extends RegexpLineParser {
     private static final long serialVersionUID = 8409744276858003050L;

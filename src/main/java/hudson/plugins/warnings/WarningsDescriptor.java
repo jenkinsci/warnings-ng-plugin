@@ -29,7 +29,9 @@ import hudson.util.FormValidation;
  * class is marked as public so that it can be accessed from views.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 @Extension(ordinal = 100) @Symbol("warnings")
 public final class WarningsDescriptor extends PluginDescriptor implements StaplerProxy {
     /** The ID of this plug-in is used as URL. */

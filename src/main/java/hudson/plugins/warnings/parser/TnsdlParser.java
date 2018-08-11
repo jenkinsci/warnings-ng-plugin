@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the tnsdl translator warnings.
  *
  * @author Shaohua Wen
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class TnsdlParser extends RegexpLineParser {
     private static final long serialVersionUID = -7740789998865369930L;

@@ -12,7 +12,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for messages from the NAG Fortran Compiler.
  *
  * @author Mat Cross.
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class NagFortranParser extends RegexpDocumentParser {
   private static final long serialVersionUID = 0L;

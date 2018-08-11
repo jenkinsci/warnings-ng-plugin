@@ -11,7 +11,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the ant JavaDoc compiler warnings.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class JavaDocParser extends RegexpLineParser {
     private static final long serialVersionUID = 7127568148333474921L;
