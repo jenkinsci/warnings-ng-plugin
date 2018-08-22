@@ -1,11 +1,12 @@
 package io.jenkins.plugins.analysis.core.views;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 
+import edu.hm.hafner.analysis.LineRange;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
@@ -60,109 +61,159 @@ public class SourceDetail implements ModelObject {
 
     private String renderSourceCode(final Reader affectedFile) {
         try {
-            return splitSourceFile(highlightSource(affectedFile));
+            return buildCodeBlock(affectedFile,issue.getFileName());
         }
         catch (IOException e) {
             return e.getMessage() + "\n" + ExceptionUtils.getStackTrace(e);
         }
     }
 
+
+    /**
+     * Prism does not detect the language by itself.
+     * Base on the extension of the file, the language is detected.
+     *
+     * @param extension File extension without the dot.
+     * @return
+     */
+    private String prismLangClassFromExtension(String extension) {
+
+        switch(extension.toLowerCase()) {
+            case "jav": case "java":
+                return "language-java";
+            case "htm": case "html": case "xml": case "xsd":
+                return "language-markup";
+            case "erb": case "jsp": case "tag":
+                return "language-erb";
+            case "rb":
+                return "language-ruby";
+            case "kt":
+                return "language-kotlin";
+            case "js":
+                return "language-javascript";
+            case "c":
+                return "language-c";
+            case "cs":
+                return "language-csharp";
+            case "vb":
+                return "language-vbnet";
+            case "cpp":
+                return "language-cpp";
+            case "groovy":
+                return "language-groovy";
+            case "pl":
+                return "language-perl";
+            case "php":
+                return "language-php";
+            case "py":
+                return "language-python";
+            case "scala": case "sc":
+                return "language-scala";
+        }
+
+        return "language-clike"; //Best effort for unknown extensions
+    }
+
+    /**
+     * This function build
+     *
+     * @param sourceFileReader Source file containing the source code to be displayed.
+     * @param fileName The filename associated to the content. It will be use to select the syntax highlight.
+     * @return
+     * @throws IOException
+     */
+    private String buildCodeBlock(Reader sourceFileReader, String fileName) throws IOException {
+
+        StringWriter writer = new StringWriter();
+
+        String prismCssClass = prismLangClassFromExtension(FilenameUtils.getExtension(fileName));
+        writer.append("<pre><code class=\""+prismCssClass+" line-numbers\">");
+
+        BufferedReader reader = new BufferedReader(sourceFileReader);
+
+        List<LineRange> ranges = issue.getLineRanges();
+        if(ranges.size() == 0) {
+            ranges.add(new LineRange(issue.getLineStart(), issue.getLineEnd()));
+        }
+        LineRange activeRange = null;
+        boolean activeRegularBlock = false;
+
+        int lineNumber = 0;
+        String line = null;
+        while((line = reader.readLine()) != null) {
+            lineNumber++;
+
+            /** Start highlight block **/
+            if(activeRange == null) {
+                boolean newBlock = false;
+                ranges: for(LineRange r :ranges) {
+                    if(r.getStart() == lineNumber) {
+                        newBlock = true;
+                        activeRange = r;
+                        break ranges;
+                    }
+                }
+
+                if(newBlock) {
+                    writer.append("</code><code class=\"highlight\">");
+                }
+
+            }
+
+            /** Code **/
+            writer.append(line);
+            writer.append("\n");
+
+            /** Clode highlight block with bug description **/
+            if(activeRange != null) {
+                if (lineNumber == activeRange.getEnd()) { //Closing active block
+
+                    ranges.remove(activeRange);
+                    activeRange = null;
+
+                    writer.append("</code>");
+
+                    if(!issue.getDescription().equals("")) { //Issue that has a detailed description
+
+                        writer.append("<div class=\"analysis-warning\">\n" +
+                                "    <input class=\"collapse-open\" type=\"checkbox\" id=\"collapse-1\"/>\n" +
+                                "    <label class=\"collapse-btn\" for=\"collapse-1\">\n" +
+                                "        <i class=\"fas fa-exclamation-triangle\"></i>\n" +
+                                "        <span class=\"analysis-warning-title\">" + issue.getMessage() + "</span>\n" +
+                                "    </label>\n" +
+                                "    <div class=\"collapse-panel\"><div class=\"collapse-inner analysis-detail\">");
+
+
+                        writer.append(issue.getDescription());
+
+                        writer.append("</div></div>\n" +
+                                "</div><code>");
+                    }
+                    else { //Issue that has only a message
+
+                        writer.append("<div class=\"analysis-warning\">\n" +
+                                "    <label class=\"collapse-btn\">\n" +
+                                "        <i class=\"fas fa-exclamation-triangle\"></i>\n" +
+                                "        <span class=\"analysis-warning-title\">" + issue.getMessage() + "</span>\n"+
+                                "    </label>\n");
+
+                        writer.append("</div><code>");
+                    }
+
+                }
+            }
+        }
+
+        IOUtils.copy(sourceFileReader, writer);
+        writer.append("</code></pre>");
+        return writer.toString();
+    }
+
+
     @Override
     public String getDisplayName() {
         return issue.getBaseName();
     }
-
-    /**
-     * Highlights the specified source and returns the result as an HTML string.
-     *
-     * @param file
-     *         the source file to highlight
-     *
-     * @return the source as an HTML string
-     * @throws IOException
-     *         if the source code could not be read
-     */
-    private String highlightSource(final Reader file) throws IOException {
-        JavaSource source = new JavaSourceParser().parse(file);
-
-        JavaSource2HTMLConverter converter = new JavaSource2HTMLConverter();
-        StringWriter writer = new StringWriter();
-        JavaSourceConversionOptions options = JavaSourceConversionOptions.getDefault();
-        options.setShowLineNumbers(true);
-        options.setAddLineAnchors(true);
-        converter.convert(source, options, writer);
-
-        return writer.toString();
-    }
-
-    /**
-     * Splits the source code into three blocks: the line to highlight and the source code before and after this line.
-     *
-     * @param sourceFile
-     *         the source code of the whole file as rendered HTML string
-     */
-    // CHECKSTYLE:CONSTANTS-OFF
-    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
-    private String splitSourceFile(final String sourceFile) {
-        StringBuilder output = new StringBuilder(sourceFile.length());
-
-        LineIterator lineIterator = IOUtils.lineIterator(new StringReader(sourceFile));
-
-        // TODO: add support for line ranges (or replace this view with client side rendering)
-        try {
-            int lineNumber = 1;
-            while (lineNumber < SOURCE_GENERATOR_OFFSET) {
-                copyLine(output, lineIterator);
-                lineNumber++;
-            }
-            lineNumber = 1;
-            boolean isFirstRange = true;
-            while (lineNumber < issue.getLineStart()) {
-                copyLine(output, lineIterator);
-                lineNumber++;
-            }
-            output.append("</code>\n");
-            output.append("</td></tr>\n");
-            output.append("<tr><td style=\"background-color:");
-            appendRangeColor(output, isFirstRange);
-            output.append("\">\n");
-            output.append("<div id=\"line");
-            output.append(issue.getLineStart());
-            output.append("\" tooltip=\"");
-            if (issue.getLineStart() > 0) {
-                outputEscaped(output, issue.getMessage());
-            }
-            outputEscaped(output, issue.getDescription());
-            output.append("\" nodismiss=\"\">\n");
-            output.append("<code><b>\n");
-            if (issue.getLineStart() <= 0) {
-                output.append(issue.getMessage());
-                if (StringUtils.isBlank(issue.getMessage())) {
-                    output.append(issue.getDescription());
-                }
-            }
-            else {
-                while (lineNumber <= issue.getLineEnd()) {
-                    copyLine(output, lineIterator);
-                    lineNumber++;
-                }
-            }
-            output.append("</b></code>\n");
-            output.append("</div>\n");
-            output.append("</td></tr>\n");
-            output.append("<tr><td>\n");
-            output.append("<code>\n");
-            isFirstRange = false;
-            while (lineIterator.hasNext()) {
-                copyLine(output, lineIterator);
-            }
-        }
-        catch (NoSuchElementException exception) {
-            // ignore an illegal range
-        }
-        return output.toString();
-    }
-    // CHECKSTYLE:CONSTANTS-ON
 
     /**
      * Writes the message to the output stream (with escaped HTML).

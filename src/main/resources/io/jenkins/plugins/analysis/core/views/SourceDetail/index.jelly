@@ -2,6 +2,14 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
   <l:layout title="${it.displayName}" norefresh="true">
+    <!-- header start source detail -->
+    <script src="${rootURL}/plugin/warnings/js/libs/prism.js"></script>
+    <link rel="stylesheet" type="text/css" href="${rootURL}/plugin/warnings/css/prism.css"/>
+    <link rel="stylesheet" type="text/css" href="${rootURL}/plugin/warnings/css/custom-styles/custom-prism.css"/>
+    <link rel="stylesheet" href="${rootURL}/plugin/warnings/css/font-awesome/css/all.css"/>
+
+    <!-- header end source detail -->
+
     <st:include it="${it.owner}" page="sidepanel.jelly" />
     <l:main-panel>
       <h1>${%sourcedetail.header(it.displayName)}</h1>
