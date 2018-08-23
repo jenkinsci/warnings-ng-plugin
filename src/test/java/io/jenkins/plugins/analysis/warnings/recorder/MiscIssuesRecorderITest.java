@@ -73,8 +73,8 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         verifyAndChangeEntry(form, "reportEncoding", "reportEncoding");
         verifyAndChangeEntry(form, "sourceCodeEncoding", "sourceCodeEncoding");
 
-        verifyAndChangeEntry(form, "ignoreAnalysisResult", true);
-        verifyAndChangeEntry(form, "overallResultMustBeSuccess", true);
+        verifyAndChangeEntry(form, "ignoreQualityGate", false);
+        verifyAndChangeEntry(form, "ignoreFailedBuilds", true);
         verifyAndChangeEntry(form, "referenceJobName", "referenceJobName");
         
         verifyAndChangeEntry(form, "healthy", 10);

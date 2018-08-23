@@ -204,7 +204,7 @@ class AnalysisHistoryTest {
         return asList(
                 new BuildHistoryBuilder().setHasResult(true)
                         .setQualityGateEvaluationMode(SUCCESSFUL_QUALITY_GATE)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setExpectedBaselineResult(FIRST)
@@ -213,7 +213,7 @@ class AnalysisHistoryTest {
                         .build(),
                 new BuildHistoryBuilder().setHasResult(true)
                         .setQualityGateEvaluationMode(SUCCESSFUL_QUALITY_GATE)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setExpectedBaselineResult(FIRST)
@@ -222,7 +222,7 @@ class AnalysisHistoryTest {
                         .build(),
                 new BuildHistoryBuilder().setHasResult(true)
                         .setQualityGateEvaluationMode(SUCCESSFUL_QUALITY_GATE)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.FAILED)
                         .setExpectedBaselineResult(FIRST)
@@ -231,7 +231,7 @@ class AnalysisHistoryTest {
                         .build(),
                 new BuildHistoryBuilder().setHasResult(true)
                         .setQualityGateEvaluationMode(SUCCESSFUL_QUALITY_GATE)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.WARNING)
                         .setExpectedBaselineResult(FIRST)
@@ -241,7 +241,7 @@ class AnalysisHistoryTest {
 
                 new BuildHistoryBuilder().setHasResult(true)
                         .setQualityGateEvaluationMode(SUCCESSFUL_QUALITY_GATE)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setExpectedBaselineResult(FIRST)
@@ -250,7 +250,7 @@ class AnalysisHistoryTest {
                         .build(),
                 new BuildHistoryBuilder().setHasResult(true)
                         .setQualityGateEvaluationMode(SUCCESSFUL_QUALITY_GATE)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setExpectedBaselineResult(FIRST)
@@ -259,7 +259,7 @@ class AnalysisHistoryTest {
                         .build(),
                 new BuildHistoryBuilder().setHasResult(true)
                         .setQualityGateEvaluationMode(SUCCESSFUL_QUALITY_GATE)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.FAILED)
                         .setExpectedBaselineResult(FIRST)
@@ -268,7 +268,7 @@ class AnalysisHistoryTest {
                         .build(),
                 new BuildHistoryBuilder().setHasResult(true)
                         .setQualityGateEvaluationMode(SUCCESSFUL_QUALITY_GATE)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.WARNING)
                         .setExpectedBaselineResult(FIRST)
@@ -446,7 +446,7 @@ class AnalysisHistoryTest {
     private static Iterable<Object> provideSingleResultIfQualityGateIsIgnored() {
         return asList(
                 new BuildHistoryBuilder().setHasResult(true)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setExpectedBaselineResult(FIRST)
@@ -454,7 +454,7 @@ class AnalysisHistoryTest {
                         .setTestName("Job has analysis result")
                         .build(),
                 new BuildHistoryBuilder().setHasResult(true)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.FAILED)
                         .setExpectedBaselineResult(FIRST)
@@ -462,7 +462,7 @@ class AnalysisHistoryTest {
                         .setTestName("Job has analysis result even if quality gate has been missed")
                         .build(),
                 new BuildHistoryBuilder().setHasResult(true)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.FAILURE)
                         .setQualityGateStatus(QualityGateStatus.FAILED)
                         .setExpectedBaselineResult(FIRST)
@@ -470,7 +470,7 @@ class AnalysisHistoryTest {
                         .setTestName("Job has no analysis result since Result is FAILURE")
                         .build(),
                 new BuildHistoryBuilder().setHasResult(true)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setExpectedBaselineResult(FIRST)
@@ -478,7 +478,7 @@ class AnalysisHistoryTest {
                         .setTestName("Job has no analysis result since Result is UNSTABLE")
                         .build(),
                 new BuildHistoryBuilder().setHasResult(false)
-                        .setJobResultEvaluationMode(JOB_MUST_BE_SUCCESSFUL)
+                        .setJobResultEvaluationMode(NO_JOB_FAILURE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setExpectedBaselineResult(NONE)

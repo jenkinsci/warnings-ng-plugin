@@ -11,7 +11,9 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
 import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -41,16 +43,16 @@ class IssuesPublisher {
     private final Charset sourceCodeEncoding;
     private final QualityGate qualityGate;
     private final String referenceJobName;
-    private final boolean ignoreAnalysisResult;
-    private final boolean overallResultMustBeSuccess;
+    private final QualityGateEvaluationMode qualityGateEvaluationMode;
+    private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
     private final String id;
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final Report report, final List<RegexpFilter> filters,
             final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
-            final String name, final String referenceJobName, final boolean ignoreAnalysisResult,
-            final boolean overallResultMustBeSuccess, final Charset sourceCodeEncoding,
+            final String name, final String referenceJobName, final boolean ignoreQualityGate,
+            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding,
             final LogHandler logger) {
         this.report = report;
         id = report.getId();
@@ -61,8 +63,8 @@ class IssuesPublisher {
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.qualityGate = qualityGate;
         this.referenceJobName = referenceJobName;
-        this.ignoreAnalysisResult = ignoreAnalysisResult;
-        this.overallResultMustBeSuccess = overallResultMustBeSuccess;
+        this.qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
+        this.jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
     }
 
@@ -179,8 +181,6 @@ class IssuesPublisher {
                 baseline = referenceJob.get().getLastBuild();
             }
         }
-        return new AnalysisHistory(baseline, selector,
-                ignoreAnalysisResult ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE,
-                overallResultMustBeSuccess ? JOB_MUST_BE_SUCCESSFUL : IGNORE_JOB_RESULT);
+        return new AnalysisHistory(baseline, selector, qualityGateEvaluationMode, jobResultEvaluationMode);
     }
 }

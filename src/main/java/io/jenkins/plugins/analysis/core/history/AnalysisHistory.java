@@ -62,7 +62,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
         /**
          * Only jobs that have an overall result of {@link Result#SUCCESS} are considered.
          */
-        JOB_MUST_BE_SUCCESSFUL,
+        NO_JOB_FAILURE,
 
         /**
          * All jobs that have an overall result better or equal to {@link Result#UNSTABLE} are considered. If the job
@@ -93,9 +93,15 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      * @param selector
      *         selects the type of the result (to get a result for the same type of static analysis)
      * @param qualityGateEvaluationMode
-     *         determines if the quality gate {@link QualityGateStatus} is taken into account when selecting the action
+     *         If set to {@link QualityGateEvaluationMode#IGNORE_QUALITY_GATE}, then the result of the quality gate is
+     *         ignored when selecting a reference build. If set to {@link QualityGateEvaluationMode#SUCCESSFUL_QUALITY_GATE}
+     *         a failing quality gate will be passed from build to build until the original reason for the failure has
+     *         been resolved.
      * @param jobResultEvaluationMode
-     *         determines if the job {@link Result} is taken into account when selecting the action
+     *         If set to {@link JobResultEvaluationMode#NO_JOB_FAILURE}, then only successful or unstable reference
+     *         builds will be considered (since since analysis results might be inaccurate if the build failed). If set
+     *         to {@link JobResultEvaluationMode#IGNORE_JOB_RESULT}, then every build that contains a static analysis
+     *         result is considered, even if the build failed. 
      */
     public AnalysisHistory(final Run<?, ?> baseline, final ResultSelector selector,
             final QualityGateEvaluationMode qualityGateEvaluationMode,
@@ -143,8 +149,8 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
     }
 
     /**
-     * Returns the issues of the historical result. If there is no historical build found, then an empty set of issues is
-     * returned.
+     * Returns the issues of the historical result. If there is no historical build found, then an empty set of issues
+     * is returned.
      *
      * @return the issues of the historical build
      */
@@ -185,7 +191,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
 
     private static boolean hasCorrectJobResult(final Run<?, ?> run,
             final JobResultEvaluationMode jobResultEvaluationMode) {
-        if (jobResultEvaluationMode == JOB_MUST_BE_SUCCESSFUL) {
+        if (jobResultEvaluationMode == NO_JOB_FAILURE) {
             return run.getResult() == Result.SUCCESS;
         }
         return true;
@@ -231,7 +237,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
 
                 cursor = getRunWithResult(run.getPreviousBuild(), selector, IGNORE_QUALITY_GATE, IGNORE_JOB_RESULT);
 
-                //noinspection ConstantConditions: result action is guaranteed to have a result (getRunWithResult)
+                //noinspection OptionalGetWithoutIsPresent (result action is guaranteed to have a result, see getRunWithResult)
                 return resultAction.get().getResult();
             }
             else {

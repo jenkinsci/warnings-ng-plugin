@@ -7,13 +7,13 @@
 
   <i:hr title="${%Reference Analysis Results}"/>
 
-  <f:entry title="${%title.ignoreAnalysisResult}" description="${%description.ignoreAnalysisResult}"
-           field="ignoreAnalysisResult">
+  <f:entry title="${%title.ignoreQualityGate}" description="${%description.ignoreQualityGate}"
+           field="ignoreQualityGate">
     <f:checkbox/>
   </f:entry>
-  <f:entry title="${%title.overallResultMustBeSuccess}" description="${%description.overallResultMustBeSuccess}"
-           field="overallResultMustBeSuccess">
-    <f:checkbox/>
+  <f:entry title="${%title.ignoreFailedBuilds}" description="${%description.ignoreFailedBuilds}"
+           field="ignoreFailedBuilds">
+    <f:checkbox default="true"/>
   </f:entry>
   <f:entry title="${%title.referenceJob}" field="referenceJobName" description="${%description.referenceJob}">
     <f:combobox/>
@@ -33,7 +33,7 @@
   <i:hr title="${%Issue filters}"/>
 
   <f:entry title="${%Issue filters}" description="${%description.filter}">
-    <u:repeatable field="filters" minimum="1"/>
+    <i:repeatable field="filters" minimum="1"/>
   </f:entry>
 
 </j:jelly>

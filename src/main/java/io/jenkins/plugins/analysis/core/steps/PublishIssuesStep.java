@@ -32,7 +32,6 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
 import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.Job;
-import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
@@ -40,8 +39,8 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 /**
- * Publish issues created by a static analysis run. The recorded issues are stored as a {@link ResultAction} in the
- * associated run. If the set of issues to store has a unique ID, then the created action will use this ID as well.
+ * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
+ * associated Jenkins build. If the issues report has a unique ID, then the created action will use this ID as well.
  * Otherwise a default ID is used to publish the results. In any case, the computed ID can be overwritten by specifying
  * an ID as step parameter.
  */
@@ -52,9 +51,9 @@ public class PublishIssuesStep extends Step {
     private final Report[] reports;
 
     private String sourceCodeEncoding;
-    
-    private boolean ignoreAnalysisResult;
-    private boolean overallResultMustBeSuccess;
+
+    private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory
+    private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored
     private String referenceJobName;
 
     private int healthy;
@@ -63,10 +62,9 @@ public class PublishIssuesStep extends Step {
     private final Thresholds thresholds = new Thresholds();
 
     private List<RegexpFilter> filters = new ArrayList<>();
-    
+
     private String id;
     private String name;
-    
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -79,7 +77,7 @@ public class PublishIssuesStep extends Step {
         super();
 
         Ensure.that(issues).isNotEmpty();
-        
+
         this.reports = Arrays.copyOf(issues, issues.length);
     }
 
@@ -116,35 +114,38 @@ public class PublishIssuesStep extends Step {
     }
 
     /**
-     * If {@code true} then the result of the previous analysis run is ignored when searching for the reference,
-     * otherwise the result of the static analysis reference must be {@link Result#SUCCESS}.
+     * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
+     * disabled by default so a failing quality gate will be passed from build to build until the original reason for
+     * the failure has been resolved.
      *
-     * @param ignoreAnalysisResult
-     *         if {@code true} then the previous build is always used
+     * @param ignoreQualityGate
+     *         if {@code true} then the result of the quality gate is ignored, otherwise only build with a successful
+     *         quality gate are selected
      */
     @DataBoundSetter
-    public void setIgnoreAnalysisResult(final boolean ignoreAnalysisResult) {
-        this.ignoreAnalysisResult = ignoreAnalysisResult;
+    public void setIgnoreQualityGate(final boolean ignoreQualityGate) {
+        this.ignoreQualityGate = ignoreQualityGate;
     }
 
-    public boolean getIgnoreAnalysisResult() {
-        return ignoreAnalysisResult;
+    public boolean getIgnoreQualityGate() {
+        return ignoreQualityGate;
     }
 
     /**
-     * If {@code true} then only runs with an overall result of {@link Result#SUCCESS} are considered as a reference,
-     * otherwise every run that contains results of the same static analysis configuration is considered.
+     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
+     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
+     * contains a static analysis result is considered, even if the build failed.
      *
-     * @param overallResultMustBeSuccess
+     * @param ignoreFailedBuilds
      *         if {@code true} then a stable build is used as reference
      */
     @DataBoundSetter
-    public void setOverallResultMustBeSuccess(final boolean overallResultMustBeSuccess) {
-        this.overallResultMustBeSuccess = overallResultMustBeSuccess;
+    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
+        this.ignoreFailedBuilds = ignoreFailedBuilds;
     }
 
-    public boolean getOverallResultMustBeSuccess() {
-        return overallResultMustBeSuccess;
+    public boolean getIgnoreFailedBuilds() {
+        return ignoreFailedBuilds;
     }
 
     /**
@@ -399,8 +400,8 @@ public class PublishIssuesStep extends Step {
      */
     public static class Execution extends AnalysisExecution<ResultAction> {
         private final HealthDescriptor healthDescriptor;
-        private final boolean overallResultMustBeSuccess;
-        private final boolean ignoreAnalysisResult;
+        private final boolean ignoreQualityGate;
+        private final boolean ignoreFailedBuilds;
         private final String sourceCodeEncoding;
         private final Report report;
         private final QualityGate qualityGate;
@@ -420,8 +421,8 @@ public class PublishIssuesStep extends Step {
         protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
-            ignoreAnalysisResult = step.getIgnoreAnalysisResult();
-            overallResultMustBeSuccess = step.getOverallResultMustBeSuccess();
+            ignoreQualityGate = step.getIgnoreQualityGate();
+            ignoreFailedBuilds = step.getIgnoreFailedBuilds();
             referenceJobName = step.getReferenceJobName();
             sourceCodeEncoding = step.getSourceCodeEncoding();
             healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
@@ -449,7 +450,7 @@ public class PublishIssuesStep extends Step {
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, filters, healthDescriptor, qualityGate,
-                    name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess,
+                    name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
                     getCharset(sourceCodeEncoding), getLogger());
             return publisher.attachAction();
         }
