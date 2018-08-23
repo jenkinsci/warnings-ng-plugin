@@ -163,7 +163,7 @@ class DetailFactoryTest {
         Object details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
                 RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
         assertThat(details).isInstanceOf(SourceDetail.class);
-        assertThat(((SourceDetail) details).getSourceCode()).contains("IOException:&nbsp;file&nbsp;error");
+        assertThat(((SourceDetail) details).getSourceCode()).contains("IOException: file error");
     }
 
     /**
