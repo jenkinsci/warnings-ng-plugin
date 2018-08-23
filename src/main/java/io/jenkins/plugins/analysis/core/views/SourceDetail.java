@@ -3,20 +3,14 @@ package io.jenkins.plugins.analysis.core.views;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 import edu.hm.hafner.analysis.LineRange;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.LineIterator;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
-import de.java2html.converter.JavaSource2HTMLConverter;
-import de.java2html.javasource.JavaSource;
-import de.java2html.javasource.JavaSourceParser;
-import de.java2html.options.JavaSourceConversionOptions;
 import edu.hm.hafner.analysis.Issue;
 
 import hudson.model.ModelObject;
