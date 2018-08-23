@@ -17,7 +17,9 @@ import hudson.plugins.warnings.parser.Warning;
  * each build via an XML file.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class WarningsResult extends BuildResult {
     private static final String FILENAME_SUFFIX = "-warnings.xml";
     /** Version < 4.0 file name of warnings. */

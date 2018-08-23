@@ -8,7 +8,9 @@ import hudson.Extension;
  * A parser for Flex SDK compiler warnings.
  *
  * @author Vivien Tintillier
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class FlexSDKParser extends RegexpLineParser {
     private static final long serialVersionUID = -185055018399324311L;

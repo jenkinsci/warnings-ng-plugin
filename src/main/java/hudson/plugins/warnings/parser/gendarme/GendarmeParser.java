@@ -34,7 +34,9 @@ import hudson.plugins.warnings.util.XmlElementUtil;
  * Parses Gendarme violations.
  *
  * @author mathias.kluba@gmail.com
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class GendarmeParser extends AbstractWarningsParser {
     private static final long serialVersionUID = 1677715364464119907L;

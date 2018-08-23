@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the Perl::Critic warnings.
  *
  * @author Mihail Menev, menev@hm.edu
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class PerlCriticParser extends RegexpLineParser {
     private static final long serialVersionUID = -6481203155449490873L;

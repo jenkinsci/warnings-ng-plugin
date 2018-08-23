@@ -6,7 +6,9 @@ import java.io.IOException;
  * Indicates that parsing has been canceled due to a user initiated interrupt.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public class ParsingCanceledException extends IOException {
     private static final long serialVersionUID = 3341274949787014225L;
 

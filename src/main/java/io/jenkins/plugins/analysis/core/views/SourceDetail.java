@@ -41,6 +41,8 @@ public class SourceDetail implements ModelObject {
     private final Issue issue;
     /** The rendered source file. */
     private final String sourceCode;
+    /** a detailed description of the specified issue. */
+    private final String description;
 
     /**
      * Creates a new instance of this source code object.
@@ -50,11 +52,15 @@ public class SourceDetail implements ModelObject {
      * @param affectedFile
      *         the file to show
      * @param issue
-     *         the warning to display in the source file
+     *         the issue to show in the source file
+     * @param description
+     *         a detailed description of the specified issue
      */
-    public SourceDetail(final Run<?, ?> owner, final Reader affectedFile, final Issue issue) {
+    public SourceDetail(final Run<?, ?> owner, final Reader affectedFile, final Issue issue,
+            final String description) {
         this.owner = owner;
         this.issue = issue;
+        this.description = description;
 
         sourceCode = renderSourceCode(affectedFile);
     }
@@ -173,7 +179,7 @@ public class SourceDetail implements ModelObject {
 
                     writer.append("</code>");
 
-                    if(!issue.getDescription().equals("")) { //Issue that has a detailed description
+                    if(!description.equals("")) { //Issue that has a detailed description
 
                         writer.append("<div class=\"analysis-warning\">\n" +
                                 "    <input class=\"collapse-open\" type=\"checkbox\" id=\"collapse-1\"/>\n" +
@@ -184,7 +190,7 @@ public class SourceDetail implements ModelObject {
                                 "    <div class=\"collapse-panel\"><div class=\"collapse-inner analysis-detail\">");
 
 
-                        writer.append(issue.getDescription());
+                        writer.append(description);
 
                         writer.append("</div></div>\n" +
                                 "</div><code>");
@@ -208,6 +214,7 @@ public class SourceDetail implements ModelObject {
         writer.append("</code></pre>");
         return writer.toString();
     }
+
 
 
     @Override
@@ -275,5 +282,6 @@ public class SourceDetail implements ModelObject {
     public String getSourceCode() {
         return sourceCode;
     }
+
 }
 

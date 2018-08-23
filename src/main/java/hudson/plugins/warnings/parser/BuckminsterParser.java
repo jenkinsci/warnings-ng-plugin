@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for Buckminster compiler warnings.
  *
  * @author Johannes Utzig
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class BuckminsterParser extends RegexpLineParser {
     private static final long serialVersionUID = -3723799140297979579L;

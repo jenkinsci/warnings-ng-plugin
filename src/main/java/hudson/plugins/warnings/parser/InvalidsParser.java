@@ -12,7 +12,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for Oracle Invalids.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class InvalidsParser extends RegexpLineParser {
     private static final long serialVersionUID = 440910718005095427L;

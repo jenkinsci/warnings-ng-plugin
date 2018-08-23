@@ -15,7 +15,9 @@ import hudson.plugins.analysis.util.model.Priority;
  *    *EXTRA File                  0        b           Unknown Task
  *   100%        New File                   0        a.log
  *                 same                 0        a.log
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class RobocopyParser extends RegexpLineParser {
     private static final long serialVersionUID = -671744745118772873L;

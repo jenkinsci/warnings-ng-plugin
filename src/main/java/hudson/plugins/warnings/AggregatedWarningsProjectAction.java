@@ -10,7 +10,9 @@ import hudson.plugins.analysis.core.AbstractProjectAction;
  * Currently, these aggregated results are not shown in the UI.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class AggregatedWarningsProjectAction extends AbstractProjectAction<AggregatedWarningsResultAction> {
     /**
      * Instantiates a new {@link AggregatedWarningsProjectAction}.

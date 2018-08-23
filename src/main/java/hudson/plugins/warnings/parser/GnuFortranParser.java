@@ -12,7 +12,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for (compile-time) messages from the GNU Fortran Compiler.
  *
  * @author Mat Cross.
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class GnuFortranParser extends RegexpDocumentParser {
     private static final String LINE_REGEXP = " at \\(\\d\\)";

@@ -13,7 +13,9 @@ import hudson.plugins.analysis.util.model.Priority;
  *
  * @author Frederic Chateau
  * @author Bruno Matos
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class DoxygenParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -6770174143703245309L;

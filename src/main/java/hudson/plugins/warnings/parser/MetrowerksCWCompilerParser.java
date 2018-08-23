@@ -9,7 +9,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for Metrowerks Codewarrior 4.x compiler warnings.
  *
  * @author Sven Lübke
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class MetrowerksCWCompilerParser extends RegexpLineParser {
     /** Pattern of MW CodeWarrior compiler warnings. */

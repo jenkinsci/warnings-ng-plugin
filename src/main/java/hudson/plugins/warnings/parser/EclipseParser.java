@@ -13,7 +13,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for Eclipse compiler warnings.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class EclipseParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 425883472788422955L;

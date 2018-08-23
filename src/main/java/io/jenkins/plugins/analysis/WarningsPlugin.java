@@ -1,4 +1,4 @@
-package hudson.plugins.warnings;
+package io.jenkins.plugins.analysis;
 
 import java.util.ServiceLoader;
 

@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the Gnat compiler warnings.
  *
  * @author Bernhard Berger
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class GnatParser extends RegexpLineParser {
     private static final long serialVersionUID = -7139298560308123856L;

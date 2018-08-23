@@ -25,7 +25,9 @@ import hudson.plugins.analysis.util.model.FileAnnotation;
  * {@link MatrixBuild}.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class WarningsAnnotationsAggregator extends MatrixAggregator {
     private final HealthDescriptor healthDescriptor;
     private final String defaultEncoding;

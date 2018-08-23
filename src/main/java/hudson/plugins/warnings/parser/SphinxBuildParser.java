@@ -2,8 +2,6 @@ package hudson.plugins.warnings.parser;
 
 import java.util.regex.Matcher;
 
-import org.apache.commons.lang.StringUtils;
-
 import hudson.Extension;
 import hudson.plugins.analysis.util.model.Priority;
 
@@ -11,7 +9,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the Sphinx build warnings.
  *
  * @author Robert Williams
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class SphinxBuildParser extends RegexpLineParser {
     private static final long serialVersionUID = 1L;

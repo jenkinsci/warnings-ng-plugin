@@ -1,14 +1,16 @@
 package hudson.plugins.warnings.parser;
 
-import org.jvnet.localizer.Localizable;
-
 import javax.annotation.Nonnull;
+
+import org.jvnet.localizer.Localizable;
 
 /**
  * Describes a parser.
  *
  * @author Ullrich Hafner
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public class ParserDescription implements Comparable<ParserDescription> {
     private final String group;
     private final Localizable name;

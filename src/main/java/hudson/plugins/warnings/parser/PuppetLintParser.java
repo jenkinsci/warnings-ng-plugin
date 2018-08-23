@@ -12,7 +12,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for puppet-lint checks warnings.
  *
  * @author Jan Vansteenkiste
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class PuppetLintParser extends RegexpLineParser {
     private static final long serialVersionUID = 7492869677427430346L;

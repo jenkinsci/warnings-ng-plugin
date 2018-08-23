@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the Clang compiler warnings.
  *
  * @author Neil Davis
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class ClangParser extends RegexpLineParser {
     private static final long serialVersionUID = -3015592762345283182L;

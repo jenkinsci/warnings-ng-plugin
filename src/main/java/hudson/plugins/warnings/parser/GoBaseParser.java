@@ -1,13 +1,16 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.plugins.warnings.WarningsDescriptor;
 import org.jvnet.localizer.Localizable;
+
+import hudson.plugins.warnings.WarningsDescriptor;
 
 /**
  * Base class for go vet / golint parsers
  *
  * @author Ryan Cox
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 abstract class GoBaseParser extends RegexpLineParser {
 
 

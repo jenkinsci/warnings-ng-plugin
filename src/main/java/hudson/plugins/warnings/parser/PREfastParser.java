@@ -8,7 +8,9 @@ import hudson.Extension;
  * A parser for Microsoft PREfast (aka Code Analysis for C/C++) XML files.
  *
  * @author Charles Chan
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class PREfastParser extends RegexpLineParser {
     private static final long serialVersionUID = 1409381677034028504L;

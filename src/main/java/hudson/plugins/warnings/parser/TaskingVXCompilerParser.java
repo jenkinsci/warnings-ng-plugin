@@ -9,7 +9,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for TASKING VX compiler warnings.
  *
  * @author Sven Lübke
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class TaskingVXCompilerParser extends RegexpLineParser {
     /** Pattern of TASKING VX compiler warnings. */

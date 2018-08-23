@@ -9,7 +9,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for EB tresos Studio warnings.
  *
  * @author Sven Lübke
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class EBtresosStudioParser extends RegexpLineParser {
     /** Pattern of EB tresos warnings. */

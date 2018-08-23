@@ -1,18 +1,20 @@
 package hudson.plugins.warnings.parser;
 
-import hudson.Extension;
-import hudson.plugins.analysis.util.model.Priority;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import hudson.Extension;
+import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * A parser for the Dr. Memory Errors.
  *
  * @author Wade Penson
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class DrMemoryParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 7195239138601238590L;

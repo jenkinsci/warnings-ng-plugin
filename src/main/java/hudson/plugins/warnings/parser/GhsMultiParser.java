@@ -12,7 +12,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the GHS Multi compiler warnings.
  *
  * @author Joseph Boulos
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class GhsMultiParser extends RegexpDocumentParser {
     private static final long serialVersionUID = 8149238560432255036L;

@@ -12,7 +12,9 @@ import hudson.model.BuildListener;
  * Provides a {@link MatrixAggregatable} for a {@link MatrixProject}.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 @Extension(optional = true)
 public class WarningsMatrixBridge implements MatrixAggregatable {
     @Override

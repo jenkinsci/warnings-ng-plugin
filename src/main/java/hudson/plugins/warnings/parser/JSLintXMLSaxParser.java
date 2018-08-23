@@ -12,7 +12,9 @@ import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Handles parsing.
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 public class JSLintXMLSaxParser extends DefaultHandler {
     private final List<FileAnnotation> warnings;
     private String fileName;

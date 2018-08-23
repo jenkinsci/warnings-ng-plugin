@@ -46,7 +46,9 @@ import hudson.plugins.warnings.parser.WarningsFilter;
  * Publishes the results of the warnings analysis (freestyle project type).
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 // CHECKSTYLE:COUPLING-OFF
 public class WarningsPublisher extends HealthAwarePublisher {
     private static final long serialVersionUID = -5936973521277401764L;

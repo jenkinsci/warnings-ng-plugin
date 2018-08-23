@@ -11,7 +11,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for IBM xlC compiler warnings.
  *
  * @author Andrew Gvozdev
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class XlcCompilerParser extends RegexpLineParser {
     private static final long serialVersionUID = 5490211629355204910L;

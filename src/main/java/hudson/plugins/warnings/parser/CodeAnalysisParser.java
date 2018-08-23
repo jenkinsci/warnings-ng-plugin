@@ -13,7 +13,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the CodeAnalysis compiler warnings.
  *
  * @author Rafal Jasica
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class CodeAnalysisParser extends RegexpLineParser {
     private static final long serialVersionUID = -125874563249851L;

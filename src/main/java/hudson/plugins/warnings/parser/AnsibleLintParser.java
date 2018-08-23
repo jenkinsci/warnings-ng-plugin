@@ -8,7 +8,9 @@ import hudson.Extension;
  * A parser for the ansible lint warnings.
  *
  * @author Ce Qi
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class AnsibleLintParser extends RegexpLineParser {
 

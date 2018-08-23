@@ -10,7 +10,9 @@ import hudson.plugins.analysis.util.model.Priority;
  * A parser for the erlc compiler warnings.
  *
  * @author Stefan Brausch
+ * @deprecated use the new analysis-model library
  */
+@Deprecated
 @Extension
 public class ErlcParser extends RegexpLineParser {
     private static final long serialVersionUID = 8986478184830773892L;
