@@ -1,11 +1,9 @@
 package hudson.plugins.warnings.dashboard;
 
+import javax.annotation.CheckForNull;
 import java.util.List;
 
-import javax.annotation.CheckForNull;
-
 import hudson.model.Job;
-
 import hudson.plugins.analysis.core.AbstractProjectAction;
 import hudson.plugins.warnings.WarningsProjectAction;
 
@@ -13,7 +11,9 @@ import hudson.plugins.warnings.WarningsProjectAction;
  * Selects a specific action from the available set of actions.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class ActionSelector {
     private final String parserName;
 

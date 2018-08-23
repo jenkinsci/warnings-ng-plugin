@@ -12,7 +12,9 @@ import hudson.plugins.warnings.WarningsProjectAction;
  * Base class for portlets that show trends of the warnings plug-in.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public abstract class AbstractTrendPortlet extends AbstractWarningsGraphPortlet {
     private ActionSelector actionSelector;
 

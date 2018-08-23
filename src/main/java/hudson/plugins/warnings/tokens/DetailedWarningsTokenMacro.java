@@ -2,14 +2,15 @@ package hudson.plugins.warnings.tokens;
 
 import hudson.Extension;
 import hudson.plugins.analysis.core.BuildResult;
-import hudson.plugins.analysis.util.model.FileAnnotation;
 import hudson.plugins.warnings.AggregatedWarningsResultAction;
 
 /**
  * Provides a token that contain details of warnings.
  *
  * @author Benedikt Spranger
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 @Extension(optional = true)
 public class DetailedWarningsTokenMacro extends AbstractDetailedTokenMacro {
     /**

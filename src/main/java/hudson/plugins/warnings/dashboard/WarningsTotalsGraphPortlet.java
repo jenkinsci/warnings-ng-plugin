@@ -15,7 +15,9 @@ import hudson.plugins.warnings.Messages;
  * A portlet that shows the warnings trend graph by priority.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public final class WarningsTotalsGraphPortlet extends AbstractTrendPortlet {
     /**
      * Creates a new instance of {@link WarningsTotalsGraphPortlet}.

@@ -8,6 +8,10 @@ import org.w3c.dom.Node;
 
 //CHECKSTYLE:OFF
 @SuppressWarnings({"PMD", "all"})
+/**
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
+ */
+@Deprecated
 public class XmlElementUtil {
 
 	private XmlElementUtil()  {

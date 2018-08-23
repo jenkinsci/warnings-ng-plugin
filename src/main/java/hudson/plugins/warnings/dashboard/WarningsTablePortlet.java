@@ -19,7 +19,9 @@ import hudson.plugins.warnings.WarningsProjectAction;
  * A portlet that shows a table with the number of warnings in a job.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public class WarningsTablePortlet extends AbstractWarningsTablePortlet {
     private final ActionSelector actionSelector;
 

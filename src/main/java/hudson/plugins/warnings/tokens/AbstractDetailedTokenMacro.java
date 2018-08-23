@@ -15,7 +15,9 @@ import org.apache.commons.lang.StringUtils;
  * build result.
  *
  * @author Benedikt Spranger
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public abstract class AbstractDetailedTokenMacro extends AbstractTokenMacro {
 
     public AbstractDetailedTokenMacro(String tokenName, Class<? extends ResultAction<? extends BuildResult>>... resultActions) {

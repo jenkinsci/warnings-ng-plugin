@@ -16,7 +16,9 @@ import hudson.plugins.warnings.WarningsProjectAction;
  * A portlet that shows the warnings of the last build by user and priority.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public final class WarningsUserGraphPortlet extends AbstractWarningsGraphPortlet {
     /**
      * Creates a new instance of {@link WarningsUserGraphPortlet}.

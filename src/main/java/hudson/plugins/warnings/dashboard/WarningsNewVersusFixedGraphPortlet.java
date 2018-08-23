@@ -15,7 +15,9 @@ import hudson.plugins.warnings.Messages;
  * A portlet that shows the warnings trend graph of fixed versus new warnings.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by classes of io.jenkins.plugins.analysis package
  */
+@Deprecated
 public final class WarningsNewVersusFixedGraphPortlet extends AbstractTrendPortlet {
     /**
      * Creates a new instance of {@link WarningsNewVersusFixedGraphPortlet}.
