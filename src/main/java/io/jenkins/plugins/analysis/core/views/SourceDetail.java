@@ -137,7 +137,7 @@ public class SourceDetail implements ModelObject {
 
         BufferedReader reader = new BufferedReader(sourceFileReader);
 
-        List<LineRange> ranges = issue.getLineRanges();
+        List<LineRange> ranges = new ArrayList<LineRange>(); //issue.getLineRanges(); //There are only one line highlight at the time for the moment.
         if(ranges.size() == 0) {
             ranges.add(new LineRange(issue.getLineStart(), issue.getLineEnd()));
         }
@@ -170,7 +170,7 @@ public class SourceDetail implements ModelObject {
             writer.append(line);
             writer.append("\n");
 
-            /** Clode highlight block with bug description **/
+            /** Code highlight block with bug description **/
             if(activeRange != null) {
                 if (lineNumber == activeRange.getEnd()) { //Closing active block
 
@@ -181,9 +181,10 @@ public class SourceDetail implements ModelObject {
 
                     if(!description.equals("")) { //Issue that has a detailed description
 
+                        int id = lineNumber; //Line number used as unique ID
                         writer.append("<div class=\"analysis-warning\">\n" +
-                                "    <input class=\"collapse-open\" type=\"checkbox\" id=\"collapse-1\"/>\n" +
-                                "    <label class=\"collapse-btn\" for=\"collapse-1\">\n" +
+                                "    <input class=\"collapse-open\" type=\"checkbox\" id=\"collapse-"+id+"\"/>\n" +
+                                "    <label class=\"collapse-btn\" for=\"collapse-"+id+"\">\n" +
                                 "        <i class=\"fas fa-exclamation-triangle\"></i>\n" +
                                 "        <span class=\"analysis-warning-title\">" + issue.getMessage() + "</span>\n" +
                                 "    </label>\n" +
