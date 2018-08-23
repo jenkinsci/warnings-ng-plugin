@@ -1,11 +1,11 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:u="/util" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form">
 
   <f:section title="${%Groovy Based Warnings Parsers}">
     <j:choose>
       <j:when test="${descriptor.canEditParsers()}">
         <f:entry title="${%Parsers}" description="${%title.description}">
-          <u:repeatable field="parsers"/>
+          <i:repeatable field="parsers"/>
         </f:entry>
       </j:when>
       <j:otherwise>

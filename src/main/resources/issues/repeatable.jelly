@@ -1,0 +1,37 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
+         xmlns:f="/lib/form">
+
+  <st:documentation> <![CDATA[
+    Wraps a <f:repeatableProperty> with an additional <div> in order to simplify UI testing.
+  ]]>
+
+    <st:attribute name="field">
+      Used for the data binding.
+    </st:attribute>
+    <st:attribute name="default">
+      The default value to use for this collection when 'instance[field]' is null.
+    </st:attribute>
+    <st:attribute name="noAddButton">
+      true if the default 'add' button (that adds a new copy) shouldn't be displayed.
+      When you use this attribute,
+    </st:attribute>
+    <st:attribute name="add">
+      If specified, this text will replace the standard "Add" text.
+    </st:attribute>
+    <st:attribute name="minimum">
+      At least provide this number of copies initially.
+      minimum="1" is useful to make sure there's always at least one entry for the user to fill in.
+    </st:attribute>
+    <st:attribute name="header">
+      For each item, add this header.
+      This also activates drag&amp;drop (where the header is a grip).
+    </st:attribute>
+
+  </st:documentation>
+
+  <div id="${field}">
+    <f:repeatableProperty field="${field}"/>
+  </div>
+
+</j:jelly>
