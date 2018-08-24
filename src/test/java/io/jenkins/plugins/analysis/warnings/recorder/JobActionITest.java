@@ -14,6 +14,7 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.views.JobAction;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 
 import hudson.model.FreeStyleProject;
@@ -26,7 +27,6 @@ import hudson.model.Run;
  * @author Nikolai Wohlgemuth
  * @author Ullrich Hafner
  */
-// TODO: increase branch coverage
 public class JobActionITest extends AbstractIssuesRecorderITest {
     /**
      * Verifies that the trend chart is visible if there are two valid builds available.
@@ -53,13 +53,69 @@ public class JobActionITest extends AbstractIssuesRecorderITest {
         assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
     }
 
+    /**
+     * Verifies that the side bar link is not missing if there are no issues in the latest build.
+     */
+    @Test
+    public void shouldHaveSidebarLinkEvenWhenLastActionHasNoResults() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
+        enableWarnings(project, new ToolConfiguration(new Eclipse(), "**/no-valid-pattern"));
+
+        AnalysisResult emptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(emptyResult).hasTotalSize(0);
+
+        JobAction jobAction = project.getAction(JobAction.class);
+        assertThat(jobAction).isNotNull();
+
+        HtmlPage jobPage = getWebPage(project);
+
+        assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, emptyResult.getOwner());
+    }
+
+    /**
+     * Verifies that the actions are correctly picked if there are two different analysis tools used.
+     */
+    @Test
+    public void shouldChooseCorrectResultsForTwoTools() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
+        enableWarnings(project,
+                new ToolConfiguration(new CheckStyle(), "nothing.found"),
+                createGenericToolConfiguration(new Eclipse()));
+
+        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+
+        List<ResultAction> resultActions = build.getActions(ResultAction.class);
+        assertThat(resultActions).hasSize(2);
+
+        List<JobAction> jobActions = project.getActions(JobAction.class);
+        assertThat(jobActions).hasSize(2);
+
+        JobAction checkstyle;
+        JobAction eclipse;
+
+        if (jobActions.get(0).getUrlName().equals("checkstyle")) {
+            checkstyle = jobActions.get(0);
+            eclipse = jobActions.get(1);
+        }
+        else {
+            checkstyle = jobActions.get(1);
+            eclipse = jobActions.get(0);
+        }
+
+        assertThat(checkstyle.getOwner()).isSameAs(project);
+        assertThat(checkstyle.getIconFileName()).contains("checkstyle-24x24");
+
+        assertThat(eclipse.getOwner()).isSameAs(project);
+        assertThat(eclipse.getIconFileName()).contains("analysis-24x24");
+    }
+
     private void assertThatSidebarLinkIsVisibleAndOpensLatestResults(final HtmlPage jobPage, final Run<?, ?> build) {
         StaticAnalysisLabelProvider labelProvider = new Eclipse().getLabelProvider();
         assertThat(findImageLinks(jobPage)).hasSize(1);
         List<DomElement> sideBarLinks = findSideBarLinks(jobPage);
         assertThat(sideBarLinks).hasSize(1);
-        assertThat(clickOnLink(sideBarLinks.get(0)).getBaseURI())
-                .endsWith(build.getUrl() + labelProvider.getResultUrl() + "/");
+        HtmlPage results = clickOnLink(sideBarLinks.get(0));
+        assertThat(results.getBaseURI()).endsWith(build.getUrl() + labelProvider.getId() + "/");
     }
 
     private void assertThatTrendChartIsVisible(final HtmlPage jobPage) {
@@ -94,35 +150,6 @@ public class JobActionITest extends AbstractIssuesRecorderITest {
         assertThat(jobAction.getUrlName()).isEqualTo(labelProvider.getId());
         assertThat(jobAction.getOwner()).isEqualTo(project);
         assertThat(jobAction.getIconFileName()).endsWith(labelProvider.getSmallIconUrl());
-        assertThat(jobAction.hasValidResults()).isTrue();
-        assertThat(jobAction.getLastAction()).isEqualTo(resultAction);
-        assertThat(jobAction.getLastFinishedRun()).isEqualTo(build);
-    }
-
-    /**
-     * Verifies that the side bar link is missing (i.e. the image URL is null) if there are no issues in the latest
-     * build.
-     */
-    @Test
-    public void shouldHaveNoSidebarLinkWhenLastActionHasNoResults() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        IssuesRecorder recorder = enableEclipseWarnings(project);
-
-        AnalysisResult nonEmptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        assertThat(nonEmptyResult).hasTotalSize(8);
-
-        recorder.setTool(new ToolConfiguration(new Eclipse(), "**/no-valid-pattern"));
-
-        AnalysisResult emptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        assertThat(emptyResult).hasTotalSize(0);
-
-        JobAction jobAction = project.getAction(JobAction.class);
-        assertThat(jobAction).isNotNull();
-
-        HtmlPage jobPage = getWebPage(project);
-        assertThat(jobAction.getIconFileName()).isNull();
-        assertThat(findImageLinks(jobPage)).isEmpty();
-        assertThat(findSideBarLinks(jobPage)).isEmpty();
     }
 
     private List<DomElement> findSideBarLinks(final HtmlPage jobPage) {

@@ -198,6 +198,11 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
     }
 
     @Override
+    public String toString() {
+        return String.format("%s - %s", jobResultEvaluationMode, qualityGateEvaluationMode);
+    }
+
+    @Override
     @Nonnull
     public Iterator<AnalysisResult> iterator() {
         return new AnalysisResultIterator(baseline, selector);

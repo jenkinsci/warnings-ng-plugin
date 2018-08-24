@@ -67,6 +67,8 @@
           </div>
 
           <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
+          
+          <script type="text/javascript" src="${resURL}/plugin/warnings/js/no-prototype.js"/>
 
         </div>
 

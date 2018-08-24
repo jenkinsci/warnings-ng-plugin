@@ -108,7 +108,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public String getUrlName() {
-        return getLabelProvider().getResultUrl();
+        return getLabelProvider().getId();
     }
 
     @Override 

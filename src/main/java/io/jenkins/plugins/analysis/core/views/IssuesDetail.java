@@ -125,7 +125,7 @@ public class IssuesDetail implements ModelObject {
     public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
             final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
         this(owner, result, result.getIssues(), result.getNewIssues(), result.getOutstandingIssues(),
-                result.getFixedIssues(), labelProvider.getLinkName(), labelProvider.getResultUrl(),
+                result.getFixedIssues(), labelProvider.getLinkName(), labelProvider.getId(),
                 labelProvider, sourceEncoding);
         infoMessages.addAll(result.getInfoMessages().castToList());
         errorMessages.addAll(result.getErrorMessages().castToList());
@@ -157,7 +157,7 @@ public class IssuesDetail implements ModelObject {
      * @return the remote API
      */
     public Api getApi() {
-        if (getUrl().endsWith(labelProvider.getResultUrl())) {
+        if (getUrl().endsWith(labelProvider.getId())) {
             return new Api(new AnalysisResultApi(result));
         }
         return new Api(new ReportApi(getIssues()));

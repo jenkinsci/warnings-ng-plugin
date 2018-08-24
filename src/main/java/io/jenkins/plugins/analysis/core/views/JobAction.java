@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.views;
 import javax.annotation.CheckForNull;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -72,7 +73,7 @@ public class JobAction implements Action {
         return labelProvider.getLinkName();
     }
 
-    /**
+    /**Dry
      * Returns the title of the trend graph.
      *
      * @return the title of the trend graph.
@@ -86,9 +87,65 @@ public class JobAction implements Action {
      *
      * @return the job
      */
-    public final Job<?, ?> getOwner() {
+    public Job<?, ?> getOwner() {
         return owner;
     }
+
+    private AnalysisHistory createBuildHistory() {
+        Run<?, ?> lastFinishedRun = owner.getLastCompletedBuild();
+        if (lastFinishedRun == null) {
+            return new NullAnalysisHistory();
+        }
+        else {
+            return new AnalysisHistory(lastFinishedRun, new ByIdResultSelector(labelProvider.getId()));
+        }
+    }
+
+    /**
+     * Returns the icon URL for the side-panel in the job screen. If there is no valid result yet, then {@code null} is
+     * returned.
+     *
+     * @return the icon URL for the side-panel in the job screen
+     */
+    @Override @CheckForNull
+    public String getIconFileName() {
+        return createBuildHistory().getBaselineResult()
+                .map(result -> Jenkins.RESOURCE_PATH + labelProvider.getSmallIconUrl())
+                .orElse(null);
+    }
+
+    @Override
+    public String getUrlName() {
+        return labelProvider.getId();
+    }
+
+    /**
+     * Redirects the index page to the last result.
+     *
+     * @param request
+     *         Stapler request
+     * @param response
+     *         Stapler response
+     *
+     * @throws IOException
+     *         in case of an error
+     */
+    public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
+        Optional<ResultAction> action = createBuildHistory().getBaselineAction();
+        if (action.isPresent()) {
+            response.sendRedirect2(String.format("../%d/%s", action.get().getOwner().getNumber(), 
+                    labelProvider.getId()));
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s (%s)", getClass().getName(), labelProvider.getName());
+    }
+
+    // ----------------------------------------------------------------
+    // ------------------------ Trend Charts --------------------------
+    // ----------------------------------------------------------------
 
     /**
      * Returns the graph configuration view for the associated job. If the requested link is neither the user graph
@@ -269,16 +326,6 @@ public class JobAction implements Action {
                 getUrlName(), createBuildHistory(), labelProvider.getToolTipProvider(), healthDescriptor);
     }
 
-    private AnalysisHistory createBuildHistory() {
-        Run<?, ?> lastFinishedRun = getLastFinishedRun();
-        if (lastFinishedRun == null) {
-            return new NullAnalysisHistory();
-        }
-        else {
-            return new AnalysisHistory(lastFinishedRun, new ByIdResultSelector(labelProvider.getId()));
-        }
-    }
-
     /**
      * Creates the graph configuration.
      *
@@ -318,102 +365,5 @@ public class JobAction implements Action {
      */
     protected GraphConfiguration createConfiguration(final List<BuildResultGraph> availableGraphs) {
         return new GraphConfiguration(availableGraphs);
-    }
-
-    /**
-     * Returns the icon URL for the side-panel in the job screen. If there is no valid result yet, then {@code null} is
-     * returned.
-     *
-     * @return the icon URL for the side-panel in the job screen
-     */
-    @Override
-    public String getIconFileName() {
-        ResultAction lastAction = getLastAction();
-        if (lastAction != null && lastAction.getResult().getTotalSize() > 0) {
-            return Jenkins.RESOURCE_PATH + labelProvider.getSmallIconUrl();
-        }
-        return null;
-    }
-
-    @Override
-    public String getUrlName() {
-        return labelProvider.getId();
-    }
-
-    /**
-     * Returns whether this owner has a valid result action attached.
-     *
-     * @return {@code true} if the results are valid
-     */
-    // FIXME: how can this be false?
-    public boolean hasValidResults() {
-        return getLastAction() != null;
-    }
-
-    /**
-     * Returns the last valid result action.
-     *
-     * @return the last valid result action, or {@code null} if no such action is found
-     */
-    @CheckForNull
-    // FIXME: Optional
-    public ResultAction getLastAction() {
-        Run<?, ?> lastRun = getLastFinishedRun();
-        if (lastRun == null) {
-            return null;
-        }
-        else {
-            return getResultAction(lastRun);
-        }
-    }
-
-    /**
-     * Returns the result action for the specified build.
-     *
-     * @param lastRun
-     *         the build to get the action for
-     *
-     * @return the action or {@code null} if there is no such action
-     */
-    @CheckForNull
-    protected ResultAction getResultAction(final Run<?, ?> lastRun) {
-        return lastRun.getAction(ResultAction.class);
-    }
-
-    /**
-     * Returns the last finished run.
-     *
-     * @return the last finished run or {@code null} if there is no such run
-     */
-    @CheckForNull
-    public Run<?, ?> getLastFinishedRun() {
-        Run<?, ?> lastRun = owner.getLastBuild();
-        while (lastRun != null && (lastRun.isBuilding() || getResultAction(lastRun) == null)) {
-            lastRun = lastRun.getPreviousBuild();
-        }
-        return lastRun;
-    }
-
-    /**
-     * Redirects the index page to the last result.
-     *
-     * @param request
-     *         Stapler request
-     * @param response
-     *         Stapler response
-     *
-     * @throws IOException
-     *         in case of an error
-     */
-    public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        Run<?, ?> lastRun = getLastFinishedRun();
-        if (lastRun != null) {
-            response.sendRedirect2(String.format("../%d/%s", lastRun.getNumber(), labelProvider.getResultUrl()));
-        }
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s (%s)", getClass().getName(), labelProvider.getName());
     }
 }

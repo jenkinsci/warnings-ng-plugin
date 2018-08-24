@@ -203,7 +203,7 @@ public class AbstractIssuesRecorderITest extends IntegrationTestWithJenkinsPerTe
         return enableWarnings(job, configuration, createGenericToolConfiguration(tool));
     }
 
-    private ToolConfiguration createGenericToolConfiguration(final StaticAnalysisTool tool) {
+    protected ToolConfiguration createGenericToolConfiguration(final StaticAnalysisTool tool) {
         return new ToolConfiguration(tool, "**/*issues.txt");
     }
 

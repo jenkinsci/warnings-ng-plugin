@@ -38,7 +38,6 @@ class StaticAnalysisLabelProviderTest {
         assertThat(labelProvider).hasName(NAME);
         assertThat(labelProvider.getLinkName()).contains(NAME);
         assertThat(labelProvider.getTrendName()).contains(NAME);
-        assertThat(labelProvider.getResultUrl()).contains(ID);
         
         labelProvider.setName(OTHER_NAME);
         assertThat(labelProvider).hasName(OTHER_NAME);

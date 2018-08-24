@@ -347,15 +347,6 @@ public class StaticAnalysisLabelProvider {
     }
 
     /**
-     * Returns the URL to the view that shows the results for the tool.
-     *
-     * @return absolute URL
-     */
-    public String getResultUrl() {
-        return getId() + "Result";
-    }
-
-    /**
      * Returns the title for the small information box in the corresponding build page.
      *
      * @param result
@@ -369,7 +360,7 @@ public class StaticAnalysisLabelProvider {
         String icon = hasErrors ? "fa-exclamation-triangle" : "fa-info-circle";
         return div(join(getName() + ": ",
                 getWarningsCount(result),
-                a().withHref(getResultUrl() + "/info").with(i().withClasses("fa", icon))))
+                a().withHref(getId() + "/info").with(i().withClasses("fa", icon))))
                 .withId(id + "-title");
     }
 
@@ -384,7 +375,7 @@ public class StaticAnalysisLabelProvider {
     // TODO: Make messages overridable
     public ContainerTag getNewIssuesLabel(final int newSize) {
         return a(newSize == 1 ? Messages.Tool_OneNewWarning() : Messages.Tool_MultipleNewWarnings(newSize))
-                .withHref(getResultUrl() + "/new");
+                .withHref(getId() + "/new");
     }
 
     /**
@@ -397,7 +388,7 @@ public class StaticAnalysisLabelProvider {
      */
     public ContainerTag getFixedIssuesLabel(final int fixedSize) {
         return a(fixedSize == 1 ? Messages.Tool_OneFixedWarning() : Messages.Tool_MultipleFixedWarnings(fixedSize))
-                .withHref(getResultUrl() + "/fixed");
+                .withHref(getId() + "/fixed");
     }
 
     /**
@@ -430,7 +421,7 @@ public class StaticAnalysisLabelProvider {
     }
 
     private ContainerTag linkToIssues(final String linkText) {
-        return a(linkText).withHref(getResultUrl());
+        return a(linkText).withHref(getId());
     }
 
     /**
@@ -458,7 +449,7 @@ public class StaticAnalysisLabelProvider {
     }
 
     private ContainerTag createReferenceBuildLink(final Run<?, ?> referenceBuild) {
-        String absoluteUrl = jenkins.getAbsoluteUrl(referenceBuild.getUrl(), getResultUrl());
+        String absoluteUrl = jenkins.getAbsoluteUrl(referenceBuild.getUrl(), getId());
         return a(referenceBuild.getFullDisplayName()).withHref(absoluteUrl);
     }
 
