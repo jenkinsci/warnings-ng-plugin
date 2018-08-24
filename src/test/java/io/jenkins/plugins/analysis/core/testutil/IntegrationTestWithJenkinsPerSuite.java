@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import org.junit.Rule;
+import org.junit.ClassRule;
 import org.jvnet.hudson.test.JenkinsRule;
 
 /**
@@ -9,12 +9,13 @@ import org.jvnet.hudson.test.JenkinsRule;
  *
  * @author Ullrich Hafner
  */
-public class IntegrationTestWithJenkinsPerSuite extends IntegrationTest {
-    @Rule
-    public final JenkinsRule jenkinsPerTest = new JenkinsRule();
+public abstract class IntegrationTestWithJenkinsPerSuite extends IntegrationTest {
+    /** Jenkins rule per suite. */
+    @ClassRule
+    public static final JenkinsRule JENKINS_PER_SUITE = new JenkinsRule();
 
     @Override
     protected JenkinsRule getJenkins() {
-        return jenkinsPerTest;
+        return JENKINS_PER_SUITE;
     }
 }
