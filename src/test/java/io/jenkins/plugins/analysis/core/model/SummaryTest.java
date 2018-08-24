@@ -46,7 +46,7 @@ class SummaryTest {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
-        assertThat(createdHtml).contains("<a href=\"testResult/info\"><i class=\"fa fa-info-circle\"></i>");
+        assertThat(createdHtml).contains("<a href=\"test/info\"><i class=\"fa fa-info-circle\"></i>");
     }
 
     /**
@@ -120,7 +120,7 @@ class SummaryTest {
         when(analysisResult.getTotalSize()).thenReturn(1);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContain("No warnings for");
-        assertThat(createdHtml).contains("<a href=\"testResult\">One warning</a>");
+        assertThat(createdHtml).contains("<a href=\"test\">One warning</a>");
     }
 
     /**
@@ -149,7 +149,7 @@ class SummaryTest {
                 EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).containsPattern(
-                createWarningsLink("<a href=\"testResult/new\">.*3 new warnings.*</a>"));
+                createWarningsLink("<a href=\"test/new\">.*3 new warnings.*</a>"));
     }
 
     /**
@@ -162,7 +162,7 @@ class SummaryTest {
                 EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContainPattern(
-                createWarningsLink("<a href=\"testResult/new\">.* new warnings.*</a>"));
+                createWarningsLink("<a href=\"test/new\">.* new warnings.*</a>"));
     }
 
     /**
@@ -174,7 +174,7 @@ class SummaryTest {
                 EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).containsPattern(
-                createWarningsLink("<a href=\"testResult/fixed\">.*5 fixed warnings.*</a>"));
+                createWarningsLink("<a href=\"test/fixed\">.*5 fixed warnings.*</a>"));
     }
 
     /**
@@ -186,7 +186,7 @@ class SummaryTest {
                 EMPTY_ERRORS, 0);
         String createdHtml = createTestData(analysisResult).create();
         assertThat(createdHtml).doesNotContainPattern(
-                createWarningsLink("<a href=\"testResult/fixed\">.* fixed warnings.*</a>"));
+                createWarningsLink("<a href=\"test/fixed\">.* fixed warnings.*</a>"));
     }
 
     /**
@@ -253,9 +253,9 @@ class SummaryTest {
         assertThat(actualSummary).contains("No warnings for 2 builds");
         assertThat(actualSummary).contains("since build <a href=\"../1\" class=\"model-link inside\">1</a>");
         assertThat(actualSummary).containsPattern(
-                createWarningsLink("<a href=\"testResult/new\">.*2 new warnings.*</a>"));
+                createWarningsLink("<a href=\"test/new\">.*2 new warnings.*</a>"));
         assertThat(actualSummary).containsPattern(
-                createWarningsLink("<a href=\"testResult/fixed\">.*2 fixed warnings.*</a>"));
+                createWarningsLink("<a href=\"test/fixed\">.*2 fixed warnings.*</a>"));
         assertThat(actualSummary).contains(
                 "Quality gate: <img src=\"color\" class=\"icon-blue\" alt=\"Success\" title=\"Success\"> Success");
         assertThat(actualSummary).contains("Reference build: <a href=\"absoluteUrl\">Job #15</a>");
