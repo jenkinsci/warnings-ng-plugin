@@ -24,28 +24,19 @@ public class MavenProjectQualityGateITest extends AbstractQualityGateITest<Maven
 
     @Override
     protected MavenModuleSet createProject() {
-        MavenModuleSet project = createJob();
+        MavenModuleSet project = createMavenJob();
         copyToWorkspace(project, "pom.xml");
         return project;
     }
 
     private void copyToWorkspace(final TopLevelItem job, final String... fileNames) {
         try {
-            FilePath workspace = j.jenkins.getWorkspaceFor(job);
+            FilePath workspace = getJenkins().jenkins.getWorkspaceFor(job);
             for (String fileName : fileNames) {
                 workspace.child(fileName).copyFrom(asInputStream(fileName));
             }
         }
         catch (IOException | InterruptedException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    private MavenModuleSet createJob() {
-        try {
-            return j.createProject(MavenModuleSet.class);
-        }
-        catch (IOException e) {
             throw new AssertionError(e);
         }
     }

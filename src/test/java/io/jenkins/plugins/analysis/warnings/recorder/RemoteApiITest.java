@@ -119,7 +119,7 @@ public class RemoteApiITest extends AbstractIssuesRecorderITest {
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
     @Test @WithTimeout(10000)
     public void shouldFindNewCheckStyleWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
         IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "**/checkstyle1*"));
         buildWithStatus(project, Result.SUCCESS);
         recorder.setTool(new ToolConfiguration(new CheckStyle(), "**/checkstyle2*"));
@@ -132,14 +132,14 @@ public class RemoteApiITest extends AbstractIssuesRecorderITest {
     }
 
     private Run<?, ?> buildCheckStyleJob() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CHECKSTYLE_FILE);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CHECKSTYLE_FILE);
         enableCheckStyleWarnings(project);
         return buildWithResult(project, Result.SUCCESS);
     }
 
     private Document callRemoteApi(final Run<?, ?> run, final String url) {
         try {
-            XmlPage page = j.createWebClient().goToXml(run.getUrl() + url);
+            XmlPage page = getJenkins().createWebClient().goToXml(run.getUrl() + url);
             return page.getXmlDocument();
         }
         catch (IOException | SAXException e) {

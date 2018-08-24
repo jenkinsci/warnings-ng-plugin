@@ -140,7 +140,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldCreateResultWithWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
         enableEclipseWarnings(project);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -158,7 +158,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldCreateUnstableResult() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
         enableEclipseWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
@@ -224,7 +224,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     }
 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
                 new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
                 new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
@@ -239,7 +239,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldHaveOriginsIfBuildContainsWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
         enableWarnings(project,
                 recorder -> {
                     recorder.setAggregatingResults(true);
@@ -285,7 +285,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     }
 
     private Run<?, ?> runJobWithCheckStyleTwice(final boolean isAggregationEnabled, final Result result) {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml", "checkstyle-twice.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "checkstyle-twice.xml");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
                 new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
                 new ToolConfiguration(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
@@ -300,7 +300,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldCreateFixedWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_8_Warnings.txt", "eclipse_5_Warnings.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_8_Warnings.txt", "eclipse_5_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
 
         // First build: baseline
@@ -335,7 +335,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldCreateNewWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_8_Warnings.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_8_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
 
         // First build: baseline
@@ -359,7 +359,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldCreateNoFixedWarningsOrNewWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_8_Warnings.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_8_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
 
         // First build: baseline
@@ -384,7 +384,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldCreateSomeNewWarningsAndSomeFixedWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_4_Warnings.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_4_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
 
         // First build: baseline
@@ -413,7 +413,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
     @Test
     public void shouldFindNewCheckStyleWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
 
         buildWithStatus(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
 
@@ -540,7 +540,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
     }
 
     private FreeStyleProject createCheckStyleProject(final boolean isEnabledForFailure) {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml");
         IssuesRecorder recorder = enableCheckStyleWarnings(project);
         recorder.setEnabledForFailure(isEnabledForFailure);
         return project;
@@ -559,7 +559,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldShowBaseNamesInFilesTab() {
-        FreeStyleProject job = createJobWithWorkspaceFiles("pmd-absolute-path.xml");
+        FreeStyleProject job = createFreeStyleProjectWithWorkspaceFiles("pmd-absolute-path.xml");
         IssuesRecorder recorder = enableWarnings(job, new Pmd());
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 

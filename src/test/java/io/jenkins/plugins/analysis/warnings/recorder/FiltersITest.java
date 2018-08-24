@@ -79,7 +79,7 @@ public class FiltersITest extends AbstractIssuesRecorderITest {
         Map<RegexpFilter, Integer[]> expectedLinesByFilter = setupCategoryFilterForCheckStyle();
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
-            FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle-filtering.xml");
+            FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml");
             enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new CheckStyle());
 
             buildAndVerifyResults(project, entry.getValue());
@@ -119,7 +119,7 @@ public class FiltersITest extends AbstractIssuesRecorderITest {
         Map<RegexpFilter, Integer[]> typeFiltersWithResult = setupCategoryFilterForPmd();
 
         for (Entry<RegexpFilter, Integer[]> entry : typeFiltersWithResult.entrySet()) {
-            FreeStyleProject project = createJobWithWorkspaceFiles("pmd-warnings.xml");
+            FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("pmd-warnings.xml");
             enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new Pmd());
 
             buildAndVerifyResults(project, entry.getValue());

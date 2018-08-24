@@ -10,7 +10,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProviderAssert.*;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import static org.mockito.Mockito.*;
 
 /**
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
-public class LabelProviderFactoryITest extends IntegrationTest {
+public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ANNOTATED_ID = "annotatedTool";
     private static final String PROVIDER_ID = "provider";
     private static final String UNDEFINED_ID = "undefined-id";

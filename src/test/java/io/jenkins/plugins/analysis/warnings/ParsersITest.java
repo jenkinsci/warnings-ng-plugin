@@ -11,6 +11,7 @@ import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
 /**
  * Integration tests of all parsers of the warnings plug-in in pipelines.
@@ -18,7 +19,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount"})
-public class ParsersITest extends PipelineITest {
+public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CODE_FRAGMENT = "<pre><code>#\n"
             + "\n"
             + "    ERROR HANDLING: N/A\n"

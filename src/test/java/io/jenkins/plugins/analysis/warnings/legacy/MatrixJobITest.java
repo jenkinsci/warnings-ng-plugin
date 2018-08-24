@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static hudson.Functions.*;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Resource;
 
 import hudson.matrix.AxisList;
@@ -35,7 +35,7 @@ import hudson.tasks.Shell;
  *
  * @author Ullrich Hafner
  */
-public class MatrixJobITest extends IntegrationTest {
+public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String WARNINGS_FILE = "matrix-warnings.txt";
 
     /**
@@ -51,7 +51,7 @@ public class MatrixJobITest extends IntegrationTest {
     public void shouldCreateIndividualAxisResults() throws Exception {
         Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
 
-        MatrixProject project = j.createProject(MatrixProject.class);
+        MatrixProject project = getJenkins().createProject(MatrixProject.class);
         enableWarnings(project);
 
         AxisList axis = new AxisList();
@@ -69,7 +69,7 @@ public class MatrixJobITest extends IntegrationTest {
 
         MatrixBuild build = project.scheduleBuild2(0).get();
         for (MatrixRun run : build.getRuns()) {
-            j.assertBuildStatus(Result.SUCCESS, run);
+            getJenkins().assertBuildStatus(Result.SUCCESS, run);
 
             AggregatedWarningsResultAction action = run.getAction(AggregatedWarningsResultAction.class);
 

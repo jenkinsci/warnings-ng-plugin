@@ -172,7 +172,7 @@ public class FilesScannerITest extends AbstractIssuesRecorderITest {
      */
     private FreeStyleProject createJobWithWorkspaceFile(final String importDirectory) {
         try {
-            FreeStyleProject job = j.createFreeStyleProject();
+            FreeStyleProject job = getJenkins().createFreeStyleProject();
             copyDirectoryToWorkspace(job, importDirectory);
 
             return job;

@@ -74,7 +74,7 @@ public class MatrixJobITest extends AbstractIssuesRecorderITest {
 
         MatrixBuild build = project.scheduleBuild2(0).get();
         for (MatrixRun run : build.getRuns()) {
-            j.assertBuildStatus(Result.SUCCESS, run);
+            getJenkins().assertBuildStatus(Result.SUCCESS, run);
 
             AnalysisResult result = getAnalysisResult(run);
 

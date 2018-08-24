@@ -23,7 +23,7 @@ import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
@@ -48,7 +48,7 @@ import hudson.util.DescribableList;
  *
  * @author Ullrich Hafner
  */
-public class AbstractIssuesRecorderITest extends IntegrationTest {
+public class AbstractIssuesRecorderITest extends IntegrationTestWithJenkinsPerTest {
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
     private static final String WINDOWS_FILE_DENY = "/deny";
 
@@ -156,7 +156,7 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
     }
 
     private WebClient createWebClient() {
-        WebClient webClient = j.createWebClient();
+        WebClient webClient = getJenkins().createWebClient();
         webClient.setJavaScriptEnabled(true);
         return webClient;
     }
@@ -179,7 +179,7 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
      *
      * @return the created job
      */
-    protected FreeStyleProject createJobWithWorkspaceFiles(final String... fileNames) {
+    protected FreeStyleProject createFreeStyleProjectWithWorkspaceFiles(final String... fileNames) {
         FreeStyleProject job = createFreeStyleProject();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
@@ -291,7 +291,7 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
     protected Run<?, ?> buildWithStatus(final FreeStyleProject job, final Result status) {
         try {
-            return j.assertBuildStatus(status, job.scheduleBuild2(0));
+            return getJenkins().assertBuildStatus(status, job.scheduleBuild2(0));
         }
         catch (Exception e) {
             throw new AssertionError(e);
@@ -369,7 +369,7 @@ public class AbstractIssuesRecorderITest extends IntegrationTest {
     }
 
     protected FilePath getWorkspaceFor(final TopLevelItem project) {
-        return j.jenkins.getWorkspaceFor(project);
+        return getJenkins().jenkins.getWorkspaceFor(project);
     }
 
     /**

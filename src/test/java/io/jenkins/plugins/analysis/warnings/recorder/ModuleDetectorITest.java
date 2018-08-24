@@ -478,9 +478,9 @@ public class ModuleDetectorITest extends AbstractIssuesRecorderITest {
             final boolean appendNonExistingFile, final String path)
             throws IOException {
         for (int i = 1; i <= modulePaths; i++) {
-            String sampleClassDummyName = j.jenkins.getWorkspaceFor(project) + "/m" + i + "/SampleClass-issues.txt";
+            String sampleClassDummyName = getJenkins().jenkins.getWorkspaceFor(project) + "/m" + i + "/SampleClass-issues.txt";
             PrintWriter writer = new PrintWriter(
-                    new FileOutputStream((j.jenkins.getWorkspaceFor(project) + path), true));
+                    new FileOutputStream((getJenkins().jenkins.getWorkspaceFor(project) + path), true));
             writer.println("[javac] " + i + ". WARNING in " + sampleClassDummyName + " (at line 42)");
             writer.println("[javac] Sample Message");
             writer.println("[javac] ^^^^^^^^^^^^^^^^^^");
@@ -490,7 +490,7 @@ public class ModuleDetectorITest extends AbstractIssuesRecorderITest {
 
         if (appendNonExistingFile) {
             PrintWriter writer = new PrintWriter(
-                    new FileOutputStream((j.jenkins.getWorkspaceFor(project) + path), true));
+                    new FileOutputStream((getJenkins().jenkins.getWorkspaceFor(project) + path), true));
             writer.println("[javac] NOT_EXISTING X. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)");
             writer.println("[javac] Sample Message");
             writer.println("[javac] ^^^^^^^^^^^^^^^^^^");
@@ -500,7 +500,7 @@ public class ModuleDetectorITest extends AbstractIssuesRecorderITest {
     }
 
     private WebClient createWebClient(final boolean javaScriptEnabled) {
-        WebClient webClient = j.createWebClient();
+        WebClient webClient = getJenkins().createWebClient();
         webClient.setJavaScriptEnabled(javaScriptEnabled);
         return webClient;
     }

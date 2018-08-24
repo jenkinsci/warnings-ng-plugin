@@ -22,6 +22,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
@@ -36,7 +37,7 @@ import hudson.util.HttpResponses;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-public class StepsITest extends PipelineITest {
+public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Creates a JenkinsFile with parallel steps and aggregates the warnings.
      */
@@ -229,7 +230,7 @@ public class StepsITest extends PipelineITest {
     public void shouldUseOtherJobAsReference() {
         WorkflowJob reference = createJob("reference");
         copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
-        reference.setDefinition(asStage(createScanForIssuesStep(Java.class), PUBLISH_ISSUES_STEP));
+        reference.setDefinition(parseAndPublish(Java.class));
 
         AnalysisResult referenceResult = scheduleBuild(reference, Java.class);
 
@@ -281,7 +282,7 @@ public class StepsITest extends PipelineITest {
 
             scheduleBuild(job, tool);
 
-            YouCannotTriggerMe urlHandler = j.jenkins.getExtensionList(UnprotectedRootAction.class)
+            YouCannotTriggerMe urlHandler = getJenkins().jenkins.getExtensionList(UnprotectedRootAction.class)
                     .get(YouCannotTriggerMe.class);
             assertThat(urlHandler).isNotNull();
 
@@ -292,7 +293,7 @@ public class StepsITest extends PipelineITest {
 
     private void write(final String adaptedOobFileContent) {
         try {
-            File userContentDir = new File(j.jenkins.getRootDir(), "userContent");
+            File userContentDir = new File(getJenkins().jenkins.getRootDir(), "userContent");
             Files.write(new File(userContentDir, "oob.xml").toPath(), adaptedOobFileContent.getBytes());
         }
         catch (IOException e) {
@@ -302,7 +303,7 @@ public class StepsITest extends PipelineITest {
 
     private String getUrl(final String relative) {
         try {
-            return j.getURL() + relative;
+            return getJenkins().getURL() + relative;
         }
         catch (IOException e) {
             throw new AssertionError(e);

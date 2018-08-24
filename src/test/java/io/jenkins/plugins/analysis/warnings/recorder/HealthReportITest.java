@@ -137,7 +137,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
      * @return a healthReport under test
      */
     private HealthReport createHealthReportTestSetupEclipse(final int health, final int unhealthy) {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse-healthReport.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse-healthReport.txt");
         enableWarnings(project, publisher -> {
                     publisher.setHealthy(health);
                     publisher.setUnhealthy(unhealthy);
@@ -153,7 +153,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
      * @return a healthReport under test
      */
     private HealthReport createHealthReportTestSetupCheckstyle(final Priority priority) {
-        FreeStyleProject project = createJobWithWorkspaceFiles("checkstyle-healthReport.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-healthReport.xml");
         enableWarnings(project, publisher -> {
                     publisher.setHealthy(10);
                     publisher.setUnhealthy(15);
@@ -179,7 +179,7 @@ public class HealthReportITest extends AbstractIssuesRecorderITest {
     private HealthReport scheduleBuildToGetHealthReportAndAssertStatus(final FreeStyleProject job,
             final Result status) {
         try {
-            FreeStyleBuild build = j.assertBuildStatus(status, job.scheduleBuild2(0));
+            FreeStyleBuild build = getJenkins().assertBuildStatus(status, job.scheduleBuild2(0));
 
             getAnalysisResult(build);
             

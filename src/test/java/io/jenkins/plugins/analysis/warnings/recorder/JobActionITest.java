@@ -33,7 +33,7 @@ public class JobActionITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldShowTrendChart() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
         enableEclipseWarnings(project);
 
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
@@ -105,7 +105,7 @@ public class JobActionITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldHaveNoSidebarLinkWhenLastActionHasNoResults() {
-        FreeStyleProject project = createJobWithWorkspaceFiles("eclipse.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
         IssuesRecorder recorder = enableEclipseWarnings(project);
 
         AnalysisResult nonEmptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);

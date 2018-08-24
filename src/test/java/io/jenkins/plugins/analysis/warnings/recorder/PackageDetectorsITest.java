@@ -385,7 +385,7 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     }
 
     private WebClient createWebClient(final boolean javaScriptEnabled) {
-        WebClient webClient = j.createWebClient();
+        WebClient webClient = getJenkins().createWebClient();
         webClient.setJavaScriptEnabled(javaScriptEnabled);
         return webClient;
     }

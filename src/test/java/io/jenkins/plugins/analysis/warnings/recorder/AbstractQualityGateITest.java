@@ -14,7 +14,7 @@ import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
@@ -33,7 +33,8 @@ import hudson.model.TopLevelItem;
  *
  * @author Michaela Reitschuster
  */
-public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLevelItem> extends IntegrationTest {
+public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLevelItem> extends
+        IntegrationTestWithJenkinsPerTest {
     private static final Map<Result, QualityGateStatus> RESULT_TO_STATUS_MAPPING = Maps.fixedSize.of(
             Result.UNSTABLE, QualityGateStatus.WARNING,
             Result.FAILURE, QualityGateStatus.FAILED);
@@ -254,7 +255,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     @SuppressWarnings("illegalcatch")
     private void scheduleBuildAndAssertStatus(final AbstractProject job, final Result result, final QualityGateStatus qualityGateStatus) {
         try {
-            Run build = j.assertBuildStatus(result, job.scheduleBuild2(0));
+            Run build = getJenkins().assertBuildStatus(result, job.scheduleBuild2(0));
             ResultAction action = build.getAction(ResultAction.class);
             assertThat(action.getResult()).hasQualityGateStatus(qualityGateStatus);
         }

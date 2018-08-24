@@ -8,7 +8,7 @@ import org.junit.Test;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class ParserConfigurationITest extends IntegrationTest {
+public class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
     /** Verifies that there is no parser defined and one factory. */
     @Test
     public void shouldHaveNoParsersAndOneProviderConfiguredWhenCreated() {

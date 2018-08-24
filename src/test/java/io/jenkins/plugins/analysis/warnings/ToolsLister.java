@@ -12,14 +12,14 @@ import org.junit.Test;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
 /**
  * Utility to create a report with all available tools.
  *
  * @author Ullrich Hafner
  */
-public class ToolsLister extends IntegrationTest {
+public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Creates the TOOLS.md file, that lists all registered tools.
      *
@@ -29,7 +29,7 @@ public class ToolsLister extends IntegrationTest {
     @Test
     public void shouldPrintAllRegisteredTools() throws IOException {
         ArrayList<StaticAnalysisToolDescriptor> descriptors = new ArrayList<>(
-                j.getInstance().getDescriptorList(StaticAnalysisTool.class));
+                getJenkins().getInstance().getDescriptorList(StaticAnalysisTool.class));
         descriptors.sort(Comparator.comparing(d -> d.getLabelProvider().getName()));
 
         try (FileWriter fileWriter = new FileWriter("SUPPORTED-FORMATS.md")) {

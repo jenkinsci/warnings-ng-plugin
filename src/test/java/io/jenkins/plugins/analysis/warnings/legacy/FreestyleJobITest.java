@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 
 import org.junit.Test;
 
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import static org.assertj.core.api.Assertions.*;
 
 import hudson.model.FreeStyleProject;
@@ -16,11 +16,11 @@ import hudson.plugins.warnings.ParserConfiguration;
 import hudson.plugins.warnings.WarningsPublisher;
 
 /**
- * Integration tests of the warnings plug-in in freestyle jobs.
+ * Integration tests of the warnings plug-in 4.x in freestyle jobs.
  *
  * @author Ullrich Hafner
  */
-public class FreestyleJobITest extends IntegrationTest {
+public class FreestyleJobITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
      */
@@ -106,5 +106,4 @@ public class FreestyleJobITest extends IntegrationTest {
 
         return action.getResult();
     }
-
 }

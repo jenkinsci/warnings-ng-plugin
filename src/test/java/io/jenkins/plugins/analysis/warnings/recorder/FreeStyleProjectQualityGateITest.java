@@ -13,7 +13,7 @@ public class FreeStyleProjectQualityGateITest extends AbstractQualityGateITest<F
     @Override
     protected FreeStyleProject createProject() {
         try {
-            return j.createFreeStyleProject();
+            return getJenkins().createFreeStyleProject();
         }
         catch (IOException e) {
             throw new AssertionError(e);

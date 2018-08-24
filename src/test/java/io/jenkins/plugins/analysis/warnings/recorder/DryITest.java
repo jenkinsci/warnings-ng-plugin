@@ -43,7 +43,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldHaveDuplicateCodeWarnings() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         enableWarnings(project, new Cpd());
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -58,7 +58,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void priorityShouldChangeIfThresholdsChange() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
         enableWarnings(project, cpd);
@@ -75,7 +75,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
 
     @Test
     public void priorityShouldChangeIfThresholdsChangeSimian() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(SIMIAN_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(SIMIAN_REPORT);
         Simian simian = new Simian();
         simian.setNormalThreshold(1);
         enableWarnings(project, simian);
@@ -90,7 +90,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void priorityLinksShouldOpenFilteredSite() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -118,7 +118,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void sourceCodeLinksShouldWork() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         copySingleFileToWorkspace(project, FOLDER + "Main.source", "Main.java");
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
@@ -144,7 +144,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void tableShouldHaveExpectedStructureWithPo() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         enableWarnings(project, cpd);
 
@@ -171,7 +171,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void firstTableRowShouldHaveRightContent() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -207,7 +207,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void duplicateCodeLinesShouldBeOfRightAmount() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
@@ -231,7 +231,7 @@ public class DryITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldDifferInAmountOfDuplicateWarningForPriorities() {
-        FreeStyleProject project = createJobWithWorkspaceFiles(CPD_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         enableWarnings(project, cpd);
 
