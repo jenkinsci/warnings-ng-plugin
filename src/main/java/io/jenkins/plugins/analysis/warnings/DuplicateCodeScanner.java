@@ -197,9 +197,11 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
          *
          * @return the validation result
          */
+        // TODO: see JENKINS-50355
         public FormValidation doCheckHighThreshold(@QueryParameter final int highThreshold,
                 @QueryParameter final int normalThreshold) {
-            return VALIDATION.validateHigh(highThreshold, normalThreshold);
+//            return VALIDATION.validateHigh(highThreshold, normalThreshold);
+            return FormValidation.ok();
         }
 
         /**
@@ -212,9 +214,11 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
          *
          * @return the validation result
          */
+        // TODO: see JENKINS-50355
         public FormValidation doCheckNormalThreshold(@QueryParameter final int highThreshold,
                 @QueryParameter final int normalThreshold) {
-            return VALIDATION.validateNormal(highThreshold, normalThreshold);
+//            return VALIDATION.validateNormal(highThreshold, normalThreshold);
+            return FormValidation.ok();
         }
     }
 
