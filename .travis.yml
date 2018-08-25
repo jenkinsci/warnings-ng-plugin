@@ -1,5 +1,20 @@
+env:
+  global:
+  - secure: "TqXeMA6pcktyfeoSX7th8EZyl7Gr/+DwDaRznTsW1sHoQF0UtTXyd8lkNMXMKlbnwZVIv2DQ3JxM9dBkoRlusLcRANcUIdpY4nd9so2zQfFWOhST6Vdyf0jb9s/TSIbJxMPuM7ZP/MKaAFV8EZa3gtFqJuP8nFxVWB8JwJwUeVA="
+
 language: java
 jdk: oraclejdk8
-script: mvn clean verify jacoco:prepare-agent test jacoco:report
+script: mvn clean verify jacoco:prepare-agent test jacoco:report -Dmaven.test.failure.ignore
 after_success:
   - bash <(curl -s https://codecov.io/bash)
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+  addons:
+    coverity_scan:
+      project:
+        name: "jenkinsci/analysis-model"
+        description: "Build submitted via Travis CI"
+      notification_email: ullrich.hafner@gmail.com
+      build_command_prepend: "mvn clean"
+      build_command: "mvn -DskipTests=true compile"
+      branch_pattern: master
