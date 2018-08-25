@@ -103,29 +103,29 @@ class StaticAnalysisLabelProviderTest {
     class AgeBuilderTest {
         @Test
         void shouldCreateAgeLinkForFirstBuild() {
-            AgeBuilder builder = new DefaultAgeBuilder(1, "checkstyleResult/");
+            AgeBuilder builder = new DefaultAgeBuilder(1, "checkstyle/");
 
             assertThat(builder.apply(1)).isEqualTo("1");
         }
 
         @Test
         void shouldCreateAgeLinkForPreviousBuilds() {
-            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyleResult/");
+            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/");
             assertThat(builder.apply(1))
-                    .isEqualTo("<a href=\"../../1/checkstyleResult\">10</a>");
+                    .isEqualTo("<a href=\"../../1/checkstyle\">10</a>");
             assertThat(builder.apply(9))
-                    .isEqualTo("<a href=\"../../9/checkstyleResult\">2</a>");
+                    .isEqualTo("<a href=\"../../9/checkstyle\">2</a>");
             assertThat(builder.apply(10))
                     .isEqualTo("1");
         }
 
         @Test
         void shouldCreateAgeLinkForSubDetails() {
-            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyleResult/package.1234/");
+            AgeBuilder builder = new DefaultAgeBuilder(10, "checkstyle/package.1234/");
             assertThat(builder.apply(1))
-                    .isEqualTo("<a href=\"../../../1/checkstyleResult\">10</a>");
+                    .isEqualTo("<a href=\"../../../1/checkstyle\">10</a>");
             assertThat(builder.apply(9))
-                    .isEqualTo("<a href=\"../../../9/checkstyleResult\">2</a>");
+                    .isEqualTo("<a href=\"../../../9/checkstyle\">2</a>");
             assertThat(builder.apply(10))
                     .isEqualTo("1");
         }

@@ -47,7 +47,7 @@ public class RemoteApiITest extends AbstractIssuesRecorderITest {
     @Test
     public void shouldReturnSummaryForTopLevelApiCall() {
         // Skip elements with absolute paths or other platform specific information 
-        verifyRemoteApi("/checkstyleResult/api/xml"
+        verifyRemoteApi("/checkstyle/api/xml"
                 + "?exclude=/*/errorMessage"  
                 + "&exclude=/*/infoMessage"
                 + "&exclude=/*/owner/url", RESULT_REMOTE_API_EXPECTED_XML);
@@ -58,7 +58,7 @@ public class RemoteApiITest extends AbstractIssuesRecorderITest {
      */
     @Test
     public void shouldReturnIssuesForNewApiCall() {
-        verifyRemoteApi("/checkstyleResult/all/api/xml", ISSUES_REMOTE_API_EXPECTED_XML);
+        verifyRemoteApi("/checkstyle/all/api/xml", ISSUES_REMOTE_API_EXPECTED_XML);
     }
 
     private void verifyRemoteApi(final String url, final String issuesRemoteApiExpectedXml) {
@@ -83,7 +83,7 @@ public class RemoteApiITest extends AbstractIssuesRecorderITest {
     public void assertXmlApiWithXPathNavigationMatchesExpected() {
         Run<?, ?> build = buildCheckStyleJob();
 
-        Document actualDocument = callRemoteApi(build, "/checkstyleResult/api/xml?xpath=/*/qualityGateStatus");
+        Document actualDocument = callRemoteApi(build, "/checkstyle/api/xml?xpath=/*/qualityGateStatus");
 
         assertThat(actualDocument.getDocumentElement().getTagName()).isEqualTo("qualityGateStatus");
         assertThat(actualDocument.getDocumentElement().getFirstChild().getNodeValue()).isEqualTo("INACTIVE");
@@ -99,7 +99,7 @@ public class RemoteApiITest extends AbstractIssuesRecorderITest {
     public void assertXmlApiWithDepthContainsDeepElements() throws XPathExpressionException {
         Run<?, ?> build = buildCheckStyleJob();
 
-        Document actualDocument = callRemoteApi(build, "/checkstyleResult/api/xml?depth=1");
+        Document actualDocument = callRemoteApi(build, "/checkstyle/api/xml?depth=1");
 
         // navigate to one deep level element that is not visible at depth 0
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -125,10 +125,10 @@ public class RemoteApiITest extends AbstractIssuesRecorderITest {
         recorder.setTool(new ToolConfiguration(new CheckStyle(), "**/checkstyle2*"));
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
 
-        assertThatRemoteApiEquals(build, "/checkstyleResult/all/api/xml", "all-issues.xml");
-        assertThatRemoteApiEquals(build, "/checkstyleResult/new/api/xml", "new-issues.xml");
-        assertThatRemoteApiEquals(build, "/checkstyleResult/fixed/api/xml", "fixed-issues.xml");
-        assertThatRemoteApiEquals(build, "/checkstyleResult/outstanding/api/xml", "outstanding-issues.xml");
+        assertThatRemoteApiEquals(build, "/checkstyle/all/api/xml", "all-issues.xml");
+        assertThatRemoteApiEquals(build, "/checkstyle/new/api/xml", "new-issues.xml");
+        assertThatRemoteApiEquals(build, "/checkstyle/fixed/api/xml", "fixed-issues.xml");
+        assertThatRemoteApiEquals(build, "/checkstyle/outstanding/api/xml", "outstanding-issues.xml");
     }
 
     private Run<?, ?> buildCheckStyleJob() {

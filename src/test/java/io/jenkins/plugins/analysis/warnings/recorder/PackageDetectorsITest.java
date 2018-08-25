@@ -44,7 +44,7 @@ public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
     private static final String PACKAGE_FILE_PATH = "detectors/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
     private static final String PACKAGE_WITH_FILES_JAVA = PACKAGE_FILE_PATH + "java/";
-    private static final String DEFAULT_ENTRY_PATH = "eclipseResult/";
+    private static final String DEFAULT_ENTRY_PATH = "eclipse/";
     private static final String DEFAULT_TAB_TO_INVESTIGATE = "packageName";
     private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving package names (or namespaces) by parsing the affected files";
 

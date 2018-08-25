@@ -83,7 +83,7 @@ public class ModuleDetectorITest extends AbstractIssuesRecorderITest {
     private static final String MAVEN_BUILD_FILE_LOCATION = "buildfiles/maven/";
     private static final String ANT_BUILD_FILE_LOCATION = "buildfiles/ant/";
     private static final String OSGI_BUILD_FILE_LOCATION = "buildfiles/osgi/";
-    private static final String DEFAULT_ENTRY_PATH = "eclipseResult/";
+    private static final String DEFAULT_ENTRY_PATH = "eclipse/";
     private static final String DEFAULT_TAB_TO_INVESTIGATE = "moduleName";
     private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)";
     private static final String EMPTY_MODULE_NAME = "";
