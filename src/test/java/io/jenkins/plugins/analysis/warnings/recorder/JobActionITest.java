@@ -12,6 +12,7 @@ import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.views.JobAction;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -27,7 +28,7 @@ import hudson.model.Run;
  * @author Nikolai Wohlgemuth
  * @author Ullrich Hafner
  */
-public class JobActionITest extends AbstractIssuesRecorderITest {
+public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that the trend chart is visible if there are two valid builds available.
      */

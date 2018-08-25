@@ -24,6 +24,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.analysis.Issue;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
@@ -40,7 +41,7 @@ import hudson.model.Result;
  * @author Deniz Mardin
  */
 // TODO: Use PropertyTable for all tests
-public class PackageDetectorsITest extends AbstractIssuesRecorderITest {
+public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String PACKAGE_FILE_PATH = "detectors/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
     private static final String PACKAGE_WITH_FILES_JAVA = PACKAGE_FILE_PATH + "java/";

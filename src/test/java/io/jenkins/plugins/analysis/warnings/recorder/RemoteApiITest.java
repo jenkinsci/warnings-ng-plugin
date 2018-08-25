@@ -23,6 +23,7 @@ import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
 import hudson.model.FreeStyleProject;
@@ -34,7 +35,7 @@ import hudson.model.Run;
  *
  * @author Manuel Hampp
  */
-public class RemoteApiITest extends AbstractIssuesRecorderITest {
+public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CHECKSTYLE_FILE = "checkstyle-filtering.xml";
     private static final String RESULT_REMOTE_API_EXPECTED_XML = "result.xml";
     private static final String ISSUES_REMOTE_API_EXPECTED_XML = "issues.xml";

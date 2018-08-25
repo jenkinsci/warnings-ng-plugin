@@ -23,6 +23,7 @@ import io.jenkins.plugins.analysis.core.model.IncludePackage;
 import io.jenkins.plugins.analysis.core.model.IncludeType;
 import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import static org.assertj.core.api.Assertions.*;
@@ -36,7 +37,7 @@ import hudson.model.Result;
  * @author Manuel Hampp
  */
 @SuppressWarnings("classdataabstractioncoupling")
-public class FiltersITest extends AbstractIssuesRecorderITest {
+public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String MODULE_FILTER = "module-filter/";
 
     /**

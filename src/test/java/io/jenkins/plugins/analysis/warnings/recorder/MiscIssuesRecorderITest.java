@@ -20,6 +20,7 @@ import io.jenkins.plugins.analysis.core.model.RegexpFilter;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Pmd;
@@ -41,7 +42,7 @@ import hudson.model.Run;
  * @author Martin Weibel
  * @author Ullrich Hafner
  */
-public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
+public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that the properties of an {@link IssuesRecorder} instance created via API are correctly shown in the job
      * configuration screen. Then these properties are changed in the HTML form, submitted to Jenkins, and verified in
@@ -325,7 +326,7 @@ public class MiscIssuesRecorderITest extends AbstractIssuesRecorderITest {
         SummaryBox resultSummary = new SummaryBox(getWebPage(result.getOwner()), "eclipse");
         assertThat(resultSummary.exists()).isTrue();
         assertThat(resultSummary.getTitle()).isEqualTo("Eclipse ECJ: 5 warnings");
-        assertThat(resultSummary.getItems()).containsExactly("3 fixed warnings", "Reference build: test0 #1");
+        assertThat(resultSummary.getItems()).containsExactly("3 fixed warnings", "Reference build: " + project.getName() + " #1");
     }
 
     /**

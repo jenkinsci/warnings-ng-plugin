@@ -10,6 +10,7 @@ import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
@@ -40,7 +41,7 @@ import hudson.model.Result;
  *
  * @author Alexander Praegla
  */
-public class FilesScannerITest extends AbstractIssuesRecorderITest {
+public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String WORKSPACE_DIRECTORY = "files-scanner";
     private static final String CHECKSTYLE_WORKSPACE = WORKSPACE_DIRECTORY + "/checkstyle";
     private static final String MULTIPLE_FILES_WORKSPACE = WORKSPACE_DIRECTORY + "/multiple_files";

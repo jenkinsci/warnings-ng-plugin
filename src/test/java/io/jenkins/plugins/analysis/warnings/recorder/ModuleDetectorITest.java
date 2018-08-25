@@ -27,6 +27,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.analysis.Issue;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import static org.assertj.core.api.Assertions.*;
 
@@ -77,7 +78,7 @@ import hudson.model.Result;
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
-public class ModuleDetectorITest extends AbstractIssuesRecorderITest {
+public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String BUILD_FILE_PATH = "detectors/";
     private static final String DEFAULT_ECLIPSE_TEST_FILE_PATH = "/eclipse_prepared-issues.txt";
     private static final String MAVEN_BUILD_FILE_LOCATION = "buildfiles/maven/";
