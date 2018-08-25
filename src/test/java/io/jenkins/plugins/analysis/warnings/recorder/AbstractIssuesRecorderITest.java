@@ -148,11 +148,11 @@ public class AbstractIssuesRecorderITest extends IntegrationTestWithJenkinsPerTe
         }
     }
     protected HtmlPage getWebPage(final AnalysisResult result, final String child) {
-        return getWebPage(result.getOwner(), result.getId() + "Result/" + child);
+        return getWebPage(result.getOwner(), result.getId() + "/" + child);
     }
     
     protected HtmlPage getWebPage(final AnalysisResult result) {
-        return getWebPage(result.getOwner(), result.getId() + "Result");
+        return getWebPage(result.getOwner(), result.getId());
     }
 
     private WebClient createWebClient() {
