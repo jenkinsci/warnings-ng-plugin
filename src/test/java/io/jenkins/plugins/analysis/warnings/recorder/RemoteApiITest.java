@@ -12,7 +12,6 @@ import java.io.IOException;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.jvnet.hudson.test.recipes.WithTimeout;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -117,7 +116,7 @@ public class RemoteApiITest extends AbstractIssuesRecorderITest {
      * several properties of the issue if the source code has not been found.
      */
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
-    @Test @WithTimeout(10000)
+    @Test
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
         IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "**/checkstyle1*"));

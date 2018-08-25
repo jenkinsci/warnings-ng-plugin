@@ -64,15 +64,130 @@ additional features are available to aggregate and group issues.
 
 ## New Features
 
-## Remote API
+### Remote API
 
-The plug-in provides two REST API endpoints: 
-1.  Summary of the analysis result (checkstyle/api/xml)
-2.  Details of the issues
-    1. checkstyle/all/api/xml
-    2. checkstyle/fixed/api/xml
-    3. checkstyle/new/api/xml
-    4. checkstyle/new/api/xml
+The plug-in provides two REST API endpoints. 
+
+#### Summary of the analysis result
+
+You can obtain a summary of a particular analysis report by using the URL \[tool-id\]/api/xml (or json). The summary
+contains the number of issues, the quality gate status, and all info and error messages.
+
+Here is an example XML report:
+
+```xml
+<analysisResultApi _class='io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi'>
+  <totalSize>3</totalSize>
+  <fixedSize>0</fixedSize>
+  <newSize>0</newSize>
+  <noIssuesSinceBuild>-1</noIssuesSinceBuild>
+  <successfulSinceBuild>-1</successfulSinceBuild>
+  <qualityGateStatus>WARNING</qualityGateStatus>
+  <owner _class='org.jenkinsci.plugins.workflow.job.WorkflowRun'>
+    <number>46</number>
+    <url>http://localhost:8080/view/White%20Mountains/job/Full%20Analysis%20-%20Model/46/</url>
+  </owner>
+  <infoMessage>Searching for all files in '/tmp/node1/workspace/Full Analysis - Model' that match the pattern
+    '**/target/spotbugsXml.xml'
+  </infoMessage>
+  <infoMessage>-> found 1 file</infoMessage>
+  <infoMessage>Successfully parsed file /tmp/node1/workspace/Full Analysis - Model/target/spotbugsXml.xml</infoMessage>
+  <infoMessage>-> found 3 issues (skipped 0 duplicates)</infoMessage>
+  <infoMessage>Post processing issues on 'node1' with encoding 'UTF-8'</infoMessage>
+  <infoMessage>Resolving absolute file names for all issues</infoMessage>
+  <infoMessage>-> affected files for all issues already have absolute paths</infoMessage>
+  <infoMessage>Copying affected files to Jenkins' build folder /Users/hafner/Development/jenkins/jobs/Full Analysis -
+    Model/builds/46
+  </infoMessage>
+  <infoMessage>-> 2 copied, 0 not in workspace, 0 not-found, 0 with I/O error</infoMessage>
+  <infoMessage>Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)</infoMessage>
+  <infoMessage>-> all issues already have a valid module name</infoMessage>
+  <infoMessage>Resolving package names (or namespaces) by parsing the affected files</infoMessage>
+  <infoMessage>-> all affected files already have a valid package name</infoMessage>
+  <infoMessage>Creating fingerprints for all affected code blocks to track issues over different builds</infoMessage>
+  <infoMessage>No filter has been set, publishing all 3 issues</infoMessage>
+  <infoMessage>No valid reference build found - all reported issues will be considered outstanding</infoMessage>
+  <infoMessage>Evaluating quality gates</infoMessage>
+  <infoMessage>-> WARNING - Total number of issues: 3 - Quality Gate: 1</infoMessage>
+  <infoMessage>-> Some quality gates have been missed: overall result is WARNING</infoMessage>
+  <infoMessage>Health report is disabled - skipping</infoMessage>
+</analysisResultApi>
+```
+
+#### Details of the analysis result
+
+The reported issues are also available as REST API. You can either query all issues, or only the 
+new, fixed, or outstanding issues. The corresponding URLs are:
+
+1. \[tool-id\]/all/api/xml
+2. \[tool-id\]/fixed/api/xml
+3. \[tool-id\]/new/api/xml
+4. \[tool-id\]/outstanding/api/xml
+
+Here is an example JSON report:
+
+```json
+{
+  "_class" : "io.jenkins.plugins.analysis.core.restapi.ReportApi",
+  "issues" : [
+    {
+      "baseName" : "AbstractParser.java",
+      "category" : "EXPERIMENTAL",
+      "columnEnd" : 0,
+      "columnStart" : 0,
+      "description" : "",
+      "fileName" : "/private/tmp/node1/workspace/Full Analysis - Model/src/main/java/edu/hm/hafner/analysis/AbstractParser.java",
+      "fingerprint" : "be18f803030f2af690fbeef09eafa5c9",
+      "lineEnd" : 59,
+      "lineStart" : 59,
+      "message" : "edu.hm.hafner.analysis.AbstractParser.parse(File, Charset, Function) may fail to clean up java.io.InputStream",
+      "moduleName" : "Static Analysis Model and Parsers",
+      "origin" : "spotbugs",
+      "packageName" : "edu.hm.hafner.analysis",
+      "reference" : "46",
+      "severity" : "LOW",
+      "type" : "OBL_UNSATISFIED_OBLIGATION"
+    },
+    {
+      "baseName" : "ReportTest.java",
+      "category" : "STYLE",
+      "columnEnd" : 0,
+      "columnStart" : 0,
+      "description" : "",
+      "fileName" : "/private/tmp/node1/workspace/Full Analysis - Model/src/test/java/edu/hm/hafner/analysis/ReportTest.java",
+      "fingerprint" : "331d509297fad027813365ad0fb37e69",
+      "lineEnd" : 621,
+      "lineStart" : 621,
+      "message" : "Return value of Report.get(int) ignored, but method has no side effect",
+      "moduleName" : "Static Analysis Model and Parsers",
+      "origin" : "spotbugs",
+      "packageName" : "edu.hm.hafner.analysis",
+      "reference" : "46",
+      "severity" : "LOW",
+      "type" : "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"
+    },
+    {
+      "baseName" : "ReportTest.java",
+      "category" : "STYLE",
+      "columnEnd" : 0,
+      "columnStart" : 0,
+      "description" : "",
+      "fileName" : "/private/tmp/node1/workspace/Full Analysis - Model/src/test/java/edu/hm/hafner/analysis/ReportTest.java",
+      "fingerprint" : "1e641f9c0b35ed97140d639695e8ce18",
+      "lineEnd" : 624,
+      "lineStart" : 624,
+      "message" : "Return value of Report.get(int) ignored, but method has no side effect",
+      "moduleName" : "Static Analysis Model and Parsers",
+      "origin" : "spotbugs",
+      "packageName" : "edu.hm.hafner.analysis",
+      "reference" : "46",
+      "severity" : "LOW",
+      "type" : "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"
+    }
+  ],
+  "size" : 3
+}
+```
 
 ## Still Available Features
 
