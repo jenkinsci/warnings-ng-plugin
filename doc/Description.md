@@ -43,13 +43,30 @@ anymore and will not be supported in the future. If you already use one of these
 your jobs to the new API as soon as possible. I will still maintain the old code for a while, but the main development
 effort will be spent into the new code base.
 
-### Migration of non Pipelines
-
-Freestyle, Matrix or Maven Jobs using the old API typically used a so called Post Build Step to 
-
 ### Migration of Pipelines
 
+### Migration of all other jobs
+
+Freestyle, Matrix or Maven Jobs using the old API typically used a so called **Post Build Action** to publish warnings. 
+E.g., the FindBugs plug-in did provide the post build action *"Publish FindBugs analysis results"*. This publisher is not 
+supported anymore. You need to add a new post build step - this step now is called *"Record static analysis results"*
+for all kind of static analysis tools. The selection of the tool is part of the configuration of this post build step. 
+Note: the warnings produced by a post build step using the old API could not be read by the new post build step.
+I.e., you can't see a combined history of the old and new results - you simply see two unrelated results. There is
+no automatic conversion of results stored in the old format available.
+
 ### Migration of Plug-in Depending on analysis-core
+
+The following plug-ins have been integrated into this version of the warnings plug-in:
+
+- Android-Lint Plug-in
+- CheckStyle Plug-in
+- CCM Plug-in
+- Dry Plug-in
+- PMD Plug-in
+- FindBugs Plug-in
+
+All other plug-ins still need to be integrated or need to be refactored to use the new API.
 
 ## Configuration
 
@@ -57,6 +74,24 @@ The basic configuration of the plug-in is the same for all Jenkins job types. No
 additional features are available to aggregate and group issues.
     
 ### Graphical Configuration
+
+The plug-in is enabled in a job by adding the post build action *"Record static analysis results"*. The basic configuration
+screen is shown in the image above:
+
+![basic configuration](images/freestyle-start.png) 
+
+First of all you need to specify the tool that should be used to parse the console log or the report file. 
+Then you need to specify the pattern of the report files that should be parsed and scanned for issues. 
+If you do not specify a pattern, then the console log of your build will be scanned. For several popular tools a default
+pattern has been provided. Depending on the selected tool you might configure some additional parameters as well. 
+You can specify multiple tools (and patterns) that will be used with the same configuration. Due to a technical 
+(or marketing) limitation of Jenkins it is not possible to select different configurations by using multiple post build 
+actions.  
+
+One new feature is available by using the checkbox *"Aggregate Results"*: if this option is selected, then one result
+is created that contains an aggregation of all issues of the selected tools. This is something the 
+Static Analysis Collector Plug-in provided previously. When this option is activated you get a unique entry point 
+for all of your issues.
 
 ### Simple Pipeline Configuration
 

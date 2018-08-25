@@ -99,7 +99,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      *         been resolved.
      * @param jobResultEvaluationMode
      *         If set to {@link JobResultEvaluationMode#NO_JOB_FAILURE}, then only successful or unstable reference
-     *         builds will be considered (since since analysis results might be inaccurate if the build failed). If set
+     *         builds will be considered (since analysis results might be inaccurate if the build failed). If set
      *         to {@link JobResultEvaluationMode#IGNORE_JOB_RESULT}, then every build that contains a static analysis
      *         result is considered, even if the build failed. 
      */
