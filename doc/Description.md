@@ -99,10 +99,23 @@ In order to let the scanner parse correctly your reports and source code files i
 
 ![encoding configuration](images/encoding.png) 
 
+#### Control the selection of the reference build (baseline)
+
+One important feature of the warnings plug-in is the classification of issues as new, outstanding and fixed:
+- **new**: all issues, that are part of the current report but have not been shown up in the reference report
+- **fixed**: all issues, that are part of the reference report but are not present in the current report anymore
+- **outstanding**: all issues, that are part of the current and reference report
+In order to compute this classification, the plug-in requires a reference build (baseline). New, fixed, and outstanding
+issues are then computed by comparing the issues in the current build and the baseline. There are three options that
+control the selection of the reference build. 
+
+![reference build configuration](images/reference.png) 
+
 #### Filtering of issues
 
-The created report of issues can be filtered afterwards. You can specify an arbitrary number of include or exclude filters. Currently,
-there is support to filter issues by module name, package name, file name, category or type.
+The created report of issues can be filtered afterwards. You can specify an arbitrary number of include or exclude 
+filters. Currently, there is support to filter issues by module name, package or namespace name, file name, 
+category or type.
 
 ![filter configuration](images/filter.png) 
 
