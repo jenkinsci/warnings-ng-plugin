@@ -1,5 +1,5 @@
 language: java
 jdk: oraclejdk8
-script: mvn clean verify jacoco:prepare-agent test jacoco:report -Dmaven.test.failure.ignore
+script: mvn clean verify jacoco:prepare-agent test jacoco:report
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
+- bash <(curl -s https://codecov.io/bash)
