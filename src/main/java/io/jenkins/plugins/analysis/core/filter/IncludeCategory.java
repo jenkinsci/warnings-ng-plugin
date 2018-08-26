@@ -10,9 +10,10 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.model.Messages;
 
 import hudson.Extension;
+import hudson.model.Descriptor;
 
 /**
- * Defines a filter criteria for {@link Report}.
+ * Defines a filter criteria for a {@link Report}.
  *
  * @author Ullrich Hafner
  */
@@ -41,7 +42,7 @@ public class IncludeCategory extends RegexpFilter {
      * @author Ullrich Hafner
      */
     @Extension @Symbol("includeCategory")
-    public static class DescriptorImpl extends RegexpFilterDescriptor {
+    public static class DescriptorImpl extends Descriptor<RegexpFilter> {
         @Nonnull
         @Override
         public String getDisplayName() {
