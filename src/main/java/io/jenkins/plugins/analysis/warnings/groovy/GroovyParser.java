@@ -200,7 +200,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
      *
      * @author Ullrich Hafner
      */
-    @Extension // FIXME: why is there Extension?
+    @Extension
     public static class DescriptorImpl extends Descriptor<GroovyParser> {
         private static final String NEWLINE = "\n";
         private static final int MAX_MESSAGE_LENGTH = 60;

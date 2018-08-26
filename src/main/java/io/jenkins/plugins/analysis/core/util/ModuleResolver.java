@@ -32,7 +32,6 @@ public class ModuleResolver {
             return;
         }
 
-        // FIXME: plural should be in a base/utility class?
         issuesWithoutModule.forEach(issue -> issue.setModuleName(detector.guessModuleName(issue.getFileName())));
         report.logInfo("-> resolved module names for %d issues", issuesWithoutModule.size());
     }

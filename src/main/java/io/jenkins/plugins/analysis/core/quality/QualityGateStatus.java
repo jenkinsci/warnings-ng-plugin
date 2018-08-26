@@ -9,7 +9,6 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
-// TODO: it would make sense to use different icons as well
 public enum QualityGateStatus {
     /** Quality gate has been passed. */
     PASSED(Result.SUCCESS),

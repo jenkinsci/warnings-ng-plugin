@@ -24,7 +24,7 @@ import hudson.util.ListBoxModel;
  * @author Ullrich Hafner
  */
 @Extension
-@Symbol("warningsParser") // FIXME: check name before going live
+@Symbol("issueParser") 
 public class ParserConfiguration extends GlobalConfiguration {
     private ImmutableList<GroovyParser> parsers = Lists.immutable.empty();
 

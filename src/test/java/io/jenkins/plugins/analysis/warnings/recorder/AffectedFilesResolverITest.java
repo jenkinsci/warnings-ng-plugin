@@ -155,7 +155,6 @@ public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
             assertThat(buildFolderCopy).exists();
             assertThat(buildFolderCopy).hasSameContentAs(getSourceInWorkspace(project));
         }
-        // FIXME: shouldn't we always create a temporary file to report the cause?
     }
 
     private Path getSourceInWorkspace(final FreeStyleProject project) {
