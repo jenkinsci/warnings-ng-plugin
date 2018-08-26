@@ -33,7 +33,11 @@
   <i:hr title="${%Issue filters}"/>
 
   <f:entry title="${%Issue filters}" description="${%description.filter}">
-    <i:repeatable field="filters" minimum="1"/>
+    <f:repeatableHeteroProperty field="filters" hasHeader="true" addCaption="${%Add Filter}" />
   </f:entry>
+
+  <f:block>
+  </f:block>
+
 
 </j:jelly>

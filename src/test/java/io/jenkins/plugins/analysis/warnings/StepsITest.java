@@ -206,25 +206,79 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Runs the Eclipse parser on an output file that contains several issues. Applies an include filter that selects
-     * only one issue (in the file AttributeException.java).
+     * Runs the PMD parser on an output file that contains 16 issues. Applies file filters that select subsets of the
+     * issues.
      */
     @Test
-    public void shouldIncludeJustOneFile() {
-        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Eclipse.class),
-                "publishIssues issues:[issues],  "
-                        + "filters:[[property: [$class: 'IncludeFile'], pattern: '.*AttributeException.*']]"));
+    public void shouldApplyFileFilters() {
+        WorkflowJob job = createJobWithWorkspaceFiles("pmd-filtering.xml");
 
-        AnalysisResult result = scheduleBuild(job, Eclipse.class);
+        setFilter(job, "includeFile('File.*.java')");
+        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isEqualTo(16);
 
-        assertThat(result.getTotalSize()).isEqualTo(1);
-        assertThat(result.getIssues()).hasSize(1);
+        setFilter(job, "excludeFile('File.*.java')");
+        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isZero();
+
+        setFilter(job, "includeFile('')");
+        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isEqualTo(16);
+
+        setFilter(job, "excludeFile('')");
+        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isEqualTo(16);
+
+        setFilter(job, "");
+        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isEqualTo(16);
+
+        verifyIncludeFile(job, "File1.java");
+        verifyIncludeFile(job, "File2.java");
+        verifyExcludeFile(job, "File1.java", "File2.java");
+        verifyExcludeFile(job, "File2.java", "File1.java");
     }
 
     /**
-     * Creates a reference job and starts the analysis for this job. Then another job is created that uses the first
-     * one as reference. Verifies that the association is correctly stored.
+     * Runs the PMD parser on an output file that contains 16 issues. Combines file filters that select 1 issue
+     */
+    @Test
+    public void shouldCombineFilter() {
+        WorkflowJob job = createJobWithWorkspaceFiles("pmd-filtering.xml");
+
+        setFilter(job, "includeFile('File1.java'), includeCategory('Category1')");
+        AnalysisResult result = scheduleBuild(job, Pmd.class);
+        assertThat(result.getTotalSize()).isEqualTo(8 + 4);
+
+        setFilter(job, "includeFile('File1.java'), excludeCategory('Category1'), excludeType('Type1'), excludeNamespace('.*package1') ");
+        AnalysisResult oneIssue = scheduleBuild(job, Pmd.class);
+        assertThat(oneIssue.getIssues().getFiles()).containsExactly("File1.java");
+        assertThat(oneIssue.getIssues().getCategories()).containsExactly("Category2");
+        assertThat(oneIssue.getIssues().getTypes()).containsExactly("Type2");
+        assertThat(oneIssue.getIssues().getPackages()).containsExactly("hm.edu.hafner.package2");
+    }
+
+    private void verifyIncludeFile(final WorkflowJob job, final String fileName) {
+        setFilter(job, "includeFile('" + fileName + "')");
+        
+        AnalysisResult result = scheduleBuild(job, Pmd.class);
+        
+        assertThat(result.getTotalSize()).isEqualTo(8);
+        assertThat(result.getIssues().getFiles()).containsExactly(fileName);
+    }
+
+    private void verifyExcludeFile(final WorkflowJob job, final String excludedFileName, final String expectedFileName) {
+        setFilter(job, "excludeFile('" + excludedFileName + "')");
+        
+        AnalysisResult result = scheduleBuild(job, Pmd.class);
+        
+        assertThat(result.getTotalSize()).isEqualTo(8);
+        assertThat(result.getIssues().getFiles()).containsExactly(expectedFileName);
+    }
+
+    private void setFilter(final WorkflowJob job, final String filters) {
+        job.setDefinition(asStage(createScanForIssuesStep(Pmd.class),
+                String.format("publishIssues issues:[issues], filters:[%s]", filters)));
+    }
+
+    /**
+     * Creates a reference job and starts the analysis for this job. Then another job is created that uses the first one
+     * as reference. Verifies that the association is correctly stored.
      */
     @Test
     public void shouldUseOtherJobAsReference() {

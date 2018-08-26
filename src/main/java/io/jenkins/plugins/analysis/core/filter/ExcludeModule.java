@@ -1,11 +1,13 @@
-package io.jenkins.plugins.analysis.core.model;
+package io.jenkins.plugins.analysis.core.filter;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+import io.jenkins.plugins.analysis.core.model.Messages;
 
 import hudson.Extension;
 
@@ -14,30 +16,32 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class ExcludeModule extends IssuesFilter {
+public class ExcludeModule extends RegexpFilter {
     private static final long serialVersionUID = 8640962711241699659L;
 
     /**
      * Creates a new instance of {@link ExcludeModule}.
+     *
+     * @param pattern
+     *         the regular expression of the filter
      */
     @DataBoundConstructor
-    public ExcludeModule() {
-        super();
-        // Required for Stapler
+    public ExcludeModule(final String pattern) {
+        super(pattern);
     }
 
     @Override
-    public void apply(final IssueFilterBuilder builder, final String pattern) {
-        builder.setExcludeModuleNameFilter(pattern);
+    public void apply(final IssueFilterBuilder builder) {
+        builder.setExcludeModuleNameFilter(getPattern());
     }
 
     /**
-     * Dummy descriptor for {@link ExcludeModule}.
+     * Descriptor for {@link ExcludeModule}.
      *
      * @author Ullrich Hafner
      */
-    @Extension
-    public static class DescriptorImpl extends IncludeFilterDescriptor {
+    @Extension @Symbol("excludeModule")
+    public static class DescriptorImpl extends RegexpFilterDescriptor {
         @Nonnull
         @Override
         public String getDisplayName() {

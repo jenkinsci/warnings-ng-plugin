@@ -11,17 +11,17 @@ import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.ExcludeCategory;
-import io.jenkins.plugins.analysis.core.model.ExcludeFile;
-import io.jenkins.plugins.analysis.core.model.ExcludeModule;
-import io.jenkins.plugins.analysis.core.model.ExcludePackage;
-import io.jenkins.plugins.analysis.core.model.ExcludeType;
-import io.jenkins.plugins.analysis.core.model.IncludeCategory;
-import io.jenkins.plugins.analysis.core.model.IncludeFile;
-import io.jenkins.plugins.analysis.core.model.IncludeModule;
-import io.jenkins.plugins.analysis.core.model.IncludePackage;
-import io.jenkins.plugins.analysis.core.model.IncludeType;
-import io.jenkins.plugins.analysis.core.model.RegexpFilter;
+import io.jenkins.plugins.analysis.core.filter.ExcludeCategory;
+import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
+import io.jenkins.plugins.analysis.core.filter.ExcludeModule;
+import io.jenkins.plugins.analysis.core.filter.ExcludePackage;
+import io.jenkins.plugins.analysis.core.filter.ExcludeType;
+import io.jenkins.plugins.analysis.core.filter.IncludeCategory;
+import io.jenkins.plugins.analysis.core.filter.IncludeFile;
+import io.jenkins.plugins.analysis.core.filter.IncludeModule;
+import io.jenkins.plugins.analysis.core.filter.IncludePackage;
+import io.jenkins.plugins.analysis.core.filter.IncludeType;
+import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -66,8 +66,8 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
         ChangeSelectionAction.java:14   com.avaloq.adt.env.internal.ui.actions.change   Import Statement Rules  UnusedImports   Normal  1
          */
         Map<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
-        filterResultMap.put(new RegexpFilter("m1", new ExcludeModule()), new Integer[]{14});
-        filterResultMap.put(new RegexpFilter("m1", new IncludeModule()), new Integer[]{54});
+        filterResultMap.put(new ExcludeModule("m1"), new Integer[]{14});
+        filterResultMap.put(new IncludeModule("m1"), new Integer[]{54});
 
         return filterResultMap;
     }
@@ -101,13 +101,13 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
           FileFinder.java:99                -Blocks RightCurlyCheck High 1
          */
         Map<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
-        filterResultMap.put(new RegexpFilter("Blocks", new IncludeCategory()), new Integer[]{30, 37, 99});
-        filterResultMap.put(new RegexpFilter("Blocks", new ExcludeCategory()), new Integer[]{17, 22, 42, 29});
-        filterResultMap.put(new RegexpFilter("(Blocks|Design)", new ExcludeCategory()), new Integer[]{42, 29});
-        filterResultMap.put(new RegexpFilter("(Blocks|Design)", new IncludeCategory()),
+        filterResultMap.put(new IncludeCategory("Blocks"), new Integer[]{30, 37, 99});
+        filterResultMap.put(new ExcludeCategory("Blocks"), new Integer[]{17, 22, 42, 29});
+        filterResultMap.put(new ExcludeCategory("(Blocks|Design)"), new Integer[]{42, 29});
+        filterResultMap.put(new IncludeCategory("(Blocks|Design)"),
                 new Integer[]{30, 37, 17, 22, 99});
-        filterResultMap.put(new RegexpFilter(".*Csharp.*", new ExcludeFile()), new Integer[]{99});
-        filterResultMap.put(new RegexpFilter(".*Csharp.*", new IncludeFile()), new Integer[]{30, 37, 17, 22, 42, 29});
+        filterResultMap.put(new ExcludeFile(".*Csharp.*"), new Integer[]{99});
+        filterResultMap.put(new IncludeFile(".*Csharp.*"), new Integer[]{30, 37, 17, 22, 42, 29});
 
         return filterResultMap;
     }
@@ -138,13 +138,13 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
         SelectSourceDialog.java:980     com.avaloq.adt.env.internal.ui.dialogs          Basic Rules EmptyCatchBlock High    1
          */
         HashMap<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
-        filterResultMap.put(new RegexpFilter(".*actions", new IncludePackage()), new Integer[]{54});
-        filterResultMap.put(new RegexpFilter(".*actions.*", new IncludePackage()), new Integer[]{54, 14});
-        filterResultMap.put(new RegexpFilter(".*actions.*", new ExcludePackage()), new Integer[]{938, 980});
-        filterResultMap.put(new RegexpFilter(".*actions", new ExcludePackage()), new Integer[]{14, 938, 980});
+        filterResultMap.put(new IncludePackage(".*actions"), new Integer[]{54});
+        filterResultMap.put(new IncludePackage(".*actions.*"), new Integer[]{54, 14});
+        filterResultMap.put(new ExcludePackage(".*actions.*"), new Integer[]{938, 980});
+        filterResultMap.put(new ExcludePackage(".*actions"), new Integer[]{14, 938, 980});
 
-        filterResultMap.put(new RegexpFilter(".*EmptyCatchBlock", new IncludeType()), new Integer[]{938, 980});
-        filterResultMap.put(new RegexpFilter(".*EmptyCatchBlock", new ExcludeType()), new Integer[]{54, 14});
+        filterResultMap.put(new IncludeType(".*EmptyCatchBlock"), new Integer[]{938, 980});
+        filterResultMap.put(new ExcludeType(".*EmptyCatchBlock"), new Integer[]{54, 14});
 
         return filterResultMap;
     }

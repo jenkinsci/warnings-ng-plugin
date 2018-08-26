@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd version="4.1" timestamp="2008-03-18T22:17:01.031">
+<file name="File1.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type1" ruleset="Category1" package="hm.edu.hafner.package1" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File2.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type1" ruleset="Category1" package="hm.edu.hafner.package1" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File1.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type2" ruleset="Category1" package="hm.edu.hafner.package1" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File2.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type2" ruleset="Category1" package="hm.edu.hafner.package1" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File1.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type1" ruleset="Category2" package="hm.edu.hafner.package1" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File2.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type1" ruleset="Category2" package="hm.edu.hafner.package1" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File1.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type2" ruleset="Category2" package="hm.edu.hafner.package1" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File2.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type2" ruleset="Category2" package="hm.edu.hafner.package1" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File1.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type1" ruleset="Category1" package="hm.edu.hafner.package2" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File2.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type1" ruleset="Category1" package="hm.edu.hafner.package2" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File1.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type2" ruleset="Category1" package="hm.edu.hafner.package2" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File2.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type2" ruleset="Category1" package="hm.edu.hafner.package2" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File1.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type1" ruleset="Category2" package="hm.edu.hafner.package2" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File2.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type1" ruleset="Category2" package="hm.edu.hafner.package2" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File1.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type2" ruleset="Category2" package="hm.edu.hafner.package2" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+<file name="File2.java">
+<violation beginline="54" endline="61" begincolumn="21" endcolumn="21" rule="Type2" ruleset="Category2" package="hm.edu.hafner.package2" class="CopyToClipboard" method="execute" externalInfoUrl="http://pmd.sourceforge.net/rules/basic.html#CollapsibleIfStatements" priority="3">
+These nested if statements could be combined
+</violation>
+</file>
+</pmd>

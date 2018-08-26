@@ -1,13 +1,10 @@
-package io.jenkins.plugins.analysis.core.model;
+package io.jenkins.plugins.analysis.core.filter;
 
 import java.io.Serializable;
-
-import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
-import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 
@@ -16,25 +13,21 @@ import hudson.model.Descriptor;
  *
  * @author Ullrich Hafner
  */
-public class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implements Serializable {
+public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implements Serializable {
     private static final long serialVersionUID = 1892735849628260157L;
+
     private final String pattern;
-    private final IssuesFilter property;
 
     /**
      * Creates a new instance of {@link RegexpFilter}.
      *
      * @param pattern
      *         the regular expression of the filter
-     * @param property
-     *         the property to filter by
      */
-    @DataBoundConstructor
-    public RegexpFilter(final String pattern, final IssuesFilter property) {
+    public RegexpFilter(final String pattern) {
         super();
 
         this.pattern = pattern;
-        this.property = property;
     }
 
     /**
@@ -47,31 +40,22 @@ public class RegexpFilter extends AbstractDescribableImpl<RegexpFilter> implemen
     }
 
     /**
-     * Returns the property that will be filtered by.
-     *
-     * @return the property to be filtered by
-     */
-    public IssuesFilter getProperty() {
-        return property;
-    }
-
-    /**
      * Applies the filter on the specified builder.
      *
      * @param builder
      *         the issue filter builder
      */
-    public void apply(final IssueFilterBuilder builder) {
-        property.apply(builder, pattern);
+    public abstract void apply(IssueFilterBuilder builder);
+
+    @Override
+    public RegexpFilterDescriptor getDescriptor() {
+        return (RegexpFilterDescriptor) super.getDescriptor();
     }
 
-    /**
+    /** 
      * Dummy descriptor for {@link RegexpFilter}.
-     *
-     * @author Ullrich Hafner
      */
-    @Extension
-    public static class DescriptorImpl extends Descriptor<RegexpFilter> {
-        // Required for Jenkins
+    public abstract static class RegexpFilterDescriptor extends Descriptor<RegexpFilter> {
+
     }
 }

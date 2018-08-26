@@ -15,8 +15,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 import edu.hm.hafner.analysis.Priority;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
-import io.jenkins.plugins.analysis.core.model.ExcludeFile;
-import io.jenkins.plugins.analysis.core.model.RegexpFilter;
+import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
@@ -244,7 +243,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         enableWarnings(project,
                 recorder -> {
                     recorder.setAggregatingResults(true);
-                    recorder.setFilters(Collections.singletonList(new RegexpFilter(".*", new ExcludeFile())));
+                    recorder.setFilters(Collections.singletonList(new ExcludeFile(".*")));
                 },
                 new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
                 new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));

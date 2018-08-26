@@ -1,11 +1,13 @@
-package io.jenkins.plugins.analysis.core.model;
+package io.jenkins.plugins.analysis.core.filter;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+import io.jenkins.plugins.analysis.core.model.Messages;
 
 import hudson.Extension;
 
@@ -14,30 +16,32 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class IncludeType extends IssuesFilter {
+public class IncludeType extends RegexpFilter {
     private static final long serialVersionUID = -4251535355471690174L;
 
     /**
      * Creates a new instance of {@link IncludeType}.
+     *
+     * @param pattern
+     *         the regular expression of the filter
      */
     @DataBoundConstructor
-    public IncludeType() {
-        super();
-        // Required for Stapler
+    public IncludeType(final String pattern) {
+        super(pattern);
     }
 
     @Override
-    public void apply(final IssueFilterBuilder builder, final String pattern) {
-        builder.setIncludeTypeFilter(pattern);
+    public void apply(final IssueFilterBuilder builder) {
+        builder.setIncludeTypeFilter(getPattern());
     }
 
     /**
-     * Dummy descriptor for {@link IncludeType}.
+     * Descriptor for {@link IncludeType}.
      *
      * @author Ullrich Hafner
      */
-    @Extension
-    public static class DescriptorImpl extends IncludeFilterDescriptor {
+    @Extension @Symbol("includeType")
+    public static class DescriptorImpl extends RegexpFilterDescriptor {
         @Nonnull
         @Override
         public String getDisplayName() {

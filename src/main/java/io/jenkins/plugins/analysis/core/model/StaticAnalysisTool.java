@@ -14,8 +14,8 @@ import hudson.model.Descriptor;
  *
  * @author Ullrich Hafner
  */
-public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticAnalysisTool>
-        implements Serializable {
+// FIXME: extension point?
+public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticAnalysisTool> implements Serializable {
     /**
      * Returns the ID of this tool.
      *
