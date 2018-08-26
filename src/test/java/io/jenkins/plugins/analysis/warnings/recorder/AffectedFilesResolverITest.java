@@ -20,6 +20,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
@@ -38,7 +39,7 @@ import hudson.model.Run;
  * @author Deniz Mardin
  * @author Frank Christian Geyer
  */
-public class AffectedFilesResolverITest extends AbstractIssuesRecorderITest {
+public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String FOLDER = "affected-files";
     private static final String SOURCE_FILE = FOLDER + "/Main.java";
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";

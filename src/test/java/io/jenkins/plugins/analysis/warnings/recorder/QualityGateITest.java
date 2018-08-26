@@ -14,45 +14,32 @@ import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
 import hudson.model.AbstractProject;
+import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
-import hudson.model.TopLevelItem;
 
 /**
- * This class is a generic way to test {@link QualityGate} with an {@link AbstractProject}. The file
- * 'checkstyle-quality-gate.xml' is being used for the tests. It contains 11 issues overall, from which 6 have high, 2
- * have normal and 3 have low severity.
- *
- * @param <T>
- *         type of the project to test quality gate with
+ * Tests the {@link QualityGate}. The file 'checkstyle-quality-gate.xml' is being used for the tests. It contains 11
+ * issues overall, from which 6 have high, 2 have normal and 3 have low severity.
  *
  * @author Michaela Reitschuster
  */
-public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLevelItem> extends
-        IntegrationTestWithJenkinsPerTest {
-    private static final Map<Result, QualityGateStatus> RESULT_TO_STATUS_MAPPING = Maps.fixedSize.of(
-            Result.UNSTABLE, QualityGateStatus.WARNING,
-            Result.FAILURE, QualityGateStatus.FAILED);
+public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
+    private static final Map<Result, QualityGateStatus> RESULT_TO_STATUS_MAPPING 
+            = Maps.fixedSize.of(Result.UNSTABLE, QualityGateStatus.WARNING, Result.FAILURE, QualityGateStatus.FAILED);
     private static final String REPORT_FILE = "checkstyle-quality-gate.xml";
-
-    /**
-     * Factory method to create the project which is used to be tested with the {@link IssuesRecorder}.
-     *
-     * @return T project to test.
-     */
-    protected abstract T createProject();
 
     /**
      * Tests if the build is considered unstable when its defined threshold for new issues (overall) is reached.
      */
     @Test
     public void shouldBeUnstableWhenUnstableNewAllIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewAll(11));
         runJobTwice(project, Result.UNSTABLE, QualityGateStatus.WARNING);
     }
@@ -63,7 +50,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeUnstableWhenUnstableNewHighIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewHigh(6));
         runJobTwice(project, Result.UNSTABLE, QualityGateStatus.WARNING);
     }
@@ -74,7 +61,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeUnstableWhenUnstableNewNormalIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewNormal(2));
         runJobTwice(project, Result.UNSTABLE, QualityGateStatus.WARNING);
     }
@@ -85,7 +72,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeUnstableWhenUnstableNewLowIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableNewLow(3));
         runJobTwice(project, Result.UNSTABLE, QualityGateStatus.WARNING);
     }
@@ -95,7 +82,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeUnstableWhenUnstableTotalAllIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalAll(11));
         runJobTwice(project, Result.UNSTABLE, QualityGateStatus.WARNING);
     }
@@ -106,7 +93,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeUnstableWhenUnstableTotalHighIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalHigh(6));
         runJobTwice(project, Result.UNSTABLE, QualityGateStatus.WARNING);
     }
@@ -117,7 +104,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeUnstableWhenUnstableTotalNormalIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalNormal(2));
         runJobTwice(project, Result.UNSTABLE, QualityGateStatus.WARNING);
     }
@@ -128,7 +115,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeUnstableWhenUnstableTotalLowIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setUnstableTotalLow(3));
         runJobTwice(project, Result.UNSTABLE, QualityGateStatus.WARNING);
     }
@@ -138,7 +125,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeFailureWhenFailedNewAllIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewAll(9));
         runJobTwice(project, Result.FAILURE, QualityGateStatus.FAILED);
     }
@@ -149,7 +136,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeFailureWhenFailedNewHighIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewHigh(6));
         runJobTwice(project, Result.FAILURE, QualityGateStatus.FAILED);
     }
@@ -160,7 +147,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeFailureWhenFailedNewNormalIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewNormal(2));
         runJobTwice(project, Result.FAILURE, QualityGateStatus.FAILED);
     }
@@ -171,7 +158,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeFailureWhenFailedNewLowIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedNewLow(3));
         runJobTwice(project, Result.FAILURE, QualityGateStatus.FAILED);
     }
@@ -181,7 +168,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeFailureWhenFailureTotalAllIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalAll(11));
         runJobTwice(project, Result.FAILURE, QualityGateStatus.FAILED);
     }
@@ -191,7 +178,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeFailureWhenFailureTotalHighIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalHigh(6));
         runJobTwice(project, Result.FAILURE, QualityGateStatus.FAILED);
     }
@@ -202,7 +189,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeFailureWhenFailureTotalNormalIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalNormal(2));
         runJobTwice(project, Result.FAILURE, QualityGateStatus.FAILED);
     }
@@ -212,7 +199,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldBeFailureWhenFailureTotalLowIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> recorder.setFailedTotalLow(3));
         runJobTwice(project, Result.FAILURE, QualityGateStatus.FAILED);
     }
@@ -222,7 +209,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      */
     @Test
     public void shouldOverrideUnstableWhenFailureAndUnstableThresholdIsReached() {
-        T project = createProject();
+        FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project, recorder -> {
             recorder.setUnstableTotalAll(1);
             recorder.setFailedTotalLow(3);
@@ -236,7 +223,7 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
      * the workspace so that the project will contain new warnings. (In the first run, new warnings are suppressed
      * automatically, so at least two builds are required to fire the new warnings detection).
      */
-    private void runJobTwice(final T project, final Result result, final QualityGateStatus qualityGateStatus) {
+    private void runJobTwice(final FreeStyleProject project, final Result result, final QualityGateStatus qualityGateStatus) {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
         copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
         scheduleBuildAndAssertStatus(project, result, RESULT_TO_STATUS_MAPPING.get(result));
@@ -253,7 +240,8 @@ public abstract class AbstractQualityGateITest<T extends AbstractProject & TopLe
     }
 
     @SuppressWarnings("illegalcatch")
-    private void scheduleBuildAndAssertStatus(final AbstractProject job, final Result result, final QualityGateStatus qualityGateStatus) {
+    private void scheduleBuildAndAssertStatus(final AbstractProject job, final Result result,
+            final QualityGateStatus qualityGateStatus) {
         try {
             Run build = getJenkins().assertBuildStatus(result, job.scheduleBuild2(0));
             ResultAction action = build.getAction(ResultAction.class);

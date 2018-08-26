@@ -142,6 +142,20 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
+     * Copies the specified files to the workspace. 
+     *
+     * @param job
+     *         the job to get the workspace for
+     * @param fileName
+     *         the file to copy
+     */
+    protected void copySingleFileToWorkspace(final TopLevelItem job, final String fileName) {
+        FilePath workspace = getWorkspace(job);
+
+        copySingleFileToWorkspace(workspace, fileName, fileName);
+    }
+
+    /**
      * Copies the specified files to the workspace. Uses the specified new file name in the workspace.
      *
      * @param job
@@ -765,7 +779,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the created {@link ResultAction}
      */
-    protected AnalysisResult scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status) {
+    protected AnalysisResult scheduleBuildAndAssertStatus(final AbstractProject<?, ?> job, final Result status) {
         return getAnalysisResult(buildWithStatus(job, status));
     }
 
@@ -780,7 +794,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the finished {@link Run}.
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    protected Run<?, ?> buildWithStatus(final FreeStyleProject job, final Result status) {
+    protected Run<?, ?> buildWithStatus(final AbstractProject<?, ?> job, final Result status) {
         try {
             return getJenkins().assertBuildStatus(status, job.scheduleBuild2(0));
         }

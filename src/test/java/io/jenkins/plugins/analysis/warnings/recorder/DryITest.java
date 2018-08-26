@@ -18,6 +18,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
 import io.jenkins.plugins.analysis.warnings.Simian;
@@ -32,7 +33,7 @@ import hudson.model.Result;
  *
  * @author Stephan Plöderl
  */
-public class DryITest extends AbstractIssuesRecorderITest {
+public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String PRIORITY_HEADER_ID = "number-priorities";
     private static final String FOLDER = "dry/";
     private static final String SIMIAN_REPORT = FOLDER + "simian.xml";
