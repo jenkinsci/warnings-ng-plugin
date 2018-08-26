@@ -93,6 +93,19 @@ is created that contains an aggregation of all issues of the selected tools. Thi
 Static Analysis Collector Plug-in provided previously. When this option is activated you get a unique entry point 
 for all of your issues.
 
+#### Setting the file encoding
+
+In order to let the scanner parse correctly your reports and source code files it is required to set the encodings: 
+
+![encoding configuration](images/encoding.png) 
+
+#### Filtering of issues
+
+The created report of issues can be filtered afterwards. You can specify an arbitrary number of include or exclude filters. Currently,
+there is support to filter issues by module name, package name, file name, category or type.
+
+![filter configuration](images/filter.png) 
+
 ### Simple Pipeline Configuration
 
 ### Advanced Pipeline Configuration
