@@ -29,7 +29,7 @@
 
           <div class="row py-3">
             <issues:trend-chart/>
-            <issues:priorities-chart/>
+            <issues:severities-chart/>
           </div>
 
           <div class="row py-3">

@@ -1,0 +1,24 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Renders a doughnut graph showing the issues per severity. The chart model is populated using an Ajax call,
+    see issues-detail.js for details.
+  </st:documentation>
+
+  <div class="col-sm-6">
+    <div class="card card-marg-bot">
+      <div data-role="page" class="card-body">
+
+        <h5 class="card-title">
+          ${%Severities}<i class="fa fa fa-bell icon-right fa-2x" aria-hidden="true"/>
+        </h5>
+
+        <div class="graph-size">
+          <canvas id="severities-chart" class="graph-cursor-pointer" width="100" height="100"/>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</j:jelly>

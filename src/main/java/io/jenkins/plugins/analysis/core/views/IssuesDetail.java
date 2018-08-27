@@ -21,6 +21,8 @@ import org.kohsuke.stapler.export.ExportedBean;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import io.jenkins.plugins.analysis.core.charts.DoughnutModel;
+import io.jenkins.plugins.analysis.core.charts.SeverityPalette;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -179,6 +181,22 @@ public class IssuesDetail implements ModelObject {
     public JSONObject getTableModel() {
         return labelProvider.toJsonArray(getIssues(), new DefaultAgeBuilder(owner.getNumber(), getUrl()),
                 new FileNameRenderer(owner));
+    }
+
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getSeverityModel() {
+        DoughnutModel model = new DoughnutModel();
+        for (Severity severity : report.getSeverities()) {
+            addSeverity(model, severity);
+        }
+
+        return JSONObject.fromObject(model);
+    }
+
+    private void addSeverity(final DoughnutModel model, final Severity severity) {
+        model.add(LocalizedSeverity.getLocalizedString(severity), 
+                getIssues().getSizeOf(severity), severity.getName(), SeverityPalette.getColor(severity));
     }
 
     /**

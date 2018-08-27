@@ -7,7 +7,7 @@
       <h1>${it.displayName}</h1>
 
       <issues:trend-chart />
-      <issues:priorities-chart />
+      <issues:severities-chart />
       <issues:details />
 
     </l:main-panel>

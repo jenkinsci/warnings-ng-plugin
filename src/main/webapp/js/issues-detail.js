@@ -24,42 +24,19 @@
     }
 
     /**
-     * Creates a doughnut chart that shows the number of issues per priority.
-     * Requires that a DOM <canvas> element exists with the ID '#priorities-chart'
-     * and a div with ID '#number-priorities' that holds the three values to render.
+     * Creates a doughnut chart that shows the number of issues per severity.
+     * Requires that a DOM <canvas> element exists with the ID '#severities-chart'.
      */
-    var priorityValues = $('#number-priorities');
-    var priorities = $('#priorities-chart');
-    var prioritiesSummaryChart = new Chart(priorities, {
-        type: 'doughnut',
-        data: {
-            labels: [
-                priorityValues.data('high-label'),
-                priorityValues.data('normal-label'),
-                priorityValues.data('low-label')],
-            urls: ['high', 'normal', 'low'],
-            datasets: [{
-                data: [
-                    priorityValues.data('high'),
-                    priorityValues.data('normal'),
-                    priorityValues.data('low')],
-                backgroundColor: [
-                    '#f5c6cb',
-                    '#ffeeba',
-                    '#b8daff'
-                ],
-                hoverBackgroundColor: [
-                    '#f5929f',
-                    '#ffeb75',
-                    '#53bdff'
-                ],
-                hoverBorderColor: [
-                    '#fff', '#fff', '#fff'
-                ]
-            }]
-        }
+    view.getSeverityModel(function (t) {
+        (function ($) {
+            var priorities = $('#severities-chart');
+            var prioritiesSummaryChart = new Chart(priorities, {
+                type: 'doughnut',
+                data: t.responseObject() 
+            });
+            openSelectedUrl(priorities, prioritiesSummaryChart);
+        })(jQuery);
     });
-    openSelectedUrl(priorities, prioritiesSummaryChart);
 
     /**
      * Creates a doughnut chart that shows the issues trend, i.e. new, fixed or outstanding issues.
