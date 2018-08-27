@@ -2,22 +2,15 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
 
   <st:documentation>
-    Renders a doughnut graph showing fixed, new and outstanding issues.
+    Renders a doughnut graph showing fixed, new and outstanding issues. The chart model is populated using an Ajax call,
+    see issues-detail.js for details.
   </st:documentation>
 
   <div class="col-sm-6">
     <div class="card card-marg-bot">
       <div data-role="page" class="card-body" >
 
-        <!-- data-xxx-issues...: model values for chart -->
-        <h5 id="number-issues" class="card-title"
-            data-new="${size(it.newIssues)}"
-            data-fixed="${size(it.fixedIssues)}"
-            data-outstanding="${size(it.outstandingIssues)}"
-            data-new-label="${%New}"
-            data-fixed-label="${%Fixed}"
-            data-outstanding-label="${%Outstanding}"
-        >
+        <h5 class="card-title">
           ${%Trend}<i class="fa fa-chart-line icon-right fa-2x" aria-hidden="true"/>
         </h5>
 

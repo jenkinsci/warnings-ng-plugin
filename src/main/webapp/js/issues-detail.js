@@ -43,39 +43,16 @@
      * Requires that a DOM <canvas> element exists with the ID '#trend-chart' and a div
      * with ID '#number-issues' that holds the three values to render.
      */
-    var numberIssues = $('#number-issues');
-    var trend = $('#trend-chart');
-    var trendSummaryChart = new Chart(trend, {
-        type: 'doughnut',
-        data: {
-            labels: [
-                numberIssues.data('new-label'),
-                numberIssues.data('fixed-label'),
-                numberIssues.data('outstanding-label')],
-
-            urls: ['new', 'fixed', 'outstanding'],
-            datasets: [{
-                data: [
-                    numberIssues.data('new'),
-                    numberIssues.data('fixed'),
-                    numberIssues.data('outstanding')],
-                backgroundColor: [
-                    '#f5c6cb',
-                    '#b8daff',
-                    '#ffeeba'
-                ],
-                hoverBackgroundColor: [
-                    '#f5929f',
-                    '#53bdff',
-                    '#ffeb75'
-                ],
-                hoverBorderColor: [
-                    '#fff', '#fff', '#fff'
-                ]
-            }]
-        }
+    view.getTrendModel(function (t) {
+        (function ($) {
+            var trend = $('#trend-chart');
+            var trendSummaryChart = new Chart(trend, {
+                type: 'doughnut',
+                data: t.responseObject()
+            });
+            openSelectedUrl(trend, trendSummaryChart);
+        })(jQuery);
     });
-    openSelectedUrl(trend, trendSummaryChart);
 
     /**
      * Create a data table instance for all tables that are marked with class "display".
@@ -195,6 +172,10 @@
             $(this).DataTable().order(order).draw();
         }
     });
+
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+    })
 
     /**
      * Opens the selected URL. For each value in a chart a different URL is registered.

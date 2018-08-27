@@ -22,6 +22,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.charts.DoughnutModel;
+import io.jenkins.plugins.analysis.core.charts.Palette;
 import io.jenkins.plugins.analysis.core.charts.SeverityPalette;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
@@ -183,6 +184,12 @@ public class IssuesDetail implements ModelObject {
                 new FileNameRenderer(owner));
     }
 
+    /**
+     * Returns the UI model for a Chart.js doughnut chart that shows the severities. 
+     *
+     * @return the UI model as JSON
+     * @see <a href="http://www.chartjs.org/docs/latest/charts/doughnut.html">Chart.js documentation</a>
+     */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getSeverityModel() {
@@ -197,6 +204,22 @@ public class IssuesDetail implements ModelObject {
     private void addSeverity(final DoughnutModel model, final Severity severity) {
         model.add(LocalizedSeverity.getLocalizedString(severity), 
                 getIssues().getSizeOf(severity), severity.getName(), SeverityPalette.getColor(severity));
+    }
+
+    /**
+     * Returns the UI model for a Chart.js doughnut chart that shows the new, fixed, and outstanding issues. 
+     *
+     * @return the UI model as JSON
+     * @see <a href="http://www.chartjs.org/docs/latest/charts/doughnut.html">Chart.js documentation</a>
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getTrendModel() {
+        DoughnutModel model = new DoughnutModel();
+        model.add(Messages.New_Warnings_Short(), newIssues.size(), "new", Palette.RED);
+        model.add(Messages.Outstanding_Warnings_Short(), outstandingIssues.size(), "outstanding", Palette.YELLOW);
+        model.add(Messages.Fixed_Warnings_Short(), fixedIssues.size(), "fixed", Palette.GREEN);
+        return JSONObject.fromObject(model);
     }
 
     /**

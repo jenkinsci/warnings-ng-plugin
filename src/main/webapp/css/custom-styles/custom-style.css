@@ -113,28 +113,36 @@ tr.shown div.details-control:before {
     color: transparent;
 }
 
+.priority-error {
+    background-color: #FFCDD2;
+}
+
+.priority-error--hover:hover {
+    background-color: #EF9A9A;
+}
+
 .priority-high {
-    background-color: #f5c6cb;
+    background-color: #FFE0B2;
 }
 
 .priority-high--hover:hover {
-    background-color: #f5929f;
+    background-color: #FFCC80;
 }
 
 .priority-normal {
-    background-color: #ffeeba;
+    background-color: #FFF9C4;
 }
 
 .priority-normal--hover:hover {
-    background-color: #ffeb75;
+    background-color: #FFF59D;
 }
 
 .priority-low {
-    background-color: #b8daff;
+    background-color: #F0F4C3;
 }
 
 .priority-low--hover:hover {
-    background-color: #53bdff;
+    background-color: #E6EE9C;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------- */

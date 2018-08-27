@@ -28,8 +28,8 @@
           <h3>${it.displayName}</h3>
 
           <div class="row py-3">
-            <issues:trend-chart/>
-            <issues:severities-chart/>
+            <issues:trend-graph/>
+            <issues:severities-graph/>
           </div>
 
           <div class="row py-3">

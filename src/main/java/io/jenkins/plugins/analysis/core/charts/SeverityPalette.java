@@ -21,15 +21,15 @@ public final class SeverityPalette {
             return Palette.RED;
         }
         if (severity == Severity.WARNING_HIGH) {
-            return Palette.YELLOW_DARK;
+            return Palette.ORANGE;
         }
         if (severity == Severity.WARNING_NORMAL) {
             return Palette.YELLOW;
         }
         if (severity == Severity.WARNING_LOW) {
-            return Palette.YELLOW_LIGHT;
+            return Palette.LIME;
         }
-        return Palette.BLUE; 
+        return Palette.PURPLE; 
     }
 
     private SeverityPalette() {

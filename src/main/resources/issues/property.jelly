@@ -40,8 +40,8 @@
               </td>
               <td>${count}</td>
               <td>
-                <issues:priority-graph max="${t.max}" high="${t.getHighCount(key)}"
-                                       normal="${t.getNormalCount(key)}" low="${t.getLowCount(key)}"/>
+                <issues:severity-distribution max="${t.max}" error="${t.getErrorsCount(key)}" high="${t.getHighCount(key)}"
+                                              normal="${t.getNormalCount(key)}" low="${t.getLowCount(key)}"/>
               </td>
             </tr>
           </j:forEach>
