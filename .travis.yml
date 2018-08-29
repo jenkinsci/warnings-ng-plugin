@@ -1,6 +1,6 @@
 language: java
 jdk: oraclejdk8
 install : true
-script : mvn -B -V clean verify jacoco:prepare-agent test jacoco:report -Dmaven.test.failure.ignore
+script : mvn -B -V clean verify jacoco:prepare-agent test jacoco:report
 after_success:
 - bash <(curl -s https://codecov.io/bash)

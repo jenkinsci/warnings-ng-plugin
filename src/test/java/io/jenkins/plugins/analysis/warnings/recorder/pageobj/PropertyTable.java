@@ -100,6 +100,7 @@ public class PropertyTable {
         private final int width;
         private final String name;
         private final int size;
+        private final boolean ignoreWidth;
 
         /**
          * Creates a new row based on the content of a list of three HTML cells.
@@ -115,8 +116,16 @@ public class PropertyTable {
             Matcher matcher = WIDTH.matcher(style);
             assertThat(matcher.matches()).isTrue();
             width = Integer.parseInt(matcher.group(1));
+            ignoreWidth = false;
         }
 
+        private PropertyRow(final String name, final int size, final int width, final boolean ignoreWidth) {
+            this.name = name;
+            this.size = size;
+            this.width = width;
+            this.ignoreWidth = ignoreWidth;
+        }
+        
         /**
          * Creates a new {@link PropertyRow}.
          *
@@ -128,9 +137,19 @@ public class PropertyTable {
          *         the percentage this size represents
          */
         public PropertyRow(final String name, final int size, final int width) {
-            this.name = name;
-            this.size = size;
-            this.width = width;
+            this(name, size, width, false);
+        }
+        
+        /**
+         * Creates a new {@link PropertyRow}.
+         *
+         * @param name
+         *         the name of the row
+         * @param size
+         *         the number of issues in this row
+         */
+        public PropertyRow(final String name, final int size) {
+            this(name, size, 0, true);
         }
 
         @Override
@@ -144,8 +163,10 @@ public class PropertyTable {
 
             PropertyRow that = (PropertyRow) o;
 
-            if (width != that.width) {
-                return false;
+            if (!ignoreWidth && !that.ignoreWidth) {
+                if (width != that.width) {
+                    return false;
+                }
             }
             if (size != that.size) {
                 return false;

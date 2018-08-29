@@ -29,6 +29,8 @@ import edu.hm.hafner.analysis.Issue;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
 import static org.assertj.core.api.Assertions.*;
 
 import hudson.model.FreeStyleProject;
@@ -95,9 +97,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * test doesn't check for correct precedence in every possible case as this might fail.
      */
     @Test
-    public void shouldShowModulesForVariousModulesDetectedForOsgiMavenAndAntInTheHtmlOutput()
-            throws IOException, SAXException {
-
+    public void shouldShowModulesForVariousModulesDetectedForOsgiMavenAndAntInTheHtmlOutput() {
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
@@ -116,39 +116,18 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 filesWithModuleConfigurationAndProperties
         );
 
-        WebClient webClient = createWebClient(false);
-        WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-        String webResponseContentAsString = webResponse.getContentAsString();
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlHeader());
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput(EMPTY_MODULE_NAME, 1));
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("edu.hm.hafner.osgi.symbolicname \\(TestVendor\\)", 7));
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("edu.hm.hafner.osgi.symbolicname", 1));
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(
-                            returnPreparedHtmlOutput("Test-Bundle-Name", 1) + returnPreparedTotalHtmlOutput(10));
-
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            List<String> moduleLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
-
-            softly.assertThat(moduleLinks).hasSize(4);
-
-            crawlAllSubPagesOfPackagesAndAssertTheyAreNotLinkingToFurtherModules(moduleLinks, result, webClient,
-                    softly);
-        }
+        verifyModules(result,
+                new PropertyRow(EMPTY_MODULE_NAME, 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 7),
+                new PropertyRow("Test-Bundle-Name", 1));
     }
 
     /**
      * Verifies that the output is correct if there are only Maven modules in the expected HTML output.
      */
     @Test
-    public void shouldShowModulesForVariousMavenModulesInTheHtmlOutput() throws IOException, SAXException {
-
+    public void shouldShowModulesForVariousMavenModulesInTheHtmlOutput() {
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml"};
@@ -156,28 +135,10 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
                 filesWithModuleConfiguration);
 
-        WebClient webClient = createWebClient(false);
-        WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-        String webResponseContentAsString = webResponse.getContentAsString();
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(webResponseContentAsString).containsPattern(returnPreparedHtmlHeader());
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("SubModuleOne", 1));
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("SubModuleTwo", 1));
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("MainModule", 1)
-                            + returnPreparedTotalHtmlOutput(3));
-
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            List<String> moduleLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
-
-            softly.assertThat(moduleLinks).hasSize(3);
-
-            crawlAllSubPagesOfPackagesAndAssertTheyAreNotLinkingToFurtherModules(moduleLinks, result, webClient,
-                    softly);
-        }
+        verifyModules(result,
+                new PropertyRow("MainModule", 1, 100),
+                new PropertyRow("SubModuleOne", 1, 100),
+                new PropertyRow("SubModuleTwo", 1, 100));
     }
 
     /**
@@ -185,33 +146,15 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousAntModulesInTheHtmlOutput() throws IOException, SAXException {
-
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"};
 
         AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
                 filesWithModuleConfiguration);
 
-        WebClient webClient = createWebClient(false);
-        WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-        String webResponseContentAsString = webResponse.getContentAsString();
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(webResponseContentAsString).containsPattern(returnPreparedHtmlHeader());
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("SecondTestModule", 1));
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("SecondTestModule", 1) +
-                            returnPreparedTotalHtmlOutput(2));
-
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            List<String> moduleLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
-
-            softly.assertThat(moduleLinks).hasSize(2);
-
-            crawlAllSubPagesOfPackagesAndAssertTheyAreNotLinkingToFurtherModules(moduleLinks, result, webClient,
-                    softly);
-        }
+        verifyModules(result,
+                new PropertyRow("TestModule", 1, 100),
+                new PropertyRow("SecondTestModule", 1, 100));
     }
 
     /**
@@ -219,7 +162,6 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() throws IOException, SAXException {
-
         String[] filesWithModuleConfiguration = new String[]{
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
@@ -233,28 +175,19 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
                 filesWithModuleConfigurationAndProperties);
 
-        WebClient webClient = createWebClient(false);
-        WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-        String webResponseContentAsString = webResponse.getContentAsString();
+        verifyModules(result,
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 2),
+                new PropertyRow("Test-Bundle-Name", 1));
 
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(webResponseContentAsString).containsPattern(returnPreparedHtmlHeader());
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("edu.hm.hafner.osgi.symbolicname \\(TestVendor\\)", 2));
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("edu.hm.hafner.osgi.symbolicname", 1));
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("Test-Bundle-Name", 1) + returnPreparedTotalHtmlOutput(4)
-                    );
+    }
 
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            List<String> moduleLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
-
-            softly.assertThat(moduleLinks).hasSize(3);
-
-            crawlAllSubPagesOfPackagesAndAssertTheyAreNotLinkingToFurtherModules(moduleLinks, result, webClient,
-                    softly);
-        }
+    private void verifyModules(final AnalysisResult result, final PropertyRow... moduleRows) {
+        HtmlPage details = getWebPage(result);
+        PropertyTable propertyTable = new PropertyTable(details, "moduleName");
+        assertThat(propertyTable.getTitle()).isEqualTo("Modules");
+        assertThat(propertyTable.getColumnName()).isEqualTo("Module");
+        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(moduleRows);
     }
 
     /**
@@ -305,7 +238,6 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() throws IOException {
-
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
@@ -461,42 +393,32 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         return "-> resolved module names for " + expectedNumberOfResolvedModuleNames + " issues";
     }
 
-    private String returnPreparedHtmlHeader() {
-        return "<a data-toggle=\"tab\" role=\"tab\" href=\"#moduleNameContent\" class=\"nav-link\">Modules</a>.*<th>Module</th><th>Total</th><th class=\"no-sort\">Distribution</th></tr></thead><tbody><tr><td>";
-    }
-
-    private String returnPreparedHtmlOutput(final String moduleName,
-            final int numberOfModules) {
-        return "<a href=\"moduleName..*\">" + moduleName + "</a></td><td>" + numberOfModules
-                + "</td><td><div><span style=\"width:.*%\" class=\"bar-graph priority-normal priority-normal--hover\">.</span></div></td></tr>";
-    }
-
-    private String returnPreparedTotalHtmlOutput(final int numberOfTotalPackagesOrNamespaces) {
-        return "<tfoot><tr><td>Total</td><td>" + numberOfTotalPackagesOrNamespaces + "</td><td>";
-    }
-
     private void writeDynamicFile(final FreeStyleProject project, final int modulePaths,
-            final boolean appendNonExistingFile, final String path)
-            throws IOException {
-        for (int i = 1; i <= modulePaths; i++) {
-            String sampleClassDummyName = getJenkins().jenkins.getWorkspaceFor(project) + "/m" + i + "/SampleClass-issues.txt";
-            PrintWriter writer = new PrintWriter(
-                    new FileOutputStream((getJenkins().jenkins.getWorkspaceFor(project) + path), true));
-            writer.println("[javac] " + i + ". WARNING in " + sampleClassDummyName + " (at line 42)");
-            writer.println("[javac] Sample Message");
-            writer.println("[javac] ^^^^^^^^^^^^^^^^^^");
-            writer.println("[javac] Sample Message" + i);
-            writer.close();
-        }
+            final boolean appendNonExistingFile, final String path) {
+        try {
+            for (int i = 1; i <= modulePaths; i++) {
+                String sampleClassDummyName = getJenkins().jenkins.getWorkspaceFor(project) + "/m" + i + "/SampleClass-issues.txt";
+                PrintWriter writer = new PrintWriter(
+                        new FileOutputStream((getJenkins().jenkins.getWorkspaceFor(project) + path), true));
+                writer.println("[javac] " + i + ". WARNING in " + sampleClassDummyName + " (at line 42)");
+                writer.println("[javac] Sample Message");
+                writer.println("[javac] ^^^^^^^^^^^^^^^^^^");
+                writer.println("[javac] Sample Message" + i);
+                writer.close();
+            }
 
-        if (appendNonExistingFile) {
-            PrintWriter writer = new PrintWriter(
-                    new FileOutputStream((getJenkins().jenkins.getWorkspaceFor(project) + path), true));
-            writer.println("[javac] NOT_EXISTING X. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)");
-            writer.println("[javac] Sample Message");
-            writer.println("[javac] ^^^^^^^^^^^^^^^^^^");
-            writer.println("[javac] Sample Message");
-            writer.close();
+            if (appendNonExistingFile) {
+                PrintWriter writer = new PrintWriter(
+                        new FileOutputStream((getJenkins().jenkins.getWorkspaceFor(project) + path), true));
+                writer.println("[javac] NOT_EXISTING X. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)");
+                writer.println("[javac] Sample Message");
+                writer.println("[javac] ^^^^^^^^^^^^^^^^^^");
+                writer.println("[javac] Sample Message");
+                writer.close();
+            }
+        }
+        catch (IOException exception) {
+            throw new AssertionError(exception);
         }
     }
 
@@ -510,16 +432,6 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         return result.getIssues().stream()
                 .collect(Collectors.groupingBy(Issue::getModuleName,
                         Collectors.counting()));
-    }
-
-    private void crawlAllSubPagesOfPackagesAndAssertTheyAreNotLinkingToFurtherModules(final List<String> packageLinks,
-            final AnalysisResult result, final WebClient webClient, final AutoCloseableSoftAssertions softly)
-            throws IOException, SAXException {
-        for (String link : packageLinks) {
-            WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH + link).getWebResponse();
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            softly.assertThat(getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE)).hasSize(0);
-        }
     }
 
     private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) throws IOException, SAXException {
@@ -544,7 +456,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private AnalysisResult buildProjectWithFilesAndReturnResult(final int numberOfExpectedModules,
-            final boolean appendNonExistingFile, final String... files) throws IOException {
+            final boolean appendNonExistingFile, final String... files) {
         FreeStyleProject project = buildProject(files);
         writeDynamicFile(project, numberOfExpectedModules, appendNonExistingFile,
                 DEFAULT_ECLIPSE_TEST_FILE_PATH);
