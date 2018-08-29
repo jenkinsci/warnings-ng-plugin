@@ -113,35 +113,35 @@ tr.shown div.details-control:before {
     color: transparent;
 }
 
-.priority-error {
+.severity-error {
     background-color: #FFCDD2;
 }
 
-.priority-error--hover:hover {
+.severity-error--hover:hover {
     background-color: #EF9A9A;
 }
 
-.priority-high {
+.severity-high {
     background-color: #FFE0B2;
 }
 
-.priority-high--hover:hover {
+.severity-high--hover:hover {
     background-color: #FFCC80;
 }
 
-.priority-normal {
+.severity-normal {
     background-color: #FFF9C4;
 }
 
-.priority-normal--hover:hover {
+.severity-normal--hover:hover {
     background-color: #FFF59D;
 }
 
-.priority-low {
+.severity-low {
     background-color: #F0F4C3;
 }
 
-.priority-low--hover:hover {
+.severity-low--hover:hover {
     background-color: #E6EE9C;
 }
 

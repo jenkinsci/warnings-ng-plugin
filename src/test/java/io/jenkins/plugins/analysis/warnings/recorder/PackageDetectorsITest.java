@@ -40,7 +40,6 @@ import hudson.model.Result;
  * @author Frank Christian Geyer
  * @author Deniz Mardin
  */
-// TODO: Use PropertyTable for all tests
 public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String PACKAGE_FILE_PATH = "detectors/";
     private static final String PACKAGE_WITH_FILES_CSHARP = PACKAGE_FILE_PATH + "csharp/";
@@ -54,9 +53,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * in the expected HTML output.
      */
     @Test
-    public void shouldShowNamespacesAndPackagesAltogetherForJavaAndCSharpInTheHtmlOutput()
-            throws IOException, SAXException {
-
+    public void shouldShowNamespacesAndPackagesAltogetherForJavaAndCSharpInTheHtmlOutput() {
         AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt", 
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt", 
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
@@ -69,32 +66,14 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         );
 
-        WebClient webClient = createWebClient(false);
-        WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-        String webResponseContentAsString = webResponse.getContentAsString();
+        HtmlPage details = getWebPage(result);
 
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlHeader(false));
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("edu.hm.hafner.analysis._123.int.naming.structure", 1));
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("SampleClassWithNamespace", 1) + "<tr><td>");
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("NestedNamespace", 1) + "<tr><td>");
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("SampleClassWithNestedAndNormalNamespace", 1) + "<tr><td>");
-            softly.assertThat(webResponseContentAsString).containsPattern(
-                    returnPreparedHtmlOutput("-", 6) + returnPreparedTotalHtmlOutput(10));
-
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            List<String> packageLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
-
-            softly.assertThat(packageLinks).hasSize(5);
-
-            crawlAllSubPagesOfPackagesAndAssertTheyAreNotLinkingToFurtherPackages(packageLinks, result, webClient,
-                    softly);
-        }
+        verifyNamespaces(details,
+                new PropertyRow("edu.hm.hafner.analysis._123.int.naming.structure", 1),
+                new PropertyRow("SampleClassWithNamespace", 1),
+                new PropertyRow("NestedNamespace", 1),
+                new PropertyRow("SampleClassWithNestedAndNormalNamespace", 1),
+                new PropertyRow("-", 6));
     }
 
     /**
@@ -110,14 +89,10 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         );
 
         HtmlPage details = getWebPage(result);
-        PropertyTable propertyTable = new PropertyTable(details, "packageName");
-        assertThat(propertyTable.getTitle()).isEqualTo("Packages");
-        assertThat(propertyTable.getColumnName()).isEqualTo("Package");
-        assertThat(propertyTable.getRows()).containsExactly(
+
+        verifyPackages(details,
                 new PropertyRow("-", 5, 100),
                 new PropertyRow("edu.hm.hafner.analysis._123.int.naming.structure", 1, 20));
-
-        // TODO: Click Package Link
     }
 
     /**
@@ -125,43 +100,44 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowNamespacesForCSharpOnlyInTheHtmlOutput() throws IOException, SAXException {
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt", 
+        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs");
 
-        WebClient webClient = createWebClient(false);
-        WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-        String webResponseContentAsString = webResponse.getContentAsString();
+        HtmlPage details = getWebPage(result);
 
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(webResponseContentAsString).containsPattern(returnPreparedHtmlHeader(false));
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("SampleClassWithNamespace", 1) + "<tr><td>");
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("NestedNamespace", 1) + "<tr><td>");
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(
-                            returnPreparedHtmlOutput("SampleClassWithNestedAndNormalNamespace", 1) + "<tr><td>");
-            softly.assertThat(webResponseContentAsString)
-                    .containsPattern(returnPreparedHtmlOutput("-", 3) + returnPreparedTotalHtmlOutput(6));
+        verifyNamespaces(details,
+                new PropertyRow("SampleClassWithNamespace", 1),
+                new PropertyRow("NestedNamespace", 1),
+                new PropertyRow("SampleClassWithNestedAndNormalNamespace", 1),
+                new PropertyRow("-", 3));
+    }
 
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            List<String> packageLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
+    private void verifyNamespaces(final HtmlPage details, final PropertyRow... packages) {
+        PropertyTable propertyTable = new PropertyTable(details, "packageName");
+        assertThat(propertyTable.getTitle()).isEqualTo("Namespaces");
+        assertThat(propertyTable.getColumnName()).isEqualTo("Namespace");
+        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(packages);
+        
+        // TODO: Click package links
+    }
 
-            softly.assertThat(packageLinks).hasSize(4);
-
-            crawlAllSubPagesOfPackagesAndAssertTheyAreNotLinkingToFurtherPackages(packageLinks, result, webClient,
-                    softly);
-        }
+    private void verifyPackages(final HtmlPage details, final PropertyRow... packages) {
+        PropertyTable propertyTable = new PropertyTable(details, "packageName");
+        assertThat(propertyTable.getTitle()).isEqualTo("Packages");
+        assertThat(propertyTable.getColumnName()).isEqualTo("Package");
+        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(packages);
+        
+        // TODO: Click package links
     }
 
     /**
      * Verifies that the output of the HTML page is empty if the project is empty.
      */
     @Test
-    public void shouldContainNoSpecificHtmlOutputForAnEmptyProject() throws IOException, SAXException {
+    public void shouldContainNoSpecificHtmlOutputForAnEmptyProject() {
         checkWebPageForExpectedEmptyResult(buildProject());
     }
 
@@ -368,23 +344,6 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         return "-> resolved package names of " + expectedNumberOfResolvedPackageNames + " affected files";
     }
 
-    private String returnPreparedHtmlHeader(final boolean isPackage) {
-        String determinedName = isPackage ? "Package" : "Namespace";
-        return "<a data-toggle=\"tab\" role=\"tab\" href=\"#packageNameContent\" class=\"nav-link\">" + determinedName
-                + "s</a>.*<th>" + determinedName
-                + "</th><th>Total</th><th class=\"no-sort\">Distribution</th></tr></thead><tbody><tr><td>";
-    }
-
-    private String returnPreparedHtmlOutput(final String packageOrNamespaceName,
-            final int numberOfPackagesOrNamespaces) {
-        return "<a href=\"packageName..*>" + packageOrNamespaceName + "</a></td><td>" + numberOfPackagesOrNamespaces
-                + "</td><td><div><span style=\"width:.*%\" class=\"bar-graph priority-normal priority-normal--hover\">.</span></div></td></tr>";
-    }
-
-    private String returnPreparedTotalHtmlOutput(final int numberOfTotalPackagesOrNamespaces) {
-        return "<tfoot><tr><td>Total</td><td>" + numberOfTotalPackagesOrNamespaces + "</td><td>";
-    }
-
     private WebClient createWebClient(final boolean javaScriptEnabled) {
         WebClient webClient = getJenkins().createWebClient();
         webClient.setJavaScriptEnabled(javaScriptEnabled);
@@ -397,21 +356,16 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                         Collectors.counting()));
     }
 
-    private void crawlAllSubPagesOfPackagesAndAssertTheyAreNotLinkingToFurtherPackages(final List<String> packageLinks,
-            final AnalysisResult result, final WebClient webClient, final AutoCloseableSoftAssertions softly)
-            throws IOException, SAXException {
-        for (String link : packageLinks) {
-            WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH + link).getWebResponse();
+    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result)  {
+        try {
+            WebClient webClient = createWebClient(false);
+            WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
             HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            softly.assertThat(getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE)).isEmpty();
+            assertThat(getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE)).isEmpty();
         }
-    }
-
-    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) throws IOException, SAXException {
-        WebClient webClient = createWebClient(false);
-        WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-        HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-        assertThat(getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE)).isEmpty();
+        catch (IOException | SAXException e) {
+            throw new AssertionError(e);
+        }
     }
 
     private List<String> getLinksWithGivenTargetName(final HtmlPage page, final String targetName) {

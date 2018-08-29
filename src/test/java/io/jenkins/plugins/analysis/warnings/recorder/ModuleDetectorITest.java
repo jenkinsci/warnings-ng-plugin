@@ -179,15 +179,16 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 2),
                 new PropertyRow("Test-Bundle-Name", 1));
-
     }
 
-    private void verifyModules(final AnalysisResult result, final PropertyRow... moduleRows) {
+    private void verifyModules(final AnalysisResult result, final PropertyRow... modules) {
         HtmlPage details = getWebPage(result);
         PropertyTable propertyTable = new PropertyTable(details, "moduleName");
         assertThat(propertyTable.getTitle()).isEqualTo("Modules");
         assertThat(propertyTable.getColumnName()).isEqualTo("Module");
-        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(moduleRows);
+        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(modules);
+
+        // TODO: Click module links
     }
 
     /**

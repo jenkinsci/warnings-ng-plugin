@@ -34,7 +34,6 @@ import hudson.model.Result;
  * @author Stephan Plöderl
  */
 public class DryITest extends IntegrationTestWithJenkinsPerSuite {
-    private static final String PRIORITY_HEADER_ID = "number-priorities";
     private static final String FOLDER = "dry/";
     private static final String SIMIAN_REPORT = FOLDER + "simian.xml";
     private static final String CPD_REPORT = FOLDER + "cpd.xml";
@@ -98,16 +97,20 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         enableWarnings(project, cpd);
 
         List<HtmlTableRow> tableRows = getIssueTableRows(project);
-        assertSizeOfSeverity(tableRows, 2, 5, 0, 0);
-        assertSizeOfSeverity(tableRows, 0, 0, 9, 0);
-        assertSizeOfSeverity(tableRows, 5, 0, 0, 6);
+        // high 5, normal 9, low 6
+        assertSizeOfSeverity(tableRows, 2, 5);
+        assertSizeOfSeverity(tableRows, 0, 9);
+        assertSizeOfSeverity(tableRows, 5, 6);
     }
 
     private void assertSizeOfSeverity(final List<HtmlTableRow> tableRows, final int row, 
-            final int high, final int normal, final int low) {
+            final int numberOfSelectedIssues) {
         HtmlTableRow rowWithSeverityToSelect = tableRows.get(row);
         HtmlPage detailsOfSeverity = clickOnLink(getPriorityCell(rowWithSeverityToSelect));
-        checkAmountOfPriorityWarnings(detailsOfSeverity.getElementById(PRIORITY_HEADER_ID), low, normal, high);
+
+        HtmlTable detailsTable = getIssuesTable(detailsOfSeverity);
+        List<HtmlTableRow> detailRows = getIssueTableRows(detailsTable);
+        assertThat(detailRows).hasSize(numberOfSelectedIssues);
     }
 
     private DomElement getPriorityCell(final HtmlTableRow rowWithLowPriorityWarning) {
@@ -268,32 +271,9 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        HtmlPage page = getWebPage(result);
-        checkAmountOfPriorityWarnings(page.getElementById("number-priorities"), low, normal, high);
-    }
-
-    /**
-     * Helper-Method that checks for the expected amount of warnings displayed in the wheel diagram.
-     *
-     * @param heading
-     *         The heading that defines the amounts of the warnings.
-     * @param low
-     *         Expected amount of low warnings.
-     * @param normal
-     *         Expected amount of normal warnings.
-     * @param high
-     *         Expected amount of high warnings.
-     */
-    private void checkAmountOfPriorityWarnings(final DomElement heading, 
-            final int low, final int normal, final int high) {
-        assertThatAttributeContainsValue(heading, "data-low", low);
-        assertThatAttributeContainsValue(heading, "data-normal", normal);
-        assertThatAttributeContainsValue(heading, "data-high", high);
-    }
-
-    private void assertThatAttributeContainsValue(
-            final DomElement heading, final String attributeName, final int value) {
-        assertThat(heading.getAttribute(attributeName)).isEqualTo(String.valueOf(value));
+        assertThat(result.getTotalHighPrioritySize()).isEqualTo(high);
+        assertThat(result.getTotalNormalPrioritySize()).isEqualTo(normal);
+        assertThat(result.getTotalLowPrioritySize()).isEqualTo(low);
     }
 
     /**
@@ -306,6 +286,10 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private HtmlTable getIssuesTable(final FreeStyleProject project) {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage page = getWebPage(result);
+        return getIssuesTable(page);
+    }
+
+    private HtmlTable getIssuesTable(final HtmlPage page) {
         DomElement table = page.getElementById("issues");
 
         assertThat(table).isInstanceOf(HtmlTable.class);
@@ -324,6 +308,10 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private List<HtmlTableRow> getIssueTableRows(final FreeStyleProject project) {
         HtmlTable table = getIssuesTable(project);
 
+        return getIssueTableRows(table);
+    }
+
+    private List<HtmlTableRow> getIssueTableRows(final HtmlTable table) {
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);
         HtmlTableBody tableBody = bodies.get(0);
