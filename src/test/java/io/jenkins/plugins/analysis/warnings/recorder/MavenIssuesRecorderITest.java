@@ -1,12 +1,16 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jvnet.hudson.test.ToolInstallations;
 
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.MavenConsole;
 
 import hudson.maven.MavenModuleSet;
 import hudson.model.Result;
@@ -22,8 +26,6 @@ public class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite
      */
     @Test
     public void shouldCreateResultWithWarnings() {
-        installMaven();
-        
         MavenModuleSet project = createMavenJob();
         copySingleFileToWorkspace(project, "pom.xml");
         copyMultipleFilesToWorkspaceWithSuffix(project, "eclipse.txt");
@@ -38,8 +40,28 @@ public class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite
                 "-> resolved package names of 4 affected files");
     }
 
+    /**
+     * Runs a maven build without a pom.xml. Enables reporting of maven warnings and errors. 
+     */
+    @Test
+    public void shouldParseMavenError() {
+        MavenModuleSet project = createMavenJob();
+        copySingleFileToWorkspace(project, "pom-error.xml", "pom.xml");
+ 
+        IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new MavenConsole(), ""));
+        recorder.setEnabledForFailure(true);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        assertThat(result).hasTotalSize(2);
+        assertThat(result.getSizePerSeverity()).containsExactly(entry(Severity.ERROR, 2));
+    }
+
+    /**
+     * Ensures that Maven 3.5 is installed before a test will be executed.
+     */
+    @BeforeClass
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.AvoidCatchingGenericException"})
-    private void installMaven() {
+    public static void installMaven() {
         try {
             ToolInstallations.configureMaven35();
         }

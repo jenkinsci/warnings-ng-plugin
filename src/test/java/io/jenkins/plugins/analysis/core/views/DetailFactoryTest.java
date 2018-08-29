@@ -229,11 +229,12 @@ class DetailFactoryTest {
 
     private void assertThatPrioritiesAreCorrectlySet(final IssuesDetail issuesDetail,
             final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
-        assertThat(issuesDetail.getIssues()).hasPriorities(expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
-        assertThat(issuesDetail.getOutstandingIssues()).hasPriorities(expectedSizeHigh, expectedSizeNormal,
+        assertThat(issuesDetail.getIssues()).hasSeverities(0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThat(issuesDetail.getOutstandingIssues()).hasSeverities(0, expectedSizeHigh, expectedSizeNormal,
                 expectedSizeLow);
-        assertThat(issuesDetail.getFixedIssues()).hasPriorities(expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
-        assertThat(issuesDetail.getNewIssues()).hasPriorities(expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThat(issuesDetail.getFixedIssues()).hasSeverities(0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow
+        );
+        assertThat(issuesDetail.getNewIssues()).hasSeverities(0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
     }
 
     private AnalysisResult createResult() {

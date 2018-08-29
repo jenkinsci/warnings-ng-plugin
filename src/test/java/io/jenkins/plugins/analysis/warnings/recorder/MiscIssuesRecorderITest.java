@@ -76,7 +76,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         verifyAndChangeEntry(form, "ignoreQualityGate", false);
         verifyAndChangeEntry(form, "ignoreFailedBuilds", true);
         verifyAndChangeEntry(form, "referenceJobName", "referenceJobName");
-        
+
         verifyAndChangeEntry(form, "healthy", 10);
         verifyAndChangeEntry(form, "unhealthy", 20);
 
@@ -95,7 +95,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         assertThat(recorder.getHealthy()).isEqualTo(15);
         assertThat(recorder.getUnhealthy()).isEqualTo(25);
-        
+
         assertThat(recorder.getEnabledForFailure()).isFalse();
         assertThat(recorder.getAggregatingResults()).isFalse();
     }
@@ -300,7 +300,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      */
     @Test
     public void shouldCreateFixedWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_8_Warnings.txt", "eclipse_5_Warnings.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_8_Warnings.txt",
+                "eclipse_5_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
 
         // First build: baseline
@@ -325,7 +326,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         SummaryBox resultSummary = new SummaryBox(getWebPage(result.getOwner()), "eclipse");
         assertThat(resultSummary.exists()).isTrue();
         assertThat(resultSummary.getTitle()).isEqualTo("Eclipse ECJ: 5 warnings");
-        assertThat(resultSummary.getItems()).containsExactly("3 fixed warnings", "Reference build: " + project.getName() + " #1");
+        assertThat(resultSummary.getItems()).containsExactly("3 fixed warnings",
+                "Reference build: " + project.getName() + " #1");
     }
 
     /**
@@ -335,7 +337,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      */
     @Test
     public void shouldCreateNewWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_8_Warnings.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_5_Warnings.txt",
+                "eclipse_8_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
 
         // First build: baseline
@@ -384,7 +387,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
      */
     @Test
     public void shouldCreateSomeNewWarningsAndSomeFixedWarnings() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_5_Warnings.txt", "eclipse_4_Warnings.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_5_Warnings.txt",
+                "eclipse_4_Warnings.txt");
         IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_5_Warnings-issues.txt"));
 
         // First build: baseline
@@ -560,7 +564,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldShowBaseNamesInFilesTab() {
         FreeStyleProject job = createFreeStyleProjectWithWorkspaceFiles("pmd-absolute-path.xml");
-        IssuesRecorder recorder = enableWarnings(job, new Pmd());
+        enableWarnings(job, new Pmd());
+        
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(5);
