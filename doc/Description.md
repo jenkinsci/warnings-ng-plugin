@@ -119,11 +119,48 @@ category or type.
 
 ![filter configuration](images/filter.png) 
 
+#### Quality gate configuration
+
+You can define several quality gates that will be checked after the issues have been reported. These quality gates
+help you to modify Jenkins' build status so that you immediately see if the desired quality of your product is met. 
+A build can be set to **unstable** or **failed** for each of these quality gates. All quality gates use a simple metric:
+you can define the number of issues that must not be reached to pass a given quality gate.   
+
+![quality gate](images/quality-gate.png) 
+
+#### Health Report configuration
+
+The plug-in can participate in the health report of your project. You can change the number of issues
+that change the health to 0% and 100%, respectively. Additionally, the severities that should be considered
+when creating the health report can be selected.
+ 
+![health report configuration](images/health.png) 
+
+
 ### Simple Pipeline Configuration
 
 ### Advanced Pipeline Configuration
 
 ## New Features
+
+### Issues history: new, fixed, and outstanding issues
+
+A highlight of the plug-in is the possibility to categorize issues of subsequent builds as new, fixed and outstanding.
+TBD details.
+
+![severities overview](images/trend.png) 
+
+### Severities
+
+The plug-in shows the distribution of the severities of the issues in a report. The warnings plug-in defines the 
+following default severities, additional ones might be added by plug-ins. Note that not every parser is capable 
+of producing warnings with a different severity. Some od the parses simply use the same severity for all issues.
+
+- Error: Indicates an error that typically should fail a build
+- Warning (High, Normal, Low): Indicates a warning of the given priority.
+
+![severities overview](images/severities.png) 
+
 
 ### Remote API
 
