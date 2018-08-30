@@ -78,12 +78,15 @@ public class GroovyExpressionMatcher implements Serializable {
      *         the issue builder
      * @param lineNumber
      *         the current line number
+     * @param fileName
+     *         the name of the parsed report file
      *
      * @return a new annotation for the specified pattern
      */
     @SuppressWarnings("all")
-    public Issue createIssue(final Matcher matcher, final IssueBuilder builder, final int lineNumber) {
-        Object result = run(matcher, builder, lineNumber);
+    public Issue createIssue(final Matcher matcher, final IssueBuilder builder, final int lineNumber, 
+            final String fileName) {
+        Object result = run(matcher, builder, lineNumber, fileName);
         if (result instanceof Issue) {
             return (Issue) result;
         }
@@ -99,15 +102,18 @@ public class GroovyExpressionMatcher implements Serializable {
      *         the issue builder
      * @param lineNumber
      *         the current line number
+     * @param fileName
+     *         the name of the parsed report file
      *
      * @return unchecked result of the script
      */
-    public Object run(final Matcher matcher, final IssueBuilder builder, final int lineNumber) {
+    public Object run(final Matcher matcher, final IssueBuilder builder, final int lineNumber, final String fileName) {
         if (compileScriptIfNotYetDone()) {
             Binding binding = compiled.getBinding();
             binding.setVariable("matcher", matcher);
             binding.setVariable("builder", builder);
             binding.setVariable("lineNumber", lineNumber);
+            binding.setVariable("fileName", fileName);
 
             return runScript();
         }
@@ -123,20 +129,6 @@ public class GroovyExpressionMatcher implements Serializable {
             LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during execution: ", exception);
             return falsePositive;
         }
-    }
-
-    /**
-     * Creates a new issue for the specified match.
-     *
-     * @param matcher
-     *         the regular expression matcher
-     * @param builder
-     *         the issue builder
-     *
-     * @return a new annotation for the specified pattern
-     */
-    public Issue createIssue(final Matcher matcher, final IssueBuilder builder) {
-        return createIssue(matcher, builder, 0);
     }
 }
 

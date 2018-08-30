@@ -374,7 +374,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             try {
                 if (matcher.find()) {
                     GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script, null);
-                    Object result = checker.run(matcher, new IssueBuilder(), 0);
+                    Object result = checker.run(matcher, new IssueBuilder(), 0, "UI Example");
                     if (result instanceof Issue) {
                         return createOkMessage((Issue) result);
                     }

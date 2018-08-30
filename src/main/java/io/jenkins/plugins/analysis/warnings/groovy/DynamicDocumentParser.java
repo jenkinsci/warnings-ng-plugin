@@ -13,6 +13,8 @@ import edu.hm.hafner.analysis.RegexpDocumentParser;
  */
 public class DynamicDocumentParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -690643673847390322L;
+    private static final int NO_LINE_NUMBER_AVAILABLE = 0;
+    
     private final GroovyExpressionMatcher expressionMatcher;
 
     /**
@@ -31,7 +33,8 @@ public class DynamicDocumentParser extends RegexpDocumentParser {
 
     @Override
     protected Issue createIssue(final Matcher matcher, final IssueBuilder builder) {
-        return expressionMatcher.createIssue(matcher, builder);
+        return expressionMatcher.createIssue(matcher, builder, 
+                NO_LINE_NUMBER_AVAILABLE, getFileName());
     }
 }
 

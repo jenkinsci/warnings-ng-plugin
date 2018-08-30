@@ -32,7 +32,7 @@ public class DynamicLineParser extends RegexpLineParser {
 
     @Override
     protected Issue createIssue(final Matcher matcher, final IssueBuilder builder) {
-        return expressionMatcher.createIssue(matcher, builder);
+        return expressionMatcher.createIssue(matcher, builder, getCurrentLine(), getFileName());
     }
 }
 
