@@ -46,7 +46,6 @@ public class IssuesTable {
 
         HtmlTableRow header = tableHeaderRows.get(0);
         columnNames = getHeaders(header.getCells());
-        
 
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);

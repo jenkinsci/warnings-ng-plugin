@@ -154,10 +154,11 @@ TBD details.
 
 The plug-in shows the distribution of the severities of the issues in a report. The warnings plug-in defines the 
 following default severities, additional ones might be added by plug-ins. Note that not every parser is capable 
-of producing warnings with a different severity. Some od the parses simply use the same severity for all issues.
+of producing warnings with a different severity. Some of the parses simply use the same severity for all issues.
 
-- Error: Indicates an error that typically should fail a build
-- Warning (High, Normal, Low): Indicates a warning of the given priority.
+- **Error**: Indicates an error that typically fails the build
+- **Warning** (High, Normal, Low): Indicates a warning of the given priority. Mapping to the priorities
+is up to the individual parsers.
 
 ![severities overview](images/severities.png) 
 

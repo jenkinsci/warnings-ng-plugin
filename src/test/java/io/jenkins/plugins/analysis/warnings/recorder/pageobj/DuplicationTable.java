@@ -15,6 +15,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -87,9 +88,9 @@ public class DuplicationTable {
      * @param element
      *         a {@link DomElement} which will trigger the redirection to a new page.
      */
-    private void clickOnLink(final DomElement element) {
+    private static HtmlPage clickOnLink(final DomElement element) {
         try {
-            element.click();
+            return element.click();
         }
         catch (IOException e) {
             throw new AssertionError(e);
@@ -119,6 +120,15 @@ public class DuplicationTable {
     }
 
     /**
+     * Returns the selected table row.
+     *
+     * @return the selected row
+     */
+    public DuplicationRow getRow(final int row) {
+        return rows.get(row);
+    }
+
+    /**
      * Simple Java bean that represents an issue row in the issues table.
      */
     public static class DuplicationRow {
@@ -127,6 +137,11 @@ public class DuplicationTable {
         private final String priority;
         private final int age;
         private final int lineCount;
+        
+        @CheckForNull
+        private DomElement fileNameLink;
+        @CheckForNull
+        private DomElement priorityLink;
 
         /**
          * Creates a new row based on the content of a list of three HTML cells.
@@ -144,6 +159,7 @@ public class DuplicationTable {
                 assertThat(columns).hasSize(6);
             }
             int column = 1;
+            fileNameLink = columns.get(column).getFirstElementChild();
             fileName = asText(columns, column++);
             if (hasPackages) {
                 packageName = asText(columns, column++);
@@ -151,17 +167,18 @@ public class DuplicationTable {
             else {
                 packageName = "-";
             }
+            priorityLink = columns.get(column).getFirstElementChild();
             priority = asText(columns, column++);
             lineCount = asInt(columns, column++);
             column++; // skip links
             age = asInt(columns, column);
         }
 
-        int asInt(final List<HtmlTableCell> columns, final int column) {
+        private int asInt(final List<HtmlTableCell> columns, final int column) {
             return Integer.parseInt(asText(columns, column));
         }
 
-        String asText(final List<HtmlTableCell> columns, final int column) {
+        private String asText(final List<HtmlTableCell> columns, final int column) {
             return columns.get(column).getTextContent();
         }
 
@@ -188,6 +205,24 @@ public class DuplicationTable {
             this.age = age;
         }
 
+        public HtmlPage clickSourceCode() {
+            if (fileNameLink != null) {
+                return clickOnLink(fileNameLink);
+            }
+            else {
+                throw new AssertionError("No source code column link found");
+            }
+        }
+        
+        public HtmlPage clickSeverity() {
+            if (priorityLink != null) {
+                return clickOnLink(priorityLink);
+            }
+            else {
+                throw new AssertionError("No severity column link found");
+            }
+        }
+        
         @Override
         public boolean equals(final Object o) {
             if (this == o) {

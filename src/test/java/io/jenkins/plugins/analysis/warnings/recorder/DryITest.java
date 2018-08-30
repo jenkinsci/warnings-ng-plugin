@@ -57,7 +57,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * cpd warnings.
      */
     @Test
-    public void priorityShouldChangeIfThresholdsChange() {
+    public void shouldConfigureSeverityThresholdsInJobConfigurationForCpd() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
@@ -74,7 +74,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
 
     @Test
-    public void priorityShouldChangeIfThresholdsChangeSimian() {
+    public void shouldConfigureSeverityThresholdsInJobConfigurationForSimian() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(SIMIAN_REPORT);
         Simian simian = new Simian();
         simian.setNormalThreshold(1);
@@ -89,39 +89,38 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the priority links are redirecting to a filtered side, showing only the warnings of this priority.
      */
     @Test
-    public void priorityLinksShouldOpenFilteredSite() {
+    public void shouldFilterIssuesBySeverity() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
 
-        List<HtmlTableRow> tableRows = getIssueTableRows(project);
-        // high 5, normal 9, low 6
-        assertSizeOfSeverity(tableRows, 2, 5);
-        assertSizeOfSeverity(tableRows, 0, 9);
-        assertSizeOfSeverity(tableRows, 5, 6);
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        HtmlPage details = getWebPage(result);
+
+        DuplicationTable issues = new DuplicationTable(details, false);
+        assertThat(issues.getRows()).hasSize(10); // paging of 10 is activated by default
+        
+        assertSizeOfSeverity(issues, 2, 5); // HIGH
+        assertSizeOfSeverity(issues, 0, 9); // NORMAL
+        assertSizeOfSeverity(issues, 5, 6); // LOW
     }
 
-    private void assertSizeOfSeverity(final List<HtmlTableRow> tableRows, final int row, 
+    private void assertSizeOfSeverity(final DuplicationTable table, final int row, 
             final int numberOfSelectedIssues) {
-        HtmlTableRow rowWithSeverityToSelect = tableRows.get(row);
-        HtmlPage detailsOfSeverity = clickOnLink(getPriorityCell(rowWithSeverityToSelect));
+        DuplicationRow selectedRow = table.getRow(row);
+        HtmlPage detailsOfSeverity = selectedRow.clickSeverity();
 
-        HtmlTable detailsTable = getIssuesTable(detailsOfSeverity);
-        List<HtmlTableRow> detailRows = getIssueTableRows(detailsTable);
-        assertThat(detailRows).hasSize(numberOfSelectedIssues);
-    }
-
-    private DomElement getPriorityCell(final HtmlTableRow rowWithLowPriorityWarning) {
-        return rowWithLowPriorityWarning.getCell(2).getFirstElementChild();
+        DuplicationTable issues = new DuplicationTable(detailsOfSeverity, false);
+        assertThat(issues.getRows()).hasSize(numberOfSelectedIssues);
     }
 
     /**
      * Verifies that the source code links are redirecting to a side displaying the source code.
      */
     @Test
-    public void sourceCodeLinksShouldWork() {
+    public void shouldNavigateToSourceCode() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         copySingleFileToWorkspace(project, FOLDER + "Main.source", "Main.java");
         Cpd cpd = new Cpd();
@@ -129,25 +128,24 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
 
-        List<HtmlTableRow> tableRows = getIssueTableRows(project);
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        HtmlPage details = getWebPage(result);
 
-        HtmlPage sourceCodePage = clickOnLink(selectSourceCodeLink(tableRows));
+        DuplicationTable issues = new DuplicationTable(details, false);
+        assertThat(issues.getRows()).hasSize(10);
+
+        HtmlPage sourceCodePage = issues.getRow(0).clickSourceCode();
         DomElement tableElement = sourceCodePage.getElementById("main-panel");
 
         String htmlFile = toString(FOLDER + "expected_html_code_block.html").trim();
         assertThat(tableElement.asText()).isEqualTo(htmlFile);
     }
 
-    private DomElement selectSourceCodeLink(final List<HtmlTableRow> tableRows) {
-        return tableRows.get(0).getCell(1).getFirstElementChild();
-    }
-
-   /**
-     * Verifies the structure of the issues table. i.e. the displayed table headers and the defined classes of the
-     * table.
+    /**
+     * Verifies the structure of the duplications table. i.e. the table headers and column contents.
      */
     @Test
-    public void tableShouldHaveExpectedStructureWithPo() {
+    public void shouldShowDuplicationColumnContent() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         enableWarnings(project, cpd);
@@ -171,17 +169,17 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the content of the issues table is as expected.
+     * Verifies that the first table column shows the content of the duplicated code if clicked.
      */
     @Test
-    public void firstTableRowShouldHaveRightContent() {
+    public void shouldShowDetailsWithDuplicatedSourceCodeSnippet() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
 
-        List<HtmlTableRow> tableRows = getIssueTableRows(project);
+        List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
 
         HtmlTableRow firstTableRow = tableRows.get(0);
         List<HtmlTableCell> firstTableRowCells = firstTableRow.getCells();
@@ -217,7 +215,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         cpd.setHighThreshold(4);
         enableWarnings(project, cpd);
 
-        List<HtmlTableRow> tableRows = getIssueTableRows(project);
+        List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
         //only 10 are displayed because of the paging
 
         assertThat(tableRows).hasSize(10);
@@ -276,19 +274,6 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalLowPrioritySize()).isEqualTo(low);
     }
 
-    /**
-     * Helper-method which builds the result and returns the issues table of a specified result type.
-     *
-     * @param project
-     *         the project, which shall be build.
-     * @return the issues table as {@link HtmlTable} object.
-     */
-    private HtmlTable getIssuesTable(final FreeStyleProject project) {
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage page = getWebPage(result);
-        return getIssuesTable(page);
-    }
-
     private HtmlTable getIssuesTable(final HtmlPage page) {
         DomElement table = page.getElementById("issues");
 
@@ -305,15 +290,15 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      *         the current {@link FreeStyleProject}.
      * @return a list of #{@link HtmlTableRow}-elements displayed in the issues-table.
      */
-    private List<HtmlTableRow> getIssueTableRows(final FreeStyleProject project) {
-        HtmlTable table = getIssuesTable(project);
+    private List<HtmlTableRow> scheduleBuildAndGetRows(final FreeStyleProject project) {
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        return getIssueTableRows(table);
-    }
+        HtmlPage page = getWebPage(result);
+        HtmlTable table = getIssuesTable(page);
 
-    private List<HtmlTableRow> getIssueTableRows(final HtmlTable table) {
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);
+        
         HtmlTableBody tableBody = bodies.get(0);
         return tableBody.getRows();
     }
@@ -328,7 +313,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      *         the current {@link FreeStyleProject}.
      */
     private void checkPriorityOfFirstWarningInTable(final String expectedPriority, final FreeStyleProject project) {
-        List<HtmlTableRow> tableRows = getIssueTableRows(project);
+        List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
         HtmlTableRow firstRow = tableRows.get(0);
         List<HtmlTableCell> tableCells = firstRow.getCells();
 
