@@ -33,7 +33,7 @@ public class CategoryUrlBuilder implements SerializableUrlGenerator {
             this.pluginName = StringUtils.EMPTY;
         }
         else {
-            this.pluginName = "/" + pluginName + "Result/";
+            this.pluginName = "/" + pluginName + "/";
         }
     }
 
