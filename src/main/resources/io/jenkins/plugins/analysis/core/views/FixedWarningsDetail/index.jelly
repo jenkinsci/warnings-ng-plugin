@@ -13,8 +13,8 @@
       <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-styles/custom-style.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/all.css"/>
 
-      <script src="${resURL}/plugin/warnings/js/libs/jquery-3.3.1.slim.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/popper-1.14.3.min.js"/>
+      <script src="${resURL}/plugin/warnings/js/libs/jquery.min.js"/>
+      <script src="${resURL}/plugin/warnings/js/libs/popper.min.js"/>
       <script src="${resURL}/plugin/warnings/js/libs/bootstrap.min.js"/>
       <script src="${resURL}/plugin/warnings/js/libs/datatables.min.js"/>
       
