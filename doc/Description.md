@@ -47,9 +47,10 @@ effort will be spent into the new code base.
 
 ### Migration of all other jobs
 
-Freestyle, Matrix or Maven Jobs using the old API typically used a so called **Post Build Action** to publish warnings. 
-E.g., the FindBugs plug-in did provide the post build action *"Publish FindBugs analysis results"*. This publisher is not 
-supported anymore. You need to add a new post build step - this step now is called *"Record static analysis results"*
+Freestyle, Matrix or Maven Jobs using the old API used a so called **Post Build Action** to publish warnings. 
+E.g., the FindBugs plug-in did provide the post build action *"Publish FindBugs analysis results"*. These old actions 
+are not supported anymore, they are now marked with *\[Deprecated\]* in the user interface. 
+You need to add a new post build step - this step now is called *"Record static analysis results"*
 for all kind of static analysis tools. The selection of the tool is part of the configuration of this post build step. 
 Note: the warnings produced by a post build step using the old API could not be read by the new post build step.
 I.e., you can't see a combined history of the old and new results - you simply see two unrelated results. There is
@@ -136,10 +137,89 @@ when creating the health report can be selected.
  
 ![health report configuration](images/health.png) 
 
-### Simple Pipeline Configuration
+### Pipeline Configuration
 
-### Advanced Pipeline Configuration
+Pipelines can create static analysis reports using two different approaches. The simple configuration
+basically provides the same properties as the post build action (see above). 
 
+#### Simple Pipeline Configuration - Single Step  
+
+The simple pipeline configuration is provided by the step *recordIssues*. This step scans for issues
+in a given set of files (or in the console log) and reports these issues in your build. You can use the 
+snippet generator to create a working snippet that calls this step. A typical example of this step 
+is shown in the following example:
+
+```
+recordIssues enabledForFailure: true, tools: [], filters: [includeFile('File.*.java'), excludeCategory('WHITESPACE')]
+
+```
+
+In this example, the files '*.log' are scanned for issues. Only issues with an file name matching the 
+pattern 'File.\*.java' are included. Issues from the 'WHITESPACE' category have been removed. The
+step will be executed even if the build failed. 
+
+In order to see all configuration options you can investigate the 
+[step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java).
+                                              
+#### Advanced Pipeline Configuration - Multiple Steps
+
+Sometimes publishing and reporting issues using a single step is not sufficient. E.g., if you build your
+product using several parallel steps and you want to combine the issues from all of these steps into 
+a single result. Then you need to split scanning and aggregation. The plug-in provides the following
+two steps:
+- scanForIssues: this step scans a report file or the console log with a particular parser and creates an 
+intermediate 
+[Report](https://github.com/jenkinsci/analysis-model/blob/master/src/main/java/edu/hm/hafner/analysis/Report.java) 
+object that contains the report. 
+- publishIssues: this step publishes a new report in your build that contains the aggregated results
+ of several *scanForIssues* steps.
+
+Example: 
+```
+node {
+    stage ('Checkout') {
+        git branch:'5.0', url: 'git@github.com:jenkinsci/warnings-plugin.git'
+    }
+    stage ('Build') {
+        def mvnHome = tool 'mvn-default'
+
+        sh "${mvnHome}/bin/mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false"
+
+        junit testResults: '**/target/*-reports/TEST-*.xml'
+
+        def java = scanForIssues tool: [$class: 'Java']
+        def javadoc = scanForIssues tool: [$class: 'JavaDoc']
+        
+        publishIssues issues:[java, javadoc], filters:[[property: [$class: 'IncludePackage'], pattern: 'io.jenkins.plugins.analysis.*']]
+    }
+
+    stage ('Analysis') {
+        def mvnHome = tool 'mvn-default'
+
+        sh "${mvnHome}/bin/mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs"
+
+        def checkstyle = scanForIssues tool: [$class: 'CheckStyle'], pattern: '**/target/checkstyle-result.xml'
+        publishIssues issues:[checkstyle]
+   
+        def pmd = scanForIssues tool: [$class: 'Pmd'], pattern: '**/target/pmd.xml'
+        publishIssues issues:[pmd]
+        
+        def cpd = scanForIssues tool: [$class: 'Cpd'], pattern: '**/target/cpd.xml'
+        publishIssues issues:[cpd]
+        
+        def findbugs = scanForIssues tool: [$class: 'FindBugs'], pattern: '**/target/findbugsXml.xml'
+        publishIssues issues:[findbugs]
+
+        def maven = scanForIssues tool: [$class: 'MavenConsole']
+        publishIssues issues:[maven]
+        
+        publishIssues id:'analysis', name:'White Mountain', issues:[checkstyle, pmd, findbugs], filters:[[property: [$class: 'IncludePackage'], pattern: 'io.jenkins.plugins.analysis.*']]
+    }
+
+``` 
+
+
+  
 ## New Features
 
 ### Issues history: new, fixed, and outstanding issues

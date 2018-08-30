@@ -57,7 +57,7 @@
     /**
      * Create a data table instance for all tables that are marked with class "display".
      */
-    $('table.display').DataTable({
+    $('table.property-table').DataTable({
         pagingType: 'numbers',  // Page number button only
         columnDefs: [{
             targets: 'no-sort', // Columns with class 'no-sort' are not orderable
@@ -66,7 +66,7 @@
     });
 
     /**
-     * Create a data table instance for all tables that are marked with class "display".
+     * Create a data table instance for the issues table.
      */
     var issues = $('#issues');
     var table = issues.DataTable({
