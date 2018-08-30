@@ -11,9 +11,8 @@ Starting with release 5.x the warnings plug-in has support for the following Jen
 - Freestyle Project
 - Maven Project
 - Matrix Project
-- Scripted Pipeline
-- Parallel Pipeline
-- Declarative Pipeline
+- Scripted Pipeline (sequential and parallel steps)
+- Declarative Pipeline (sequential and parallel steps)
 - Multi-branch Pipeline
 
 ## Features Overview 
@@ -45,16 +44,22 @@ effort will be spent into the new code base.
 
 ### Migration of Pipelines
 
+Pipelines calling the old static analysis steps (e.g., findbugs, checkstyle, etc.) need to call the new *recordIssues* 
+step now. The same step is used for all static analysis tools, the actual parser is selected
+by using the step property *tools*. For more details on the set of available parameters please see section 
+[Pipeline Configuration](#simple-pipeline-configuration).     
+
 ### Migration of all other jobs
 
-Freestyle, Matrix or Maven Jobs using the old API used a so called **Post Build Action** to publish warnings. 
-E.g., the FindBugs plug-in did provide the post build action *"Publish FindBugs analysis results"*. These old actions 
-are not supported anymore, they are now marked with *\[Deprecated\]* in the user interface. 
-You need to add a new post build step - this step now is called *"Record static analysis results"*
-for all kind of static analysis tools. The selection of the tool is part of the configuration of this post build step. 
-Note: the warnings produced by a post build step using the old API could not be read by the new post build step.
+Freestyle, Matrix or Maven Jobs using the old API used a so called **Post Build Action** that was provided by 
+each individual plug-in. E.g., the FindBugs plug-in did provide the post build action 
+*"Publish FindBugs analysis results"*. These old plug-in specific actions are not supported anymore, 
+they are now marked with *\[Deprecated\]* in the user interface. 
+Now you need to add a new post build step - this step now is called *"Record static analysis results"*
+for all static analysis tools. The selection of the tool is part of the configuration of this post build step. 
+Note: the warnings produced by a post build step using the old API cannot not be read by the new post build actions.
 I.e., you can't see a combined history of the old and new results - you simply see two unrelated results. There is
-no automatic conversion of results stored in the old format available.
+also no automatic conversion of results stored in the old format available.
 
 ### Migration of Plug-in Depending on analysis-core
 
@@ -106,6 +111,7 @@ One important feature of the warnings plug-in is the classification of issues as
 - **new**: all issues, that are part of the current report but have not been shown up in the reference report
 - **fixed**: all issues, that are part of the reference report but are not present in the current report anymore
 - **outstanding**: all issues, that are part of the current and reference report
+
 In order to compute this classification, the plug-in requires a reference build (baseline). New, fixed, and outstanding
 issues are then computed by comparing the issues in the current build and the baseline. There are three options that
 control the selection of the reference build. 
@@ -140,9 +146,9 @@ when creating the health report can be selected.
 ### Pipeline Configuration
 
 Pipelines can create static analysis reports using two different approaches. The simple configuration
-basically provides the same properties as the post build action (see above). 
+basically provides the same properties as the post build action (see [above](#graphical-configuration)). 
 
-#### Simple Pipeline Configuration - Single Step  
+#### Simple Pipeline Configuration 
 
 The simple pipeline configuration is provided by the step *recordIssues*. This step scans for issues
 in a given set of files (or in the console log) and reports these issues in your build. You can use the 
@@ -168,11 +174,13 @@ product using several parallel steps and you want to combine the issues from all
 a single result. Then you need to split scanning and aggregation. The plug-in provides the following
 two steps:
 - scanForIssues: this step scans a report file or the console log with a particular parser and creates an 
-intermediate 
-[Report](https://github.com/jenkinsci/analysis-model/blob/master/src/main/java/edu/hm/hafner/analysis/Report.java) 
-object that contains the report. 
+  intermediate 
+  [Report](https://github.com/jenkinsci/analysis-model/blob/master/src/main/java/edu/hm/hafner/analysis/Report.java) 
+  object that contains the report. See 
+  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssues.java) for details.
 - publishIssues: this step publishes a new report in your build that contains the aggregated results
- of several *scanForIssues* steps.
+  of several *scanForIssues* steps. See 
+  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssues.java) for details.
 
 Example: 
 ```
@@ -213,7 +221,7 @@ node {
         def maven = scanForIssues tool: [$class: 'MavenConsole']
         publishIssues issues:[maven]
         
-        publishIssues id:'analysis', name:'White Mountain', issues:[checkstyle, pmd, findbugs], filters:[[property: [$class: 'IncludePackage'], pattern: 'io.jenkins.plugins.analysis.*']]
+        publishIssues id:'analysis', name:'White Mountains Issues', issues:[checkstyle, pmd, findbugs], filters:[includePackage('io.jenkins.plugins.analysis.*')]
     }
 
 ``` 
