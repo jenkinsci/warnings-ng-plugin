@@ -8,7 +8,7 @@ other teams as well please share it and provide pull requests for the
 [warnings plug-in](https://github.com/jenkinsci/warnings-plugin/pulls) and 
 the [analysis parsers library](https://github.com/jenkinsci/analysis-model/). 
 
-For more details please refer to the corresponding [Jenkins wiki page](https://wiki.jenkins.io/x/G4CGAQ).
+For more details please refer to the [documentation](doc/Description.md).
 
 All source code is licensed under the MIT license.
 
