@@ -136,7 +136,6 @@ when creating the health report can be selected.
  
 ![health report configuration](images/health.png) 
 
-
 ### Simple Pipeline Configuration
 
 ### Advanced Pipeline Configuration
@@ -146,22 +145,60 @@ when creating the health report can be selected.
 ### Issues history: new, fixed, and outstanding issues
 
 A highlight of the plug-in is the possibility to categorize issues of subsequent builds as new, fixed and outstanding.
-TBD details.
 
-![severities overview](images/trend.png) 
+![issues history](images/trend.png) 
+
+Using this feature it makes it a lot easier to keep the quality of your project under control: you can focus
+only on those warnings that have been introduced recently. 
+
+Note: the detection of new warnings is based on a complex algorithm that tries to track the same warning in
+two two different versions of the source code. Depending on the extend of the modification of the source code
+it might produce some false positives, i.e., you might still get some new and fixed warnings even if there should 
+be none. The accuracy of this algorithm is still ongoing research and will be refined in the next couple of months. 
 
 ### Severities
 
-The plug-in shows the distribution of the severities of the issues in a report. The warnings plug-in defines the 
-following default severities, additional ones might be added by plug-ins. Note that not every parser is capable 
-of producing warnings with a different severity. Some of the parses simply use the same severity for all issues.
-
+The plug-in shows the distribution of the severities of the issues in a chart. It defines the 
+following default severities, additional ones might be added by plug-ins that extend the warnings plug-in. 
+Note that not every parser is capable of producing warnings with a different severity. Some of the parses simply 
+use the same severity for all issues.
 - **Error**: Indicates an error that typically fails the build
 - **Warning** (High, Normal, Low): Indicates a warning of the given priority. Mapping to the priorities
 is up to the individual parsers.
 
 ![severities overview](images/severities.png) 
 
+### Issues Overview
+
+You can get a fast and efficient overview of the reported set of issues in several aggregation views. 
+Depending on the number or type of issues you will see the distribution of issues by
+- Static Analysis Tool
+- Module
+- Package or Namespace
+- Severity
+- Category
+- Type
+
+Each of these detail views are interactive, i.e. you can navigate into a subset of the categorized issues. 
+
+### Issues Details
+
+The reported set of issues is shown in a modern and responsible table. The table is loaded on demand using an Ajax 
+call. It provides the following features:
+- **Pagination**: the number of issues is subdivided into several pages which can be selected by using the provided page 
+links. Note that currently the pagination is done on the client side, i.e. it may take some time to obtain the whole table of 
+issues from the server.
+- **Sorting**: the table content can be sorted by clicking on ony of the table columns.
+- **Filtering, Searching**: you can filter the shown issues by entering some text in the search box.
+- **Content Aware**: columns are only shown if there is something useful to display. I.e., if a tool does not report an
+issues category, then the category will be automatically hidden.
+- **Responsive**: the layout should adapt to the actual screen size. 
+- **Details**: the details message for an issue (if provided by the corresponding static analysis tool) is shown as 
+child row within the table.
+
+### Source Code View
+
+TBD.
 
 ### Remote API
 
@@ -288,24 +325,27 @@ Here is an example JSON report:
 }
 ```
 
-## Still Available Features
+### Token Macro Support
 
-- Build summary showing the new and fixed warnings of a build
-- Several trend reports showing the number of warnings per build
-- Overview of the found warnings per module, package, author, category, or type
-- Detail reports of the found warnings optionally filtered by severity (or new and fixed)
-- Colored HTML display of the corresponding source file and warning lines
-- Quality Gates to mark builds as unstable or failed based on the number of issues
-- Configurable project health support
-- Highscore computation for builds without warnings and successful builds
-- Token to simplify post processing of the analysis results (e.g., using Email notifications)
+The warnings plug-in provides the token *ANALYSIS_ISSUES_COUNT* that could be used in additional post build processing
+steps, e.g. in the mailer. In order to use this tokens you need to install the latest release of the 
+[token macro plug-in](https://wiki.jenkins.io/display/JENKINS/Token+Macro+Plugin). 
+The token has an optional parameter *tool* that could be used to select a particular analysis result. 
+Examples:
+- *${ANALYSIS_ISSUES_COUNT}*: expands to the aggregated number of issues of all analysis tools
+- *${ANALYSIS_ISSUES_COUNT, tool='checkstyle'}*: expands to the total number of **CheckStyle** issues
+
+### Trend Reports
+
+Several trend reports are available that show a historical trend of the issues. These trends will be modernized as well 
+in the near future.
 
 ## Not Yet Supported Features
 
-- Several portlets for the Jenkins dashboard view
-- View column that shows the total number of warnings in a job
+Some of the existing features of the warnings plug-in are not yet ported. These will be added one by one after the
+5.0.0 release of the warnings plug-in. 
+- Portlets for the Jenkins dashboard view
+- View column that shows the number of issues in a job
+- Quality gate based on the total number of issues
 
-### REST API
-### Token Macro
-### Column
 
