@@ -17,7 +17,7 @@ Starting with release 5.x the warnings plug-in has support for the following Jen
 
 ## Features Overview 
 
-The warnings plug-in basically provides the following features if added as a post build step to a job: 
+The warnings plug-in basically provides the following features if added as a post build action (or step) to a job: 
 
 1. The plug-in scans the console log of a Jenkins build or files in the workspace of your job for any kind of issues. 
 There are almost one hundred [report formats](../SUPPORTED-FORMATS.md) supported. It can detect errors from you 
@@ -34,19 +34,22 @@ main build page. From here you can also dive into the details:
     
 ## Transition from 4.x to 5.x
 
-The warnings plug-in previously was part of the static analysis suite, that provided the same set of features through 
+Previously the warnings plug-in was part of the static analysis suite, that provided the same set of features through 
 several plugins (CheckStyle, PMD, Static Analysis Utilities, Analysis Collector etc.). 
 In order to simplify the user experience and the development process, these
 plug-ins and the core functionality have been merged into the warnings plug-ins. All other plug-in are not required
 anymore and will not be supported in the future. If you already use one of these plug-ins you should migrate
 your jobs to the new API as soon as possible. I will still maintain the old code for a while, but the main development
-effort will be spent into the new code base.
+effort will be spent into the new code base. 
+
+Note: the dependency to the old API (analysis-core) is still required so that all existing
+jobs will function correctly. In future versions of the warnings plug-in I will make this dependency optional. 
 
 ### Migration of Pipelines
 
-Pipelines calling the old static analysis steps (e.g., findbugs, checkstyle, etc.) need to call the new *recordIssues* 
+Pipelines calling the old static analysis steps (e.g., `findbugs`, `checkstyle`, etc.) need to call the new `recordIssues` 
 step now. The same step is used for all static analysis tools, the actual parser is selected
-by using the step property *tools*. For more details on the set of available parameters please see section 
+by using the step property `tools`. For more details on the set of available parameters please see section 
 [Pipeline Configuration](#simple-pipeline-configuration).     
 
 ### Migration of all other jobs
@@ -150,37 +153,39 @@ basically provides the same properties as the post build action (see [above](#gr
 
 #### Simple Pipeline Configuration 
 
-The simple pipeline configuration is provided by the step *recordIssues*. This step scans for issues
+The simple pipeline configuration is provided by the step `recordIssues`. This step scans for issues
 in a given set of files (or in the console log) and reports these issues in your build. You can use the 
 snippet generator to create a working snippet that calls this step. A typical example of this step 
 is shown in the following example:
 
 ```
-recordIssues enabledForFailure: true, tools: [], filters: [includeFile('File.*.java'), excludeCategory('WHITESPACE')]
-
+recordIssues 
+    enabledForFailure: true, 
+    tools: [[pattern: '*.log', tool: [$class: 'Java']]], 
+    filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
 ```
 
-In this example, the files '*.log' are scanned for issues. Only issues with an file name matching the 
-pattern 'File.\*.java' are included. Issues from the 'WHITESPACE' category have been removed. The
+In this example, the files '*.log' are scanned for **Java** issues. Only issues with a file name matching the 
+pattern 'MyFile.\*.java' are included. Issues with category 'WHITESPACE' will be removed. The
 step will be executed even if the build failed. 
 
 In order to see all configuration options you can investigate the 
 [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java).
                                               
-#### Advanced Pipeline Configuration - Multiple Steps
+#### Advanced Pipeline Configuration
 
 Sometimes publishing and reporting issues using a single step is not sufficient. E.g., if you build your
 product using several parallel steps and you want to combine the issues from all of these steps into 
 a single result. Then you need to split scanning and aggregation. The plug-in provides the following
 two steps:
-- scanForIssues: this step scans a report file or the console log with a particular parser and creates an 
+- `scanForIssues`: this step scans a report file or the console log with a particular parser and creates an 
   intermediate 
   [Report](https://github.com/jenkinsci/analysis-model/blob/master/src/main/java/edu/hm/hafner/analysis/Report.java) 
   object that contains the report. See 
-  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssues.java) for details.
-- publishIssues: this step publishes a new report in your build that contains the aggregated results
-  of several *scanForIssues* steps. See 
-  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssues.java) for details.
+  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssuesStep.java) for details.
+- `publishIssues`: this step publishes a new report in your build that contains the aggregated results
+  of several `scanForIssues` steps. See 
+  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java) for details.
 
 Example: 
 ```
@@ -198,7 +203,8 @@ node {
         def java = scanForIssues tool: [$class: 'Java']
         def javadoc = scanForIssues tool: [$class: 'JavaDoc']
         
-        publishIssues issues:[java, javadoc], filters:[[property: [$class: 'IncludePackage'], pattern: 'io.jenkins.plugins.analysis.*']]
+        publishIssues issues:[java, javadoc], 
+            filters:[includePackage('io.jenkins.plugins.analysis.*')]
     }
 
     stage ('Analysis') {
@@ -221,14 +227,16 @@ node {
         def maven = scanForIssues tool: [$class: 'MavenConsole']
         publishIssues issues:[maven]
         
-        publishIssues id:'analysis', name:'White Mountains Issues', issues:[checkstyle, pmd, findbugs], filters:[includePackage('io.jenkins.plugins.analysis.*')]
+        publishIssues id:'analysis', name:'White Mountains Issues', 
+            issues:[checkstyle, pmd, findbugs], 
+            filters:[includePackage('io.jenkins.plugins.analysis.*')]
     }
 
 ``` 
-
-
   
 ## New Features
+
+The most important new features are described in the following sections. 
 
 ### Issues history: new, fixed, and outstanding issues
 
@@ -269,9 +277,11 @@ Depending on the number or type of issues you will see the distribution of issue
 
 Each of these detail views are interactive, i.e. you can navigate into a subset of the categorized issues. 
 
+![packages overview](images/packages.png) 
+
 ### Issues Details
 
-The reported set of issues is shown in a modern and responsible table. The table is loaded on demand using an Ajax 
+The reported set of issues is shown in a modern and responsive table. The table is loaded on demand using an Ajax 
 call. It provides the following features:
 - **Pagination**: the number of issues is subdivided into several pages which can be selected by using the provided page 
 links. Note that currently the pagination is done on the client side, i.e. it may take some time to obtain the whole table of 
@@ -284,6 +294,8 @@ issues category, then the category will be automatically hidden.
 - **Details**: the details message for an issue (if provided by the corresponding static analysis tool) is shown as 
 child row within the table.
 
+![details](images/details.png) 
+
 ### Source Code View
 
 TBD.
@@ -294,8 +306,9 @@ The plug-in provides two REST API endpoints.
 
 #### Summary of the analysis result
 
-You can obtain a summary of a particular analysis report by using the URL \[tool-id\]/api/xml (or json). The summary
-contains the number of issues, the quality gate status, and all info and error messages.
+You can obtain a summary of a particular analysis report by using the URL `\[tool-id\]/api/xml` 
+(or `\[tool-id\]/api/json`). The summary contains the number of issues, the quality gate status, and all 
+info and error messages.
 
 Here is an example XML report:
 
@@ -340,13 +353,13 @@ Here is an example XML report:
 
 #### Details of the analysis result
 
-The reported issues are also available as REST API. You can either query all issues, or only the 
+The reported issues are also available as REST API. You can either query all issues or only the 
 new, fixed, or outstanding issues. The corresponding URLs are:
 
-1. \[tool-id\]/all/api/xml
-2. \[tool-id\]/fixed/api/xml
-3. \[tool-id\]/new/api/xml
-4. \[tool-id\]/outstanding/api/xml
+1. `\[tool-id\]/all/api/xml`: lists all issues
+2. `\[tool-id\]/fixed/api/xml`: lists all fixed issues
+3. `\[tool-id\]/new/api/xml`: lists all new issues
+4. `\[tool-id\]/outstanding/api/xml`: lists all outstanding issues
 
 Here is an example JSON report:
 
@@ -415,13 +428,13 @@ Here is an example JSON report:
 
 ### Token Macro Support
 
-The warnings plug-in provides the token *ANALYSIS_ISSUES_COUNT* that could be used in additional post build processing
+The warnings plug-in provides the token `ANALYSIS_ISSUES_COUNT` that could be used in additional post build processing
 steps, e.g. in the mailer. In order to use this tokens you need to install the latest release of the 
 [token macro plug-in](https://wiki.jenkins.io/display/JENKINS/Token+Macro+Plugin). 
-The token has an optional parameter *tool* that could be used to select a particular analysis result. 
+The token has an optional parameter `tool` that could be used to select a particular analysis result. 
 Examples:
-- *${ANALYSIS_ISSUES_COUNT}*: expands to the aggregated number of issues of all analysis tools
-- *${ANALYSIS_ISSUES_COUNT, tool='checkstyle'}*: expands to the total number of **CheckStyle** issues
+- `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
+- `${ANALYSIS_ISSUES_COUNT, tool='checkstyle'}`: expands to the total number of **CheckStyle** issues
 
 ### Trend Reports
 
@@ -430,9 +443,10 @@ in the near future.
 
 ## Not Yet Supported Features
 
-Some of the existing features of the warnings plug-in are not yet ported. These will be added one by one after the
-5.0.0 release of the warnings plug-in. 
-- Portlets for the Jenkins dashboard view
+Some of the existing features of the warnings plug-in are not yet ported to the API. These will be added one by one after the
+first 5.x release of the warnings plug-in: 
+- Visualization of open tasks
+- Portlets for Jenkins' dashboard view
 - View column that shows the number of issues in a job
 - Quality gate based on the total number of issues
 
