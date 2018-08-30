@@ -170,7 +170,15 @@ public class DetailFactory {
     private String getDisplayNameOfDetails(final String property, final Report selectedIssues) {
         return getColumnHeaderFor(selectedIssues, property)
                 + " "
-                + Issue.getPropertyValueAsString(selectedIssues.get(0), property);
+                + getPropertyValueAsString(property, selectedIssues);
+    }
+
+    private String getPropertyValueAsString(final String property, final Report selectedIssues) {
+        if ("fileName".equals(property)) {
+            return selectedIssues.get(0).getBaseName();
+        }
+        
+        return Issue.getPropertyValueAsString(selectedIssues.get(0), property);
     }
 
     private String removePropertyPrefix(final String link) {
