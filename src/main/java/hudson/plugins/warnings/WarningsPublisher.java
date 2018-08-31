@@ -451,7 +451,7 @@ public class WarningsPublisher extends HealthAwarePublisher {
     public WarningsDescriptor getDescriptor() {
         return (WarningsDescriptor)super.getDescriptor();
     }
-
+ 
     @Override
     public MatrixAggregator createAggregator(final MatrixBuild run, final Launcher launcher, final BuildListener listener) {
         return new WarningsAnnotationsAggregator(run, launcher, listener, this, getDefaultEncoding(),
