@@ -17,7 +17,7 @@ import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 /**
- * Validates a file encoding. The encoding must be an encoding ID supported by the underlying Java platform.
+ * Validates all properties of a configuration of a static analysis tool in a job. 
  *
  * @author Ullrich Hafner
  */

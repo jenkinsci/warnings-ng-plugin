@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.collections.impl.factory.Sets;
@@ -17,8 +16,6 @@ import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
-import jenkins.model.Jenkins;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -174,10 +171,6 @@ public class ScanForIssuesStep extends Step {
         @Override
         public String getDisplayName() {
             return Messages.ScanForIssues_DisplayName();
-        }
-
-        public Collection<? extends StaticAnalysisToolDescriptor> getAvailableTools() {
-            return Jenkins.getInstance().getDescriptorList(StaticAnalysisTool.class);
         }
 
         /**
