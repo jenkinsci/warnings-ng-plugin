@@ -57,4 +57,61 @@ public class IssuesDetailAssert extends AbstractAssert<IssuesDetailAssert, Issue
         }
         return this;
     }
+    
+    /**
+     * Verifies that the actual new issues of the {@link IssuesDetail} instance are equal to the expected ones.
+     *
+     * @param expectedNewIssues
+     *         the expected new issues to compare the actual {@link Report} to.
+     *
+     * @return this assertion object.
+     * @throws AssertionError
+     *         if the actual {@link Report} are not equal to the given ones.
+     */
+    public IssuesDetailAssert hasNewIssues(final Report expectedNewIssues) {
+        isNotNull();
+
+        if (!Objects.equals(actual.getNewIssues(), expectedNewIssues)) {
+            failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "newIssues", actual, expectedNewIssues, actual.getNewIssues());
+        }
+        return this;
+    }
+    
+    /**
+     * Verifies that the actual fixed issues of the {@link IssuesDetail} instance are equal to the expected ones.
+     *
+     * @param expectedFixedIssues
+     *         the expected fixed issues to compare the actual {@link Report} to.
+     *
+     * @return this assertion object.
+     * @throws AssertionError
+     *         if the actual {@link Report} are not equal to the given ones.
+     */
+    public IssuesDetailAssert hasFixedIssues(final Report expectedFixedIssues) {
+        isNotNull();
+
+        if (!Objects.equals(actual.getFixedIssues(), expectedFixedIssues)) {
+            failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "fixedIssues", actual, expectedFixedIssues, actual.getFixedIssues());
+        }
+        return this;
+    }
+    
+    /**
+     * Verifies that the actual outstanding issues of the {@link IssuesDetail} instance are equal to the expected ones.
+     *
+     * @param expectedOutstandingIssues
+     *         the expected outstanding issues to compare the actual {@link Report} to.
+     *
+     * @return this assertion object.
+     * @throws AssertionError
+     *         if the actual {@link Report} are not equal to the given ones.
+     */
+    public IssuesDetailAssert hasOutstandingIssues(final Report expectedOutstandingIssues) {
+        isNotNull();
+
+        if (!Objects.equals(actual.getOutstandingIssues(), expectedOutstandingIssues)) {
+            failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "fixedIssues", actual, expectedOutstandingIssues, actual.getOutstandingIssues());
+        }
+        return this;
+    }
 }
