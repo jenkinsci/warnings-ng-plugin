@@ -14,10 +14,7 @@
           ${%Severities}<i class="fa fa fa-bell icon-right fa-2x" aria-hidden="true"/>
         </h5>
 
-        <div class="graph-size">
-          <canvas id="severities-chart" class="graph-cursor-pointer" width="100" height="100"/>
-        </div>
-
+        <div id="severities-chart" class="graph-cursor-pointer" style="width: 100%; min-height: 256px"/>
       </div>
     </div>
   </div>

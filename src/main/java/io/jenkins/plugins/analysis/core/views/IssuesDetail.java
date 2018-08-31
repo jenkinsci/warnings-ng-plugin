@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.collections.api.set.ImmutableSet;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -21,9 +22,7 @@ import org.kohsuke.stapler.export.ExportedBean;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import io.jenkins.plugins.analysis.core.charts.DoughnutModel;
-import io.jenkins.plugins.analysis.core.charts.Palette;
-import io.jenkins.plugins.analysis.core.charts.SeverityPalette;
+import io.jenkins.plugins.analysis.core.charts.PieModel;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -33,6 +32,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.Defaul
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import hudson.markup.MarkupFormatter;
@@ -185,41 +185,36 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the UI model for a Chart.js doughnut chart that shows the severities. 
+     * Returns the UI model for an Echarts doughnut chart that shows the severities. 
      *
      * @return the UI model as JSON
-     * @see <a href="http://www.chartjs.org/docs/latest/charts/doughnut.html">Chart.js documentation</a>
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getSeverityModel() {
-        DoughnutModel model = new DoughnutModel();
-        for (Severity severity : report.getSeverities()) {
-            addSeverity(model, severity);
+    public JSONArray getSeverityModel() {
+        List<PieModel> model = new ArrayList<>();
+        ImmutableSet<Severity> predefinedSeverities = Severity.getPredefinedValues();
+        for (Severity severity : predefinedSeverities) {
+            model.add(new PieModel(LocalizedSeverity.getLocalizedString(severity), report.getSizeOf(severity)));
         }
 
-        return JSONObject.fromObject(model);
-    }
-
-    private void addSeverity(final DoughnutModel model, final Severity severity) {
-        model.add(LocalizedSeverity.getLocalizedString(severity), 
-                getIssues().getSizeOf(severity), severity.getName(), SeverityPalette.getColor(severity));
+        return JSONArray.fromObject(model);
     }
 
     /**
-     * Returns the UI model for a Chart.js doughnut chart that shows the new, fixed, and outstanding issues. 
+     * Returns the UI model for an Echarts doughnut chart that shows the new, fixed, and outstanding issues. 
      *
      * @return the UI model as JSON
-     * @see <a href="http://www.chartjs.org/docs/latest/charts/doughnut.html">Chart.js documentation</a>
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getTrendModel() {
-        DoughnutModel model = new DoughnutModel();
-        model.add(Messages.New_Warnings_Short(), newIssues.size(), "new", Palette.RED);
-        model.add(Messages.Outstanding_Warnings_Short(), outstandingIssues.size(), "outstanding", Palette.YELLOW);
-        model.add(Messages.Fixed_Warnings_Short(), fixedIssues.size(), "fixed", Palette.GREEN);
-        return JSONObject.fromObject(model);
+    public JSONArray getTrendModel() {
+        List<PieModel> model = new ArrayList<>();
+        model.add(new PieModel(Messages.New_Warnings_Short(), newIssues.size()));
+        model.add(new PieModel(Messages.Outstanding_Warnings_Short(), outstandingIssues.size()));
+        model.add(new PieModel(Messages.Fixed_Warnings_Short(), fixedIssues.size()));
+        
+        return JSONArray.fromObject(model);
     }
 
     /**

@@ -17,7 +17,7 @@
       <script src="${resURL}/plugin/warnings/js/libs/popper.min.js"/>
       <script src="${resURL}/plugin/warnings/js/libs/bootstrap.min.js"/>
       <script src="${resURL}/plugin/warnings/js/libs/datatables.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/chart.bundle-2.7.2.min.js"/>
+      <script src="${resURL}/plugin/warnings/js/libs/echarts.common.min.js"/>
 
       <j:set var="i" value="${it.issues}"/>
 

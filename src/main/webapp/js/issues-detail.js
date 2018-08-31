@@ -25,32 +25,103 @@
 
     /**
      * Creates a doughnut chart that shows the number of issues per severity.
-     * Requires that a DOM <canvas> element exists with the ID '#severities-chart'.
+     * Requires that a DOM <div> element exists with the ID '#severities-chart'.
      */
-    view.getSeverityModel(function (t) {
+    view.getSeverityModel(function (pieModel) {
         (function ($) {
-            var priorities = $('#severities-chart');
-            var prioritiesSummaryChart = new Chart(priorities, {
-                type: 'doughnut',
-                data: t.responseObject() 
+            var severitiesChart = echarts.init(document.getElementById('severities-chart'));
+            var severitiesOptions = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'horizontal',
+                    x: 'center',
+                    y: 'bottom'
+                },
+                series: [{
+                    type: 'pie',
+                    radius: ['30%', '70%'],
+                    avoidLabelOverlap: false,
+                    color: ['#EF9A9A', '#FFCC80', '#FFF59D', '#E6EE9C'],
+                    label: {
+                        normal: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            show: false
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: true
+                        }
+                    },
+                    data: pieModel.responseObject(),
+                }
+                ]
+            };
+            severitiesChart.setOption(severitiesOptions);
+            severitiesChart.resize();
+            $(window).on('resize', function () {
+                severitiesChart.resize();
             });
-            openSelectedUrl(priorities, prioritiesSummaryChart);
+            severitiesChart.on('click', function (params) {
+                window.location.assign(params.name);
+            });
         })(jQuery);
     });
 
     /**
-     * Creates a doughnut chart that shows the issues trend, i.e. new, fixed or outstanding issues.
-     * Requires that a DOM <canvas> element exists with the ID '#trend-chart' and a div
-     * with ID '#number-issues' that holds the three values to render.
+     * Creates a doughnut chart that shows the number of new, fixed and outstanding issues.
+     * Requires that a DOM <div> element exists with the ID '#trend-chart'.
      */
-    view.getTrendModel(function (t) {
+    view.getTrendModel(function (pieModel) {
         (function ($) {
-            var trend = $('#trend-chart');
-            var trendSummaryChart = new Chart(trend, {
-                type: 'doughnut',
-                data: t.responseObject()
+            var trendChart = echarts.init(document.getElementById('trend-chart'));
+            var trendOptions = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: "{b}: {c} ({d}%)"
+                },
+                legend: {
+                    orient: 'horizontal',
+                    x: 'center',
+                    y: 'bottom'
+                },
+                series: [{
+                    type: 'pie',
+                    radius: ['30%', '70%'],
+                    avoidLabelOverlap: false,
+                    color: ['#EF9A9A', '#FFF59D', '#A5D6A7'],
+                    label: {
+                        normal: {
+                            show: false,
+                            position: 'center'
+                        },
+                        emphasis: {
+                            show: false
+                        }
+                    },
+                    labelLine: {
+                        normal: {
+                            show: true
+                        }
+                    },
+                    data: pieModel.responseObject(),
+                }
+                ]
+            };
+            trendChart.setOption(trendOptions);
+            trendChart.resize();
+            $(window).on('resize', function () {
+                trendChart.resize();
             });
-            openSelectedUrl(trend, trendSummaryChart);
+            trendChart.on('click', function (params) {
+                window.location.assign(params.name);
+            });
         })(jQuery);
     });
 
@@ -93,6 +164,7 @@
             tr.addClass('shown');
         }
     });
+
     // $('#expand').on('click', function () {
     //     table.rows().every(function () {
     //         var tr = $(this.node());
