@@ -35,7 +35,7 @@ public class FixedWarningsDetail extends IssuesDetail {
     // TODO: display name should be from label provider to make it overridable
     public FixedWarningsDetail(final Run<?, ?> owner, final AnalysisResult result, final Report fixedIssues,
             final String url, final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
-        super(owner, result, fixedIssues, fixedIssues, NO_ISSUES, NO_ISSUES, Messages.FixedIssues_View_Name(),
+        super(owner, result, fixedIssues, NO_ISSUES, NO_ISSUES, fixedIssues, Messages.FixedIssues_View_Name(),
                 url, labelProvider, sourceEncoding);
     }
 }

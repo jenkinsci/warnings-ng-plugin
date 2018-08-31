@@ -39,6 +39,7 @@ class DetailFactoryTest {
     private static final String[] ERROR_MESSAGES = new String[]{"error", "messages"};
     private static final String[] LOG_MESSAGES = new String[]{"log", "messages"};
 
+    private static final Report NO_ISSUES = new Report();
     private static final Report ALL_ISSUES = createReportWith(3, 2, 1, "all");
     private static final Report NEW_ISSUES = createReportWith(3, 2, 1, "new");
     private static final Report OUTSTANDING_ISSUES = createReportWith(3, 2, 1, "outstanding");
@@ -60,6 +61,9 @@ class DetailFactoryTest {
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
                 FixedWarningsDetail.class);
         assertThat(details).hasIssues(FIXED_ISSUES);
+        assertThat(details).hasFixedIssues(FIXED_ISSUES);
+        assertThat(details).hasNewIssues(NO_ISSUES);
+        assertThat(details).hasOutstandingIssues(NO_ISSUES);
     }
 
     @Test
@@ -68,6 +72,9 @@ class DetailFactoryTest {
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(ALL_ISSUES);
+        assertThat(details).hasFixedIssues(FIXED_ISSUES);
+        assertThat(details).hasNewIssues(NEW_ISSUES);
+        assertThat(details).hasOutstandingIssues(OUTSTANDING_ISSUES);
     }
 
     @Test
@@ -76,6 +83,9 @@ class DetailFactoryTest {
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(NEW_ISSUES);
+        assertThat(details).hasFixedIssues(NO_ISSUES);
+        assertThat(details).hasNewIssues(NEW_ISSUES);
+        assertThat(details).hasOutstandingIssues(NO_ISSUES);
     }
 
     @Test
@@ -84,6 +94,9 @@ class DetailFactoryTest {
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
                 IssuesDetail.class);
         assertThat(details).hasIssues(OUTSTANDING_ISSUES);
+        assertThat(details).hasFixedIssues(NO_ISSUES);
+        assertThat(details).hasNewIssues(NO_ISSUES);
+        assertThat(details).hasOutstandingIssues(OUTSTANDING_ISSUES);
     }
 
     @Test
@@ -91,7 +104,7 @@ class DetailFactoryTest {
         IssuesDetail details = createTrendDetails("HIGH", RUN, createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
                 IssuesDetail.class);
-        assertThat(details).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_HIGH)));
+        assertThatPrioritiesAreFiltered(details, Severity.WARNING_HIGH);
         assertThatPrioritiesAreCorrectlySet(details, 3, 0, 0);
     }
 
@@ -101,7 +114,7 @@ class DetailFactoryTest {
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
                 IssuesDetail.class);
 
-        assertThat(details).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_NORMAL)));
+        assertThatPrioritiesAreFiltered(details, Severity.WARNING_NORMAL);
         assertThatPrioritiesAreCorrectlySet(details, 0, 2, 0);
     }
 
@@ -111,8 +124,15 @@ class DetailFactoryTest {
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
                 IssuesDetail.class);
 
-        assertThat(details).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(Severity.WARNING_LOW)));
+        assertThatPrioritiesAreFiltered(details, Severity.WARNING_LOW);
         assertThatPrioritiesAreCorrectlySet(details, 0, 0, 1);
+    }
+
+    private void assertThatPrioritiesAreFiltered(final IssuesDetail details, final Severity severity) {
+        assertThat(details).hasIssues(ALL_ISSUES.filter(Issue.bySeverity(severity)));
+        assertThat(details).hasFixedIssues(FIXED_ISSUES.filter(Issue.bySeverity(severity)));
+        assertThat(details).hasNewIssues(NEW_ISSUES.filter(Issue.bySeverity(severity)));
+        assertThat(details).hasOutstandingIssues(OUTSTANDING_ISSUES.filter(Issue.bySeverity(severity)));
     }
 
     @Test

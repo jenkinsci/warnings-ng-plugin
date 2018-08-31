@@ -130,22 +130,22 @@ public class DetailFactory {
             final Charset sourceEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
         String url = parent.getUrl() + "/" + link;
 
-        if ("all".equals(link)) {
+        if ("all".equalsIgnoreCase(link)) {
             return new IssuesDetail(owner, result, allIssues, newIssues, outstandingIssues, fixedIssues,
                     labelProvider.getLinkName(), url, labelProvider, sourceEncoding);
         }
-        if ("fixed".equals(link)) {
+        if ("fixed".equalsIgnoreCase(link)) {
             return new FixedWarningsDetail(owner, result, fixedIssues, url, labelProvider, sourceEncoding);
         }
-        if ("new".equals(link)) {
+        if ("new".equalsIgnoreCase(link)) {
             return new IssuesDetail(owner, result, newIssues, newIssues, EMPTY,
                     EMPTY, Messages.New_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
-        if ("outstanding".equals(link)) {
+        if ("outstanding".equalsIgnoreCase(link)) {
             return new IssuesDetail(owner, result, outstandingIssues, EMPTY, outstandingIssues,
                     EMPTY, Messages.Outstanding_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
-        if ("info".equals(link)) {
+        if ("info".equalsIgnoreCase(link)) {
             return new InfoErrorDetail(owner, result.getErrorMessages(), result.getInfoMessages(),
                     labelProvider.getName());
         }
@@ -153,8 +153,8 @@ public class DetailFactory {
             if (severity.getName().equalsIgnoreCase(link)) {
                 Predicate<Issue> severityFilter = Issue.bySeverity(severity);
                 return new IssuesDetail(owner, result,
-                        allIssues.filter(severityFilter), outstandingIssues.filter(severityFilter),
-                        newIssues.filter(severityFilter), fixedIssues.filter(severityFilter),
+                        allIssues.filter(severityFilter), newIssues.filter(severityFilter),
+                        outstandingIssues.filter(severityFilter), fixedIssues.filter(severityFilter),
                         LocalizedSeverity.getLongLocalizedString(severity), url,
                         labelProvider, sourceEncoding);
             }
