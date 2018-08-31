@@ -42,7 +42,7 @@ public class ExcludeModule extends RegexpFilter {
      * @author Ullrich Hafner
      */
     @Extension @Symbol("excludeModule")
-    public static class DescriptorImpl extends Descriptor<RegexpFilter> {
+    public static class DescriptorImpl extends RegexpFilterDescriptor {
         @Nonnull
         @Override
         public String getDisplayName() {

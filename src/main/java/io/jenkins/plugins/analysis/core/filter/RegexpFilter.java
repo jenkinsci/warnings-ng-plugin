@@ -1,11 +1,19 @@
 package io.jenkins.plugins.analysis.core.filter;
 
 import java.io.Serializable;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+import edu.hm.hafner.util.Ensure;
 
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+import hudson.util.FormValidation;
 
 /**
  * Defines a filter criteria based on a regular expression for {@link Report}.
@@ -45,4 +53,29 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
      *         the issue filter builder
      */
     public abstract void apply(IssueFilterBuilder builder);
+
+    public abstract static class RegexpFilterDescriptor extends Descriptor<RegexpFilter> {
+        /**
+         * Performs on-the-fly validation on threshold for high warnings.
+         *
+         * @param pattern
+         *         the pattern to check
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckPattern(@QueryParameter final String pattern) {
+            try {
+                if (StringUtils.isBlank(pattern)) {
+                    return FormValidation.ok(Messages.pattern_blank());
+                }
+                Pattern compiled = Pattern.compile(pattern);
+                Ensure.that(compiled).isNotNull();
+
+                return FormValidation.ok();
+            }
+            catch (PatternSyntaxException exception) {
+                return FormValidation.error(Messages.pattern_error(exception.getLocalizedMessage()));
+            }        
+        }
+    }
 }

@@ -10,7 +10,6 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.model.Messages;
 
 import hudson.Extension;
-import hudson.model.Descriptor;
 
 /**
  * Defines a filter criteria for a {@link Report}.
@@ -33,7 +32,7 @@ public class IncludeFile extends RegexpFilter {
 
     @Override
     public void apply(final IssueFilterBuilder builder) {
-        builder.setIncludeFilenameFilter(getPattern());
+        builder.setIncludeFileNameFilter(getPattern());
     }
 
     /**
@@ -42,7 +41,7 @@ public class IncludeFile extends RegexpFilter {
      * @author Ullrich Hafner
      */
     @Extension @Symbol("includeFile")
-    public static class DescriptorImpl extends Descriptor<RegexpFilter> {
+    public static class DescriptorImpl extends RegexpFilterDescriptor {
         @Nonnull
         @Override
         public String getDisplayName () {

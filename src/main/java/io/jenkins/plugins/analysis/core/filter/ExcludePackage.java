@@ -42,7 +42,7 @@ public class ExcludePackage extends RegexpFilter {
      * @author Ullrich Hafner
      */
     @Extension @Symbol({"excludePackage", "excludeNamespace"})
-    public static class DescriptorImpl extends Descriptor<RegexpFilter> {
+    public static class DescriptorImpl extends RegexpFilterDescriptor {
         @Nonnull
         @Override
         public String getDisplayName() {

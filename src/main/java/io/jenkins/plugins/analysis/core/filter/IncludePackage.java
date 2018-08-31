@@ -10,7 +10,6 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.model.Messages;
 
 import hudson.Extension;
-import hudson.model.Descriptor;
 
 /**
  * Defines a filter criteria for a {@link Report}.
@@ -42,7 +41,7 @@ public class IncludePackage extends RegexpFilter {
      * @author Ullrich Hafner
      */
     @Extension @Symbol({"includePackage", "includeNamespace"})
-    public static class DescriptorImpl extends Descriptor<RegexpFilter> {
+    public static class DescriptorImpl extends RegexpFilterDescriptor {
         @Nonnull
         @Override
         public String getDisplayName() {

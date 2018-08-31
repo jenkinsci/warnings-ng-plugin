@@ -54,7 +54,7 @@ class GroovyExpressionMatcherTest {
     void shouldThrowCompilationFailedExceptionIfGroovyScriptContainsErrors() {
         GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(ILLEGAL_PARSER_SCRIPT, null);
 
-        assertThatThrownBy(() -> matcher.compile()).isInstanceOf(CompilationFailedException.class);
+        assertThatThrownBy(matcher::compile).isInstanceOf(CompilationFailedException.class);
     }
 
     @Test
