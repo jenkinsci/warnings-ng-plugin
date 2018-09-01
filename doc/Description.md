@@ -79,13 +79,16 @@ All other plug-ins still need to be integrated or need to be refactored to use t
 
 ## Configuration
 
-The basic configuration of the plug-in is the same for all Jenkins job types. Note that for scripted pipelines some
-additional features are available to aggregate and group issues.
-    
-### Graphical Configuration
+The configuration of the plug-in is the same for all Jenkins job types. It is enabled in the UI by adding 
+the post build action *"Record static analysis results"* to your job. In pipelines the plug-in will be activated 
+by adding the step `recordIssues`. Note that for scripted pipelines some additional features are available to 
+aggregate and group issues, see [section Advanced Pipeline Configuration](#advanced-pipeline-configuration) for details. 
 
-The plug-in is enabled in a job by adding the post build action *"Record static analysis results"*. The basic configuration
-screen is shown in the image above:
+In the following sections, both the graphical configuration and the pipeline configuration are shown side by side.
+    
+### Tool selection
+
+The basic configuration of the plug-in is shown in the image above:
 
 ![basic configuration](images/freestyle-start.png) 
 
@@ -102,11 +105,30 @@ is created that contains an aggregation of all issues of the selected tools. Thi
 Static Analysis Collector Plug-in provided previously. When this option is activated you get a unique entry point 
 for all of your issues.
 
+An example pipeline with these options is shown in the following snippet:
+
+```
+recordIssues 
+    enabledForFailure: true, aggregatingResults : true, 
+    tools: [
+        [tool: [$class: 'Java']], 
+        [pattern: 'checkstyle-result.xml', tool: [$class: 'CheckStyle']]
+    ]
+```
+
 #### Setting the file encoding
 
 In order to let the scanner parse correctly your reports and source code files it is required to set the encodings: 
 
 ![encoding configuration](images/encoding.png) 
+
+An example pipeline with these options is shown in the following snippet:
+
+```
+recordIssues 
+    sourceCodeEncoding: 'UTF-8', reportEncoding : 'ISO-8859-1', 
+    tools: [[tool: [$class: 'Java']]]
+```
 
 #### Control the selection of the reference build (baseline)
 
