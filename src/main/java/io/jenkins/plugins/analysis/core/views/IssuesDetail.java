@@ -23,7 +23,10 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.charts.PieModel;
+import io.jenkins.plugins.analysis.core.charts.PriorityChart;
+import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.PropertyStatistics;
@@ -185,7 +188,7 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the UI model for an Echarts doughnut chart that shows the severities. 
+     * Returns the UI model for an ECharts doughnut chart that shows the severities. 
      *
      * @return the UI model as JSON
      */
@@ -202,7 +205,7 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the UI model for an Echarts doughnut chart that shows the new, fixed, and outstanding issues. 
+     * Returns the UI model for an ECharts doughnut chart that shows the new, fixed, and outstanding issues. 
      *
      * @return the UI model as JSON
      */
@@ -215,6 +218,20 @@ public class IssuesDetail implements ModelObject {
         model.add(new PieModel(Messages.Fixed_Warnings_Short(), fixedIssues.size()));
         
         return JSONArray.fromObject(model);
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity. 
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getBuildTrend() {
+        PriorityChart priorityChart = new PriorityChart();
+
+        AnalysisHistory history = new AnalysisHistory(owner, new ByIdResultSelector(report.getId()));
+        return JSONObject.fromObject(priorityChart.create(history));
     }
 
     /**

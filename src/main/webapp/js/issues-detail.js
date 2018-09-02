@@ -31,6 +31,18 @@
         (function ($) {
             var severitiesChart = echarts.init(document.getElementById('severities-chart'));
             var severitiesOptions = {
+                title: {
+                    text: 'Severities Distribution',
+                    textStyle: {
+                        fontWeight: 'normal',
+                        fontSize: '16'
+                    },
+                    left: 'center'
+                },
+                textStyle: {
+                    fontWeight: 'normal',
+                    fontSize: '16'
+                },
                 tooltip: {
                     trigger: 'item',
                     formatter: "{b}: {c} ({d}%)"
@@ -71,6 +83,9 @@
             severitiesChart.on('click', function (params) {
                 window.location.assign(params.name);
             });
+            $('#overview-carousel').on('slid.bs.carousel', function () {
+                severitiesChart.resize();
+            });
         })(jQuery);
     });
 
@@ -82,6 +97,14 @@
         (function ($) {
             var trendChart = echarts.init(document.getElementById('trend-chart'));
             var trendOptions = {
+                title: {
+                    text: 'Reference Comparison',
+                    textStyle: {
+                        fontWeight: 'normal',
+                        fontSize: '16'
+                    },
+                    left: 'center',
+                },
                 tooltip: {
                     trigger: 'item',
                     formatter: "{b}: {c} ({d}%)"
@@ -122,9 +145,65 @@
             trendChart.on('click', function (params) {
                 window.location.assign(params.name);
             });
+            $('#overview-carousel').on('slid.bs.carousel', function () {
+                trendChart.resize();
+            });
         })(jQuery);
     });
 
+    view.getBuildTrend(function (lineModel) {
+        (function ($) {
+            var buildHistoryChart = echarts.init(document.getElementById('history-chart'));
+            var historyOptions = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'cross',
+                        label: {
+                            backgroundColor: '#6a7985'
+                        }
+                    }
+                },
+                legend: {
+                    show: false
+                },
+                grid: {
+                    left: '20',
+                    right: '10',
+                    bottom: '20',
+                    top: '10',
+                    containLabel: true
+                },
+                xAxis: [
+                    {
+                        name: 'build',
+                        nameLocation: 'center',
+                        nameGap: '25',
+                        type: 'category',
+                        boundaryGap: false,
+                        data: lineModel.responseJSON.XAxisLabels
+                    }
+                ],
+                yAxis: [
+                    {
+                        name: 'count',
+                        nameLocation: 'center',
+                        nameGap: '25',
+                        nameRotate: '90',
+                        type: 'value'
+                    }
+                ],
+                series: lineModel.responseJSON.series
+            };
+            buildHistoryChart.setOption(historyOptions);
+            buildHistoryChart.resize();
+            $(window).on('resize', function () {
+                buildHistoryChart.resize();
+            });
+        })(jQuery);
+    });
+
+    
     /**
      * Create a data table instance for all tables that are marked with class "display".
      */

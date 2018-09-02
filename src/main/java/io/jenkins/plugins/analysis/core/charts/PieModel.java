@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 /**
- * UI model for a ECharts pie chart. Simple data bean that will be converted to JSON.
+ * UI model for an ECharts pie chart. Simple data bean that will be converted to JSON.
  *
  * @author Ullrich Hafner
  */

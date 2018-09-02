@@ -1,3 +1,17 @@
+/* ------------------------------------------------------------------------------------------------------------------- */
+
+/* Bootstrap Carousel */
+.carousel-control-prev-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23b4b4b4' viewBox='0 0 8 8'%3E%3Cpath d='M5.25 0l-4 4 4 4 1.5-1.5-2.5-2.5 2.5-2.5-1.5-1.5z'/%3E%3C/svg%3E");
+}
+
+.carousel-control-next-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23b4b4b4' viewBox='0 0 8 8'%3E%3Cpath d='M2.75 0l-1.5 1.5 2.5 2.5-2.5 2.5 1.5 1.5 4-4-4-4z'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------------------------------------------------------- */
+
+/* Build configuration UI header frame */
 .subsection-header {
     border: 0;
     height: 1px;
@@ -6,6 +20,8 @@
     background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
     background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
 }
+
+/* ------------------------------------------------------------------------------------------------------------------- */
 
 /* Table custom column widths */
 .col-width-1 {
@@ -61,6 +77,7 @@ table.dataTable {
 /* ------------------------------------------------------------------------------------------------------------------- */
 
 /* DataTables Details */
+
 /* Mouse cursor pointer for details icon */
 div.details-control {
     position: relative;
