@@ -1,6 +1,6 @@
 # Contributing to the Static Analysis Suite
 
-This page provides information about contributing code to Jenkins' Static Analysis Suite
+This page provides information about contributing code to Jenkins' Warnings plug-in.
 
 :exclamation: There's a lot more to the Jenkins project than just code. For information on contributing to the Jenkins'
 project overall, check out [Jenkins' contributing landing page](https://jenkins.io/participate/).
