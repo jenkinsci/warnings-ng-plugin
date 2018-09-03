@@ -22,15 +22,12 @@ function renderTrendChart(chartDivId, chartModel) {
         grid: {
             left: '20',
             right: '10',
-            bottom: '20',
+            bottom: '10',
             top: '10',
             containLabel: true
         },
         xAxis: [
             {
-                name: 'build',
-                nameLocation: 'center',
-                nameGap: '25',
                 type: 'category',
                 boundaryGap: false,
                 data: chartModel.XAxisLabels

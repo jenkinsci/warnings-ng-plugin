@@ -12,6 +12,7 @@ import org.kohsuke.stapler.bind.JavaScriptMethod;
 import io.jenkins.plugins.analysis.core.charts.PriorityChart;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.history.NullAnalysisHistory;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
@@ -135,6 +136,25 @@ public class JobAction implements Action {
         return JSONObject.fromObject(priorityChart.create(createBuildHistory()));
     }
 
+    /**
+     * Returns whether the trend chart is visible or not. 
+     * 
+     * @return {@code true} if the trend is visible, false otherwise
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public boolean isTrendVisible() {
+        AnalysisHistory history = createBuildHistory();
+
+        int count = 0;
+        for (AnalysisResult analysisResult : history) {
+            count++;
+            if (count >= 2) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
     @Override
     public String toString() {
         return String.format("%s (%s)", getClass().getName(), labelProvider.getName());

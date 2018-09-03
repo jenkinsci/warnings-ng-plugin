@@ -1,20 +1,24 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
-  <div class="test-trend-caption">
-    ${from.trendName}
-  </div>
-  <div align="right">
-    <div id="${from.urlName}-history-chart" class="graph-cursor-pointer"
-         style="width: 500px; min-height: 200px; min-width: 500px; height: 200px;"/>
-  </div>
 
-  <script src="${resURL}/plugin/warnings/js/libs/echarts.common.min.js"/>
-  <script src="${resURL}/plugin/warnings/js/trend-chart.js"/>
-  <script>
-    var ${from.urlName}Action = <st:bind value="${from}"/>;
-    ${from.urlName}Action.getBuildTrend(function (trendModel) {
-        renderTrendChart('${from.urlName}-history-chart', trendModel.responseJSON);
-    });
-  </script>
+  <j:if test="${from.isTrendVisible()}">
 
+    <div class="test-trend-caption">
+      ${from.trendName}
+    </div>
+    <div align="right">
+      <div id="${from.urlName}-history-chart" class="graph-cursor-pointer"
+           style="width: 500px; min-height: 200px; min-width: 500px; height: 200px;"/>
+    </div>
+    <script src="${resURL}/plugin/warnings/js/libs/echarts.common.min.js"/>
+    <script src="${resURL}/plugin/warnings/js/trend-chart.js"/>
+    <script>
+      var ${from.urlName}Action = <st:bind value="${from}"/>;
+      ${from.urlName}Action.getBuildTrend(function (trendModel) {
+          renderTrendChart('${from.urlName}-history-chart', trendModel.responseJSON);
+      });
+    </script>
+
+  </j:if>
+  
 </j:jelly>

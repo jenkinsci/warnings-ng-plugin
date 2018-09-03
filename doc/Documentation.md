@@ -105,6 +105,9 @@ is created that contains an aggregation of all issues of the selected tools. Thi
 Static Analysis Collector Plug-in provided previously. When this option is activated you get a unique entry point 
 for all of your issues.
 
+In the basic configuration section you can additionally choose if the step should run for failed builds as well.
+This option is disabled by default, since analysis results might be inaccurate if the build failed.
+ 
 An example pipeline with these options is shown in the following snippet:
 
 ```
@@ -126,8 +129,7 @@ An example pipeline with these options is shown in the following snippet:
 
 ```
 recordIssues 
-    sourceCodeEncoding: 'UTF-8', reportEncoding : 'ISO-8859-1', 
-    tools: [[tool: [$class: 'Java']]]
+    sourceCodeEncoding: 'UTF-8', reportEncoding : 'ISO-8859-1', tools: [[tool: [$class: 'Java']]]
 ```
 
 #### Control the selection of the reference build (baseline)
@@ -143,6 +145,14 @@ control the selection of the reference build.
 
 ![reference build configuration](images/reference.png) 
 
+An example pipeline with these options is shown in the following snippet:
+
+```
+recordIssues 
+    tools: [ [tool: [$class: 'Java']] ],
+    ignoreAnalysisResult: true, overallResultMustBeSuccess: false, referenceJobName: 'my-project/master'
+```
+
 #### Filtering of issues
 
 The created report of issues can be filtered afterwards. You can specify an arbitrary number of include or exclude 
@@ -150,6 +160,14 @@ filters. Currently, there is support to filter issues by module name, package or
 category or type.
 
 ![filter configuration](images/filter.png) 
+
+An example pipeline with these options is shown in the following snippet:
+
+```
+recordIssues 
+    tools: [[pattern: '*.log', tool: [$class: 'Java']]], 
+    filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
+```
 
 #### Quality gate configuration
 
@@ -160,6 +178,13 @@ you can define the number of issues that must not be reached to pass a given qua
 
 ![quality gate](images/quality-gate.png) 
 
+An example pipeline with these options is shown in the following snippet:
+
+```
+recordIssues 
+    tools: [[pattern: '*.log', tool: [$class: 'Java']]], unstableTotalHigh: 10, unstableNewAll: 1
+```
+
 #### Health Report configuration
 
 The plug-in can participate in the health report of your project. You can change the number of issues
@@ -167,6 +192,13 @@ that change the health to 0% and 100%, respectively. Additionally, the severitie
 when creating the health report can be selected.
  
 ![health report configuration](images/health.png) 
+
+An example pipeline with these options is shown in the following snippet:
+
+```
+recordIssues 
+    tools: [[pattern: '*.log', tool: [$class: 'Java']]], healthy: 10, unhealthy: 100
+```
 
 ### Pipeline Configuration
 

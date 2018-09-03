@@ -120,22 +120,19 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatTrendChartIsVisible(final HtmlPage jobPage) {
-        DomElement trendChart = findTrendChart(jobPage);
+        DomElement trendChart = jobPage.getElementById("eclipse-history-chart");
+        assertThat(trendChart).isNotNull();
 
-        String title = trendChart.getFirstElementChild().getTextContent();
+        List<DomElement> captions = jobPage.getByXPath("//div[contains(@class, 'test-trend-caption')]");
+        assertThat(captions).hasSize(1);
+        String title = captions.get(0).getTextContent();
         assertThat(title).isEqualTo(new Eclipse().getLabelProvider().getTrendName());
     }
 
     private void assertThatTrendChartIsHidden(final HtmlPage jobPage) {
-        DomElement trendChart = findTrendChart(jobPage);
+        DomElement trendChart = jobPage.getElementById("eclipse-history-chart");
 
-        assertThat(trendChart.getFirstElementChild()).isNull();
-    }
-
-    private DomElement findTrendChart(final HtmlPage jobPage) {
-        DomElement trendChart = jobPage.getElementById("eclipse");
-        assertThat(trendChart).isNotNull();
-        return trendChart;
+        assertThat(trendChart).isNull();
     }
 
     private void assertActionProperties(final FreeStyleProject project, final Run<?, ?> build) {
