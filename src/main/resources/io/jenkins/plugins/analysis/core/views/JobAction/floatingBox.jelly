@@ -1,25 +1,20 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"
->
-  <div id="${from.urlName}" align="right">
-    <j:if test="${from.isTrendVisible(request)}">
-      <div class="test-trend-caption">
-        ${from.trendName}
-      </div>
-      <div>
-        <!-- Note that the parameter ?url=${from.trendGraphId} is not used by the graph: it
-             has been added to provide different URLs so that the images are not cached by the browser. -->
-        <img src="${from.urlName}/trendGraph/png?url=${from.trendGraphId}"
-             lazymap="${from.urlName}/trendGraph/map?url=${from.trendGraphId}"/>
-      </div>
-      <div>
-        <a href="${from.urlName}/trendDetails">${%Enlarge}</a>
-        <st:nbsp/>
-        <a href="${from.urlName}/configure">${%Configure}</a>
-      </div>
-    </j:if>
-    <j:if test="${from.canShowEnableTrendLink(request)}">
-      <a href="${from.urlName}/configure">${%enable.graph(from.trendName)}</a>
-    </j:if>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+  <div class="test-trend-caption">
+    ${from.trendName}
   </div>
+  <div align="right">
+    <div id="${from.urlName}-history-chart" class="graph-cursor-pointer"
+         style="width: 500px; min-height: 200px; min-width: 500px; height: 200px;"/>
+  </div>
+
+  <script src="${resURL}/plugin/warnings/js/libs/echarts.common.min.js"/>
+  <script src="${resURL}/plugin/warnings/js/trend-chart.js"/>
+  <script>
+    var ${from.urlName}Action = <st:bind value="${from}"/>;
+    ${from.urlName}Action.getBuildTrend(function (trendModel) {
+        renderTrendChart('${from.urlName}-history-chart', trendModel.responseJSON);
+    });
+  </script>
+
 </j:jelly>

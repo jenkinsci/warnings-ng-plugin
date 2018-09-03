@@ -13,7 +13,7 @@
             integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
             crossorigin="anonymous"/>
 
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-styles/custom-style.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-style.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/all.css"/>
 
       <div class="fluid-container">

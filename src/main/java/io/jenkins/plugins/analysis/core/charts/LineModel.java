@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import net.sf.json.JSONObject;
+
 /**
  * UI model for an ECharts line chart. Simple data bean that will be converted to JSON. On the client side the three
  * properties need to be placed into the correct place in the options structure.
@@ -96,5 +98,10 @@ public class LineModel {
      */
     public int size() {
         return xAxisLabels.size();
+    }
+
+    @Override
+    public String toString() {
+        return JSONObject.fromObject(this).toString(2);
     }
 }

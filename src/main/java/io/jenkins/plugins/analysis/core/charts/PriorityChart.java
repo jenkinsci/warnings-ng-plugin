@@ -42,6 +42,7 @@ public class PriorityChart {
     }
 
     private LineSeries createSeries(final Severity severity) {
-        return new LineSeries(LocalizedSeverity.getLocalizedString(severity));
+        return new LineSeries(LocalizedSeverity.getLocalizedString(severity), 
+                SeverityPalette.getColor(severity).getNormal());
     }
 }

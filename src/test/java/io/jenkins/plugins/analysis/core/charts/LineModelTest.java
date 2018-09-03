@@ -13,6 +13,9 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  * @author Ullrich Hafner
  */
 class LineModelTest {
+
+    private static final String COLOR = "#fff";
+
     @Test
     void shouldCreateLineModel() {
         LineModel model = new LineModel("spotbugs");
@@ -21,9 +24,9 @@ class LineModelTest {
         for (int i = 0; i < 5; i++) {
             builds.add("#" + (i + 1));
         }
-        series.add(new LineSeries("High"));
-        series.add(new LineSeries("Normal"));
-        series.add(new LineSeries("Low"));
+        series.add(new LineSeries("High", COLOR));
+        series.add(new LineSeries("Normal", COLOR));
+        series.add(new LineSeries("Low", COLOR));
 
         for (LineSeries severity : series) {
             for (int i = 0; i < 5; i++) {
@@ -46,5 +49,7 @@ class LineModelTest {
         assertThatJson(model).node("series")
                 .isArray()
                 .ofLength(3);
+
+        System.out.println(model);
     }
 }

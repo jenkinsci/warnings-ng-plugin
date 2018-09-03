@@ -109,7 +109,7 @@ tr.shown div.details-control:before {
 /* Font awesome icons float right */
 .icon-right {
     float: right;
-    color: #ddd;
+    color: #b4b4b4;
     position: absolute;
     right: 25px;
     top: 10px;

@@ -14,15 +14,18 @@ public class LineSeries {
     private final String type = "line";
     private final AreaStyle areaStyle = new AreaStyle();
     private final List<Integer> data = new ArrayList<>();
+    private final ItemStyle itemStyle;
 
     /**
      * Creates a new instance of {@link LineSeries}.
      *
      * @param name
      *         the name of the series
+     * @param color the color of the series
      */
-    public LineSeries(final String name) {
+    public LineSeries(final String name, final String color) {
         this.name = name;
+        this.itemStyle = new ItemStyle(color);
     }
 
     public String getName() {
@@ -43,6 +46,10 @@ public class LineSeries {
 
     public List<Integer> getData() {
         return data;
+    }
+
+    public ItemStyle getItemStyle() {
+        return itemStyle;
     }
 
     /**

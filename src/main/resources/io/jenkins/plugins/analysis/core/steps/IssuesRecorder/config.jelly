@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form">
 
-  <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-styles/custom-style.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-style.css"/>
 
   <f:entry title="${%title.tool}" description="${%description.tool}">
     <i:repeatable minimum="1" field="tools" />

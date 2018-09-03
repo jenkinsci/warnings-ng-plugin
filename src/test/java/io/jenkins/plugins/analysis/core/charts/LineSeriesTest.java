@@ -13,10 +13,11 @@ class LineSeriesTest {
     private static final String SEVERITY = "High";
     private static final String STACKED = "stacked";
     private static final String LINE = "line";
+    private static final String COLOR = "#fff";
 
     @Test
     void shouldCreateLineSeries() {
-        LineSeries lineSeries = new LineSeries(SEVERITY);
+        LineSeries lineSeries = new LineSeries(SEVERITY, COLOR);
 
         assertThatJson(lineSeries).node("areaStyle").isEqualTo(new AreaStyle());
         assertThatJson(lineSeries).node("name").isEqualTo(SEVERITY);
@@ -27,7 +28,7 @@ class LineSeriesTest {
 
     @Test
     void shouldCreateLineSeriesWithValues() {
-        LineSeries lineSeries = new LineSeries("High");
+        LineSeries lineSeries = new LineSeries("High", COLOR);
         lineSeries.add(22);
         
         assertThatJson(lineSeries).node("areaStyle").isEqualTo(new AreaStyle());

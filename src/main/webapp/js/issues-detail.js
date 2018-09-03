@@ -151,58 +151,13 @@
         })(jQuery);
     });
 
+    /**
+     * Creates a build trend chart that shows the number of issues for a couple of builds.
+     * Requires that a DOM <div> element exists with the ID '#history-chart'.
+     */
     view.getBuildTrend(function (lineModel) {
-        (function ($) {
-            var buildHistoryChart = echarts.init(document.getElementById('history-chart'));
-            var historyOptions = {
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'cross',
-                        label: {
-                            backgroundColor: '#6a7985'
-                        }
-                    }
-                },
-                legend: {
-                    show: false
-                },
-                grid: {
-                    left: '20',
-                    right: '10',
-                    bottom: '20',
-                    top: '10',
-                    containLabel: true
-                },
-                xAxis: [
-                    {
-                        name: 'build',
-                        nameLocation: 'center',
-                        nameGap: '25',
-                        type: 'category',
-                        boundaryGap: false,
-                        data: lineModel.responseJSON.XAxisLabels
-                    }
-                ],
-                yAxis: [
-                    {
-                        name: 'count',
-                        nameLocation: 'center',
-                        nameGap: '25',
-                        nameRotate: '90',
-                        type: 'value'
-                    }
-                ],
-                series: lineModel.responseJSON.series
-            };
-            buildHistoryChart.setOption(historyOptions);
-            buildHistoryChart.resize();
-            $(window).on('resize', function () {
-                buildHistoryChart.resize();
-            });
-        })(jQuery);
+        renderTrendChart('history-chart', lineModel.responseJSON);
     });
-
     
     /**
      * Create a data table instance for all tables that are marked with class "display".

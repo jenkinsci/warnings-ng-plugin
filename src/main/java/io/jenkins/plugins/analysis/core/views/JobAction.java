@@ -2,41 +2,25 @@ package io.jenkins.plugins.analysis.core.views;
 
 import javax.annotation.CheckForNull;
 import java.io.IOException;
-import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.kohsuke.stapler.Stapler;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 
-import com.google.common.collect.Lists;
-
+import io.jenkins.plugins.analysis.core.charts.PriorityChart;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.history.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
-import io.jenkins.plugins.analysis.graphs.BuildResultGraph;
-import io.jenkins.plugins.analysis.graphs.DefaultGraphConfigurationView;
-import io.jenkins.plugins.analysis.graphs.DifferenceGraph;
-import io.jenkins.plugins.analysis.graphs.EmptyGraph;
-import io.jenkins.plugins.analysis.graphs.GraphConfiguration;
-import io.jenkins.plugins.analysis.graphs.GraphConfigurationView;
-import io.jenkins.plugins.analysis.graphs.HealthGraph;
-import io.jenkins.plugins.analysis.graphs.NewVersusFixedGraph;
-import io.jenkins.plugins.analysis.graphs.NullGraph;
-import io.jenkins.plugins.analysis.graphs.PriorityGraph;
-import io.jenkins.plugins.analysis.graphs.TotalsGraph;
-import io.jenkins.plugins.analysis.graphs.TrendDetails;
-import io.jenkins.plugins.analysis.graphs.UserGraphConfigurationView;
 import jenkins.model.Jenkins;
+import net.sf.json.JSONObject;
 
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
-import hudson.util.Graph;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -138,232 +122,21 @@ public class JobAction implements Action {
         }
     }
 
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity. 
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getBuildTrend() {
+        PriorityChart priorityChart = new PriorityChart();
+
+        return JSONObject.fromObject(priorityChart.create(createBuildHistory()));
+    }
+
     @Override
     public String toString() {
         return String.format("%s (%s)", getClass().getName(), labelProvider.getName());
-    }
-
-    // ----------------------------------------------------------------
-    // ------------------------ Trend Charts --------------------------
-    // ----------------------------------------------------------------
-
-    /**
-     * Returns the graph configuration view for the associated job. If the requested link is neither the user graph
-     * configuration nor the default configuration then {@code null} is returned.
-     *
-     * @param link
-     *         the requested link
-     * @param request
-     *         Stapler request
-     * @param response
-     *         Stapler response
-     *
-     * @return the dynamic result of the analysis (detail page).
-     */
-    @CheckForNull
-    @SuppressWarnings("unused") // Called by jelly view
-    public Object getDynamic(final String link, final StaplerRequest request, final StaplerResponse response) {
-        if ("configureDefaults".equals(link)) {
-            return createDefaultConfiguration();
-        }
-        else if ("configure".equals(link)) {
-            return createUserConfiguration(request);
-        }
-        else {
-            return null;
-        }
-    }
-
-    /**
-     * Returns the trend graph details.
-     *
-     * @return the details
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public Object getTrendDetails() {
-        return getTrendDetails(Stapler.getCurrentRequest(), Stapler.getCurrentResponse());
-    }
-
-    /**
-     * Returns the trend graph details.
-     *
-     * @param request
-     *         Stapler request
-     * @param response
-     *         Stapler response
-     *
-     * @return the details
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public Object getTrendDetails(final StaplerRequest request, final StaplerResponse response) {
-        return new TrendDetails(getOwner(), getTrendGraph(request, response, "../../"), getTrendGraphId());
-    }
-
-    /**
-     * Returns the trend graph.
-     *
-     * @return the current trend graph
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public Object getTrendGraph() {
-        return getTrendGraph(Stapler.getCurrentRequest(), Stapler.getCurrentResponse());
-    }
-
-    /**
-     * Returns the configured trend graph.
-     *
-     * @param request
-     *         Stapler request
-     * @param response
-     *         Stapler response
-     *
-     * @return the trend graph
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public Graph getTrendGraph(final StaplerRequest request, final StaplerResponse response) {
-        return getTrendGraph(request, response, "");
-    }
-
-    private Graph getTrendGraph(final StaplerRequest request, final StaplerResponse response, final String urlPrefix) {
-        GraphConfigurationView configuration = createUserConfiguration(request);
-        if (configuration.hasMeaningfulGraph()) {
-            configuration.setUrlPrefix(urlPrefix);
-            return configuration.getGraphRenderer(getUrlName());
-        }
-        else {
-            BuildResultGraph graphType = configuration.getGraphType();
-            try {
-                response.sendRedirect2(request.getContextPath() + graphType.getExampleImage());
-            }
-            catch (IOException exception) {
-                if (LOGGER.isLoggable(Level.SEVERE)) {
-                    LOGGER.log(Level.SEVERE, "Can't create graph: " + graphType, exception);
-                }
-            }
-
-            return null;
-        }
-    }
-
-    /**
-     * Returns whether the trend graph is visible.
-     *
-     * @param request
-     *         the request to get the cookie from
-     *
-     * @return {@code true} if the trend is visible
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public boolean isTrendVisible(final StaplerRequest request) {
-        GraphConfigurationView configuration = createUserConfiguration(request);
-
-        return configuration.isVisible() && configuration.hasMeaningfulGraph();
-    }
-
-    /**
-     * Returns the ID of the selected trend graph.
-     *
-     * @return ID of the selected trend graph
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public String getTrendGraphId() {
-        GraphConfigurationView configuration = createUserConfiguration(Stapler.getCurrentRequest());
-
-        return configuration.getGraphType().getId();
-    }
-
-    /**
-     * Returns whether the trend graph is deactivated.
-     *
-     * @param request
-     *         the request to get the cookie from
-     *
-     * @return {@code true} if the trend is deactivated
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public boolean isTrendDeactivated(final StaplerRequest request) {
-        return createUserConfiguration(request).isDeactivated();
-    }
-
-    /**
-     * Returns whether the enable trend graph link should be shown.
-     *
-     * @param request
-     *         the request to get the cookie from
-     *
-     * @return the graph configuration
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public boolean canShowEnableTrendLink(final StaplerRequest request) {
-        GraphConfigurationView configuration = createUserConfiguration(request);
-        if (configuration.hasMeaningfulGraph()) {
-            return !configuration.isDeactivated() && !configuration.isVisible();
-        }
-        return false;
-    }
-
-    /**
-     * Creates a view to configure the trend graph for the current user.
-     *
-     * @param request
-     *         Stapler request
-     *
-     * @return a view to configure the trend graph for the current user
-     */
-    protected GraphConfigurationView createUserConfiguration(final StaplerRequest request) {
-        return new UserGraphConfigurationView(createConfiguration(), getOwner(),
-                getUrlName(), request.getCookies(), createBuildHistory(), labelProvider.getToolTipProvider(),
-                healthDescriptor);
-    }
-
-    /**
-     * Creates a view to configure the trend graph defaults.
-     *
-     * @return a view to configure the trend graph defaults
-     */
-    protected GraphConfigurationView createDefaultConfiguration() {
-        return new DefaultGraphConfigurationView(createConfiguration(), getOwner(),
-                getUrlName(), createBuildHistory(), labelProvider.getToolTipProvider(), healthDescriptor);
-    }
-
-    /**
-     * Creates the graph configuration.
-     *
-     * @return the graph configuration
-     */
-    private GraphConfiguration createConfiguration() {
-        return createConfiguration(getAvailableGraphs());
-    }
-
-    /**
-     * Returns the sorted list of available graphs.
-     *
-     * @return the available graphs
-     */
-    @SuppressWarnings("NP")
-    protected List<BuildResultGraph> getAvailableGraphs() {
-        List<BuildResultGraph> availableGraphs = Lists.newArrayList();
-
-        availableGraphs.add(new NewVersusFixedGraph());
-        availableGraphs.add(new PriorityGraph());
-        availableGraphs.add(new TotalsGraph());
-        availableGraphs.add(new HealthGraph(healthDescriptor));
-        availableGraphs.add(new DifferenceGraph());
-        availableGraphs.add(new EmptyGraph());
-        availableGraphs.add(new NullGraph());
-
-        return availableGraphs;
-    }
-
-    /**
-     * Creates the graph configuration.
-     *
-     * @param availableGraphs
-     *         the available graphs
-     *
-     * @return the graph configuration.
-     */
-    protected GraphConfiguration createConfiguration(final List<BuildResultGraph> availableGraphs) {
-        return new GraphConfiguration(availableGraphs);
     }
 }

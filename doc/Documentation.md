@@ -50,7 +50,7 @@ jobs will function correctly. In future versions of the warnings plug-in I will 
 Pipelines calling the old static analysis steps (e.g., `findbugs`, `checkstyle`, etc.) need to call the new `recordIssues` 
 step now. The same step is used for all static analysis tools, the actual parser is selected
 by using the step property `tools`. For more details on the set of available parameters please see section 
-[Pipeline Configuration](#simple-pipeline-configuration).     
+[Configuration](#configuration).     
 
 ### Migration of all other jobs
 
@@ -285,6 +285,14 @@ use the same severity for all issues.
 is up to the individual parsers.
 
 ![severities overview](images/severities.png) 
+
+### Build Trend
+
+In order to see the trend of the analysis results, a chart showing the number of issues per build is also
+shown. This chart is used in the details page as well as in the job overview. Currently, type and configuration
+of the chart is fixed. This will be enhanced in future versions of the plug-in.
+
+![trend chart](images/history.png) 
 
 ### Issues Overview
 
