@@ -9,7 +9,7 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
-import io.jenkins.plugins.analysis.core.charts.PriorityChart;
+import io.jenkins.plugins.analysis.core.charts.SeverityChart;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.history.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -131,9 +131,9 @@ public class JobAction implements Action {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getBuildTrend() {
-        PriorityChart priorityChart = new PriorityChart();
+        SeverityChart severityChart = new SeverityChart();
 
-        return JSONObject.fromObject(priorityChart.create(createBuildHistory()));
+        return JSONObject.fromObject(severityChart.create(createBuildHistory()));
     }
 
     /**

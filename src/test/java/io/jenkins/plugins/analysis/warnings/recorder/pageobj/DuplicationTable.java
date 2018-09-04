@@ -53,12 +53,12 @@ public class DuplicationTable {
         if (hasPackages) {
             assertThat(cells).hasSize(7);
             assertThat(getHeaders(cells)).containsExactly(
-                    "Details", "File", "Package", "Priority", "#Lines", "Duplicated In", "Age");
+                    "Details", "File", "Package", "Severity", "#Lines", "Duplicated In", "Age");
         }
         else {
             assertThat(cells).hasSize(6);
             assertThat(getHeaders(cells)).containsExactly(
-                    "Details", "File", "Priority", "#Lines", "Duplicated In", "Age");
+                    "Details", "File", "Severity", "#Lines", "Duplicated In", "Age");
         }
 
         List<HtmlTableBody> bodies = table.getBodies();

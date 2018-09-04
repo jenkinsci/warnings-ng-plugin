@@ -12,7 +12,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.LineRange;
 import edu.hm.hafner.analysis.LineRangeList;
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.ResourceTest;
 import static java.util.Collections.*;
@@ -35,7 +35,7 @@ public class IssueStreamITest extends ResourceTest {
     private static final String PACKAGE_NAME = "package-name";
     private static final String FILE_NAME = "file-name";
     private static final String MODULE_NAME = "module-name";
-    private static final Priority PRIORITY = Priority.HIGH;
+    private static final Severity PRIORITY = Severity.WARNING_HIGH;
     private static final String MESSAGE = "message";
     private static final String DESCRIPTION = "description";
     private static final String FINGERPRINT = "fingerprint";
@@ -113,7 +113,7 @@ public class IssueStreamITest extends ResourceTest {
                 .setType(TYPE)
                 .setPackageName(PACKAGE_NAME)
                 .setModuleName(MODULE_NAME)
-                .setPriority(PRIORITY)
+                .setSeverity(PRIORITY)
                 .setMessage(message)
                 .setDescription(DESCRIPTION)
                 .setOrigin(ORIGIN)

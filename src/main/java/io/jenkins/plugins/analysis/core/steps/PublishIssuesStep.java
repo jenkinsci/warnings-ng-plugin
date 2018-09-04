@@ -16,7 +16,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -46,7 +46,7 @@ import hudson.util.ListBoxModel;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class PublishIssuesStep extends Step {
-    private static final Priority DEFAULT_MINIMUM_PRIORITY = Priority.LOW;
+    private static final Severity DEFAULT_MINIMUM_PRIORITY = Severity.WARNING_LOW;
 
     private final Report[] reports;
 
@@ -58,7 +58,7 @@ public class PublishIssuesStep extends Step {
 
     private int healthy;
     private int unhealthy;
-    private Priority minimumPriority = DEFAULT_MINIMUM_PRIORITY;
+    private Severity minimumSeverity = DEFAULT_MINIMUM_PRIORITY;
     private final Thresholds thresholds = new Thresholds();
 
     private List<RegexpFilter> filters = new ArrayList<>();
@@ -212,25 +212,25 @@ public class PublishIssuesStep extends Step {
     }
 
     @CheckForNull
-    public String getMinimumPriority() {
-        return minimumPriority.name();
+    public String getMinimumSeverity() {
+        return minimumSeverity.getName();
     }
 
     @CheckForNull
-    public Priority getMinimumPriorityAsPriority() {
-        return minimumPriority;
+    public Severity getMinimumSeverityAsSeverity() {
+        return minimumSeverity;
     }
 
     /**
-     * Sets the minimum priority to consider when computing the health report. Issues with a priority less than this
+     * Sets the minimum severity to consider when computing the health report. Issues with a severity less than this
      * value will be ignored.
      *
-     * @param minimumPriority
-     *         the priority to consider
+     * @param minimumSeverity
+     *         the severity to consider
      */
     @DataBoundSetter
-    public void setMinimumPriority(final String minimumPriority) {
-        this.minimumPriority = Priority.fromString(minimumPriority, Priority.LOW);
+    public void setMinimumSeverity(final String minimumSeverity) {
+        this.minimumSeverity = Severity.valueOf(minimumSeverity, Severity.WARNING_LOW);
     }
 
     Thresholds getThresholds() {
@@ -426,7 +426,7 @@ public class PublishIssuesStep extends Step {
             referenceJobName = step.getReferenceJobName();
             sourceCodeEncoding = step.getSourceCodeEncoding();
             healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
-                    step.getMinimumPriorityAsPriority());
+                    step.getMinimumSeverityAsSeverity());
 
             thresholds = step.getThresholds();
             qualityGate = new QualityGate(thresholds);
@@ -494,11 +494,11 @@ public class PublishIssuesStep extends Step {
         }
 
         /**
-         * Returns a model with all available priority filters.
+         * Returns a model with all available severity filters.
          *
-         * @return a model with all available priority filters
+         * @return a model with all available severity filters
          */
-        public ListBoxModel doFillMinimumPriorityItems() {
+        public ListBoxModel doFillMinimumSeverityItems() {
             return model.getAllSeverityFilters();
         }
 

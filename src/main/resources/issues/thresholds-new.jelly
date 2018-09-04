@@ -9,10 +9,10 @@
     <thead>
       <tr>
         <td/>
-        <td>${%All priorities}</td>
-        <td>${%Priority high}</td>
-        <td>${%Priority normal}</td>
-        <td>${%Priority low}</td>
+        <td>${%All severities}</td>
+        <td>${%Severity high}</td>
+        <td>${%Severity normal}</td>
+        <td>${%Severity low}</td>
       </tr>
     </thead>
     <tbody>

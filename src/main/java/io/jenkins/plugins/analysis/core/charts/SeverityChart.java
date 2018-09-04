@@ -5,11 +5,11 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
 
 /**
- * Builds the model for a graph showing all issues by priority.
+ * Builds the model for a graph showing all issues by severity.
  *
  * @author Ullrich Hafner
  */
-public class PriorityChart {
+public class SeverityChart {
     /**
      * Creates the chart for the specified results.
      *
@@ -32,7 +32,7 @@ public class PriorityChart {
             normal.add(result.getTotalNormalPrioritySize());
             low.add(result.getTotalLowPrioritySize());
 
-            model.addXAxisLabel(result.getBuild().getDisplayName()); // TODO: denormalize
+            model.addXAxisLabel(result.getBuild().getDisplayName()); // TODO: de-normalize
             if (model.size() > 50) {
                 break;
             }

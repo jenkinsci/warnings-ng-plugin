@@ -105,7 +105,7 @@ public class StaticAnalysisLabelProvider {
         if (report.hasTypes()) {
             visibleColumns.add(Messages.Table_Column_Type());
         }
-        visibleColumns.add(Messages.Table_Column_Priority());
+        visibleColumns.add(Messages.Table_Column_Severity());
         visibleColumns.add(Messages.Table_Column_Age());
         return visibleColumns;
     }

@@ -20,7 +20,7 @@ public class IssueRow {
     public static final String PACKAGE = "Package";
     public static final String CATEGORY = "Category";
     public static final String TYPE = "Type";
-    public static final String PRIORITY = "Priority";
+    public static final String PRIORITY = "Severity";
     public static final String AGE = "Age";
     
     private final Map<String, String> valueByName = new HashMap<>();

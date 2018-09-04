@@ -1,12 +1,13 @@
 import edu.hm.hafner.analysis.IssueBuilder
-import edu.hm.hafner.analysis.Priority
+import edu.hm.hafner.analysis.Severity
 
 String type = matcher.group(1)
-Priority priority
+Severity severity
 if ("warning".equalsIgnoreCase(type)) {
-    priority = Priority.NORMAL
-} else {
-    priority = Priority.HIGH
+    severity = Severity.WARNING_NORMAL
+} 
+else {
+    severity = Severity.WARNING_HIGH
 }
 def builder = new IssueBuilder()
 return builder.setFileName(matcher.group(2))

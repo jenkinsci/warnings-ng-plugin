@@ -99,48 +99,48 @@ public class PropertyStatistics {
     }
 
     /**
-     * Returns the number of issues with priority {@link Severity#ERROR} for the specified property instance.
+     * Returns the number of issues with severity {@link Severity#ERROR} for the specified property instance.
      *
      * @param key
      *         the property instance
      *
-     * @return the number of high priority issues
+     * @return the number of high severity issues
      */
     public long getErrorsCount(final String key) {
         return getReportFor(key).getSizeOf(Severity.ERROR);
     }
 
     /**
-     * Returns the number of issues with priority {@link Severity#WARNING_HIGH} for the specified property instance.
+     * Returns the number of issues with severity {@link Severity#WARNING_HIGH} for the specified property instance.
      *
      * @param key
      *         the property instance
      *
-     * @return the number of high priority issues
+     * @return the number of high severity issues
      */
     public long getHighCount(final String key) {
         return getReportFor(key).getSizeOf(Severity.WARNING_HIGH);
     }
 
     /**
-     * Returns the number of issues with priority {@link Severity#WARNING_NORMAL} for the specified property instance.
+     * Returns the number of issues with severity {@link Severity#WARNING_NORMAL} for the specified property instance.
      *
      * @param key
      *         the property instance
      *
-     * @return the number of normal priority issues
+     * @return the number of normal severity issues
      */
     public long getNormalCount(final String key) {
         return getReportFor(key).getSizeOf(Severity.WARNING_NORMAL);
     }
 
     /**
-     * Returns the number of issues with priority {@link Severity#WARNING_LOW} for the specified property instance.
+     * Returns the number of issues with severity {@link Severity#WARNING_LOW} for the specified property instance.
      *
      * @param key
      *         the property instance
      *
-     * @return the number of low priority issues
+     * @return the number of low severity issues
      */
     public long getLowCount(final String key) {
         return getReportFor(key).getSizeOf(Severity.WARNING_LOW);

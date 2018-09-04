@@ -4,7 +4,6 @@ import java.util.Map;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 
-import edu.hm.hafner.analysis.Priority;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
@@ -37,8 +36,8 @@ public class HealthReportBuilder {
             final StaticAnalysisLabelProvider labelProvider,
             final Map<Severity, Integer> sizePerSeverity) {
         int relevantIssuesSize = 0;
-        for (Priority priority : Priority.collectPrioritiesFrom(healthDescriptor.getMinimumPriority())) {
-            relevantIssuesSize += sizePerSeverity.getOrDefault(Severity.valueOf(priority), 0);
+        for (Severity severity : Severity.collectSeveritiesFrom(healthDescriptor.getMinimumSeverity())) {
+            relevantIssuesSize += sizePerSeverity.getOrDefault(severity, 0);
         }
         relevantIssuesSize += sizePerSeverity.getOrDefault(Severity.ERROR, 0);
 

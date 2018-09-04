@@ -6,7 +6,7 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.NoSuchElementException;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
@@ -248,13 +248,13 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getHighCount() returns the number of issues with Priority#HIGH.
+     * Verifies that getHighCount() returns the number of issues with Severity#HIGH.
      */
     @Test
     void shouldReturnHighCountOne() {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setPriority(Priority.HIGH).setCategory(KEY).build());
+        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).build());
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         long value = statistics.getHighCount(KEY);
@@ -263,16 +263,16 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getHighCount() returns the number of issues with Priority#HIGH.
+     * Verifies that getHighCount() returns the number of issues with Severity#HIGH.
      */
     @Test
     void shouldReturnHighCountTwo() {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setPriority(Priority.HIGH).setCategory(KEY).setOrigin("A").build());
-        issues.add(builder.setPriority(Priority.HIGH).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setPriority(Priority.LOW).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setPriority(Priority.NORMAL).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("A").build());
+        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         long value = statistics.getHighCount(KEY);
@@ -281,13 +281,13 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getHighCount() returns zero if there are not issues with Priority#HIGH.
+     * Verifies that getHighCount() returns zero if there are not issues with Severity#HIGH.
      */
     @Test
     void shouldReturnHighCountZero() {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setPriority(Priority.LOW).setCategory(KEY).build());
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         long value = statistics.getHighCount(KEY);
@@ -309,13 +309,13 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getNormalCount() returns the number of issues with Priority#NORMAL.
+     * Verifies that getNormalCount() returns the number of issues with Severity#NORMAL.
      */
     @Test
     void shouldReturnNormalCountOne() {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setPriority(Priority.NORMAL).setCategory(KEY).build());
+        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).build());
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         long value = statistics.getNormalCount(KEY);
@@ -324,16 +324,16 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getNormalCount() returns the number of issues with Priority#NORMAL.
+     * Verifies that getNormalCount() returns the number of issues with Severity#NORMAL.
      */
     @Test
     void shouldReturnNormalCountTwo() {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setPriority(Priority.NORMAL).setCategory(KEY).setOrigin("A").build());
-        issues.add(builder.setPriority(Priority.NORMAL).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setPriority(Priority.LOW).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setPriority(Priority.HIGH).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("A").build());
+        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         long value = statistics.getNormalCount(KEY);
@@ -354,13 +354,13 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getNormalCount() returns zero if there are not issues with Priority#NORMAL.
+     * Verifies that getNormalCount() returns zero if there are not issues with Severity#NORMAL.
      */
     @Test
     void shouldReturnNormalCountZero() {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setPriority(Priority.LOW).setCategory(KEY).build());
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         long value = statistics.getNormalCount(KEY);
@@ -369,13 +369,13 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getLowCount() returns the number of issues with Priority#LOW.
+     * Verifies that getLowCount() returns the number of issues with Severity#LOW.
      */
     @Test
     void shouldReturnLowCountOne() {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setPriority(Priority.LOW).setCategory(KEY).build());
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         long value = statistics.getLowCount(KEY);
@@ -396,16 +396,16 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getLowCount() returns the number of issues with Priority#LOW.
+     * Verifies that getLowCount() returns the number of issues with Severity#LOW.
      */
     @Test
     void shouldReturnLowCountTwo() {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setPriority(Priority.LOW).setCategory(KEY).setOrigin("A").build());
-        issues.add(builder.setPriority(Priority.LOW).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setPriority(Priority.NORMAL).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setPriority(Priority.HIGH).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("A").build());
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         long value = statistics.getLowCount(KEY);
@@ -414,13 +414,13 @@ class PropertyStatisticsTest {
     }
 
     /**
-     * Verifies that getLowCount() returns zero if there are not issues with Priority#LOW.
+     * Verifies that getLowCount() returns zero if there are not issues with Severity#LOW.
      */
     @Test
     void shouldReturnLowCountZero() {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setPriority(Priority.HIGH).setCategory(KEY).build());
+        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).build());
         PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
 
         long value = statistics.getLowCount(KEY);

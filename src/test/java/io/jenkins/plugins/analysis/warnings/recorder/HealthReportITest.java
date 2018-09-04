@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 
 import org.junit.Test;
 
+import edu.hm.hafner.analysis.Severity;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -13,7 +14,6 @@ import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Result;
-import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Integration tests for the health report of the warnings plug-in in freestyle jobs.
@@ -102,7 +102,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldCreateHealthReportWithHighPriority() {
-        HealthReport report = createHealthReportTestSetupCheckstyle(Priority.HIGH);
+        HealthReport report = createHealthReportTestSetupCheckstyle(Severity.WARNING_HIGH);
         assertThat(report.getDescription()).isEqualTo("CheckStyle: 2 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
@@ -112,7 +112,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldCreateHealthReportWithNormalPriority() {
-        HealthReport report = createHealthReportTestSetupCheckstyle(Priority.NORMAL);
+        HealthReport report = createHealthReportTestSetupCheckstyle(Severity.WARNING_NORMAL);
         assertThat(report.getDescription()).isEqualTo("CheckStyle: 4 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
@@ -122,7 +122,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldCreateHealthReportWithLowPriority() {
-        HealthReport report = createHealthReportTestSetupCheckstyle(Priority.LOW);
+        HealthReport report = createHealthReportTestSetupCheckstyle(Severity.WARNING_LOW);
         assertThat(report.getDescription()).isEqualTo("CheckStyle: 6 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H80PLUS);
     }
@@ -153,12 +153,12 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      *
      * @return a healthReport under test
      */
-    private HealthReport createHealthReportTestSetupCheckstyle(final Priority priority) {
+    private HealthReport createHealthReportTestSetupCheckstyle(final Severity priority) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-healthReport.xml");
         enableWarnings(project, publisher -> {
                     publisher.setHealthy(10);
                     publisher.setUnhealthy(15);
-                    publisher.setMinimumPriority(priority.name());
+                    publisher.setMinimumSeverity(priority.getName());
                 },
                 new ToolConfiguration(new CheckStyle(), "**/*issues.txt")
         );

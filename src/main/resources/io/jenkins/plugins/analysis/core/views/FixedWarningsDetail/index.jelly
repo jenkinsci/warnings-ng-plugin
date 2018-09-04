@@ -34,7 +34,7 @@
             <tr>
               <th>${%File}</th>
               <th>${%Line}</th>
-              <th>${%Priority}</th>
+              <th>${%Severity}</th>
               <th>${%Type}</th>
               <th>${%Category}</th>
             </tr>

@@ -23,10 +23,11 @@
     </p>
     <hr/>
     <pre>
-import edu.hm.hafner.analysis.Priority
+import edu.hm.hafner.analysis.Severity
 
 builder.setFileName(matcher.group(1))
         .setLineStart(Integer.parseInt(matcher.group(2)))
+        .setSeverity(Severity.WARNING_NORMAL)
         .setCategory(matcher.group(3))
         .setMessage(matcher.group(4))
 

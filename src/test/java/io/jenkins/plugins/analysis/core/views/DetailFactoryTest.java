@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
@@ -225,7 +225,7 @@ class DetailFactoryTest {
 
         Report filtered = ((IssuesDetail) details).getIssues();
         assertThat(filtered).hasSize(1);
-        assertThat(filtered.get(0)).hasCategory("CATEGORY2").hasPriority(Priority.HIGH);
+        assertThat(filtered.get(0)).hasCategory("CATEGORY2").hasSeverity(Severity.WARNING_HIGH);
     }
 
     @SuppressWarnings("ParameterNumber")
@@ -281,13 +281,13 @@ class DetailFactoryTest {
         IssueBuilder builder = new IssueBuilder();
         Report issues = new Report();
         for (int i = 0; i < high; i++) {
-            issues.add(builder.setPriority(Priority.HIGH).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());
+            issues.add(builder.setSeverity(Severity.WARNING_HIGH).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());
         }
         for (int i = 0; i < normal; i++) {
-            issues.add(builder.setPriority(Priority.NORMAL).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());
+            issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());
         }
         for (int i = 0; i < low; i++) {
-            issues.add(builder.setPriority(Priority.LOW).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());
+            issues.add(builder.setSeverity(Severity.WARNING_LOW).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());
         }
         return issues;
     }

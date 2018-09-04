@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 
@@ -99,9 +99,9 @@ public class JobConfigurationModel {
      */
     public ListBoxModel getAllSeverityFilters() {
         ListBoxModel options = new ListBoxModel();
-        options.add(Messages.PriorityFilter_High(), Priority.HIGH.name());
-        options.add(Messages.PriorityFilter_Normal(), Priority.NORMAL.name());
-        options.add(Messages.PriorityFilter_Low(), Priority.LOW.name());
+        options.add(Messages.SeverityFilter_High(), Severity.WARNING_HIGH.getName());
+        options.add(Messages.SeverityFilter_Normal(), Severity.WARNING_NORMAL.getName());
+        options.add(Messages.SeverityFilter_Low(), Severity.WARNING_LOW.getName());
         return options;
     }
 

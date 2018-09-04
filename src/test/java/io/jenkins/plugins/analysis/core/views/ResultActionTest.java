@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.SerializableTest;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
@@ -33,7 +33,7 @@ class ResultActionTest extends SerializableTest<ResultAction> {
     @Override
     protected ResultAction createSerializable() {
         return new ResultAction(null, mock(AnalysisResult.class),
-                new HealthDescriptor(0, 0, Priority.HIGH),
+                new HealthDescriptor(0, 0, Severity.WARNING_HIGH),
                 "ID", "Name", StandardCharsets.UTF_8);
     }
 }

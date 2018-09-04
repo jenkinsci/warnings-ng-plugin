@@ -13,14 +13,14 @@ import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link PriorityChart}.
+ * Tests the class {@link SeverityChart}.
  *
  * @author Ullrich Hafner
  */
-class PriorityChartTest {
+class SeverityChartTest {
     @Test
     void shouldCreatePriorityChart() {
-        PriorityChart chart = new PriorityChart();
+        SeverityChart chart = new SeverityChart();
 
         List<AnalysisResult> results = new ArrayList<>();
         results.add(createResult(1, 2, 3, "#1"));

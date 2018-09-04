@@ -16,7 +16,7 @@
   <f:entry title="${%Unhealthy threshold}" description="${%description.unhealthy(unhealthyIcon)}" field="unhealthy">
     <i:number/>
   </f:entry>
-  <f:entry title="${%Health priorities}" description="${%description.health.priorities}" field="minimumPriority">
+  <f:entry title="${%Health severities}" description="${%description.health.severities}" field="minimumSeverity">
     <f:select default="low"/>
   </f:entry>
 

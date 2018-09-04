@@ -495,7 +495,7 @@ public class AnalysisResult implements Serializable {
     /**
      * Returns the number of issues in this analysis run, mapped by {@link Severity}.
      *
-     * @return number of issues per priority
+     * @return number of issues per severity
      */
     public Map<Severity, Integer> getSizePerSeverity() {
         return Maps.immutable.ofAll(sizePerSeverity).toMap();
@@ -504,7 +504,7 @@ public class AnalysisResult implements Serializable {
     /**
      * Returns the new number of issues in this analysis run, mapped by {@link Severity}.
      *
-     * @return number of issues per priority
+     * @return number of issues per severity
      */
     public Map<Severity, Integer> getNewSizePerSeverity() {
         return Maps.immutable.ofAll(sizePerSeverity).toMap();
@@ -552,9 +552,9 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-     * Returns the total number of high priority issues in this analysis run.
+     * Returns the total number of high severity issues in this analysis run.
      *
-     * @return total number of high priority issues
+     * @return total number of high severity issues
      */
     @Exported
     public int getTotalHighPrioritySize() {
@@ -562,9 +562,9 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-     * Returns the total number of normal priority issues in this analysis run.
+     * Returns the total number of normal severity issues in this analysis run.
      *
-     * @return total number of normal priority issues
+     * @return total number of normal severity issues
      */
     @Exported
     public int getTotalNormalPrioritySize() {
@@ -572,9 +572,9 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-     * Returns the total number of low priority issues in this analysis run.
+     * Returns the total number of low severity issues in this analysis run.
      *
-     * @return total number of low priority of issues
+     * @return total number of low severity of issues
      */
     @Exported
     public int getTotalLowPrioritySize() {
@@ -614,9 +614,9 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-     * Returns the number of new high priority issues in this analysis run.
+     * Returns the number of new high severity issues in this analysis run.
      *
-     * @return number of new high priority issues
+     * @return number of new high severity issues
      */
     @Exported
     public int getNewHighPrioritySize() {
@@ -624,9 +624,9 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-     * Returns the number of new normal priority issues in this analysis run.
+     * Returns the number of new normal severity issues in this analysis run.
      *
-     * @return number of new normal priority issues
+     * @return number of new normal severity issues
      */
     @Exported
     public int getNewNormalPrioritySize() {
@@ -634,9 +634,9 @@ public class AnalysisResult implements Serializable {
     }
 
     /**
-     * Returns the number of new low priority issues in this analysis run.
+     * Returns the number of new low severity issues in this analysis run.
      *
-     * @return number of new low priority of issues
+     * @return number of new low severity of issues
      */
     @Exported
     public int getNewLowPrioritySize() {

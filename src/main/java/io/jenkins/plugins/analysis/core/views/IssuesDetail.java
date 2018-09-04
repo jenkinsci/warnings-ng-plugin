@@ -23,7 +23,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.charts.PieModel;
-import io.jenkins.plugins.analysis.core.charts.PriorityChart;
+import io.jenkins.plugins.analysis.core.charts.SeverityChart;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
@@ -228,10 +228,10 @@ public class IssuesDetail implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getBuildTrend() {
-        PriorityChart priorityChart = new PriorityChart();
+        SeverityChart severityChart = new SeverityChart();
 
         AnalysisHistory history = new AnalysisHistory(owner, new ByIdResultSelector(report.getId()));
-        return JSONObject.fromObject(priorityChart.create(history));
+        return JSONObject.fromObject(severityChart.create(history));
     }
 
     /**
@@ -350,7 +350,7 @@ public class IssuesDetail implements ModelObject {
      * @param severity
      *         the severity
      *
-     * @return localized priority name
+     * @return localized severity name
      */
     @SuppressWarnings("unused") // Called by jelly view
     public String getLocalizedSeverity(final Severity severity) {

@@ -4,9 +4,8 @@ import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.FormattedLogger;
-
-import hudson.plugins.analysis.util.model.Priority;
 
 /**
  * Stores a set of four thresholds and checks if one or more of them are reached.
@@ -27,11 +26,11 @@ public class ThresholdSet implements Serializable {
      * @param totalThreshold
      *         threshold for the totals number of issues
      * @param highThreshold
-     *         threshold for the number of issues of {@link Priority#HIGH}
+     *         threshold for the number of issues of {@link Severity#WARNING_HIGH}
      * @param normalThreshold
-     *         threshold for the number of issues of {@link Priority#NORMAL}
+     *         threshold for the number of issues of {@link Severity#WARNING_NORMAL}
      * @param lowThreshold
-     *         threshold for the number of issues of {@link Priority#LOW}
+     *         threshold for the number of issues of {@link Severity#WARNING_LOW}
      */
     public ThresholdSet(final int totalThreshold, final int highThreshold, final int normalThreshold,
             final int lowThreshold) {
@@ -207,10 +206,10 @@ public class ThresholdSet implements Serializable {
         }
 
         /**
-         * Sets the threshold for the size of high priority issues.
+         * Sets the threshold for the size of high severity issues.
          *
          * @param highThreshold
-         *         the number of high priority issues
+         *         the number of high severity issues
          *
          * @return this
          */
@@ -220,10 +219,10 @@ public class ThresholdSet implements Serializable {
         }
 
         /**
-         * Sets the threshold for the size of high priority issues.
+         * Sets the threshold for the size of high severity issues.
          *
          * @param highThreshold
-         *         the number of high priority issues
+         *         the number of high severity issues
          *
          * @return this
          */
@@ -232,10 +231,10 @@ public class ThresholdSet implements Serializable {
         }
 
         /**
-         * Sets the threshold for the size of normal priority issues.
+         * Sets the threshold for the size of normal severity issues.
          *
          * @param normalThreshold
-         *         the number of normal priority issues
+         *         the number of normal severity issues
          *
          * @return this
          */
@@ -245,10 +244,10 @@ public class ThresholdSet implements Serializable {
         }
 
         /**
-         * Sets the threshold for the size of normal priority issues.
+         * Sets the threshold for the size of normal severity issues.
          *
          * @param normalThreshold
-         *         the number of normal priority issues
+         *         the number of normal severity issues
          *
          * @return this
          */
@@ -257,10 +256,10 @@ public class ThresholdSet implements Serializable {
         }
 
         /**
-         * Sets the threshold for the size of low priority issues.
+         * Sets the threshold for the size of low severity issues.
          *
          * @param lowThreshold
-         *         the number of low priority issues
+         *         the number of low severity issues
          *
          * @return this
          */
@@ -270,10 +269,10 @@ public class ThresholdSet implements Serializable {
         }
 
         /**
-         * Sets the threshold for the size of low priority issues.
+         * Sets the threshold for the size of low severity issues.
          *
          * @param lowThreshold
-         *         the number of low priority issues
+         *         the number of low severity issues
          *
          * @return this
          */

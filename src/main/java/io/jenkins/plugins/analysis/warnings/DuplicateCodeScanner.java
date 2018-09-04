@@ -36,19 +36,19 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
     private int normalThreshold = 25;
 
     /**
-     * Returns the minimum number of duplicate lines for high priority warnings.
+     * Returns the minimum number of duplicate lines for high severity warnings.
      *
-     * @return the minimum number of duplicate lines for high priority warnings
+     * @return the minimum number of duplicate lines for high severity warnings
      */
     public int getHighThreshold() {
         return THRESHOLD_VALIDATION.getHighThreshold(normalThreshold, highThreshold);
     }
 
     /**
-     * Sets the minimum number of duplicate lines for high priority warnings.
+     * Sets the minimum number of duplicate lines for high severity warnings.
      *
      * @param highThreshold
-     *         the number of lines for priority high
+     *         the number of lines for severity high
      */
     @DataBoundSetter
     public void setHighThreshold(final int highThreshold) {
@@ -65,10 +65,10 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
     }
 
     /**
-     * Sets the minimum number of duplicate lines for normal priority warnings.
+     * Sets the minimum number of duplicate lines for normal severity warnings.
      *
      * @param normalThreshold
-     *         the number of lines for priority normal
+     *         the number of lines for severity normal
      */
     @DataBoundSetter
     public void setNormalThreshold(final int normalThreshold) {
@@ -165,7 +165,7 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
             if (report.hasPackages()) {
                 headers.add(Messages.DRY_Table_Column_Package());
             }
-            headers.add(Messages.DRY_Table_Column_Priority());
+            headers.add(Messages.DRY_Table_Column_Severity());
             headers.add(Messages.DRY_Table_Column_LinesCount());
             headers.add(Messages.DRY_Table_Column_DuplicatedIn());
             headers.add(Messages.DRY_Table_Column_Age());
@@ -227,9 +227,9 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
      */
     @SuppressWarnings("ParameterHidesMemberVariable")
     public static class ThresholdValidation {
-        /** Minimum number of duplicate lines for a warning with priority high. */
+        /** Minimum number of duplicate lines for a warning with severity high. */
         static final int DEFAULT_HIGH_THRESHOLD = 50;
-        /** Minimum number of duplicate lines for a warning with priority normal. */
+        /** Minimum number of duplicate lines for a warning with severity normal. */
         static final int DEFAULT_NORMAL_THRESHOLD = 25;
 
         /**
@@ -281,14 +281,14 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         }
 
         /**
-         * Returns the minimum number of duplicate lines for a warning with priority high.
+         * Returns the minimum number of duplicate lines for a warning with severity high.
          *
          * @param normalThreshold
          *         the normal threshold
          * @param highThreshold
          *         the high threshold
          *
-         * @return the minimum number of duplicate lines for a warning with priority high
+         * @return the minimum number of duplicate lines for a warning with severity high
          */
         public int getHighThreshold(final int normalThreshold, final int highThreshold) {
             if (!isValid(normalThreshold, highThreshold)) {
@@ -302,14 +302,14 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         }
 
         /**
-         * Returns the minimum number of duplicate lines for a warning with priority normal.
+         * Returns the minimum number of duplicate lines for a warning with severity normal.
          *
          * @param normalThreshold
          *         the normal threshold
          * @param highThreshold
          *         the high threshold
          *
-         * @return the minimum number of duplicate lines for a warning with priority normal
+         * @return the minimum number of duplicate lines for a warning with severity normal
          */
         public int getNormalThreshold(final int normalThreshold, final int highThreshold) {
             if (!isValid(normalThreshold, highThreshold)) {

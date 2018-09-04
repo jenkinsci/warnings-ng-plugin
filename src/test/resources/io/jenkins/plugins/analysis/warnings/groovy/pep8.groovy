@@ -1,12 +1,12 @@
-import edu.hm.hafner.analysis.Priority
+import edu.hm.hafner.analysis.Severity
 
 String message = matcher.group(5)
 String category = matcher.group(4)
-Priority priority
+Severity severity
 if (category.contains("E")) {
-    priority = Priority.NORMAL
+    severity = Severity.WARNING_NORMAL
 } else {
-    priority = Priority.LOW
+    severity = Severity.WARNING_LOW
 }
 
 return builder.setFileName(matcher.group(1))
@@ -14,5 +14,5 @@ return builder.setFileName(matcher.group(1))
         .setColumnStart(Integer.parseInt(matcher.group(3)))
         .setCategory(category)
         .setMessage(message)
-        .setPriority(priority)
+        .setSeverity(severity)
         .build()

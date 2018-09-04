@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.quality;
 
 import java.io.Serializable;
 
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 
 /**
  * A health descriptor defines the parameters to create the build health.
@@ -14,7 +14,7 @@ public class HealthDescriptor implements Serializable {
 
     private final int healthy;
     private final int unhealthy;
-    private final Priority minimumPriority;
+    private final Severity minimumSeverity;
 
     /**
      * Creates a new {@link HealthDescriptor}.
@@ -23,13 +23,13 @@ public class HealthDescriptor implements Serializable {
      *         the healthy threshold, i.e. when health is reported as 100%.
      * @param unhealthy
      *         the unhealthy threshold, i.e. when health is reported as 0%.
-     * @param minimumPriority
-     *         the minimum priority that should be considered when computing build health
+     * @param minimumSeverity
+     *         the minimum severity that should be considered when computing build health
      */
-    public HealthDescriptor(final int healthy, final int unhealthy, final Priority minimumPriority) {
+    public HealthDescriptor(final int healthy, final int unhealthy, final Severity minimumSeverity) {
         this.healthy = healthy;
         this.unhealthy = unhealthy;
-        this.minimumPriority = minimumPriority;
+        this.minimumSeverity = minimumSeverity;
     }
 
     /**
@@ -51,13 +51,13 @@ public class HealthDescriptor implements Serializable {
     }
 
     /**
-     * Returns the minimum priority that should be considered when computing build health. E.g., if {@link
-     * Priority#NORMAL} is returned, then annotations with priority {@link Priority#LOW} are ignored.
+     * Returns the minimum severity that should be considered when computing build health. E.g., if {@link
+     * Severity#WARNING_NORMAL} is returned, then annotations with severity {@link Severity#WARNING_LOW} are ignored.
      *
-     * @return the minimum priority to consider
+     * @return the minimum severity to consider
      */
-    public Priority getMinimumPriority() {
-        return minimumPriority;
+    public Severity getMinimumSeverity() {
+        return minimumSeverity;
     }
 
     /**
@@ -80,6 +80,6 @@ public class HealthDescriptor implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Healthy=%d, Unhealthy=%d, Minimum Priority=%s", healthy, unhealthy, minimumPriority);
+        return String.format("Healthy=%d, Unhealthy=%d, Minimum Severity=%s", healthy, unhealthy, minimumSeverity);
     }
 }

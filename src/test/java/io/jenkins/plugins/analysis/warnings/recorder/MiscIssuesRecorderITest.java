@@ -12,7 +12,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlNumberInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
@@ -61,7 +61,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
             tool.setHealthy(10);
             tool.setUnhealthy(20);
             // TODO: add validation of minimum priority
-            tool.setMinimumPriority(Priority.HIGH.name());
+            tool.setMinimumSeverity(Severity.WARNING_HIGH.getName());
 
             tool.setEnabledForFailure(true);
             tool.setAggregatingResults(true);

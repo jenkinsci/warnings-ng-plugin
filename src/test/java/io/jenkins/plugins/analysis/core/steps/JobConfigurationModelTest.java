@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import static io.jenkins.plugins.analysis.core.steps.IssuesRecorder.*;
 import io.jenkins.plugins.analysis.core.testutil.Assertions;
@@ -73,12 +73,12 @@ class JobConfigurationModelTest {
         Option actualLowOption = allFilters.get(2);
 
         assertSoftly(softly -> {
-            softly.assertThat(actualHighOption.value).isEqualTo(Priority.HIGH.name());
-            softly.assertThat(actualHighOption.name).isEqualTo(Messages.PriorityFilter_High());
-            softly.assertThat(actualNormalOption.value).isEqualTo(Priority.NORMAL.name());
-            softly.assertThat(actualNormalOption.name).isEqualTo(Messages.PriorityFilter_Normal());
-            softly.assertThat(actualLowOption.value).isEqualTo(Priority.LOW.name());
-            softly.assertThat(actualLowOption.name).isEqualTo(Messages.PriorityFilter_Low());
+            softly.assertThat(actualHighOption.value).isEqualTo(Severity.WARNING_HIGH.getName());
+            softly.assertThat(actualHighOption.name).isEqualTo(Messages.SeverityFilter_High());
+            softly.assertThat(actualNormalOption.value).isEqualTo(Severity.WARNING_NORMAL.getName());
+            softly.assertThat(actualNormalOption.name).isEqualTo(Messages.SeverityFilter_Normal());
+            softly.assertThat(actualLowOption.value).isEqualTo(Severity.WARNING_LOW.getName());
+            softly.assertThat(actualLowOption.name).isEqualTo(Messages.SeverityFilter_Low());
         });
     }
 

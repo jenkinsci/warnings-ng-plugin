@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Priority;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.ResourceTest;
 import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
@@ -170,7 +170,7 @@ class StaticAnalysisLabelProviderTest {
                     .setCategory("category-" + index)
                     .setType("type-" + index)
                     .setLineStart(15)
-                    .setPriority(Priority.HIGH)
+                    .setSeverity(Severity.WARNING_HIGH)
                     .setReference("1");
             return builder.build();
         }
@@ -193,7 +193,7 @@ class StaticAnalysisLabelProviderTest {
                     .setCategory("category-1")
                     .setType("type-1")
                     .setLineStart(15)
-                    .setPriority(Priority.HIGH)
+                    .setSeverity(Severity.WARNING_HIGH)
                     .setReference("1").build();
 
             Report report = mock(Report.class);
