@@ -174,7 +174,7 @@
      * Create a data table instance for the issues table.
      */
     var issues = $('#issues');
-    var table = issues.DataTable({
+    var issuesTable = issues.DataTable({
         pagingType: 'numbers',  // Page number button only
         order: [[1, 'asc']],
         columnDefs: [{
@@ -186,7 +186,7 @@
     // Add event listener for opening and closing details
     issues.on('click', 'div.details-control', function () {
         var tr = $(this).parents('tr');
-        var row = table.row(tr);
+        var row = issuesTable.row(tr);
 
         if (row.child.isShown()) {
             // This row is already open - close it
@@ -198,7 +198,16 @@
             tr.addClass('shown');
         }
     });
-
+    
+    // Store paging size
+    issues.on('length.dt', function ( e, settings, len ) {
+        localStorage.setItem('table-length', len);
+    });
+    var storedLength = localStorage.getItem('table-length');
+    if ($.isNumeric(storedLength)) {
+        issuesTable.page.len(storedLength);
+    } 
+    
     // $('#expand').on('click', function () {
     //     table.rows().every(function () {
     //         var tr = $(this.node());
@@ -224,7 +233,7 @@
     var tabToggleLink = $('a[data-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
         var activeTab = $(e.target).attr('href');
-        if (activeTab === '#issuesContent' && table.data().length === 0) {
+        if (activeTab === '#issuesContent' && issuesTable.data().length === 0) {
             view.getTableModel(function (t) {
                 (function ($) {
                     var table = $('#issues').DataTable();
