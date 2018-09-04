@@ -1,0 +1,26 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Renders a bootstrap card with a zero issues message.
+  </st:documentation>
+
+  <div class="card card-marg-bot h-100">
+    <div data-role="page" class="card-body">
+
+      <h5 class="card-title">
+        ${%Congratulations}
+        <i class="fa fa-trophy icon-right fa-2x" aria-hidden="true"/>
+      </h5>
+
+      <div class="text-center">
+        <i class="fa fa-check-double banner" aria-hidden="true"/>
+      </div>
+      <div class="text-center">
+        <h5 class="card-title">${%congratulations}</h5>
+      </div>
+
+    </div>
+  </div>
+
+</j:jelly>

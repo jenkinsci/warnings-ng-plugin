@@ -1,0 +1,38 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Renders a bootstrap card with carousel with several doughnut charts.
+  </st:documentation>
+
+  <div class="card card-marg-bot">
+    <div data-role="page" class="card-body">
+
+      <h5 class="card-title">
+        ${%Overview}
+        <i class="fa fa-bell icon-right fa-2x" aria-hidden="true"/>
+      </h5>
+
+      <div id="overview-carousel" class="carousel slide" data-interval="false" >
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div id="severities-chart" class="graph-cursor-pointer card-chart"/>
+          </div>
+          <div class="carousel-item">
+            <div id="trend-chart" class="graph-cursor-pointer card-chart"/>
+          </div>
+        </div>
+        <a class="carousel-control-prev" data-target="#overview-carousel" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"/>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" data-target="#overview-carousel" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"/>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+
+    </div>
+  </div>
+  
+</j:jelly>

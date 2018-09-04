@@ -19,102 +19,69 @@
       <script src="${resURL}/plugin/warnings/js/libs/datatables.min.js"/>
       <script src="${resURL}/plugin/warnings/js/libs/echarts.common.min.js"/>
 
-      <j:set var="i" value="${it.issues}"/>
 
-      <j:if test="${i.isNotEmpty()}">
+      <div class="fluid-container">
 
-        <div class="fluid-container">
+        <h3>${it.displayName}</h3>
 
-          <h3>${it.displayName}</h3>
+        <j:set var="i" value="${it.issues}"/>
+        <j:choose>
+          <j:when test="${i.isNotEmpty()}">
 
-          <div class="row py-3">
-            <div class="col-sm-6">
-              <div class="card card-marg-bot">
-                <div data-role="page" class="card-body">
+            <div class="row py-3">
 
-                  <h5 class="card-title">
-                    ${%Overview}
-                    <i class="fa fa-bell icon-right fa-2x" aria-hidden="true"/>
-                  </h5>
-                  <div id="overview-carousel" class="carousel slide" data-interval="false" >
-                    <div class="carousel-inner">
-                      <div class="carousel-item active">
-                        <div id="severities-chart" class="graph-cursor-pointer" style="width: 100%; min-height: 256px"/>
-                      </div>
-                      <div class="carousel-item">
-                        <div id="trend-chart" class="graph-cursor-pointer" style="width: 100%; min-height: 256px"/>
-                      </div>
-                    </div>
-                    <a class="carousel-control-prev" data-target="#overview-carousel" role="button" data-slide="prev">
-                      <span class="carousel-control-prev-icon" aria-hidden="true"/>
-                      <span class="sr-only">Previous</span>
-                    </a>
-                    <a class="carousel-control-next" data-target="#overview-carousel" role="button" data-slide="next">
-                      <span class="carousel-control-next-icon" aria-hidden="true"/>
-                      <span class="sr-only">Next</span>
-                    </a>
-                  </div>
-                </div>
+              <div class="col-sm-6">
+                <issues:carousel/>
+              </div>
+
+              <div class="col-sm-6">
+                <issues:history/>
+              </div>
+
+            </div>
+
+            <div class="row py-3">
+
+              <div class="col">
+                <issues:details/>
+              </div>
+
+            </div>
+
+            <script>var view = <st:bind value="${it}"/></script>
+            
+            <script type="text/javascript" src="${resURL}/plugin/warnings/js/trend-chart.js"/>
+            <script type="text/javascript" src="${resURL}/plugin/warnings/js/issues-detail.js"/>
+
+          </j:when>
+          <j:otherwise>
+
+            <div class="row py-1">
+
+              <div class="col-sm-6">
+                <issues:zero-issues/>
+              </div>
+
+              <div class="col-sm-6">
+                <issues:history/>
               </div>
             </div>
 
-            <div class="col-sm-6">
-              <div class="card card-marg-bot">
-                <div data-role="page" class="card-body">
+            <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
 
-                  <h5 class="card-title">
-                    ${%History}<i class="fa fa-chart-line icon-right fa-2x" aria-hidden="true"/>
-                  </h5>
+            
+            <script type="text/javascript" src="${resURL}/plugin/warnings/js/no-prototype.js"/>
+            <script type="text/javascript" src="${resURL}/plugin/warnings/js/trend-chart.js"/>
+            <script>
+              var view = <st:bind value="${it}"/>
+              view.getBuildTrend(function (lineModel) {
+                renderTrendChart('history-chart', lineModel.responseJSON);
+              });
+            </script>
 
-                  <div id="history-chart" class="graph-cursor-pointer" style="width: 100%; min-height: 256px"/>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="row py-3">
-            <issues:details/>
-          </div>
-
-        </div>
-
-        <script>var view = <st:bind value="${it}"/></script>
-        <script type="text/javascript" src="${resURL}/plugin/warnings/js/trend-chart.js"/>
-        <script type="text/javascript" src="${resURL}/plugin/warnings/js/issues-detail.js"/>
-
-      </j:if>
-
-      <j:if test="${i.isEmpty()}">
-
-        <div class="fluid-container">
-
-          <h3>${it.displayName}</h3>
-
-          <div class="row py-1">
-            <div class="col">
-              <div id="congratulations">
-                <div class="card">
-                  <div class="card-body">
-                    <div class="text-center">
-                      <h5 class="card-title">${%congratulations}</h5>
-                    </div>
-                    <div class="text-center">
-                      <i class="fa fa-check-double banner" aria-hidden="true"/>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
-
-          <script type="text/javascript" src="${resURL}/plugin/warnings/js/no-prototype.js"/>
-
-        </div>
-
-      </j:if>
+          </j:otherwise>
+        </j:choose>
+      </div>
 
     </l:main-panel>
 

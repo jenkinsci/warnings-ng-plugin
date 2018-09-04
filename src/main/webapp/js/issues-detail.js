@@ -169,7 +169,7 @@
             orderable: false
         }]
     });
-
+    
     /**
      * Create a data table instance for the issues table.
      */
@@ -199,33 +199,6 @@
         }
     });
     
-    // Store paging size
-    issues.on('length.dt', function ( e, settings, len ) {
-        localStorage.setItem('table-length', len);
-    });
-    var storedLength = localStorage.getItem('table-length');
-    if ($.isNumeric(storedLength)) {
-        issuesTable.page.len(storedLength);
-    } 
-    
-    // $('#expand').on('click', function () {
-    //     table.rows().every(function () {
-    //         var tr = $(this.node());
-    //         var description = $(tr).find("div.details-control").data('description');
-    //         this.child(description).show();
-    //         tr.addClass('shown');
-    //     });
-    // });
-    // $('#hide').on('click', function () {
-    //     table.rows().every(function () {
-    //         table.rows().every(function () {
-    //             var tr = $(this.node());
-    //             this.child().hide();
-    //             tr.removeClass('shown');
-    //         });
-    //     });
-    // });
-
     /**
      * Issues are loaded on demand: if the active tab shows the issues table, then the content is loaded using an
      * Ajax call.
@@ -265,8 +238,8 @@
     /**
      * Stores the order of every table in the local storage of the browser.
      */
-    var tables = $('#statistics').find('table').not('.ignore-column-sorting');
-    tables.on('order.dt', function (e) {
+    var allTables = $('#statistics').find('table');
+    allTables.on('order.dt', function (e) {
         var table = $(e.target);
         var order = table.DataTable().order();
         var id = table.attr('id');
@@ -277,14 +250,24 @@
     /**
      * Restores the order of every table by reading the local storage of the browser.
      * If no order has been stored yet, the table is skipped.
+     * Also saves the default length of the number of table columns.
      */
-    tables.each(function () {
+    allTables.each(function () {
+        // Restore order
         var id = $(this).attr('id');
         var orderBy = localStorage.getItem(id + '#orderBy');
         var orderDirection = localStorage.getItem(id + '#orderDirection');
         if (orderBy && orderDirection) {
             var order = [orderBy, orderDirection];
             $(this).DataTable().order(order).draw();
+        }
+        // Store paging size
+        $(this).on('length.dt', function ( e, settings, len ) {
+            localStorage.setItem(id + '#table-length', len);
+        });
+        var storedLength = localStorage.getItem(id + '#table-length');
+        if ($.isNumeric(storedLength)) {
+            $(this).DataTable().page.len(storedLength);
         }
     });
 

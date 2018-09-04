@@ -129,10 +129,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public String getIconFileName() {
-        if (getResult().getTotalSize() > 0) {
-            return getSmallImage();
-        }
-        return null;
+        return getSmallImage();
     }
 
     @Override
