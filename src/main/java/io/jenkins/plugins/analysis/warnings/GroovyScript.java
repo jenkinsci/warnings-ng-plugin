@@ -96,5 +96,9 @@ public class GroovyScript extends StaticAnalysisTool {
             }
             return options;
         }
+        
+        public boolean hasParsers() {
+            return true;
+        }
     }
 }

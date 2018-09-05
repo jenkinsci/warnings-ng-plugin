@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.impl.factory.Lists;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -24,9 +23,16 @@ import hudson.util.ListBoxModel;
  * @author Ullrich Hafner
  */
 @Extension
-@Symbol("issueParser") 
+@Symbol("warningsParsers") 
 public class ParserConfiguration extends GlobalConfiguration {
-    private ImmutableList<GroovyParser> parsers = Lists.immutable.empty();
+    private List<GroovyParser> parsers = new ArrayList<>();
+
+    /**
+     * Loads the configuration from disk.
+     */
+    public ParserConfiguration() {
+        load();
+    }
 
     /**
      * Returns the singleton instance of this {@link ParserConfiguration}.
@@ -43,7 +49,7 @@ public class ParserConfiguration extends GlobalConfiguration {
      * @return the Groovy parsers
      */
     public List<GroovyParser> getParsers() {
-        return parsers.castToList();
+        return parsers;
     }
 
     /**
@@ -54,7 +60,8 @@ public class ParserConfiguration extends GlobalConfiguration {
      */
     @DataBoundSetter
     public void setParsers(final List<GroovyParser> parsers) {
-        this.parsers = Lists.immutable.withAll(parsers);
+        this.parsers = new ArrayList<>(parsers);
+        save();
     }
 
     /**

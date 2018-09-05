@@ -30,7 +30,7 @@
     <jenkins-test-harness.version>2.40-20180612.101324-2</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model.version>1.0.0-RC2</analysis-model.version>
+    <analysis-model.version>1.0.0-RC3-SNAPSHOT</analysis-model.version>
     <analysis-config.version>2.0.0</analysis-config.version>
 
     <commons.lang.version>3.7</commons.lang.version>
@@ -97,8 +97,8 @@
   <dependencies>
     <!-- Project Dependencies -->
     <dependency>
-      <groupId>edu.hm.hafner</groupId>
-      <artifactId>analysis-model</artifactId>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>analysis-model-api</artifactId>
       <version>${analysis-model.version}</version>
     </dependency>
     <dependency>
