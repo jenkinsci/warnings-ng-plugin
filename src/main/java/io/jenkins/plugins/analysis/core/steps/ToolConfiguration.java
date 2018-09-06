@@ -42,7 +42,7 @@ public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration
      * @param tool
      *         the ID of the tool to use
      * @param pattern
- *         the pattern of files to parse
+     *         the pattern of files to parse
      */
     @DataBoundConstructor
     public ToolConfiguration(final StaticAnalysisTool tool, final String pattern) {

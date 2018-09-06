@@ -13,13 +13,13 @@ node {
         def java = scanForIssues tool: [$class: 'Java']
         def javadoc = scanForIssues tool: [$class: 'JavaDoc']
 
-        publishIssues issues:[java, javadoc], filters:[[property: [$class: 'IncludePackage'], pattern: 'io.jenkins.plugins.analysis.*']]
+        publishIssues issues:[java, javadoc], filters: [includePackage('io.jenkins.plugins.analysis.*')]
     }
 
     stage ('Analysis') {
         def mvnHome = tool 'mvn-default'
 
-        sh "${mvnHome}/bin/mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs"
+        sh "${mvnHome}/bin/mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs spotbugs:spotbugs"
 
         def checkstyle = scanForIssues tool: [$class: 'CheckStyle'], pattern: '**/target/checkstyle-result.xml'
         publishIssues issues:[checkstyle]
@@ -33,9 +33,12 @@ node {
         def findbugs = scanForIssues tool: [$class: 'FindBugs'], pattern: '**/target/findbugsXml.xml'
         publishIssues issues:[findbugs]
 
+        def spotbugs = scanForIssues tool: [$class: 'SpotBugs'], pattern: '**/target/spotbugsXml.xml'
+        publishIssues issues:[spotbugs]
+
         def maven = scanForIssues tool: [$class: 'MavenConsole']
         publishIssues issues:[maven]
 
-        publishIssues id:'analysis', name:'White Mountains', issues:[checkstyle, pmd, findbugs], filters:[[property: [$class: 'IncludePackage'], pattern: 'io.jenkins.plugins.analysis.*']]
+        publishIssues id:'analysis', name:'White Mountains', issues:[checkstyle, pmd, findbugs, spotbugs], filters: [includePackage('io.jenkins.plugins.analysis.*')]
     }
 }
