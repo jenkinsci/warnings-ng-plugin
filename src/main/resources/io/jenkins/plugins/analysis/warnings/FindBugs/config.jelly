@@ -7,6 +7,6 @@
     <f:checkbox default="true"/>
   </f:entry>
 
-    <i:tool-defaults/>
+  <i:tool-defaults/>
 
 </j:jelly>

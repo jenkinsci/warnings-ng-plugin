@@ -97,8 +97,8 @@
   <dependencies>
     <!-- Project Dependencies -->
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>analysis-model-api</artifactId>
+      <groupId>edu.hm.hafner</groupId>
+      <artifactId>analysis-model</artifactId>
       <version>${analysis-model.version}</version>
     </dependency>
     <dependency>

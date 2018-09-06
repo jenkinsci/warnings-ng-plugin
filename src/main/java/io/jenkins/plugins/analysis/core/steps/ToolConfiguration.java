@@ -6,8 +6,10 @@ import java.io.IOException;
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
@@ -25,6 +27,8 @@ import hudson.util.FormValidation;
 public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration> {
     private final String pattern;
     private final StaticAnalysisTool tool;
+    private String id;
+    private String name;
 
     /**
      * Creates a new instance of {@link ToolConfiguration}.
@@ -69,6 +73,67 @@ public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration
      */
     public String getPattern() {
         return pattern;
+    }
+
+    /**
+     * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
+     * given, then the ID of the associated {@link StaticAnalysisTool} is used.
+     *
+     * @param id
+     *         the ID of the results
+     * @see #getTool() 
+     */
+    @DataBoundSetter
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Returns whether a user defined ID has been set. This ID will then override the default ID.
+     * 
+     * @return returns {@code true} if a user defined ID is present, {@code false} otherwise
+     */
+    public boolean hasId() {
+        return StringUtils.isNotBlank(id);
+    }
+
+    /**
+     * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
+     * the associated {@link StaticAnalysisLabelProvider} of the {@link StaticAnalysisTool} is used.
+     *
+     * @param name
+     *         the name of the results
+     * @see #getTool() 
+     */
+    @DataBoundSetter
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Returns the actual name of the tool. If no user defined name is given, then the default name is returned.
+     * 
+     * @return the name
+     */
+    public String getActualName() {
+        return StringUtils.defaultIfBlank(name, getTool().getName());
+    }
+
+    /**
+     * Returns whether a user defined name has been set. This name will then override the default name.
+     *
+     * @return returns {@code true} if a user defined name is present, {@code false} otherwise
+     */
+    public boolean hasName() {
+        return StringUtils.isNotBlank(name);
     }
 
     @Override

@@ -5,12 +5,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.eclipse.collections.impl.factory.Lists;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Assume;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.jvnet.hudson.test.TestExtension;
 import org.kohsuke.stapler.HttpResponse;
 
@@ -203,6 +206,32 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(result.getIssues()).hasId(id);
         assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
+    }
+    
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and uses this parser twice.
+     */
+    @Test @Disabled("FIXME: Check why recordIssues is not available")
+    public void shouldUseGroovyParserTwice() {
+        WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
+        job.setDefinition(asStage(
+                "recordIssues tools: [" 
+                        + "[pattern: '**/*issues.txt', id: 'groovy-1', tool: [$class: 'GroovyScript', id:'groovy-pep8']]," 
+                        + "[pattern: '**/*issues.txt', id: 'groovy-2', tool: [$class: 'GroovyScript', id:'groovy-pep8']]" 
+                        + "] "));
+        ParserConfiguration configuration = ParserConfiguration.getInstance();
+        String id = "groovy-pep8";
+        configuration.setParsers(Collections.singletonList(
+                new GroovyParser(id, "Groovy Pep8",
+                        "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
+                        toString("groovy/pep8.groovy"), "")));
+        WorkflowRun run = runSuccessfully(job);
+
+        List<AnalysisResult> results = getAnalysisResults(run);
+        assertThat(results).hasSize(2);
+
+        Set<String> ids = results.stream().map(AnalysisResult::getId).collect(Collectors.toSet());
+        assertThat(ids).containsExactly("groovy-1", "groovy-2");
     }
 
     /**

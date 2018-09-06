@@ -8,11 +8,18 @@
            description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
     <f:textbox/>
   </f:entry>
+  <f:entry title="${%ID}" description="${%description.id}" field="id">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="${%Name}" description="${%description.name}" field="name">
+    <f:textbox/>
+  </f:entry>
 
   <f:entry title="">
     <div align="right">
       <f:repeatableDeleteButton />
     </div>
   </f:entry>
+
 
 </j:jelly>

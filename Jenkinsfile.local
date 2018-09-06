@@ -42,3 +42,4 @@ node {
         publishIssues id:'analysis', name:'White Mountains', issues:[checkstyle, pmd, findbugs, spotbugs], filters: [includePackage('io.jenkins.plugins.analysis.*')]
     }
 }
+

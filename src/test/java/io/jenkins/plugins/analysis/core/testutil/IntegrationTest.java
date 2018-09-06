@@ -529,7 +529,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the action of the specified build
      */
-    protected ResultAction getResultAction(final WorkflowRun build) {
+    protected ResultAction getResultAction(final Run<?, ?> build) {
         ResultAction action = build.getAction(ResultAction.class);
         assertThat(action).as("No ResultAction found in run %s", build).isNotNull();
         return action;

@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
@@ -20,6 +22,7 @@ import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Pmd;
@@ -153,6 +156,26 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     /**
+     * Runs the Eclipse parser and changes name and ID.
+     */
+    @Test
+    public void shouldCreateResultWithDifferentNameAndId() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
+        ToolConfiguration configuration = new ToolConfiguration(new Eclipse(), "**/*issues.txt");
+        String id = "new-id";
+        configuration.setId(id);
+        String name = "new-name";
+        configuration.setName(name);
+        enableWarnings(project, configuration);
+
+        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+
+        ResultAction action = getResultAction(build);
+        assertThat(action.getId()).isEqualTo(id);
+        assertThat(action.getDisplayName()).startsWith(name) ;
+    }
+
+    /**
      * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be
      * unstable.
      */
@@ -267,6 +290,27 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         AnalysisResult result = getAnalysisResult(build);
         assertThat(result).hasId("checkstyle");
         assertThat(result).hasTotalSize(6);
+    }
+
+    /**
+     * Enables CheckStyle tool twice for two different files with varying amount of issues. Uses a different ID for both
+     * tools so that no exception will be thrown.
+     */
+    @Test
+    public void shouldUseSameToolTwice() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "checkstyle-twice.xml");
+        ToolConfiguration first = new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt");
+        ToolConfiguration second = new ToolConfiguration(new CheckStyle(), "**/checkstyle-twice-issues.txt");
+        second.setId("second");
+        enableWarnings(project, recorder -> recorder.setAggregatingResults(false), first, second);
+
+        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+
+        List<AnalysisResult> results = getAnalysisResults(build);
+        assertThat(results).hasSize(2);
+
+        Set<String> ids = results.stream().map(AnalysisResult::getId).collect(Collectors.toSet());
+        assertThat(ids).containsExactly("checkstyle", "second");
     }
 
     /**

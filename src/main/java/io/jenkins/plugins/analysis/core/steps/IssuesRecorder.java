@@ -466,7 +466,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     private String createLoggerPrefix() {
-        return tools.stream().map(tool -> tool.getTool().getName()).collect(Collectors.joining());
+        return tools.stream().map(tool -> tool.getActualName()).collect(Collectors.joining());
     }
 
     private void record(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
@@ -484,8 +484,15 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         else {
             for (ToolConfiguration toolConfiguration : tools) {
                 Report report = scanWithTool(run, workspace, listener, toolConfiguration);
-                publishResult(run, launcher, listener, toolConfiguration.getTool().getName(), report,
-                        StringUtils.EMPTY);
+                String actualName;
+                if (toolConfiguration.hasName()) {
+                    actualName = toolConfiguration.getName();
+                }
+                else {
+                    actualName = StringUtils.EMPTY;
+                }
+                publishResult(run, launcher, listener, toolConfiguration.getActualName(), report,
+                        actualName);
             }
         }
     }
@@ -494,9 +501,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             final ToolConfiguration toolConfiguration) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), workspace,
                 getReportCharset(), getSourceCodeCharset(), new FilePath(run.getRootDir()), 
-                new LogHandler(listener, toolConfiguration.getTool().getName()));
-        return issuesScanner.scan(expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()),
+                new LogHandler(listener, toolConfiguration.getActualName()));
+        Report report = issuesScanner.scan(expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()),
                 run.getLogFile());
+        if (toolConfiguration.hasId()) {
+            report.setId(toolConfiguration.getId());
+        }
+        return report;
     }
 
     private Charset getSourceCodeCharset() {
