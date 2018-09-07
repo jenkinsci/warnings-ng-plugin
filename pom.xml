@@ -26,7 +26,8 @@
     <jenkins-test-harness.version>2.40-20180612.101324-2</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model.version>1.0.0-RC5-SNAPSHOT</analysis-model.version>
+    <analysis-model-api.version>1.0.0-beta1</analysis-model-api.version>
+    <analysis-model.version>1.0.0-RC6</analysis-model.version>
     <analysis-config.version>2.0.0</analysis-config.version>
 
     <commons.lang.version>3.8</commons.lang.version>
@@ -93,9 +94,9 @@
   <dependencies>
     <!-- Project Dependencies -->
     <dependency>
-      <groupId>edu.hm.hafner</groupId>
-      <artifactId>analysis-model</artifactId>
-      <version>${analysis-model.version}</version>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>analysis-model-api</artifactId>
+      <version>${analysis-model-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.collections</groupId>
@@ -563,6 +564,7 @@
                     <ignoreClasses>
                       <!-- asm dependency from PMD contains a java9 module-info.class -->
                       <ignoreClass>module-info</ignoreClass>
+                      <ignoreClass>**/ModuleUtils*</ignoreClass>
                     </ignoreClasses>
                   </enforceBytecodeVersion>
                 </rules>
