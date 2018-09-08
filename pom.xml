@@ -577,39 +577,6 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire.plugin}</version>
-          <configuration>
-            <excludes>
-              <exclude>**/*ITest.*</exclude>
-              <exclude>**/InjectedTest.*</exclude>
-            </excludes>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven-surefire.plugin}</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.maven.surefire</groupId>
-              <artifactId>surefire-junit47</artifactId>
-              <version>${maven-surefire.plugin}</version>
-            </dependency>
-          </dependencies>
-          <configuration>
-            <includes>
-              <include>**/*ITest.*</include>
-              <include>**/*InjectedTest.*</include>
-            </includes>
-            <reuseForks>false</reuseForks>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
