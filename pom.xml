@@ -58,6 +58,7 @@
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.10.0</maven-pmd-plugin.version>
+    <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <pmd.version>6.7.0</pmd.version>
     <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
     <checkstyle.version>8.12</checkstyle.version>
@@ -66,8 +67,8 @@
     <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
     <maven-surefire.plugin>2.22.0</maven-surefire.plugin>
     <jar.maven.plugin>3.0.2</jar.maven.plugin>
-    <error-prone.maven.plugin>2.8.2</error-prone.maven.plugin>
-    <error.prone.version>2.2.0</error.prone.version>
+    <maven-error-prone-plugin.version>2.8.5</maven-error-prone-plugin.version>
+    <error-prone.version>2.3.1</error-prone.version>
     <versions-maven-plugin.version>2.6</versions-maven-plugin.version>
     <depgraph-maven-plugin.version>3.2.1</depgraph-maven-plugin.version>
     <animal-sniffer-maven-plugin.version>1.17</animal-sniffer-maven-plugin.version>
@@ -278,11 +279,19 @@
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-engine</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.junit.platform</groupId>
@@ -390,24 +399,17 @@
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-failsafe-plugin</artifactId>
-        <version>${maven-surefire.plugin}</version>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler-plugin.version}</version>
         <configuration>
-          <includes>
-            <include>**/*ITest.*</include>
-            <include>**/*InjectedTest.*</include>
-          </includes>
-          <reuseForks>false</reuseForks>
+          <source>${java.level}</source>
+          <target>${java.level}</target>
+          <testSource>${java.level}</testSource>
+          <testTarget>${java.level}</testTarget>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+          </compilerArgs>
         </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>integration-test</goal>
-              <goal>verify</goal>
-            </goals>
-          </execution>
-        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -581,6 +583,33 @@
               <exclude>**/InjectedTest.*</exclude>
             </excludes>
           </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-surefire.plugin}</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.surefire</groupId>
+              <artifactId>surefire-junit47</artifactId>
+              <version>${maven-surefire.plugin}</version>
+            </dependency>
+          </dependencies>
+          <configuration>
+            <includes>
+              <include>**/*ITest.*</include>
+              <include>**/*InjectedTest.*</include>
+            </includes>
+            <reuseForks>false</reuseForks>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
