@@ -34,16 +34,16 @@ main build page. From here you can also dive into the details:
     
 ## Transition from 4.x to 5.x
 
-Previously the warnings plug-in was part of the static analysis suite, that provided the same set of features through 
+Previously the warnings plug-in was part of the static analysis suite that provided the same set of features through 
 several plugins (CheckStyle, PMD, Static Analysis Utilities, Analysis Collector etc.). 
 In order to simplify the user experience and the development process, these
-plug-ins and the core functionality have been merged into the warnings plug-ins. All other plug-in are not required
+plug-ins and the core functionality have been merged into the warnings plug-in. All other plug-ins are not required
 anymore and will not be supported in the future. If you already use one of these plug-ins you should migrate
-your jobs to the new API as soon as possible. I will still maintain the old code for a while, but the main development
-effort will be spent into the new code base. 
+your jobs to the new recorders and steps as soon as possible. I will still maintain the old code for a while, 
+but the main development effort will be spent into the new code base. 
 
 Note: the dependency to the old API (analysis-core) is still required so that all existing
-jobs will function correctly. In future versions of the warnings plug-in I will make this dependency optional. 
+jobs will work correctly. In future versions of the warnings plug-in I will make this dependency optional. 
 
 ### Migration of Pipelines
 
@@ -93,9 +93,17 @@ The basic configuration of the plug-in is shown in the image above:
 ![basic configuration](images/freestyle-start.png) 
 
 First of all you need to specify the tool that should be used to parse the console log or the report file. 
+Depending on the selected tool you might configure some additional parameters as well. E.g., the SpotBugs configuration
+(see image above) provides a flag to select the priority mapping. 
+
+Each tool is identified by an ID that is used as URL to the results of the analysis. For each tool, a default URL 
+(and name) is provided that can be changed if required. E.g., if you are going to use a parser multiple
+times then you need to specify different IDs for each of the invocations.  
+
 Then you need to specify the pattern of the report files that should be parsed and scanned for issues. 
 If you do not specify a pattern, then the console log of your build will be scanned. For several popular tools a default
-pattern has been provided. Depending on the selected tool you might configure some additional parameters as well. 
+pattern has been provided: in this case the default pattern will be used if the pattern is empty.  
+
 You can specify multiple tools (and patterns) that will be used with the same configuration. Due to a technical 
 (or marketing) limitation of Jenkins it is not possible to select different configurations by using multiple post build 
 actions.  
