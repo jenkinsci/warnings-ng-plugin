@@ -8,6 +8,7 @@
     <relativePath />
   </parent>
 
+  <groupId>org.jvnet.hudson.plugins</groupId>
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Plug-in</name>
