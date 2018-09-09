@@ -11,7 +11,7 @@
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Plug-in</name>
-  <version>5.0.0-beta1</version>
+  <version>5.0.0-beta2-SNAPSHOT</version>
   <url>https://wiki.jenkins.io/x/G4CGAQ</url>
   <description>Jenkins plug-in to scan the console log or a compiler log file for warnings.
   </description>
