@@ -23,7 +23,7 @@
     <!-- Override properties defined in parent POM -->
     <jenkins.version>2.89.1</jenkins.version>
     <java.level>8</java.level>
-    <jenkins-test-harness.version>2.40-20180612.101324-2</jenkins-test-harness.version>
+    <jenkins-test-harness.version>2.40</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>1.0.0-beta1</analysis-model-api.version>
