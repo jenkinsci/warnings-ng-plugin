@@ -1,18 +1,17 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>3.9</version>
-    <relativePath/>
+    <relativePath />
   </parent>
 
   <artifactId>warnings</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Plug-in</name>
-  <version>5.0.0-beta1-SNAPSHOT</version>
+  <version>5.0.0-beta1</version>
   <url>https://wiki.jenkins.io/x/G4CGAQ</url>
   <description>Jenkins plug-in to scan the console log or a compiler log file for warnings.
   </description>
