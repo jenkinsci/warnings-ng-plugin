@@ -12,7 +12,6 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Assume;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 import org.kohsuke.stapler.HttpResponse;
@@ -211,7 +210,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and uses this parser twice.
      */
-    @Test @Ignore("FIXME: Check why recordIssues is not available")
+    @Test 
     public void shouldUseGroovyParserTwice() {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
