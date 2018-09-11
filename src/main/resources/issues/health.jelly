@@ -17,7 +17,7 @@
     <i:number/>
   </f:entry>
   <f:entry title="${%Health severities}" description="${%description.health.severities}" field="minimumSeverity">
-    <f:select default="low"/>
+    <f:select default="LOW"/>
   </f:entry>
 
 </j:jelly>
