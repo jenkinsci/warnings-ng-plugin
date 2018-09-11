@@ -157,11 +157,7 @@
   <rule ref="rulesets/java/android.xml/DoNotHardCodeSDCard"/>
   <rule ref="rulesets/java/imports.xml/DontImportJavaLang"/>
   <rule ref="rulesets/java/imports.xml/ImportFromSamePackage"/>
-  <rule ref="rulesets/java/imports.xml/TooManyStaticImports">
-    <properties>
-      <property name="maximumStaticImports" value="10"/>
-    </properties>
-  </rule>
+  <rule ref="rulesets/java/imports.xml/TooManyStaticImports"/>
   <rule ref="rulesets/java/imports.xml/UnnecessaryFullyQualifiedName"/>
   <rule ref="rulesets/java/strictexception.xml/AvoidCatchingThrowable"/>
   <rule ref="rulesets/java/strictexception.xml/SignatureDeclareThrowsException"/>

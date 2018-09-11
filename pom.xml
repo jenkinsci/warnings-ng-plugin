@@ -28,7 +28,6 @@
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>1.0.0-beta1</analysis-model-api.version>
     <analysis-model.version>1.0.0-RC6</analysis-model.version>
-    <analysis-config.version>2.0.0</analysis-config.version>
 
     <commons.lang.version>3.8</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -201,38 +200,11 @@
       <artifactId>matrix-project</artifactId>
       <version>${matrix-project.version}</version>
       <optional>true</optional>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jenkins-ci.plugins</groupId>
-          <artifactId>junit</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.jenkins-ci.plugins</groupId>
-          <artifactId>script-security</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit-plugin.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jenkins-ci.plugins</groupId>
-          <artifactId>script-security</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
       <version>${jenkins-maven-plugin.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>commons-net</groupId>
-          <artifactId>commons-net</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -245,12 +217,6 @@
       <artifactId>token-macro</artifactId>
       <version>${token-macro.version}</version>
       <optional>true</optional>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jenkins-ci.plugins.workflow</groupId>
-          <artifactId>workflow-job</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -357,12 +323,6 @@
       <artifactId>workflow-cps</artifactId>
       <version>2.42</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jenkins-ci.plugins</groupId>
-          <artifactId>scm-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <!-- stage -->
     <dependency>
@@ -370,13 +330,6 @@
       <artifactId>pipeline-stage-step</artifactId>
       <version>2.3</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.jenkins-ci.plugins</groupId>
-          <artifactId>scm-api</artifactId>
-        </exclusion>
-      </exclusions>
-
     </dependency>
     <!-- node -->
     <dependency>
@@ -410,6 +363,21 @@
         <artifactId>mailer</artifactId>
         <version>1.18</version>
       </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>scm-api</artifactId>
+        <version>2.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>script-security</artifactId>
+        <version>1.36</version>
+      </dependency>
+      <dependency>
+        <groupId>commons-net</groupId>
+        <artifactId>commons-net</artifactId>
+        <version>3.6</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -426,19 +394,6 @@
           <compilerArgs>
             <arg>-Xlint:all</arg>
           </compilerArgs>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>versions-maven-plugin</artifactId>
-        <version>${versions-maven-plugin.version}</version>
-      </plugin>
-      <plugin>
-        <groupId>com.github.ferstl</groupId>
-        <artifactId>depgraph-maven-plugin</artifactId>
-        <version>${depgraph-maven-plugin.version}</version>
-        <configuration>
-          <graphFormat>puml</graphFormat>
         </configuration>
       </plugin>
       <plugin>
@@ -513,44 +468,17 @@
           <outputFormats>XML,HTML</outputFormats>
           <verbose>true</verbose>
           <targetClasses>
-            <param>io.jenkins.plugins.analysis.core.*</param>
+            <param>io.jenkins.plugins.analysis.*</param>
           </targetClasses>
           <targetTests>
-            <param>io.jenkins.plugins.analysis.core.*</param>
+            <param>io.jenkins.plugins.analysis.*</param>
           </targetTests>
           <excludedTestClasses>
             <param>*ITest</param>
           </excludedTestClasses>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.jacoco</groupId>
-        <artifactId>jacoco-maven-plugin</artifactId>
-        <version>${jacoco-maven-plugin.version}</version>
-        <configuration>
-          <includes>
-            <include>io/jenkins/plugins/analysis/**/*</include>
-          </includes>
-          <excludes>
-            <exclude>io/jenkins/plugins/analysis/graphs/**/*</exclude>
-          </excludes>
-        </configuration>
-        <executions>
-          <execution>
-            <goals>
-              <goal>prepare-agent</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>report</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>report</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
+   </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -573,6 +501,15 @@
           <version>${animal-sniffer-maven-plugin.version}</version>
         </plugin>
         <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>versions-maven-plugin</artifactId>
+          <version>${versions-maven-plugin.version}</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>${maven-surefire.plugin}</version>
+        </plugin>
+        <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
           <executions>
             <execution>
@@ -583,6 +520,7 @@
                     <ignoreClasses>
                       <!-- asm dependency from PMD contains a java9 module-info.class -->
                       <ignoreClass>module-info</ignoreClass>
+                      <!-- Junit >= 5.3 contains some java9 classes -->
                       <ignoreClass>**/ModuleUtils*</ignoreClass>
                     </ignoreClasses>
                   </enforceBytecodeVersion>
@@ -592,8 +530,12 @@
           </executions>
         </plugin>
         <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire.plugin}</version>
+          <groupId>com.github.ferstl</groupId>
+          <artifactId>depgraph-maven-plugin</artifactId>
+          <version>${depgraph-maven-plugin.version}</version>
+          <configuration>
+            <graphFormat>puml</graphFormat>
+          </configuration>
         </plugin>
         <plugin>
           <groupId>org.jacoco</groupId>
@@ -625,18 +567,13 @@
           <version>${maven-checkstyle-plugin.version}</version>
           <dependencies>
             <dependency>
-              <groupId>org.jvnet.hudson.plugins</groupId>
-              <artifactId>analysis-config</artifactId>
-              <version>${analysis-config.version}</version>
-            </dependency>
-            <dependency>
               <groupId>com.puppycrawl.tools</groupId>
               <artifactId>checkstyle</artifactId>
               <version>${checkstyle.version}</version>
             </dependency>
           </dependencies>
           <configuration>
-            <configLocation>checkstyle-configuration.xml</configLocation>
+            <configLocation>etc/checkstyle-configuration.xml</configLocation>
             <includeTestSourceDirectory>true</includeTestSourceDirectory>
             <excludes>hudson/**/*</excludes>
           </configuration>
@@ -646,11 +583,6 @@
           <artifactId>maven-pmd-plugin</artifactId>
           <version>${maven-pmd-plugin.version}</version>
           <dependencies>
-            <dependency>
-              <groupId>org.jvnet.hudson.plugins</groupId>
-              <artifactId>analysis-config</artifactId>
-              <version>${analysis-config.version}</version>
-            </dependency>
             <dependency>
               <groupId>net.sourceforge.pmd</groupId>
               <artifactId>pmd-core</artifactId>
@@ -664,7 +596,7 @@
           </dependencies>
           <configuration>
             <rulesets>
-              <ruleset>pmd-configuration.xml</ruleset>
+              <ruleset>etc/pmd-configuration.xml</ruleset>
             </rulesets>
             <excludeRoots>
               <excludeRoot>target/generated-sources/localizer</excludeRoot>
@@ -679,13 +611,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>findbugs-maven-plugin</artifactId>
           <version>${findbugs-maven-plugin.version}</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.jvnet.hudson.plugins</groupId>
-              <artifactId>analysis-config</artifactId>
-              <version>${analysis-config.version}</version>
-            </dependency>
-          </dependencies>
           <configuration>
             <xmlOutput>true</xmlOutput>
             <findbugsXmlOutput>true</findbugsXmlOutput>
@@ -693,7 +618,7 @@
             <effort>Max</effort>
             <relaxed>false</relaxed>
             <fork>false</fork>
-            <excludeFilterFile>findbugs-exclusion-filter.xml</excludeFilterFile>
+            <excludeFilterFile>etc/findbugs-exclusion-filter.xml</excludeFilterFile>
             <includeTests>true</includeTests>
           </configuration>
         </plugin>
@@ -701,20 +626,13 @@
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-maven-plugin</artifactId>
           <version>${spotbugs-maven-plugin.version}</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.jvnet.hudson.plugins</groupId>
-              <artifactId>analysis-config</artifactId>
-              <version>${analysis-config.version}</version>
-            </dependency>
-          </dependencies>
           <configuration>
             <xmlOutput>true</xmlOutput>
             <threshold>Low</threshold>
             <effort>Max</effort>
             <relaxed>false</relaxed>
             <fork>true</fork>
-            <excludeFilterFile>findbugs-exclusion-filter.xml</excludeFilterFile>
+            <excludeFilterFile>etc/findbugs-exclusion-filter.xml</excludeFilterFile>
             <includeTests>true</includeTests>
           </configuration>
         </plugin>
