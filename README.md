@@ -12,6 +12,8 @@ For more details please refer to the [documentation](doc/Documentation.md).
 
 All source code is licensed under the MIT license.
 
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/warnings.svg)](https://plugins.jenkins.io/warnings)
+[![Jenkins Version](https://img.shields.io/badge/Jenkins-2.89.1-green.svg)](https://jenkins.io/download/)
 [![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/master/)
 [![Travis](https://img.shields.io/travis/jenkinsci/warnings-plugin.svg)](https://travis-ci.org/jenkinsci/warnings-plugin)
 [![Codecov](https://img.shields.io/codecov/c/github/jenkinsci/warnings-plugin/master.svg)](https://codecov.io/gh/jenkinsci/warnings-plugin/branch/master)
