@@ -1,0 +1,60 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam component {
+  BackgroundColor<<optional>> beige
+  BackgroundColor<<test>> lightGreen
+  BackgroundColor<<runtime>> lightBlue
+  BackgroundColor<<provided>> lightGray
+}
+component "warnings\n5.0.0-beta3-SNAPSHOT" as org_jvnet_hudson_plugins_warnings_hpi_compile
+
+component "analysis-model-api\n1.0.0-beta1" as org_jenkins_ci_plugins_analysis_model_api_jar_compile
+
+component "analysis-core\n1.95" as org_jvnet_hudson_plugins_analysis_core_jar_compile
+component "matrix-project\n1.13" as org_jenkins_ci_plugins_matrix_project_jar_compile<<optional>>
+component "dashboard-view\n2.9.11" as org_jenkins_ci_plugins_dashboard_view_jar_compile<<optional>>
+component "token-macro\n2.5" as org_jenkins_ci_plugins_token_macro_jar_compile<<optional>>
+component "workflow-step-api\n2.13" as org_jenkins_ci_plugins_workflow_workflow_step_api_jar_compile
+component "structs\n1.10" as org_jenkins_ci_plugins_structs_jar_compile
+component "antisamy-markup-formatter\n1.5" as org_jenkins_ci_plugins_antisamy_markup_formatter_jar_compile
+component "maven-plugin\n3.1.2" as org_jenkins_ci_main_maven_plugin_jar_compile
+
+component "eclipse-collections-api\n9.2.0" as org_eclipse_collections_eclipse_collections_api_jar_compile
+component "eclipse-collections\n9.2.0" as org_eclipse_collections_eclipse_collections_jar_compile
+component "commons-lang3\n3.8" as org_apache_commons_commons_lang3_jar_compile
+component "commons-io\n2.6" as commons_io_commons_io_jar_compile
+component "commons-digester3\n3.2" as org_apache_commons_commons_digester3_jar_compile
+component "commons-text\n1.4" as org_apache_commons_commons_text_jar_compile
+component "joda-time\n1.6" as joda_time_joda_time_jar_compile
+component "java2html\n5.0" as de_java2html_java2html_jar_compile
+component "xercesImpl\n2.11.0" as xerces_xercesImpl_jar_compile
+component "j2html\n1.3.0" as com_j2html_j2html_jar_compile
+component "pmd-core\n6.7.0" as net_sourceforge_pmd_pmd_core_jar_compile
+component "pmd-java\n6.7.0" as net_sourceforge_pmd_pmd_java_jar_compile
+component "slf4j-api\n1.7.25" as org_slf4j_slf4j_api_jar_compile<<optional>>
+
+org_jenkins_ci_plugins_analysis_model_api_jar_compile <.. org_jvnet_hudson_plugins_warnings_hpi_compile
+org_jvnet_hudson_plugins_analysis_core_jar_compile <.. org_jvnet_hudson_plugins_warnings_hpi_compile
+org_jenkins_ci_plugins_matrix_project_jar_compile <.. org_jvnet_hudson_plugins_warnings_hpi_compile
+org_jenkins_ci_main_maven_plugin_jar_compile <.. org_jvnet_hudson_plugins_warnings_hpi_compile
+org_jenkins_ci_plugins_dashboard_view_jar_compile <.. org_jvnet_hudson_plugins_warnings_hpi_compile
+org_jenkins_ci_plugins_token_macro_jar_compile <.. org_jvnet_hudson_plugins_warnings_hpi_compile
+org_jenkins_ci_plugins_workflow_workflow_step_api_jar_compile <.. org_jvnet_hudson_plugins_warnings_hpi_compile
+org_jenkins_ci_plugins_structs_jar_compile <.. org_jvnet_hudson_plugins_warnings_hpi_compile
+org_jenkins_ci_plugins_antisamy_markup_formatter_jar_compile <.. org_jvnet_hudson_plugins_warnings_hpi_compile
+
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> org_eclipse_collections_eclipse_collections_api_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> org_eclipse_collections_eclipse_collections_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> org_apache_commons_commons_lang3_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> commons_io_commons_io_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> org_apache_commons_commons_digester3_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> org_apache_commons_commons_text_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> joda_time_joda_time_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> de_java2html_java2html_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> xerces_xercesImpl_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> com_j2html_j2html_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> net_sourceforge_pmd_pmd_core_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> net_sourceforge_pmd_pmd_java_jar_compile
+org_jvnet_hudson_plugins_warnings_hpi_compile ..> org_slf4j_slf4j_api_jar_compile
+
+@enduml
