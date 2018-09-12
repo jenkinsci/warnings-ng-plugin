@@ -1,12 +1,12 @@
-# Jenkins Warning Plug-in
+# Jenkins warning plugin
 
-The Jenkins 'warnings' plug-in collects compiler warnings or issues reported by static analysis tools and visualizes the 
+The Jenkins Warnings plugin collects compiler warnings or issues reported by static analysis tools and visualizes the 
 results. It has built-in support for numerous static analysis tools (including several compilers), see the list of
 [supported report formats](../SUPPORTED-FORMATS.md). 
 
-## Supported Project Types
+## Supported project types
 
-Starting with release 5.x the warnings plug-in has support for the following Jenkins project types:
+Starting with release 5.x the Warnings plugin has support for the following Jenkins project types:
 
 - Freestyle Project
 - Maven Project
@@ -15,35 +15,37 @@ Starting with release 5.x the warnings plug-in has support for the following Jen
 - Declarative Pipeline (sequential and parallel steps)
 - Multi-branch Pipeline
 
-## Features Overview 
+## Features overview 
 
-The warnings plug-in basically provides the following features if added as a post build action (or step) to a job: 
+The Warnings plugin provides the following features when added as a post build action (or step) to a job: 
 
-1. The plug-in scans the console log of a Jenkins build or files in the workspace of your job for any kind of issues. 
-There are almost one hundred [report formats](../SUPPORTED-FORMATS.md) supported. It can detect errors from you 
-compiler (C, C#, Java, etc.), warnings from a static analysis tool (CheckStyle, StyleCop, SpotBugs, etc.),
-duplications from a copy-and-paste detector (CPD, Simian, etc.), vulnerabilities, or even open tasks in comments of 
-your source files. 
-2. The plug-in publishes a report of the found issues in your build, so you can navigate to a summary report from the 
-main build page. From here you can also dive into the details: 
-    1. distribution of new, fixed and outstanding issues
-    2. distribution of the issues by severity, category, type, module, or package
-    3. list of all issues including helpful comments from the reporting tool
-    4. annotated source code of the affected files
-    5. trend charts of the issues 
+1. The plugin scans the console log of a Jenkins build or files in the workspace of your job for any kind of issues. 
+There are almost one hundred [report formats](../SUPPORTED-FORMATS.md) supported. Among the problems it can detect:
+    - errors from your compiler (C, C#, Java, etc.)
+    - warnings from a static analysis tool (CheckStyle, StyleCop, SpotBugs, etc.)
+    - duplications from a copy-and-paste detector (CPD, Simian, etc.)
+    - vulnerabilities
+    - open tasks in comments of your source files
+2. The plugin publishes a report of the issues found in your build, so you can navigate to a summary report from the 
+main build page. From there you can also dive into the details: 
+    - distribution of new, fixed and outstanding issues
+    - distribution of the issues by severity, category, type, module, or package
+    - list of all issues including helpful comments from the reporting tool
+    - annotated source code of the affected files
+    - trend charts of the issues 
     
 ## Transition from 4.x to 5.x
 
-Previously the warnings plug-in was part of the static analysis suite that provided the same set of features through 
+Previously the Warnings plugin was part of the static analysis suite that provided the same set of features through 
 several plugins (CheckStyle, PMD, Static Analysis Utilities, Analysis Collector etc.). 
 In order to simplify the user experience and the development process, these
-plug-ins and the core functionality have been merged into the warnings plug-in. All other plug-ins are not required
-anymore and will not be supported in the future. If you already use one of these plug-ins you should migrate
-your jobs to the new recorders and steps as soon as possible. I will still maintain the old code for a while, 
+plugins and the core functionality have been merged into the Warnings plugin. All other plugins are not required
+anymore and will not be supported in the future. If you currently use one of these plugins you should migrate
+to the new recorders and steps as soon as possible. I will still maintain the old code for a while, 
 but the main development effort will be spent into the new code base. 
 
 Note: the dependency to the old API (analysis-core) is still required so that all existing
-jobs will work correctly. In future versions of the warnings plug-in I will make this dependency optional. 
+jobs will work correctly. In future versions of the Warnings plugin I will make this dependency optional. 
 
 ### Migration of Pipelines
 
@@ -55,8 +57,8 @@ by using the step property `tools`. For more details on the set of available par
 ### Migration of all other jobs
 
 Freestyle, Matrix or Maven Jobs using the old API used a so called **Post Build Action** that was provided by 
-each individual plug-in. E.g., the FindBugs plug-in did provide the post build action 
-*"Publish FindBugs analysis results"*. These old plug-in specific actions are not supported anymore, 
+each individual plugin. E.g., the FindBugs plugin did provide the post build action 
+*"Publish FindBugs analysis results"*. These old plugin specific actions are not supported anymore, 
 they are now marked with *\[Deprecated\]* in the user interface. 
 Now you need to add a new post build step - this step now is called *"Record static analysis results"*
 for all static analysis tools. The selection of the tool is part of the configuration of this post build step. 
@@ -64,23 +66,23 @@ Note: the warnings produced by a post build step using the old API cannot not be
 I.e., you can't see a combined history of the old and new results - you simply see two unrelated results. There is
 also no automatic conversion of results stored in the old format available.
 
-### Migration of Plug-in Depending on analysis-core
+### Migration of plugins depending on analysis-core
 
-The following plug-ins have been integrated into this version of the warnings plug-in:
+The following plugins have been integrated into this version of the Warnings plugin:
 
-- Android-Lint Plug-in
-- CheckStyle Plug-in
-- CCM Plug-in
-- Dry Plug-in
-- PMD Plug-in
-- FindBugs Plug-in
+- Android-Lint Plugin
+- CheckStyle Plugin
+- CCM Plugin
+- Dry Plugin
+- PMD Plugin
+- FindBugs Plugin
 
-All other plug-ins still need to be integrated or need to be refactored to use the new API.
+All other plugins still need to be integrated or need to be refactored to use the new API.
 
 ## Configuration
 
-The configuration of the plug-in is the same for all Jenkins job types. It is enabled in the UI by adding 
-the post build action *"Record static analysis results"* to your job. In pipelines the plug-in will be activated 
+The configuration of the plugin is the same for all Jenkins job types. It is enabled in the UI by adding 
+the post build action *"Record static analysis results"* to your job. In pipelines the plugin will be activated 
 by adding the step `recordIssues`. Note that for scripted pipelines some additional features are available to 
 aggregate and group issues, see [section Advanced Pipeline Configuration](#advanced-pipeline-configuration) for details. 
 
@@ -88,7 +90,7 @@ In the following sections, both the graphical configuration and the pipeline con
     
 ### Tool selection
 
-The basic configuration of the plug-in is shown in the image above:
+The basic configuration of the plugin is shown in the image above:
 
 ![basic configuration](images/freestyle-start.png) 
 
@@ -110,7 +112,7 @@ actions.
 
 One new feature is available by using the checkbox *"Aggregate Results"*: if this option is selected, then one result
 is created that contains an aggregation of all issues of the selected tools. This is something the 
-Static Analysis Collector Plug-in provided previously. When this option is activated you get a unique entry point 
+Static Analysis Collector Plugin provided previously. When this option is activated you get a unique entry point 
 for all of your issues.
 
 In the basic configuration section you can additionally choose if the step should run for failed builds as well.
@@ -142,12 +144,12 @@ recordIssues
 
 #### Control the selection of the reference build (baseline)
 
-One important feature of the warnings plug-in is the classification of issues as new, outstanding and fixed:
+One important feature of the Warnings plugin is the classification of issues as new, outstanding and fixed:
 - **new**: all issues, that are part of the current report but have not been shown up in the reference report
 - **fixed**: all issues, that are part of the reference report but are not present in the current report anymore
 - **outstanding**: all issues, that are part of the current and reference report
 
-In order to compute this classification, the plug-in requires a reference build (baseline). New, fixed, and outstanding
+In order to compute this classification, the plugin requires a reference build (baseline). New, fixed, and outstanding
 issues are then computed by comparing the issues in the current build and the baseline. There are three options that
 control the selection of the reference build. 
 
@@ -161,10 +163,10 @@ recordIssues
     ignoreAnalysisResult: true, overallResultMustBeSuccess: false, referenceJobName: 'my-project/master'
 ```
 
-#### Filtering of issues
+#### Filtering issues
 
 The created report of issues can be filtered afterwards. You can specify an arbitrary number of include or exclude 
-filters. Currently, there is support to filter issues by module name, package or namespace name, file name, 
+filters. Currently, there is support for filtering issues by module name, package or namespace name, file name, 
 category or type.
 
 ![filter configuration](images/filter.png) 
@@ -180,9 +182,9 @@ recordIssues
 #### Quality gate configuration
 
 You can define several quality gates that will be checked after the issues have been reported. These quality gates
-help you to modify Jenkins' build status so that you immediately see if the desired quality of your product is met. 
+let you to modify Jenkins' build status so that you immediately see if the desired quality of your product is met. 
 A build can be set to **unstable** or **failed** for each of these quality gates. All quality gates use a simple metric:
-you can define the number of issues that must not be reached to pass a given quality gate.   
+the maximum number of issues that can be found and still pass a given quality gate.   
 
 ![quality gate](images/quality-gate.png) 
 
@@ -193,9 +195,9 @@ recordIssues
     tools: [[pattern: '*.log', tool: [$class: 'Java']]], unstableTotalHigh: 10, unstableNewAll: 1
 ```
 
-#### Health Report configuration
+#### Health report configuration
 
-The plug-in can participate in the health report of your project. You can change the number of issues
+The plugin can participate in the health report of your project. You can change the number of issues
 that change the health to 0% and 100%, respectively. Additionally, the severities that should be considered
 when creating the health report can be selected.
  
@@ -208,14 +210,16 @@ recordIssues
     tools: [[pattern: '*.log', tool: [$class: 'Java']]], healthy: 10, unhealthy: 100
 ```
 
-### Pipeline Configuration
+### Pipeline configuration
 
-Pipelines can create static analysis reports using two different approaches. The simple configuration
-basically provides the same properties as the post build action (see [above](#graphical-configuration)). 
+Requirements for using the Warnings plugin in Jenkins Pipeline can be complex and sometimes controversial.
+In order to be as flexible as possible I decided to split the main step into two individual parts,
+which could then be used independently from each other.
 
-#### Simple Pipeline Configuration 
+#### Simple Pipeline configuration 
 
-The simple pipeline configuration is provided by the step `recordIssues`. This step scans for issues
+The simple pipeline configuration is provided by the step `recordIssues`, it provides the same properties as 
+the post build action (see [above](#graphical-configuration)). This step scans for issues
 in a given set of files (or in the console log) and reports these issues in your build. You can use the 
 snippet generator to create a working snippet that calls this step. A typical example of this step 
 is shown in the following example:
@@ -228,17 +232,17 @@ recordIssues
 ```
 
 In this example, the files '*.log' are scanned for **Java** issues. Only issues with a file name matching the 
-pattern 'MyFile.\*.java' are included. Issues with category 'WHITESPACE' will be removed. The
+pattern 'MyFile.\*.java' are included. Issues with category 'WHITESPACE' will be excluded. The
 step will be executed even if the build failed. 
 
 In order to see all configuration options you can investigate the 
 [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java).
                                               
-#### Advanced Pipeline Configuration
+#### Advanced Pipeline configuration
 
 Sometimes publishing and reporting issues using a single step is not sufficient. E.g., if you build your
 product using several parallel steps and you want to combine the issues from all of these steps into 
-a single result. Then you need to split scanning and aggregation. The plug-in provides the following
+a single result. Then you need to split scanning and aggregation. The plugin provides the following
 two steps:
 - `scanForIssues`: this step scans a report file or the console log with a particular parser and creates an 
   intermediate 
@@ -296,17 +300,17 @@ node {
 
 ``` 
   
-## New Features
+## New features
 
 The most important new features are described in the following sections. 
 
 ### Issues history: new, fixed, and outstanding issues
 
-A highlight of the plug-in is the possibility to categorize issues of subsequent builds as new, fixed and outstanding.
+One highlight of the plugin is the ability to categorize issues of subsequent builds as new, fixed and outstanding.
 
 ![issues history](images/trend.png) 
 
-Using this feature it makes it a lot easier to keep the quality of your project under control: you can focus
+Using this feature makes it a lot easier to keep the quality of your project under control: you can focus
 only on those warnings that have been introduced recently. 
 
 Note: the detection of new warnings is based on a complex algorithm that tries to track the same warning in
@@ -316,25 +320,27 @@ be none. The accuracy of this algorithm is still ongoing research and will be re
 
 ### Severities
 
-The plug-in shows the distribution of the severities of the issues in a chart. It defines the 
-following default severities, additional ones might be added by plug-ins that extend the warnings plug-in. 
-Note that not every parser is capable of producing warnings with a different severity. Some of the parses simply 
-use the same severity for all issues.
+The plugin shows the distribution of the severities of the issues in a chart. It defines the following 
+default severities, but additional ones might be added by plugins that extend the Warnings plugin.
+
 - **Error**: Indicates an error that typically fails the build
 - **Warning** (High, Normal, Low): Indicates a warning of the given priority. Mapping to the priorities
 is up to the individual parsers.
 
 ![severities overview](images/severities.png) 
 
-### Build Trend
+Note that not every parser is capable of producing warnings with a different severity. Some of the parsers simply
+use the same severity for all issues.
+
+### Build trend
 
 In order to see the trend of the analysis results, a chart showing the number of issues per build is also
 shown. This chart is used in the details page as well as in the job overview. Currently, type and configuration
-of the chart is fixed. This will be enhanced in future versions of the plug-in.
+of the chart is fixed. This will be enhanced in future versions of the plugin.
 
 ![trend chart](images/history.png) 
 
-### Issues Overview
+### Issues overview
 
 You can get a fast and efficient overview of the reported set of issues in several aggregation views. 
 Depending on the number or type of issues you will see the distribution of issues by
@@ -349,10 +355,11 @@ Each of these detail views are interactive, i.e. you can navigate into a subset 
 
 ![packages overview](images/packages.png) 
 
-### Issues Details
+### Issues details
 
-The reported set of issues is shown in a modern and responsive table. The table is loaded on demand using an Ajax 
+The set of reported issues is shown in a modern and responsive table. The table is loaded on demand using an Ajax 
 call. It provides the following features:
+
 - **Pagination**: the number of issues is subdivided into several pages which can be selected by using the provided page 
 links. Note that currently the pagination is done on the client side, i.e. it may take some time to obtain the whole table of 
 issues from the server.
@@ -366,18 +373,18 @@ child row within the table.
 
 ![details](images/details.png) 
 
-### Source Code View
+### Source code view
 
 TBD.
 
 ### Remote API
 
-The plug-in provides two REST API endpoints. 
+The plugin provides two REST API endpoints. 
 
 #### Summary of the analysis result
 
-You can obtain a summary of a particular analysis report by using the URL `\[tool-id\]/api/xml` 
-(or `\[tool-id\]/api/json`). The summary contains the number of issues, the quality gate status, and all 
+You can obtain a summary of a particular analysis report by using the URL `[tool-id]/api/xml` 
+(or `[tool-id]/api/json`). The summary contains the number of issues, the quality gate status, and all 
 info and error messages.
 
 Here is an example XML report:
@@ -426,10 +433,10 @@ Here is an example XML report:
 The reported issues are also available as REST API. You can either query all issues or only the 
 new, fixed, or outstanding issues. The corresponding URLs are:
 
-1. `\[tool-id\]/all/api/xml`: lists all issues
-2. `\[tool-id\]/fixed/api/xml`: lists all fixed issues
-3. `\[tool-id\]/new/api/xml`: lists all new issues
-4. `\[tool-id\]/outstanding/api/xml`: lists all outstanding issues
+1. `[tool-id]/all/api/xml`: lists all issues
+2. `[tool-id]/fixed/api/xml`: lists all fixed issues
+3. `[tool-id]/new/api/xml`: lists all new issues
+4. `[tool-id]/outstanding/api/xml`: lists all outstanding issues
 
 Here is an example JSON report:
 
@@ -496,25 +503,22 @@ Here is an example JSON report:
 }
 ```
 
-### Token Macro Support
+### Token macro support
 
-The warnings plug-in provides the token `ANALYSIS_ISSUES_COUNT` that could be used in additional post build processing
+The Warnings plugin provides the token `ANALYSIS_ISSUES_COUNT` that could be used in additional post build processing
 steps, e.g. in the mailer. In order to use this tokens you need to install the latest release of the 
-[token macro plug-in](https://wiki.jenkins.io/display/JENKINS/Token+Macro+Plugin). 
+[token macro plugin](https://plugins.jenkins.io/token-macro). 
 The token has an optional parameter `tool` that could be used to select a particular analysis result. 
 Examples:
+
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
 - `${ANALYSIS_ISSUES_COUNT, tool='checkstyle'}`: expands to the total number of **CheckStyle** issues
 
-### Trend Reports
-
-Several trend reports are available that show a historical trend of the issues. These trends will be modernized as well 
-in the near future.
-
 ## Not Yet Supported Features
 
-Some of the existing features of the warnings plug-in are not yet ported to the API. These will be added one by one after the
-first 5.x release of the warnings plug-in: 
+Some of the existing features of the Warnings plugin are not yet ported to the API. These will be added one by one after the
+first 5.x release of the Warnings plugin: 
+
 - Visualization of open tasks
 - Portlets for Jenkins' dashboard view
 - View column that shows the number of issues in a job
