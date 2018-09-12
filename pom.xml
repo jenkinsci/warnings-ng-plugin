@@ -139,11 +139,6 @@
       <version>5.0</version>
     </dependency>
     <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>2.11.0</version>
-    </dependency>
-    <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>${json.version}</version>
@@ -535,6 +530,13 @@
           <version>${depgraph-maven-plugin.version}</version>
           <configuration>
             <graphFormat>puml</graphFormat>
+            <scope>runtime</scope>
+            <excludes>
+            </excludes>
+            <showVersions>true</showVersions>
+            <transitiveExcludes>
+              <exclude>*</exclude>
+            </transitiveExcludes>
           </configuration>
         </plugin>
         <plugin>
