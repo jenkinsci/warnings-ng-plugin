@@ -4,31 +4,36 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.violations.AndroidLintParserAdapter;
+import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 
 /**
- * Provides a parser and customized messages for Android Lint.
+ * Provides a parser and customized messages for ESlint. Delegates to {@link CheckStyleParser}.
  *
  * @author Ullrich Hafner
  */
-public class AndroidLint extends StaticAnalysisTool {
-    private static final long serialVersionUID = -7264992947534927156L;
-    static final String ID = "android-lint";
+public class EsLint extends StaticAnalysisTool {
+    private static final long serialVersionUID = -7944828406964963020L;
+    static final String ID = "eslint";
 
-    /** Creates a new instance of {@link AndroidLint}. */
+    /** Creates a new instance of {@link EsLint}. */
     @DataBoundConstructor
-    public AndroidLint() {
+    public EsLint() {
         super();
         // empty constructor required for stapler
     }
 
     @Override
-    public AndroidLintParserAdapter createParser() {
-        return new AndroidLintParserAdapter();
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
+    @Override
+    public CheckStyleParser createParser() {
+        return new CheckStyleParser();
     }
 
     /** Descriptor for this static analysis tool. */
@@ -42,7 +47,17 @@ public class AndroidLint extends StaticAnalysisTool {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return Messages.Violations_AndroidLint();
+            return Messages.Warnings_ESlint_Name();
+        }
+
+        @Override
+        public String getHelp() {
+            return "Use option --format checkstyle.";
+        }
+
+        @Override
+        public String getUrl() {
+            return "https://eslint.org";
         }
 
         @Override
