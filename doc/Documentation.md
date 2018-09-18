@@ -237,7 +237,50 @@ step will be executed even if the build failed.
 
 In order to see all configuration options you can investigate the 
 [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java).
-                                              
+
+#### Declarative Pipeline configuration 
+
+Configuration of the plugin in Declarative Pipeline jobs is the same as in Scripted Pipelines, see the following
+example that builds the [analysis-model](https://github.com/jenkinsci/analysis-model) library on Jenkins:
+
+```
+pipeline {
+    agent 'any'
+    tools {
+        maven 'mvn-default'
+        jdk 'jdk-default'
+    }
+    stages {
+        stage ('Build') {
+            steps {
+                sh '${M2_HOME}/bin/mvn --batch-mode -V -U -e clean verify -Dsurefire.useFile=false -Dmaven.test.failure.ignore'
+            }
+        }
+
+        stage ('Analysis') {
+            steps {
+                sh '${M2_HOME}/bin/mvn --batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs spotbugs:spotbugs'
+            }
+        }
+    }
+    post {
+        always {
+            junit testResults: '**/target/surefire-reports/TEST-*.xml'
+
+            recordIssues enabledForFailure: true, 
+                tools: [[tool: [$class: 'MavenConsole']], 
+                        [tool: [$class: 'Java']], 
+                        [tool: [$class: 'JavaDoc']]]
+            recordIssues enabledForFailure: true, tools: [[tool: [$class: 'CheckStyle']]]
+            recordIssues enabledForFailure: true, tools: [[tool: [$class: 'FindBugs']]]
+            recordIssues enabledForFailure: true, tools: [[tool: [$class: 'SpotBugs']]]
+            recordIssues enabledForFailure: true, tools: [[pattern: '**/target/cpd.xml', tool: [$class: 'Cpd']]]
+            recordIssues enabledForFailure: true, tools: [[pattern: '**/target/pmd.xml', tool: [$class: 'Pmd']]]
+        }
+    }
+}
+```                                              
+
 #### Advanced Pipeline configuration
 
 Sometimes publishing and reporting issues using a single step is not sufficient. E.g., if you build your
