@@ -22,12 +22,26 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
      *         the name of the tool
      */
     protected IconLabelProvider(final String id, final String name) {
-        super(id, name);
-
-        smallIconUrl = ICONS_URL + getId() + "-24x24.png";
-        largeIconUrl = ICONS_URL + getId() + "-48x48.png";
+        this(id, name, id);
     }
 
+    /**
+     * Creates a new label provider with the specified ID and name.
+     *
+     * @param id
+     *         the ID (i.e., URL)
+     * @param name
+     *         the name of the tool
+     * @param iconName
+     *         the the unique name of the icon file
+     */
+    protected IconLabelProvider(final String id, final String name, final String iconName) {
+        super(id, name);
+        
+        smallIconUrl = ICONS_URL + iconName + "-24x24.png";
+        largeIconUrl = ICONS_URL + iconName + "-48x48.png";
+    }
+    
     @Override
     public String getSmallIconUrl() {
         return smallIconUrl;

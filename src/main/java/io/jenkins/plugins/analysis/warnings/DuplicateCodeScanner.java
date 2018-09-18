@@ -10,9 +10,7 @@ import org.kohsuke.stapler.QueryParameter;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
-import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import static j2html.TagCreator.*;
 import net.sf.json.JSONArray;
@@ -26,8 +24,6 @@ import hudson.util.FormValidation;
  */
 public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
     private static final long serialVersionUID = -8446643146836067375L;
-    private static final String SMALL_ICON_URL = IMAGE_PREFIX + "dry-24x24.png";
-    private static final String LARGE_ICON_URL = IMAGE_PREFIX + "dry-48x48.png";
 
     /** Validates the thresholds user input. */
     private static final ThresholdValidation THRESHOLD_VALIDATION = new ThresholdValidation();
@@ -76,19 +72,9 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
     }
 
     /** Provides icons for DRY parsers. */
-    static class DryLabelProvider extends StaticAnalysisLabelProvider {
+    static class DryLabelProvider extends IconLabelProvider {
         protected DryLabelProvider(final String id, final String name) {
-            super(id, name);
-        }
-
-        @Override
-        public String getSmallIconUrl() {
-            return SMALL_ICON_URL;
-        }
-
-        @Override
-        public String getLargeIconUrl() {
-            return LARGE_ICON_URL;
+            super(id, name, "dry");
         }
 
         @Override

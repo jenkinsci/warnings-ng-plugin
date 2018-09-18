@@ -7,7 +7,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.parser.JavaDocParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.warnings.Java.JavaLabelProvider;
 
 import hudson.Extension;
 
@@ -32,16 +31,6 @@ public class JavaDoc extends StaticAnalysisTool {
         return new JavaDocParser();
     }
 
-    /** Provides the labels for the static analysis tool. */
-    public static class JavaDocLabelProvider extends JavaLabelProvider {
-        /**
-         * Creates a new {@link JavaDocLabelProvider}.
-         */
-        public JavaDocLabelProvider() {
-            super(ID, Messages.Warnings_JavaDoc_ParserName());
-        }
-    }
-
     /** Descriptor for this static analysis tool. */
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
@@ -55,10 +44,10 @@ public class JavaDoc extends StaticAnalysisTool {
         public String getDisplayName() {
             return Messages.Warnings_JavaDoc_ParserName();
         }
-
+       
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new JavaDocLabelProvider();
+            return new IconLabelProvider(getId(), getDisplayName(), "java");
         }
     }
 }

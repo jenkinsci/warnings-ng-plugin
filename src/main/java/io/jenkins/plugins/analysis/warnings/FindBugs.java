@@ -9,7 +9,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.FindBugsParser;
 import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
-import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
@@ -60,25 +59,21 @@ public class FindBugs extends StaticAnalysisTool {
     }
 
     /** Provides the labels for the static analysis tool. */
-    static class FindBugsLabelProvider extends StaticAnalysisLabelProvider {
-        private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
-        private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
+    static class FindBugsLabelProvider extends IconLabelProvider {
         private final FindBugsMessages messages;
-
-        FindBugsLabelProvider(final FindBugsMessages messages) {
-            this(messages, ID, Messages.Warnings_FindBugs_ParserName());
-        }
 
         /**
          * Creates a new {@link FindBugsLabelProvider} with the specified ID.
          *
+         * @param messages
+         *         the details messages
          * @param id
          *         the ID
          * @param name
          *         the name of the static analysis tool
          */
-        protected FindBugsLabelProvider(final FindBugsMessages messages, final String id, final String name) {
-            super(id, name);
+        FindBugsLabelProvider(final FindBugsMessages messages, final String id, final String name) {
+            super(id, name, name);
 
             this.messages = messages;
         }
@@ -86,16 +81,6 @@ public class FindBugs extends StaticAnalysisTool {
         @Override
         public String getDescription(final Issue issue) {
             return messages.getMessage(issue.getType(), LocaleProvider.getLocale());
-        }
-
-        @Override
-        public String getSmallIconUrl() {
-            return SMALL_ICON_URL;
-        }
-
-        @Override
-        public String getLargeIconUrl() {
-            return LARGE_ICON_URL;
         }
     }
 
@@ -133,7 +118,7 @@ public class FindBugs extends StaticAnalysisTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new FindBugsLabelProvider(messages);
+            return new FindBugsLabelProvider(messages, getId(), getDisplayName());
         }
 
         @Override

@@ -6,7 +6,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
-import static hudson.plugins.warnings.WarningsDescriptor.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
@@ -40,10 +39,7 @@ public class CheckStyle extends StaticAnalysisTool {
     }
 
     /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends StaticAnalysisLabelProvider {
-        private static final String SMALL_ICON_URL = IMAGE_PREFIX + ID + "-24x24.png";
-        private static final String LARGE_ICON_URL = IMAGE_PREFIX + ID + "-48x48.png";
-
+    private static class LabelProvider extends IconLabelProvider {
         private final CheckStyleRules rules;
 
         LabelProvider(final CheckStyleRules rules) {
@@ -55,16 +51,6 @@ public class CheckStyle extends StaticAnalysisTool {
         @Override
         public String getDescription(final Issue issue) {
             return rules.getDescription(issue.getType());
-        }
-
-        @Override
-        public String getSmallIconUrl() {
-            return SMALL_ICON_URL;
-        }
-
-        @Override
-        public String getLargeIconUrl() {
-            return LARGE_ICON_URL;
         }
     }
 
