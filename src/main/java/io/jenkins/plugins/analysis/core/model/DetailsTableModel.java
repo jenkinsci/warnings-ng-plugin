@@ -143,6 +143,8 @@ public class DetailsTableModel {
      *
      * @param issue
      *         the issue in a table row
+     * @param description
+     *         description of the issue
      *
      * @return the formatted column
      */
