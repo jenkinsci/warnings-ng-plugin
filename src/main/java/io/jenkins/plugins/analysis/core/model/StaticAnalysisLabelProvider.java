@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import javax.annotation.CheckForNull;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -11,12 +10,9 @@ import org.jvnet.localizer.Localizable;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.IntegerParser;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
@@ -35,7 +31,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  *
  * @author Ullrich Hafner
  */
-public class StaticAnalysisLabelProvider {
+public class StaticAnalysisLabelProvider implements DescriptionProvider {
     private static final String ICONS_PREFIX = "/plugin/warnings/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
@@ -75,14 +71,14 @@ public class StaticAnalysisLabelProvider {
     }
 
     /**
-     * Creates a new {@link StaticAnalysisLabelProvider} with the ID 'analysis-core'. This label provider is used as
-     * fallback.
+     * Returns the model for the details table.
+     * 
+     * @return the table model
      */
-    @VisibleForTesting
-    StaticAnalysisLabelProvider() {
-        this("analysis-core");
+    protected DetailsTableModel createTableModel() {
+        return new DetailsTableModel();
     }
-
+    
     /**
      * Returns the table headers of the report table.
      *
@@ -93,21 +89,7 @@ public class StaticAnalysisLabelProvider {
      */
     @SuppressWarnings("unused") // called by Jelly view
     public List<String> getTableHeaders(final Report report) {
-        List<String> visibleColumns = new ArrayList<>();
-        visibleColumns.add(Messages.Table_Column_Details());
-        visibleColumns.add(Messages.Table_Column_File());
-        if (report.hasPackages()) {
-            visibleColumns.add(Messages.Table_Column_Package());
-        }
-        if (report.hasCategories()) {
-            visibleColumns.add(Messages.Table_Column_Category());
-        }
-        if (report.hasTypes()) {
-            visibleColumns.add(Messages.Table_Column_Type());
-        }
-        visibleColumns.add(Messages.Table_Column_Severity());
-        visibleColumns.add(Messages.Table_Column_Age());
-        return visibleColumns;
+        return createTableModel().getHeaders(report);
     }
 
     /**
@@ -120,21 +102,7 @@ public class StaticAnalysisLabelProvider {
      */
     @SuppressWarnings("unused") // called by Jelly view
     public List<Integer> getTableWidths(final Report report) {
-        List<Integer> widths = new ArrayList<>();
-        widths.add(1);
-        widths.add(1);
-        if (report.hasPackages()) {
-            widths.add(2);
-        }
-        if (report.hasCategories()) {
-            widths.add(1);
-        }
-        if (report.hasTypes()) {
-            widths.add(1);
-        }
-        widths.add(1);
-        widths.add(1);
-        return widths;
+        return createTableModel().getWidths(report);
     }
 
     /**
@@ -152,117 +120,10 @@ public class StaticAnalysisLabelProvider {
     public JSONObject toJsonArray(final Report report, final AgeBuilder ageBuilder,
             final FileNameRenderer fileNameRenderer) {
         JSONArray rows = new JSONArray();
-        for (Issue issue : report) {
-            rows.add(toJson(report, issue, ageBuilder, fileNameRenderer));
-        }
+        rows.addAll(createTableModel().getContent(report, ageBuilder, fileNameRenderer, this));
         JSONObject data = new JSONObject();
         data.put("data", rows);
         return data;
-    }
-
-    /**
-     * Returns an JSON array that represents the columns of the issues table.
-     *
-     * @param report
-     *         the report to show in the table
-     * @param issue
-     *         the issue to get the column properties for
-     * @param ageBuilder
-     *         age builder to compute the age of a build
-     * @param fileNameRenderer
-     *         creates a link to the affected file (if accessible)
-     *
-     * @return the columns
-     */
-    protected JSONArray toJson(final Report report, final Issue issue,
-            final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer) {
-        JSONArray columns = new JSONArray();
-        columns.add(formatDetails(issue));
-        columns.add(formatFileName(issue, fileNameRenderer));
-        if (report.hasPackages()) {
-            columns.add(formatProperty("packageName", issue.getPackageName()));
-        }
-        if (report.hasCategories()) {
-            columns.add(formatProperty("category", issue.getCategory()));
-        }
-        if (report.hasTypes()) {
-            columns.add(formatProperty("type", issue.getType()));
-        }
-        columns.add(formatSeverity(issue.getSeverity()));
-        columns.add(formatAge(issue, ageBuilder));
-        return columns;
-    }
-
-    /**
-     * Formats the text of the details column. The details column is not directly shown, it rather is a hidden element
-     * that is expanded if the corresponding button is selected. The actual text value is stored in the {@code
-     * data-description} attribute.
-     *
-     * @param issue
-     *         the issue in a table row
-     *
-     * @return the formatted column
-     */
-    protected String formatDetails(final Issue issue) {
-        return div().withClass("details-control")
-                .attr("data-description", join(p(strong(issue.getMessage())), getDescription(issue)).render())
-                .render();
-    }
-
-    /**
-     * Formats the text of the age column. The age shows the number of builds a warning is reported.
-     *
-     * @param issue
-     *         the issue in a table row
-     * @param ageBuilder
-     *         renders the age
-     *
-     * @return the formatted column
-     */
-    protected String formatAge(final Issue issue, final AgeBuilder ageBuilder) {
-        return ageBuilder.apply(new IntegerParser().parseInt(issue.getReference()));
-    }
-
-    /**
-     * Formats the text of the severity column.
-     *
-     * @param severity
-     *         the severity of the issue
-     *
-     * @return the formatted column
-     */
-    protected String formatSeverity(final Severity severity) {
-        return String.format("<a href=\"%s\">%s</a>",
-                severity.getName(), LocalizedSeverity.getLocalizedString(severity));
-    }
-
-    /**
-     * Formats the text of the specified property column. T he text actually is a link to the UI representation of the
-     * property.
-     *
-     * @param property
-     *         the property to format
-     * @param value
-     *         the value of the property
-     *
-     * @return the formatted column
-     */
-    protected String formatProperty(final String property, final String value) {
-        return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
-    }
-
-    /**
-     * Formats the text of the file name column. The text actually is a link to the UI representation of the file.
-     *
-     * @param issue
-     *         the issue to show the file name for
-     * @param fileNameRenderer
-     *         creates a link to the affected file (if accessible)
-     *
-     * @return the formatted file name
-     */
-    protected String formatFileName(final Issue issue, final FileNameRenderer fileNameRenderer) {
-        return fileNameRenderer.renderAffectedFileLink(issue);
     }
 
     @VisibleForTesting
@@ -492,14 +353,7 @@ public class StaticAnalysisLabelProvider {
         return Messages._Tool_MultipleIssues(numberOfItems);
     }
 
-    /**
-     * Returns a detailed description of the specified issue.
-     *
-     * @param issue
-     *         the issue to get the description for
-     *
-     * @return the description
-     */
+    @Override
     public String getDescription(final Issue issue) {
         return issue.getDescription();
     }

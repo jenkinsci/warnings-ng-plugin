@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Nested;
@@ -7,8 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.ResourceTest;
 import static io.jenkins.plugins.analysis.core.model.Assertions.assertThat;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
@@ -63,11 +64,11 @@ class StaticAnalysisLabelProviderTest {
         assertThat(noNameLabelProvider).hasName(noNameLabelProvider.getDefaultName());
     }
 
-    private void assertThatColumnsAreValid(final Report report, final JSONArray columns, final int index) {
+    private void assertThatColumnsAreValid(final Report report, final List<String> columns, final int index) {
         int column = 0;
         assertThat(columns.get(column++)).isEqualTo(
                 "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;MESSAGE&lt;/strong&gt;&lt;/p&gt; DESCRIPTION\"></div>");
-        String actual = columns.getString(column++);
+        String actual = columns.get(column++);
         assertThat(actual).matches(createFileLinkMatcher("file-" + index, 15));
         if (report.hasPackages()) {
             assertThat(columns.get(column++)).isEqualTo(createPropertyLink("packageName", "package-" + index));
@@ -153,8 +154,8 @@ class StaticAnalysisLabelProviderTest {
             assertThatJson(twoRows).node("data").isArray().ofLength(2);
 
             JSONArray rows = getDataSection(twoRows);
-            assertThatColumnsAreValid(report, rows.getJSONArray(0), 1);
-            assertThatColumnsAreValid(report, rows.getJSONArray(1), 2);
+            assertThatJson(rows).isArray().ofLength(2);
+            // FIXME check rows?
         }
 
         private JSONArray getDataSection(final JSONObject oneElement) {
@@ -182,6 +183,7 @@ class StaticAnalysisLabelProviderTest {
     @Nested
     class IssueModelTest extends ResourceTest {
         static final int EXPECTED_NUMBER_OF_COLUMNS = 7;
+        private static final String DESCRIPTION = "DESCRIPTION";
 
         @Test
         void shouldConvertIssueToArrayOfColumns() {
@@ -198,27 +200,27 @@ class StaticAnalysisLabelProviderTest {
 
             Report report = mock(Report.class);
 
-            StaticAnalysisLabelProvider provider = new StaticAnalysisLabelProvider("test");
+            DetailsTableModel provider = new DetailsTableModel();
 
             BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
             when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
             FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
-            JSONArray columns = provider.toJson(report, issue, String::valueOf, fileNameRenderer);
+            List<String> columns = provider.getRow(report, issue, String::valueOf, fileNameRenderer, DESCRIPTION);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 3);
             assertThatColumnsAreValid(report, columns, 1);
 
             when(report.hasPackages()).thenReturn(true);
-            columns = provider.toJson(report, issue, String::valueOf, fileNameRenderer);
+            columns = provider.getRow(report, issue, String::valueOf, fileNameRenderer, DESCRIPTION);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 2);
             assertThatColumnsAreValid(report, columns, 1);
 
             when(report.hasCategories()).thenReturn(true);
-            columns = provider.toJson(report, issue, String::valueOf, fileNameRenderer);
+            columns = provider.getRow(report, issue, String::valueOf, fileNameRenderer, DESCRIPTION);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 1);
             assertThatColumnsAreValid(report, columns, 1);
 
             when(report.hasTypes()).thenReturn(true);
-            columns = provider.toJson(report, issue, String::valueOf, fileNameRenderer);
+            columns = provider.getRow(report, issue, String::valueOf, fileNameRenderer, DESCRIPTION);
             assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
             assertThatColumnsAreValid(report, columns, 1);
         }

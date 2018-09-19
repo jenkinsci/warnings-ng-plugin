@@ -4,6 +4,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -68,6 +70,7 @@ import hudson.util.DescribableList;
 public abstract class IntegrationTest extends ResourceTest {
     /** Issue log files will be renamed to mach this pattern. */
     private static final String FILE_NAME_PATTERN = "%s-issues.txt";
+    private static final Charset UTF_8 = StandardCharsets.UTF_8;
     
     /** Step to publish a set of issues. Uses defaults for all options. */
     protected static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
@@ -107,7 +110,7 @@ public abstract class IntegrationTest extends ResourceTest {
             FilePath workspace = getWorkspace(job);
 
             FilePath child = workspace.child(fileName);
-            child.copyFrom(new ByteArrayInputStream(content.getBytes()));
+            child.copyFrom(new ByteArrayInputStream(content.getBytes(UTF_8)));
         }
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
