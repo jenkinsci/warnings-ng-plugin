@@ -5,23 +5,22 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 
 /**
- * Provides a parser and customized messages for ktlint. Delegates to {@link CheckStyleParser}.
+ * Provides a parser and customized messages for PHP_CodeSniffer. Delegates to {@link CheckStyleParser}.
  *
  * @author Ullrich Hafner
  */
-public class KtLint extends StaticAnalysisTool {
+public class PhpCodeSniffer extends StaticAnalysisTool {
     private static final long serialVersionUID = -7944828406964963020L;
-    static final String ID = "ktlint";
+    static final String ID = "php-code-sniffer";
 
-    /** Creates a new instance of {@link KtLint}. */
+    /** Creates a new instance of {@link PhpCodeSniffer}. */
     @DataBoundConstructor
-    public KtLint() {
+    public PhpCodeSniffer() {
         super();
         // empty constructor required for stapler
     }
@@ -47,22 +46,17 @@ public class KtLint extends StaticAnalysisTool {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return Messages.Warnings_KtLint_Name();
+            return Messages.Warnings_PhpCodeSniffer_Name();
         }
 
         @Override
         public String getHelp() {
-            return "Use option --reporter=checkstyle.";
+            return "Use option --report=checkstyle.";
         }
 
         @Override
         public String getUrl() {
-            return "https://ktlint.github.io";
-        }
-
-        @Override
-        public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
+            return "https://github.com/squizlabs/PHP_CodeSniffer";
         }
     }
 }
