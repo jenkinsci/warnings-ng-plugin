@@ -144,7 +144,7 @@ class StaticAnalysisLabelProviderTest {
             report.add(createIssue(1));
             report.add(createIssue(2));
 
-            StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider();
+            StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider("test");
             BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
             when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
             JSONObject twoRows = labelProvider.toJsonArray(report, new DefaultAgeBuilder(1, "url"),
@@ -198,7 +198,7 @@ class StaticAnalysisLabelProviderTest {
 
             Report report = mock(Report.class);
 
-            StaticAnalysisLabelProvider provider = new StaticAnalysisLabelProvider();
+            StaticAnalysisLabelProvider provider = new StaticAnalysisLabelProvider("test");
 
             BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
             when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
