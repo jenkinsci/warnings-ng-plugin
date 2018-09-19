@@ -16,7 +16,7 @@ import hudson.Extension;
  */
 public class CppLint extends StaticAnalysisTool {
     private static final long serialVersionUID = 7156745296954706641L;
-    static final String ID = "cpp-lint";
+    static final String ID = "cpplint";
 
     /** Creates a new instance of {@link CppLint}. */
     @DataBoundConstructor

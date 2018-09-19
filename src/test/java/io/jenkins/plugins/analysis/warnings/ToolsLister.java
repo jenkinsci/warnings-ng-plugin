@@ -45,15 +45,16 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
                     + "other teams as well please share it and provide pull requests for the \n"
                     + "[warnings plug-in](https://github.com/jenkinsci/warnings-plugin/pulls) and \n"
                     + "the [analysis parsers library](https://github.com/jenkinsci/analysis-model/).  \n");
-            file.print("| Number | ID | Icons | Name | Default Pattern |\n");
-            file.print("| --- | --- | --- | --- | --- |\n");
+            file.print("| Number | ID | $class | Icons | Name | Default Pattern |\n");
+            file.print("| --- | --- | --- | --- | --- | --- |\n");
 
             for (int i = 0; i < descriptors.size(); i++) {
                 StaticAnalysisToolDescriptor descriptor = descriptors.get(i);
                 final StaticAnalysisLabelProvider labelProvider = descriptor.getLabelProvider();
-                file.printf("| %d | %s | %s | %s | %s |%n",
+                file.printf("| %d | %s | %s | %s | %s | %s |%n",
                         i,
                         descriptor.getId(),
+                        descriptor.clazz.getSimpleName(),
                         getIcon(labelProvider, labelProvider.getSmallIconUrl())
                                 + " " + getIcon(labelProvider, labelProvider.getLargeIconUrl()),
                         getName(descriptor),

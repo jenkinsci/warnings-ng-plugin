@@ -16,7 +16,7 @@ import hudson.Extension;
  */
 public class AnsibleLint extends StaticAnalysisTool {
     private static final long serialVersionUID = -838846658095256811L;
-    static final String ID = "ansible-lint";
+    static final String ID = "ansiblelint";
 
     /** Creates a new instance of {@link AnsibleLint}. */
     @DataBoundConstructor

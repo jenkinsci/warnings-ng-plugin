@@ -16,7 +16,7 @@ import hudson.Extension;
  */
 public class ZptLint extends StaticAnalysisTool {
     private static final long serialVersionUID = 5232724287545487246L;
-    static final String ID = "zpt-lint";
+    static final String ID = "zptlint";
 
     /** Creates a new instance of {@link ZptLint}. */
     @DataBoundConstructor

@@ -10,17 +10,17 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import hudson.Extension;
 
 /**
- * Provides a parser and customized messages for ktlint. Delegates to {@link CheckStyleParser}.
+ * Provides a parser and customized messages for SwiftLint. Delegates to {@link CheckStyleParser}.
  *
  * @author Ullrich Hafner
  */
-public class KtLint extends StaticAnalysisTool {
+public class SwiftLint extends StaticAnalysisTool {
     private static final long serialVersionUID = -7944828406964963020L;
-    static final String ID = "ktlint";
+    static final String ID = "swiftlint";
 
-    /** Creates a new instance of {@link KtLint}. */
+    /** Creates a new instance of {@link SwiftLint}. */
     @DataBoundConstructor
-    public KtLint() {
+    public SwiftLint() {
         super();
         // empty constructor required for stapler
     }
@@ -46,17 +46,17 @@ public class KtLint extends StaticAnalysisTool {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return Messages.Warnings_KtLint_Name();
+            return Messages.Warnings_SwiftLint_Name();
         }
 
         @Override
         public String getHelp() {
-            return "Use option --reporter=checkstyle.";
+            return "Use configuration reporter: \\”checkstyle\\”.";
         }
 
         @Override
         public String getUrl() {
-            return "https://ktlint.github.io";
+            return "https://github.com/realm/SwiftLint";
         }
     }
 }

@@ -73,7 +73,7 @@ public class FindBugs extends StaticAnalysisTool {
          *         the name of the static analysis tool
          */
         FindBugsLabelProvider(final FindBugsMessages messages, final String id, final String name) {
-            super(id, name, name);
+            super(id, name, id);
 
             this.messages = messages;
         }

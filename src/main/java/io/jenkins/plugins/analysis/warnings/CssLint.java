@@ -16,7 +16,7 @@ import hudson.Extension;
  */
 public class CssLint extends StaticAnalysisTool {
     private static final long serialVersionUID = -2790274869830094987L;
-    static final String ID = "css-lint";
+    static final String ID = "csslint";
 
     /** Creates a new instance of {@link CssLint}. */
     @DataBoundConstructor

@@ -16,7 +16,7 @@ import hudson.Extension;
  */
 public class XmlLint extends StaticAnalysisTool {
     private static final long serialVersionUID = -8253765174954652451L;
-    static final String ID = "xml-lint";
+    static final String ID = "xmllint";
 
     /** Creates a new instance of {@link XmlLint}. */
     @DataBoundConstructor
