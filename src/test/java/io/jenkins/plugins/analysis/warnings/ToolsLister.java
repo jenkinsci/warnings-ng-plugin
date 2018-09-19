@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -30,7 +31,7 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
     public void shouldPrintAllRegisteredTools() throws IOException {
         ArrayList<StaticAnalysisToolDescriptor> descriptors = new ArrayList<>(
                 getJenkins().getInstance().getDescriptorList(StaticAnalysisTool.class));
-        descriptors.sort(Comparator.comparing(d -> d.getLabelProvider().getName()));
+        descriptors.sort(Comparator.comparing(d -> d.getLabelProvider().getName().toLowerCase(Locale.ENGLISH)));
 
         try (FileWriter fileWriter = new FileWriter("SUPPORTED-FORMATS.md")) {
             PrintWriter file = new PrintWriter(fileWriter);
