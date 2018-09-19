@@ -39,6 +39,8 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
             file.println("# Supported Report Formats\n"
                     + "\n"
                     + "Jenkins' warnings plug-in supports the following report formats. \n"
+                    + "If your tool is supported, but has no custom icon yet, please file a pull request for the\n"
+                    + "[warnings plug-in](https://github.com/jenkinsci/warnings-plugin/pulls).\n"
                     + "If your tool is not yet supported you can either define a new \n"
                     + "Groovy based parser in the user interface or provide a parser within a new small plug-in. \n"
                     + "If the parser is useful for \n"
