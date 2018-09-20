@@ -11,10 +11,11 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("FieldCanBeLocal")
-@SuppressFBWarnings("SS_SHOULD_BE_STATIC")
 public class LineSeries {
     private final String name;
+    @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
     private final String stack = "stacked";
+    @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
     private final String type = "line";
     private final AreaStyle areaStyle = new AreaStyle();
     private final List<Integer> data = new ArrayList<>();

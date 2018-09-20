@@ -7,9 +7,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author Ullrich Hafner
  */
-@SuppressFBWarnings("SS_SHOULD_BE_STATIC")
 @SuppressWarnings("FieldCanBeLocal")
 public class AreaStyle {
+    @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
     private final boolean normal = true;
 
     public boolean isNormal() {
