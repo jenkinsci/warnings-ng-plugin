@@ -129,7 +129,25 @@ recordIssues
     ]
 ```
 
-#### Setting the file encoding
+### Creating support for a custom tool
+
+If none of the built-in tools works in your project you have two ways to add additional tools. 
+
+#### Deploying a new tool using a custom plugin
+
+The most flexible way is to define a new tool by writing a Java class that will be deployed in your own small Jenkins plugin. 
+This class needs to derive from `IssueParser`, see TBD for more details. 
+
+#### Creating a new tool in the user interface
+
+If the format of your log messages is quite simple then you can define support for your tool by creating
+a simple tool configuration in Jenkins' user interface. This configuration takes a regular expression that will be used to match the console log. If the expression matches, then
+a Groovy script will be invoked that converts the matching text into a warning instance. Here is an example of such
+a Groovy based parser:
+
+![groovy parser](images/groovy-parser.png)  
+
+### Setting the file encoding
 
 In order to let the scanner parse correctly your reports and source code files it is required to set the encodings: 
 
@@ -142,7 +160,7 @@ recordIssues
     sourceCodeEncoding: 'UTF-8', reportEncoding : 'ISO-8859-1', tools: [[tool: [$class: 'Java']]]
 ```
 
-#### Control the selection of the reference build (baseline)
+### Control the selection of the reference build (baseline)
 
 One important feature of the Warnings plugin is the classification of issues as new, outstanding and fixed:
 - **new**: all issues, that are part of the current report but have not been shown up in the reference report
@@ -163,7 +181,7 @@ recordIssues
     ignoreAnalysisResult: true, overallResultMustBeSuccess: false, referenceJobName: 'my-project/master'
 ```
 
-#### Filtering issues
+### Filtering issues
 
 The created report of issues can be filtered afterwards. You can specify an arbitrary number of include or exclude 
 filters. Currently, there is support for filtering issues by module name, package or namespace name, file name, 
@@ -179,7 +197,7 @@ recordIssues
     filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
 ```
 
-#### Quality gate configuration
+### Quality gate configuration
 
 You can define several quality gates that will be checked after the issues have been reported. These quality gates
 let you to modify Jenkins' build status so that you immediately see if the desired quality of your product is met. 
@@ -195,7 +213,7 @@ recordIssues
     tools: [[pattern: '*.log', tool: [$class: 'Java']]], unstableTotalHigh: 10, unstableNewAll: 1
 ```
 
-#### Health report configuration
+### Health report configuration
 
 The plugin can participate in the health report of your project. You can change the number of issues
 that change the health to 0% and 100%, respectively. Additionally, the severities that should be considered
@@ -424,6 +442,24 @@ child row within the table.
 
 TBD.
 
+
+### Configuration as code support
+
+The Warnings plugin is compatible with the 
+[Configuration as Code plugin](https://github.com/jenkinsci/configuration-as-code-plugin). 
+You can import parser configurations (see section [Creating a new tool in the user interface](#creating-a-new-tool-in-the-user-interface)) into Jenkins' system configuration using a YAML configuration in the form 
+of the following example: 
+
+```yaml
+unclassified:
+  warningsParsers:
+    parsers:
+    - name: "Name of Parser (used in all user interface labels)"
+      id: "id" # the ID must be a valid URL
+      regexp: ".*"
+      script: "Groovy Script"
+``` 
+
 ### Remote API
 
 The plugin provides two REST API endpoints. 
@@ -554,7 +590,7 @@ Here is an example JSON report:
 
 The Warnings plugin provides the token `ANALYSIS_ISSUES_COUNT` that could be used in additional post build processing
 steps, e.g. in the mailer. In order to use this tokens you need to install the latest release of the 
-[token macro plugin](https://plugins.jenkins.io/token-macro). 
+[Token Macro plugin](https://plugins.jenkins.io/token-macro). 
 The token has an optional parameter `tool` that could be used to select a particular analysis result. 
 Examples:
 
