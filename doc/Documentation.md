@@ -207,8 +207,12 @@ An example pipeline with these options is shown in the following snippet:
 
 ```
 recordIssues 
-    tools: [[pattern: '*.log', tool: [$class: 'Java']]], healthy: 10, unhealthy: 100
+    tools: [[pattern: '*.log', tool: [$class: 'Java']]], 
+    healthy: 10, unhealthy: 100, minimumSeverity: 'HIGH'
 ```
+
+This job adjusts the build health based on all warnings with severity HIGH and errors. If the build has 10 warnings
+or less then the health is at 100%. If the build has more than 100 warnings, then the health is at 0%.
 
 ### Pipeline configuration
 
