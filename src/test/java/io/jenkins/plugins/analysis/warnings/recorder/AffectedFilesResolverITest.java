@@ -16,6 +16,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
@@ -88,6 +89,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
     private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
         result.getIssues()
                 .forEach(issue -> AffectedFilesResolver.getFile(result.getOwner(), issue.getFileName())
@@ -234,9 +236,8 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         try {
             FilePath workspace = getWorkspace(job);
             workspace.mkdirs();
-            Files.write(Paths.get(workspace.child("gcc.log").getRemote()),
-                    String.format("%s/config.xml:451: warning: foo defined but not used\n", job.getRootDir())
-                            .getBytes());
+            String logMessage = String.format("%s/config.xml:451: warning: foo defined but not used%n", job.getRootDir());
+            Files.write(Paths.get(workspace.child("gcc.log").getRemote()), logMessage.getBytes());
         }
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
@@ -253,11 +254,6 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         assertThatLogContains(result.getOwner(), "1 copied");
         assertThatLogContains(result.getOwner(), "0 not-found");
         assertThatLogContains(result.getOwner(), "0 with I/O error");
-    }
-
-    private void assertThatPageShowsErrorMessage(final HtmlPage contentPage) {
-        assertThat(contentPage.getElementById("main-panel").asText()).contains("Can't read file: ");
-        assertThat(contentPage.getElementById("main-panel").asText()).contains(".tmp");
     }
 
     private Issue getIssueWithSource(final AnalysisResult result) {
