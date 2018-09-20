@@ -218,22 +218,32 @@
 
     /**
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
+     * If the user selects the tab using an #anchor prefer this tab.
      */
     var detailsTabs = $('#tab-details');
     detailsTabs.find('li:first-child a').tab('show');
+
+    var url = document.location.toString();
+    if (url.match('#')) {
+        var tabName = url.split('#')[1];
+
+        detailsTabs.find('a[href="#' + tabName + '"]').tab('show');
+    }
+    else {
+        var activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
+        }
+    }
 
     /**
      * Store the selected tab in Browser's local storage.
      */
     tabToggleLink.on('show.bs.tab', function (e) {
+        window.location.hash = e.target.hash;
         var activeTab = $(e.target).attr('href');
         localStorage.setItem('activeTab', activeTab);
     });
-
-    var activeTab = localStorage.getItem('activeTab');
-    if (activeTab) {
-        detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
-    }
 
     /**
      * Stores the order of every table in the local storage of the browser.
