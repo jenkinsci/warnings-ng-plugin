@@ -81,5 +81,4 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
         }
         return String.format("[%s](%s)", name, url);
     }
-
 }
