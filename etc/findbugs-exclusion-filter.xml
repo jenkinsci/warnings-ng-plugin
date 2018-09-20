@@ -6,7 +6,6 @@
       <Class name="~hudson.*" />
   </Match>
   <Match>
-      <Bug code="NM" />
       <Class name="~.*Assertions.*" />
   </Match>
   <Match>

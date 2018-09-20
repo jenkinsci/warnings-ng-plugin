@@ -183,7 +183,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
 
         HtmlTableRow firstTableRow = tableRows.get(0);
         List<HtmlTableCell> firstTableRowCells = firstTableRow.getCells();
-        HtmlDivision divElement = (HtmlDivision) firstTableRowCells.get(0).getFirstElementChild();
+        HtmlDivision divElement = getCellAs(firstTableRowCells, 0, HtmlDivision.class);
 
         assertThat(divElement.getAttribute("class")).isEqualTo("details-control");
         assertThat(divElement.getAttribute("data-description")).isEqualTo(
@@ -193,7 +193,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(file.getTextContent()).isEqualTo("Main.java:11");
 
         int[] duplications = {8, 17, 20, 26, 29};
-        HtmlUnorderedList duplicationList = (HtmlUnorderedList) firstTableRowCells.get(4).getFirstElementChild();
+        HtmlUnorderedList duplicationList = getCellAs(firstTableRowCells, 4, HtmlUnorderedList.class);
         @SuppressWarnings("unchecked")
         NodeList duplicationListItems = duplicationList.getChildNodes();
 
@@ -202,6 +202,13 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
             Node otherFile = duplicationListItems.item(i);
             assertThat(otherFile.getTextContent()).isEqualTo("Main.java:" + duplications[i]);
         }
+    }
+
+    private <T> T getCellAs(final List<HtmlTableCell> cells, final int index, final Class<T> type) {
+        DomElement firstElementChild = cells.get(index).getFirstElementChild();
+        assertThat(firstElementChild).isInstanceOf(type);
+        
+        return type.cast(firstElementChild);
     }
 
     /**
@@ -222,7 +229,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         for (HtmlTableRow tableRow : tableRows) {
             List<HtmlTableCell> tableCells = tableRow.getCells();
             assertThat(tableCells).hasSize(6);
-            HtmlDivision divElement = (HtmlDivision) tableCells.get(0).getFirstElementChild();
+            HtmlDivision divElement = getCellAs(tableCells, 0, HtmlDivision.class);
             int lineCount = Integer.parseInt(tableCells.get(3).getTextContent());
             assertThat(divElement.getAttribute("data-description").split("\n")).hasSize(lineCount);
         }
