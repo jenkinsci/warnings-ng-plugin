@@ -60,6 +60,11 @@ public class GroovyScript extends StaticAnalysisTool {
     }
 
     @Override
+    public boolean canScanConsoleLog() {
+        return false; // due to security reasons running a groovy script on master is prohibited
+    }
+
+    @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new StaticAnalysisLabelProvider(id, getTool().getName());
     }
@@ -96,9 +101,10 @@ public class GroovyScript extends StaticAnalysisTool {
             }
             return options;
         }
-        
-        public boolean hasParsers() {
-            return true;
+
+        @Override
+        public String getHelp() {
+            return "Note that due to security reasons scanning the console log using a Groovy script is not allowed.";
         }
     }
 }
