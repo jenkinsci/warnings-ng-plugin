@@ -3,11 +3,15 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * UI model for a ECharts line chart series property. Simple data bean that will be converted to JSON.
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("FieldCanBeLocal")
+@SuppressFBWarnings("SS_SHOULD_BE_STATIC")
 public class LineSeries {
     private final String name;
     private final String stack = "stacked";

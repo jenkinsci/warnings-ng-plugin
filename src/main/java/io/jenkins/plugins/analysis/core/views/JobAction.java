@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.views;
 
 import javax.annotation.CheckForNull;
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -145,12 +146,12 @@ public class JobAction implements Action {
     public boolean isTrendVisible() {
         AnalysisHistory history = createBuildHistory();
 
-        int count = 0;
-        for (AnalysisResult analysisResult : history) {
-            count++;
+        Iterator<AnalysisResult> iterator = history.iterator();
+        for (int count = 1; iterator.hasNext(); count++) {
             if (count >= 2) {
                 return true;
             }
+            iterator.next();
         }
         return false;
     }

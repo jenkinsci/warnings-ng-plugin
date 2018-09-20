@@ -15,7 +15,8 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class SwiftLint extends StaticAnalysisTool {
-    private static final long serialVersionUID = -7944828406964963020L;
+    private static final long serialVersionUID = -1112001682237184947L;
+    
     static final String ID = "swiftlint";
 
     /** Creates a new instance of {@link SwiftLint}. */

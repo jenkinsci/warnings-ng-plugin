@@ -15,7 +15,7 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Infer extends StaticAnalysisTool {
-    private static final long serialVersionUID = -7944828406964963020L;
+    private static final long serialVersionUID = 1536446255698173148L;
     static final String ID = "infer";
 
     /** Creates a new instance of {@link Infer}. */

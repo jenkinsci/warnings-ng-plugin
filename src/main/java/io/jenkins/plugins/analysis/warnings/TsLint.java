@@ -15,7 +15,8 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class TsLint extends StaticAnalysisTool {
-    private static final long serialVersionUID = -7944828406964963020L;
+    private static final long serialVersionUID = -2834404931238461956L;
+    
     static final String ID = "tslint";
 
     /** Creates a new instance of {@link TsLint}. */

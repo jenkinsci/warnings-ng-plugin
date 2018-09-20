@@ -18,6 +18,8 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class RuboCop extends StaticAnalysisTool {
+    private static final long serialVersionUID = -6972204105563729273L;
+    
     static final String ID = "rubocop";
 
     /** Creates a new instance of {@link RuboCop}. */

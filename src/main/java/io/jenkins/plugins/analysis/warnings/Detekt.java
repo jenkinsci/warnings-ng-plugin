@@ -15,7 +15,8 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class Detekt extends StaticAnalysisTool {
-    private static final long serialVersionUID = -7944828406964963020L;
+    private static final long serialVersionUID = 2441989609462884392L;
+    
     static final String ID = "detekt";
 
     /** Creates a new instance of {@link Detekt}. */

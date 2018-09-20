@@ -16,7 +16,8 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class KtLint extends StaticAnalysisTool {
-    private static final long serialVersionUID = -7944828406964963020L;
+    private static final long serialVersionUID = 1897385505660427545L;
+    
     static final String ID = "ktlint";
 
     /** Creates a new instance of {@link KtLint}. */

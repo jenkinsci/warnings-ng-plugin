@@ -16,7 +16,8 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class EsLint extends StaticAnalysisTool {
-    private static final long serialVersionUID = -7944828406964963020L;
+    private static final long serialVersionUID = -3634797822059504099L;
+    
     static final String ID = "eslint";
 
     /** Creates a new instance of {@link EsLint}. */
