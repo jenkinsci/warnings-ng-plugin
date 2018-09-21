@@ -16,7 +16,6 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -27,8 +26,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
-import io.jenkins.plugins.analysis.core.scm.BlameFactory;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.Extension;
@@ -50,7 +47,7 @@ import hudson.util.ListBoxModel;
 public class PublishIssuesStep extends Step {
     private static final Severity DEFAULT_MINIMUM_PRIORITY = Severity.WARNING_LOW;
 
-    private final Report[] reports;
+    private final AnnotatedReport[] reports;
 
     private String sourceCodeEncoding;
 
@@ -72,10 +69,10 @@ public class PublishIssuesStep extends Step {
      * Creates a new instance of {@link PublishIssuesStep}.
      *
      * @param issues
-     *         the issues to publish as {@link Action} in the {@link Job}.
+     *         the reports to publish as {@link Action} in the {@link Job}.
      */
     @DataBoundConstructor
-    public PublishIssuesStep(final Report... issues) {
+    public PublishIssuesStep(final AnnotatedReport... issues) {
         super();
 
         Ensure.that(issues).isNotEmpty();
@@ -405,7 +402,7 @@ public class PublishIssuesStep extends Step {
         private final boolean ignoreQualityGate;
         private final boolean ignoreFailedBuilds;
         private final String sourceCodeEncoding;
-        private final Report report;
+        private final AnnotatedReport report;
         private final QualityGate qualityGate;
         private final List<RegexpFilter> filters;
         private final String name;
@@ -433,16 +430,16 @@ public class PublishIssuesStep extends Step {
             thresholds = step.getThresholds();
             qualityGate = new QualityGate(thresholds);
             name = StringUtils.defaultString(step.getName());
-            report = new Report();
+            report = new AnnotatedReport();
             if (StringUtils.isNotBlank(step.getId())) {
                 report.setId(step.getId());
             }
             if (step.reports.length > 1) {
                 report.logInfo("Aggregating reports of:");
                 LabelProviderFactory factory = new LabelProviderFactory();
-                for (Report issues : step.reports) {
-                    StaticAnalysisLabelProvider labelProvider = factory.create(issues.getId());
-                    report.logInfo("-> %s", labelProvider.getToolTip(issues.size()));
+                for (AnnotatedReport subReport : step.reports) {
+                    StaticAnalysisLabelProvider labelProvider = factory.create(subReport.getId());
+                    this.report.logInfo("-> %s", labelProvider.getToolTip(subReport.size()));
                 }
             }
             report.addAll(step.reports);
@@ -451,8 +448,7 @@ public class PublishIssuesStep extends Step {
 
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
-            Blamer blamer = BlameFactory.createBlamer(getRun(), getWorkspace(), getTaskListener());
-            IssuesPublisher publisher = new IssuesPublisher(getRun(), report, blamer, filters, 
+            IssuesPublisher publisher = new IssuesPublisher(getRun(), report.getReport(), report.getBlames(), filters, 
                     healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
                     getCharset(sourceCodeEncoding), getLogger());
@@ -461,7 +457,7 @@ public class PublishIssuesStep extends Step {
 
         private LogHandler getLogger() throws InterruptedException {
             String toolName = new LabelProviderFactory().create(report.getId(), name).getName();
-            return new LogHandler(getTaskListener(), toolName, report);
+            return new LogHandler(getTaskListener(), toolName, report.getReport());
         }
     }
 

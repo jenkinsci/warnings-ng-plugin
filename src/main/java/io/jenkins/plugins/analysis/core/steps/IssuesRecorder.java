@@ -26,7 +26,6 @@ import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
-import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import jenkins.tasks.SimpleBuildStep;
@@ -557,7 +556,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             final FilePath workspace, final TaskListener listener, final String loggerName, final Report report,
             final String name) {
         Blamer blamer = BlameFactory.createBlamer(run, workspace, listener);
-        IssuesPublisher publisher = new IssuesPublisher(run, report, blamer, getFilters(),
+        IssuesPublisher publisher = new IssuesPublisher(run, report, blamer.blame(report), getFilters(),
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), new QualityGate(thresholds),
                 name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report));

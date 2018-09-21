@@ -23,7 +23,6 @@ import io.jenkins.plugins.analysis.core.model.DeltaReport;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
@@ -52,7 +51,7 @@ class IssuesPublisher {
     private final String id;
 
     @SuppressWarnings("ParameterNumber")
-    IssuesPublisher(final Run<?, ?> run, final Report report, final Blamer blamer,
+    IssuesPublisher(final Run<?, ?> run, final Report report, final Blames blames,
             final List<RegexpFilter> filters,
             final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
@@ -60,7 +59,7 @@ class IssuesPublisher {
             final LogHandler logger) {
         this.report = report;
         id = report.getId();
-        this.blames = blamer.blame(report);
+        this.blames = blames;
         this.filters = new ArrayList<>(filters);
         this.run = run;
         this.healthDescriptor = healthDescriptor;

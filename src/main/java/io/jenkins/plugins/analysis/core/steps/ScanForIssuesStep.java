@@ -16,6 +16,8 @@ import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.scm.BlameFactory;
+import io.jenkins.plugins.analysis.core.scm.Blamer;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -118,7 +120,7 @@ public class ScanForIssuesStep extends Step {
     /**
      * Actually performs the execution of the associated step.
      */
-    public static class Execution extends AnalysisExecution<Report> {
+    public static class Execution extends AnalysisExecution<AnnotatedReport> {
         private final String reportEncoding;
         private final String sourceCodeEncoding;
         private final StaticAnalysisTool tool;
@@ -142,11 +144,18 @@ public class ScanForIssuesStep extends Step {
         }
 
         @Override
-        protected Report run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), getCharset(reportEncoding),
+        protected AnnotatedReport run() throws IOException, InterruptedException, IllegalStateException {
+            FilePath workspace = getWorkspace();
+            TaskListener listener = getTaskListener();
+            
+            IssuesScanner issuesScanner = new IssuesScanner(tool, workspace, getCharset(reportEncoding),
                     getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()), 
-                    new LogHandler(getTaskListener(), tool.getName()));
-            return issuesScanner.scan(pattern, getRun().getLogFile());
+                    new LogHandler(listener, tool.getName()));
+            
+            Report report = issuesScanner.scan(pattern, getRun().getLogFile());
+            Blamer blamer = BlameFactory.createBlamer(getRun(), workspace, listener);
+
+            return new AnnotatedReport(report, blamer.blame(report));
         }
     }
 

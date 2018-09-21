@@ -109,4 +109,9 @@ public class Blames implements Serializable {
     public ImmutableList<String> getErrorMessages() {
         return Lists.immutable.ofAll(errorMessages);
     }
+
+    public void add(final Blames blames) {
+        // FIXME: we need to actually merge the results
+        blamesPerFile.putAll(blames.blamesPerFile); 
+    }
 }
