@@ -108,6 +108,7 @@ public class AffectedFilesResolver {
                     }
                     catch (IOException exception) {
                         if (error < 5) {
+                            // FIXME: use length of list
                             errorLog.add(String.format("- '%s', IO exception has been thrown: %s", file, exception));
                         }
                         else if (error == 5) {

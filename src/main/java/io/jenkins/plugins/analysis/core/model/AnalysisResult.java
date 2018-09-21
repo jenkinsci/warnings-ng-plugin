@@ -34,9 +34,11 @@ import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.scm.Blames;
 
 import hudson.XmlFile;
 import hudson.model.Run;
+import hudson.util.XStream2;
 
 /**
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and
@@ -69,10 +71,10 @@ public class AnalysisResult implements Serializable {
      * stored.
      */
     private final String referenceBuildId;
-    
+
     private transient ReentrantLock lock = new ReentrantLock();
     private transient Run<?, ?> owner;
-    
+
     /**
      * All outstanding issues: i.e. all issues, that are part of the current and reference report.
      */
@@ -90,7 +92,10 @@ public class AnalysisResult implements Serializable {
      */
     @CheckForNull
     private transient WeakReference<Report> fixedIssuesReference;
-    
+    /** All SCM blames. Provides a mapping of file names to SCM commit information like author, email or commit ID. */
+    @CheckForNull
+    private transient WeakReference<Blames> blames;
+
     /** Determines since which build we have zero warnings. */
     private int noIssuesSinceBuild;
     /** Determines since which build the result is successful. */
@@ -105,14 +110,16 @@ public class AnalysisResult implements Serializable {
      *         the current build as owner of this action
      * @param report
      *         the issues of this result
+     * @param blames
+     *         author and commit information for all issues
      * @param qualityGateStatus
      *         the quality gate status
      * @param previousResult
      *         the analysis result of the previous run
      */
-    public AnalysisResult(final Run<?, ?> owner,
-            final DeltaReport report, final QualityGateStatus qualityGateStatus, final AnalysisResult previousResult) {
-        this(owner, report, qualityGateStatus, true);
+    public AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final Blames blames,
+            final QualityGateStatus qualityGateStatus, final AnalysisResult previousResult) {
+        this(owner, report, blames, qualityGateStatus, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -146,11 +153,16 @@ public class AnalysisResult implements Serializable {
      *         the current build as owner of this action
      * @param report
      *         the issues of this result
+     * @param blames
+     *         author and commit information for all issues
      * @param qualityGateStatus
      *         the quality gate status
+     * @param blames
+     *         author and commit information for all issues
      */
-    public AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final QualityGateStatus qualityGateStatus) {
-        this(owner, report, qualityGateStatus, true);
+    public AnalysisResult(final Run<?, ?> owner, 
+            final DeltaReport report, final Blames blames, final QualityGateStatus qualityGateStatus) {
+        this(owner, report, blames, qualityGateStatus, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -173,16 +185,18 @@ public class AnalysisResult implements Serializable {
      *         the current run as owner of this action
      * @param report
      *         the issues of this result
+     * @param blames
+     *         author and commit information for all issues
      * @param qualityGateStatus
      *         the quality gate to enforce
      * @param canSerialize
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
-    protected AnalysisResult(final Run<?, ?> owner,
-            final DeltaReport report, final QualityGateStatus qualityGateStatus, final boolean canSerialize) {
+    protected AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final Blames blames, 
+            final QualityGateStatus qualityGateStatus, final boolean canSerialize) {
         this.owner = owner;
-        
+
         Report allIssues = report.getAllIssues();
         id = allIssues.getId();
         size = allIssues.getSize();
@@ -192,7 +206,7 @@ public class AnalysisResult implements Serializable {
 
         Report outstandingIssues = report.getOutstandingIssues();
         outstandingIssuesReference = new WeakReference<>(outstandingIssues);
-        
+
         Report newIssues = report.getNewIssues();
         newSize = newIssues.getSize();
         newSizePerSeverity = getSizePerSeverity(newIssues);
@@ -208,8 +222,23 @@ public class AnalysisResult implements Serializable {
         errors = new ArrayList<>(allIssues.getErrorMessages().castToList());
 
         this.qualityGateStatus = qualityGateStatus;
+        
+        this.blames = new WeakReference<>(blames);
         if (canSerialize) {
             serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
+            serializeBlames(blames);
+        }
+    }
+
+    private void serializeBlames(final Blames blames) {
+        try {
+            XmlFile file = new XmlFile(new XStream2(), new File(getOwner().getRootDir(), id + "-blames.xml"));
+            file.write(blames);
+        }
+        catch (IOException exception) {
+            LOGGER.log(Level.SEVERE, 
+                    String.format("Failed to serialize SCM blame information for results %s in build %s.", 
+                            id, owner), exception);
         }
     }
 
@@ -659,7 +688,7 @@ public class AnalysisResult implements Serializable {
     // TODO: if the trend charts are refactored then this adapter might be obsolete 
     public static class RunAdapter implements AnalysisBuild {
         private final Run<?, ?> run;
-    
+
         /**
          * Creates a new instance of {@link RunAdapter}.
          *
@@ -669,27 +698,27 @@ public class AnalysisResult implements Serializable {
         public RunAdapter(final Run<?, ?> run) {
             this.run = run;
         }
-    
+
         @Override
         public long getTimeInMillis() {
             return run.getTimeInMillis();
         }
-    
+
         @Override
         public int getNumber() {
             return run.getNumber();
         }
-    
+
         @Override
         public String getDisplayName() {
             return run.getDisplayName();
         }
-    
+
         @Override
         public int compareTo(final AnalysisBuild o) {
             return getNumber() - o.getNumber();
         }
-    
+
         @Override
         public boolean equals(final Object o) {
             if (this == o) {
@@ -698,12 +727,12 @@ public class AnalysisResult implements Serializable {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-    
+
             RunAdapter that = (RunAdapter) o;
-    
+
             return run.equals(that.run);
         }
-    
+
         @Override
         public int hashCode() {
             return run.hashCode();

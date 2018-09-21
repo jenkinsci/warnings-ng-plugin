@@ -16,17 +16,19 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
+import io.jenkins.plugins.analysis.core.scm.BlameFactory;
+import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.Extension;
@@ -449,7 +451,9 @@ public class PublishIssuesStep extends Step {
 
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesPublisher publisher = new IssuesPublisher(getRun(), report, filters, healthDescriptor, qualityGate,
+            Blamer blamer = BlameFactory.createBlamer(getRun(), getWorkspace(), getTaskListener());
+            IssuesPublisher publisher = new IssuesPublisher(getRun(), report, blamer, filters, 
+                    healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
                     getCharset(sourceCodeEncoding), getLogger());
             return publisher.attachAction();

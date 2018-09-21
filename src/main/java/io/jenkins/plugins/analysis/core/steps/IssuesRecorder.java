@@ -14,23 +14,28 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
+import io.jenkins.plugins.analysis.core.scm.BlameFactory;
+import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import jenkins.tasks.SimpleBuildStep;
 
+import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Result;
@@ -457,7 +462,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            record(run, workspace, launcher, listener);
+            record(run, workspace, listener);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -466,10 +471,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     private String createLoggerPrefix() {
-        return tools.stream().map(tool -> tool.getActualName()).collect(Collectors.joining());
+        return tools.stream().map(ToolConfiguration::getActualName).collect(Collectors.joining());
     }
 
-    private void record(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
+    private void record(final Run<?, ?> run, final FilePath workspace,
             final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
@@ -478,7 +483,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             for (ToolConfiguration toolConfiguration : tools) {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
-            publishResult(run, launcher, listener, Messages.Tool_Default_Name(),
+            publishResult(run, workspace, listener, Messages.Tool_Default_Name(),
                     totalIssues, Messages.Tool_Default_Name());
         }
         else {
@@ -491,8 +496,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                 else {
                     actualName = StringUtils.EMPTY;
                 }
-                publishResult(run, launcher, listener, toolConfiguration.getActualName(), report,
-                        actualName);
+                publishResult(run, workspace, listener, toolConfiguration.getActualName(), report, actualName);
             }
         }
     }
@@ -508,6 +512,16 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             report.setId(toolConfiguration.getId());
         }
         return report;
+    }
+
+    private EnvVars getEnvironment(final AbstractBuild build, final TaskListener listener) {
+        try {
+            return build.getEnvironment(listener);
+        }
+        catch (IOException | InterruptedException e) {
+            // ignore
+        }
+        return new EnvVars();
     }
 
     private Charset getSourceCodeCharset() {
@@ -528,8 +542,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *
      * @param run
      *         the run
-     * @param launcher
-     *         the launcher
+     * @param workspace
+     *         the workspace for this build
      * @param listener
      *         the listener
      * @param loggerName
@@ -539,9 +553,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param name
      *         the name of the report (might be empty)
      */
-    public void publishResult(final Run<?, ?> run, final Launcher launcher,
-            final TaskListener listener, final String loggerName, final Report report, final String name) {
-        IssuesPublisher publisher = new IssuesPublisher(run, report, getFilters(),
+    public void publishResult(final Run<?, ?> run,
+            final FilePath workspace, final TaskListener listener, final String loggerName, final Report report,
+            final String name) {
+        Blamer blamer = BlameFactory.createBlamer(run, workspace, listener);
+        IssuesPublisher publisher = new IssuesPublisher(run, report, blamer, getFilters(),
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), new QualityGate(thresholds),
                 name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report));
