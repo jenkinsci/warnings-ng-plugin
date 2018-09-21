@@ -135,15 +135,15 @@ If none of the built-in tools works in your project you have two ways to add add
 
 #### Deploying a new tool using a custom plugin
 
-The most flexible way is to define a new tool by writing a Java class that will be deployed in your own small Jenkins plugin. 
-This class needs to derive from `IssueParser`, see TBD for more details. 
+The most flexible way is to define a new tool by writing a Java class that will be deployed in your own small 
+Jenkins plugin, see [Providing support for a custom static analysis tool](Custom-Plugin.md) for details. 
 
 #### Creating a new tool in the user interface
 
-If the format of your log messages is quite simple then you can define support for your tool by creating
-a simple tool configuration in Jenkins' user interface. This configuration takes a regular expression that will be used to match the console log. If the expression matches, then
-a Groovy script will be invoked that converts the matching text into a warning instance. Here is an example of such
-a Groovy based parser:
+If the format of your log messages is quite simple then you can define support for your tool by creating a simple 
+tool configuration in Jenkins' user interface. This configuration takes a regular expression that will be used to 
+match the console log. If the expression matches, then a Groovy script will be invoked that converts the matching 
+text into a warning instance. Here is an example of such a Groovy based parser:
 
 ![groovy parser](images/groovy-parser.png)  
 
