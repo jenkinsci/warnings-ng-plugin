@@ -54,8 +54,7 @@
     <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
     <matrix-project.version>1.13</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
-    <git-plugin.version>4.0.0-beta3</git-plugin.version>
-    <git-client-plugin.version>3.0.0-beta5</git-client-plugin.version>
+    <git-plugin.version>3.9.1</git-plugin.version>
     <workflow-step.version>2.13</workflow-step.version>
     <workflow-job.version>2.16</workflow-job.version>
 
@@ -244,12 +243,6 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>git</artifactId>
       <version>${git-plugin.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>git-client</artifactId>
-      <version>${git-client-plugin.version}</version>
       <optional>true</optional>
     </dependency>
 
