@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import javax.annotation.CheckForNull;
-import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
@@ -75,36 +74,10 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * 
      * @return the table model
      */
-    protected DetailsTableModel createTableModel() {
+    public DetailsTableModel getTableModel() {
         return new DetailsTableModel();
     }
     
-    /**
-     * Returns the table headers of the report table.
-     *
-     * @param report
-     *         the report to show
-     *
-     * @return the table headers
-     */
-    @SuppressWarnings("unused") // called by Jelly view
-    public List<String> getTableHeaders(final Report report) {
-        return createTableModel().getHeaders(report);
-    }
-
-    /**
-     * Returns the widths of the table headers of the report table.
-     *
-     * @param report
-     *         the report to show
-     *
-     * @return the width of the table headers
-     */
-    @SuppressWarnings("unused") // called by Jelly view
-    public List<Integer> getTableWidths(final Report report) {
-        return createTableModel().getWidths(report);
-    }
-
     /**
      * Converts the specified set of issues into a table.
      *
@@ -120,7 +93,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     public JSONObject toJsonArray(final Report report, final AgeBuilder ageBuilder,
             final FileNameRenderer fileNameRenderer) {
         JSONArray rows = new JSONArray();
-        rows.addAll(createTableModel().getContent(report, ageBuilder, fileNameRenderer, this));
+        rows.addAll(getTableModel().getContent(report, ageBuilder, fileNameRenderer, this));
         JSONObject data = new JSONObject();
         data.put("data", rows);
         return data;

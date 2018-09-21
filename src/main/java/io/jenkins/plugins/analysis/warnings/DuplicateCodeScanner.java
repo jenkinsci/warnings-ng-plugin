@@ -90,7 +90,7 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         }
 
         @Override
-        protected DetailsTableModel createTableModel() {
+        public DetailsTableModel getTableModel() {
             return new DryTableModel();
         }
    }

@@ -41,7 +41,7 @@
             <issues:property property="type" name="${l.type}" elements="${i.types}"/>
 
             <j:if test="${i.isNotEmpty()}">
-              <issues:table issues="${i}" labelProvider="${it.labelProvider}"/>
+              <issues:table tableId="issues" issues="${i}" model="${it.labelProvider.tableModel}"/>
             </j:if>
 
           </div>
