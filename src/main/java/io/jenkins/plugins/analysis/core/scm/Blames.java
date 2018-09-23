@@ -14,8 +14,9 @@ import org.eclipse.collections.impl.factory.Lists;
 import com.google.errorprone.annotations.FormatMethod;
 
 /**
- * Provides access to the blame information of a file. 
- *
+ * Provides access to the blame information of report. Collects all blames for a set of affected files.
+ * Additionally, info and error messages during the SCM processing will be stored. 
+ * 
  * @author Ullrich Hafner
  */
 public class Blames implements Serializable {
@@ -24,7 +25,7 @@ public class Blames implements Serializable {
     private final Map<String, BlameRequest> blamesPerFile = new HashMap<>();
     private final List<String> infoMessages = new ArrayList<>();
     private final List<String> errorMessages = new ArrayList<>();
-    
+
     public boolean contains(final String fileName) {
         return blamesPerFile.containsKey(fileName);
     }
@@ -59,7 +60,8 @@ public class Blames implements Serializable {
     }
 
     /**
-     * Logs the specified information message. Use this method to log any useful information when composing this instance.
+     * Logs the specified information message. Use this method to log any useful information when composing this
+     * instance.
      *
      * @param format
      *         A <a href="../util/Formatter.html#syntax">format string</a>
@@ -112,7 +114,7 @@ public class Blames implements Serializable {
 
     public void add(final Blames blames) {
         // FIXME: we need to actually merge the results
-        blamesPerFile.putAll(blames.blamesPerFile); 
+        blamesPerFile.putAll(blames.blamesPerFile);
     }
 
     public BlameRequest getFile(final String fileName) {

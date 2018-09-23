@@ -1,13 +1,17 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import javax.annotation.CheckForNull;
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.blame.BlameResult;
@@ -18,6 +22,11 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.jenkinsci.plugins.gitclient.GitClient;
 import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Report;
+import jenkins.MasterToSlaveFileCallable;
+
+import hudson.FilePath;
 import hudson.model.TaskListener;
 import hudson.plugins.git.GitException;
 import hudson.remoting.VirtualChannel;
@@ -28,9 +37,11 @@ import hudson.remoting.VirtualChannel;
  * @author Lukas Krose
  * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
  */
-public class GitBlamer extends AbstractBlamer {
+public class GitBlamer implements Blamer {
     private final GitClient git;
     private final String gitCommit;
+    private final FilePath workspace;
+    private final TaskListener listener;
 
     /**
      * Creates a new blamer for Git.
@@ -43,18 +54,30 @@ public class GitBlamer extends AbstractBlamer {
      *         task listener to print logging statements to
      */
     public GitBlamer(final GitClient git, @CheckForNull final String gitCommit, final TaskListener listener) {
-        super(git.getWorkTree(), listener);
-
+        this.workspace = git.getWorkTree();
+        this.listener = listener;
         this.git = git;
         this.gitCommit = StringUtils.defaultString(gitCommit, "HEAD");
     }
 
-    @Override
-    protected Blames blameOnAgent(final Blames blames)
-            throws InterruptedException, IOException {
+    /**
+     * Computes for each conflicting file a {@link BlameRequest}. Note that this call is executed on a build agent.
+     * I.e., the blamer instance and all transfer objects need to be serializable.
+     *
+     * @param blames
+     *         a mapping of file names to blame request. Each blame request defines the lines that need to be mapped to
+     *         an author.
+     *
+     * @return the same mapping, now filled with blame information
+     * @throws InterruptedException
+     *         if this operation has been canceled
+     * @throws IOException
+     *         in case of an error
+     */
+    protected Blames blameOnAgent(final Blames blames) throws InterruptedException, IOException {
         blames.logInfo("Using GitBlamer to create author and commit information for all warnings.%n");
         blames.logInfo("GIT_COMMIT=%s, workspace=%s%n", gitCommit, git.getWorkTree());
-        
+
         return fillBlameResults(blames, loadBlameResultsForFiles(blames));
     }
 
@@ -65,7 +88,8 @@ public class GitBlamer extends AbstractBlamer {
             return git.withRepository(new BlameCallback(blames, headCommit, blames.getRequests()));
         }
         catch (GitException exception) {
-            blames.logError("Can't determine head commit using 'git rev-parse'. Skipping blame. %n%s%n", exception.getMessage());
+            blames.logError("Can't determine head commit using 'git rev-parse'. Skipping blame. %n%s%n",
+                    exception.getMessage());
 
             return Collections.emptyMap();
         }
@@ -85,7 +109,8 @@ public class GitBlamer extends AbstractBlamer {
                     if (lineIndex < blame.getResultContents().size()) {
                         PersonIdent who = blame.getSourceAuthor(lineIndex);
                         if (who == null) {
-                            blames.logInfo("No author information found for line %d in file %s.%n", lineIndex, fileName);
+                            blames.logInfo("No author information found for line %d in file %s.%n", lineIndex,
+                                    fileName);
                         }
                         else {
                             request.setName(line, who.getName());
@@ -103,6 +128,139 @@ public class GitBlamer extends AbstractBlamer {
             }
         }
         return blames;
+    }
+
+    @Override
+    public Blames blame(final Report report) {
+        try {
+            if (!report.isEmpty()) {
+                return invokeBlamer(report);
+            }
+        }
+        catch (IOException e) {
+            report.logError("Computing blame information failed with an exception:%n%s%n%s",
+                    e.getMessage(), ExceptionUtils.getStackTrace(e));
+        }
+        catch (InterruptedException e) {
+            // nothing to do, already logged
+        }
+        return new Blames();
+    }
+
+    private Blames invokeBlamer(final Report report) throws IOException, InterruptedException {
+        final Blames blames = extractConflictingFiles(report);
+
+        Blames blamesOfConflictingFiles = getWorkspace().act(
+                new MasterToSlaveFileCallable<Blames>() {
+                    @Override
+                    public Blames invoke(final File workspace, final VirtualChannel channel)
+                            throws IOException, InterruptedException {
+                        return blameOnAgent(blames);
+                    }
+                });
+
+        return blamesOfConflictingFiles;
+    }
+
+    /**
+     * Extracts the relative file names of the files that contain annotations to make sure every file is blamed only
+     * once.
+     *
+     * @param report
+     *         the issues to extract the file names from
+     *
+     * @return a mapping of absolute to relative file names of the conflicting files
+     */
+    protected Blames extractConflictingFiles(final Report report) {
+        Blames blames = new Blames();
+
+        String workspacePath = getWorkspacePath();
+        List<String> errorLog = new ArrayList<>();
+
+        for (Issue issue : report) {
+            if (issue.getLineStart() > 0) {
+                String storedFileName = issue.getFileName();
+                if (blames.contains(storedFileName)) {
+                    blames.addLine(storedFileName, issue.getLineStart());
+                }
+                else {
+                    String absoluteFileName = getCanonicalPath(storedFileName);
+                    if (absoluteFileName.startsWith(workspacePath)) {
+                        String relativeFileName = absoluteFileName.substring(workspacePath.length());
+                        if (relativeFileName.startsWith("/") || relativeFileName.startsWith("\\")) {
+                            relativeFileName = relativeFileName.substring(1);
+                        }
+                        blames.addRequest(storedFileName,
+                                new BlameRequest(relativeFileName, issue.getLineStart()));
+                    }
+                    else {
+                        int error = errorLog.size();
+                        if (error < 5) {
+                            errorLog.add(String.format(
+                                    "Skipping non-workspace file %s (workspace = %s, absolute = %s).%n",
+                                    storedFileName, workspacePath, absoluteFileName));
+                        }
+                        else if (error == 5) {
+                            errorLog.add("  ... skipped logging of additional non-workspace file errors ...");
+                        }
+                    }
+                }
+            }
+        }
+
+        if (blames.isEmpty()) {
+            report.logError("Created no blame requests - Git blame will be skipped");
+            errorLog.forEach(report::logError);
+        }
+        else {
+            report.logInfo("Created blame requests for %d files - invoking Git blame on agent for each of the requests",
+                    blames.size());
+            errorLog.forEach(report::logError);
+        }
+        return blames;
+    }
+
+    private String getWorkspacePath() {
+        return getCanonicalPath(workspace.getRemote());
+    }
+
+    private String getCanonicalPath(final String path) {
+        try {
+            return new File(path).getCanonicalPath().replace('\\', '/');
+        }
+        catch (IOException e) {
+            return path;
+        }
+    }
+
+    /**
+     * Prints the specified error message.
+     *
+     * @param message
+     *         the message (format string)
+     * @param args
+     *         the arguments for the message format
+     */
+    protected final void error(final String message, final Object... args) {
+        listener.error("<Git Blamer> " + String.format(message, args));
+    }
+
+    /**
+     * Returns the workspace path on the agent.
+     *
+     * @return workspace path
+     */
+    protected FilePath getWorkspace() {
+        return workspace;
+    }
+
+    /**
+     * Returns the listener for logging statements.
+     *
+     * @return logger
+     */
+    protected TaskListener getListener() {
+        return listener;
     }
 
     private static class BlameCallback implements RepositoryCallback<Map<String, BlameResult>> {

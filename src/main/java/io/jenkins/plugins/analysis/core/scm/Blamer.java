@@ -5,13 +5,13 @@ import java.io.Serializable;
 import edu.hm.hafner.analysis.Report;
 
 /**
- * Adds SCM information to a set of annotations (e.g., author, commit ID, etc.).
+ * Obtains SCM information for a report of issues (e.g., author, commit ID, etc.).
  *
  * @author Lukas Krose
  */
 public interface Blamer extends Serializable {
     /**
-     * Adds author and commit information to the given report.
+     * Obtains author and commit information for all issues of the given report.
      *
      * @param report
      *         the report

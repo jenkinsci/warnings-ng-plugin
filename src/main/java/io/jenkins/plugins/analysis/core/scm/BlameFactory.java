@@ -35,6 +35,7 @@ public class BlameFactory {
      * @return the blamer
      */
     public static Blamer createBlamer(Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
+        // FIXME: this should be on a new type
         if (GlobalSettings.instance().getNoAuthors()) {
             return new NullBlamer();
         }
@@ -46,13 +47,10 @@ public class BlameFactory {
             if (gitChecker.isGit(scm)) {
                 return gitChecker.createBlamer(run, scm, workspace, listener);
             }
-            else {
-                logOnlyGitSupported(listener);
-            }
         }
-        else {
-            logOnlyGitSupported(listener);
-        }
+        
+        listener.getLogger().println("Skipping issues blame since Git is the only supported SCM up to now.");
+        
         return new NullBlamer();
     }
 
@@ -75,13 +73,5 @@ public class BlameFactory {
             }
         }
         return new NullSCM();
-    }
-
-    private static void logOnlyGitSupported(final TaskListener listener) {
-        log(listener, "Skipping warnings blame since Git is the only supported SCM up to now.%n");
-    }
-
-    private static void log(final TaskListener listener, final String message) {
-        listener.getLogger().println(message);
     }
 }

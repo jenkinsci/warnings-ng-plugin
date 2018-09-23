@@ -26,10 +26,6 @@ import hudson.scm.SCM;
  */
 // Next Release
 // TODO: Whom should we blame if the whole file is marked? Or if a range is marked and multiple authors are in the range
-// TODO: Tooltip and URL in graph: need a hack in JFreeGraph tooltip generation as done in StackedAreaRenderer2
-// TODO: Portlet contains build days input field which makes no sense: new portlet base class
-// TODO: Meaningful graph already for the first build!
-// TODO: Commit tab?
 // TODO: Links in commits?
 // TODO: Check if we should also create new Jenkins users
 // TODO: Blame needs only run for new warnings
