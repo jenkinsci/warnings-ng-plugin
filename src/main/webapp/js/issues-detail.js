@@ -171,51 +171,11 @@
     });
     
     /**
-     * Create a data table instance for the issues table.
+     * Create data table instances for the detail tables.
      */
-    var issues = $('#issues');
-    var issuesTable = issues.DataTable({
-        pagingType: 'numbers',  // Page number button only
-        order: [[1, 'asc']],
-        columnDefs: [{
-            targets: 0,         // First column contains details button
-            orderable: false
-        }]
-    });
-
-    // Add event listener for opening and closing details
-    issues.on('click', 'div.details-control', function () {
-        var tr = $(this).parents('tr');
-        var row = issuesTable.row(tr);
-
-        if (row.child.isShown()) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-        } else {
-            // Open this row
-            row.child($(this).data('description')).show();
-            tr.addClass('shown');
-        }
-    });
+    showTable('#issues');
+    showTable('#scm');
     
-    /**
-     * Issues are loaded on demand: if the active tab shows the issues table, then the content is loaded using an
-     * Ajax call.
-     */
-    var tabToggleLink = $('a[data-toggle="tab"]');
-    tabToggleLink.on('show.bs.tab', function (e) {
-        var activeTab = $(e.target).attr('href');
-        if (activeTab === '#issuesContent' && issuesTable.data().length === 0) {
-            view.getTableModel(function (t) {
-                (function ($) {
-                    var table = $('#issues').DataTable();
-                    table.rows.add(t.responseObject().data).draw()
-                })(jQuery);
-            });
-        }
-    });
-
     /**
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
      */
@@ -225,6 +185,7 @@
     /**
      * Store the selected tab in Browser's local storage.
      */
+    var tabToggleLink = $('a[data-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
         var activeTab = $(e.target).attr('href');
         localStorage.setItem('activeTab', activeTab);
@@ -271,27 +232,59 @@
         }
     });
 
+    /**
+     * Activate tooltips.
+     */
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
 
     /**
-     * Opens the selected URL. For each value in a chart a different URL is registered.
+     * Initializes the specified table.
      *
-     * @param {jQuery} element - the <canvas> element that will be clicked
-     * @param {Chart} chart - the Chart.js Chart instance that will be clicked
+     * @param {String} id - the ID of the table
      */
-    function openSelectedUrl(element, chart) {
-        element[0].onclick = function (evt) {
-            var activePoints = chart.getElementsAtEvent(evt);
-            if (activePoints[0]) {
-                var chartData = activePoints[0]['_chart'].config.data;
-                var idx = activePoints[0]['_index'];
+    function showTable(id) {
+        // Create a data table instance for the issues table. 
+        var table = $(id);
+        var dataTable = table.DataTable({
+            pagingType: 'numbers',  // Page number button only
+            order: [[1, 'asc']],
+            columnDefs: [{
+                targets: 0,         // First column contains details button
+                orderable: false
+            }]
+        });
 
-                var url = chartData.urls[idx];
-                window.open(url, '_self');
+        // Add event listener for opening and closing details
+        table.on('click', 'div.details-control', function () {
+            var tr = $(this).parents('tr');
+            var row = dataTable.row(tr);
+
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                // Open this row
+                row.child($(this).data('description')).show();
+                tr.addClass('shown');
             }
-        };
+        });
+
+        // Content is loaded on demand: if the active tab shows the table, then content is loaded using Ajax
+        var tabToggleLink = $('a[data-toggle="tab"]');
+        tabToggleLink.on('show.bs.tab', function (e) {
+            var activeTab = $(e.target).attr('href');
+            if (activeTab === (id + 'Content') && dataTable.data().length === 0) {
+                view.getTableModel(id,  function (t) {
+                    (function ($) {
+                        var table = $(id).DataTable();
+                        table.rows.add(t.responseObject().data).draw()
+                    })(jQuery);
+                });
+            }
+        });
     }
 })(jQuery);
 

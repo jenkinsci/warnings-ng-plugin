@@ -22,8 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -46,7 +44,6 @@ import hudson.util.XStream2;
  *
  * @author Ullrich Hafner
  */
-@ExportedBean
 @SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength"})
 public class AnalysisResult implements Serializable {
@@ -94,7 +91,7 @@ public class AnalysisResult implements Serializable {
     private transient WeakReference<Report> fixedIssuesReference;
     /** All SCM blames. Provides a mapping of file names to SCM commit information like author, email or commit ID. */
     @CheckForNull
-    private transient WeakReference<Blames> blames;
+    private transient WeakReference<Blames> blamesReference;
 
     /** Determines since which build we have zero warnings. */
     private int noIssuesSinceBuild;
@@ -157,8 +154,6 @@ public class AnalysisResult implements Serializable {
      *         author and commit information for all issues
      * @param qualityGateStatus
      *         the quality gate status
-     * @param blames
-     *         author and commit information for all issues
      */
     public AnalysisResult(final Run<?, ?> owner, 
             final DeltaReport report, final Blames blames, final QualityGateStatus qualityGateStatus) {
@@ -223,23 +218,76 @@ public class AnalysisResult implements Serializable {
 
         this.qualityGateStatus = qualityGateStatus;
         
-        this.blames = new WeakReference<>(blames);
+        this.blamesReference = new WeakReference<>(blames);
         if (canSerialize) {
-            serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
+            serializeIssues(outstandingIssues, newIssues, fixedIssues);
             serializeBlames(blames);
+        }
+    }
+
+    /**
+     * Returns the blames for the report.
+     *
+     * @return the blames
+     */
+    public Blames getBlames() {
+        lock.lock();
+        try {
+            if (blamesReference == null) {
+                return readBlames();
+            }
+            Blames result = blamesReference.get();
+            if (result == null) {
+                return readBlames();
+            }
+            return result;
+        }
+        finally {
+            lock.unlock();
         }
     }
 
     private void serializeBlames(final Blames blames) {
         try {
-            XmlFile file = new XmlFile(new XStream2(), new File(getOwner().getRootDir(), id + "-blames.xml"));
-            file.write(blames);
+            getBlamesFile().write(blames);
         }
         catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, 
-                    String.format("Failed to serialize SCM blame information for results %s in build %s.", 
+            LOGGER.log(Level.SEVERE,
+                    String.format("Failed to serialize SCM blame information for results %s in build %s.",
                             id, owner), exception);
         }
+    }
+
+    private XmlFile getBlamesFile() {
+        return new XmlFile(new XStream2(), new File(getOwner().getRootDir(), id + "-blames.xml"));
+    }
+
+    private Blames readBlames() {
+        Blames blames = readXml(Blames.class, getBlamesFile(), new Blames());
+        blamesReference = new WeakReference<>(blames);
+        return blames;
+    }
+
+    private <T> T readXml(final Class<T> type, final XmlFile dataFile, final T defaultValue) {
+        try {
+            Object deserialized = dataFile.read();
+
+            if (type.isInstance(deserialized)) {
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
+                }
+                return type.cast(deserialized);
+            }
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + deserialized);
+            }
+        }
+        catch (IOException exception) {
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
+            }
+        }
+        return defaultValue; // fallback
     }
 
     private Map<Severity, Integer> getSizePerSeverity(final Report report) {
@@ -251,7 +299,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the ID
      */
-    @Exported
     public String getId() {
         return id;
     }
@@ -261,7 +308,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the run
      */
-    @Exported
     public Run<?, ?> getOwner() {
         return owner;
     }
@@ -282,7 +328,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the error messages
      */
-    @Exported
     public ImmutableList<String> getErrorMessages() {
         return Lists.immutable.withAll(errors);
     }
@@ -292,7 +337,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the info messages
      */
-    @Exported
     public ImmutableList<String> getInfoMessages() {
         return Lists.immutable.withAll(messages);
     }
@@ -315,7 +359,7 @@ public class AnalysisResult implements Serializable {
         return id + "-issues.xml";
     }
 
-    private void serializeAnnotations(final Report outstandingIssues,
+    private void serializeIssues(final Report outstandingIssues,
             final Report newIssues, final Report fixedIssues) {
         serializeIssues(outstandingIssues, "outstanding");
         serializeIssues(newIssues, "new");
@@ -338,7 +382,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return all issues
      */
-    @Exported
     public Report getIssues() {
         Report merged = new Report();
         merged.addAll(getNewIssues(), getOutstandingIssues());
@@ -351,7 +394,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return all outstanding issues
      */
-    @Exported
     public Report getOutstandingIssues() {
         return getIssues(AnalysisResult::getOutstandingIssuesReference, AnalysisResult::setOutstandingIssuesReference,
                 "outstanding");
@@ -363,7 +405,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return all new issues
      */
-    @Exported
     public Report getNewIssues() {
         return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference,
                 "new");
@@ -375,7 +416,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return all fixed issues
      */
-    @Exported
     public Report getFixedIssues() {
         return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference,
                 "fixed");
@@ -425,34 +465,10 @@ public class AnalysisResult implements Serializable {
 
     private Report readIssues(final BiConsumer<AnalysisResult, WeakReference<Report>> setter,
             final String suffix) {
-        Report report = readIssues(suffix);
+        XmlFile dataFile = getDataFile(suffix);
+        Report report = readXml(Report.class, dataFile, new Report());
         setter.accept(this, new WeakReference<>(report));
         return report;
-    }
-
-    private Report readIssues(final String suffix) {
-        XmlFile dataFile = getDataFile(suffix);
-        try {
-            Object deserialized = dataFile.read();
-
-            if (deserialized instanceof Report) {
-                Report result = (Report) deserialized;
-
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
-                }
-                return result;
-            }
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + deserialized);
-            }
-        }
-        catch (IOException exception) {
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
-            }
-        }
-        return new Report(); // fallback
     }
 
     /**
@@ -479,7 +495,6 @@ public class AnalysisResult implements Serializable {
      * @return {@code true} if the static analysis result is successful, {@code false} if the static analysis result is
      *         {@link QualityGateStatus#WARNING} or {@link QualityGateStatus#FAILED}
      */
-    @Exported
     public boolean isSuccessful() {
         return qualityGateStatus.isSuccessful();
     }
@@ -489,7 +504,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the quality gate status
      */
-    @Exported
     public QualityGateStatus getQualityGateStatus() {
         return qualityGateStatus;
     }
@@ -553,7 +567,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of issues
      */
-    @Exported
     public int getTotalSize() {
         return size;
     }
@@ -575,7 +588,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of errors
      */
-    @Exported
     public int getTotalErrorsSize() {
         return getTotalSizeOf(Severity.ERROR);
     }
@@ -585,7 +597,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of high severity issues
      */
-    @Exported
     public int getTotalHighPrioritySize() {
         return getTotalSizeOf(Severity.WARNING_HIGH);
     }
@@ -595,7 +606,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of normal severity issues
      */
-    @Exported
     public int getTotalNormalPrioritySize() {
         return getTotalSizeOf(Severity.WARNING_NORMAL);
     }
@@ -605,7 +615,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of low severity of issues
      */
-    @Exported
     public int getTotalLowPrioritySize() {
         return getTotalSizeOf(Severity.WARNING_LOW);
     }
@@ -615,7 +624,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new issues
      */
-    @Exported
     public int getNewSize() {
         return newSize;
     }
@@ -637,7 +645,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new errors issues
      */
-    @Exported
     public int getNewErrorSize() {
         return getNewSizeOf(Severity.ERROR);
     }
@@ -647,7 +654,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new high severity issues
      */
-    @Exported
     public int getNewHighPrioritySize() {
         return getNewSizeOf(Severity.WARNING_HIGH);
     }
@@ -657,7 +663,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new normal severity issues
      */
-    @Exported
     public int getNewNormalPrioritySize() {
         return getNewSizeOf(Severity.WARNING_NORMAL);
     }
@@ -667,7 +672,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new low severity of issues
      */
-    @Exported
     public int getNewLowPrioritySize() {
         return getNewSizeOf(Severity.WARNING_LOW);
     }
@@ -677,7 +681,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of fixed issues
      */
-    @Exported
     public int getFixedSize() {
         return fixedSize;
     }

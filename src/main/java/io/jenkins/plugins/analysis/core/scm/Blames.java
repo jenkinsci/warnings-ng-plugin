@@ -114,4 +114,8 @@ public class Blames implements Serializable {
         // FIXME: we need to actually merge the results
         blamesPerFile.putAll(blames.blamesPerFile); 
     }
+
+    public BlameRequest getFile(final String fileName) {
+        return blamesPerFile.get(fileName);
+    }
 }

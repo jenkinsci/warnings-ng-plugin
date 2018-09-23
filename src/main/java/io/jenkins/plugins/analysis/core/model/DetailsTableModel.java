@@ -24,6 +24,17 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 public class DetailsTableModel {
+    private final AgeBuilder ageBuilder;
+    private final FileNameRenderer fileNameRenderer;
+    private final DescriptionProvider descriptionProvider;
+
+    public DetailsTableModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+            final DescriptionProvider descriptionProvider) { // method reference
+        this.ageBuilder = ageBuilder;
+        this.fileNameRenderer = fileNameRenderer;
+        this.descriptionProvider = descriptionProvider;
+    }
+
     /**
      * Returns the table headers of the report table.
      *
@@ -83,17 +94,10 @@ public class DetailsTableModel {
      *
      * @param report
      *         the report to show in the table
-     * @param ageBuilder
-     *         produces the age of an issue based on the current build number
-     * @param fileNameRenderer
-     *         creates a link to the affected file (if accessible)
-     * @param descriptionProvider
-     *         provides descriptions for issues (if available)
      *
      * @return the table as String
      */
-    public List<List<String>> getContent(final Report report, final AgeBuilder ageBuilder,
-            final FileNameRenderer fileNameRenderer, final DescriptionProvider descriptionProvider) {
+    public List<List<String>> getContent(final Report report) {
         List<List<String>> rows = new ArrayList<>();
         for (Issue issue : report) {
             rows.add(getRow(report, issue, ageBuilder, fileNameRenderer, descriptionProvider.getDescription(issue)));
