@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.List;
 import java.util.Locale;
 
+import org.eclipse.collections.api.list.ImmutableList;
+import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -24,22 +26,14 @@ class DetailsTableModelTest {
     private static final String MESSAGE = "MESSAGE";
 
     @Test
-    void shouldConvertIssuesToArrayWith7Columns() {
+    void shouldConvertIssuesToArrayWithAllColumns() {
         Locale.setDefault(Locale.ENGLISH);
+
+        DetailsTableModel model = createModel();
 
         Report report = new Report();
         report.add(createIssue(1));
         report.add(createIssue(2));
-
-        DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
-        when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
-        FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
-
-        DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
-
-        DetailsTableModel model = new DetailsTableModel(ageBuilder, fileNameRenderer, descriptionProvider);
 
         assertThat(model.getHeaders(report)).hasSize(7);
         assertThat(model.getWidths(report)).hasSize(7);
@@ -55,6 +49,46 @@ class DetailsTableModelTest {
         assertThat(columns.get(4)).contains("type-1");
         assertThat(columns.get(5)).contains("High");
         assertThat(columns.get(6)).contains("1");
+    }
+
+    private DetailsTableModel createModel() {
+        DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
+        when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
+        FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
+
+        DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
+
+        return new DetailsTableModel(ageBuilder, fileNameRenderer, descriptionProvider);
+    }
+
+    @Test
+    void shouldShowOnlyColumnsWithMeaningfulContent() {
+        Locale.setDefault(Locale.ENGLISH);
+
+        DetailsTableModel model = createModel();
+
+        ImmutableList<Issue> issues = Lists.immutable.of(createIssue(1));
+        Report report = mock(Report.class);
+        when(report.iterator()).thenReturn(issues.iterator());
+        
+        assertThat(model.getHeaders(report)).hasSize(4).doesNotContain("Package", "Category", "Types");
+        assertThat(model.getWidths(report)).hasSize(4);
+        assertThat(model.getContent(report)).hasSize(1);
+        
+        when(report.hasPackages()).thenReturn(true);
+        assertThat(model.getHeaders(report)).hasSize(5).contains("Package").doesNotContain("Category", "Type");
+        assertThat(model.getWidths(report)).hasSize(5);
+        
+        when(report.hasCategories()).thenReturn(true);
+        assertThat(model.getHeaders(report)).hasSize(6).contains("Package", "Category").doesNotContain("Type");
+        assertThat(model.getWidths(report)).hasSize(6);
+        
+        when(report.hasTypes()).thenReturn(true);
+        assertThat(model.getHeaders(report)).hasSize(7).contains("Package", "Category", "Type");
+        assertThat(model.getWidths(report)).hasSize(7);
+        
     }
 
     private IssueBuilder createBuilder() {

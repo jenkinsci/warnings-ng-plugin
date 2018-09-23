@@ -6,9 +6,7 @@ import java.util.Locale;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.util.ResourceTest;
 import static io.jenkins.plugins.analysis.core.model.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.CompositeLocalizable;
@@ -32,7 +30,7 @@ class StaticAnalysisLabelProviderTest {
         assertThat(labelProvider).hasName(NAME);
         assertThat(labelProvider.getLinkName()).contains(NAME);
         assertThat(labelProvider.getTrendName()).contains(NAME);
-        
+
         labelProvider.setName(OTHER_NAME);
         assertThat(labelProvider).hasName(OTHER_NAME);
         assertThat(labelProvider.getLinkName()).contains(OTHER_NAME);
@@ -121,56 +119,6 @@ class StaticAnalysisLabelProviderTest {
         }
     }
 
-// FIXME: enable using the new model
-    /**
-     * Tests the dynamic creation of the table model for a single {@link Issue}.
-     */
-    @Nested
-    class IssueModelTest extends ResourceTest {
-        static final int EXPECTED_NUMBER_OF_COLUMNS = 7;
-        private static final String DESCRIPTION = "DESCRIPTION";
-
-        @Test
-        void shouldConvertIssueToArrayOfColumns() {
-//            Locale.setDefault(Locale.ENGLISH);
-//
-//            IssueBuilder builder = createBuilder();
-//            Issue issue = builder.setFileName("path/to/file-1")
-//                    .setPackageName("package-1")
-//                    .setCategory("category-1")
-//                    .setType("type-1")
-//                    .setLineStart(15)
-//                    .setSeverity(Severity.WARNING_HIGH)
-//                    .setReference("1").build();
-//
-//            Report report = mock(Report.class);
-//
-//            DetailsTableModel provider = new DetailsTableModel();
-//
-//            BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-//            when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
-//            FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
-//            List<String> columns = provider.getRow(report, issue, String::valueOf, fileNameRenderer, DESCRIPTION);
-//            assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 3);
-//            assertThatColumnsAreValid(report, columns, 1);
-//
-//            when(report.hasPackages()).thenReturn(true);
-//            columns = provider.getRow(report, issue, String::valueOf, fileNameRenderer, DESCRIPTION);
-//            assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 2);
-//            assertThatColumnsAreValid(report, columns, 1);
-//
-//            when(report.hasCategories()).thenReturn(true);
-//            columns = provider.getRow(report, issue, String::valueOf, fileNameRenderer, DESCRIPTION);
-//            assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS - 1);
-//            assertThatColumnsAreValid(report, columns, 1);
-//
-//            when(report.hasTypes()).thenReturn(true);
-//            columns = provider.getRow(report, issue, String::valueOf, fileNameRenderer, DESCRIPTION);
-//            assertThatJson(columns).isArray().ofLength(EXPECTED_NUMBER_OF_COLUMNS);
-//            assertThatColumnsAreValid(report, columns, 1);
-        }
-    }
-
     /**
      * Tests the utility class {@link CompositeLocalizable}.
      */
@@ -179,7 +127,7 @@ class StaticAnalysisLabelProviderTest {
         @Test
         void shouldCreateComposedMessage() {
             CompositeLocalizable localizable = new CompositeLocalizable("Static Analysis", Messages._Tool_NoIssues());
-            
+
             assertThat(localizable).hasToString("Static Analysis: No warnings");
             assertThat(localizable.toString(Locale.ENGLISH)).isEqualTo("Static Analysis: No warnings");
             assertThat(localizable.getKey()).isEqualTo(Messages._Tool_NoIssues().getKey());
