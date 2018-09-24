@@ -17,12 +17,14 @@ function renderTrendChart(chartDivId, chartModel) {
             }
         },
         legend: {
-            show: false
+            orient: 'horizontal',
+            x: 'center',
+            y: 'bottom'
         },
         grid: {
             left: '20',
             right: '10',
-            bottom: '10',
+            bottom: '20',
             top: '10',
             containLabel: true
         },
