@@ -11,7 +11,8 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
  */
 class BlamesTest {
     private static final String RELATIVE_PATH = "with/file.txt";
-    private static final String ABSOLUTE_PATH = "/absolute/path/to/workspace/" + RELATIVE_PATH;
+    private static final String WORKSPACE = "/absolute/path/to/workspace/";
+    private static final String ABSOLUTE_PATH = WORKSPACE + RELATIVE_PATH;
 
     @Test
     void shouldCreateEmptyDefaultValue() {
@@ -23,24 +24,23 @@ class BlamesTest {
     
     @Test
     void shouldCreateSingleBlame() {
-        Blames blames = new Blames();
+        Blames blames = new Blames(WORKSPACE);
 
-        BlameRequest request = new BlameRequest(RELATIVE_PATH, 1);
-        blames.addRequest(ABSOLUTE_PATH, request);
+        blames.addLine(ABSOLUTE_PATH, 1);
 
         assertThat(blames).isNotEmpty();
         assertThat(blames.size()).isEqualTo(1);
         assertThat(blames).hasFiles(ABSOLUTE_PATH);
         assertThat(blames.contains(ABSOLUTE_PATH)).isTrue();
-        assertThat(blames.getRequest(ABSOLUTE_PATH)).isSameAs(request);
+        assertThat(blames.getRequest(ABSOLUTE_PATH)).hasFileName(RELATIVE_PATH);
+        assertThat(blames.getRequest(ABSOLUTE_PATH).iterator()).containsExactlyInAnyOrder(1);
     }
     
     @Test
     void shouldAddAdditionalLinesToARequest() {
-        Blames blames = new Blames();
+        Blames blames = new Blames(WORKSPACE);
 
-        BlameRequest request = new BlameRequest(RELATIVE_PATH, 1);
-        blames.addRequest(ABSOLUTE_PATH, request);
+        blames.addLine(ABSOLUTE_PATH, 1);
         blames.addLine(ABSOLUTE_PATH, 2);
 
         assertThat(blames.size()).isEqualTo(1);

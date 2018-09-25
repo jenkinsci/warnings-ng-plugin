@@ -3,11 +3,9 @@ package io.jenkins.plugins.analysis.core.scm;
 import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -151,7 +149,7 @@ public class GitBlamer implements Blamer {
     private Blames invokeBlamer(final Report report) throws IOException, InterruptedException {
         final Blames blames = extractConflictingFiles(report);
 
-        Blames blamesOfConflictingFiles = getWorkspace().act(
+        Blames blamesOfConflictingFiles = workspace.act(
                 new MasterToSlaveFileCallable<Blames>() {
                     @Override
                     public Blames invoke(final File workspace, final VirtualChannel channel)
@@ -175,9 +173,6 @@ public class GitBlamer implements Blamer {
     protected Blames extractConflictingFiles(final Report report) {
         Blames blames = new Blames();
 
-        String workspacePath = getWorkspacePath();
-        List<String> errorLog = new ArrayList<>();
-
         for (Issue issue : report) {
             if (issue.getLineStart() > 0 && issue.hasFileName()) {
                 String storedFileName = issue.getFileName();
@@ -185,83 +180,19 @@ public class GitBlamer implements Blamer {
                     blames.addLine(storedFileName, issue.getLineStart());
                 }
                 else {
-                    String absoluteFileName = getCanonicalPath(storedFileName);
-                    if (absoluteFileName.startsWith(workspacePath)) {
-                        String relativeFileName = absoluteFileName.substring(workspacePath.length());
-                        if (relativeFileName.startsWith("/") || relativeFileName.startsWith("\\")) {
-                            relativeFileName = relativeFileName.substring(1);
-                        }
-                        blames.addRequest(storedFileName,
-                                new BlameRequest(relativeFileName, issue.getLineStart()));
-                    }
-                    else {
-                        int error = errorLog.size();
-                        if (error < 5) {
-                            errorLog.add(String.format(
-                                    "Skipping non-workspace file %s (workspace = %s, absolute = %s).%n",
-                                    storedFileName, workspacePath, absoluteFileName));
-                        }
-                        else if (error == 5) {
-                            errorLog.add("  ... skipped logging of additional non-workspace file errors ...");
-                        }
-                    }
+                    blames.addLine(storedFileName, issue.getLineStart());
                 }
             }
         }
 
         if (blames.isEmpty()) {
-            report.logError("Created no blame requests - Git blame will be skipped");
-            errorLog.forEach(report::logError);
+            blames.logError("Created no blame requests - Git blame will be skipped");
         }
         else {
-            report.logInfo("Created blame requests for %d files - invoking Git blame on agent for each of the requests",
+            blames.logInfo("Created blame requests for %d files - invoking Git blame on agent for each of the requests",
                     blames.size());
-            errorLog.forEach(report::logError);
         }
         return blames;
-    }
-
-    private String getWorkspacePath() {
-        return getCanonicalPath(workspace.getRemote());
-    }
-
-    private String getCanonicalPath(final String path) {
-        try {
-            return new File(path).getCanonicalPath().replace('\\', '/');
-        }
-        catch (IOException e) {
-            return path;
-        }
-    }
-
-    /**
-     * Prints the specified error message.
-     *
-     * @param message
-     *         the message (format string)
-     * @param args
-     *         the arguments for the message format
-     */
-    protected final void error(final String message, final Object... args) {
-        listener.error("<Git Blamer> " + String.format(message, args));
-    }
-
-    /**
-     * Returns the workspace path on the agent.
-     *
-     * @return workspace path
-     */
-    protected FilePath getWorkspace() {
-        return workspace;
-    }
-
-    /**
-     * Returns the listener for logging statements.
-     *
-     * @return logger
-     */
-    protected TaskListener getListener() {
-        return listener;
     }
 
     private static class BlameCallback implements RepositoryCallback<Map<String, BlameResult>> {

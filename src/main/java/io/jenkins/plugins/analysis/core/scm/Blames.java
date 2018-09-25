@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
 
@@ -25,7 +26,23 @@ public class Blames implements Serializable {
     private final Map<String, BlameRequest> blamesPerFile = new HashMap<>();
     private final List<String> infoMessages = new ArrayList<>();
     private final List<String> errorMessages = new ArrayList<>();
+    private final String workspace;
 
+    /**
+     * Creates an empty instance of {@link Blames}.
+     */
+    public Blames() {
+        this(StringUtils.EMPTY);
+    }
+
+    /**
+     * Creates an empty instance of {@link Blames} that will work on the specified workspace. 
+     */
+    public Blames(final String workspace) {
+        this.workspace = workspace;
+    }
+
+    
     /**
      * Returns whether there are files with blames in this instance.
      *
@@ -57,19 +74,7 @@ public class Blames implements Serializable {
     }
 
     /**
-     * Adds the specified request to this instance.
-     *
-     * @param fileName
-     *         the absolute file name that will be used as a key
-     * @param blameRequest
-     *         the blame request to add
-     */
-    public void addRequest(final String fileName, final BlameRequest blameRequest) {
-        blamesPerFile.put(fileName, blameRequest);
-    }
-
-    /**
-     * Adds the specified line number for the specified file to this instance.
+     * Adds a blame request for the specified affected file and line number.
      *
      * @param fileName
      *         the absolute file name that will be used as a key
@@ -77,10 +82,28 @@ public class Blames implements Serializable {
      *         the line number to find the blame for
      */
     public void addLine(final String fileName, final int lineStart) {
-        BlameRequest request = blamesPerFile.get(fileName);
-        request.addLineNumber(lineStart);
+        if (!contains(fileName)) {
+            if (fileName.startsWith(workspace)) {
+                String relativeFileName = fileName.substring(workspace.length());
+                String cleanFileName = StringUtils.removeStart(relativeFileName, "/");
+                blamesPerFile.put(fileName, new BlameRequest(cleanFileName, lineStart));
+            }
+            else {
+                int error = errorMessages.size();
+                if (error < 5) {
+                    logError("Skipping non-workspace file %s (workspace = %s).%n", fileName, workspace);
+                }
+                else if (error == 5) {
+                    logError("  ... skipped logging of additional non-workspace file errors ...");
+                }
+            }
+        }
+        else {
+            BlameRequest request = blamesPerFile.get(fileName);
+            request.addLineNumber(lineStart);
+        }
     }
-
+    
     public Set<String> getFiles() {
         return blamesPerFile.keySet();
     }
