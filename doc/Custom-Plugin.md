@@ -39,7 +39,7 @@ The plugin should depend on Jenkins plugin parent pom and on the warnings plugin
 
 Each custom tool requires a parser that will be instantiated to scan the console log (or a report file). The parser 
 must derive from the abstract class `IssueParser`, or one of the child classes. 
-The following base classes can be used as base class:
+The following base classes can be used as the base class:
 
 - `AbstractParser`: parses an input stream - you have under full control on how to access the input stream.
 - `RegexpLineParser`: parses all lines of an input stream one by one with a regular expression.
@@ -49,13 +49,13 @@ with a regular expression. This type of parser is quite slow and should only be 
   
 Please have a look at one of the 
 [existing parsers](https://github.com/jenkinsci/analysis-model/tree/master/src/main/java/edu/hm/hafner/analysis/parser)
-in order to see how to use these base classe.
+in order to see how to use these base classes.
 
 ## Register the tool in the warnings plugin
 
 In order to get picked up by the warnings plugin your parser must be registered as an extension.
 This is achieved by extending from the base class `StaticAnalysisTool` and registering it using the annotation 
-`@Extension` at the associated `Descriptor` class. Typically you do this in Jenkins by adding the descriptor as
+`@Extension` at the associated `Descriptor` class. Typically you do this in Jenkins by adding the descriptor as a
 static nested class of the `StaticAnalysisTool`. Here is an example that can be used as a starting point. 
 
 ```java
@@ -108,5 +108,5 @@ public class YourTool extends StaticAnalysisTool {
 
 ## Packaging the plugin
 
-You can create a HPI of your plugin by calling `mvn clean install`. For more details on Jenkins' plugin development
+You can create a HPI of your plugin by calling `mvn clean install`. For more details on Jenkins plugin development
 please see [wiki](https://wiki.jenkins.io/display/JENKINS/Extend+Jenkins) or [homepage](https://jenkins.io/doc/developer/).  
