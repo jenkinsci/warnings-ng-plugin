@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 

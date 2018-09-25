@@ -75,8 +75,9 @@ public class GitBlamer implements Blamer {
      *         in case of an error
      */
     protected Blames blameOnAgent(final Blames blames) throws InterruptedException, IOException {
-        blames.logInfo("Using GitBlamer to create author and commit information for all warnings.%n");
-        blames.logInfo("GIT_COMMIT=%s, workspace=%s%n", gitCommit, git.getWorkTree());
+        blames.logInfo("Using GitBlamer to create author and commit information for all %d affected files.%n",
+                blames.size());
+        blames.logInfo("GIT_COMMIT='%s', workspace='%s'%n", gitCommit, git.getWorkTree());
 
         return fillBlameResults(blames, loadBlameResultsForFiles(blames));
     }

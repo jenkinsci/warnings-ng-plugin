@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;

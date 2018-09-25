@@ -9,7 +9,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.NoSuchElementException;
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * PropertyStatisticsTest to test {@link PropertyStatistics}.

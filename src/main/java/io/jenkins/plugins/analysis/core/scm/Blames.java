@@ -14,9 +14,9 @@ import org.eclipse.collections.impl.factory.Lists;
 import com.google.errorprone.annotations.FormatMethod;
 
 /**
- * Provides access to the blame information of report. Collects all blames for a set of affected files.
- * Additionally, info and error messages during the SCM processing will be stored. 
- * 
+ * Provides access to the blame information of report. Collects all blames for a set of affected files. Additionally,
+ * info and error messages during the SCM processing will be stored.
+ *
  * @author Ullrich Hafner
  */
 public class Blames implements Serializable {
@@ -26,25 +26,59 @@ public class Blames implements Serializable {
     private final List<String> infoMessages = new ArrayList<>();
     private final List<String> errorMessages = new ArrayList<>();
 
-    public boolean contains(final String fileName) {
-        return blamesPerFile.containsKey(fileName);
-    }
-
-    public void addLine(final String fileName, final int lineStart) {
-        BlameRequest request = blamesPerFile.get(fileName);
-        request.addLineNumber(lineStart);
-    }
-
-    public void addRequest(final String fileName, final BlameRequest blameRequest) {
-        blamesPerFile.put(fileName, blameRequest);
-    }
-
+    /**
+     * Returns whether there are files with blames in this instance.
+     *
+     * @return {@code true} if there a no blames available, {@code false} otherwise
+     */
     public boolean isEmpty() {
         return blamesPerFile.isEmpty();
     }
 
+    /**
+     * Returns the number of files that have been added to this instance.
+     *
+     * @return number of affected files with blames
+     */
     public int size() {
         return blamesPerFile.size();
+    }
+
+    /**
+     * Returns whether the specified file already has been added.
+     *
+     * @param fileName
+     *         the name of the file
+     *
+     * @return {@code true} if the file already has been added, {@code false} otherwise
+     */
+    public boolean contains(final String fileName) {
+        return blamesPerFile.containsKey(fileName);
+    }
+
+    /**
+     * Adds the specified request to this instance.
+     *
+     * @param fileName
+     *         the absolute file name that will be used as a key
+     * @param blameRequest
+     *         the blame request to add
+     */
+    public void addRequest(final String fileName, final BlameRequest blameRequest) {
+        blamesPerFile.put(fileName, blameRequest);
+    }
+
+    /**
+     * Adds the specified line number for the specified file to this instance.
+     *
+     * @param fileName
+     *         the absolute file name that will be used as a key
+     * @param lineStart
+     *         the line number to find the blame for
+     */
+    public void addLine(final String fileName, final int lineStart) {
+        BlameRequest request = blamesPerFile.get(fileName);
+        request.addLineNumber(lineStart);
     }
 
     public Set<String> getFiles() {

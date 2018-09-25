@@ -3,7 +3,7 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Severity;
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
