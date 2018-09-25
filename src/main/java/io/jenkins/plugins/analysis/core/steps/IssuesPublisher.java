@@ -131,6 +131,9 @@ class IssuesPublisher {
         DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector), run.getNumber());
         QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
         reportHealth(filtered);
+        blames.getInfoMessages().forEach(filtered::logInfo);
+        blames.getErrorMessages().forEach(filtered::logError);
+        blames.clearMessages();
         logger.log(filtered);
         return new AnalysisHistory(run, selector).getResult()
                 .map(previous -> new AnalysisResult(run, deltaReport, blames, qualityGateStatus, previous))

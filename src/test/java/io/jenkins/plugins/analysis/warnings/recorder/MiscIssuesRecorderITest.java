@@ -76,6 +76,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         verifyAndChangeEntry(form, "reportEncoding", "reportEncoding");
         verifyAndChangeEntry(form, "sourceCodeEncoding", "sourceCodeEncoding");
 
+        verifyAndChangeEntry(form, "blameDisabled", false);
         verifyAndChangeEntry(form, "ignoreQualityGate", false);
         verifyAndChangeEntry(form, "ignoreFailedBuilds", true);
         verifyAndChangeEntry(form, "referenceJobName", "referenceJobName");

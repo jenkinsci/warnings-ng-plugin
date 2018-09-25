@@ -178,7 +178,7 @@ public class GitBlamer implements Blamer {
         List<String> errorLog = new ArrayList<>();
 
         for (Issue issue : report) {
-            if (issue.getLineStart() > 0) {
+            if (issue.getLineStart() > 0 && issue.hasFileName()) {
                 String storedFileName = issue.getFileName();
                 if (blames.contains(storedFileName)) {
                     blames.addLine(storedFileName, issue.getLineStart());

@@ -43,7 +43,6 @@ import hudson.markup.RawHtmlMarkupFormatter;
 import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
-import hudson.plugins.analysis.core.GlobalSettings;
 
 /**
  * Build view that shows the details for a subset of issues.
@@ -317,8 +316,8 @@ public class IssuesDetail implements ModelObject {
      *         and commit information are omitted
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public boolean isAuthorInformationEnabled() {
-        return !GlobalSettings.instance().getNoAuthors();
+    public boolean isBlameDisabled() {
+        return result.getBlames().isEmpty(); 
     }
 
     /**

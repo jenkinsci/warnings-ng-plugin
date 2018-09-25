@@ -17,7 +17,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.Blames;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -36,6 +36,7 @@ public class ScanForIssuesStep extends Step {
     private String sourceCodeEncoding;
     private String pattern;
     private StaticAnalysisTool tool;
+    private boolean isBlameDisabled;
 
     /**
      * Creates a new instance of {@link ScanForIssuesStep}.
@@ -67,6 +68,20 @@ public class ScanForIssuesStep extends Step {
     @CheckForNull
     public StaticAnalysisTool getTool() {
         return tool;
+    }
+
+    /**
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    public boolean getBlameDisabled() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setBlameDisabled(final boolean blameDisabled) {
+        this.isBlameDisabled = blameDisabled;
     }
 
     /**
@@ -125,6 +140,7 @@ public class ScanForIssuesStep extends Step {
         private final String sourceCodeEncoding;
         private final StaticAnalysisTool tool;
         private final String pattern;
+        private final boolean isBlameDisabled;
 
         /**
          * Creates a new instance of the step execution object.
@@ -141,6 +157,7 @@ public class ScanForIssuesStep extends Step {
             sourceCodeEncoding = step.getSourceCodeEncoding();
             tool = step.getTool();
             pattern = step.getPattern();
+            isBlameDisabled = step.getBlameDisabled();
         }
 
         @Override
@@ -153,9 +170,17 @@ public class ScanForIssuesStep extends Step {
                     new LogHandler(listener, tool.getName()));
             
             Report report = issuesScanner.scan(pattern, getRun().getLogFile());
-            Blamer blamer = BlameFactory.createBlamer(getRun(), workspace, listener);
+            return new AnnotatedReport(report, blame(report, workspace, listener));
+        }
 
-            return new AnnotatedReport(report, blamer.blame(report));
+        private Blames blame(final Report report, final FilePath workspace, final TaskListener listener)
+                throws IOException, InterruptedException {
+            if (isBlameDisabled) {
+                Blames blames = new Blames();
+                blames.logInfo("Skipping blaming as requested in the job configuration");
+                return blames;
+            }
+            return BlameFactory.createBlamer(getRun(), workspace, listener).blame(report);
         }
     }
 

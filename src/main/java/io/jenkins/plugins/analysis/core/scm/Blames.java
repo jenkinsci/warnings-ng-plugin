@@ -120,4 +120,12 @@ public class Blames implements Serializable {
     public BlameRequest getFile(final String fileName) {
         return blamesPerFile.get(fileName);
     }
+
+    /**
+     * Clears all info and error messages.
+     */
+    public void clearMessages() {
+        errorMessages.clear();
+        infoMessages.clear();
+    }
 }

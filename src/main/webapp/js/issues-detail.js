@@ -247,44 +247,46 @@
     function showTable(id) {
         // Create a data table instance for the issues table. 
         var table = $(id);
-        var dataTable = table.DataTable({
-            pagingType: 'numbers',  // Page number button only
-            order: [[1, 'asc']],
-            columnDefs: [{
-                targets: 0,         // First column contains details button
-                orderable: false
-            }]
-        });
+        if (table.length) {
+            var dataTable = table.DataTable({
+                pagingType: 'numbers',  // Page number button only
+                order: [[1, 'asc']],
+                columnDefs: [{
+                    targets: 0,         // First column contains details button
+                    orderable: false
+                }]
+            });
 
-        // Add event listener for opening and closing details
-        table.on('click', 'div.details-control', function () {
-            var tr = $(this).parents('tr');
-            var row = dataTable.row(tr);
+            // Add event listener for opening and closing details
+            table.on('click', 'div.details-control', function () {
+                var tr = $(this).parents('tr');
+                var row = dataTable.row(tr);
 
-            if (row.child.isShown()) {
-                // This row is already open - close it
-                row.child.hide();
-                tr.removeClass('shown');
-            } else {
-                // Open this row
-                row.child($(this).data('description')).show();
-                tr.addClass('shown');
-            }
-        });
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    // Open this row
+                    row.child($(this).data('description')).show();
+                    tr.addClass('shown');
+                }
+            });
 
-        // Content is loaded on demand: if the active tab shows the table, then content is loaded using Ajax
-        var tabToggleLink = $('a[data-toggle="tab"]');
-        tabToggleLink.on('show.bs.tab', function (e) {
-            var activeTab = $(e.target).attr('href');
-            if (activeTab === (id + 'Content') && dataTable.data().length === 0) {
-                view.getTableModel(id,  function (t) {
-                    (function ($) {
-                        var table = $(id).DataTable();
-                        table.rows.add(t.responseObject().data).draw()
-                    })(jQuery);
-                });
-            }
-        });
+            // Content is loaded on demand: if the active tab shows the table, then content is loaded using Ajax
+            var tabToggleLink = $('a[data-toggle="tab"]');
+            tabToggleLink.on('show.bs.tab', function (e) {
+                var activeTab = $(e.target).attr('href');
+                if (activeTab === (id + 'Content') && dataTable.data().length === 0) {
+                    view.getTableModel(id, function (t) {
+                        (function ($) {
+                            var table = $(id).DataTable();
+                            table.rows.add(t.responseObject().data).draw()
+                        })(jQuery);
+                    });
+                }
+            });
+        }
     }
 })(jQuery);
 

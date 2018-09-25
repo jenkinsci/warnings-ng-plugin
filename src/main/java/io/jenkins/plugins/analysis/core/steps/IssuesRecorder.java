@@ -25,7 +25,7 @@ import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import jenkins.tasks.SimpleBuildStep;
@@ -87,6 +87,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
+    
+    private boolean isBlameDisabled;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -173,6 +175,20 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setAggregatingResults(final boolean aggregatingResults) {
         this.isAggregatingResults = aggregatingResults;
+    }
+
+    /**
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    public boolean getBlameDisabled() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setBlameDisabled(final boolean blameDisabled) {
+        this.isBlameDisabled = blameDisabled;
     }
 
     /**
@@ -555,12 +571,21 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     public void publishResult(final Run<?, ?> run,
             final FilePath workspace, final TaskListener listener, final String loggerName, final Report report,
             final String name) {
-        Blamer blamer = BlameFactory.createBlamer(run, workspace, listener);
-        IssuesPublisher publisher = new IssuesPublisher(run, report, blamer.blame(report), getFilters(),
+        IssuesPublisher publisher = new IssuesPublisher(run, report, blame(report, run, workspace, listener), getFilters(),
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), new QualityGate(thresholds),
                 name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report));
         publisher.attachAction();
+    }
+
+    private Blames blame(final Report report, final Run<?, ?> run, final FilePath workspace, 
+            final TaskListener listener) {
+        if (isBlameDisabled) {
+            Blames blames = new Blames();
+            blames.logInfo("Skipping blaming as requested in the job configuration");
+            return blames;
+        }
+        return BlameFactory.createBlamer(run, workspace, listener).blame(report);
     }
 
     private String expandEnvironmentVariables(final Run<?, ?> run, final TaskListener listener, final String pattern)
