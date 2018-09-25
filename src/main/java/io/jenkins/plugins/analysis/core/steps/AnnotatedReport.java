@@ -64,7 +64,7 @@ public class AnnotatedReport implements Serializable {
     public void addAll(final AnnotatedReport... reports) {
         for (AnnotatedReport annotatedReport : reports) {
             report.addAll(annotatedReport.getReport());
-            blames.add(annotatedReport.getBlames());
+            blames.addAll(annotatedReport.getBlames());
         }
     }
 }

@@ -115,6 +115,33 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
         return emailByLine.get(line);
     }
 
+    /**
+     * Merges the lines of the other blame request with the lines of this instance.
+     *
+     * @param otherRequest
+     *         the other request
+     *
+     * @throws IllegalArgumentException
+     *         if the file name of the other request does not match
+     */
+    public void merge(final BlameRequest otherRequest) {
+        if (otherRequest.getFileName().equals(getFileName())) {
+            for (Integer otherLine : otherRequest) {
+                if (!lines.contains(otherLine)) {
+                    lines.add(otherLine);
+                    commitByLine.put(otherLine, otherRequest.getCommit(otherLine));
+                    nameByLine.put(otherLine, otherRequest.getName(otherLine));
+                    emailByLine.put(otherLine, otherRequest.getEmail(otherLine));
+                }
+            }
+        }
+        else {
+            throw new IllegalArgumentException(
+                    String.format("File names of this instance: %s, other file name %s",
+                            getFileName(), otherRequest.getFileName()));
+        }
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

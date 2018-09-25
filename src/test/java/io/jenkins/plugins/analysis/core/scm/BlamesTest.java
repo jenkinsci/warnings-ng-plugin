@@ -18,6 +18,9 @@ class BlamesTest {
     private static final String ABSOLUTE_PATH = WORKSPACE + RELATIVE_PATH;
     private static final String ANOTHER_FILE = "another-file.txt";
     private static final String ANOTHER_ABSOLUTE_PATH = WORKSPACE + ANOTHER_FILE;
+    private static final String COMMIT = "commit";
+    private static final String NAME = "name";
+    private static final String EMAIL = "email";
 
     @Test
     void shouldCreateEmptyDefaultValue() {
@@ -88,5 +91,59 @@ class BlamesTest {
         assertThatThrownBy(() -> { blames.get(wrongFile); })
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining(wrongFile);
+    }
+    
+    @Test
+    void shouldAggregateBlamesOfSameFile() {
+        Blames blames = new Blames(WORKSPACE);
+
+        blames.addLine(ABSOLUTE_PATH, 1);
+        setDetails(blames.get(ABSOLUTE_PATH), 1);
+        blames.addLine(ABSOLUTE_PATH, 2);
+        setDetails(blames.get(ABSOLUTE_PATH), 2);
+
+        Blames another = new Blames(WORKSPACE);
+
+        another.addLine(ABSOLUTE_PATH, 2);
+        setDetails(another.get(ABSOLUTE_PATH), 2);
+        another.addLine(ABSOLUTE_PATH, 3);
+        setDetails(another.get(ABSOLUTE_PATH), 3);
+        
+        blames.addAll(another);
+
+        BlameRequest expected = new BlameRequest(RELATIVE_PATH, 1).addLineNumber(2).addLineNumber(3);
+        setDetails(expected, 1);
+        setDetails(expected, 2);
+        setDetails(expected, 3);
+        assertThat(blames.getRequests()).containsExactly(expected);
+    }
+
+    private void setDetails(final BlameRequest request, final int lineNumber) {
+        request.setCommit(lineNumber, COMMIT);
+        request.setName(lineNumber, NAME);
+        request.setEmail(lineNumber, EMAIL);
+    }
+
+
+    @Test
+    void shouldAggregateBlamesOfDifferentFiles() {
+        Blames blames = new Blames(WORKSPACE);
+
+        blames.addLine(ABSOLUTE_PATH, 1);
+        blames.addLine(ABSOLUTE_PATH, 2);
+
+        Blames another = new Blames(WORKSPACE);
+
+        another.addLine(ANOTHER_ABSOLUTE_PATH, 2);
+        another.addLine(ANOTHER_ABSOLUTE_PATH, 3);
+        
+        blames.addAll(another);
+
+        BlameRequest firstBlame = new BlameRequest(RELATIVE_PATH, 1).addLineNumber(2);
+        BlameRequest secondBlame = new BlameRequest(ANOTHER_FILE, 2).addLineNumber(3);
+
+        assertThat(blames.getRequests()).containsExactlyInAnyOrder(firstBlame, secondBlame);
+        assertThat(blames.get(ABSOLUTE_PATH)).isEqualTo(firstBlame);
+        assertThat(blames.get(ANOTHER_ABSOLUTE_PATH)).isEqualTo(secondBlame);
     }
 }

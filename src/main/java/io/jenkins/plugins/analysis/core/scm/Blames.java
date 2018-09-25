@@ -184,6 +184,7 @@ public class Blames implements Serializable {
      *         absolute file name
      *
      * @return the blames for that file
+     * @throws NoSuchElementException if the file name is not registered
      */
     public BlameRequest get(final String fileName) {
         if (contains(fileName)) {
@@ -192,9 +193,21 @@ public class Blames implements Serializable {
         throw new NoSuchElementException("No information for file %s stored", fileName);
     }
 
-    public void add(final Blames blames) {
-        // FIXME: we need to actually merge the results
-        blamesPerFile.putAll(blames.blamesPerFile);
+    /**
+     * Merges all specified blames with the current set of blames.
+     * 
+     * @param other the blames to add
+     */
+    public void addAll(final Blames other) {
+        for (String otherFile : other.blamesPerFile.keySet()) {
+            BlameRequest otherRequest = other.get(otherFile);
+            if (contains(otherFile)) {
+                get(otherFile).merge(otherRequest);
+            }
+            else {
+                blamesPerFile.put(otherFile, otherRequest);
+            }
+        }
     }
 
     /**
