@@ -96,9 +96,9 @@ public class GitBlamer implements Blamer {
 
     private Blames fillBlameResults(final Blames blames,
             final Map<String, BlameResult> blameResults) {
-        for (String fileName : blames.getFiles()) {
-            BlameRequest request = blames.getRequest(fileName);
-            BlameResult blame = blameResults.get(request.getFileName());
+        for (BlameRequest request : blames.getRequests()) {
+            String fileName = request.getFileName();
+            BlameResult blame = blameResults.get(fileName);
             if (blame == null) {
                 blames.logInfo("No blame details found for %s.%n", fileName);
             }

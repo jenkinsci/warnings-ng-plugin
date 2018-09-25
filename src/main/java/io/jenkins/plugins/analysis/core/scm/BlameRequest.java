@@ -37,8 +37,9 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
         add(lineNumber);
     }
 
-    private void add(final int lineNumber) {
+    private BlameRequest add(final int lineNumber) {
         lines.add(lineNumber);
+        return this;
     }
 
     /**
@@ -47,8 +48,8 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
      * @param lineNumber
      *         the line number to add
      */
-    void addLineNumber(final int lineNumber) {
-        add(lineNumber);
+    BlameRequest addLineNumber(final int lineNumber) {
+        return add(lineNumber);
     }
 
     public String getFileName() {
@@ -112,5 +113,41 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
 
     public String getEmail(final int line) {
         return emailByLine.get(line);
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        BlameRequest request = (BlameRequest) o;
+
+        if (!fileName.equals(request.fileName)) {
+            return false;
+        }
+        if (!lines.equals(request.lines)) {
+            return false;
+        }
+        if (!commitByLine.equals(request.commitByLine)) {
+            return false;
+        }
+        if (!nameByLine.equals(request.nameByLine)) {
+            return false;
+        }
+        return emailByLine.equals(request.emailByLine);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = fileName.hashCode();
+        result = 31 * result + lines.hashCode();
+        result = 31 * result + commitByLine.hashCode();
+        result = 31 * result + nameByLine.hashCode();
+        result = 31 * result + emailByLine.hashCode();
+        return result;
     }
 }

@@ -56,16 +56,16 @@ public class ReferenceDetailsModel extends DetailsTableModel {
         columns.add(formatFileName(issue, fileNameRenderer));
         columns.add(formatAge(issue, ageBuilder));
         if (blames.contains(issue.getFileName())) {
-            BlameRequest blameRequest = blames.getFile(issue.getFileName());
+            BlameRequest blameRequest = blames.get(issue.getFileName());
             int line = issue.getLineStart();
             columns.add(blameRequest.getName(line));
             columns.add(blameRequest.getEmail(line));
             columns.add(blameRequest.getCommit(line));
         }
         else {
-            columns.add("Ich");
-            columns.add("ulli@ich.de");
-            columns.add("##34234212131221");
+            columns.add("-");
+            columns.add("-");
+            columns.add("-");
         }
         return columns;
     }

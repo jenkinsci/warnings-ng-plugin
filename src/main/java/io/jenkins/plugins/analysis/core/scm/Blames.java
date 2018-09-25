@@ -14,6 +14,8 @@ import org.eclipse.collections.impl.factory.Lists;
 
 import com.google.errorprone.annotations.FormatMethod;
 
+import edu.hm.hafner.util.NoSuchElementException;
+
 /**
  * Provides access to the blame information of report. Collects all blames for a set of affected files. Additionally,
  * info and error messages during the SCM processing will be stored.
@@ -36,13 +38,12 @@ public class Blames implements Serializable {
     }
 
     /**
-     * Creates an empty instance of {@link Blames} that will work on the specified workspace. 
+     * Creates an empty instance of {@link Blames} that will work on the specified workspace.
      */
     public Blames(final String workspace) {
         this.workspace = workspace;
     }
 
-    
     /**
      * Returns whether there are files with blames in this instance.
      *
@@ -74,7 +75,8 @@ public class Blames implements Serializable {
     }
 
     /**
-     * Adds a blame request for the specified affected file and line number.
+     * Adds a blame request for the specified affected file and line number. This file and line will be processed by Git
+     * blame later on.
      *
      * @param fileName
      *         the absolute file name that will be used as a key
@@ -103,17 +105,14 @@ public class Blames implements Serializable {
             request.addLineNumber(lineStart);
         }
     }
-    
+
+    /**
+     * Returns the absolute file names of the affected files that will be processed by Git blame.
+     *
+     * @return the file names
+     */
     public Set<String> getFiles() {
         return blamesPerFile.keySet();
-    }
-
-    public BlameRequest getRequest(final String fileName) {
-        return blamesPerFile.get(fileName);
-    }
-
-    public Collection<BlameRequest> getRequests() {
-        return blamesPerFile.values();
     }
 
     /**
@@ -169,13 +168,33 @@ public class Blames implements Serializable {
         return Lists.immutable.ofAll(errorMessages);
     }
 
+    /**
+     * Returns all stored requests.
+     *
+     * @return the requests
+     */
+    public Collection<BlameRequest> getRequests() {
+        return blamesPerFile.values();
+    }
+
+    /**
+     * Returns the blames for the specified file.
+     *
+     * @param fileName
+     *         absolute file name
+     *
+     * @return the blames for that file
+     */
+    public BlameRequest get(final String fileName) {
+        if (contains(fileName)) {
+            return blamesPerFile.get(fileName);
+        }
+        throw new NoSuchElementException("No information for file %s stored", fileName);
+    }
+
     public void add(final Blames blames) {
         // FIXME: we need to actually merge the results
         blamesPerFile.putAll(blames.blamesPerFile);
-    }
-
-    public BlameRequest getFile(final String fileName) {
-        return blamesPerFile.get(fileName);
     }
 
     /**
