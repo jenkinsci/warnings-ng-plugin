@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.scm;
 
 import org.junit.jupiter.api.Test;
 
+import static io.jenkins.plugins.analysis.core.scm.BlameRequest.EMPTY;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -70,4 +71,14 @@ class BlameRequestTest {
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("wrong").hasMessageContaining("file");
     }
-}
+
+    @Test
+    void shouldReturnMeaningfulDefaults() {
+        BlameRequest request = new BlameRequest("file", 1);
+        
+        assertThat(request.getCommit(2)).isEqualTo(EMPTY);
+        assertThat(request.getEmail(2)).isEqualTo(EMPTY);
+        assertThat(request.getName(2)).isEqualTo(EMPTY);
+    }
+
+    }

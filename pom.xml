@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.9</version>
+    <version>3.23</version>
     <relativePath />
   </parent>
 
@@ -23,11 +23,11 @@
     <!-- Override properties defined in parent POM -->
     <jenkins.version>2.89.1</jenkins.version>
     <java.level>8</java.level>
-    <jenkins-test-harness.version>2.40-20180612.101324-2</jenkins-test-harness.version>
+    <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>1.0.0-beta2-SNAPSHOT</analysis-model-api.version>
-    <analysis-model.version>1.0.0-RC7-SNAPSHOT</analysis-model.version>
+    <analysis-model-api.version>1.0.0-beta2</analysis-model-api.version>
+    <analysis-model.version>1.0.0-RC8</analysis-model.version>
 
     <commons.lang.version>3.8</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>

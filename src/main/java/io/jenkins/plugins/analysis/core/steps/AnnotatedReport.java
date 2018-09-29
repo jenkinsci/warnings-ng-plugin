@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.google.errorprone.annotations.FormatMethod;
 
@@ -31,9 +32,32 @@ public class AnnotatedReport implements Serializable {
         this.blames = blames;
     }
 
+    /**
+     * Creates a new instance of {@link AnnotatedReport}. The blames will be initialized empty.
+     *
+     * @param report
+     *         report with issues
+     */
+    public AnnotatedReport(final Report report) {
+        this(report, new Blames());
+    }
+
+    /**
+     * Creates a new instance of {@link AnnotatedReport}. Blames and report will be initialized empty.
+     */
     public AnnotatedReport() {
-        report = new Report();
-        blames = new Blames();
+        this(new Report());
+    }
+
+    /**
+     * Creates a new instance of {@link AnnotatedReport} as an aggregation of the specified reports. 
+     */
+    public AnnotatedReport(final List<AnnotatedReport> reports) {
+        this();
+        
+        for (AnnotatedReport report : reports) {
+            add(report);
+        }
     }
 
     public Blames getBlames() {
@@ -63,8 +87,12 @@ public class AnnotatedReport implements Serializable {
 
     public void addAll(final AnnotatedReport... reports) {
         for (AnnotatedReport annotatedReport : reports) {
-            report.addAll(annotatedReport.getReport());
-            blames.addAll(annotatedReport.getBlames());
+            add(annotatedReport);
         }
+    }
+
+    private void add(final AnnotatedReport annotatedReport) {
+        report.addAll(annotatedReport.getReport());
+        blames.addAll(annotatedReport.getBlames());
     }
 }

@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
@@ -10,7 +9,6 @@ import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 
-import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
@@ -28,7 +26,7 @@ import hudson.model.BuildListener;
  */
 public class IssuesAggregator extends MatrixAggregator {
     private final IssuesRecorder recorder;
-    private final MutableMap<String, List<Report>> results = Maps.mutable.empty();
+    private final MutableMap<String, List<AnnotatedReport>> results = Maps.mutable.empty();
     private final List<String> names = Lists.mutable.empty();
 
     private final ReentrantLock aggregationTableLock = new ReentrantLock();
@@ -74,23 +72,26 @@ public class IssuesAggregator extends MatrixAggregator {
 
     private void initializeMap(final List<ResultAction> actions) {
         for (ResultAction action : actions) {
-            results.put(action.getId(), Lists.mutable.of(action.getResult().getIssues()));
+            results.put(action.getId(), Lists.mutable.of(createReport(action.getResult())));
         }
+    }
+
+    private AnnotatedReport createReport(final AnalysisResult result) {
+        return new AnnotatedReport(result.getIssues(), result.getBlames());
     }
 
     private void updateMap(final List<ResultAction> actions) {
         for (ResultAction action : actions) {
-            List<Report> runs = results.get(action.getId());
-            runs.add(action.getResult().getIssues());
+            List<AnnotatedReport> runs = results.get(action.getId());
+            runs.add(createReport(action.getResult()));
         }
     }
 
     @Override
-    public boolean endBuild() throws IOException, InterruptedException {
-        for (Entry<String, List<Report>> reportsPerId : results.entrySet()) {
-            Report aggregatedReport = new Report(reportsPerId.getValue());
-            recorder.publishResult(build, build.getWorkspace(), listener, Messages.Tool_Default_Name(), aggregatedReport,
-                    StringUtils.EMPTY);
+    public boolean endBuild() {
+        for (Entry<String, List<AnnotatedReport>> reportsPerId : results.entrySet()) {
+            AnnotatedReport aggregatedReport = new AnnotatedReport(reportsPerId.getValue());
+            recorder.publishResult(build, listener, Messages.Tool_Default_Name(), aggregatedReport, StringUtils.EMPTY);
         }
         return true;
     }

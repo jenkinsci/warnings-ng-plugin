@@ -45,8 +45,6 @@ import hudson.util.ListBoxModel;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class PublishIssuesStep extends Step {
-    private static final Severity DEFAULT_MINIMUM_PRIORITY = Severity.WARNING_LOW;
-
     private final AnnotatedReport[] reports;
 
     private String sourceCodeEncoding;
@@ -57,7 +55,7 @@ public class PublishIssuesStep extends Step {
 
     private int healthy;
     private int unhealthy;
-    private Severity minimumSeverity = DEFAULT_MINIMUM_PRIORITY;
+    private Severity minimumSeverity = Severity.WARNING_LOW;
     private final Thresholds thresholds = new Thresholds();
 
     private List<RegexpFilter> filters = new ArrayList<>();
@@ -449,8 +447,7 @@ public class PublishIssuesStep extends Step {
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report.getReport(), report.getBlames(), filters, 
-                    healthDescriptor, qualityGate,
-                    name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
+                    healthDescriptor, qualityGate, name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
                     getCharset(sourceCodeEncoding), getLogger());
             return publisher.attachAction();
         }

@@ -16,6 +16,9 @@ class BlamesTest {
     private static final String RELATIVE_PATH = "with/file.txt";
     private static final String WORKSPACE = "/absolute/path/to/workspace/";
     private static final String ABSOLUTE_PATH = WORKSPACE + RELATIVE_PATH;
+    private static final String WINDOWS_WORKSPACE = "C:\\absolute\\path\\to\\workspace\\";
+    private static final String WINDOWS_RELATIVE_PATH = "with/file.txt";
+    private static final String WINDOWS_ABSOLUTE_PATH = "C:/absolute/path/to/workspace/" + RELATIVE_PATH;
     private static final String ANOTHER_FILE = "another-file.txt";
     private static final String ANOTHER_ABSOLUTE_PATH = WORKSPACE + ANOTHER_FILE;
     private static final String COMMIT = "commit";
@@ -51,6 +54,20 @@ class BlamesTest {
         assertThat(blames.size()).isEqualTo(1);
         assertThat(blames).hasFiles(ABSOLUTE_PATH);
         assertThat(blames.contains(ABSOLUTE_PATH)).isTrue();
+        
+        assertThat(blames.getRequests()).containsExactly(new BlameRequest(RELATIVE_PATH, 1));
+    }
+    
+    @Test
+    void shouldConvertWindowsPathToUnix() {
+        Blames blames = new Blames(WINDOWS_WORKSPACE);
+
+        blames.addLine(WINDOWS_ABSOLUTE_PATH, 1);
+
+        assertThat(blames).isNotEmpty();
+        assertThat(blames.size()).isEqualTo(1);
+        assertThat(blames).hasFiles(WINDOWS_ABSOLUTE_PATH);
+        assertThat(blames.contains(WINDOWS_ABSOLUTE_PATH)).isTrue();
         
         assertThat(blames.getRequests()).containsExactly(new BlameRequest(RELATIVE_PATH, 1));
     }

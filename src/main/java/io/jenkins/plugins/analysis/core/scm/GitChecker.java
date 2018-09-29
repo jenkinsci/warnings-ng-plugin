@@ -61,9 +61,9 @@ public class GitChecker {
         try {
             EnvVars environment = build.getEnvironment(listener);
             GitClient gitClient = asGit(scm).createClient(listener, environment, build, workspace);
-            String gitCommit = environment.get("GIT_COMMIT");
+            String gitCommit = environment.getOrDefault("GIT_COMMIT", "HEAD");
 
-            return new GitBlamer(gitClient, gitCommit, listener);
+            return new GitBlamer(gitClient, gitCommit);
         }
         catch (IOException | InterruptedException e) {
             return new NullBlamer();

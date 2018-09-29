@@ -52,11 +52,9 @@ class IssuesPublisher {
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final Report report, final Blames blames,
-            final List<RegexpFilter> filters,
-            final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
+            final List<RegexpFilter> filters, final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
-            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding,
-            final LogHandler logger) {
+            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger) {
         this.report = report;
         id = report.getId();
         this.blames = blames;
@@ -131,9 +129,6 @@ class IssuesPublisher {
         DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector), run.getNumber());
         QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
         reportHealth(filtered);
-        blames.getInfoMessages().forEach(filtered::logInfo);
-        blames.getErrorMessages().forEach(filtered::logError);
-        blames.clearMessages();
         logger.log(filtered);
         return new AnalysisHistory(run, selector).getResult()
                 .map(previous -> new AnalysisResult(run, deltaReport, blames, qualityGateStatus, previous))

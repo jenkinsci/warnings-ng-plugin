@@ -57,8 +57,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
             tool.setReportEncoding("reportEncoding");
             tool.setSourceCodeEncoding("sourceCodeEncoding");
 
-            tool.setIgnoreAnalysisResult(true);
-            tool.setOverallResultMustBeSuccess(true);
+            tool.setIgnoreQualityGate(true);
+            tool.setIgnoreFailedBuilds(true);
             tool.setReferenceJobName("referenceJobName");
 
             tool.setHealthy(10);
@@ -94,8 +94,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(recorder.getSourceCodeEncoding()).isEqualTo("new-sourceCodeEncoding");
 
         assertThat(recorder.getReferenceJobName()).isEqualTo("new-referenceJobName");
-        assertThat(recorder.getOverallResultMustBeSuccess()).isFalse();
-        assertThat(recorder.getIgnoreAnalysisResult()).isFalse();
+        assertThat(recorder.getIgnoreFailedBuilds()).isFalse();
+        assertThat(recorder.getIgnoreQualityGate()).isFalse();
 
         assertThat(recorder.getHealthy()).isEqualTo(15);
         assertThat(recorder.getUnhealthy()).isEqualTo(25);

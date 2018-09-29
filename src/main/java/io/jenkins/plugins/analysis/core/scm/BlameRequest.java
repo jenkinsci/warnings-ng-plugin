@@ -17,6 +17,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @author Ullrich Hafner
  */
 public class BlameRequest implements Iterable<Integer>, Serializable {
+    static final String EMPTY = "-";
+    
     private String fileName;
     private final Set<Integer> lines = new HashSet<Integer>();
     private final Map<Integer, String> commitByLine = new HashMap<Integer, String>();
@@ -80,7 +82,7 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
     }
 
     public String getCommit(final int line) {
-        return commitByLine.get(line);
+        return getStringValue(commitByLine, line);
     }
 
     /**
@@ -96,7 +98,7 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
     }
 
     public String getName(final int line) {
-        return nameByLine.get(line);
+        return getStringValue(nameByLine, line);
     }
 
     /**
@@ -112,7 +114,14 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
     }
 
     public String getEmail(final int line) {
-        return emailByLine.get(line);
+        return getStringValue(emailByLine, line);
+    }
+
+    private String getStringValue(final Map<Integer, String> map, final int line) {
+        if (map.containsKey(line)) {
+            return map.get(line);
+        }
+        return EMPTY;
     }
 
     /**

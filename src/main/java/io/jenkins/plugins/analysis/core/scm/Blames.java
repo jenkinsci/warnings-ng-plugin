@@ -15,6 +15,7 @@ import org.eclipse.collections.impl.factory.Lists;
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.util.NoSuchElementException;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Provides access to the blame information of report. Collects all blames for a set of affected files. Additionally,
@@ -41,7 +42,11 @@ public class Blames implements Serializable {
      * Creates an empty instance of {@link Blames} that will work on the specified workspace.
      */
     public Blames(final String workspace) {
-        this.workspace = workspace;
+        this.workspace = normalizeFileName(workspace);
+    }
+
+    private String normalizeFileName(@CheckForNull final String platformFileName) {
+        return StringUtils.replace(StringUtils.strip(platformFileName), "\\", "/");
     }
 
     /**

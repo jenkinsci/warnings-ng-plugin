@@ -1,14 +1,8 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import javax.annotation.CheckForNull;
-import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -22,15 +16,14 @@ import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import jenkins.MasterToSlaveFileCallable;
 
 import hudson.FilePath;
-import hudson.model.TaskListener;
 import hudson.plugins.git.GitException;
 import hudson.remoting.VirtualChannel;
 
 /**
- * Assigns git blames to warnings. Based on the solution by John Gibson, see JENKINS-6748.
+ * Assigns git blames to warnings. Based on the solution by John Gibson, see JENKINS-6748. This code is intended to run
+ * on the agent.
  *
  * @author Lukas Krose
  * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
@@ -39,7 +32,6 @@ public class GitBlamer implements Blamer {
     private final GitClient git;
     private final String gitCommit;
     private final FilePath workspace;
-    private final TaskListener listener;
 
     /**
      * Creates a new blamer for Git.
@@ -48,97 +40,36 @@ public class GitBlamer implements Blamer {
      *         git client
      * @param gitCommit
      *         content of environment variable GIT_COMMIT
-     * @param listener
-     *         task listener to print logging statements to
      */
-    public GitBlamer(final GitClient git, @CheckForNull final String gitCommit, final TaskListener listener) {
+    public GitBlamer(final GitClient git, final String gitCommit) {
         this.workspace = git.getWorkTree();
-        this.listener = listener;
         this.git = git;
-        this.gitCommit = StringUtils.defaultString(gitCommit, "HEAD");
-    }
-
-    /**
-     * Computes for each conflicting file a {@link BlameRequest}. Note that this call is executed on a build agent.
-     * I.e., the blamer instance and all transfer objects need to be serializable.
-     *
-     * @param blames
-     *         a mapping of file names to blame request. Each blame request defines the lines that need to be mapped to
-     *         an author.
-     *
-     * @return the same mapping, now filled with blame information
-     * @throws InterruptedException
-     *         if this operation has been canceled
-     * @throws IOException
-     *         in case of an error
-     */
-    protected Blames blameOnAgent(final Blames blames) throws InterruptedException, IOException {
-        blames.logInfo("Using GitBlamer to create author and commit information for all %d affected files.%n",
-                blames.size());
-        blames.logInfo("GIT_COMMIT='%s', workspace='%s'%n", gitCommit, git.getWorkTree());
-
-        return fillBlameResults(blames, loadBlameResultsForFiles(blames));
-    }
-
-    private Map<String, BlameResult> loadBlameResultsForFiles(final Blames blames)
-            throws InterruptedException, IOException {
-        try {
-            ObjectId headCommit = git.revParse(gitCommit);
-            return git.withRepository(new BlameCallback(blames, headCommit, blames.getRequests()));
-        }
-        catch (GitException exception) {
-            blames.logError("Can't determine head commit using 'git rev-parse'. Skipping blame. %n%s%n",
-                    exception.getMessage());
-
-            return Collections.emptyMap();
-        }
-    }
-
-    private Blames fillBlameResults(final Blames blames,
-            final Map<String, BlameResult> blameResults) {
-        for (BlameRequest request : blames.getRequests()) {
-            String fileName = request.getFileName();
-            BlameResult blame = blameResults.get(fileName);
-            if (blame == null) {
-                blames.logInfo("No blame details found for %s.%n", fileName);
-            }
-            else {
-                for (int line : request) {
-                    int lineIndex = line - 1; // first line is index 0
-                    if (lineIndex < blame.getResultContents().size()) {
-                        PersonIdent who = blame.getSourceAuthor(lineIndex);
-                        if (who == null) {
-                            blames.logInfo("No author information found for line %d in file %s.%n", lineIndex,
-                                    fileName);
-                        }
-                        else {
-                            request.setName(line, who.getName());
-                            request.setEmail(line, who.getEmailAddress());
-                        }
-                        RevCommit commit = blame.getSourceCommit(lineIndex);
-                        if (commit == null) {
-                            blames.logInfo("No commit ID found for line %d in file %s.%n", lineIndex, fileName);
-                        }
-                        else {
-                            request.setCommit(line, commit.getName());
-                        }
-                    }
-                }
-            }
-        }
-        return blames;
+        this.gitCommit = gitCommit;
     }
 
     @Override
     public Blames blame(final Report report) {
         try {
-            if (!report.isEmpty()) {
-                return invokeBlamer(report);
+            report.logInfo("Invoking GitBlamer to create author and commit information for all affected files");
+            report.logInfo("GIT_COMMIT env = '%s'", gitCommit);
+            report.logInfo("Git working tree = '%s'", git.getWorkTree());
+
+            ObjectId headCommit = git.revParse(gitCommit);
+            if (headCommit == null) {
+                report.logError("Could not retrieve HEAD commit, aborting.");
+                return new Blames();
             }
+            report.logInfo("Git commit ID = '%s'", headCommit);
+
+            return git.withRepository(new BlameCallback(report, headCommit, workspace.getRemote()));
         }
         catch (IOException e) {
             report.logError("Computing blame information failed with an exception:%n%s%n%s",
                     e.getMessage(), ExceptionUtils.getStackTrace(e));
+        }
+        catch (GitException exception) {
+            report.logError("Can't determine head commit using 'git rev-parse'. Skipping blame. %n%s",
+                    exception.getMessage());
         }
         catch (InterruptedException e) {
             // nothing to do, already logged
@@ -146,269 +77,129 @@ public class GitBlamer implements Blamer {
         return new Blames();
     }
 
-    private Blames invokeBlamer(final Report report) throws IOException, InterruptedException {
-        final Blames blames = extractConflictingFiles(report);
+    static class BlameCallback implements RepositoryCallback<Blames> {
+        private final Report report;
+        private final ObjectId headCommit;
+        private final String workspace;
 
-        Blames blamesOfConflictingFiles = workspace.act(
-                new MasterToSlaveFileCallable<Blames>() {
-                    @Override
-                    public Blames invoke(final File workspace, final VirtualChannel channel)
-                            throws IOException, InterruptedException {
-                        return blameOnAgent(blames);
-                    }
-                });
-
-        return blamesOfConflictingFiles;
-    }
-
-    /**
-     * Extracts the relative file names of the files that contain annotations to make sure every file is blamed only
-     * once.
-     *
-     * @param report
-     *         the issues to extract the file names from
-     *
-     * @return a mapping of absolute to relative file names of the conflicting files
-     */
-    protected Blames extractConflictingFiles(final Report report) {
-        Blames blames = new Blames();
-
-        for (Issue issue : report) {
-            if (issue.getLineStart() > 0 && issue.hasFileName()) {
-                String storedFileName = issue.getFileName();
-                if (blames.contains(storedFileName)) {
-                    blames.addLine(storedFileName, issue.getLineStart());
-                }
-                else {
-                    blames.addLine(storedFileName, issue.getLineStart());
-                }
-            }
-        }
-
-        if (blames.isEmpty()) {
-            blames.logError("Created no blame requests - Git blame will be skipped");
-        }
-        else {
-            blames.logInfo("Created blame requests for %d files - invoking Git blame on agent for each of the requests",
-                    blames.size());
-        }
-        return blames;
-    }
-
-    private static class BlameCallback implements RepositoryCallback<Map<String, BlameResult>> {
-        private Blames blames;
-        private ObjectId headCommit;
-        private Collection<BlameRequest> requests;
-
-        public BlameCallback(final Blames blames, final ObjectId headCommit,
-                final Collection<BlameRequest> requests) {
-            this.blames = blames;
+        public BlameCallback(final Report report, final ObjectId headCommit, final String workspace) {
+            this.report = report;
             this.headCommit = headCommit;
-            this.requests = requests;
+            this.workspace = workspace;
         }
 
         @Override
-        public Map<String, BlameResult> invoke(final Repository repo, final VirtualChannel channel)
-                throws InterruptedException {
-            Map<String, BlameResult> blameResults = new HashMap<String, BlameResult>();
-            if (headCommit == null) {
-                blames.logError("Could not retrieve HEAD commit, aborting.");
+        public Blames invoke(final Repository repo, final VirtualChannel channel) throws InterruptedException {
+            BlameRunner blameRunner = new BlameRunner(repo, headCommit);
+            Blames blames = extractAffectedFiles(report);
 
-                return blameResults;
+            for (BlameRequest request : blames.getRequests()) {
+                run(request, blameRunner);
+                if (Thread.interrupted()) { // Cancel request by user
+                    String message = "Thread was interrupted while computing blame information";
+                    report.logInfo(message);
+                    throw new InterruptedException(message);
+                }
             }
 
-            for (BlameRequest request : requests) {
-                BlameCommand blame = new BlameCommand(repo);
-                String fileName = request.getFileName();
-                blame.setFilePath(fileName);
-                blame.setStartCommit(headCommit);
-                try {
-                    BlameResult result = blame.call();
-                    if (result == null) {
-                        blames.logInfo("No blame results for request <%s>.%n", request);
+            report.logInfo("-> blamed authors of issues in %d files", blames.size());
+
+            return blames;
+        }
+
+        /**
+         * Extracts the relative file names of the files that contain annotations to make sure every file is blamed only
+         * once.
+         *
+         * @param report
+         *         the issues to extract the file names from
+         *
+         * @return a mapping of absolute to relative file names of the conflicting files
+         */
+        protected Blames extractAffectedFiles(final Report report) {
+            Blames blames = new Blames(workspace);
+
+            for (Issue issue : report) {
+                if (issue.getLineStart() > 0 && issue.hasFileName()) {
+                    String storedFileName = issue.getFileName();
+                    if (blames.contains(storedFileName)) {
+                        blames.addLine(storedFileName, issue.getLineStart());
                     }
                     else {
-                        blameResults.put(fileName, result);
+                        blames.addLine(storedFileName, issue.getLineStart());
                     }
-                    if (Thread.interrupted()) {
-                        String message = "Thread was interrupted while computing blame information.";
-                        blames.logInfo(message);
-                        throw new InterruptedException(message);
-                    }
-                }
-                catch (GitAPIException e) {
-                    blames.logError("Error running git blame on %s with revision %s", fileName, headCommit);
                 }
             }
+            blames.getInfoMessages().forEach(report::logInfo);
+            blames.getErrorMessages().forEach(report::logError);
+            blames.clearMessages();
+            
+            if (blames.isEmpty()) {
+                report.logError("Created no blame requests - Git blame will be skipped");
+            }
+            else {
+                report.logInfo(
+                        "Created blame requests for %d files - invoking Git blame on agent for each of the requests",
+                        blames.size());
+            }
+            return blames;
+        }
 
-            return blameResults;
+        void run(final BlameRequest request, final BlameRunner blameRunner) {
+            String fileName = request.getFileName();
+            try {
+                BlameResult blame = blameRunner.run(fileName);
+                if (blame == null) {
+                    report.logError("No blame results for request <%s>.%n", request);
+                }
+                else {
+                    for (int line : request) {
+                        int lineIndex = line - 1; // first line is index 0
+                        if (lineIndex < blame.getResultContents().size()) {
+                            PersonIdent who = blame.getSourceAuthor(lineIndex);
+                            if (who == null) {
+                                report.logInfo("No author information found for line %d in file %s", lineIndex,
+                                        fileName);
+                            }
+                            else {
+                                request.setName(line, who.getName());
+                                request.setEmail(line, who.getEmailAddress());
+                            }
+                            RevCommit commit = blame.getSourceCommit(lineIndex);
+                            if (commit == null) {
+                                report.logInfo("No commit ID found for line %d in file %s", lineIndex, fileName);
+                            }
+                            else {
+                                request.setCommit(line, commit.getName());
+                            }
+                        }
+                    }
+                }
+            }
+            catch (GitAPIException e) {
+                report.logError("Error running git blame on %s with revision %s", fileName, headCommit);
+            }
         }
     }
 
-//    /**
-//     * Get a repository browser link for the specified commit.
-//     *
-//     * @param commitId the id of the commit to be linked.
-//     * @return The link or {@code null} if one is not available.
-//     */
-//
-//    public URL urlForCommitId(final String commitId) {
-//        if (commitUrlsAttempted) {
-//            return commitUrls == null ? null : commitUrls.get(commitId);
-//        }
-//        commitUrlsAttempted = true;
-//
-//        Run<?, ?> run = getOwner();
-//        if (run.getParent() instanceof AbstractProject) {
-//            AbstractProject aProject = (AbstractProject) run.getParent();
-//            SCM scm = aProject.getScm();
-//            //SCM scm = getOwner().getParent().getScm();
-//            if ((scm == null) || (scm instanceof NullSCM)) {
-//                scm = aProject.getRootProject().getScm();
-//            }
-//
-//            final HashSet<String> commitIds = new HashSet<String>(getAnnotations().size());
-//            for (final FileAnnotation annot : getAnnotations()) {
-//                commitIds.add(annot.getCommitId());
-//            }
-//            commitIds.remove(null);
-//            try {
-//                commitUrls = computeUrlsForCommitIds(scm, commitIds);
-//                if (commitUrls != null) {
-//                    return commitUrls.get(commitId);
-//                }
-//            }
-//            catch (NoClassDefFoundError e) {
-//                // Git wasn't installed, ignore
-//            }
-//        }
-//        return null;
-//    }
-//
-//    /**
-//     * Creates links for the specified commitIds using the repository browser.
-//     *
-//     * @param scm the {@code SCM} of the owning project.
-//     * @param commitIds the commit ids in question.
-//     * @return a mapping of the links or {@code null} if the {@code SCM} isn't a
-//     *  {@code GitSCM} or if a repository browser isn't set or if it isn't a
-//     *  {@code GitRepositoryBrowser}.
-//     */
-//
-//    @SuppressWarnings("REC_CATCH_EXCEPTION")
-//    public static Map<String, URL> computeUrlsForCommitIds(final SCM scm, final Set<String> commitIds) {
-//        if (!(scm instanceof GitSCM)) {
-//            return null;
-//        }
-//        if (commitIds.isEmpty()) {
-//            return null;
-//        }
-//
-//        GitSCM gscm = (GitSCM) scm;
-//        GitRepositoryBrowser browser = gscm.getBrowser();
-//        if (browser == null) {
-//            RepositoryBrowser<?> ebrowser = gscm.getEffectiveBrowser();
-//            if (ebrowser instanceof GitRepositoryBrowser) {
-//                browser = (GitRepositoryBrowser) ebrowser;
-//            }
-//            else {
-//                return null;
-//            }
-//        }
-//
-//        // This is a dirty hack because the only way to create changesets is to do it by parsing git log messages
-//        // Because what we're doing is fairly dangerous (creating minimal commit messages) just give up if there is an error
-//        try {
-//            HashMap<String, URL> result = new HashMap<String, URL>((int) (commitIds.size() * 1.5f));
-//            for (final String commitId : commitIds) {
-//                GitChangeSet cs = new GitChangeSet(Collections.singletonList("commit " + commitId), true);
-//                if (cs.getId() != null) {
-//                    result.put(commitId, browser.getChangeSetLink(cs));
-//                }
-//            }
-//
-//            return result;
-//        }
-//        // CHECKSTYLE:OFF
-//        catch (Exception e) {
-//            // CHECKSTYLE:ON
-//            // TODO: log?
-//            return null;
-//        }
-//    }
-//
-//    /**
-//     * Get a {@code User} that corresponds to this author.
-//     *
-//     * @return a {@code User} or {@code null} if one can't be created.
-//     */
-//    public User getUser() {
-//        if (userAttempted) {
-//            return user;
-//        }
-//        userAttempted = true;
-//        if ("".equals(authorName)) {
-//            return null;
-//        }
-//        Run<?, ?> run = getOwner();
-//        if (run.getParent() instanceof AbstractProject) {
-//            AbstractProject aProject = (AbstractProject) run.getParent();
-//            SCM scm = aProject.getScm();
-//
-//
-//            if ((scm == null) || (scm instanceof NullSCM)) {
-//                scm = aProject.getRootProject().getScm();
-//            }
-//            try {
-//                user = findOrCreateUser(authorName, authorEmail, scm);
-//            }
-//            catch (NoClassDefFoundError e) {
-//                // Git wasn't installed, ignore
-//            }
-//        }
-//        return user;
-//    }
-//
-//
-//    /**
-//     * Returns user of the change set.  Stolen from hudson.plugins.git.GitChangeSet.
-//     *
-//     * @param fullName user name.
-//     * @param email user email.
-//     * @param scm the SCM of the owning project.
-//     * @return {@link User} or {@code null} if the {@Code SCM} isn't a {@code GitSCM}.
-//     */
-//    public static User findOrCreateUser(final String fullName, final String email, final SCM scm) {
-//        if (!(scm instanceof GitSCM)) {
-//            return null;
-//        }
-//
-//        GitSCM gscm = (GitSCM) scm;
-//        boolean createAccountBasedOnEmail = gscm.isCreateAccountBasedOnEmail();
-//
-//        User user;
-//        if (createAccountBasedOnEmail) {
-//            user = User.get(email, false);
-//
-//            if (user == null) {
-//                try {
-//                    user = User.get(email, true);
-//                    user.setFullName(fullName);
-//                    user.addProperty(new Mailer.UserProperty(email));
-//                    user.save();
-//                }
-//                catch (IOException e) {
-//                    // add logging statement?
-//                }
-//            }
-//        }
-//        else {
-//            user = User.get(fullName, false);
-//
-//            if (user == null) {
-//                user = User.get(email.split("@")[0], true);
-//            }
-//        }
-//        return user;
-//    }
+    /**
+     * Executes the Git blame command.
+     */
+    static class BlameRunner {
+        private final Repository repo;
+        private final ObjectId headCommit;
+
+        BlameRunner(final Repository repo, final ObjectId headCommit) {
+            this.repo = repo;
+            this.headCommit = headCommit;
+        }
+
+        @CheckForNull
+        BlameResult run(final String fileName) throws GitAPIException {
+            BlameCommand blame = new BlameCommand(repo);
+            blame.setFilePath(fileName);
+            blame.setStartCommit(headCommit);
+            return blame.call();
+        }
+    }
 }

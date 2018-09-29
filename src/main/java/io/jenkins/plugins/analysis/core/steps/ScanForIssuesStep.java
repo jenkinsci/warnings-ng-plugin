@@ -12,12 +12,12 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
-import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -164,23 +164,21 @@ public class ScanForIssuesStep extends Step {
         protected AnnotatedReport run() throws IOException, InterruptedException, IllegalStateException {
             FilePath workspace = getWorkspace();
             TaskListener listener = getTaskListener();
+            Blamer blamer = blame(workspace, listener);
             
             IssuesScanner issuesScanner = new IssuesScanner(tool, workspace, getCharset(reportEncoding),
-                    getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()), 
+                    getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()), blamer,
                     new LogHandler(listener, tool.getName()));
             
-            Report report = issuesScanner.scan(pattern, getRun().getLogFile());
-            return new AnnotatedReport(report, blame(report, workspace, listener));
+            return issuesScanner.scan(pattern, getRun().getLogFile());
         }
 
-        private Blames blame(final Report report, final FilePath workspace, final TaskListener listener)
+        private Blamer blame(final FilePath workspace, final TaskListener listener)
                 throws IOException, InterruptedException {
             if (isBlameDisabled) {
-                Blames blames = new Blames();
-                blames.logInfo("Skipping blaming as requested in the job configuration");
-                return blames;
+                return new NullBlamer();
             }
-            return BlameFactory.createBlamer(getRun(), workspace, listener).blame(report);
+            return BlameFactory.createBlamer(getRun(), workspace, listener);
         }
     }
 
