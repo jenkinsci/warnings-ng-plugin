@@ -57,6 +57,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
             tool.setReportEncoding("reportEncoding");
             tool.setSourceCodeEncoding("sourceCodeEncoding");
 
+            tool.setBlameDisabled(true);
             tool.setIgnoreQualityGate(true);
             tool.setIgnoreFailedBuilds(true);
             tool.setReferenceJobName("referenceJobName");
@@ -76,8 +77,9 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         verifyAndChangeEntry(form, "reportEncoding", "reportEncoding");
         verifyAndChangeEntry(form, "sourceCodeEncoding", "sourceCodeEncoding");
 
-        verifyAndChangeEntry(form, "blameDisabled", false);
-        verifyAndChangeEntry(form, "ignoreQualityGate", false);
+        verifyAndChangeEntry(form, "blameDisabled", true);
+        
+        verifyAndChangeEntry(form, "ignoreQualityGate", true);
         verifyAndChangeEntry(form, "ignoreFailedBuilds", true);
         verifyAndChangeEntry(form, "referenceJobName", "referenceJobName");
 
@@ -92,6 +94,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         IssuesRecorder recorder = getRecorder(job);
         assertThat(recorder.getReportEncoding()).isEqualTo("new-reportEncoding");
         assertThat(recorder.getSourceCodeEncoding()).isEqualTo("new-sourceCodeEncoding");
+        
+        assertThat(recorder.getBlameDisabled()).isFalse();
 
         assertThat(recorder.getReferenceJobName()).isEqualTo("new-referenceJobName");
         assertThat(recorder.getIgnoreFailedBuilds()).isFalse();

@@ -60,14 +60,14 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      */
     public enum JobResultEvaluationMode {
         /**
-         * Only jobs that have an overall result of {@link Result#SUCCESS} are considered.
+         * Only those jobs are considered that did not fail. I.e. jobs with result {@link Result#UNSTABLE} or 
+         * {@link Result#SUCCESS}.
          */
         NO_JOB_FAILURE,
 
         /**
-         * All jobs that have an overall result better or equal to {@link Result#UNSTABLE} are considered. If the job
-         * has an overall result of {@link Result#FAILURE} then it will be considered as well if the cause of the
-         * failure is the missed quality gate of the static analysis tool evaluation.
+         * All jobs are considered regardless of the result. If the job has an overall result of {@link Result#FAILURE} 
+         * then it will be considered as well.
          */
         IGNORE_JOB_RESULT
     }
@@ -99,9 +99,9 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      *         been resolved.
      * @param jobResultEvaluationMode
      *         If set to {@link JobResultEvaluationMode#NO_JOB_FAILURE}, then only successful or unstable reference
-     *         builds will be considered (since analysis results might be inaccurate if the build failed). If set
-     *         to {@link JobResultEvaluationMode#IGNORE_JOB_RESULT}, then every build that contains a static analysis
-     *         result is considered, even if the build failed. 
+     *         builds will be considered (since analysis results might be inaccurate if the build failed). If set to
+     *         {@link JobResultEvaluationMode#IGNORE_JOB_RESULT}, then every build that contains a static analysis
+     *         result is considered, even if the build failed.
      */
     public AnalysisHistory(final Run<?, ?> baseline, final ResultSelector selector,
             final QualityGateEvaluationMode qualityGateEvaluationMode,
@@ -192,7 +192,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
     private static boolean hasCorrectJobResult(final Run<?, ?> run,
             final JobResultEvaluationMode jobResultEvaluationMode) {
         if (jobResultEvaluationMode == NO_JOB_FAILURE) {
-            return run.getResult() == Result.SUCCESS;
+            return run.getResult().isBetterThan(Result.FAILURE);
         }
         return true;
     }
