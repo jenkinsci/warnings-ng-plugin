@@ -1,7 +1,9 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.InvalidPathException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,11 +112,14 @@ public class AbsolutePathGenerator {
     @VisibleForTesting
     static class FileSystem {
         String resolveFile(final String fileName, final File workspace) {
-            File remoteFile = new File(workspace, fileName);
-            if (remoteFile.exists()) {
-                return remoteFile.getAbsolutePath();
+            try {
+                Path path = workspace.toPath().resolve(fileName);
+    
+                return path.toAbsolutePath().normalize().toRealPath().toString();
             }
-            return fileName;
+            catch (IOException e){
+                return fileName; // fallback
+            }
         }
 
         boolean isRelative(final String fileName) {

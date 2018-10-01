@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.core.scm;
 
 import javax.annotation.CheckForNull;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jgit.api.BlameCommand;
@@ -50,7 +52,7 @@ public class GitBlamer implements Blamer {
     @Override
     public Blames blame(final Report report) {
         try {
-            report.logInfo("Invoking GitBlamer to create author and commit information for all affected files");
+            report.logInfo("Invoking Git blamer to create author and commit information for all affected files");
             report.logInfo("GIT_COMMIT env = '%s'", gitCommit);
             report.logInfo("Git working tree = '%s'", git.getWorkTree());
 
@@ -61,7 +63,9 @@ public class GitBlamer implements Blamer {
             }
             report.logInfo("Git commit ID = '%s'", headCommit);
 
-            return git.withRepository(new BlameCallback(report, headCommit, workspace.getRemote()));
+            String workspacePath = getWorkspacePath(workspace);
+            report.logInfo("Job workspace = '%s'", workspacePath);
+            return git.withRepository(new BlameCallback(report, headCommit, workspacePath));
         }
         catch (IOException e) {
             report.logError("Computing blame information failed with an exception:%n%s%n%s",
@@ -75,6 +79,11 @@ public class GitBlamer implements Blamer {
             // nothing to do, already logged
         }
         return new Blames();
+    }
+
+    private String getWorkspacePath(final FilePath workspace) throws IOException {
+        Path path = Paths.get(workspace.getRemote());
+        return path.toAbsolutePath().normalize().toRealPath().toString();
     }
 
     static class BlameCallback implements RepositoryCallback<Blames> {
