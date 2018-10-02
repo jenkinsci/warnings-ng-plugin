@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import javax.annotation.CheckForNull;
-import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
 
@@ -9,16 +8,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.jvnet.localizer.Localizable;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.scm.Blames;
 import static j2html.TagCreator.*;
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
 import j2html.tags.UnescapedText;
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import hudson.model.BallColor;
 import hudson.model.Run;
@@ -74,56 +71,34 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * Returns the model for the details table.
      * 
      * @return the table model
+     * @param owner
+     * @param url
      */
-    protected DetailsTableModel createTableModel() {
-        return new DetailsTableModel();
+    public DetailsTableModel getIssuesModel(final Run<?, ?> owner, final String url) {
+        return new DetailsTableModel(getAgeBuilder(owner, url),
+                getFileNameRenderer(owner), this);
     }
-    
-    /**
-     * Returns the table headers of the report table.
-     *
-     * @param report
-     *         the report to show
-     *
-     * @return the table headers
-     */
-    @SuppressWarnings("unused") // called by Jelly view
-    public List<String> getTableHeaders(final Report report) {
-        return createTableModel().getHeaders(report);
+
+    protected DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
+        return new DefaultAgeBuilder(owner.getNumber(), url);
     }
 
     /**
-     * Returns the widths of the table headers of the report table.
-     *
-     * @param report
-     *         the report to show
-     *
-     * @return the width of the table headers
+     * Returns the model for the details table.
+     * 
+     * @return the table model
+     * @param owner
+     * @param url
+     * @param blames
      */
-    @SuppressWarnings("unused") // called by Jelly view
-    public List<Integer> getTableWidths(final Report report) {
-        return createTableModel().getWidths(report);
+    public DetailsTableModel getScmModel(final Run<?, ?> owner,
+            final String url, final Blames blames) {
+        return new ReferenceDetailsModel(getAgeBuilder(owner, url),
+                getFileNameRenderer(owner), this, blames);
     }
 
-    /**
-     * Converts the specified set of issues into a table.
-     *
-     * @param report
-     *         the report to show in the table
-     * @param ageBuilder
-     *         produces the age of an issue based on the current build number
-     * @param fileNameRenderer
-     *         creates a link to the affected file (if accessible)
-     *
-     * @return the table as String
-     */
-    public JSONObject toJsonArray(final Report report, final AgeBuilder ageBuilder,
-            final FileNameRenderer fileNameRenderer) {
-        JSONArray rows = new JSONArray();
-        rows.addAll(createTableModel().getContent(report, ageBuilder, fileNameRenderer, this));
-        JSONObject data = new JSONObject();
-        data.put("data", rows);
-        return data;
+    protected FileNameRenderer getFileNameRenderer(final Run<?, ?> owner) {
+        return new FileNameRenderer(owner);
     }
 
     @VisibleForTesting

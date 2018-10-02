@@ -8,7 +8,7 @@ import org.junit.Test;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 
@@ -84,7 +84,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(project, recorder -> {
-            recorder.setIgnoreAnalysisResult(true);
+            recorder.setIgnoreQualityGate(true);
             recorder.setUnstableNewAll(3);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
@@ -111,7 +111,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
     public void shouldCreateUnstableResultWithNotIgnoredUnstableInBetween() {
         // #1 INACTIVE
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(project, recorder -> recorder.setIgnoreAnalysisResult(true));
+        IssuesRecorder issuesRecorder = enableWarnings(project, recorder -> recorder.setIgnoreQualityGate(true));
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.INACTIVE));
 
@@ -142,7 +142,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(project, recorder -> {
-            recorder.setOverallResultMustBeSuccess(true);
+            recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
             recorder.setUnstableNewAll(3);
         });
@@ -174,7 +174,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject project = createJob(JOB_NAME, "eclipse4Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, recorder -> {
-            recorder.setOverallResultMustBeSuccess(true);
+            recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
         });
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
@@ -206,7 +206,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject project = createJob(JOB_NAME, "eclipse4Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, recorder -> {
-            recorder.setOverallResultMustBeSuccess(false);
+            recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
@@ -239,7 +239,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(project, recorder -> {
-            recorder.setOverallResultMustBeSuccess(false);
+            recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
             recorder.setUnstableNewAll(3);
         });
@@ -303,7 +303,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(reference, recorder -> {
             recorder.setUnstableNewAll(3);
-            recorder.setIgnoreAnalysisResult(false);
+            recorder.setIgnoreQualityGate(false);
         });
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(2).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.PASSED));
@@ -318,7 +318,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         enableWarnings(project, recorder -> {
             recorder.setUnstableNewAll(3);
             recorder.setReferenceJobName(REFERENCE_JOB_NAME);
-            recorder.setIgnoreAnalysisResult(false);
+            recorder.setIgnoreQualityGate(false);
         });
 
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
@@ -337,7 +337,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(reference, recorder -> {
-            recorder.setIgnoreAnalysisResult(true);
+            recorder.setIgnoreQualityGate(true);
             recorder.setUnstableNewAll(3);
         });
         scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
@@ -353,7 +353,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         enableWarnings(project, recorder -> {
             recorder.setUnstableNewAll(3);
             recorder.setReferenceJobName(REFERENCE_JOB_NAME);
-            recorder.setIgnoreAnalysisResult(true);
+            recorder.setIgnoreQualityGate(true);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
                 .hasTotalSize(8)
@@ -370,7 +370,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
     public void shouldCreateUnstableResultWithNotIgnoredUnstableInBetweenWithReferenceBuild() {
         // #1 SUCCESS
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse6Warnings.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(reference, recorder -> recorder.setIgnoreAnalysisResult(true));
+        IssuesRecorder issuesRecorder = enableWarnings(reference, recorder -> recorder.setIgnoreQualityGate(true));
         scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(6).hasNewSize(0).hasQualityGateStatus(QualityGateStatus.INACTIVE));
 
@@ -386,7 +386,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         enableWarnings(project, recorder -> {
             recorder.setUnstableNewAll(3);
             recorder.setReferenceJobName(REFERENCE_JOB_NAME);
-            recorder.setIgnoreAnalysisResult(true);
+            recorder.setIgnoreQualityGate(true);
             recorder.setUnstableTotalAll(9);
         });
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
@@ -405,7 +405,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(reference, recorder -> {
-            recorder.setOverallResultMustBeSuccess(true);
+            recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
             recorder.setUnstableNewAll(3);
         });
@@ -424,7 +424,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         enableWarnings(project, recorder -> {
             recorder.setUnstableNewAll(3);
             recorder.setReferenceJobName(REFERENCE_JOB_NAME);
-            recorder.setOverallResultMustBeSuccess(true);
+            recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
         });
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
@@ -443,7 +443,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse4Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(reference, recorder -> {
-            recorder.setOverallResultMustBeSuccess(true);
+            recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
         });
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
@@ -461,7 +461,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         enableWarnings(project, recorder -> {
             recorder.setUnstableNewAll(3);
             recorder.setReferenceJobName(REFERENCE_JOB_NAME);
-            recorder.setOverallResultMustBeSuccess(true);
+            recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,
@@ -480,7 +480,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse4Warnings.txt");
         IssuesRecorder issuesRecorder = enableWarnings(reference, recorder -> {
-            recorder.setOverallResultMustBeSuccess(false);
+            recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
         });
         scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
@@ -499,7 +499,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         enableWarnings(project, recorder -> {
             recorder.setUnstableNewAll(3);
             recorder.setReferenceJobName(REFERENCE_JOB_NAME);
-            recorder.setOverallResultMustBeSuccess(false);
+            recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
         });
         scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
@@ -518,7 +518,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         // #1 SUCCESS
         FreeStyleProject reference = createJob(REFERENCE_JOB_NAME, "eclipse2Warnings.txt");
         enableWarnings(reference, recorder -> {
-            recorder.setOverallResultMustBeSuccess(false);
+            recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
             recorder.setUnstableNewAll(3);
         });
@@ -538,7 +538,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
         enableWarnings(project, recorder -> {
             recorder.setUnstableNewAll(3);
             recorder.setReferenceJobName(REFERENCE_JOB_NAME);
-            recorder.setOverallResultMustBeSuccess(false);
+            recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS,

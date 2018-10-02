@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.SerializableTest;
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.FormattedLogger;
 import io.jenkins.plugins.analysis.core.quality.QualityGate.QualityGateBuilder;

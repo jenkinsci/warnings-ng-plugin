@@ -17,6 +17,8 @@ import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
@@ -39,21 +41,22 @@ class IssuesScanner {
     private final Charset logFileEncoding;
     private final Charset sourceCodeEncoding;
     private final StaticAnalysisTool tool;
-
+    private final Blamer blamer;
     private final LogHandler logger;
 
     IssuesScanner(final StaticAnalysisTool tool, final FilePath workspace,
             final Charset logFileEncoding, final Charset sourceCodeEncoding, final FilePath jenkinsRootDir,
-            final LogHandler logger) {
-        this.workspace = workspace; 
+            final Blamer blamer, final LogHandler logger) {
+        this.workspace = workspace;
         this.logFileEncoding = logFileEncoding;
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
         this.jenkinsRootDir = jenkinsRootDir;
+        this.blamer = blamer;
         this.logger = logger;
     }
 
-    public Report scan(final String pattern, final File consoleLog) throws IOException, InterruptedException {
+    public AnnotatedReport scan(final String pattern, final File consoleLog) throws IOException, InterruptedException {
         if (StringUtils.isBlank(pattern)) {
             String defaultPattern = tool.getDescriptor().getPattern();
             if (defaultPattern.isEmpty()) {
@@ -81,7 +84,7 @@ class IssuesScanner {
      * @throws IOException
      *         if something goes wrong
      */
-    public Report scanInWorkspace(final String pattern) throws InterruptedException, IOException {
+    public AnnotatedReport scanInWorkspace(final String pattern) throws InterruptedException, IOException {
         Report report = workspace.act(new FilesScanner(pattern, tool, logFileEncoding.name()));
 
         logger.log(report);
@@ -100,7 +103,7 @@ class IssuesScanner {
      * @throws IOException
      *         if something goes wrong
      */
-    public Report scanInConsoleLog(final File consoleLog) throws InterruptedException, IOException {
+    public AnnotatedReport scanInConsoleLog(final File consoleLog) throws InterruptedException, IOException {
         Ensure.that(tool.canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 tool.getName());
@@ -113,9 +116,9 @@ class IssuesScanner {
 
         Report report = tool.createParser().parse(consoleLog, logFileEncoding, ConsoleNote::removeNotes);
         report.setId(tool.getId());
-        
+
         consoleReport.addAll(report);
-        
+
         logger.log(consoleReport);
 
         return postProcess(consoleReport);
@@ -131,10 +134,10 @@ class IssuesScanner {
         }
     }
 
-    private Report postProcess(final Report report) throws IOException, InterruptedException {
-        Report postProcessed;
+    private AnnotatedReport postProcess(final Report report) throws IOException, InterruptedException {
+        AnnotatedReport result;
         if (report.isEmpty()) {
-            postProcessed = report; // nothing to post process
+            result = new AnnotatedReport(report); // nothing to post process
             if (report.hasErrors()) {
                 report.logInfo("Skipping post processing due to errors");
             }
@@ -142,10 +145,10 @@ class IssuesScanner {
         else {
             report.logInfo("Post processing issues on '%s' with encoding '%s'", getAgentName(), sourceCodeEncoding);
 
-            postProcessed = workspace.act(new ReportPostProcessor(report, sourceCodeEncoding.name(), jenkinsRootDir));
+            result = workspace.act(new ReportPostProcessor(report, sourceCodeEncoding.name(), jenkinsRootDir, blamer));
         }
-        logger.log(postProcessed);
-        return postProcessed;
+        logger.log(result.getReport());
+        return result;
     }
 
     private String getAgentName() {
@@ -162,32 +165,37 @@ class IssuesScanner {
 
     /**
      * Post processes the report on the build agent. Assigns absolute paths, package names, and module names and
-     * computes fingerprints for each issue.
+     * computes fingerprints for each issue. Finally, for each file the SCM blames are computed.
      */
-    private static class ReportPostProcessor extends MasterToSlaveFileCallable<Report> {
+    private static class ReportPostProcessor extends MasterToSlaveFileCallable<AnnotatedReport> {
         private static final long serialVersionUID = -9138045560271783096L;
 
         private final Report report;
         private final String sourceCodeEncoding;
         private final FilePath jenkinsRootDir;
+        private final Blamer blamer;
 
-        ReportPostProcessor(final Report report, final String sourceCodeEncoding, final FilePath jenkinsRootDir) {
+        ReportPostProcessor(final Report report, final String sourceCodeEncoding, final FilePath jenkinsRootDir,
+                final Blamer blamer) {
             super();
 
             this.report = report;
             this.sourceCodeEncoding = sourceCodeEncoding;
             this.jenkinsRootDir = jenkinsRootDir;
+            this.blamer = blamer;
         }
 
         @Override
-        public Report invoke(final File workspace, final VirtualChannel channel) throws IOException, InterruptedException {
+        public AnnotatedReport invoke(final File workspace, final VirtualChannel channel)
+                throws IOException, InterruptedException {
             resolveAbsolutePaths(workspace);
             copyAffectedFiles(workspace);
             resolveModuleNames(workspace);
             resolvePackageNames();
             createFingerprints();
-
-            return report;
+            Blames blames = blamer.blame(report);
+            
+            return new AnnotatedReport(report, blames);
         }
 
         private void resolveAbsolutePaths(final File workspace) {
@@ -200,10 +208,9 @@ class IssuesScanner {
         private void copyAffectedFiles(final File workspace)
                 throws IOException, InterruptedException {
             report.logInfo("Copying affected files to Jenkins' build folder %s", jenkinsRootDir);
-            
+
             new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(report, jenkinsRootDir, workspace);
         }
-
 
         private void resolveModuleNames(final File workspace) {
             report.logInfo("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");

@@ -12,10 +12,12 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
-import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.scm.BlameFactory;
+import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 
 import hudson.EnvVars;
 import hudson.Extension;
@@ -34,6 +36,7 @@ public class ScanForIssuesStep extends Step {
     private String sourceCodeEncoding;
     private String pattern;
     private StaticAnalysisTool tool;
+    private boolean isBlameDisabled;
 
     /**
      * Creates a new instance of {@link ScanForIssuesStep}.
@@ -65,6 +68,20 @@ public class ScanForIssuesStep extends Step {
     @CheckForNull
     public StaticAnalysisTool getTool() {
         return tool;
+    }
+
+    /**
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    public boolean getBlameDisabled() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setBlameDisabled(final boolean blameDisabled) {
+        this.isBlameDisabled = blameDisabled;
     }
 
     /**
@@ -118,11 +135,12 @@ public class ScanForIssuesStep extends Step {
     /**
      * Actually performs the execution of the associated step.
      */
-    public static class Execution extends AnalysisExecution<Report> {
+    public static class Execution extends AnalysisExecution<AnnotatedReport> {
         private final String reportEncoding;
         private final String sourceCodeEncoding;
         private final StaticAnalysisTool tool;
         private final String pattern;
+        private final boolean isBlameDisabled;
 
         /**
          * Creates a new instance of the step execution object.
@@ -139,14 +157,28 @@ public class ScanForIssuesStep extends Step {
             sourceCodeEncoding = step.getSourceCodeEncoding();
             tool = step.getTool();
             pattern = step.getPattern();
+            isBlameDisabled = step.getBlameDisabled();
         }
 
         @Override
-        protected Report run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesScanner issuesScanner = new IssuesScanner(tool, getWorkspace(), getCharset(reportEncoding),
-                    getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()), 
-                    new LogHandler(getTaskListener(), tool.getName()));
+        protected AnnotatedReport run() throws IOException, InterruptedException, IllegalStateException {
+            FilePath workspace = getWorkspace();
+            TaskListener listener = getTaskListener();
+            Blamer blamer = blame(workspace, listener);
+            
+            IssuesScanner issuesScanner = new IssuesScanner(tool, workspace, getCharset(reportEncoding),
+                    getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()), blamer,
+                    new LogHandler(listener, tool.getName()));
+            
             return issuesScanner.scan(pattern, getRun().getLogFile());
+        }
+
+        private Blamer blame(final FilePath workspace, final TaskListener listener)
+                throws IOException, InterruptedException {
+            if (isBlameDisabled) {
+                return new NullBlamer();
+            }
+            return BlameFactory.createBlamer(getRun(), workspace, listener);
         }
     }
 

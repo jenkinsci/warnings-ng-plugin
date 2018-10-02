@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode;
 import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
@@ -19,10 +20,10 @@ import io.jenkins.plugins.analysis.core.history.ResultSelector;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
-import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.Job;
@@ -36,6 +37,7 @@ import hudson.model.Run;
  */
 class IssuesPublisher {
     private final Report report;
+    private final Blames blames;
     private final List<RegexpFilter> filters;
     private final Run<?, ?> run;
     private final HealthDescriptor healthDescriptor;
@@ -49,13 +51,13 @@ class IssuesPublisher {
     private final String id;
 
     @SuppressWarnings("ParameterNumber")
-    IssuesPublisher(final Run<?, ?> run, final Report report, final List<RegexpFilter> filters,
-            final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
+    IssuesPublisher(final Run<?, ?> run, final Report report, final Blames blames,
+            final List<RegexpFilter> filters, final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
-            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding,
-            final LogHandler logger) {
+            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger) {
         this.report = report;
         id = report.getId();
+        this.blames = blames;
         this.filters = new ArrayList<>(filters);
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -75,12 +77,14 @@ class IssuesPublisher {
      * @return the created result action
      */
     public ResultAction attachAction() {
-        ResultSelector selector = ensureThatIdIsUnique();
-
-        Report filtered = filter();
-
         logger.log("Attaching ResultAction with ID '%s' to run '%s'.", id, run);
-        AnalysisResult result = createResult(selector, filtered);
+
+        ResultSelector selector = ensureThatIdIsUnique();
+        Report filtered = filter();
+        AnalysisResult result = createAnalysisResult(filtered, selector, blames);
+        logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
+                result.getTotalSize(), result.getNewSize(), result.getFixedSize());
+
         ResultAction action = new ResultAction(run, result, healthDescriptor, id, name, sourceCodeEncoding);
         run.addAction(action);
 
@@ -95,15 +99,6 @@ class IssuesPublisher {
                     String.format("ID %s is already used by another action: %s%n", id, other.get()));
         }
         return selector;
-    }
-
-    private AnalysisResult createResult(final ResultSelector selector, final Report filtered) {
-        AnalysisResult result = createAnalysisResult(filtered, selector);
-
-        logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
-                result.getTotalSize(), result.getNewSize(), result.getFixedSize());
-
-        return result;
     }
 
     private Report filter() {
@@ -129,14 +124,15 @@ class IssuesPublisher {
     }
 
     @SuppressWarnings("PMD.PrematureDeclaration")
-    private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector) {
+    private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector,
+            final Blames blames) {
         DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector), run.getNumber());
         QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
         reportHealth(filtered);
         logger.log(filtered);
         return new AnalysisHistory(run, selector).getResult()
-                .map(previous -> new AnalysisResult(run, deltaReport, qualityGateStatus, previous))
-                .orElseGet(() -> new AnalysisResult(run, deltaReport, qualityGateStatus));
+                .map(previous -> new AnalysisResult(run, deltaReport, blames, qualityGateStatus, previous))
+                .orElseGet(() -> new AnalysisResult(run, deltaReport, blames, qualityGateStatus));
     }
 
     private void reportHealth(final Report filtered) {

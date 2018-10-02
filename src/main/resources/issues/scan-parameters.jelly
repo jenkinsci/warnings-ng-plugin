@@ -5,6 +5,10 @@
     Provides all required input fields to scan for issues.
   </st:documentation>
 
+  <f:entry title="${%title.blameDisabled}" description="${%description.blameDisabled}" field="blameDisabled">
+    <f:checkbox />
+  </f:entry>
+
   <i:hr title="${%File Encoding}"/>
 
   <f:entry title="${%title.reportEncoding}" description="${%description.reportEncoding}">

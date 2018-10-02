@@ -8,7 +8,7 @@ import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.SerializableTest;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import hudson.model.Run;

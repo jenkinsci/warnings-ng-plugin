@@ -171,51 +171,11 @@
     });
     
     /**
-     * Create a data table instance for the issues table.
+     * Create data table instances for the detail tables.
      */
-    var issues = $('#issues');
-    var issuesTable = issues.DataTable({
-        pagingType: 'numbers',  // Page number button only
-        order: [[1, 'asc']],
-        columnDefs: [{
-            targets: 0,         // First column contains details button
-            orderable: false
-        }]
-    });
-
-    // Add event listener for opening and closing details
-    issues.on('click', 'div.details-control', function () {
-        var tr = $(this).parents('tr');
-        var row = issuesTable.row(tr);
-
-        if (row.child.isShown()) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-        } else {
-            // Open this row
-            row.child($(this).data('description')).show();
-            tr.addClass('shown');
-        }
-    });
+    showTable('#issues');
+    showTable('#scm');
     
-    /**
-     * Issues are loaded on demand: if the active tab shows the issues table, then the content is loaded using an
-     * Ajax call.
-     */
-    var tabToggleLink = $('a[data-toggle="tab"]');
-    tabToggleLink.on('show.bs.tab', function (e) {
-        var activeTab = $(e.target).attr('href');
-        if (activeTab === '#issuesContent' && issuesTable.data().length === 0) {
-            view.getTableModel(function (t) {
-                (function ($) {
-                    var table = $('#issues').DataTable();
-                    table.rows.add(t.responseObject().data).draw()
-                })(jQuery);
-            });
-        }
-    });
-
     /**
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
      * If the user selects the tab using an #anchor prefer this tab.
@@ -239,6 +199,7 @@
     /**
      * Store the selected tab in Browser's local storage.
      */
+    var tabToggleLink = $('a[data-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
         window.location.hash = e.target.hash;
         var activeTab = $(e.target).attr('href');
@@ -281,9 +242,62 @@
         }
     });
 
+    /**
+     * Activate tooltips.
+     */
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     })
+
+    /**
+     * Initializes the specified table.
+     *
+     * @param {String} id - the ID of the table
+     */
+    function showTable(id) {
+        // Create a data table instance for the issues table. 
+        var table = $(id);
+        if (table.length) {
+            var dataTable = table.DataTable({
+                pagingType: 'numbers',  // Page number button only
+                order: [[1, 'asc']],
+                columnDefs: [{
+                    targets: 0,         // First column contains details button
+                    orderable: false
+                }]
+            });
+
+            // Add event listener for opening and closing details
+            table.on('click', 'div.details-control', function () {
+                var tr = $(this).parents('tr');
+                var row = dataTable.row(tr);
+
+                if (row.child.isShown()) {
+                    // This row is already open - close it
+                    row.child.hide();
+                    tr.removeClass('shown');
+                } else {
+                    // Open this row
+                    row.child($(this).data('description')).show();
+                    tr.addClass('shown');
+                }
+            });
+
+            // Content is loaded on demand: if the active tab shows the table, then content is loaded using Ajax
+            var tabToggleLink = $('a[data-toggle="tab"]');
+            tabToggleLink.on('show.bs.tab', function (e) {
+                var activeTab = $(e.target).attr('href');
+                if (activeTab === (id + 'Content') && dataTable.data().length === 0) {
+                    view.getTableModel(id, function (t) {
+                        (function ($) {
+                            var table = $(id).DataTable();
+                            table.rows.add(t.responseObject().data).draw()
+                        })(jQuery);
+                    });
+                }
+            });
+        }
+    }
 })(jQuery);
 
 

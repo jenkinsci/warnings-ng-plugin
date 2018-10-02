@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.9</version>
+    <version>3.23</version>
     <relativePath />
   </parent>
 
@@ -23,11 +23,11 @@
     <!-- Override properties defined in parent POM -->
     <jenkins.version>2.89.1</jenkins.version>
     <java.level>8</java.level>
-    <jenkins-test-harness.version>2.40-20180612.101324-2</jenkins-test-harness.version>
+    <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>1.0.0-beta1</analysis-model-api.version>
-    <analysis-model.version>1.0.0-RC6</analysis-model.version>
+    <analysis-model-api.version>1.0.0-beta2</analysis-model-api.version>
+    <analysis-model.version>1.0.0-RC8</analysis-model.version>
 
     <commons.lang.version>3.8</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -54,6 +54,9 @@
     <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
     <matrix-project.version>1.13</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
+    <git-plugin.version>3.9.1</git-plugin.version>
+    <workflow-step.version>2.13</workflow-step.version>
+    <workflow-job.version>2.16</workflow-job.version>
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.10.0</maven-pmd-plugin.version>
@@ -189,7 +192,29 @@
       </exclusions>
     </dependency>
 
-    <!-- Jenkins Plug-in Dependencies -->
+    <!-- Required Jenkins Plug-in Dependencies -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-step-api</artifactId>
+      <version>${workflow-step.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-job</artifactId>
+      <version>${workflow-job.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>structs</artifactId>
+      <version>1.10</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>antisamy-markup-formatter</artifactId>
+      <version>1.5</version>
+    </dependency>
+
+    <!-- Optional Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>matrix-project</artifactId>
@@ -200,6 +225,7 @@
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
       <version>${jenkins-maven-plugin.version}</version>
+      <!-- TODO: not yet optional due to deprecated code -->
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -214,19 +240,10 @@
       <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-step-api</artifactId>
-      <version>2.13</version>
-    </dependency>
-    <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>structs</artifactId>
-      <version>1.10</version>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>antisamy-markup-formatter</artifactId>
-      <version>1.5</version>
+      <artifactId>git</artifactId>
+      <version>${git-plugin.version}</version>
+      <optional>true</optional>
     </dependency>
 
     <!-- Test Dependencies -->
@@ -361,6 +378,21 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.8.2</version>
+      </dependency>
+      <dependency>
+        <groupId>joda-time</groupId>
+        <artifactId>joda-time</artifactId>
+        <version>2.9.5</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci</groupId>
+        <artifactId>annotation-indexer</artifactId>
+        <version>1.12</version>
+      </dependency>
+      <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>mailer</artifactId>
         <version>1.18</version>
@@ -438,9 +470,11 @@
         <configuration>
           <packages>
             <package>io.jenkins.plugins.analysis.core.history</package>
-            <package>io.jenkins.plugins.analysis.core.model</package>
+            <package>io.jenkins.plugins.analysis.core.scm</package>
             <package>io.jenkins.plugins.analysis.core.quality</package>
+            <package>io.jenkins.plugins.analysis.core.model</package>
           </packages>
+          <entryPointClassPackage>io.jenkins.plugins.analysis.core.assertions</entryPointClassPackage>
           <excludes>
             <exclude>.*ITest</exclude>
           </excludes>

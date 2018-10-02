@@ -27,11 +27,11 @@ import io.jenkins.plugins.analysis.core.charts.SeverityChart;
 import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
+import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.PropertyStatistics;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
@@ -43,7 +43,6 @@ import hudson.markup.RawHtmlMarkupFormatter;
 import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
-import hudson.plugins.analysis.core.GlobalSettings;
 
 /**
  * Build view that shows the details for a subset of issues.
@@ -180,15 +179,48 @@ public class IssuesDetail implements ModelObject {
         return labelProvider;
     }
 
-    @JavaScriptMethod
-    @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getTableModel() {
-        return labelProvider.toJsonArray(getIssues(), new DefaultAgeBuilder(owner.getNumber(), getUrl()),
-                new FileNameRenderer(owner));
+    /**
+     * Returns the model for the details table.
+     *
+     * @return the table model
+     */
+    public DetailsTableModel getIssuesModel() {
+        return labelProvider.getIssuesModel(owner, getUrl());
     }
 
     /**
-     * Returns the UI model for an ECharts doughnut chart that shows the severities. 
+     * Returns the model for the details table.
+     *
+     * @return the table model
+     */
+    public DetailsTableModel getScmModel() {
+        return labelProvider.getScmModel(owner, getUrl(), result.getBlames());
+    }
+
+    private JSONObject toJsonArray(final List<List<String>> rows) {
+        JSONArray array = new JSONArray();
+        array.addAll(rows);
+        JSONObject data = new JSONObject();
+        data.put("data", array);
+        return data;
+    }
+
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getTableModel(final String id) {
+        List<List<String>> rows;
+        if ("#issues".equals(id)) {
+            rows = getIssuesModel().getContent(getIssues());
+        }
+        else {
+            rows = getScmModel().getContent(getIssues());
+        }
+
+        return toJsonArray(rows);
+    }
+
+    /**
+     * Returns the UI model for an ECharts doughnut chart that shows the severities.
      *
      * @return the UI model as JSON
      */
@@ -205,7 +237,7 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the UI model for an ECharts doughnut chart that shows the new, fixed, and outstanding issues. 
+     * Returns the UI model for an ECharts doughnut chart that shows the new, fixed, and outstanding issues.
      *
      * @return the UI model as JSON
      */
@@ -216,12 +248,12 @@ public class IssuesDetail implements ModelObject {
         model.add(new PieModel(Messages.New_Warnings_Short(), newIssues.size()));
         model.add(new PieModel(Messages.Outstanding_Warnings_Short(), outstandingIssues.size()));
         model.add(new PieModel(Messages.Fixed_Warnings_Short(), fixedIssues.size()));
-        
+
         return JSONArray.fromObject(model);
     }
 
     /**
-     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity. 
+     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
      *
      * @return the UI model as JSON
      */
@@ -284,8 +316,8 @@ public class IssuesDetail implements ModelObject {
      *         and commit information are omitted
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public boolean isAuthorInformationEnabled() {
-        return !GlobalSettings.instance().getNoAuthors();
+    public boolean isBlameDisabled() {
+        return result.getBlames().isEmpty(); 
     }
 
     /**

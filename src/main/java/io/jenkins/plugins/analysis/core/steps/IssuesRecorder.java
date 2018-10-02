@@ -15,15 +15,17 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.Thresholds;
+import io.jenkins.plugins.analysis.core.scm.BlameFactory;
+import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import jenkins.tasks.SimpleBuildStep;
@@ -70,8 +72,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private String reportEncoding;
     private String sourceCodeEncoding;
 
-    private boolean ignoreAnalysisResult;
-    private boolean overallResultMustBeSuccess;
+    private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
+    private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
     private String referenceJobName;
 
     private int healthy;
@@ -83,6 +85,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
+    
+    private boolean isBlameDisabled;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -172,6 +176,20 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    public boolean getBlameDisabled() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setBlameDisabled(final boolean blameDisabled) {
+        this.isBlameDisabled = blameDisabled;
+    }
+
+    /**
      * Returns whether recording should be enabled for failed builds as well.
      *
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
@@ -187,35 +205,38 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
-     * If {@code true} then the result of the previous analysis run is ignored when searching for the reference,
-     * otherwise the result of the static analysis reference must be {@link Result#SUCCESS}.
+     * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
+     * disabled by default so a failing quality gate will be passed from build to build until the original reason for
+     * the failure has been resolved.
      *
-     * @param ignoreAnalysisResult
-     *         if {@code true} then the previous build is always used
+     * @param ignoreQualityGate
+     *         if {@code true} then the result of the quality gate is ignored, otherwise only build with a successful
+     *         quality gate are selected
      */
     @DataBoundSetter
-    public void setIgnoreAnalysisResult(final boolean ignoreAnalysisResult) {
-        this.ignoreAnalysisResult = ignoreAnalysisResult;
+    public void setIgnoreQualityGate(final boolean ignoreQualityGate) {
+        this.ignoreQualityGate = ignoreQualityGate;
     }
 
-    public boolean getIgnoreAnalysisResult() {
-        return ignoreAnalysisResult;
+    public boolean getIgnoreQualityGate() {
+        return ignoreQualityGate;
     }
 
     /**
-     * If {@code true} then only runs with an overall result of {@link Result#SUCCESS} are considered as a reference,
-     * otherwise every run that contains results of the same static analysis configuration is considered.
+     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
+     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
+     * contains a static analysis result is considered, even if the build failed.
      *
-     * @param overallResultMustBeSuccess
+     * @param ignoreFailedBuilds
      *         if {@code true} then a stable build is used as reference
      */
     @DataBoundSetter
-    public void setOverallResultMustBeSuccess(final boolean overallResultMustBeSuccess) {
-        this.overallResultMustBeSuccess = overallResultMustBeSuccess;
+    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
+        this.ignoreFailedBuilds = ignoreFailedBuilds;
     }
 
-    public boolean getOverallResultMustBeSuccess() {
-        return overallResultMustBeSuccess;
+    public boolean getIgnoreFailedBuilds() {
+        return ignoreFailedBuilds;
     }
 
     /**
@@ -457,7 +478,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            record(run, workspace, launcher, listener);
+            record(run, workspace, listener);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -466,24 +487,22 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     private String createLoggerPrefix() {
-        return tools.stream().map(tool -> tool.getActualName()).collect(Collectors.joining());
+        return tools.stream().map(ToolConfiguration::getActualName).collect(Collectors.joining());
     }
 
-    private void record(final Run<?, ?> run, final FilePath workspace, final Launcher launcher,
-            final TaskListener listener)
+    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
-            Report totalIssues = new Report();
+            AnnotatedReport totalIssues = new AnnotatedReport();
             totalIssues.setId("analysis");
             for (ToolConfiguration toolConfiguration : tools) {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
-            publishResult(run, launcher, listener, Messages.Tool_Default_Name(),
-                    totalIssues, Messages.Tool_Default_Name());
+            publishResult(run, listener, Messages.Tool_Default_Name(), totalIssues, Messages.Tool_Default_Name());
         }
         else {
             for (ToolConfiguration toolConfiguration : tools) {
-                Report report = scanWithTool(run, workspace, listener, toolConfiguration);
+                AnnotatedReport report = scanWithTool(run, workspace, listener, toolConfiguration);
                 String actualName;
                 if (toolConfiguration.hasName()) {
                     actualName = toolConfiguration.getName();
@@ -491,23 +510,29 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                 else {
                     actualName = StringUtils.EMPTY;
                 }
-                publishResult(run, launcher, listener, toolConfiguration.getActualName(), report,
-                        actualName);
+                publishResult(run, listener, toolConfiguration.getActualName(), report, actualName);
             }
         }
     }
 
-    private Report scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+    private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), workspace,
                 getReportCharset(), getSourceCodeCharset(), new FilePath(run.getRootDir()), 
-                new LogHandler(listener, toolConfiguration.getActualName()));
-        Report report = issuesScanner.scan(expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()),
-                run.getLogFile());
+                blame(run, workspace, listener), new LogHandler(listener, toolConfiguration.getActualName()));
+        AnnotatedReport report = issuesScanner.scan(
+                expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()), run.getLogFile());
         if (toolConfiguration.hasId()) {
             report.setId(toolConfiguration.getId());
         }
         return report;
+    }
+
+    private Blamer blame(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
+        if (isBlameDisabled) {
+            return new NullBlamer();
+        }
+        return BlameFactory.createBlamer(run, workspace, listener);
     }
 
     private Charset getSourceCodeCharset() {
@@ -528,8 +553,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *
      * @param run
      *         the run
-     * @param launcher
-     *         the launcher
      * @param listener
      *         the listener
      * @param loggerName
@@ -539,12 +562,12 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param name
      *         the name of the report (might be empty)
      */
-    public void publishResult(final Run<?, ?> run, final Launcher launcher,
-            final TaskListener listener, final String loggerName, final Report report, final String name) {
-        IssuesPublisher publisher = new IssuesPublisher(run, report, getFilters(),
+    public void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName, 
+            final AnnotatedReport report, final String name) {
+        IssuesPublisher publisher = new IssuesPublisher(run, report.getReport(), report.getBlames(), getFilters(),
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), new QualityGate(thresholds),
-                name, referenceJobName, ignoreAnalysisResult, overallResultMustBeSuccess, getSourceCodeCharset(),
-                new LogHandler(listener, loggerName, report));
+                name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
+                new LogHandler(listener, loggerName, report.getReport()));
         publisher.attachAction();
     }
 

@@ -10,12 +10,14 @@ import org.kohsuke.stapler.QueryParameter;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
+import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import static j2html.TagCreator.*;
 
+import hudson.model.Run;
 import hudson.util.FormValidation;
 
 /**
@@ -90,8 +92,8 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         }
 
         @Override
-        protected DetailsTableModel createTableModel() {
-            return new DryTableModel();
+        public DetailsTableModel getIssuesModel(final Run<?, ?> owner, final String url) {
+            return new DryTableModel(getAgeBuilder(owner, url), getFileNameRenderer(owner), this);
         }
    }
 
@@ -245,6 +247,12 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
      * Provides a table that contains the duplication references as well.
      */
     public static class DryTableModel extends DetailsTableModel {
+        public DryTableModel(final AgeBuilder ageBuilder,
+                final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider);
+        }
+
         @Override
         public List<Integer> getWidths(final Report report) {
             List<Integer> widths = new ArrayList<>();

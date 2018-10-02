@@ -16,7 +16,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import static io.jenkins.plugins.analysis.core.model.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -57,8 +57,9 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
             tool.setReportEncoding("reportEncoding");
             tool.setSourceCodeEncoding("sourceCodeEncoding");
 
-            tool.setIgnoreAnalysisResult(true);
-            tool.setOverallResultMustBeSuccess(true);
+            tool.setBlameDisabled(true);
+            tool.setIgnoreQualityGate(true);
+            tool.setIgnoreFailedBuilds(true);
             tool.setReferenceJobName("referenceJobName");
 
             tool.setHealthy(10);
@@ -76,7 +77,9 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         verifyAndChangeEntry(form, "reportEncoding", "reportEncoding");
         verifyAndChangeEntry(form, "sourceCodeEncoding", "sourceCodeEncoding");
 
-        verifyAndChangeEntry(form, "ignoreQualityGate", false);
+        verifyAndChangeEntry(form, "blameDisabled", true);
+        
+        verifyAndChangeEntry(form, "ignoreQualityGate", true);
         verifyAndChangeEntry(form, "ignoreFailedBuilds", true);
         verifyAndChangeEntry(form, "referenceJobName", "referenceJobName");
 
@@ -91,10 +94,12 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         IssuesRecorder recorder = getRecorder(job);
         assertThat(recorder.getReportEncoding()).isEqualTo("new-reportEncoding");
         assertThat(recorder.getSourceCodeEncoding()).isEqualTo("new-sourceCodeEncoding");
+        
+        assertThat(recorder.getBlameDisabled()).isFalse();
 
         assertThat(recorder.getReferenceJobName()).isEqualTo("new-referenceJobName");
-        assertThat(recorder.getOverallResultMustBeSuccess()).isFalse();
-        assertThat(recorder.getIgnoreAnalysisResult()).isFalse();
+        assertThat(recorder.getIgnoreFailedBuilds()).isFalse();
+        assertThat(recorder.getIgnoreQualityGate()).isFalse();
 
         assertThat(recorder.getHealthy()).isEqualTo(15);
         assertThat(recorder.getUnhealthy()).isEqualTo(25);

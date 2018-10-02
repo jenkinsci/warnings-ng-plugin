@@ -178,7 +178,7 @@ An example pipeline with these options is shown in the following snippet:
 ```
 recordIssues 
     tools: [ [tool: [$class: 'Java']] ],
-    ignoreAnalysisResult: true, overallResultMustBeSuccess: false, referenceJobName: 'my-project/master'
+    ignoreQualityGate: false, ignoreFailedBuilds: true, referenceJobName: 'my-project/master'
 ```
 
 ### Filtering issues
@@ -311,7 +311,7 @@ a single result. Then you need to split scanning and aggregation. The plugin pro
 two steps:
 - `scanForIssues`: this step scans a report file or the console log with a particular parser and creates an 
   intermediate 
-  [Report](https://github.com/jenkinsci/analysis-model/blob/master/src/main/java/edu/hm/hafner/analysis/Report.java) 
+  [AnnotatedReport](../src/main/java/io/jenkins/plugins/analysis/core/steps/AnnotatedReport.java) 
   object that contains the report. See 
   [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssuesStep.java) for details.
 - `publishIssues`: this step publishes a new report in your build that contains the aggregated results
@@ -437,6 +437,20 @@ issues category, then the category will be automatically hidden.
 child row within the table.
 
 ![details](images/details.png) 
+
+### Source code blames (for Git projects)
+
+If not disabled in the job configuration, the plugin will execute `git blame` to determine who is the responsible 
+'author' of an issue. In the corresponding *Source Control* view all issues will be listed with author name, email and
+commit ID. 
+  
+![source control overview](images/git.png) 
+
+In order to disable the blame feature, set the property `blameDisabled` to `true`, see the following example:
+```
+recordIssues 
+    blameDisabled: true, tools: [[pattern: '*.log', tool: [$class: 'Java']]]
+```
 
 ### Source code view
 

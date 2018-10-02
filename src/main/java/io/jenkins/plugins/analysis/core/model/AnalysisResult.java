@@ -22,8 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
-import org.kohsuke.stapler.export.Exported;
-import org.kohsuke.stapler.export.ExportedBean;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -34,9 +32,11 @@ import io.jenkins.plugins.analysis.core.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.scm.Blames;
 
 import hudson.XmlFile;
 import hudson.model.Run;
+import hudson.util.XStream2;
 
 /**
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and
@@ -44,7 +44,6 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
-@ExportedBean
 @SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength"})
 public class AnalysisResult implements Serializable {
@@ -69,10 +68,10 @@ public class AnalysisResult implements Serializable {
      * stored.
      */
     private final String referenceBuildId;
-    
+
     private transient ReentrantLock lock = new ReentrantLock();
     private transient Run<?, ?> owner;
-    
+
     /**
      * All outstanding issues: i.e. all issues, that are part of the current and reference report.
      */
@@ -90,7 +89,10 @@ public class AnalysisResult implements Serializable {
      */
     @CheckForNull
     private transient WeakReference<Report> fixedIssuesReference;
-    
+    /** All SCM blames. Provides a mapping of file names to SCM commit information like author, email or commit ID. */
+    @CheckForNull
+    private transient WeakReference<Blames> blamesReference;
+
     /** Determines since which build we have zero warnings. */
     private int noIssuesSinceBuild;
     /** Determines since which build the result is successful. */
@@ -105,14 +107,16 @@ public class AnalysisResult implements Serializable {
      *         the current build as owner of this action
      * @param report
      *         the issues of this result
+     * @param blames
+     *         author and commit information for all issues
      * @param qualityGateStatus
      *         the quality gate status
      * @param previousResult
      *         the analysis result of the previous run
      */
-    public AnalysisResult(final Run<?, ?> owner,
-            final DeltaReport report, final QualityGateStatus qualityGateStatus, final AnalysisResult previousResult) {
-        this(owner, report, qualityGateStatus, true);
+    public AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final Blames blames,
+            final QualityGateStatus qualityGateStatus, final AnalysisResult previousResult) {
+        this(owner, report, blames, qualityGateStatus, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -146,11 +150,14 @@ public class AnalysisResult implements Serializable {
      *         the current build as owner of this action
      * @param report
      *         the issues of this result
+     * @param blames
+     *         author and commit information for all issues
      * @param qualityGateStatus
      *         the quality gate status
      */
-    public AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final QualityGateStatus qualityGateStatus) {
-        this(owner, report, qualityGateStatus, true);
+    public AnalysisResult(final Run<?, ?> owner, 
+            final DeltaReport report, final Blames blames, final QualityGateStatus qualityGateStatus) {
+        this(owner, report, blames, qualityGateStatus, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -173,16 +180,18 @@ public class AnalysisResult implements Serializable {
      *         the current run as owner of this action
      * @param report
      *         the issues of this result
+     * @param blames
+     *         author and commit information for all issues
      * @param qualityGateStatus
      *         the quality gate to enforce
      * @param canSerialize
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
-    protected AnalysisResult(final Run<?, ?> owner,
-            final DeltaReport report, final QualityGateStatus qualityGateStatus, final boolean canSerialize) {
+    protected AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final Blames blames, 
+            final QualityGateStatus qualityGateStatus, final boolean canSerialize) {
         this.owner = owner;
-        
+
         Report allIssues = report.getAllIssues();
         id = allIssues.getId();
         size = allIssues.getSize();
@@ -192,7 +201,7 @@ public class AnalysisResult implements Serializable {
 
         Report outstandingIssues = report.getOutstandingIssues();
         outstandingIssuesReference = new WeakReference<>(outstandingIssues);
-        
+
         Report newIssues = report.getNewIssues();
         newSize = newIssues.getSize();
         newSizePerSeverity = getSizePerSeverity(newIssues);
@@ -208,9 +217,77 @@ public class AnalysisResult implements Serializable {
         errors = new ArrayList<>(allIssues.getErrorMessages().castToList());
 
         this.qualityGateStatus = qualityGateStatus;
+        
+        this.blamesReference = new WeakReference<>(blames);
         if (canSerialize) {
-            serializeAnnotations(outstandingIssues, newIssues, fixedIssues);
+            serializeIssues(outstandingIssues, newIssues, fixedIssues);
+            serializeBlames(blames);
         }
+    }
+
+    /**
+     * Returns the blames for the report.
+     *
+     * @return the blames
+     */
+    public Blames getBlames() {
+        lock.lock();
+        try {
+            if (blamesReference == null) {
+                return readBlames();
+            }
+            Blames result = blamesReference.get();
+            if (result == null) {
+                return readBlames();
+            }
+            return result;
+        }
+        finally {
+            lock.unlock();
+        }
+    }
+
+    private void serializeBlames(final Blames blames) {
+        try {
+            getBlamesFile().write(blames);
+        }
+        catch (IOException exception) {
+            LOGGER.log(Level.SEVERE,
+                    String.format("Failed to serialize SCM blame information for results %s in build %s.",
+                            id, owner), exception);
+        }
+    }
+
+    private XmlFile getBlamesFile() {
+        return new XmlFile(new XStream2(), new File(getOwner().getRootDir(), id + "-blames.xml"));
+    }
+
+    private Blames readBlames() {
+        Blames blames = readXml(Blames.class, getBlamesFile(), new Blames());
+        blamesReference = new WeakReference<>(blames);
+        return blames;
+    }
+
+    private <T> T readXml(final Class<T> type, final XmlFile dataFile, final T defaultValue) {
+        try {
+            Object deserialized = dataFile.read();
+
+            if (type.isInstance(deserialized)) {
+                if (LOGGER.isLoggable(Level.FINE)) {
+                    LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
+                }
+                return type.cast(deserialized);
+            }
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + deserialized);
+            }
+        }
+        catch (IOException exception) {
+            if (LOGGER.isLoggable(Level.SEVERE)) {
+                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
+            }
+        }
+        return defaultValue; // fallback
     }
 
     private Map<Severity, Integer> getSizePerSeverity(final Report report) {
@@ -222,7 +299,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the ID
      */
-    @Exported
     public String getId() {
         return id;
     }
@@ -232,7 +308,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the run
      */
-    @Exported
     public Run<?, ?> getOwner() {
         return owner;
     }
@@ -253,7 +328,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the error messages
      */
-    @Exported
     public ImmutableList<String> getErrorMessages() {
         return Lists.immutable.withAll(errors);
     }
@@ -263,7 +337,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the info messages
      */
-    @Exported
     public ImmutableList<String> getInfoMessages() {
         return Lists.immutable.withAll(messages);
     }
@@ -286,7 +359,7 @@ public class AnalysisResult implements Serializable {
         return id + "-issues.xml";
     }
 
-    private void serializeAnnotations(final Report outstandingIssues,
+    private void serializeIssues(final Report outstandingIssues,
             final Report newIssues, final Report fixedIssues) {
         serializeIssues(outstandingIssues, "outstanding");
         serializeIssues(newIssues, "new");
@@ -309,7 +382,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return all issues
      */
-    @Exported
     public Report getIssues() {
         Report merged = new Report();
         merged.addAll(getNewIssues(), getOutstandingIssues());
@@ -322,7 +394,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return all outstanding issues
      */
-    @Exported
     public Report getOutstandingIssues() {
         return getIssues(AnalysisResult::getOutstandingIssuesReference, AnalysisResult::setOutstandingIssuesReference,
                 "outstanding");
@@ -334,7 +405,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return all new issues
      */
-    @Exported
     public Report getNewIssues() {
         return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference,
                 "new");
@@ -346,7 +416,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return all fixed issues
      */
-    @Exported
     public Report getFixedIssues() {
         return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference,
                 "fixed");
@@ -396,34 +465,10 @@ public class AnalysisResult implements Serializable {
 
     private Report readIssues(final BiConsumer<AnalysisResult, WeakReference<Report>> setter,
             final String suffix) {
-        Report report = readIssues(suffix);
+        XmlFile dataFile = getDataFile(suffix);
+        Report report = readXml(Report.class, dataFile, new Report());
         setter.accept(this, new WeakReference<>(report));
         return report;
-    }
-
-    private Report readIssues(final String suffix) {
-        XmlFile dataFile = getDataFile(suffix);
-        try {
-            Object deserialized = dataFile.read();
-
-            if (deserialized instanceof Report) {
-                Report result = (Report) deserialized;
-
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
-                }
-                return result;
-            }
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + deserialized);
-            }
-        }
-        catch (IOException exception) {
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
-            }
-        }
-        return new Report(); // fallback
     }
 
     /**
@@ -450,7 +495,6 @@ public class AnalysisResult implements Serializable {
      * @return {@code true} if the static analysis result is successful, {@code false} if the static analysis result is
      *         {@link QualityGateStatus#WARNING} or {@link QualityGateStatus#FAILED}
      */
-    @Exported
     public boolean isSuccessful() {
         return qualityGateStatus.isSuccessful();
     }
@@ -460,7 +504,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return the quality gate status
      */
-    @Exported
     public QualityGateStatus getQualityGateStatus() {
         return qualityGateStatus;
     }
@@ -524,7 +567,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of issues
      */
-    @Exported
     public int getTotalSize() {
         return size;
     }
@@ -546,7 +588,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of errors
      */
-    @Exported
     public int getTotalErrorsSize() {
         return getTotalSizeOf(Severity.ERROR);
     }
@@ -556,7 +597,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of high severity issues
      */
-    @Exported
     public int getTotalHighPrioritySize() {
         return getTotalSizeOf(Severity.WARNING_HIGH);
     }
@@ -566,7 +606,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of normal severity issues
      */
-    @Exported
     public int getTotalNormalPrioritySize() {
         return getTotalSizeOf(Severity.WARNING_NORMAL);
     }
@@ -576,7 +615,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return total number of low severity of issues
      */
-    @Exported
     public int getTotalLowPrioritySize() {
         return getTotalSizeOf(Severity.WARNING_LOW);
     }
@@ -586,7 +624,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new issues
      */
-    @Exported
     public int getNewSize() {
         return newSize;
     }
@@ -608,7 +645,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new errors issues
      */
-    @Exported
     public int getNewErrorSize() {
         return getNewSizeOf(Severity.ERROR);
     }
@@ -618,7 +654,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new high severity issues
      */
-    @Exported
     public int getNewHighPrioritySize() {
         return getNewSizeOf(Severity.WARNING_HIGH);
     }
@@ -628,7 +663,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new normal severity issues
      */
-    @Exported
     public int getNewNormalPrioritySize() {
         return getNewSizeOf(Severity.WARNING_NORMAL);
     }
@@ -638,7 +672,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of new low severity of issues
      */
-    @Exported
     public int getNewLowPrioritySize() {
         return getNewSizeOf(Severity.WARNING_LOW);
     }
@@ -648,7 +681,6 @@ public class AnalysisResult implements Serializable {
      *
      * @return number of fixed issues
      */
-    @Exported
     public int getFixedSize() {
         return fixedSize;
     }
@@ -659,7 +691,7 @@ public class AnalysisResult implements Serializable {
     // TODO: if the trend charts are refactored then this adapter might be obsolete 
     public static class RunAdapter implements AnalysisBuild {
         private final Run<?, ?> run;
-    
+
         /**
          * Creates a new instance of {@link RunAdapter}.
          *
@@ -669,27 +701,27 @@ public class AnalysisResult implements Serializable {
         public RunAdapter(final Run<?, ?> run) {
             this.run = run;
         }
-    
+
         @Override
         public long getTimeInMillis() {
             return run.getTimeInMillis();
         }
-    
+
         @Override
         public int getNumber() {
             return run.getNumber();
         }
-    
+
         @Override
         public String getDisplayName() {
             return run.getDisplayName();
         }
-    
+
         @Override
         public int compareTo(final AnalysisBuild o) {
             return getNumber() - o.getNumber();
         }
-    
+
         @Override
         public boolean equals(final Object o) {
             if (this == o) {
@@ -698,12 +730,12 @@ public class AnalysisResult implements Serializable {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-    
+
             RunAdapter that = (RunAdapter) o;
-    
+
             return run.equals(that.run);
         }
-    
+
         @Override
         public int hashCode() {
             return run.hashCode();
