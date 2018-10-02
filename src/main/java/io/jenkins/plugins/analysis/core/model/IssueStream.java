@@ -12,6 +12,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.LineRange;
 import edu.hm.hafner.analysis.LineRangeList;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.TreeString;
@@ -39,6 +40,7 @@ public class IssueStream {
         xStream2.alias("lineRange", LineRange.class);
         xStream2.alias("treeString", TreeString.class);
         xStream2.alias("issue", Issue.class);
+        xStream2.alias("analysisReport", Report.class);
         return xStream2;
     }
 
