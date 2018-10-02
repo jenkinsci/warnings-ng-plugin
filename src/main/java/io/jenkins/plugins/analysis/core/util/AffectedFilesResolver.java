@@ -7,10 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
+import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
@@ -95,9 +94,9 @@ public class AffectedFilesResolver {
         int copied = 0;
         int notFound = 0;
         int notInWorkspace = 0;
-        int error = 0;
 
-        List<String> errorLog = new ArrayList<>();
+        FilteredLog log = new FilteredLog(report, 
+                "Can't copy some affected workspace files to Jenkins build folder:");
         Set<String> files = report.getFiles();
         for (String file : files) {
             if (exists(file)) {
@@ -107,14 +106,7 @@ public class AffectedFilesResolver {
                         copied++;
                     }
                     catch (IOException exception) {
-                        if (error < 5) {
-                            // FIXME: use length of list
-                            errorLog.add(String.format("- '%s', IO exception has been thrown: %s", file, exception));
-                        }
-                        else if (error == 5) {
-                            errorLog.add("  ... skipped logging of additional file errors ...");
-                        }
-                        error++;
+                        log.logError("- '%s', IO exception has been thrown: %s", file, exception);
                     }
                 }
                 else {
@@ -127,11 +119,8 @@ public class AffectedFilesResolver {
         }
 
         report.logInfo("-> %d copied, %d not in workspace, %d not-found, %d with I/O error",
-                copied, notInWorkspace, notFound, error);
-        if (error > 0) {
-            report.logError("Can't copy %d affected files:", error);
-            errorLog.forEach(report::logError);
-        }
+                copied, notInWorkspace, notFound, log.size());
+        log.logSummary();
     }
 
     private void copy(final FilePath jenkinsBuildRoot, final String file) throws IOException, InterruptedException {

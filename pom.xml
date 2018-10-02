@@ -26,8 +26,8 @@
     <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>1.0.0-beta2</analysis-model-api.version>
-    <analysis-model.version>1.0.0-RC8</analysis-model.version>
+    <analysis-model-api.version>1.0.0-beta3</analysis-model-api.version>
+    <analysis-model.version>1.0.0-RC9</analysis-model.version>
 
     <commons.lang.version>3.8</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -327,13 +327,6 @@
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>
       <version>1.0</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- WorkflowJob -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-job</artifactId>
-      <version>2.16</version>
       <scope>test</scope>
     </dependency>
     <!-- Groovy -->

@@ -10,8 +10,7 @@ import edu.hm.hafner.analysis.Report;
 public class NullBlamer implements Blamer {
     @Override
     public Blames blame(final Report report) {
-        Blames blames = new Blames();
-        blames.logInfo("Skipping blaming as requested in the job configuration");
-        return blames;
+        report.logInfo("Skipping blaming as requested in the job configuration");
+        return new Blames();
     }
 }

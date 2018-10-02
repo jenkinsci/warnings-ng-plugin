@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.scm;
 
 import javax.annotation.CheckForNull;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -16,6 +15,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import org.jenkinsci.plugins.gitclient.GitClient;
 import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 
+import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
@@ -28,6 +28,7 @@ import hudson.remoting.VirtualChannel;
  * on the agent.
  *
  * @author Lukas Krose
+ * @author Ullrich Hafner
  * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
  */
 public class GitBlamer implements Blamer {
@@ -61,7 +62,7 @@ public class GitBlamer implements Blamer {
                 report.logError("Could not retrieve HEAD commit, aborting.");
                 return new Blames();
             }
-            report.logInfo("Git commit ID = '%s'", headCommit);
+            report.logInfo("Git commit ID = '%s'", headCommit.getName());
 
             String workspacePath = getWorkspacePath(workspace);
             report.logInfo("Job workspace = '%s'", workspacePath);
@@ -82,8 +83,7 @@ public class GitBlamer implements Blamer {
     }
 
     private String getWorkspacePath(final FilePath workspace) throws IOException {
-        Path path = Paths.get(workspace.getRemote());
-        return path.toAbsolutePath().normalize().toRealPath().toString();
+        return Paths.get(workspace.getRemote()).toAbsolutePath().normalize().toRealPath().toString();
     }
 
     static class BlameCallback implements RepositoryCallback<Blames> {
@@ -125,24 +125,23 @@ public class GitBlamer implements Blamer {
          *
          * @return a mapping of absolute to relative file names of the conflicting files
          */
-        protected Blames extractAffectedFiles(final Report report) {
+        private Blames extractAffectedFiles(final Report report) {
             Blames blames = new Blames(workspace);
 
+            FilteredLog log = new FilteredLog(report, "Can't create blame requests for some affected files:");
             for (Issue issue : report) {
                 if (issue.getLineStart() > 0 && issue.hasFileName()) {
                     String storedFileName = issue.getFileName();
                     if (blames.contains(storedFileName)) {
-                        blames.addLine(storedFileName, issue.getLineStart());
+                        blames.addLine(storedFileName, issue.getLineStart(), log);
                     }
                     else {
-                        blames.addLine(storedFileName, issue.getLineStart());
+                        blames.addLine(storedFileName, issue.getLineStart(), log);
                     }
                 }
             }
-            blames.getInfoMessages().forEach(report::logInfo);
-            blames.getErrorMessages().forEach(report::logError);
-            blames.clearMessages();
             
+            log.logSummary();
             if (blames.isEmpty()) {
                 report.logError("Created no blame requests - Git blame will be skipped");
             }
@@ -155,11 +154,12 @@ public class GitBlamer implements Blamer {
         }
 
         void run(final BlameRequest request, final BlameRunner blameRunner) {
+            FilteredLog log = new FilteredLog(report, "Git blame reported several errors:");
             String fileName = request.getFileName();
             try {
                 BlameResult blame = blameRunner.run(fileName);
                 if (blame == null) {
-                    report.logError("No blame results for request <%s>.%n", request);
+                    log.logError("No blame results for request <%s>.%n", request);
                 }
                 else {
                     for (int line : request) {
@@ -167,7 +167,7 @@ public class GitBlamer implements Blamer {
                         if (lineIndex < blame.getResultContents().size()) {
                             PersonIdent who = blame.getSourceAuthor(lineIndex);
                             if (who == null) {
-                                report.logInfo("No author information found for line %d in file %s", lineIndex,
+                                log.logError("No author information found for line %d in file %s", lineIndex,
                                         fileName);
                             }
                             else {
@@ -176,7 +176,7 @@ public class GitBlamer implements Blamer {
                             }
                             RevCommit commit = blame.getSourceCommit(lineIndex);
                             if (commit == null) {
-                                report.logInfo("No commit ID found for line %d in file %s", lineIndex, fileName);
+                                log.logError("No commit ID found for line %d in file %s", lineIndex, fileName);
                             }
                             else {
                                 request.setCommit(line, commit.getName());
@@ -186,8 +186,9 @@ public class GitBlamer implements Blamer {
                 }
             }
             catch (GitAPIException e) {
-                report.logError("Error running git blame on %s with revision %s", fileName, headCommit);
+                log.logError("Error running git blame on %s with revision %s", fileName, headCommit);
             }
+            log.logSummary();
         }
     }
 

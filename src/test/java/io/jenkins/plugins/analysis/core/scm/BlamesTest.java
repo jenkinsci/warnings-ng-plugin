@@ -4,8 +4,10 @@ import java.util.NoSuchElementException;
 
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.FilteredLog;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 
 /**
  * Tests the class {@link Blames}.
@@ -18,12 +20,13 @@ class BlamesTest {
     private static final String ABSOLUTE_PATH = WORKSPACE + RELATIVE_PATH;
     private static final String WINDOWS_WORKSPACE = "C:\\absolute\\path\\to\\workspace\\";
     private static final String WINDOWS_RELATIVE_PATH = "with/file.txt";
-    private static final String WINDOWS_ABSOLUTE_PATH = "C:/absolute/path/to/workspace/" + RELATIVE_PATH;
+    private static final String WINDOWS_ABSOLUTE_PATH = "C:/absolute/path/to/workspace/" + WINDOWS_RELATIVE_PATH;
     private static final String ANOTHER_FILE = "another-file.txt";
     private static final String ANOTHER_ABSOLUTE_PATH = WORKSPACE + ANOTHER_FILE;
     private static final String COMMIT = "commit";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
+    private static final FilteredLog LOG = mock(FilteredLog.class);
 
     @Test
     void shouldCreateEmptyDefaultValue() {
@@ -34,21 +37,10 @@ class BlamesTest {
     }
     
     @Test
-    void shouldHaveErrorAndInfoMessages() {
-        Blames blames = new Blames();
-        
-        blames.logError("error %d", 1);
-        blames.logInfo("message %d", 2);
-        
-        assertThat(blames).hasErrorMessages("error 1");
-        assertThat(blames).hasInfoMessages("message 2");
-    }
-    
-    @Test
     void shouldCreateSingleBlame() {
         Blames blames = new Blames(WORKSPACE);
 
-        blames.addLine(ABSOLUTE_PATH, 1);
+        blames.addLine(ABSOLUTE_PATH, 1, LOG);
 
         assertThat(blames).isNotEmpty();
         assertThat(blames.size()).isEqualTo(1);
@@ -62,7 +54,7 @@ class BlamesTest {
     void shouldConvertWindowsPathToUnix() {
         Blames blames = new Blames(WINDOWS_WORKSPACE);
 
-        blames.addLine(WINDOWS_ABSOLUTE_PATH, 1);
+        blames.addLine(WINDOWS_ABSOLUTE_PATH, 1, LOG);
 
         assertThat(blames).isNotEmpty();
         assertThat(blames.size()).isEqualTo(1);
@@ -76,8 +68,8 @@ class BlamesTest {
     void shouldAddAdditionalLinesToRequest() {
         Blames blames = new Blames(WORKSPACE);
 
-        blames.addLine(ABSOLUTE_PATH, 1);
-        blames.addLine(ABSOLUTE_PATH, 2);
+        blames.addLine(ABSOLUTE_PATH, 1, LOG);
+        blames.addLine(ABSOLUTE_PATH, 2, LOG);
 
         assertThat(blames.size()).isEqualTo(1);
         assertThat(blames).hasFiles(ABSOLUTE_PATH);
@@ -91,8 +83,8 @@ class BlamesTest {
     void shouldCreateTwoDifferentBlames() {
         Blames blames = new Blames(WORKSPACE);
 
-        blames.addLine(ABSOLUTE_PATH, 1);
-        blames.addLine(WORKSPACE + ANOTHER_FILE, 2);
+        blames.addLine(ABSOLUTE_PATH, 1, LOG);
+        blames.addLine(WORKSPACE + ANOTHER_FILE, 2, LOG);
 
         assertThat(blames.size()).isEqualTo(2);
         assertThat(blames).hasFiles(ABSOLUTE_PATH, ANOTHER_ABSOLUTE_PATH);
@@ -114,16 +106,16 @@ class BlamesTest {
     void shouldAggregateBlamesOfSameFile() {
         Blames blames = new Blames(WORKSPACE);
 
-        blames.addLine(ABSOLUTE_PATH, 1);
+        blames.addLine(ABSOLUTE_PATH, 1, LOG);
         setDetails(blames.get(ABSOLUTE_PATH), 1);
-        blames.addLine(ABSOLUTE_PATH, 2);
+        blames.addLine(ABSOLUTE_PATH, 2, LOG);
         setDetails(blames.get(ABSOLUTE_PATH), 2);
 
         Blames another = new Blames(WORKSPACE);
 
-        another.addLine(ABSOLUTE_PATH, 2);
+        another.addLine(ABSOLUTE_PATH, 2, LOG);
         setDetails(another.get(ABSOLUTE_PATH), 2);
-        another.addLine(ABSOLUTE_PATH, 3);
+        another.addLine(ABSOLUTE_PATH, 3, LOG);
         setDetails(another.get(ABSOLUTE_PATH), 3);
         
         blames.addAll(another);
@@ -146,13 +138,13 @@ class BlamesTest {
     void shouldAggregateBlamesOfDifferentFiles() {
         Blames blames = new Blames(WORKSPACE);
 
-        blames.addLine(ABSOLUTE_PATH, 1);
-        blames.addLine(ABSOLUTE_PATH, 2);
+        blames.addLine(ABSOLUTE_PATH, 1, LOG);
+        blames.addLine(ABSOLUTE_PATH, 2, LOG);
 
         Blames another = new Blames(WORKSPACE);
 
-        another.addLine(ANOTHER_ABSOLUTE_PATH, 2);
-        another.addLine(ANOTHER_ABSOLUTE_PATH, 3);
+        another.addLine(ANOTHER_ABSOLUTE_PATH, 2, LOG);
+        another.addLine(ANOTHER_ABSOLUTE_PATH, 3, LOG);
         
         blames.addAll(another);
 

@@ -5,13 +5,12 @@ import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -61,10 +60,9 @@ public class AbsolutePathGenerator {
 
         Map<String, String> relativeToAbsoluteMapping = resolveAbsoluteNames(relativeFileNames, workspace);
 
-        List<String> unresolved = new ArrayList<>();
+        FilteredLog log = new FilteredLog(report, "Can't resolve absolute paths for some files:");
         int resolvedCount = 0;
         int unchangedCount = 0;
-        int unresolvedCount = 0;
         for (Issue issue : report) {
             if (relativeToAbsoluteMapping.containsKey(issue.getFileName())) {
                 String absoluteFileName = relativeToAbsoluteMapping.get(issue.getFileName());
@@ -73,13 +71,7 @@ public class AbsolutePathGenerator {
             }
             else {
                 if (relativeFileNames.contains(issue.getFileName())) {
-                    unresolvedCount++;
-                    if (unresolvedCount < 5) {
-                        unresolved.add(String.format("- %s", issue.getFileName()));
-                    }
-                    else if (unresolvedCount == 5) {
-                        unresolved.add("  ... skipped logging of additional file errors ...");
-                    }
+                    log.logError("- %s", issue.getFileName());
                 }
                 else {
                     unchangedCount++;
@@ -87,12 +79,9 @@ public class AbsolutePathGenerator {
             }
         }
 
-        if (unresolvedCount > 0) {
-            report.logError("Can't resolve absolute paths for %d files:", unresolvedCount);
-            unresolved.forEach(report::logError);
-        }
         report.logInfo("-> %d resolved, %d unresolved, %d already absolute", 
-                resolvedCount, unresolvedCount, unchangedCount);
+                resolvedCount, log.size(), unchangedCount);
+        log.logSummary();
     }
 
     private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final File workspace) {

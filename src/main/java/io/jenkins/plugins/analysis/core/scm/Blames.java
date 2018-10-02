@@ -1,19 +1,14 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.list.ImmutableList;
-import org.eclipse.collections.impl.factory.Lists;
 
-import com.google.errorprone.annotations.FormatMethod;
-
+import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.util.NoSuchElementException;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
@@ -27,8 +22,6 @@ public class Blames implements Serializable {
     private static final long serialVersionUID = -7884822502506035784L;
 
     private final Map<String, BlameRequest> blamesPerFile = new HashMap<>();
-    private final List<String> infoMessages = new ArrayList<>();
-    private final List<String> errorMessages = new ArrayList<>();
     private final String workspace;
 
     /**
@@ -87,8 +80,10 @@ public class Blames implements Serializable {
      *         the absolute file name that will be used as a key
      * @param lineStart
      *         the line number to find the blame for
+     * @param log
+     *         the logger to report errors to
      */
-    public void addLine(final String fileName, final int lineStart) {
+    public void addLine(final String fileName, final int lineStart, final FilteredLog log) {
         if (!contains(fileName)) {
             if (fileName.startsWith(workspace)) {
                 String relativeFileName = fileName.substring(workspace.length());
@@ -96,13 +91,7 @@ public class Blames implements Serializable {
                 blamesPerFile.put(fileName, new BlameRequest(cleanFileName, lineStart));
             }
             else {
-                int error = errorMessages.size();
-                if (error < 5) {
-                    logError("Skipping non-workspace file %s (workspace = %s).%n", fileName, workspace);
-                }
-                else if (error == 5) {
-                    logError("  ... skipped logging of additional non-workspace file errors ...");
-                }
+                log.logError("Skipping non-workspace file %s (workspace = %s).%n", fileName, workspace);
             }
         }
         else {
@@ -121,59 +110,6 @@ public class Blames implements Serializable {
     }
 
     /**
-     * Logs the specified information message. Use this method to log any useful information when composing this
-     * instance.
-     *
-     * @param format
-     *         A <a href="../util/Formatter.html#syntax">format string</a>
-     * @param args
-     *         Arguments referenced by the format specifiers in the format string.  If there are more arguments than
-     *         format specifiers, the extra arguments are ignored.  The number of arguments is variable and may be
-     *         zero.
-     *
-     * @see #getInfoMessages()
-     */
-    @FormatMethod
-    public void logInfo(final String format, final Object... args) {
-        infoMessages.add(String.format(format, args));
-    }
-
-    /**
-     * Logs the specified error message. Use this method to log any error when composing this instance.
-     *
-     * @param format
-     *         A <a href="../util/Formatter.html#syntax">format string</a>
-     * @param args
-     *         Arguments referenced by the format specifiers in the format string.  If there are more arguments than
-     *         format specifiers, the extra arguments are ignored.  The number of arguments is variable and may be
-     *         zero.
-     *
-     * @see #getInfoMessages()
-     */
-    @FormatMethod
-    public void logError(final String format, final Object... args) {
-        errorMessages.add(String.format(format, args));
-    }
-
-    /**
-     * Returns the info messages that have been reported since the creation of this set of issues.
-     *
-     * @return the info messages
-     */
-    public ImmutableList<String> getInfoMessages() {
-        return Lists.immutable.ofAll(infoMessages);
-    }
-
-    /**
-     * Returns the error messages that have been reported since the creation of this set of issues.
-     *
-     * @return the error messages
-     */
-    public ImmutableList<String> getErrorMessages() {
-        return Lists.immutable.ofAll(errorMessages);
-    }
-
-    /**
      * Returns all stored requests.
      *
      * @return the requests
@@ -189,7 +125,8 @@ public class Blames implements Serializable {
      *         absolute file name
      *
      * @return the blames for that file
-     * @throws NoSuchElementException if the file name is not registered
+     * @throws NoSuchElementException
+     *         if the file name is not registered
      */
     public BlameRequest get(final String fileName) {
         if (contains(fileName)) {
@@ -200,8 +137,9 @@ public class Blames implements Serializable {
 
     /**
      * Merges all specified blames with the current set of blames.
-     * 
-     * @param other the blames to add
+     *
+     * @param other
+     *         the blames to add
      */
     public void addAll(final Blames other) {
         for (String otherFile : other.blamesPerFile.keySet()) {
@@ -213,13 +151,5 @@ public class Blames implements Serializable {
                 blamesPerFile.put(otherFile, otherRequest);
             }
         }
-    }
-
-    /**
-     * Clears all info and error messages.
-     */
-    public void clearMessages() {
-        errorMessages.clear();
-        infoMessages.clear();
     }
 }
