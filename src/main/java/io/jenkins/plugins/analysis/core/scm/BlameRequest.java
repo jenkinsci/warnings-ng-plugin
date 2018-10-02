@@ -78,7 +78,7 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
      *         the commit ID
      */
     void setCommit(final int lineNumber, final String id) {
-        commitByLine.put(lineNumber, id);
+        setStringValue(commitByLine, lineNumber, id);
     }
 
     public String getCommit(final int line) {
@@ -94,7 +94,7 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
      *         the author name
      */
     void setName(final int lineNumber, final String name) {
-        nameByLine.put(lineNumber, name);
+        setStringValue(nameByLine, lineNumber, name);
     }
 
     public String getName(final int line) {
@@ -110,7 +110,7 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
      *         the email address of the author
      */
     void setEmail(final int lineNumber, final String emailAddress) {
-        emailByLine.put(lineNumber, emailAddress);
+        setStringValue(emailByLine, lineNumber, emailAddress);
     }
 
     public String getEmail(final int line) {
@@ -122,6 +122,10 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
             return map.get(line);
         }
         return EMPTY;
+    }
+
+    private String setStringValue(final Map<Integer, String> map, final int lineNumber, final String value) {
+        return map.put(lineNumber, value.intern());
     }
 
     /**
@@ -138,9 +142,9 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
             for (Integer otherLine : otherRequest) {
                 if (!lines.contains(otherLine)) {
                     lines.add(otherLine);
-                    commitByLine.put(otherLine, otherRequest.getCommit(otherLine));
-                    nameByLine.put(otherLine, otherRequest.getName(otherLine));
-                    emailByLine.put(otherLine, otherRequest.getEmail(otherLine));
+                    setStringValue(commitByLine, otherLine, otherRequest.getCommit(otherLine));
+                    setStringValue(nameByLine, otherLine, otherRequest.getName(otherLine));
+                    setStringValue(emailByLine, otherLine, otherRequest.getEmail(otherLine));
                 }
             }
         }
