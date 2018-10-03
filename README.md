@@ -1,4 +1,4 @@
-# Jenkins Warning Plug-in
+# Jenkins Warnings Plug-in
 
 [![Join the chat at https://gitter.im/jenkinsci/warnings-plugin](https://badges.gitter.im/jenkinsci/warnings-plugin.svg)](https://gitter.im/jenkinsci/warnings-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/warnings.svg)](https://plugins.jenkins.io/warnings)
