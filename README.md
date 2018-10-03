@@ -19,5 +19,5 @@ All source code is licensed under the MIT license.
 [![Codecov](https://img.shields.io/codecov/c/github/jenkinsci/warnings-plugin/master.svg)](https://codecov.io/gh/jenkinsci/warnings-plugin/branch/master)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/warnings-plugin.svg)](https://github.com/jenkinsci/warnings-plugin/pulls)
 ![JDK8](https://img.shields.io/badge/jdk-8-yellow.svg)
-[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Join the chat at https://gitter.im/jenkinsci/warnings-plugin](https://badges.gitter.im/jenkinsci/warnings-plugin.svg)](https://gitter.im/jenkinsci/warnings-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
