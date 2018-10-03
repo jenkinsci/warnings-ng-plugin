@@ -91,7 +91,7 @@ public class Blames implements Serializable {
                 blamesPerFile.put(fileName, new BlameRequest(cleanFileName, lineStart));
             }
             else {
-                log.logError("Skipping non-workspace file %s (workspace = %s).%n", fileName, workspace);
+                log.logError("- Skipping non-workspace file %s", fileName);
             }
         }
         else {
