@@ -1,5 +1,11 @@
 # Jenkins Warning Plug-in
 
+[![Join the chat at https://gitter.im/jenkinsci/warnings-plugin](https://badges.gitter.im/jenkinsci/warnings-plugin.svg)](https://gitter.im/jenkinsci/warnings-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/warnings.svg)](https://plugins.jenkins.io/warnings)
+[![Jenkins Version](https://img.shields.io/badge/Jenkins-2.89.1-green.svg)](https://jenkins.io/download/)
+![JDK8](https://img.shields.io/badge/jdk-8-yellow.svg)
+[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+
 The Jenkins 'warnings' plug-in collects compiler warnings or issues reported by static analysis tools and visualizes the 
 results. It has built-in support for numerous static analysis tools (including several compilers), see the list of
 [supported report formats](SUPPORTED-FORMATS.md). If your tool is not yet supported you can either define a new 
@@ -12,12 +18,9 @@ For more details please refer to the [documentation](doc/Documentation.md).
 
 All source code is licensed under the MIT license.
 
-[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/warnings.svg)](https://plugins.jenkins.io/warnings)
-[![Jenkins Version](https://img.shields.io/badge/Jenkins-2.89.1-green.svg)](https://jenkins.io/download/)
+
 [![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/master/)
 [![Travis](https://img.shields.io/travis/jenkinsci/warnings-plugin.svg)](https://travis-ci.org/jenkinsci/warnings-plugin)
 [![Codecov](https://img.shields.io/codecov/c/github/jenkinsci/warnings-plugin/master.svg)](https://codecov.io/gh/jenkinsci/warnings-plugin/branch/master)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/warnings-plugin.svg)](https://github.com/jenkinsci/warnings-plugin/pulls)
-![JDK8](https://img.shields.io/badge/jdk-8-yellow.svg)
-[![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Join the chat at https://gitter.im/jenkinsci/warnings-plugin](https://badges.gitter.im/jenkinsci/warnings-plugin.svg)](https://gitter.im/jenkinsci/warnings-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
