@@ -113,7 +113,16 @@ actions.
 One new feature is available by using the checkbox *"Aggregate Results"*: if this option is selected, then one result
 is created that contains an aggregation of all issues of the selected tools. This is something the 
 Static Analysis Collector Plugin provided previously. When this option is activated you get a unique entry point 
-for all of your issues.
+for all of your issues. The following screenshot shows this new behavior: 
+
+![aggregated results](images/aggregation.png) 
+
+If this option is not enabled, then for each tool a separate result will be created. This result has a unique URL and
+icon, so you quickly see the difference between the created reports:
+
+![separate results](images/separate.png) 
+
+
 
 In the basic configuration section you can additionally choose if the step should run for failed builds as well.
 This option is disabled by default, since analysis results might be inaccurate if the build failed.
