@@ -197,7 +197,20 @@
     }
 
     /**
-     * Store the selected tab in Browser's local storage.
+     * Store and restore the selected carousel image in browser's local storage.
+     */
+    var carousel = $('#overview-carousel');
+    carousel.on('slid.bs.carousel', function (e) {
+        localStorage.setItem('activeCarousel', e.to);   
+        console.log()
+    });
+    var activeCarousel = localStorage.getItem('activeCarousel');
+    if (activeCarousel) {
+        carousel.carousel(parseInt(activeCarousel));
+    }
+    
+    /**
+     * Store the selected tab in browser's local storage.
      */
     var tabToggleLink = $('a[data-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
@@ -247,7 +260,7 @@
      */
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
 
     /**
      * Initializes the specified table.
