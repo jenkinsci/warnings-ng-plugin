@@ -25,10 +25,10 @@ import hudson.util.FormValidation;
  * @author Ullrich Hafner
  */
 public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration> {
-    private final String pattern;
     private final StaticAnalysisTool tool;
-    private String id;
-    private String name;
+    private final String pattern;
+    private String id = StringUtils.EMPTY;
+    private String name = StringUtils.EMPTY;
 
     /**
      * Creates a new instance of {@link ToolConfiguration}.

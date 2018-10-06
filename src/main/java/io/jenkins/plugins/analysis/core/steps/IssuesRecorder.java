@@ -69,8 +69,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private List<ToolConfiguration> tools;
     
-    private String reportEncoding;
-    private String sourceCodeEncoding;
+    private String reportEncoding = StringUtils.EMPTY;
+    private String sourceCodeEncoding = StringUtils.EMPTY;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
