@@ -8,13 +8,11 @@
 
     <l:main-panel>
 
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.3/css/tether.min.css"/>
-      <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"
-            integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-            crossorigin="anonymous"/>
-
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-style.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/bootstrap.min.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/datatables.min.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/all.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-style.css"/>
+      <script src="${resURL}/plugin/warnings/js/libs/bootstrap.min.js"/>
 
       <div class="fluid-container">
         

@@ -111,10 +111,12 @@ tr.shown div.details-control:before {
 
 /* ------------------------------------------------------------------------------------------------------------------- */
 
+
 /* Font awesome icons float right */
 .icon-right {
     float: right;
     color: #b4b4b4;
+    font-weight: 900;
     position: absolute;
     right: 25px;
     top: 10px;
@@ -124,6 +126,13 @@ tr.shown div.details-control:before {
 .banner {
     padding: 30px;
     color: #009688;
+    font-size: 100px;
+}
+
+/* Font awesome icons banner */
+i {
+    color: #b4b4b4;
+    font-weight: 900;
     font-size: 100px;
 }
 
