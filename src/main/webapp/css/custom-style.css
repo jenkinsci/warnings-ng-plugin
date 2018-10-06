@@ -90,6 +90,12 @@ div.details-control {
 }
 
 /* Add font awesome plus icon when its closed */
+.fa:before {
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
+}
+
+/* Add font awesome plus icon when its closed */
 div.details-control:before {
     content: "\f055";
     font-family: "Font Awesome 5 Free";
@@ -114,6 +120,7 @@ tr.shown div.details-control:before {
 
 /* Font awesome icons float right */
 .icon-right {
+    font-family: "Font Awesome 5 Free";
     float: right;
     color: #b4b4b4;
     font-weight: 900;

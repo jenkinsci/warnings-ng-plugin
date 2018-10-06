@@ -2,6 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
   <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/solid.min.css"/>
   <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/fontawesome.min.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-style.css"/>
 
   <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">
     <j:out value="${it.summary}" />
