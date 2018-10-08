@@ -1,7 +1,0 @@
-/<somelocation>/cppunit-1.10.0-vx_rtp/include/cppunit/extensions/TestFixtureFactory.h:17:
-warning: class CppUnit::TestFixtureFactory has virtual functions but
-non-virtual destructor
-/<somelocation>/cppunit-1.10.0-vx_rtp/include/cppunit/extensions/TestFixtureFactory.h:
-In instantiation of CppUnit::ConcretTestFixtureFactory&lt;TestCase_MYdvc>:
-TestCase_MYdvc.h:67:   instantiated from here
-

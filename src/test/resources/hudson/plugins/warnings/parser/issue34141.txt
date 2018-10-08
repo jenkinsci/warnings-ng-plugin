@@ -1,2 +1,0 @@
-14:22:36 New:                     vobs/1062_GEN3/configuration/tools/CSU/device_get_logs_info.sh /main/Integration/2
-14:22:36 New:                     vobs/1062_GEN3/configuration/tools/RIU/device_get_logs_info.sh "symbolic link d6377eb4.fc7711e5.8fd8.00:50:56:bc:54:8e" SYMLINK

@@ -8,7 +8,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  * @author Ullrich Hafner
  */
 public class IconLabelProvider extends StaticAnalysisLabelProvider {
-    private static final String ICONS_URL = "/plugin/warnings/icons/";
+    private static final String ICONS_URL = "/plugin/warnings-ng/icons/";
     
     private final String smallIconUrl;
     private final String largeIconUrl;

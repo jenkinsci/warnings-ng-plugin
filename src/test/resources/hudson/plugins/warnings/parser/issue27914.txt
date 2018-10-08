@@ -1,3 +1,0 @@
-E:\workspace\TreeSize release nightly\DelphiLib\Jam.UI.Dialogs.pas(4522): Hint warning H2164: Variable 'lTaskDialog' is declared but never used in 'TDialog.ShowTaskDialog' [E:\workspace\TreeSize release nightly\CLI\TreeSizeCLI.dproj]
-E:\workspace\TreeSize release nightly\DelphiLib\Jam.UI.Dialogs.pas(4523): Hint warning H2164: Variable 'lButton' is declared but never used in 'TDialog.ShowTaskDialog' [E:\workspace\TreeSize release nightly\CLI\TreeSizeCLI.dproj]
-E:\workspace\TreeSize release nightly\DelphiLib\Jam.UI.Dialogs.pas(4524): Hint warning H2164: Variable 'lIndex' is declared but never used in 'TDialog.ShowTaskDialog' [E:\workspace\TreeSize release nightly\CLI\TreeSizeCLI.dproj]

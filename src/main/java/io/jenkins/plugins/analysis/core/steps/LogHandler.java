@@ -2,9 +2,10 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
+import com.google.errorprone.annotations.FormatMethod;
+
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.util.Logger;
-import io.jenkins.plugins.analysis.core.util.LoggerFactory;
+import io.jenkins.plugins.analysis.core.util.ToolLogger;
 
 import hudson.model.TaskListener;
 
@@ -15,8 +16,8 @@ import hudson.model.TaskListener;
  */
 @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
 class LogHandler {
-    private final Logger errorLogger;
-    private final Logger logger;
+    private final ToolLogger errorLogger;
+    private final ToolLogger logger;
     private int infoPosition = 0;
     private int errorPosition = 0;
 
@@ -51,12 +52,12 @@ class LogHandler {
         this.errorPosition = errorPosition;
     }
 
-    private Logger createErrorLogger(final TaskListener listener, final String name) {
+    private ToolLogger createErrorLogger(final TaskListener listener, final String name) {
         return createLogger(listener, String.format("[%s] [ERROR]", name));
     }
 
-    private Logger createLogger(final TaskListener listener, final String name) {
-        return new LoggerFactory().createLogger(listener.getLogger(), name);
+    private ToolLogger createLogger(final TaskListener listener, final String name) {
+        return new ToolLogger(listener.getLogger(), name);
     }
 
     /**
@@ -81,6 +82,7 @@ class LogHandler {
      *         format specifiers, the extra arguments are ignored.  The number of arguments is variable and may be
      *         zero.
      */
+    @FormatMethod
     public void log(final String format, final Object... args) {
         logger.log(format, args);
     }

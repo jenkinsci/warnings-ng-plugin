@@ -1,3 +1,0 @@
-[  FAILED  ] allCases/ReferenceCaseTest.ROIRequirementsTest/25, where GetParam() = (19, 1) (11760 ms)
-[ RUN      ] allCases/ReferenceCaseTest.ROIRequirementsTest/29
-C:\Program Files (x86)\Jenkins\jobs\MyJob\workspace\MyProject\testing\regression_tests\BackToBackTest\ROIRequirements.cpp(168): error: Expected: (xEdgeLength) <= (maxEdgeLength), actual: 150.781 vs 150

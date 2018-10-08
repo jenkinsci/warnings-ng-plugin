@@ -1,3 +1,0 @@
-nagfor file.f90 > not_a_message_line
-Panic: file10.f90, line 1: User requested panic
-[NAG Fortran Compiler - not a message line]

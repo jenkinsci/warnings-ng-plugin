@@ -1,5 +1,0 @@
-F:\AC_working\new-wlanac\ac\np\capwap\source\capwap_data.c(974): Error 40: Undeclared identifier 'TRUE'
-F:\AC_working\new-wlanac\ac\np\capwap\source\capwap_data.c(974): Error 63: Expected an lvalue
-F:\AC_working\new-wlanac\ac\np\capwap\source\capwap_data.c(975): Error 40: Undeclared identifier 'pDstCwData'
-F:\AC_working\new-wlanac\ac\np\capwap\source\capwap_data.c(975): Error 10: Expecting a structure or union
-

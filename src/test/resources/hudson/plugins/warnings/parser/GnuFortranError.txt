@@ -1,5 +1,0 @@
-generic2.f90:81.24-26:
-
-call d_vode(istate, lambda_fcn, dummy_jac, lambda, x_tmp, x_end, tol, pm)
-                    1
-Error: Interface mismatch in dummy procedure 'f' at (1): Shape mismatch in dimension 1 of argument 'y'

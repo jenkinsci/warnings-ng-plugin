@@ -8,17 +8,17 @@
 
     <l:main-panel>
 
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/bootstrap.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/datatables.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-style.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/solid.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/fontawesome.min.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/bootstrap.min.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/datatables.min.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
 
-      <script src="${resURL}/plugin/warnings/js/libs/jquery.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/popper.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/bootstrap.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/datatables.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/echarts.common.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/datatables.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/echarts.common.min.js"/>
 
 
       <div class="fluid-container">
@@ -51,8 +51,8 @@
 
             <script>var view = <st:bind value="${it}"/></script>
             
-            <script type="text/javascript" src="${resURL}/plugin/warnings/js/trend-chart.js"/>
-            <script type="text/javascript" src="${resURL}/plugin/warnings/js/issues-detail.js"/>
+            <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
+            <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
 
           </j:when>
           <j:otherwise>
@@ -71,8 +71,8 @@
             <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
 
             
-            <script type="text/javascript" src="${resURL}/plugin/warnings/js/no-prototype.js"/>
-            <script type="text/javascript" src="${resURL}/plugin/warnings/js/trend-chart.js"/>
+            <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
+            <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
             <script>
               var view = <st:bind value="${it}"/>
               view.getBuildTrend(function (lineModel) {

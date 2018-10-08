@@ -1,9 +1,0 @@
-ld: warning: Sometthing::SetName(wxString const&) has different visibility (default) in ../some/path/to/library.a(library_lib_somehting.o) and (hidden) in /some/unit/path/to/file.o
-ld: warning: Sometthing::GetLayoutDirection() const has different visibility (default) in ../some/path/to/library.a(library_lib_somehting.o) and (hidden) in /some/unit/path/to/file.o
-ld: warning: Sometthing::SetLayoutDirection(wxLayoutDirection) has different visibility (default) in ../some/path/to/library.a(library_lib_somehting.o) and (hidden) in /some/unit/path/to/file.o
-ld: warning: Sometthing::SetSizeHints(int, int, int, int, int, int)has different visibility (default) in ../some/path/to/library.a(library_lib_somehting.o) and (hidden) in /some/unit/path/to/file.o
-ld: warning: Sometthing::SetMinSize(wxSize const&) has different visibility (default) in ../some/path/to/library.a(library_lib_somehting.o) and (hidden) in /some/unit/path/to/file.o
-ld: warning: Sometthing::SetMaxSize(wxSize const&) has different visibility (default) in ../some/path/to/library.a(library_lib_somehting.o) and (hidden) in /some/unit/path/to/file.o
-ld: warning: Sometthing::IsShown() const has different visibility (default) in ../some/path/to/library.a(library_lib_somehting.o) and (hidden) in /some/unit/path/to/file.o
-ld: warning: Sometthing::IsEnabled() const has different visibility (default) in ../some/path/to/library.a(library_lib_somehting.o) and (hidden) in /some/unit/path/to/file.o
-ld: warning: Sometthing::SetWindowStyleFlag(long) has different visibility (default) in ../some/path/to/library.a(library_lib_somehting.o) and (hidden) in /some/unit/path/to/file.o

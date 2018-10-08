@@ -1,4 +1,0 @@
-nagfor file.f90 > not_a_message_line
-Fatal Error: file9.f90, line 5: SAME_NAME is not a derived type
-             detected at ::@N
-[NAG Fortran Compiler - not a message line]

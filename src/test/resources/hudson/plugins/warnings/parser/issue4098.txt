@@ -1,4 +1,0 @@
-
-
-[javac] warning: [path] bad path element "C:\...\.hudson\jobs\...\log4j.jar": no such file or directory
-

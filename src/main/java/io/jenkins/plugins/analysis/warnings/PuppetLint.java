@@ -43,5 +43,21 @@ public class PuppetLint extends StaticAnalysisTool {
         public String getDisplayName() {
             return Messages.Warnings_Puppet_ParserName();
         }
+
+        @Override
+        public String getHelp() {
+            return "  <p>\n"
+                    + "    To be able to grab puppet-lint output, you will need a recent enough version that supports\n"
+                    + "    the <code>--log-format flag</code>.<br/>\n"
+                    + "    When running puppet-lint, make sure you use the following log format:\n"
+                    + "  </p>\n"
+                    + "  <pre>\n"
+                    + "    <code>%{path}:%{line}:%{check}:%{KIND}:%{message}</code>\n"
+                    + "  </pre>\n"
+                    + "  <p>Complete example:</p>\n"
+                    + "  <pre>\n"
+                    + "      <code>find . -iname *.pp -exec puppet-lint --log-format \"%{path}:%{line}:%{check}:%{KIND}:%{message}\" {} \\;</code>\n"
+                    + "  </pre>\n";
+        }
     }
 }

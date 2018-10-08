@@ -8,7 +8,6 @@ import edu.hm.hafner.analysis.parser.SphinxBuildParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
-import hudson.plugins.warnings.parser.Messages;
 
 /**
  * Provides a parser and customized messages for Sphinx build warnings.

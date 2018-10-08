@@ -1,3 +1,0 @@
-/opt/ros/fuerte/stacks/Mule/Mapping/Local_map/src/LocalCostMap.cpp:399: Missing space before { [whitespace/braces] [5]
-/opt/ros/fuerte/stacks/Mule/Mapping/Local_map/src/LocalCostMap.cpp:400: Tab found; better to use spaces [whitespace/tab] [1]
-

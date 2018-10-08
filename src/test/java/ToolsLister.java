@@ -68,7 +68,7 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
             return "-";
         }
         return String.format("![%s](%s)", labelProvider.getName(),
-                icon.replace("/plugin/warnings/", "src/main/webapp/"));
+                icon.replace("/plugin/warnings-ng/", "src/main/webapp/"));
     }
 
     private String getName(final StaticAnalysisToolDescriptor descriptor) {

@@ -12,12 +12,11 @@ import hudson.model.AbstractProject;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.plugins.analysis.core.GlobalSettings;
 import hudson.scm.NullSCM;
 import hudson.scm.SCM;
 
 /**
- * Selects a matching SCM blamer for the specified job.
+ * Selects a matching SCM blamer for the specified job. Currently, only Git is supported.
  *
  * @author Lukas Krose
  */
@@ -35,11 +34,6 @@ public class BlameFactory {
      * @return the blamer
      */
     public static Blamer createBlamer(Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
-        // FIXME: this should be on a new type
-        if (GlobalSettings.instance().getNoAuthors()) {
-            return new NullBlamer();
-        }
-
         Jenkins instance = Jenkins.getInstance();
         if (instance.getPlugin("git") != null) {
             SCM scm = getScm(run);

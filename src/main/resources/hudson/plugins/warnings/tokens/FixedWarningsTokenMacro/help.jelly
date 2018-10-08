@@ -1,9 +1,0 @@
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core">
-
-  <dt>$${WARNINGS_FIXED}</dt>
-  <dd>
-    Expands to the total number of fixed compiler warnings in a build.
-  </dd>
-
-</j:jelly>

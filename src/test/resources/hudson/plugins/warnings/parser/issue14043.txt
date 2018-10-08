@@ -1,9 +1,0 @@
-10:53:05,516 [INFO] - info.XXX.YYY.persistence.entity.scenario.RemplaceAffectation : _____________doProjette(this: RemplaceAffectation {id: 1, ligne:Ligne {nom: Ligne 2}, entite:Concept {id:2, nom:p2, generalisation:, specialisations:[], prototypes:[], constituants:[], caracteristiques:[], affectations:[]}, quantite:4}, pivot: Concept {id:2, nom:p2, generalisation:, specialisations:[], prototypes:[], constituants:[], caracteristiques:[], affectations: []}, projection: ConceptDto {id:2, nom:p2, caracteristiques: {}, affectations: {}}, date: 05/01/2012)
-
-
-10:53:07,084 [ERROR] - info.XXX.YYY.service.entite.EntiteService : On trouve plusieurs resultats pour findByField(fieldName:nom, value:aa, klass:class info.stif.mr1.persistence.entity.entite.Entite): results=[Modele {id:101, nom: aa, generalisation:, specialisations:[], archetype:1, prototypes:[201], constituants:[], caracteristiques:[]}, Modele {id:102, nom: aa, generalisation:, specialisations:[], archetype:2, prototypes:[], constituants:[], caracteristiques:[]}, Concept {id:1, nom:aa, generalisation:, specialisations:[], prototypes:[101], constituants:[], caracteristiques:[], affectations:[]}, Concept {id:2, nom:aa, generalisation:, specialisations:[], prototypes:[102], constituants:[], caracteristiques:[], affectations: []}, info.stif.mr1.persistence.entity.entite.ObjetConcret@2a6cd712]
-
-[junit] <misc junit stdout printout> [data within brackets] [] empty bracket
-
-[junit] G GOT < + 120512,21:18:18.005->120512,21:18:18.632 Ab Micid:192.168.0.1 0 2 PEAK_REPORT(3) PSS:12253413403527718 status=NORMAL issi=123456789012345 ssisfn=123456789012 Contexts:[] cpn=mylabs RET=3
-

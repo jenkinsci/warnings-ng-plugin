@@ -1,3 +1,0 @@
-nagfor file.f90 > not_a_message_line
-Extension: file4.f90, line 9: Left-hand side of intrinsic assignment is allocatable polymorphic variable X
-[NAG Fortran Compiler - not a message line]

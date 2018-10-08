@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<report>
-    <file classname="SomeClass" level="SomeLevel" loc="173" name="SomeDirectory/SomeClass.java" package="SomePackage" src-dir ="SomeDirectory">
-        <item column="0" end-column="3" finding-type="SomeType" line="50" end-line="70" message="SomeMessage" origin="Checkstyle" severity="CriticalError"/>
-    </file>
-    <!-- INFO level is not reported as violation at all. -->   
-</report>

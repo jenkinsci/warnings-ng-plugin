@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
 
-  <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-style.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
   <i:hr title="${%File Encoding}"/>
 

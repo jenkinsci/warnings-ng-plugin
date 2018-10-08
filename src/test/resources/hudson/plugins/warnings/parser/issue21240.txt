@@ -1,1 +1,0 @@
-aaa.class: warning: Cannot find annotation method 'xxx()' in type 'yyyy': class file for fully.qualified.ClassName not found

@@ -7,7 +7,7 @@ fi
 
 mvn install -DskipTests || { echo "Build failed"; exit 1; }
 
-rm -rf $JENKINS_HOME/plugins/warnings*
+rm -rf $JENKINS_HOME/plugins/warnings-ng*
 
 cp -fv target/*.hpi $JENKINS_HOME/plugins
 

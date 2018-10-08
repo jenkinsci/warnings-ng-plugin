@@ -1,5 +1,0 @@
-/Volumes/workspace/MyApp/ViewController.m:1211:26: warning: implicit conversion loses integer precision: 'NSInteger' (aka 'long') to 'int' [-Wshorten-64-to-32]
-
-/Volumes/workspace/MyApp/Splot.m:85: error: -[SplotTests testSplots] : (([hereItGoes isThisOrThat:SetDefault]) is true) failed - Splot does not exists
-
-/Volumes/workspaceMyApp/InitTests.m:132: error: -[InitTests testOnRocks] : (([topViewController isKindOfClass:[DemoViewController class]]) is true) failed - demo view is not on top

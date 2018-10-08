@@ -1,3 +1,0 @@
-nagfor file.f90 > not_a_message_line
-Deleted feature used: file6.f90, line 4: assigned GOTO statement
-[NAG Fortran Compiler - not a message line]

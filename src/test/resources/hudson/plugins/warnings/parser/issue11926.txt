@@ -1,4 +1,0 @@
-FLMSG Warning   451 /opt/server/jenkins/workspace/prova/src/component/include/myInclude.h,28 Header file '/opt/ti/xdctools_3_22_01_21/packages/xdc/runtime/Main.h' repeatedly included but does not have a standard include guard
-FLMSG Warning   451 /opt/server/jenkins/workspace/prova/src/component/include/myInclude.h,28 Header file '/opt/ti/xdctools_3_22_01_21/packages/xdc/runtime/Main.h' repeatedly included but does not have a standard include guard
-FLMSG Warning   451 /opt/server/jenkins/workspace/prova/src/component/include/myInclude.h,28 Header file '/opt/ti/xdctools_3_22_01_21/packages/xdc/runtime/Main.h' repeatedly included but does not have a standard include guard
-FLMSG Warning   451 /opt/server/jenkins/workspace/prova/src/component/include/myInclude.h,28 Header file '/opt/ti/xdctools_3_22_01_21/packages/xdc/runtime/Main.h' repeatedly included but does not have a standard include guard

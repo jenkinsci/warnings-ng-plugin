@@ -1,6 +1,0 @@
-================ gcc 4.6 warnings
-gcc4warning.c: In function 'gcc4warning':
-gcc4warning.c:4:2: warning: implicit declaration of function 'undeclared_function' [-Wimplicit-function-declaration]
-gcc4warning.c:3:6: warning: unused variable 'unused_local' [-Wunused-variable]
-gcc4warning.c:1:21: warning: unused parameter 'unused_parameter' [-Wunused-parameter]
-gcc4warning.c:5:1: warning: control reaches end of non-void function [-Wreturn-type]

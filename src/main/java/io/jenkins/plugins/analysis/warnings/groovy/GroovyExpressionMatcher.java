@@ -12,8 +12,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
-
-import hudson.plugins.warnings.WarningsDescriptor;
+import io.jenkins.plugins.analysis.WarningsPlugin;
 
 /**
  * Creates a warning based on a regular expression match and groovy script.
@@ -65,7 +64,7 @@ public class GroovyExpressionMatcher implements Serializable {
     public Script compile() throws CompilationFailedException {
         Binding binding = new Binding();
         binding.setVariable("falsePositive", falsePositive);
-        GroovyShell shell = new GroovyShell(WarningsDescriptor.class.getClassLoader(), binding);
+        GroovyShell shell = new GroovyShell(WarningsPlugin.class.getClassLoader(), binding);
         return shell.parse(script);
     }
 

@@ -1,6 +1,0 @@
-clang++ ...
-In file included from /home/user/project/test/test.cpp:10:
-./test.h:10:10: fatal error: 'test.h' file not found
-#include "test.h"
-         ^
-1 error generated.

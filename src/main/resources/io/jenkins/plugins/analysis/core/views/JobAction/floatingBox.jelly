@@ -10,8 +10,8 @@
       <div id="${from.urlName}-history-chart" class="graph-cursor-pointer"
            style="width: 500px; min-height: 200px; min-width: 500px; height: 200px;"/>
     </div>
-    <script src="${resURL}/plugin/warnings/js/libs/echarts.common.min.js"/>
-    <script src="${resURL}/plugin/warnings/js/trend-chart.js"/>
+    <script src="${resURL}/plugin/warnings-ng/js/libs/echarts.common.min.js"/>
+    <script src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
     <script>
       var ${from.urlName}Action = <st:bind value="${from}"/>;
       ${from.urlName}Action.getBuildTrend(function (trendModel) {

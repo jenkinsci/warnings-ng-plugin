@@ -1,2 +1,0 @@
-11% scanner.cpp:1518:28: warning: Array access (via field 'yy_buffer_stack') results in a null pointer dereference
-

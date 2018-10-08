@@ -8,16 +8,16 @@
 
     <l:main-panel>
 
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/bootstrap.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/datatables.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/solid.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/font-awesome/css/fontawesome.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings/css/custom-style.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/bootstrap.min.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/datatables.min.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
-      <script src="${resURL}/plugin/warnings/js/libs/jquery.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/popper.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/bootstrap.min.js"/>
-      <script src="${resURL}/plugin/warnings/js/libs/datatables.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/datatables.min.js"/>
       
       <div class="fluid-container">
 

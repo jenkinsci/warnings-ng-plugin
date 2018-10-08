@@ -1,4 +1,0 @@
-<StyleCopViolations>
-  <Violation Section="Root.ListViewProblem.Form1.Dispose%bool" LineNumber="18" Source="Form1.Designer.cs" RuleNamespace="Microsoft.StyleCop.CSharp.ReadabilityRules" Rule="PrefixLocalCallsWithThis" RuleId="SA1101">The call to components must begin with the 'this.' prefix to indicate that the item is a member of the class.</Violation>
-  <Violation Section="Root.ListViewProblem.Form1.Dispose%bool" LineNumber="16" Source="Form1.Designer.cs" RuleNamespace="Microsoft.StyleCop.CSharp.ReadabilityRules" Rule="PrefixLocalCallsWithThis" RuleId="SA1101">The call to components must begin with the 'this.' prefix to indicate that the item is a member of the class.</Violation>
-</StyleCopViolations>

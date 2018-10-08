@@ -19,7 +19,6 @@ import j2html.tags.UnescapedText;
 
 import hudson.model.BallColor;
 import hudson.model.Run;
-import hudson.plugins.analysis.util.ToolTipProvider;
 
 /**
  * A generic label provider for static analysis results. Creates pre-defined labels that are parameterized with a string
@@ -29,7 +28,7 @@ import hudson.plugins.analysis.util.ToolTipProvider;
  * @author Ullrich Hafner
  */
 public class StaticAnalysisLabelProvider implements DescriptionProvider {
-    private static final String ICONS_PREFIX = "/plugin/warnings/icons/";
+    private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
 
@@ -296,10 +295,6 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
                         .withAlt(color.getDescription())
                         .withTitle(color.getDescription()),
                 color.getDescription());
-    }
-
-    public ToolTipProvider getToolTipProvider() {
-        return this::getToolTip;
     }
 
     public String getToolTip(final int numberOfItems) {

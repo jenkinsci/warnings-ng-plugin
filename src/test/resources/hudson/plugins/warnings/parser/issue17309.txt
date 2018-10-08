@@ -1,2 +1,0 @@
-foo.cc:4:39: error: dereferencing pointer '<anonymous>' does break strict-aliasing rules
-

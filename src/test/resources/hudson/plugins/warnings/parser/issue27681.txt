@@ -1,8 +1,0 @@
-hpunit:
-[exec] PHPUnit 4.5.1 by Sebastian Bergmann and contributors.
-[exec]
-[exec] Configuration read from .../phpunit.xml
-[exec]
-[exec] PHP Fatal error: SOAP-ERROR: Parsing WSDL: Couldn't load from '...' : failed to load external entity "..."
-[exec] in ...*.php on line 39
-

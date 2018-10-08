@@ -12,7 +12,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
-import hudson.plugins.warnings.parser.Messages;
 
 /**
  * Provides a parser and customized messages for the Scala compiler.

@@ -1,3 +1,0 @@
-nagfor file.f90 > not_a_message_line
-Questionable: /file3.f90, line 12: Array constructor has polymorphic element P(5) (but the constructor value will not be polymorphic)
-[NAG Fortran Compiler - not a message line]
