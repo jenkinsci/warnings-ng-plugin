@@ -29,7 +29,7 @@
 
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>1.0.0-beta3</analysis-model-api.version>
-    <analysis-model.version>1.0.0-RC10-SNAPSHOT</analysis-model.version>
+    <analysis-model.version>1.0.0-RC10</analysis-model.version>
 
     <commons.lang.version>3.8</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
