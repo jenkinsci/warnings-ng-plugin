@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
-  <l:layout title="${it.displayName}" norefresh="true">
+  <issues:layout title="${it.displayName}" norefresh="true">
 
     <st:include it="${it.owner}" page="sidepanel.jelly"/>
 
@@ -86,6 +86,6 @@
 
     </l:main-panel>
 
-  </l:layout>
+  </issues:layout>
 
 </j:jelly>
