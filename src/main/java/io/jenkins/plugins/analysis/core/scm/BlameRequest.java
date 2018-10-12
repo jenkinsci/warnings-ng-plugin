@@ -17,8 +17,10 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  * @author Ullrich Hafner
  */
 public class BlameRequest implements Iterable<Integer>, Serializable {
-    static final String EMPTY = "-";
+    private static final long serialVersionUID = -7491390234189584964L;
     
+    static final String EMPTY = "-";
+
     private String fileName;
     private final Set<Integer> lines = new HashSet<Integer>();
     private final Map<Integer, String> commitByLine = new HashMap<Integer, String>();

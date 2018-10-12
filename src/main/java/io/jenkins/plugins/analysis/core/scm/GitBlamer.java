@@ -18,6 +18,7 @@ import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.FilePath;
 import hudson.plugins.git.GitException;
@@ -31,7 +32,10 @@ import hudson.remoting.VirtualChannel;
  * @author Ullrich Hafner
  * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
  */
+@SuppressFBWarnings(value = "SE", justification = "GitClient implementation is Serializable")    
 public class GitBlamer implements Blamer {
+    private static final long serialVersionUID = -619059996626444900L;
+
     private final GitClient git;
     private final String gitCommit;
     private final FilePath workspace;
