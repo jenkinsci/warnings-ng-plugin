@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core.filter;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import io.jenkins.plugins.analysis.core.filter.IncludeType.DescriptorImpl;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter.RegexpFilterDescriptor;
@@ -16,6 +18,25 @@ import static org.mockito.Mockito.*;
  */
 class RegexpFilterTest {
     private static final String PATTERN = "pattern";
+    private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
+
+    @Test
+    void issue54035() {
+        Report report = new Report();
+        report.add(ISSUE_BUILDER.setFileName("warning.txt").build());
+        report.add(ISSUE_BUILDER.setFileName("_build.external/mercury/Testing/na/na_test.c").build());
+        report.add(ISSUE_BUILDER.setFileName("@2/_build.external/pmix/src/mca/gds/gds.h").build());
+        
+        RegexpFilter filter = new ExcludeFile(".*_build\\.external\\/.*");
+
+        IssueFilterBuilder builder = new IssueFilterBuilder();
+        filter.apply(builder);
+        
+        Report filtered = report.filter(builder.build());
+        
+        assertThat(filtered).hasSize(1);
+        assertThat(report.get(0)).hasFileName("warning.txt");
+    }
 
     @Test
     void shouldValidatePattern() {
