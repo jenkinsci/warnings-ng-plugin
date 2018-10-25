@@ -11,6 +11,7 @@ import edu.hm.hafner.analysis.parser.ScalacParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.plugins.warnings.parser.Messages;
 
@@ -36,6 +37,7 @@ public class Scala extends StaticAnalysisToolSuite {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("scala")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

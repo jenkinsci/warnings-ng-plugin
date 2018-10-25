@@ -7,6 +7,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.parser.GnuMakeGccParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -31,6 +32,7 @@ public class GnuMakeGcc extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("gnuMakeGcc")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

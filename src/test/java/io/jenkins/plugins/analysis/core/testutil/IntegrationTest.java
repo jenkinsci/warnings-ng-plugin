@@ -39,6 +39,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.core.util.SymbolNameGenerator;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
@@ -387,8 +388,8 @@ public abstract class IntegrationTest extends ResourceTest {
     protected String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> tool,
             final String issuesName) {
         return String.format(
-                "def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
-                issuesName, tool.getSimpleName());
+                "def %s = scanForIssues tool: %s()], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
+                issuesName, new SymbolNameGenerator().getSymbolName(tool));
     }
 
     /**
@@ -918,4 +919,5 @@ public abstract class IntegrationTest extends ResourceTest {
     protected void removeBuilder(final FreeStyleProject project, final Builder builder) {
         project.getBuildersList().remove(builder);
     }
+
 }

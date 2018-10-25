@@ -25,6 +25,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.core.util.SymbolNameGenerator;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
@@ -85,7 +86,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("issue11675.txt");
         job.setDefinition(asStage(
                 "sh 'cat issue11675-issues.txt'",
-                "def issues = scanForIssues tool: [$class: 'Eclipse']",
+                "def issues = scanForIssues tool: Eclipse()",
                 PUBLISH_ISSUES_STEP));
 
         AnalysisResult result = scheduleBuild(job, Eclipse.class);
@@ -184,7 +185,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldShowWarningsOfGroovyParser() {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
-                "def groovy = scanForIssues tool: [$class: 'GroovyScript', id:'groovy-pep8'], "
+                "def groovy = scanForIssues tool: groovyScript(), id:'groovy-pep8'], "
                         + "pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
                 "publishIssues issues:[groovy]"));
 
@@ -215,8 +216,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
                 "recordIssues tools: [" 
-                        + "[pattern: '**/*issues.txt', id: 'groovy-1', tool: [$class: 'GroovyScript', id:'groovy-pep8']]," 
-                        + "[pattern: '**/*issues.txt', id: 'groovy-2', tool: [$class: 'GroovyScript', id:'groovy-pep8']]" 
+                        + "[pattern: '**/*issues.txt', id: 'groovy-1', tool: groovyScript(), id:'groovy-pep8']],"
+                        + "[pattern: '**/*issues.txt', id: 'groovy-2', tool: groovyScript(), id:'groovy-pep8']]"
                         + "] "));
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         String id = "groovy-pep8";
@@ -358,8 +359,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 FindBugs.class, JcReport.class);
         for (Class<? extends StaticAnalysisTool> tool : classes) {
             job.setDefinition(asStage(
-                    String.format("def issues = scanForIssues tool: [$class: '%s'], pattern:'xxe.xml'",
-                            tool.getSimpleName()),
+                    String.format("def issues = scanForIssues tool: %s(), pattern:'xxe.xml'",
+                            new SymbolNameGenerator().getSymbolName(tool)),
                     "publishIssues issues:[issues]"));
 
             scheduleBuild(job, tool);

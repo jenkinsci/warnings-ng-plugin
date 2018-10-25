@@ -8,6 +8,7 @@ import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -38,6 +39,7 @@ public class EsLint extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("esLint")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

@@ -7,6 +7,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.parser.SphinxBuildParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.plugins.warnings.parser.Messages;
 
@@ -32,6 +33,7 @@ public class SphinxBuild extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("sphinxBuild")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

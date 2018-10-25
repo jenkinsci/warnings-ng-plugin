@@ -45,22 +45,29 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
                     + "other teams as well please share it and provide pull requests for the \n"
                     + "[warnings plug-in](https://github.com/jenkinsci/warnings-plugin/pulls) and \n"
                     + "the [analysis parsers library](https://github.com/jenkinsci/analysis-model/).  \n");
-            file.print("| Number | ID | $class | Icons | Name | Default Pattern |\n");
-            file.print("| --- | --- | --- | --- | --- | --- |\n");
+            file.print("| Number | ID | $class | Icons | Name | Default Pattern | Symbol \n");
+            file.print("| --- | --- | --- | --- | --- | --- | --- |\n");
 
             for (int i = 0; i < descriptors.size(); i++) {
                 StaticAnalysisToolDescriptor descriptor = descriptors.get(i);
                 final StaticAnalysisLabelProvider labelProvider = descriptor.getLabelProvider();
-                file.printf("| %d | %s | %s | %s | %s | %s |%n",
+                file.printf("| %d | %s | %s | %s | %s | %s |%n | %s()",
                         i,
                         descriptor.getId(),
                         descriptor.clazz.getSimpleName(),
                         getIcon(labelProvider, labelProvider.getSmallIconUrl())
                                 + " " + getIcon(labelProvider, labelProvider.getLargeIconUrl()),
                         getName(descriptor),
-                        descriptor.getPattern());
+                        descriptor.getPattern(),
+                        getSymbolName(descriptor.clazz.getSimpleName()));
             }
         }
+    }
+
+    private String getSymbolName(String name) {
+        char c[] = name.toCharArray();
+        c[0] = Character.toLowerCase(c[0]);
+        return new String(c);
     }
 
     private String getIcon(final StaticAnalysisLabelProvider labelProvider, final String icon) {

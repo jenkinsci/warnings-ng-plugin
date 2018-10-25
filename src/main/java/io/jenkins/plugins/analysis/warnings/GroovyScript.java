@@ -12,6 +12,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.util.ListBoxModel;
 
@@ -74,6 +75,7 @@ public class GroovyScript extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("groovyScript")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */
