@@ -11,6 +11,7 @@ import java.io.StringWriter;
 
 import org.apache.commons.beanutils.MethodUtils;
 import org.apache.commons.digester3.NodeCreateRule;
+import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -55,6 +56,9 @@ public class TopicRule extends NodeCreateRule {
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(new DOMSource(subsection), new StreamResult(content));
-        return(content.toString());
+        String text = content.toString();
+        String prefixRemoved=StringUtils.substringAfter(text, ">");
+        String suffixRemoved = StringUtils.substringBeforeLast(prefixRemoved, "<");
+        return suffixRemoved;
     }
 }

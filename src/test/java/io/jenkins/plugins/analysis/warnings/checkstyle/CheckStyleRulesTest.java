@@ -24,6 +24,10 @@ class CheckStyleRulesTest {
         assertThat(rules.getRule("AnnotationUseStyle")).as("No rule information found").isNotNull();
         assertThat(rules.getRule("AnnotationUseStyle").getDescription()).as("Wrong description for AnnotationUseStyle found.").contains("This check controls the style with the usage of annotations.");
         assertThat(rules.getRule("Undefined").getDescription()).as("No default text available for undefined rule.").isEqualTo(Rule.UNDEFINED_DESCRIPTION);
+        assertThat(rules.getRule("DesignForExtension").getDescription()).as("Wrong start of rule text.").startsWith(
+                "<p>Since Checkstyle 3.1</p><p>\n"
+                        + "          The check finds classes that are designed for extension (subclass creation).\n"
+                        + "        </p><p>\n");
 
         for (Rule rule : rules.getRules()) {
             assertThat(rule.getDescription()).as("Rule %s has no description", rule.getName()).isNotEqualTo(Rule.UNDEFINED_DESCRIPTION);
