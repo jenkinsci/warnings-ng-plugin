@@ -1,7 +1,7 @@
 # Jenkins Warnings Next Generation Plugin
 
 [![Join the chat at https://gitter.im/jenkinsci/warnings-plugin](https://badges.gitter.im/jenkinsci/warnings-plugin.svg)](https://gitter.im/jenkinsci/warnings-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/warnings.svg)](https://plugins.jenkins.io/warnings)
+[![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/warnings-ng.svg)](https://plugins.jenkins.io/warnings-ng)
 [![Jenkins Version](https://img.shields.io/badge/Jenkins-2.89.1-green.svg)](https://jenkins.io/download/)
 ![JDK8](https://img.shields.io/badge/jdk-8-yellow.svg)
 [![License: MIT](https://img.shields.io/badge/license-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
@@ -19,11 +19,11 @@ The Jenkins **Next Generation** Warnings plug-in replaces the whole Jenkins Stat
 I.e. it makes the following Jenkins plugins obsolete:
 Android Lint, CheckStyle, Dry, FindBugs, PMD, Warnings, Static Analysis Utilities, Static Analysis Collector Plugins.
 
-If your tool is not yet supported you can either define a new 
-Groovy based parser in the user interface or provide a parser within a new small plug-in. If the parser is useful for 
-other teams as well please share it and provide pull requests for the 
-[warnings plug-in](https://github.com/jenkinsci/warnings-plugin/pulls) and 
-the [analysis parsers library](https://github.com/jenkinsci/analysis-model/). 
+If your tool is not yet supported you can either define a new Groovy based parser in the user interface or provide 
+a parser within a new small plug-in. If the parser is useful for other teams as well please share it and provide 
+pull requests for the 
+[Warnings Next Generation Plug-in](https://github.com/jenkinsci/warnings-ng-plugin/pulls) and 
+the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/). 
 
 The plugin publishes a report of the issues found in your build, so you can navigate to a summary report from the 
 main build page. From there you can also dive into the details: 
@@ -38,8 +38,8 @@ For more details please refer to the [documentation](doc/Documentation.md).
 All source code is licensed under the MIT license.
 
 
-[![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/job/master/)
-[![Travis](https://img.shields.io/travis/jenkinsci/warnings-plugin.svg)](https://travis-ci.org/jenkinsci/warnings-plugin)
-[![Codecov](https://img.shields.io/codecov/c/github/jenkinsci/warnings-plugin/master.svg)](https://codecov.io/gh/jenkinsci/warnings-plugin/branch/master)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/warnings-plugin.svg)](https://github.com/jenkinsci/warnings-plugin/pulls)
+[![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/)
+[![Travis](https://img.shields.io/travis/jenkinsci/warnings-ng-plugin.svg)](https://travis-ci.org/jenkinsci/warnings-ng-plugin)
+[![Codecov](https://img.shields.io/codecov/c/github/jenkinsci/warnings-ng-plugin/master.svg)](https://codecov.io/gh/jenkinsci/warnings-ng-plugin/branch/master)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/warnings-ng-plugin.svg)](https://github.com/jenkinsci/warnings-ng-plugin/pulls)
 

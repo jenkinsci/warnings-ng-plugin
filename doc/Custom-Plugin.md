@@ -5,7 +5,7 @@ contains a Java implementation of the tool.
 
 ## Create a plugin
 
-The plugin should depend on Jenkins plugin parent pom and on the warnings plugin.
+The plugin should depend on Jenkins plugin parent pom and on the Warnings Next Generation Plugin.
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -26,9 +26,9 @@ The plugin should depend on Jenkins plugin parent pom and on the warnings plugin
    
   <dependencies>
     <dependency>
-      <groupId>org.jvnet.hudson.plugins</groupId>
-      <artifactId>warnings</artifactId>
-      <version>5.0.0</version>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>warnings-ng</artifactId>
+      <version>[warnings-ng.version]</version>
     </dependency>
   </dependencies>
 
@@ -109,4 +109,5 @@ public class YourTool extends StaticAnalysisTool {
 ## Packaging the plugin
 
 You can create a HPI of your plugin by calling `mvn clean install`. For more details on Jenkins plugin development
-please see [wiki](https://wiki.jenkins.io/display/JENKINS/Extend+Jenkins) or [homepage](https://jenkins.io/doc/developer/).  
+please see [wiki](https://wiki.jenkins.io/display/JENKINS/Extend+Jenkins) 
+or [homepage](https://jenkins.io/doc/developer/).  

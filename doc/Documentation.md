@@ -1,12 +1,12 @@
-# Jenkins warning plugin
+# Jenkins Warnings Next Generation Plugin
 
-The Jenkins Warnings plugin collects compiler warnings or issues reported by static analysis tools and visualizes the 
+The Jenkins Warnings Next Generation Plugin collects compiler warnings or issues reported by static analysis tools and visualizes the 
 results. It has built-in support for numerous static analysis tools (including several compilers), see the list of
 [supported report formats](../SUPPORTED-FORMATS.md). 
 
 ## Supported project types
 
-Starting with release 5.x the Warnings plugin has support for the following Jenkins project types:
+The Warnings Next Generation plugin has support for the following Jenkins project types:
 
 - Freestyle Project
 - Maven Project
@@ -17,7 +17,7 @@ Starting with release 5.x the Warnings plugin has support for the following Jenk
 
 ## Features overview 
 
-The Warnings plugin provides the following features when added as a post build action (or step) to a job: 
+The Warnings Next Generation Plugin provides the following features when added as a post build action (or step) to a job: 
 
 1. The plugin scans the console log of a Jenkins build or files in the workspace of your job for any kind of issues. 
 There are almost one hundred [report formats](../SUPPORTED-FORMATS.md) supported. Among the problems it can detect:
@@ -34,18 +34,16 @@ main build page. From there you can also dive into the details:
     - annotated source code of the affected files
     - trend charts of the issues 
     
-## Transition from 4.x to 5.x
+## Transition from the static analysis suite
 
-Previously the Warnings plugin was part of the static analysis suite that provided the same set of features through 
-several plugins (CheckStyle, PMD, Static Analysis Utilities, Analysis Collector etc.). 
+Previously the same set of features has been provided by the plugins of the static analysis suite 
+(CheckStyle, PMD, FindBugs, Static Analysis Utilities, Analysis Collector, Warnings etc.). 
 In order to simplify the user experience and the development process, these
-plugins and the core functionality have been merged into the Warnings plugin. All other plugins are not required
-anymore and will not be supported in the future. If you currently use one of these plugins you should migrate
+plugins and the core functionality have been merged into the Warnings Next Generation plugin. 
+These old static analysis plugins are not required anymore and are now end-of-life. 
+If you currently use one of these old plugins you should migrate
 to the new recorders and steps as soon as possible. I will still maintain the old code for a while, 
 but the main development effort will be spent into the new code base. 
-
-Note: the dependency to the old API (analysis-core) is still required so that all existing
-jobs will work correctly. In future versions of the Warnings plugin I will make this dependency optional. 
 
 ### Migration of Pipelines
 
