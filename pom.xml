@@ -9,6 +9,7 @@
     <relativePath/>
   </parent>
 
+  <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
