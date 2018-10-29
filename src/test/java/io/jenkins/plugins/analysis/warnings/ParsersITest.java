@@ -221,9 +221,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         Report report = shouldFindIssuesOfTool(6, CheckStyle.class, "checkstyle.xml");
 
         assertThatDescriptionOfIssueIsSet(new CheckStyle(), report.get(2),
-                "<p>Since Checkstyle 3.1</p><p>\n"
-                        + "          The check finds classes that are designed for extension (subclass creation).\n"
-                        + "        </p><p>\n");
+                "<p>Since Checkstyle 3.1</p><p>");
+        StaticAnalysisLabelProvider labelProvider = new CheckStyle().getLabelProvider();
+        assertThat(labelProvider.getDescription(report.get(2)))
+                .contains("The check finds classes that are designed for extension (subclass creation).");
     }
 
     private void assertThatDescriptionOfIssueIsSet(final StaticAnalysisTool tool, final Issue issue,
