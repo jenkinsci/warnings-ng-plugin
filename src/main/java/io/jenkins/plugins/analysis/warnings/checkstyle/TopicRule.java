@@ -59,6 +59,10 @@ public class TopicRule extends NodeCreateRule {
         String text = content.toString();
         String prefixRemoved=StringUtils.substringAfter(text, ">");
         String suffixRemoved = StringUtils.substringBeforeLast(prefixRemoved, "<");
-        return suffixRemoved;
+        
+        String endSourceRemoved = StringUtils.replace(suffixRemoved, "</source>", "</code></pre>");
+        String startSourceRemoved = StringUtils.replace(endSourceRemoved, "<source>", "<pre><code>");
+        
+        return startSourceRemoved;
     }
 }
