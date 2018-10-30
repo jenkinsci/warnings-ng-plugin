@@ -388,7 +388,7 @@ public abstract class IntegrationTest extends ResourceTest {
     protected String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> tool,
             final String issuesName) {
         return String.format(
-                "def %s = scanForIssues tool: %s()], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
+                "def %s = scanForIssues tool: %s(), pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
                 issuesName, new SymbolNameGenerator().getSymbolName(tool));
     }
 
