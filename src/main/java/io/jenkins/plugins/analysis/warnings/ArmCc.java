@@ -13,7 +13,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 import hudson.Extension;
 
 /**
- * Provides a parser and customized messages for the Buckminster Compiler.
+ * Provides a parser and customized messages for the ArmCc compiler.
  *
  * @author Ullrich Hafner
  */

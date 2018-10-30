@@ -63,6 +63,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files=&quot;$files $directory/$i&quot;\n"
             + "done</code></pre>";
 
+    /** Runs the TagList parser on output files that contains 6 issues. */
+    @Test
+    public void shouldFindAllTagListIssues() {
+        shouldFindIssuesOfTool(4, TagList.class, "taglist.xml");
+    }
+
     /** Runs the Ccm parser on output files that contains 6 issues. */
     @Test
     public void shouldFindAllCcmIssues() {
