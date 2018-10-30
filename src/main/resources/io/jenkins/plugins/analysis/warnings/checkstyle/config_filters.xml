@@ -6,7 +6,8 @@
 
   <head>
     <title>Filters</title>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"/>
+    <script type="text/javascript"
+            src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"/>
     <script type="text/javascript" src="js/anchors.js"/>
     <script type="text/javascript" src="js/google-analytics.js"/>
     <link rel="icon" href="images/favicon.png" type="image/x-icon" />
@@ -22,7 +23,7 @@
     </section>
 
     <section name="SeverityMatchFilter">
-      <subsection name="Description">
+      <subsection name="Description" id="SeverityMatchFilter_Description">
         <p>Since Checkstyle 3.2</p>
         <p>
           Filter <code>SeverityMatchFilter</code> decides
@@ -30,7 +31,7 @@
           level</a> of the event.
         </p>
       </subsection>
-      <subsection name="Properties">
+      <subsection name="Properties" id="SeverityMatchFilter_Properties">
         <table>
           <tr>
             <th>name</th>
@@ -63,7 +64,7 @@
           </tr>
         </table>
       </subsection>
-      <subsection name="Examples">
+      <subsection name="Examples" id="SeverityMatchFilter_Examples">
           <p>
             For example, the following configuration fragment directs the
             Checker to not report audit events with severity
@@ -76,7 +77,7 @@
 &lt;/module&gt;
           </source>
       </subsection>
-      <subsection name="Example of Usage">
+      <subsection name="Example of Usage" id="SeverityMatchFilter_Example_of_Usage">
         <ul>
           <li>
             <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+SeverityMatchFilter">
@@ -84,17 +85,17 @@
           </li>
         </ul>
       </subsection>
-      <subsection name="Package">
+      <subsection name="Package" id="SeverityMatchFilter_Package">
         <p> com.puppycrawl.tools.checkstyle.filters </p>
       </subsection>
 
-      <subsection name="Parent Module">
+      <subsection name="Parent Module" id="SeverityMatchFilter_Parent_Module">
         <p> <a href="config.html#Checker">Checker</a> </p>
       </subsection>
     </section>
 
     <section name="SuppressionCommentFilter">
-      <subsection name="Description">
+      <subsection name="Description" id="SuppressionCommentFilter_Description">
           <p>Since Checkstyle 3.5</p>
           <p>
             Filter <code>SuppressionCommentFilter</code> uses
@@ -113,8 +114,16 @@
             Note that the suppression comment should be put before the violation. You can use more
             than one suppression comment each on separate line.
           </p>
+          <p>
+            Attention: This filter may only be specified within the TreeWalker module
+            (<code>&lt;module name=&quot;TreeWalker&quot;/&gt;</code>) and only
+            applies to checks which are also defined within this module.
+            To filter non-TreeWalker checks like <code>RegexpSingleline</code>,
+            a <a href="config_filters.html#SuppressWithPlainTextCommentFilter">
+            SuppressWithPlainTextCommentFilter</a> or similar filter must be used.
+          </p>
       </subsection>
-      <subsection name="Properties">
+      <subsection name="Properties" id="SuppressionCommentFilter_Properties">
           <table>
               <tr>
                   <th>name</th>
@@ -167,11 +176,12 @@
               </tr>
           </table>
           <p>
-              offCommentFormat and onCommentFormat must have equal <a
-                  href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Matcher.html#groupCount()">paren counts</a>.
+              offCommentFormat and onCommentFormat must have equal
+              <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Matcher.html#groupCount()">
+              paren counts</a>.
           </p>
       </subsection>
-      <subsection name="Examples">
+      <subsection name="Examples" id="SuppressionCommentFilter_Examples">
           <p>
               To configure a filter to suppress audit events between a comment
               containing <code>CHECKSTYLE:OFF</code> and a comment containing
@@ -294,7 +304,9 @@ private int array1 []; // CHECKSTYLE_ON: ALMOST_ALL
   &lt;property name=&quot;offCommentFormat&quot; value=&quot;stop&quot;/&gt;
   &lt;property name=&quot;onCommentFormat&quot; value=&quot;resume&quot;/&gt;
   &lt;property name=&quot;checkFormat&quot; value=&quot;IllegalTypeCheck&quot;/&gt;
-  &lt;property name=&quot;messageFormat&quot; value=&quot;^Declaring variables, return values or parameters of type 'GregorianCalendar' is not allowed.$&quot;/&gt;
+  &lt;property name=&quot;messageFormat&quot;
+      value=&quot;^Declaring variables, return values or parameters of type 'GregorianCalendar'
+        is not allowed.$&quot;/&gt;
 &lt;/module&gt;
           </source>
           <p>
@@ -302,8 +314,12 @@ private int array1 []; // CHECKSTYLE_ON: ALMOST_ALL
           </p>
           <source>
 ...
-GregorianCalendar calendar; // Warning here: Declaring variables, return values or parameters of type 'GregorianCalendar' is not allowed.
-HashSet hashSet; // Warning here: Declaring variables, return values or parameters of type 'HashSet' is not allowed.
+// Warning below: Declaring variables, return values or parameters of type 'GregorianCalendar'
+// is not allowed.
+GregorianCalendar calendar;
+// Warning below here: Declaring variables, return values or parameters of type 'HashSet'
+// is not allowed.
+HashSet hashSet;
 ...
           </source>
           <p>
@@ -313,7 +329,10 @@ HashSet hashSet; // Warning here: Declaring variables, return values or paramete
 ...
 //stop
 GregorianCalendar calendar; // No warning here as it is suppressed by filter.
-HashSet hashSet; // Warning here: Declaring variables, return values or parameters of type 'HashSet' is not allowed.
+HashSet hashSet;
+// Warning above here: Declaring variables, return values or parameters of type 'HashSet'
+//is not allowed.
+
 //resume
 ...
           </source>
@@ -360,7 +379,7 @@ public void testMethod() { }
 
 // CSOFF systemout (debug)
 public static void foo() {
-    System.out.println("Debug info."); // should NOT fail RegexpSinglelineJava
+  System.out.println("Debug info."); // should NOT fail RegexpSinglelineJava
 }
 // CSON systemout
           </source>
@@ -383,7 +402,7 @@ public class UserService {
 }
           </source>
       </subsection>
-      <subsection name="Example of Usage">
+      <subsection name="Example of Usage" id="SuppressionCommentFilter_Example_of_Usage">
         <ul>
           <li>
             <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+SuppressionCommentFilter">
@@ -391,28 +410,28 @@ public class UserService {
           </li>
         </ul>
       </subsection>
-      <subsection name="Package">
+      <subsection name="Package" id="SuppressionCommentFilter_Package">
         <p> com.puppycrawl.tools.checkstyle.filters </p>
       </subsection>
 
-      <subsection name="Parent Module">
+      <subsection name="Parent Module" id="SuppressionCommentFilter_Parent_Module">
         <p> <a href="config.html#TreeWalker">TreeWalker</a> </p>
       </subsection>
     </section>
 
     <section name="SuppressionFilter">
-      <subsection name="Description">
+      <subsection name="Description" id="SuppressionFilter_Description">
         <p>Since Checkstyle 3.2</p>
           <p>
             Filter <code>SuppressionFilter</code> rejects
             audit events for Check errors according to
-            a <a href="config.html#XML_Structure"><em>suppressions XML
+            a <a href="dtds/suppressions_1_2.dtd"><em>suppressions XML
             document</em></a> in a file. If there is no configured
             suppressions file or the optional is set to true and
             suppressions file was not found the Filter accepts all audit events.
           </p>
       </subsection>
-      <subsection name="Properties">
+      <subsection name="Properties" id="SuppressionFilter_Properties">
           <table>
              <tr>
                <th>name</th>
@@ -439,8 +458,8 @@ public class UserService {
                     </li>
                   </ol>
                </td>
-               <td><a href="property_types.html#string">string</a></td>
-               <td><code>none</code></td>
+               <td><a href="property_types.html#string">String</a></td>
+               <td><code>null</code></td>
                <td>3.2</td>
              </tr>
              <tr>
@@ -457,22 +476,8 @@ public class UserService {
                <td>6.15</td>
              </tr>
           </table>
-      </subsection>
-      <subsection name="Examples">
           <p>
-              For example, the following configuration fragment directs the
-              Checker to use a <code>SuppressionFilter</code>
-              with suppressions
-              file <code>config/suppressions.xml</code>:
-          </p>
-          <source>
-&lt;module name=&quot;SuppressionFilter&quot;&gt;
-  &lt;property name=&quot;file&quot; value=&quot;config/suppressions.xml&quot;/&gt;
-  &lt;property name=&quot;optional&quot; value=&quot;false&quot;/&gt;
-&lt;/module&gt;
-          </source>
-          <p>
-            A <a href="config.html#XML_Structure"><em>suppressions XML
+            A <a href="dtds/suppressions_1_2.dtd"><em>suppressions XML
             document</em></a> contains a set
             of <code>suppress</code> elements, where
             each <code>suppress</code> element can have the
@@ -500,8 +505,9 @@ public class UserService {
               <li>
                   <code>id</code> -
                   a <a href="property_types.html#string">string</a>
-                  matched against the ID of the check associated with an audit
-                  event.  Optional as long as <code>checks</code> or <code>message</code> is specified.
+                  matched against the <a href="config.html#Id">check id</a> associated with an audit
+                  event.  Optional as long as <code>checks</code> or <code>message</code>
+                  is specified.
               </li>
               <li>
                   <code>lines</code> - a comma-separated list of
@@ -526,6 +532,20 @@ public class UserService {
             You can download template of empty suppression filter
             <a href="files/suppressions_none.xml">here</a>.
           </p>
+      </subsection>
+      <subsection name="Examples" id="SuppressionFilter_Examples">
+          <p>
+              For example, the following configuration fragment directs the
+              Checker to use a <code>SuppressionFilter</code>
+              with suppressions
+              file <code>config/suppressions.xml</code>:
+          </p>
+          <source>
+&lt;module name=&quot;SuppressionFilter&quot;&gt;
+  &lt;property name=&quot;file&quot; value=&quot;config/suppressions.xml&quot;/&gt;
+  &lt;property name=&quot;optional&quot; value=&quot;false&quot;/&gt;
+&lt;/module&gt;
+          </source>
           <p>
             The following suppressions XML document directs
             a <code>SuppressionFilter</code> to
@@ -541,88 +561,69 @@ public class UserService {
 &lt;?xml version=&quot;1.0&quot;?&gt;
 
 &lt;!DOCTYPE suppressions PUBLIC
-&quot;-//Puppy Crawl//DTD Suppressions 1.1//EN&quot;
-&quot;http://checkstyle.sourceforge.net/dtds/suppressions_1_1.dtd&quot;&gt;
+  &quot;-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN&quot;
+  &quot;https://checkstyle.org/dtds/suppressions_1_2.dtd&quot;&gt;
 
 &lt;suppressions&gt;
-&lt;suppress checks=&quot;JavadocStyleCheck&quot;
-  files=&quot;AbstractComplexityCheck.java&quot;
-  lines=&quot;82,108-122&quot;/&gt;
-&lt;suppress checks=&quot;MagicNumberCheck&quot;
-  files=&quot;JavadocStyleCheck.java&quot;
-  lines=&quot;221&quot;/&gt;
+  &lt;suppress checks=&quot;JavadocStyleCheck&quot;
+    files=&quot;AbstractComplexityCheck.java&quot;
+    lines=&quot;82,108-122&quot;/&gt;
+  &lt;suppress checks=&quot;MagicNumberCheck&quot;
+    files=&quot;JavadocStyleCheck.java&quot;
+    lines=&quot;221&quot;/&gt;
+  &lt;suppress message=&quot;Missing a Javadoc comment&quot;/&gt;
 &lt;/suppressions&gt;
-&lt;suppress message=&quot;Missing a Javadoc comment&quot;/&gt;&lt;/suppressions&gt;
           </source>
           <p>
-            As another example to suppress Check by module id:
-          </p>
-          <source>
-&lt;module name=&quot;DescendantToken&quot;&gt;
-  &lt;property name=&quot;id&quot; value=&quot;stringEqual&quot;/&gt;
-  &lt;property name=&quot;tokens&quot; value=&quot;EQUAL,NOT_EQUAL&quot;/&gt;
-  &lt;property name=&quot;limitedTokens&quot; value=&quot;STRING_LITERAL&quot;/&gt;
-  &lt;property name=&quot;maximumNumber&quot; value=&quot;0&quot;/&gt;
-  &lt;property name=&quot;maximumDepth&quot; value=&quot;1&quot;/&gt;
-&lt;/module&gt;
-
-&lt;module name=&quot;DescendantToken&quot;&gt;
-  &lt;property name=&quot;id&quot; value=&quot;switchNoDefault&quot;/&gt;
-  &lt;property name=&quot;tokens&quot; value=&quot;LITERAL_SWITCH&quot;/&gt;
-  &lt;property name=&quot;maximumDepth&quot; value=&quot;2&quot;/&gt;
-  &lt;property name=&quot;limitedTokens&quot; value=&quot;LITERAL_DEFAULT&quot;/&gt;
-  &lt;property name=&quot;minimumNumber&quot; value=&quot;1&quot;/&gt;
-&lt;/module&gt;
-          </source>
-          <p>
-            Then the following can be used to suppress only the first
-            check and not the second by using
-            the <code>id</code> attribute:
+            Suppress Check by <a href="config.html#Id">module id</a>
+            when config have two instances on the same Check:
           </p>
           <source>
 &lt;suppress id=&quot;stringEqual&quot; files=&quot;SomeTestCode.java&quot;/&gt;
           </source>
           <p>
-            Suppress checks for hidden files and folders:
+            Suppress all Checks for hidden files and folders:
           </p>
           <source>
 &lt;suppress files=&quot;[/\\]\..+&quot; checks=&quot;.*&quot;/&gt;
           </source>
           <p>
-            Suppress checks for Maven-generated code:
+            Suppress all Checks for Maven-generated code:
           </p>
           <source>
 &lt;suppress files=&quot;[/\\]target[/\\]&quot; checks=&quot;.*&quot;/&gt;
           </source>
           <p>
-            Suppress checks for archives, classes and other binary files:
+            Suppress all Checks for archives, classes and other binary files:
           </p>
           <source>
 &lt;suppress files=&quot;.+\.(?:jar|zip|war|class|tar|bin)$&quot; checks=&quot;.*&quot;/&gt;
           </source>
           <p>
-            Suppress checks for image files:
+            Suppress all Checks for image files:
           </p>
           <source>
 &lt;suppress files=&quot;.+\.(?:png|gif|jpg|jpeg)$&quot; checks=&quot;.*&quot;/&gt;
           </source>
           <p>
-            Suppress checks for non-java files:
+            Suppress all Checks for non-java files:
           </p>
           <source>
-&lt;suppress files=&quot;.+\.(?:txt|xml|csv|sh|thrift|html|sql|eot|ttf|woff|css|png)$&quot; checks=&quot;.*&quot;/&gt;
+&lt;suppress files=&quot;.+\.(?:txt|xml|csv|sh|thrift|html|sql|eot|ttf|woff|css|png)$&quot;
+    checks=&quot;.*&quot;/&gt;
           </source>
           <p>
-            Suppress all checks in generated sources:
+            Suppress all Checks in generated sources:
           </p>
           <source>
 &lt;suppress checks=&quot;.*&quot; files=&quot;com[\\/]mycompany[\\/]app[\\/]gen[\\/]&quot;/&gt;
           </source>
           <p>
-            Suppress FileLength check on integration tests in certain folder:
+            Suppress FileLength Check on integration tests in certain folder:
           </p>
           <source>
-&lt;suppress checks=&quot;FileLength&quot; files=&quot;com[\\/]mycompany[\\/]app[\\/].*IT.java&quot;/&gt;
+&lt;suppress checks=&quot;FileLength&quot;
+  files=&quot;com[\\/]mycompany[\\/]app[\\/].*IT.java&quot;/&gt;
           </source>
           <p>
             Suppress naming errors on variable named 'log' in all files:
@@ -631,7 +632,7 @@ public class UserService {
 &lt;suppress message=&quot;Name 'log' must match pattern&quot;/&gt;
           </source>
       </subsection>
-      <subsection name="Example of Usage">
+      <subsection name="Example of Usage" id="SuppressionFilter_Example_of_Usage">
         <ul>
           <li>
             <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+SuppressionFilter">
@@ -639,17 +640,17 @@ public class UserService {
           </li>
         </ul>
       </subsection>
-      <subsection name="Package">
+      <subsection name="Package" id="SuppressionFilter_Package">
         <p> com.puppycrawl.tools.checkstyle.filters </p>
       </subsection>
 
-      <subsection name="Parent Module">
+      <subsection name="Parent Module" id="SuppressionFilter_Parent_Module">
         <p> <a href="config.html#Checker">Checker</a> </p>
       </subsection>
     </section>
 
     <section name="SuppressionXpathFilter">
-      <subsection name="Description">
+      <subsection name="Description" id="SuppressionXpathFilter_Description">
         <p>Since Checkstyle 8.6</p>
         <p>
           Filter <code>SuppressionXpathFilter</code> works as
@@ -659,44 +660,100 @@ public class UserService {
           are queries for suppressed nodes inside the AST tree.
         </p>
         <p>
-          Note, after resolving
-          <a href="https://github.com/checkstyle/checkstyle/issues/4530">issue 4530</a>
-          CLI will have option to generate the basic suppression xpath to elements.
-        </p>
-        <p>
           Currently, filter supports the following
           checks:
         </p>
         <ul>
+          <li>AbstractClassNameCheck</li>
+          <li>AnonInnerLengthCheck</li>
+          <li>ArrayTypeStyleCheck</li>
+          <li>AvoidInlineConditionalsCheck</li>
+          <li>AvoidNestedBlocksCheck</li>
+          <li>BooleanExpressionComplexityCheck</li>
+          <li>CatchParameterNameCheck</li>
+          <li>ClassTypeParameterNameCheck</li>
+          <li>ConstantNameCheck</li>
+          <li>CovariantEqualsCheck</li>
           <li>CyclomaticComplexityCheck</li>
           <li>DeclarationOrderCheck</li>
           <li>DefaultComesLastCheck</li>
+          <li>DescendantTokenCheck</li>
+          <li>DesignForExtensionCheck</li>
+          <li>EmptyBlockCheck</li>
+          <li>EmptyStatementCheck</li>
+          <li>EqualsAvoidNullCheck</li>
+          <li>EqualsHashCodeCheck</li>
+          <li>ExecutableStatementCountCheck</li>
           <li>ExplicitInitializationCheck</li>
           <li>FallThroughCheck</li>
+          <li>FinalLocalVariableCheck</li>
+          <li>FinalParametersCheck</li>
           <li>HiddenFieldCheck</li>
-          <li>IllegalCatchCheck</li>
-          <li>IllegalThrowsCheck</li>
-          <li>JavadocMethodCheck</li>
+          <li>HideUtilityClassConstructorCheck</li>
+          <li>IllegalInstantiationCheck</li>
+          <li>IllegalTokenCheck</li>
+          <li>IllegalTokenTextCheck</li>
+          <li>InnerAssignmentCheck</li>
+          <li>InnerTypeLastCheck</li>
+          <li>InterfaceTypeParameterNameCheck</li>
           <li>JavadocVariableCheck</li>
+          <li>JavaNCSSCheck</li>
+          <li>IllegalImportCheck</li>
+          <li>IllegalThrowsCheck</li>
           <li>ImportControlCheck</li>
           <li>LeftCurlyCheck</li>
+          <li>LocalFinalVariableNameCheck</li>
+          <li>LocalVariableNameCheck</li>
+          <li>MagicNumberCheck</li>
+          <li>MemberNameCheck</li>
+          <li>MethodLengthCheck</li>
+          <li>MethodNameCheck</li>
           <li>MethodParamPadCheck</li>
-          <li>MultipleVariableDeclarationCheck</li>
+          <li>MethodTypeParameterNameCheck</li>
+          <li>ModifiedControlVariableCheck</li>
+          <li>ModifierOrderCheck</li>
+          <li>MultipleVariableDeclarationsCheck</li>
+          <li>MutableExceptionCheck</li>
           <li>NestedForDepthCheck</li>
           <li>NestedIfDepthCheck</li>
           <li>NestedTryDepthCheck</li>
           <li>NPathComplexityCheck</li>
           <li>OneStatementPerLineCheck</li>
+          <li>OperatorWrapCheck</li>
           <li>OuterTypeNumberCheck</li>
+          <li>ParameterAssignmentCheck</li>
+          <li>ParameterNameCheck</li>
+          <li>ParameterNumberCheck</li>
+          <li>RedundantImportCheck</li>
+          <li>RedundantModifierCheck</li>
           <li>RequireThisCheck</li>
+          <li>ReturnCountCheck</li>
           <li>RightCurlyCheck</li>
+          <li>SeparatorWrapCheck</li>
+          <li>SimplifyBooleanExpressionCheck</li>
+          <li>SimplifyBooleanReturnCheck</li>
+          <li>StaticVariableNameCheck</li>
+          <li>StringLiteralEqualityCheck</li>
+          <li>SuperCloneCheck</li>
+          <li>SuperFinalizeCheck</li>
+          <li>SuppressWarningsCheck</li>
+          <li>ThrowsCountCheck</li>
+          <li>TypeNameCheck</li>
+          <li>VisibilityModifierCheck</li>
         </ul>
         <p>
           Note, that support for other Checks will be available after resolving
           <a href="https://github.com/checkstyle/checkstyle/issues/4830">issue 4830</a>.
         </p>
+        <p>
+          You can use the command line helper tool to generate xpath
+          suppressions based on your configuration file and input files.
+          See
+          <a href="cmdline.html">here</a>
+          for more details.
+        </p>
       </subsection>
-      <subsection name="Properties">
+      <subsection name="Properties" id="SuppressionXpathFilter_Properties">
         <table>
           <tr>
             <th>name</th>
@@ -723,8 +780,8 @@ public class UserService {
                 </li>
               </ol>
             </td>
-            <td><a href="property_types.html#string">string</a></td>
-            <td><code>none</code></td>
+            <td><a href="property_types.html#string">String</a></td>
+            <td><code>null</code></td>
             <td>8.6</td>
           </tr>
           <tr>
@@ -733,7 +790,7 @@ public class UserService {
               Tells what to do when the file is not existing. If
               optional is set to false the file must exist, or else
               it ends with error. On the other hand if optional is
-              true and file is not found, the filter accept all
+              true and file is not found, the filter accepts all
               audit events.
             </td>
             <td><a href="property_types.html#boolean">Boolean</a></td>
@@ -742,7 +799,7 @@ public class UserService {
           </tr>
         </table>
       </subsection>
-      <subsection name="Examples">
+      <subsection name="Examples" id="SuppressionXpathFilter_Examples">
         <p>
           For example, the following configuration fragment directs the
           Checker to use a <code>SuppressionXpathFilter</code>
@@ -756,7 +813,7 @@ public class UserService {
 &lt;/module&gt;
         </source>
         <p>
-          A <a href="config.html#XML_Structure"><em>suppressions XML
+          A <a href="/dtds/suppressions_1_2_xpath_experimental.dtd"><em>suppressions XML
           document</em></a> contains a set
           of <code>suppress</code> and <code>suppress-xpath</code> elements, where
           each <code>suppress-xpath</code> element can have the
@@ -810,8 +867,8 @@ public class UserService {
 &lt;?xml version=&quot;1.0&quot;?&gt;
 
 &lt;!DOCTYPE suppressions PUBLIC
-&quot;-//Puppy Crawl//DTD Suppressions Xpath Experimental 1.2//EN&quot;
-&quot;http://checkstyle.sourceforge.net/dtds/suppressions_1_2_xpath_experimental.dtd&quot;&gt;
+&quot;-//Checkstyle//DTD SuppressionXpathFilter Experimental Configuration 1.2//EN&quot;
+&quot;https://checkstyle.org/dtds/suppressions_1_2_xpath_experimental.dtd&quot;&gt;
 
 &lt;suppressions&gt;
   &lt;suppress-xpath checks=&quot;CyclomaticComplexity&quot;
@@ -853,8 +910,65 @@ public class UserService {
 &lt;suppress-xpath checks=&quot;.*&quot; query=&quot;/CLASS_DEF[@text='TestClass']
           //METHOD_DEF[@text='testMethod']//VARIABLE_DEF[@text='testVariable']&quot;/&gt;
         </source>
+        <p>
+          In the following sample, violations for <code>LeftCurly</code> check will be suppressed
+          for classes with name <i>Main</i> or for methods with name <i>calculate</i>.
+        </p>
+        <source>
+&lt;suppress-xpath checks=&quot;LeftCurly&quot; query=&quot;/CLASS_DEF[@text='Main']//*
+          | //METHOD_DEF[@text='calculate']/*&quot;/&gt;
+        </source>
+        <p>
+          The following example demonstrates how to suppress <code>RequireThis</code> violations for
+          variable <i>age</i> inside <i>changeAge</i> method.
+        </p>
+        <source>
+&lt;suppress-xpath checks=&quot;RequireThis&quot; query=&quot;/CLASS_DEF[@text='InputTest']
+          //METHOD_DEF[@text='changeAge']//ASSIGN[@text='age']/IDENT&quot;/&gt;
+        </source>
+        <source>
+public class InputTest {
+  private int age = 23;
+
+  public void changeAge() {
+    age = 24; //violation will be suppressed
+  }
+}
+        </source>
+        <p>
+          Suppress <code>IllegalThrows</code> violations only for methods with name
+          <i>throwsMethod</i> and only for <code>RuntimeException</code> exceptions.
+          Double colon is used for axis iterations. In the following example <code>ancestor</code>
+          axis is used to iterate all ancestor nodes of the current node with type
+          <code>METHOD_DEF</code> and name <i>throwsMethod</i>. Please read more about xpath axes at
+          <a href="https://www.w3schools.com/xml/xpath_axes.asp">W3Schools Xpath Axes</a>.
+        </p>
+        <source>
+&lt;suppress-xpath checks=&quot;IllegalThrows&quot; query=&quot;//LITERAL_THROWS/IDENT[
+          ..[@text='RuntimeException'] and ./ancestor::METHOD_DEF[@text='throwsMethod']]&quot;/&gt;
+        </source>
+        <source>
+public class InputTest {
+  public void throwsMethod() throws RuntimeException { // violation will be suppressed
+  }
+
+  public void sampleMethod() throws RuntimeException { // will throw violation here
+  }
+}
+        </source>
+        <p>
+          The following sample demonstrates how to suppress all violations for method itself and
+          all descendants. <code>descendant-or-self</code> axis iterates through current node and
+          all children nodes at any level. Keyword <code>node()</code> selects node elements.
+          Please read more about xpath syntax at
+          <a href="https://www.w3schools.com/xml/xpath_syntax.asp">W3Schools Xpath Syntax</a>.
+        </p>
+        <source>
+&lt;suppress-xpath checks=&quot;.*&quot; query=&quot;//METHOD_DEF[@text='legacyMethod']
+          /descendant-or-self::node()&quot;/&gt;
+        </source>
       </subsection>
-      <subsection name="Example of Usage">
+      <subsection name="Example of Usage" id="SuppressionXpathFilter_Example_of_Usage">
         <ul>
           <li>
             <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+SuppressionXpathFilter">
@@ -862,17 +976,17 @@ public class UserService {
           </li>
         </ul>
       </subsection>
-      <subsection name="Package">
+      <subsection name="Package" id="SuppressionXpathFilter_Package">
         <p> com.puppycrawl.tools.checkstyle.filters </p>
       </subsection>
 
-      <subsection name="Parent Module">
+      <subsection name="Parent Module" id="SuppressionXpathFilter_Parent_Module">
         <p> <a href="config.html#TreeWalker">TreeWalker</a> </p>
       </subsection>
     </section>
 
     <section name="SuppressWarningsFilter">
-      <subsection name="Description">
+      <subsection name="Description" id="SuppressWarningsFilter_Description">
           <p>Since Checkstyle 5.7</p>
           <p>
               Filter <code>SuppressWarningsFilter</code> uses annotations to
@@ -888,7 +1002,8 @@ public class UserService {
           </p>
           <p>
               Usage: This filter only works in conjunction with a
-              <a href="config_annotation.html#SuppressWarningsHolder">SuppressWarningsHolder</a>, since that check finds
+              <a href="config_annotation.html#SuppressWarningsHolder">SuppressWarningsHolder</a>,
+              since that check finds
               the annotations in the Java files and makes them available for
               the filter. Because of that, a configuration that includes
               this filter must also include
@@ -897,7 +1012,7 @@ public class UserService {
               and should be written with any dotted prefix or "Check" suffix removed.
           </p>
       </subsection>
-      <subsection name="Examples">
+      <subsection name="Examples" id="SuppressWarningsFilter_Examples">
           <p>
               To configure the check that makes tha annotations available to
               the filter.
@@ -961,7 +1076,7 @@ public static void foo() {
 }
           </source>
       </subsection>
-      <subsection name="Example of Usage">
+      <subsection name="Example of Usage" id="SuppressWarningsFilter_Example_of_Usage">
         <ul>
           <li>
             <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+SuppressWarningsFilter">
@@ -969,17 +1084,17 @@ public static void foo() {
           </li>
         </ul>
       </subsection>
-      <subsection name="Package">
+      <subsection name="Package" id="SuppressWarningsFilter_Package">
         <p> com.puppycrawl.tools.checkstyle.filters </p>
       </subsection>
 
-      <subsection name="Parent Module">
+      <subsection name="Parent Module" id="SuppressWarningsFilter_Parent_Module">
         <p> <a href="config.html#Checker">Checker</a> </p>
       </subsection>
     </section>
 
     <section name="SuppressWithNearbyCommentFilter">
-        <subsection name="Description">
+        <subsection name="Description" id="SuppressWithNearbyCommentFilter_Description">
             <p>Since Checkstyle 5.0</p>
             <p>
                 Filter <code>SuppressWithNearbyCommentFilter</code> uses
@@ -993,8 +1108,16 @@ public static void foo() {
                 single comments.  This requires fewer lines to mark a region, and
                 may be aesthetically preferable in some contexts.
             </p>
+            <p>
+                Attention: This filter may only be specified within the TreeWalker module
+                (<code>&lt;module name=&quot;TreeWalker&quot;/&gt;</code>) and only
+                applies to checks which are also defined within this module.
+                To filter non-TreeWalker checks like <code>RegexpSingleline</code>,
+                a <a href="config_filters.html#SuppressWithPlainTextCommentFilter">
+                SuppressWithPlainTextCommentFilter</a> or similar filter must be used.
+            </p>
         </subsection>
-        <subsection name="Properties">
+        <subsection name="Properties" id="SuppressWithNearbyCommentFilter_Properties">
             <table>
                 <tr>
                     <th>name</th>
@@ -1048,7 +1171,7 @@ public static void foo() {
                 </tr>
             </table>
         </subsection>
-        <subsection name="Examples">
+        <subsection name="Examples" id="SuppressWithNearbyCommentFilter_Examples">
             <p>
                 To configure a filter to suppress audit events for <i>check</i>
                 on any line with a comment <code>SUPPRESS CHECKSTYLE <i>check</i></code>:
@@ -1096,13 +1219,14 @@ catch (Throwable th) { ... }
 . . .
             </source>
             <p>
-                To configure a filter so that <code>CHECKSTYLE IGNORE <i>check</i> FOR NEXT <i>var</i> LINES</code>
-                avoids triggering any audits for the given check for the current line and the next <i>var</i> lines
-                (for a total of <i>var</i>+1 lines):
+                To configure a filter so that <code>CHECKSTYLE IGNORE <i>check</i> FOR NEXT
+                <i>var</i> LINES</code> avoids triggering any audits for the given check for
+                the current line and the next <i>var</i> lines (for a total of <i>var</i>+1 lines):
             </p>
             <source>
 &lt;module name=&quot;SuppressWithNearbyCommentFilter&quot;&gt;
-  &lt;property name=&quot;commentFormat&quot; value=&quot;CHECKSTYLE IGNORE (\w+) FOR NEXT (\d+) LINES&quot;/&gt;
+  &lt;property name=&quot;commentFormat&quot;
+      value=&quot;CHECKSTYLE IGNORE (\w+) FOR NEXT (\d+) LINES&quot;/&gt;
   &lt;property name=&quot;checkFormat&quot; value=&quot;$1&quot;/&gt;
   &lt;property name=&quot;influenceFormat&quot; value=&quot;$2&quot;/&gt;
 &lt;/module&gt;
@@ -1129,13 +1253,15 @@ private int D2;
 // ALLOW MemberName ON PREVIOUS LINE
 . . .
             </source>
+
             <p>
-                To configure a filter to allow suppress one or more Checks(separated by &quot;|&quot;)
-                and demand comment no less than 14 symbols:
+                To configure a filter to allow suppress one or more Checks
+                (separated by &quot;|&quot;) and demand comment no less than 14 symbols:
             </p>
             <source>
 &lt;module name="SuppressWithNearbyCommentFilter&quot;&gt;
-  &lt;property name="commentFormat" value="@cs\.suppress \[(\w+(\|\w+)*)\] \w[-\.'`,:;\w ]{14,}"/&gt;
+  &lt;property name="commentFormat"
+    value="@cs\.suppress \[(\w+(\|\w+)*)\] \w[-\.'`,:;\w ]{14,}"/&gt;
   &lt;property name="checkFormat" value="$1"/&gt;
   &lt;property name="influenceFormat" value="1"/&gt;
 &lt;/module>
@@ -1196,7 +1322,7 @@ public static void foo() {
   &lt;property name="commentFormat" value="@cs-\: ([\w\|]+) influence (\d+)"/&gt;
   &lt;property name="checkFormat" value="$1"/&gt;
   &lt;property name="influenceFormat" value="$2"/&gt;
-  &lt;/module&gt;
+&lt;/module&gt;
             </source>
             <source>
 // @cs-: ClassDataAbstractionCoupling influence 2
@@ -1208,7 +1334,7 @@ public class UserService {
 }
             </source>
         </subsection>
-        <subsection name="Example of Usage">
+        <subsection name="Example of Usage" id="SuppressWithNearbyCommentFilter_Example_of_Usage">
         <ul>
           <li>
             <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+SuppressWithNearbyCommentFilter">
@@ -1216,17 +1342,17 @@ public class UserService {
           </li>
         </ul>
         </subsection>
-        <subsection name="Package">
+        <subsection name="Package" id="SuppressWithNearbyCommentFilter_Package">
             <p> com.puppycrawl.tools.checkstyle.filters </p>
         </subsection>
 
-        <subsection name="Parent Module">
+        <subsection name="Parent Module" id="SuppressWithNearbyCommentFilter_Parent_Module">
           <p> <a href="config.html#TreeWalker">TreeWalker</a> </p>
         </subsection>
       </section>
 
     <section name="SuppressWithPlainTextCommentFilter">
-          <subsection name="Description">
+          <subsection name="Description" id="SuppressWithPlainTextCommentFilter_Description">
               <p>Since Checkstyle 8.6</p>
               <p>
                   Filter <code>SuppressWithPlainTextCommentFilter</code> uses plain text to suppress
@@ -1252,11 +1378,11 @@ public class UserService {
                   file is edited.
               </p>
               <p>
-                  Note that the suppression comment should be put before the violation. You can use more
-                  than one suppression comment each on separate line.
+                  Note that the suppression comment should be put before the violation.
+                  You can use more than one suppression comment each on separate line.
               </p>
           </subsection>
-          <subsection name="Properties">
+          <subsection name="Properties" id="SuppressWithPlainTextCommentFilter_Properties">
               <table>
                   <tr>
                       <th>name</th>
@@ -1295,11 +1421,12 @@ public class UserService {
                   </tr>
               </table>
               <p>
-                  offCommentFormat and onCommentFormat must have equal <a
-                      href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Matcher.html#groupCount()">paren counts</a>.
+                  offCommentFormat and onCommentFormat must have equal
+                  <a href="https://docs.oracle.com/javase/7/docs/api/java/util/regex/Matcher.html#groupCount()">
+                  paren counts</a>.
               </p>
           </subsection>
-          <subsection name="Examples">
+          <subsection name="Examples" id="SuppressWithPlainTextCommentFilter_Examples">
               <p>
                   To configure a filter to suppress audit events between a comment
                   containing <code>CHECKSTYLE:OFF</code> and a comment containing
@@ -1379,17 +1506,19 @@ my.property=value2 // No violation events will be reported
               </source>
               <source>
 // CSOFF: RegexpSinglelineCheck
-&lt;condition property=&quot;checkstyle.ant.skip&quot;&gt; // RegexpSingleline check won't warn here if the line matches regexp
-  &lt;isset property=&quot;checkstyle.ant.skip&quot;/&gt; // RegexpSingleline check won't warn here if the line matches regexp
-&lt;/condition&gt; // RegexpSingleline check won't warn here if the line matches regexp
+ // RegexpSingleline check won't warn any lines below here if the line matches regexp
+&lt;condition property=&quot;checkstyle.ant.skip&quot;&gt;
+  &lt;isset property=&quot;checkstyle.ant.skip&quot;/&gt;
+&lt;/condition&gt;
 // CSON: RegexpSinglelineCheck
-&lt;property name=&quot;checkstyle.pattern.todo&quot; value=&quot;NOTHingWillMatCH_-&quot;/&gt; // RegexpSingleline check will warn here if the line matches regexp
+// RegexpSingleline check will warn below here if the line matches regexp
+&lt;property name=&quot;checkstyle.pattern.todo&quot; value=&quot;NOTHingWillMatCH_-&quot;/&gt;
               </source>
               <p>
                   To configure a filter to suppress all audit events between a comment
                   containing <code>CHECKSTYLE_OFF: ALMOST_ALL</code> and a comment containing
-                  <code>CHECKSTYLE_OFF: ALMOST_ALL</code> except for the <em>EqualsHashCode</em> check
-                  (Checker is configured to check only java files):
+                  <code>CHECKSTYLE_OFF: ALMOST_ALL</code> except for the <em>EqualsHashCode</em>
+                  check (Checker is configured to check only java files):
               </p>
               <source>
 &lt;module name=&quot;Checker&quot;&gt;
@@ -1398,7 +1527,8 @@ my.property=value2 // No violation events will be reported
   &lt;module name=&quot;SuppressWithPlainTextCommentFilter&quot;&gt;
     &lt;property name=&quot;offCommentFormat&quot; value=&quot;CHECKSTYLE_OFF: ALMOST_ALL&quot;/&gt;
     &lt;property name=&quot;onCommentFormat&quot; value=&quot;CHECKSTYLE_ON: ALMOST_ALL&quot;/&gt;
-    &lt;property name=&quot;checkFormat&quot; value=&quot;^((?!(FileTabCharacterCheck)).)*$&quot;/&gt;
+    &lt;property name=&quot;checkFormat&quot;
+      value=&quot;^((?!(FileTabCharacterCheck)).)*$&quot;/&gt;
   &lt;/module&gt;
 
 &lt;/module>
@@ -1423,7 +1553,8 @@ private int array1 [];
     &lt;property name=&quot;offCommentFormat&quot; value=&quot;stop&quot;/&gt;
     &lt;property name=&quot;onCommentFormat&quot; value=&quot;resume&quot;/&gt;
     &lt;property name=&quot;checkFormat&quot; value=&quot;FileTabCharacterCheck&quot;/&gt;
-    &lt;property name=&quot;messageFormat&quot; value=&quot;^File contains tab characters (this is the first instance)\.$&quot;/&gt;
+    &lt;property name=&quot;messageFormat&quot;
+        value=&quot;^File contains tab characters (this is the first instance)\.$&quot;/&gt;
   &lt;/module&gt;
 &lt;/module>
               </source>
@@ -1451,9 +1582,10 @@ private int array1 [];
 &lt;/module&gt;
               </source>
               <p>
-                  Example of SuppressWithPlainTextCommentFilter configuration (checkFormat which is set to '$1'
-                  points that ID of the checks is in the first group of offCommentFormat and
-                  onCommentFormat regular expressions):
+                  Example of SuppressWithPlainTextCommentFilter configuration
+                  (checkFormat which is set to '$1' points that ID of the checks
+                  is in the first group of offCommentFormat and onCommentFormat
+                  regular expressions):
               </p>
               <source>
 &lt;module name=&quot;Checker&quot;&gt;
@@ -1504,7 +1636,8 @@ CREATE TABLE STATION (
   LONG_W REAL);
               </source>
           </subsection>
-          <subsection name="Example of Usage">
+          <subsection name="Example of Usage"
+            id="SuppressWithPlainTextCommentFilter_Example_of_Usage">
               <ul>
                   <li>
                       <a href="https://github.com/search?q=path%3Aconfig+filename%3Acheckstyle_checks.xml+repo%3Acheckstyle%2Fcheckstyle+SuppressWithPlainTextCommentFilter">
@@ -1512,11 +1645,11 @@ CREATE TABLE STATION (
                   </li>
               </ul>
           </subsection>
-          <subsection name="Package">
+          <subsection name="Package" id="SuppressWithPlainTextCommentFilter_Package">
               <p> com.puppycrawl.tools.checkstyle.filters </p>
           </subsection>
 
-          <subsection name="Parent Module">
+          <subsection name="Parent Module" id="SuppressWithPlainTextCommentFilter_Parent_Module">
               <p> <a href="config.html#Checker">Checker</a> </p>
           </subsection>
       </section>

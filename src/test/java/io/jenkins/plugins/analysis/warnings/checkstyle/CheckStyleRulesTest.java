@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Ullrich Hafner
  */
 class CheckStyleRulesTest {
-    private static final int NUMBER_OF_AVAILABLE_CHECKSTYLE_RULES = 161;
+    private static final int NUMBER_OF_AVAILABLE_CHECKSTYLE_RULES = 163;
 
     /** Test whether we could parse the Checkstyle rule meta data. */
     @Test
