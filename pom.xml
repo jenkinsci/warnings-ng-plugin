@@ -14,7 +14,7 @@
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
   <version>5.0.0-beta4-SNAPSHOT</version>
-  <url>http://plugins.jenkins.io/warnings-ng</url>
+  <url>https://wiki.jenkins.io/x/1YTeCQ</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static 
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools 
     (including several compilers), see the list of supported report formats.

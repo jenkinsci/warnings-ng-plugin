@@ -28,7 +28,7 @@ public class TopicRule extends NodeCreateRule {
      * @throws ParserConfigurationException
      *         the parser configuration exception
      */
-    public TopicRule() throws ParserConfigurationException {
+    TopicRule() throws ParserConfigurationException {
         super(Node.ELEMENT_NODE);
     }
 
@@ -51,18 +51,18 @@ public class TopicRule extends NodeCreateRule {
      * @throws TransformerException
      *         in case of an error
      */
-    protected String extractNodeContent(final Element subsection) throws TransformerException {
+    private String extractNodeContent(final Element subsection) throws TransformerException {
         StringWriter content = new StringWriter();
         Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(new DOMSource(subsection), new StreamResult(content));
         String text = content.toString();
-        String prefixRemoved=StringUtils.substringAfter(text, ">");
+        String prefixRemoved = StringUtils.substringAfter(text, ">");
         String suffixRemoved = StringUtils.substringBeforeLast(prefixRemoved, "<");
-        
+
         String endSourceRemoved = StringUtils.replace(suffixRemoved, "</source>", "</code></pre>");
         String startSourceRemoved = StringUtils.replace(endSourceRemoved, "<source>", "<pre><code>");
-        
+
         return startSourceRemoved;
     }
 }

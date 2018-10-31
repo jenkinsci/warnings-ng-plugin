@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Issue;
@@ -9,7 +10,6 @@ import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -55,7 +55,7 @@ public class Pmd extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("pmd")
+    @Symbol({"pmd", "pmdParser"})
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         private final PmdMessages messages;
