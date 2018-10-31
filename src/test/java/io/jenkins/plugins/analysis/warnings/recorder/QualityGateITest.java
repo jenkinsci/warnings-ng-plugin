@@ -240,10 +240,10 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     @SuppressWarnings("illegalcatch")
-    private void scheduleBuildAndAssertStatus(final AbstractProject job, final Result result,
+    private void scheduleBuildAndAssertStatus(final AbstractProject<?, ?> job, final Result result,
             final QualityGateStatus qualityGateStatus) {
         try {
-            Run build = getJenkins().assertBuildStatus(result, job.scheduleBuild2(0));
+            Run<?, ?> build = getJenkins().assertBuildStatus(result, job.scheduleBuild2(0));
             ResultAction action = build.getAction(ResultAction.class);
             assertThat(action.getResult()).hasQualityGateStatus(qualityGateStatus);
         }

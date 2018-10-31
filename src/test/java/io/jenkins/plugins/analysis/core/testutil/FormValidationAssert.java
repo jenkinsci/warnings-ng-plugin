@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import org.apache.commons.lang3.ObjectUtils;
+import java.util.Objects;
+
 import org.assertj.core.api.AbstractAssert;
 
 import hudson.util.FormValidation;
@@ -48,7 +49,7 @@ public class FormValidationAssert extends AbstractAssert<FormValidationAssert, F
     public FormValidationAssert isError() {
         isNotNull();
 
-        if (!ObjectUtils.equals(actual.kind, Kind.ERROR)) {
+        if (!Objects.equals(actual.kind, Kind.ERROR)) {
             failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "kind", actual, "ERROR", "not an ERROR");
         }
 
@@ -65,7 +66,7 @@ public class FormValidationAssert extends AbstractAssert<FormValidationAssert, F
     public FormValidationAssert isOk() {
         isNotNull();
 
-        if (!ObjectUtils.equals(actual.kind, Kind.OK)) {
+        if (!Objects.equals(actual.kind, Kind.OK)) {
             failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "kind", actual, "OK", "not OK");
         }
 
@@ -85,7 +86,7 @@ public class FormValidationAssert extends AbstractAssert<FormValidationAssert, F
     public FormValidationAssert hasMessage(final String expectedMessage) {
         isNotNull();
 
-        if (!ObjectUtils.equals(actual.getMessage(), expectedMessage)) {
+        if (!Objects.equals(actual.getMessage(), expectedMessage)) {
             failWithMessage(EXPECTED_BUT_WAS_MESSAGE, "message", actual, expectedMessage, actual.getMessage());
         }
 

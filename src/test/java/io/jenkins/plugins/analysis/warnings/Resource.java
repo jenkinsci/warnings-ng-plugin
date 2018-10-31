@@ -51,14 +51,6 @@ public class Resource {
         }
     }
 
-    public String asText() {
-        try {
-            return IOUtils.toString(url.openStream());
-        } catch (IOException e) {
-            throw new IOError(e);
-        }
-    }
-
     public byte[] asByteArray() throws IOException {
         try (InputStream is = asInputStream()) {
             return IOUtils.toByteArray(is);
