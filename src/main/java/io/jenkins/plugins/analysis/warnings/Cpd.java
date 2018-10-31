@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.dry.cpd.CpdParser;
@@ -39,6 +40,7 @@ public class Cpd extends DuplicateCodeScanner {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("cpd")
     @Extension
     public static class Descriptor extends DryDescriptor {
         /** Creates the descriptor instance. */

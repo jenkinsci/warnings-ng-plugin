@@ -85,10 +85,10 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("issue11675.txt");
         job.setDefinition(asStage(
                 "sh 'cat issue11675-issues.txt'",
-                "def issues = scanForIssues tool: [$class: 'Eclipse']",
+                "def issues = scanForIssues tool: eclipse()",
                 PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleBuild(job, Eclipse.class);
+        AnalysisResult result = scheduleBuild(job, new Eclipse());
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
@@ -133,9 +133,9 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     private void publishResultsWithIdAndName(final String publishStep, final String expectedId,
             final String expectedName) {
         WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Java.class, "java"),
-                createScanForIssuesStep(Eclipse.class, "eclipse"),
-                createScanForIssuesStep(JavaDoc.class, "javadoc"),
+        job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
+                createScanForIssuesStep(new Eclipse(), "eclipse"),
+                createScanForIssuesStep(new JavaDoc(), "javadoc"),
                 publishStep));
 
         WorkflowRun run = runSuccessfully(job);
@@ -163,7 +163,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     public void shouldHaveActionWithIdAndNameWithEmptyResults() {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Java.class, "java"),
+        job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 "publishIssues issues:[java]"));
 
         WorkflowRun run = runSuccessfully(job);
@@ -184,7 +184,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldShowWarningsOfGroovyParser() {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
-                "def groovy = scanForIssues tool: [$class: 'GroovyScript', id:'groovy-pep8'], "
+                "def groovy = scanForIssues tool: groovyScript(id: 'groovy-pep8'), "
                         + "pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
                 "publishIssues issues:[groovy]"));
 
@@ -215,8 +215,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
                 "recordIssues tools: [" 
-                        + "[pattern: '**/*issues.txt', id: 'groovy-1', tool: [$class: 'GroovyScript', id:'groovy-pep8']]," 
-                        + "[pattern: '**/*issues.txt', id: 'groovy-2', tool: [$class: 'GroovyScript', id:'groovy-pep8']]" 
+                        + "[pattern: '**/*issues.txt', id: 'groovy-1', tool: groovyScript(id:'groovy-pep8')]," 
+                        + "[pattern: '**/*issues.txt', id: 'groovy-2', tool: groovyScript(id:'groovy-pep8')]" 
                         + "] "));
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         String id = "groovy-pep8";
@@ -242,19 +242,19 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File.*.java')");
-        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isEqualTo(16);
+        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isEqualTo(16);
 
         setFilter(job, "excludeFile('File.*.java')");
-        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isZero();
+        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isZero();
 
         setFilter(job, "includeFile('')");
-        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isEqualTo(16);
+        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isEqualTo(16);
 
         setFilter(job, "excludeFile('')");
-        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isEqualTo(16);
+        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isEqualTo(16);
 
         setFilter(job, "");
-        assertThat(scheduleBuild(job, Pmd.class).getTotalSize()).isEqualTo(16);
+        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isEqualTo(16);
 
         verifyIncludeFile(job, "File1.java");
         verifyIncludeFile(job, "File2.java");
@@ -270,11 +270,11 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File1.java'), includeCategory('Category1')");
-        AnalysisResult result = scheduleBuild(job, Pmd.class);
+        AnalysisResult result = scheduleBuild(job, new Pmd());
         assertThat(result.getTotalSize()).isEqualTo(8 + 4);
 
         setFilter(job, "includeFile('File1.java'), excludeCategory('Category1'), excludeType('Type1'), excludeNamespace('.*package1') ");
-        AnalysisResult oneIssue = scheduleBuild(job, Pmd.class);
+        AnalysisResult oneIssue = scheduleBuild(job, new Pmd());
         assertThat(oneIssue.getIssues().getFiles()).containsExactly("File1.java");
         assertThat(oneIssue.getIssues().getCategories()).containsExactly("Category2");
         assertThat(oneIssue.getIssues().getTypes()).containsExactly("Type2");
@@ -284,7 +284,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     private void verifyIncludeFile(final WorkflowJob job, final String fileName) {
         setFilter(job, "includeFile('" + fileName + "')");
         
-        AnalysisResult result = scheduleBuild(job, Pmd.class);
+        AnalysisResult result = scheduleBuild(job, new Pmd());
         
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues().getFiles()).containsExactly(fileName);
@@ -293,14 +293,14 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     private void verifyExcludeFile(final WorkflowJob job, final String excludedFileName, final String expectedFileName) {
         setFilter(job, "excludeFile('" + excludedFileName + "')");
         
-        AnalysisResult result = scheduleBuild(job, Pmd.class);
+        AnalysisResult result = scheduleBuild(job, new Pmd());
         
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues().getFiles()).containsExactly(expectedFileName);
     }
 
     private void setFilter(final WorkflowJob job, final String filters) {
-        job.setDefinition(asStage(createScanForIssuesStep(Pmd.class),
+        job.setDefinition(asStage(createScanForIssuesStep(new Pmd()),
                 String.format("publishIssues issues:[issues], filters:[%s]", filters)));
     }
 
@@ -312,19 +312,19 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldUseOtherJobAsReference() {
         WorkflowJob reference = createJob("reference");
         copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
-        reference.setDefinition(parseAndPublish(Java.class));
+        reference.setDefinition(parseAndPublish(new Java()));
 
-        AnalysisResult referenceResult = scheduleBuild(reference, Java.class);
+        AnalysisResult referenceResult = scheduleBuild(reference, new Java());
 
         assertThat(referenceResult.getTotalSize()).isEqualTo(2);
         assertThat(referenceResult.getIssues()).hasSize(2);
         assertThat(referenceResult.getReferenceBuild()).isEmpty();
 
         WorkflowJob job = createJobWithWorkspaceFiles("java-start.txt");
-        job.setDefinition(asStage(createScanForIssuesStep(Java.class),
+        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
                 "publishIssues issues:[issues], referenceJobName:'reference'"));
 
-        AnalysisResult result = scheduleBuild(reference, Java.class);
+        AnalysisResult result = scheduleBuild(reference, new Java());
 
         assertThat(result.getTotalSize()).isEqualTo(2);
         assertThat(result.getIssues()).hasSize(2);
@@ -354,12 +354,11 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
         createFileInWorkspace(job, "xxe.xml", adaptedXxeFileContent);
 
-        List<Class<? extends StaticAnalysisTool>> classes = Lists.mutable.of(CheckStyle.class, Pmd.class,
-                FindBugs.class, JcReport.class);
-        for (Class<? extends StaticAnalysisTool> tool : classes) {
+        List<StaticAnalysisTool> tools = Lists.mutable.of(new CheckStyle(), new Pmd(), new FindBugs(), new JcReport());
+        for (StaticAnalysisTool tool : tools) {
             job.setDefinition(asStage(
-                    String.format("def issues = scanForIssues tool: [$class: '%s'], pattern:'xxe.xml'",
-                            tool.getSimpleName()),
+                    String.format("def issues = scanForIssues tool: %s(), pattern:'xxe.xml'",
+                            tool.getSymbolName()),
                     "publishIssues issues:[issues]"));
 
             scheduleBuild(job, tool);

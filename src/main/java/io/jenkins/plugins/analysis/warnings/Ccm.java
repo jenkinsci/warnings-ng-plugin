@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.ccm.CcmParser;
@@ -30,7 +31,13 @@ public class Ccm extends StaticAnalysisTool {
         return new CcmParser();
     }
 
+    @Override
+    public boolean canScanConsoleLog() {
+        return false;
+    }
+
     /** Descriptor for this static analysis tool. */
+    @Symbol("ccm")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

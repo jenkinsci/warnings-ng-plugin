@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.LintParser;
@@ -37,6 +38,7 @@ public class JsLint extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("jsLint")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

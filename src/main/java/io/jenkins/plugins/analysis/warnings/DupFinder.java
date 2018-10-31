@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
@@ -43,6 +44,7 @@ public class DupFinder extends DuplicateCodeScanner {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("dupFinder")
     @Extension
     public static class Descriptor extends DryDescriptor {
         /** Creates the descriptor instance. */

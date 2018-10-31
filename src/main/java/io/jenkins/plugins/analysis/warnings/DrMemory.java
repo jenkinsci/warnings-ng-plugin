@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.DrMemoryParser;
@@ -31,6 +32,7 @@ public class DrMemory extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("drMemory")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

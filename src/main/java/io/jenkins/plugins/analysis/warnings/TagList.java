@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.IssueParser;
@@ -33,6 +34,7 @@ public class TagList extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("tagList")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

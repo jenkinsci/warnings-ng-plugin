@@ -8,6 +8,7 @@ import edu.hm.hafner.analysis.parser.violations.PitAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -37,6 +38,7 @@ public class Pit extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("pit")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

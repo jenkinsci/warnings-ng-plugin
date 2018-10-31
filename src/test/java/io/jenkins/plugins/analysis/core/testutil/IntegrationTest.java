@@ -358,7 +358,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline script
      */
-    protected CpsFlowDefinition parseAndPublish(final Class<? extends StaticAnalysisTool> tool) {
+    protected CpsFlowDefinition parseAndPublish(final StaticAnalysisTool tool) {
         return asStage(createScanForIssuesStep(tool), PUBLISH_ISSUES_STEP);
     }
 
@@ -370,7 +370,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline step
      */
-    protected String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> tool) {
+    protected String createScanForIssuesStep(final StaticAnalysisTool tool) {
         return createScanForIssuesStep(tool, "issues");
     }
 
@@ -384,11 +384,10 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline step
      */
-    protected String createScanForIssuesStep(final Class<? extends StaticAnalysisTool> tool,
-            final String issuesName) {
+    protected String createScanForIssuesStep(final StaticAnalysisTool tool, final String issuesName) {
         return String.format(
-                "def %s = scanForIssues tool: [$class: '%s'], pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
-                issuesName, tool.getSimpleName());
+                "def %s = scanForIssues tool: %s(), pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
+                issuesName, tool.getSymbolName());
     }
 
     /**
@@ -450,13 +449,13 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the created {@link AnalysisResult}
      */
     @SuppressWarnings("illegalcatch")
-    protected AnalysisResult scheduleBuild(final WorkflowJob job, final Class<? extends StaticAnalysisTool> tool) {
+    protected AnalysisResult scheduleBuild(final WorkflowJob job, final StaticAnalysisTool tool) {
         try {
             WorkflowRun run = runSuccessfully(job);
 
             ResultAction action = getResultAction(run);
 
-            assertThat(action.getId()).isEqualTo(getIdOf(tool));
+            assertThat(action.getId()).isEqualTo(tool.getId());
 
             return action.getResult();
         }
@@ -918,4 +917,5 @@ public abstract class IntegrationTest extends ResourceTest {
     protected void removeBuilder(final FreeStyleProject project, final Builder builder) {
         project.getBuildersList().remove(builder);
     }
+
 }

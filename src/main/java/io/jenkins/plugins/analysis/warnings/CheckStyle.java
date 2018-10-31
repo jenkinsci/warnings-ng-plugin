@@ -10,6 +10,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -55,6 +56,7 @@ public class CheckStyle extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("checkStyle")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         private final CheckStyleRules rules;

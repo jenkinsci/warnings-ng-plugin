@@ -10,6 +10,7 @@ import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
 import edu.hm.hafner.analysis.parser.Gcc4LinkerParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -34,6 +35,7 @@ public class Gcc4 extends StaticAnalysisToolSuite {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("gcc4")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */

@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.jvnet.localizer.LocaleProvider;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -85,6 +86,7 @@ public class FindBugs extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("findBugs")
     @Extension
     public static class FindBugsDescriptor extends StaticAnalysisToolDescriptor {
         private final FindBugsMessages messages = new FindBugsMessages();

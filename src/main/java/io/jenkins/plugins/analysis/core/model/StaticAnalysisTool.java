@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import java.io.Serializable;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.Symbol;
 
 import edu.hm.hafner.analysis.IssueParser;
 
@@ -31,6 +32,15 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
      */
     public String getName() {
         return getDescriptor().getDisplayName();
+    }
+
+    /**
+     * Returns the {@link Symbol} name of this tool.
+     *
+     * @return the name of this tool, or "undefined" if no symbol has been defined
+     */
+    public String getSymbolName() {
+        return  getDescriptor().getSymbolName();
     }
 
     /**
@@ -83,6 +93,23 @@ public abstract class StaticAnalysisTool extends AbstractDescribableImpl<StaticA
         @Override
         public String getId() {
             return id;
+        }
+
+        /**
+         * Returns the {@link Symbol} name of this tool.
+         *
+         * @return the name of this tool, or "undefined" if no symbol has been defined
+         */
+        public String getSymbolName() {
+            Symbol annotation = getClass().getAnnotation(Symbol.class);
+
+            if (annotation != null) {
+                String[] symbols = annotation.value();
+                if (symbols.length > 0) {
+                    return symbols[0];
+                }
+            }
+            return "unknownSymbol";
         }
 
         /**

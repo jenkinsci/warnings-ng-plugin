@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import hudson.Extension;
@@ -29,6 +30,7 @@ public class SpotBugs extends FindBugs {
 
     /** Descriptor for this static analysis tool. */
     @Extension
+    @Symbol("spotBugs")
     public static class Descriptor extends FindBugsDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {

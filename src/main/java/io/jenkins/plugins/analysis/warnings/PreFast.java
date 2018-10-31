@@ -2,40 +2,37 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.violations.CodeNarcAdapter;
+import edu.hm.hafner.analysis.parser.PreFastParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 
 /**
- * Provides a parser and customized messages for CodeNArc.
+ * Provides a parser and customized messages for Microsoft PreFast.
  *
  * @author Ullrich Hafner
  */
-public class CodeNArc extends StaticAnalysisTool {
-    private static final long serialVersionUID = 8809406805732162793L;
-    static final String ID = "codenarc";
+public class PreFast extends StaticAnalysisTool {
+    private static final long serialVersionUID = -3802198096988685475L;
+    static final String ID = "prefast";
 
-    /** Creates a new instance of {@link CodeNArc}. */
+    /** Creates a new instance of {@link PreFast}. */
     @DataBoundConstructor
-    public CodeNArc() {
+    public PreFast() {
         super();
         // empty constructor required for stapler
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
-    public CodeNarcAdapter createParser() {
-        return new CodeNarcAdapter();
+    public PreFastParser createParser() {
+        return new PreFastParser();
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("prefast")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */
@@ -46,7 +43,7 @@ public class CodeNArc extends StaticAnalysisTool {
         @Nonnull
         @Override
         public String getDisplayName() {
-            return Messages.Violations_CodeNarc();
+            return Messages.Warnings_PREfast_ParserName();
         }
     }
 }

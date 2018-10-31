@@ -9,6 +9,7 @@ import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -54,6 +55,7 @@ public class Pmd extends StaticAnalysisTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("pmd")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         private final PmdMessages messages;

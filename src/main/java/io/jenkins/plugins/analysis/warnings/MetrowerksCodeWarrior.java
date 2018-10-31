@@ -10,6 +10,7 @@ import edu.hm.hafner.analysis.parser.MetrowerksCwCompilerParser;
 import edu.hm.hafner.analysis.parser.MetrowerksCwLinkerParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -34,6 +35,7 @@ public class MetrowerksCodeWarrior extends StaticAnalysisToolSuite {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("metrowerksCodeWarrior")
     @Extension
     public static class Descriptor extends StaticAnalysisToolDescriptor {
         /** Creates the descriptor instance. */
