@@ -120,8 +120,6 @@ icon, so you quickly see the difference between the created reports:
 
 ![separate results](images/separate.png) 
 
-
-
 In the basic configuration section you can additionally choose if the step should run for failed builds as well.
 This option is disabled by default, since analysis results might be inaccurate if the build failed.
  
@@ -131,8 +129,8 @@ An example pipeline with these options is shown in the following snippet:
 recordIssues 
     enabledForFailure: true, aggregatingResults : true, 
     tools: [
-        [tool: [$class: 'Java']], 
-        [pattern: 'checkstyle-result.xml', tool: [$class: 'CheckStyle']]
+        [tool: java()], 
+        [pattern: 'checkstyle-result.xml', tool: checkStyle()]
     ]
 ```
 
@@ -164,7 +162,7 @@ An example pipeline with these options is shown in the following snippet:
 
 ```
 recordIssues 
-    sourceCodeEncoding: 'UTF-8', reportEncoding : 'ISO-8859-1', tools: [[tool: [$class: 'Java']]]
+    sourceCodeEncoding: 'UTF-8', reportEncoding : 'ISO-8859-1', tools: [[tool: java()]]
 ```
 
 ### Control the selection of the reference build (baseline)
@@ -184,7 +182,7 @@ An example pipeline with these options is shown in the following snippet:
 
 ```
 recordIssues 
-    tools: [ [tool: [$class: 'Java']] ],
+    tools: [ [tool: java()] ],
     ignoreQualityGate: false, ignoreFailedBuilds: true, referenceJobName: 'my-project/master'
 ```
 
@@ -200,7 +198,7 @@ An example pipeline with these options is shown in the following snippet:
 
 ```
 recordIssues 
-    tools: [[pattern: '*.log', tool: [$class: 'Java']]], 
+    tools: [[pattern: '*.log', tool: java()]], 
     filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
 ```
 
@@ -217,7 +215,7 @@ An example pipeline with these options is shown in the following snippet:
 
 ```
 recordIssues 
-    tools: [[pattern: '*.log', tool: [$class: 'Java']]], unstableTotalHigh: 10, unstableNewAll: 1
+    tools: [[pattern: '*.log', tool: java()]], unstableTotalHigh: 10, unstableNewAll: 1
 ```
 
 ### Health report configuration
@@ -232,7 +230,7 @@ An example pipeline with these options is shown in the following snippet:
 
 ```
 recordIssues 
-    tools: [[pattern: '*.log', tool: [$class: 'Java']]], 
+    tools: [[pattern: '*.log', tool: java()]], 
     healthy: 10, unhealthy: 100, minimumSeverity: 'HIGH'
 ```
 
@@ -256,7 +254,7 @@ is shown in the following example:
 ```
 recordIssues 
     enabledForFailure: true, 
-    tools: [[pattern: '*.log', tool: [$class: 'Java']]], 
+    tools: [[pattern: '*.log', tool: java()]], 
     filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
 ```
 
@@ -298,7 +296,7 @@ pipeline {
 
             recordIssues enabledForFailure: true, 
                 tools: [[tool: [$class: 'MavenConsole']], 
-                        [tool: [$class: 'Java']], 
+                        [tool: java()], 
                         [tool: [$class: 'JavaDoc']]]
             recordIssues enabledForFailure: true, tools: [[tool: [$class: 'CheckStyle']]]
             recordIssues enabledForFailure: true, tools: [[tool: [$class: 'FindBugs']]]
@@ -338,7 +336,7 @@ node {
 
         junit testResults: '**/target/*-reports/TEST-*.xml'
 
-        def java = scanForIssues tool: [$class: 'Java']
+        def java = scanForIssues tool: java()
         def javadoc = scanForIssues tool: [$class: 'JavaDoc']
         
         publishIssues issues:[java, javadoc], 
@@ -456,7 +454,7 @@ commit ID.
 In order to disable the blame feature, set the property `blameDisabled` to `true`, see the following example:
 ```
 recordIssues 
-    blameDisabled: true, tools: [[pattern: '*.log', tool: [$class: 'Java']]]
+    blameDisabled: true, tools: [[pattern: '*.log', tool: java()]]
 ```
 
 ### Source code view

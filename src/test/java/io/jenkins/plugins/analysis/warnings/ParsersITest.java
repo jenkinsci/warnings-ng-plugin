@@ -524,7 +524,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Microsoft PreFast parser on an output file that contains 11 issues. */
     @Test
     public void shouldFindAllPREfastIssues() {
-        shouldFindIssuesOfTool(11, new PreFast(), "PreFast.xml");
+        shouldFindIssuesOfTool(11, new PreFast(), "PREfast.xml");
     }
 
     /** Runs the Puppet Lint parser on an output file that contains 5 issues. */
@@ -550,7 +550,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllQACSourceCodeAnalyserIssues() {
-        shouldFindIssuesOfTool(9, new QacSourceCodeAnalyser(), "QacSourceCodeAnalyser.txt");
+        shouldFindIssuesOfTool(9, new QacSourceCodeAnalyser(), "QACSourceCodeAnalyser.txt");
     }
 
     /** Runs the Resharper parser on an output file that contains 3 issues. */
