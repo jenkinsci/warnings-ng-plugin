@@ -212,25 +212,77 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test 
     public void shouldUseGroovyParserTwice() {
+        List<AnalysisResult> results = getAnalysisResults(runWith2GroovyParsers(false));
+        assertThat(results).hasSize(2);
+
+        Set<String> ids = results.stream().map(AnalysisResult::getId).collect(Collectors.toSet());
+        assertThat(ids).containsExactly("groovy-1", "groovy-2");
+    }
+
+    @Test 
+    public void shouldLogWarningIfNameIsSetWhenNotAggregating() {
+        List<AnalysisResult> results = getAnalysisResults(runWith2GroovyParsers(false,
+                "name: 'name'", "id: 'id'"));
+        assertThat(results).hasSize(2);
+        for (AnalysisResult result : results) {
+            assertThat(result.getInfoMessages())
+                    .contains("Ignoring name='name' and id='id' when publishing non-aggregating reports");
+        }
+
+        Set<String> ids = results.stream().map(AnalysisResult::getId).collect(Collectors.toSet());
+        assertThat(ids).containsExactly("groovy-1", "groovy-2");
+    }
+
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and uses this parser twice.
+     * Publishes the results into a single result.
+     */
+    @Test 
+    public void shouldUseGroovyParserTwiceAndAggregateIntoSingleResult() {
+        List<AnalysisResult> results = getAnalysisResults(runWith2GroovyParsers(true));
+        assertThat(results).hasSize(1);
+        
+        AnalysisResult result = results.get(0);
+        assertThat(result.getId()).isEqualTo("analysis");
+    }
+
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and uses this parser twice.
+     * Publishes the results into a single result that uses a different ID and name.
+     */
+    @Test
+    public void shouldUseGroovyParserTwiceAndAggregateIntoSingleResultWithCustomizableIdAndName() {
+        WorkflowRun build = runWith2GroovyParsers(true, "name: 'Custom Name'", "id: 'custom-id'");
+        ResultAction action = getResultAction(build);
+        
+        assertThat(action.getId()).isEqualTo("custom-id");
+        assertThat(action.getDisplayName()).isEqualTo("Custom Name Warnings");
+    }
+
+    private WorkflowRun runWith2GroovyParsers(final boolean isAggregating, String... arguments) {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
-                "recordIssues tools: [" 
+                "recordIssues aggregatingResults: "+ isAggregating + ", tools: [" 
                         + "[pattern: '**/*issues.txt', id: 'groovy-1', tool: groovyScript(id:'groovy-pep8')]," 
                         + "[pattern: '**/*issues.txt', id: 'groovy-2', tool: groovyScript(id:'groovy-pep8')]" 
-                        + "] "));
+                        + "] " + join(arguments)));
+
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         String id = "groovy-pep8";
         configuration.setParsers(Collections.singletonList(
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
-        WorkflowRun run = runSuccessfully(job);
+        return runSuccessfully(job);
+    }
 
-        List<AnalysisResult> results = getAnalysisResults(run);
-        assertThat(results).hasSize(2);
-
-        Set<String> ids = results.stream().map(AnalysisResult::getId).collect(Collectors.toSet());
-        assertThat(ids).containsExactly("groovy-1", "groovy-2");
+    private String join(final String[] arguments) {
+        StringBuilder builder = new StringBuilder();
+        for (String argument : arguments) {
+            builder.append(", ");
+            builder.append(argument);
+        }
+        return builder.toString();
     }
 
     /**

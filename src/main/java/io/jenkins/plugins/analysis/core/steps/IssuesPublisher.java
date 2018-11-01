@@ -71,7 +71,7 @@ class IssuesPublisher {
     }
 
     /**
-     * Creates a new {@link AnalysisResult} and attaches the result in an {@link ResultAction} that is registered with
+     * Creates a new {@link AnalysisResult} and attaches the result in a {@link ResultAction} that is registered with
      * the current run.
      *
      * @return the created result action

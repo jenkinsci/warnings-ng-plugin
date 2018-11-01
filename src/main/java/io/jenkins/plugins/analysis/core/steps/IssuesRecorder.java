@@ -19,6 +19,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -68,7 +69,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     static final String NO_REFERENCE_JOB = "-";
 
     private List<ToolConfiguration> tools;
-    
+
     private String reportEncoding = StringUtils.EMPTY;
     private String sourceCodeEncoding = StringUtils.EMPTY;
 
@@ -85,8 +86,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
-    
+
     private boolean isBlameDisabled;
+
+    private String id;
+    private String name;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -96,6 +100,46 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         super();
 
         // empty constructor required for Stapler
+    }
+
+    /**
+     * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
+     * given, then the ID of the associated result object is used.
+     * <p>
+     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
+     * UI in order to simplify the user interface.
+     * </p>
+     *
+     * @param id
+     *         the ID of the results
+     */
+    @DataBoundSetter
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
+     * the associated {@link StaticAnalysisLabelProvider} is used.
+     * <p>
+     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
+     * UI in order to simplify the user interface.
+     * </p>
+     *
+     * @param name
+     *         the name of the results
+     */
+    @DataBoundSetter
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @CheckForNull
@@ -116,8 +160,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     /**
      * Sets the static analysis tool that will scan files and create issues.
-     * 
-     * @param tool 
+     *
+     * @param tool
      *         the static analysis tool
      */
     public void setTool(final ToolConfiguration tool) {
@@ -128,7 +172,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     public String getReportEncoding() {
         return reportEncoding;
     }
-
 
     /**
      * Sets the default encoding used to read the log files that contain the warnings.
@@ -473,6 +516,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     @Override
+    public Descriptor getDescriptor() {
+        return (Descriptor) super.getDescriptor();
+    }
+
+    @Override
     public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace,
             @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
             throws InterruptedException, IOException {
@@ -494,31 +542,48 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
             AnnotatedReport totalIssues = new AnnotatedReport();
-            totalIssues.setId("analysis");
+            totalIssues.setId(StringUtils.defaultIfEmpty(id, "analysis"));
             for (ToolConfiguration toolConfiguration : tools) {
                 totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
             }
-            publishResult(run, listener, Messages.Tool_Default_Name(), totalIssues, Messages.Tool_Default_Name());
+            String name = StringUtils.defaultIfEmpty(this.name, Messages.Tool_Default_Name());
+            publishResult(run, listener, name, totalIssues, name);
         }
         else {
             for (ToolConfiguration toolConfiguration : tools) {
                 AnnotatedReport report = scanWithTool(run, workspace, listener, toolConfiguration);
-                String actualName;
-                if (toolConfiguration.hasName()) {
-                    actualName = toolConfiguration.getName();
+                if (StringUtils.isNotBlank(id) || StringUtils.isNotBlank(name)) {
+                    report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
+                            name, id);
                 }
-                else {
-                    actualName = StringUtils.EMPTY;
-                }
-                publishResult(run, listener, toolConfiguration.getActualName(), report, actualName);
+                publishResult(run, listener, toolConfiguration.getActualName(), report,
+                        getReportName(toolConfiguration));
             }
+        }
+    }
+
+    /**
+     * Returns the name of the tool. If no name has been set, then an empty string is returned so that the default name
+     * will be used.
+     *
+     * @param toolConfiguration
+     *         the tool
+     *
+     * @return the name
+     */
+    private String getReportName(final ToolConfiguration toolConfiguration) {
+        if (toolConfiguration.hasName()) {
+            return toolConfiguration.getName();
+        }
+        else {
+            return StringUtils.EMPTY;
         }
     }
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), workspace,
-                getReportCharset(), getSourceCodeCharset(), new FilePath(run.getRootDir()), 
+                getReportCharset(), getSourceCodeCharset(), new FilePath(run.getRootDir()),
                 blame(run, workspace, listener), new LogHandler(listener, toolConfiguration.getActualName()));
         AnnotatedReport report = issuesScanner.scan(
                 expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()), run.getLogFile());
@@ -562,7 +627,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param name
      *         the name of the report (might be empty)
      */
-    public void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName, 
+    public void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
             final AnnotatedReport report, final String name) {
         IssuesPublisher publisher = new IssuesPublisher(run, report.getReport(), report.getBlames(), getFilters(),
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), new QualityGate(thresholds),
