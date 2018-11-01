@@ -402,8 +402,8 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 PrintWriter writer = new PrintWriter(
                         new FileOutputStream((getJenkins().jenkins.getWorkspaceFor(project) + path), true));
                 writer.println("[javac] " + i + ". WARNING in " + sampleClassDummyName + " (at line 42)");
-                writer.println("[javac] Sample Message");
-                writer.println("[javac] ^^^^^^^^^^^^^^^^^^");
+                writer.println("[javac] \tSample Message");
+                writer.println("[javac] \t^^^^^^^^^^^^^^^^^^");
                 writer.println("[javac] Sample Message" + i);
                 writer.close();
             }
@@ -412,8 +412,8 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 PrintWriter writer = new PrintWriter(
                         new FileOutputStream((getJenkins().jenkins.getWorkspaceFor(project) + path), true));
                 writer.println("[javac] NOT_EXISTING X. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)");
-                writer.println("[javac] Sample Message");
-                writer.println("[javac] ^^^^^^^^^^^^^^^^^^");
+                writer.println("[javac] \tSample Message");
+                writer.println("[javac] \t^^^^^^^^^^^^^^^^^^");
                 writer.println("[javac] Sample Message");
                 writer.close();
             }

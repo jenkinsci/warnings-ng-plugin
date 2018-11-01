@@ -4,18 +4,42 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.AbstractIssueParserTest;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import edu.hm.hafner.analysis.parser.Pep8ParserTest;
+import edu.hm.hafner.analysis.assertj.SoftAssertions;
 
 /**
  * Test the class {@link DynamicLineParser}. Creates a new Pep8 parser in Groovy. All Pep8 test cases are reused.
  *
  * @author Ullrich Hafner
  */
-class DynamicLineParserTest extends Pep8ParserTest {
+class DynamicLineParserTest extends AbstractIssueParserTest {
     private static final String FILE_NAME = "file-with-line-numbers.txt";
+
+    DynamicLineParserTest() {
+        super("pep8Test.txt");
+    }
+
+    @Override
+    protected void assertThatIssuesArePresent(final Report report, final SoftAssertions softly) {
+        softly.assertThat(report)
+                .hasSize(8).hasSeverities(0, 0, 6, 2);
+
+        softly.assertThat(report.get(0))
+                .hasFileName("optparse.py")
+                .hasCategory("E401")
+                .hasSeverity(Severity.WARNING_NORMAL)
+                .hasMessage("multiple imports on one line")
+                .hasDescription("")
+                .hasPackageName("-")
+                .hasLineStart(69)
+                .hasLineEnd(69)
+                .hasColumnStart(11)
+                .hasColumnEnd(11);
+    }
 
     @Override
     public AbstractParser createParser() {
