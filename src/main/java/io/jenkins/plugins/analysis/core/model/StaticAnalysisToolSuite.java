@@ -20,7 +20,7 @@ import edu.hm.hafner.analysis.Report;
  */
 public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
     @Override
-    public IssueParser createParser() {
+    public final IssueParser createParser() {
         return new CompositeParser(getParsers());
     }
 

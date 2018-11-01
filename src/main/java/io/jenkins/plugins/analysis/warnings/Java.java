@@ -1,14 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-
-import edu.hm.hafner.analysis.parser.JavacParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import java.util.Collection;
 
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
+
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.AntJavacParser;
+import edu.hm.hafner.analysis.parser.JavacParser;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+
 import hudson.Extension;
 
 /**
@@ -16,7 +19,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Java extends StaticAnalysisTool {
+public class Java extends StaticAnalysisToolSuite {
     private static final long serialVersionUID = 2254154391638811877L;
     static final String ID = "java";
 
@@ -28,10 +31,10 @@ public class Java extends StaticAnalysisTool {
     }
 
     @Override
-    public JavacParser createParser() {
-        return new JavacParser();
+    protected Collection<? extends AbstractParser> getParsers() {
+        return asList(new JavacParser(), new AntJavacParser());
     }
-    
+
     /** Descriptor for this static analysis tool. */
     @Symbol("java")
     @Extension

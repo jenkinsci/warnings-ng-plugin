@@ -1,0 +1,5 @@
+[java] /var/lib/jenkins/workspace/webhooks/src/main/java/File.java:59: error: ';' expected
+[java]         eventResources.stream()
+[java]                       ^
+[java] 1 error
+[java] 
