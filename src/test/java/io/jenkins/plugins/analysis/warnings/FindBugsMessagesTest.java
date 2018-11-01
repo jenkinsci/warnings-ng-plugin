@@ -20,9 +20,9 @@ class FindBugsMessagesTest {
     /** Expected number of patterns. */
     private static final int EXPECTED_PATTERNS = 468;
     /** Expected number of patterns in fb-contrib. */
-    private static final int EXPECTED_CONTRIB_PATTERNS = 277;
+    private static final int EXPECTED_CONTRIB_PATTERNS = 302;
     /** Expected number of patterns in find-sec-bugs. */
-    private static final int EXPECTED_SECURITY_PATTERNS = 113;
+    private static final int EXPECTED_SECURITY_PATTERNS = 128;
 
     @Test
     void shouldReadAllMessageFiles() {
@@ -58,7 +58,7 @@ class FindBugsMessagesTest {
                 .isEqualTo("Store of null value into field annotated @Nonnull");
 
         assertThat(messages.getMessage("NMCS_NEEDLESS_MEMBER_COLLECTION_SYNCHRONIZATION", Locale.ENGLISH))
-                .contains("This class defines a private collection member as synchronized. It appears however");
+                .contains("This class defines a private collection member as synchronized. It appears");
         assertThat(messages.getShortMessage("NMCS_NEEDLESS_MEMBER_COLLECTION_SYNCHRONIZATION", Locale.ENGLISH))
                 .isEqualTo("Class defines unneeded synchronization on member collection");
     }
