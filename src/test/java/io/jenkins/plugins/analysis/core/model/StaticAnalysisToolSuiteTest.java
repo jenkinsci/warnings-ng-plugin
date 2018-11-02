@@ -36,7 +36,7 @@ class StaticAnalysisToolSuiteTest {
     @Test
     @SuppressWarnings("unchecked")
     void shouldReturnReportOfSingleParser() {
-        AbstractParser parser = mock(AbstractParser.class);
+        AbstractParser parser = createParserStub();
         Report issues = createIssues(1);
         when(parser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issues);
 
@@ -50,11 +50,11 @@ class StaticAnalysisToolSuiteTest {
     @Test
     @SuppressWarnings("unchecked")
     void shouldReturnAggregationOfTwoParsers() {
-        AbstractParser firstParser = mock(AbstractParser.class);
+        AbstractParser firstParser = createParserStub();
         Report issuesFirstParser = createIssues(1);
         when(firstParser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issuesFirstParser);
 
-        AbstractParser secondParser = mock(AbstractParser.class);
+        AbstractParser secondParser = createParserStub();
         Report issuesSecondParser = createIssues(2);
         when(secondParser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issuesSecondParser);
 
@@ -65,6 +65,13 @@ class StaticAnalysisToolSuiteTest {
         Report expected = new Report();
         expected.addAll(issuesFirstParser, issuesSecondParser);
         assertThat(compositeIssues).isEqualTo(expected);
+    }
+
+    private AbstractParser createParserStub() {
+        AbstractParser stub = mock(AbstractParser.class);
+        when(stub.accepts(any(), any())).thenReturn(true);
+        
+        return stub;
     }
 
     private Report createIssues(final int id) {
