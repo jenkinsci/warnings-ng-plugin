@@ -114,7 +114,7 @@ class IssuesScanner {
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
         logger.log(consoleReport);
 
-        Report report = tool.createParser().parse(consoleLog, logFileEncoding, ConsoleNote::removeNotes);
+        Report report = tool.createParser().parse(consoleLog.toPath(), logFileEncoding, ConsoleNote::removeNotes);
         report.setId(tool.getId());
 
         consoleReport.addAll(report);

@@ -91,7 +91,8 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
 
     private void aggregateIssuesOfFile(final File file, final Report report) {
         try {
-            Report result = parser.parse(file, new JobConfigurationModel().getCharset(encoding));
+            // FIXME: directly use Path
+            Report result = parser.parse(file.toPath(), new JobConfigurationModel().getCharset(encoding));
             result.setId(id);
             report.addAll(result);
             report.logInfo("Successfully parsed file %s", file);

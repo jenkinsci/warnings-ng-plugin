@@ -1,13 +1,16 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-
-import edu.hm.hafner.analysis.parser.EclipseParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import java.util.Collection;
 
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
+
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.EclipseParser;
+import edu.hm.hafner.analysis.parser.EclipseXMLParser;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+
 import hudson.Extension;
 
 /**
@@ -15,7 +18,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Eclipse extends StaticAnalysisTool {
+public class Eclipse extends StaticAnalysisToolSuite {
     private static final long serialVersionUID = -2312612497121380654L;
     static final String ID = "eclipse";
 
@@ -27,8 +30,8 @@ public class Eclipse extends StaticAnalysisTool {
     }
 
     @Override
-    public EclipseParser createParser() {
-        return new EclipseParser();
+    protected Collection<? extends AbstractParser> getParsers() {
+        return asList(new EclipseParser(), new EclipseXMLParser());
     }
 
     /** Descriptor for this static analysis tool. */

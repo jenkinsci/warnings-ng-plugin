@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.function.Function;
 
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 class StaticAnalysisToolSuiteTest {
     private static final Charset ENCODING = StandardCharsets.UTF_8;
     private static final Function<String, String> IDENTITY = Function.identity();
-    private static final File FILE = mock(File.class);
+    private static final Path FILE = mock(Path.class);
 
     @Test
     void shouldReturnEmptyReportIfSuiteIsEmpty() {

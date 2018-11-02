@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.File;
 import java.nio.charset.Charset;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -67,10 +67,12 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
         }
 
         @Override
-        public Report parse(final File file, final Charset charset, final Function<String, String> preProcessor) {
+        public Report parse(final Path file, final Charset charset, final Function<String, String> preProcessor) {
             Report aggregated = new Report();
             for (AbstractParser parser : parsers) {
-                aggregated.addAll(parser.parse(file, charset, preProcessor));
+                if (parser.accepts(file, charset)) {
+                    aggregated.addAll(parser.parse(file, charset, preProcessor));
+                }
             }
             return aggregated;
         }

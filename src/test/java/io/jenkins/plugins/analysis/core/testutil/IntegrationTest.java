@@ -457,6 +457,13 @@ public abstract class IntegrationTest extends ResourceTest {
 
             assertThat(action.getId()).isEqualTo(tool.getId());
 
+            System.out.println("------------------------------------- Infos ------------------------------------");
+            System.out.println(action.getResult().getInfoMessages());
+            System.out.println("------------------------------------ Errors ------------------------------------");
+            System.out.println(action.getResult().getErrorMessages());
+            System.out.println("--------------------------------------------------------------------------------");
+
+
             return action.getResult();
         }
         catch (Exception e) {

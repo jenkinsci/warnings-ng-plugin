@@ -63,6 +63,14 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files=&quot;$files $directory/$i&quot;\n"
             + "done</code></pre>";
 
+    /** Runs the SonarQube parsers on two files that contains 6 and 31 issues. */
+    @Test 
+    public void shouldFindAllSonarQubeIssues() {
+        shouldFindIssuesOfTool(31, new SonarQube(), "sonarqube-api.json");
+        shouldFindIssuesOfTool(6, new SonarQube(), "sonarqube-differential.json");
+        shouldFindIssuesOfTool(37, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
+    }
+
     /** Runs the TagList parser on output files that contains 6 issues. */
     @Test
     public void shouldFindAllTagListIssues() {
@@ -537,6 +545,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFindAllEclipseIssues() {
         shouldFindIssuesOfTool(8, new Eclipse(), "eclipse.txt");
+        
+        shouldFindIssuesOfTool(6, new Eclipse(), "eclipse-withinfo.xml");
+        
+        shouldFindIssuesOfTool(8 + 6, new Eclipse(), "eclipse-withinfo.xml", "eclipse.txt");
     }
 
     /** Runs the PyLint parser on an output file that contains 6 issues. */
@@ -645,7 +657,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             job.setDefinition(parseAndPublish(tool));
 
             AnalysisResult result = scheduleBuild(job, tool);
-
+            
             assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 

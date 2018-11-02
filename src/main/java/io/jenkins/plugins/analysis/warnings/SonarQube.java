@@ -1,15 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.SonarQubeIssuesParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import java.util.Collection;
 
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.DataBoundConstructor;
+
+import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.parser.SonarQubeDiffParser;
+import edu.hm.hafner.analysis.parser.SonarQubeIssuesParser;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+
 import hudson.Extension;
 
 /**
@@ -17,7 +19,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class SonarQube extends StaticAnalysisTool {
+public class SonarQube extends StaticAnalysisToolSuite {
     static final String ID = "sonar";
 
     /** Creates a new instance of {@link SonarQube}. */
@@ -27,11 +29,9 @@ public class SonarQube extends StaticAnalysisTool {
         // empty constructor required for stapler
     }
 
-    // FIXME: See https://issues.jenkins-ci.org/browse/JENKINS-52463
-    // StaticAnalysisTool or Composite 
     @Override
-    public IssueParser createParser() {
-        return new SonarQubeIssuesParser(); 
+    protected Collection<? extends AbstractParser> getParsers() {
+        return asList(new SonarQubeIssuesParser(), new SonarQubeDiffParser()); 
     }
 
     /** Descriptor for this static analysis tool. */
