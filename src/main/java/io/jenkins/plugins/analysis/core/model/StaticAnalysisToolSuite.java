@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 
@@ -29,7 +28,7 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
      *
      * @return the parsers to use
      */
-    protected abstract Collection<? extends AbstractParser> getParsers();
+    protected abstract Collection<? extends IssueParser> getParsers();
 
     /**
      * Wraps all parsers into a collection.
@@ -39,8 +38,8 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
      *
      * @return a singleton collection
      */
-    protected Collection<? extends AbstractParser> asList(final AbstractParser... parser) {
-        List<AbstractParser> parsers = new ArrayList<>();
+    protected Collection<? extends IssueParser> asList(final IssueParser... parser) {
+        List<IssueParser> parsers = new ArrayList<>();
         Collections.addAll(parsers, parser);
         return parsers;
     }
@@ -52,7 +51,7 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
      * @author Ullrich Hafner
      */
     private static class CompositeParser extends IssueParser {
-        private final List<AbstractParser> parsers = new ArrayList<>();
+        private final List<IssueParser> parsers = new ArrayList<>();
 
         /**
          * Creates a new instance of {@link CompositeParser}.
@@ -60,7 +59,7 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
          * @param parsers
          *         the parsers to use to scan the input files
          */
-        CompositeParser(final Collection<? extends AbstractParser> parsers) {
+        CompositeParser(final Collection<? extends IssueParser> parsers) {
             super();
 
             this.parsers.addAll(parsers);
@@ -69,7 +68,7 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
         @Override
         public Report parse(final Path file, final Charset charset, final Function<String, String> preProcessor) {
             Report aggregated = new Report();
-            for (AbstractParser parser : parsers) {
+            for (IssueParser parser : parsers) {
                 if (parser.accepts(file, charset)) {
                     aggregated.addAll(parser.parse(file, charset, preProcessor));
                 }
