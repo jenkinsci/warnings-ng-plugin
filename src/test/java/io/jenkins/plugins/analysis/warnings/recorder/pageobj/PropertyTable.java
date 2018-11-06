@@ -152,6 +152,10 @@ public class PropertyTable {
             this(name, size, 0, true);
         }
 
+        public int size() {
+            return size;
+        }
+
         @Override
         public boolean equals(final Object o) {
             if (this == o) {

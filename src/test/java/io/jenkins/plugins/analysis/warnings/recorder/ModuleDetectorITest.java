@@ -3,20 +3,15 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.assertj.core.api.AutoCloseableSoftAssertions;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
@@ -28,7 +23,6 @@ import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.ModuleDetector;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -80,7 +74,6 @@ import hudson.model.Result;
  * <dt>m3/build.xml<dt/>
  * <dd>a build file without the name tag<dd/>
  * </dl>
- *
  *
  * <b>OSGI:</b>
  *
@@ -194,14 +187,13 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF"
-        };
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        String[] workspaceFilesAndProperties = ArrayUtils
-                .add(workspaceFiles, (BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"));
-
-        AnalysisResult result = createResult(workspaceFiles.length, false,
-                workspaceFilesAndProperties);
+        AnalysisResult result = createResult(
+                workspaceFiles.length - 1, 
+                false,
+                workspaceFiles);
 
         verifyModules(result,
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
@@ -209,14 +201,107 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 new PropertyRow("Test-Bundle-Name", 1));
     }
 
-    private void verifyModules(final AnalysisResult result, final PropertyRow... modules) {
-        HtmlPage details = getWebPage(result);
-        PropertyTable propertyTable = new PropertyTable(details, "moduleName");
-        assertThat(propertyTable.getTitle()).isEqualTo("Modules");
-        assertThat(propertyTable.getColumnName()).isEqualTo("Module");
-        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(modules);
+    /**
+     * Verifies that if there are different usages of Maven, Ant and OSGI, OSGI should have precedence. This test
+     * doesn't check for correct precedence in every possible case as this might fail.
+     */
+    @Test
+    public void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() throws IOException {
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        // TODO: Click module links
+        AnalysisResult result = createResult(
+                workspaceFiles.length - 1,
+                true,
+                workspaceFiles);
+
+        verifyModules(result,
+                new PropertyRow(EMPTY_MODULE_NAME, 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 7),
+                new PropertyRow("Test-Bundle-Name", 1));
+    }
+
+    /**
+     * Verifies that various Maven .pom files are handled correctly.
+     */
+    @Test
+    public void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() throws IOException {
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m3/pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m4/pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m5/pom.xml"};
+
+        AnalysisResult result = createResult(
+                workspaceFiles.length,
+                true,
+                workspaceFiles);
+
+        verifyModules(result,
+                new PropertyRow(EMPTY_MODULE_NAME, 1),
+                new PropertyRow("SubModuleOne", 1),
+                new PropertyRow("module.read.from.artifact.id", 1),
+                new PropertyRow("MainModule", 3),
+                new PropertyRow("SubModuleTwo", 1));
+    }
+
+    /**
+     * Verifies that various Ant .build files are handled correctly.
+     */
+    @Test
+    public void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() throws IOException {
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m2/build.xml",
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m3/build.xml"
+        };
+
+        AnalysisResult result = createResult(
+                workspaceFiles.length,
+                true,
+                workspaceFiles);
+
+        verifyModules(result,
+                new PropertyRow(EMPTY_MODULE_NAME, 1),
+                new PropertyRow("SecondTestModule", 1),
+                new PropertyRow("TestModule", 3));
+    }
+
+    /**
+     * Verifies that various OSGI .MF files are handled correctly.
+     */
+    @Test
+    public void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() throws IOException {
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+
+        AnalysisResult result = createResult(
+                workspaceFiles.length - 1,
+                true,
+                workspaceFiles);
+
+        verifyModules(result,
+                new PropertyRow(EMPTY_MODULE_NAME, 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 2),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
+                new PropertyRow("Test-Bundle-Name", 1));
     }
 
     /**
@@ -262,159 +347,26 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 createResult(workspaceFiles.length, false, workspaceFiles));
     }
 
-    /**
-     * Verifies that if there are different usages of Maven, Ant and OSGI, OSGI should have precedence. This test
-     * doesn't check for correct precedence in every possible case as this might fail.
-     */
-    @Test
-    public void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() throws IOException {
-        String[] workspaceFiles = new String[] {
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+    private void verifyModules(final AnalysisResult result, final PropertyRow... modules) {
+        HtmlPage details = getWebPage(result);
+        PropertyTable propertyTable = new PropertyTable(details, "moduleName");
+        assertThat(propertyTable.getTitle()).isEqualTo("Modules");
+        assertThat(propertyTable.getColumnName()).isEqualTo("Module");
+        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(modules);
 
-        AnalysisResult result = createResult(
-                workspaceFiles.length - 1, 
-                true, 
-                workspaceFiles);
+        verifyConsoleLog(result, Stream.of(modules).mapToInt(PropertyRow::size).sum());
 
-        verifyModules(result,
-                new PropertyRow(EMPTY_MODULE_NAME, 1),
-                new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
-                new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 7),
-                new PropertyRow("Test-Bundle-Name", 1));
+        // TODO: Click module links
+    }
 
+    private void verifyConsoleLog(final AnalysisResult result, final int modulesSize) {
         String logOutput = getConsoleLog(result);
         assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-        assertThat(logOutput).contains(returnExpectedNumberOfResolvedModuleNames(10));
+        assertThat(logOutput).contains(getModulesResolvedMessage(modulesSize));
     }
 
-    /**
-     * Verifies that various Maven .pom files are handled correctly.
-     */
-    @Test
-    public void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() throws IOException {
-        String[] workspaceFiles = new String[] {
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m3/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m4/pom.xml",
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m5/pom.xml"};
-
-        AnalysisResult result = createResult(
-                workspaceFiles.length, 
-                true,
-                workspaceFiles);
-
-        String logOutput = getConsoleLog(result);
-        Map<String, Long> collect = collectModuleNames(result);
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(result.getIssues()).hasSize(7);
-            softly.assertThat(result.getIssues().getModules())
-                    .containsExactly(
-                            "SubModuleOne",
-                            EMPTY_MODULE_NAME,
-                            "module.read.from.artifact.id",
-                            "SubModuleTwo",
-                            "MainModule");
-            softly.assertThat(collect).hasSize(5);
-            softly.assertThat(collect.get(EMPTY_MODULE_NAME)).isEqualTo(1L);
-            softly.assertThat(collect.get("SubModuleOne")).isEqualTo(1L);
-            softly.assertThat(collect.get("module.read.from.artifact.id")).isEqualTo(1L);
-            softly.assertThat(collect.get("SubModuleTwo")).isEqualTo(1L);
-            softly.assertThat(collect.get("MainModule")).isEqualTo(3L);
-            softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedModuleNames(7));
-        }
-    }
-
-    /**
-     * Verifies that various Ant .build files are handled correctly.
-     */
-    @Test
-    public void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() throws IOException {
-        String[] workspaceFiles = new String[] {
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m2/build.xml",
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m3/build.xml"
-        };
-
-        AnalysisResult result = createResult(
-                workspaceFiles.length,
-                true, 
-                workspaceFiles);
-
-        String logOutput = getConsoleLog(result);
-        Map<String, Long> collect = collectModuleNames(result);
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(result.getIssues()).hasSize(5);
-            softly.assertThat(result.getIssues().getModules())
-                    .containsExactly(EMPTY_MODULE_NAME,
-                            "SecondTestModule",
-                            "TestModule");
-            softly.assertThat(collect).hasSize(3);
-            softly.assertThat(collect.get(EMPTY_MODULE_NAME)).isEqualTo(1L);
-            softly.assertThat(collect.get("SecondTestModule")).isEqualTo(1L);
-            softly.assertThat(collect.get("TestModule")).isEqualTo(3L);
-            softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedModuleNames(5));
-        }
-    }
-
-    /**
-     * Verifies that various OSGI .MF files are handled correctly.
-     */
-    @Test
-    public void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() throws IOException {
-        String[] workspaceFiles = new String[] {
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
-
-        AnalysisResult result = createResult(
-                workspaceFiles.length - 1,
-                true,
-                workspaceFiles);
-
-        Map<String, Long> collect = collectModuleNames(result);
-        String logOutput = getConsoleLog(result);
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(result.getIssues()).hasSize(5);
-            softly.assertThat(result.getIssues().getModules())
-                    .containsExactly(EMPTY_MODULE_NAME,
-                            "edu.hm.hafner.osgi.symbolicname (TestVendor)",
-                            "edu.hm.hafner.osgi.symbolicname",
-                            "Test-Bundle-Name");
-            softly.assertThat(collect).hasSize(4);
-            softly.assertThat(collect.get(EMPTY_MODULE_NAME)).isEqualTo(1L);
-            softly.assertThat(collect.get("Test-Bundle-Name")).isEqualTo(1L);
-            softly.assertThat(collect.get("edu.hm.hafner.osgi.symbolicname (TestVendor)")).isEqualTo(2L);
-            softly.assertThat(collect.get("edu.hm.hafner.osgi.symbolicname")).isEqualTo(1L);
-            softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedModuleNames(5));
-        }
-    }
-
-    private String getConsoleLog(final AnalysisResult result) throws IOException {
-        return FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
-    }
-
-    private String returnExpectedNumberOfResolvedModuleNames(final int expectedNumberOfResolvedModuleNames) {
-        return "-> resolved module names for " + expectedNumberOfResolvedModuleNames + " issues";
+    private String getModulesResolvedMessage(final int modulesSize) {
+        return String.format("-> resolved module names for %s issues", modulesSize);
     }
 
     private void writeDynamicFile(final FreeStyleProject project, final int modulePaths,
@@ -459,12 +411,6 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         return webClient;
     }
 
-    private Map<String, Long> collectModuleNames(final AnalysisResult result) {
-        return result.getIssues().stream()
-                .collect(Collectors.groupingBy(Issue::getModuleName,
-                        Collectors.counting()));
-    }
-
     private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
         try {
             WebClient webClient = createWebClient(false);
@@ -494,8 +440,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     private AnalysisResult createResult(final int numberOfExpectedModules,
             final boolean appendNonExistingFile, final String... files) {
         FreeStyleProject project = buildProject(files);
-        writeDynamicFile(project, numberOfExpectedModules, appendNonExistingFile,
-                DEFAULT_ECLIPSE_TEST_FILE_PATH);
+        writeDynamicFile(project, numberOfExpectedModules, appendNonExistingFile, DEFAULT_ECLIPSE_TEST_FILE_PATH);
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
 
