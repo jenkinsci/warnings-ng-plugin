@@ -17,7 +17,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.assertj.core.api.AutoCloseableSoftAssertions;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
@@ -101,7 +100,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the HTML output is correct if there are OSGI, Maven and Ant modules used within the build. This
      * test doesn't check for correct precedence in every possible case as this might fail.
      */
-    @Test @Ignore
+    @Test
     public void shouldShowModulesForVariousModulesDetectedForOsgiMavenAndAntInTheHtmlOutput() {
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
@@ -131,7 +130,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that the output is correct if there are only Maven modules in the expected HTML output.
      */
-    @Test @Ignore
+    @Test
     public void shouldShowModulesForVariousMavenModulesInTheHtmlOutput() {
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
@@ -149,7 +148,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that the output is correct if there are only Ant modules in the expected HTML output.
      */
-    @Test @Ignore
+    @Test
     public void shouldShowModulesForVariousAntModulesInTheHtmlOutput() throws IOException, SAXException {
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"};
@@ -165,7 +164,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that the output is correct if there are only OSGI modules in the expected HTML output.
      */
-    @Test @Ignore
+    @Test
     public void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() throws IOException, SAXException {
         String[] filesWithModuleConfiguration = new String[]{
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
@@ -199,7 +198,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that the output of the HTML page is empty if the project is empty.
      */
-    @Test @Ignore
+    @Test
     public void shouldContainNoSpecificHtmlOutputForAnEmptyProject() throws IOException, SAXException {
         checkWebPageForExpectedEmptyResult(buildProjectWithFilesAndReturnResult(NO_MODULE_PATHS, false));
     }
@@ -207,7 +206,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that the output of the HTML page is empty if only one module is set by Maven.
      */
-    @Test @Ignore
+    @Test
     public void shouldContainNoSpecificHtmlOutputForASingleModuleMavenProject() throws IOException, SAXException {
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml"};
         checkWebPageForExpectedEmptyResult(
@@ -218,7 +217,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that the output of the HTML page is empty if only one module is set by Ant.
      */
-    @Test @Ignore
+    @Test
     public void shouldContainNoHtmlOutputForASingleModuleAntProject() throws IOException, SAXException {
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml"};
         checkWebPageForExpectedEmptyResult(
@@ -229,7 +228,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that the output of the HTML page is empty if only one module is set by Ant.
      */
-    @Test @Ignore
+    @Test
     public void shouldContainNoHtmlOutputForASingleModuleOsgiProject() throws IOException, SAXException {
         String[] filesWithModuleConfiguration = new String[]{
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF"};
@@ -242,7 +241,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that if there are different usages of Maven, Ant and OSGI, OSGI should have precedence. This test
      * doesn't check for correct precedence in every possible case as this might fail.
      */
-    @Test @Ignore
+    @Test
     public void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() throws IOException {
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
@@ -285,7 +284,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that various Maven .pom files are handled correctly.
      */
-    @Test @Ignore
+    @Test
     public void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() throws IOException {
 
         String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
@@ -325,7 +324,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that various Ant .build files are handled correctly.
      */
-    @Test @Ignore
+    @Test
     public void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() throws IOException {
 
         String[] filesWithModuleConfiguration = new String[]{
@@ -359,9 +358,8 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that various OSGI .MF files are handled correctly.
      */
-    @Test @Ignore
+    @Test
     public void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() throws IOException {
-
         String[] filesWithModuleConfiguration = new String[]{
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
@@ -403,9 +401,10 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
             final boolean appendNonExistingFile, final String file) {
         try {
             for (int i = 1; i <= modulePaths; i++) {
-                String sampleClassDummyName = getJenkins().jenkins.getWorkspaceFor(project) + "/m" + i + "/ClassWithWarnings.java";
+                String directory = getJenkins().jenkins.getWorkspaceFor(project) + "/m" + i;
+                String sampleClassDummyName = directory + "/ClassWithWarnings.java";
                 PrintWriter writer = new PrintWriter(
-                        new FileOutputStream(getJenkins().jenkins.getWorkspaceFor(project) + file), true);
+                        new FileOutputStream(getJenkins().jenkins.getWorkspaceFor(project) + file, true));
                 writer.println("[javac] " + i + ". WARNING in " + sampleClassDummyName + " (at line 42)");
                 writer.println("[javac] \tSample Message");
                 writer.println("[javac] \t^^^^^^^^^^^^^^^^^^");
@@ -413,18 +412,15 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 writer.close();
                 Path path = Paths.get(sampleClassDummyName);
                 if (!Files.exists(path)) {
-                    try {
-                        Files.createFile(path);
-                    }
-                    catch (IOException ignore) {
-                        // ignore
-                    }
+                    Path dirPath = Paths.get(directory);
+                    Files.createDirectories(dirPath);
+                    Files.createFile(path);
                 }
             }
 
             if (appendNonExistingFile) {
                 PrintWriter writer = new PrintWriter(
-                        new FileOutputStream(getJenkins().jenkins.getWorkspaceFor(project) + file), true);
+                        new FileOutputStream(getJenkins().jenkins.getWorkspaceFor(project) + file, true));
                 writer.println("[javac] NOT_EXISTING X. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)");
                 writer.println("[javac] \tSample Message");
                 writer.println("[javac] \t^^^^^^^^^^^^^^^^^^");
