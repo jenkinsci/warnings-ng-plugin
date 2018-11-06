@@ -41,45 +41,66 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
 /**
- * Integration test for the classes associated with {@link ModuleDetector}.
+ * Integration test for the {@link ModuleDetector}.
+ *
  * <p>
- * These are the module files that are necessary for this integration test:
+ * These tests work on several pom.xml, build.xml and MANIFEST.MF files that will be copied to the workspace for each
+ * test. The following files are used:
+ *
  * <b>Maven:</b>
- * pom.xml a default pom.xml with a valid name tag
+ *
+ * <dl>
+ * <dt>pom.xml<dt/>
+ * <dd>a default pom.xml with a valid name tag<dd/>
+ * <dt>m1/pom.xml<dt/>
+ * <dd>a default pom.xml with a valid name tag which could be used to detect additional modules in addition to
+ * the previous mentioned pom.xml<dd/>
+ * <dt>m2/pom.xml<dt/>
+ * <dd>a default pom.xml with a valid name tag which could be used to detect additional modules in addition to
+ * the previous mentioned pom.xml<dd/>
+ * <dt>m3/pom.xml<dt/>
+ * <dd>a broken XML-structure breaks the correct parsing of this file<dd/>
+ * <dt>m4/pom.xml<dt/>
+ * <dd>a pom.xml with an artifactId tag and without a name tag<dd/>
+ * <dt>m5/pom.xml<dt/>
+ * <dd>a pom.xml without an artifactId tag and without a name tag<dd/>
+ * </dl>
  * <p>
- * m1/pom.xml a default pom.xml with a valid name tag which could be used to detect additional modules in addition to
- * the previous mentioned pom.xml
- * <p>
- * m2/pom.xml a default pom.xml with a valid name tag which could be used to detect additional modules in addition to
- * the first mentioned pom.xml
- * <p>
- * m3/pom.xml a broken XML-structure breaks the correct parsing of this file
- * <p>
- * m4/pom.xml a pom.xml with a substitutional artifactId tag and without a name tag
- * <p>
- * m5/pom.xml a pom.xml without a substitutional artifactId tag and without a name tag
  *
  * <b>Ant:</b>
- * build.xml a default build.xml with a valid name tag
- * <p>
- * m1/build.xml a default build.xml with a valid name tag which could be used to detect additional modules in addition
- * to the previous mentioned build.xml
- * <p>
- * m2/build.xml a broken XML-structure breaks the correct parsing of this file
- * <p>
- * m3/build.xml a build file without the name tag
+ *
+ * <dl>
+ * <dt>build.xml<dt/>
+ * <dd>a default build.xml with a valid name tag<dd/>
+ * <dt>m1/build.xml<dt/>
+ * <dd>a default build.xml with a valid name tag which could be used to detect additional modules in addition
+ * * to the previous mentioned build.xml<dd/>
+ * <dt>m2/build.xml<dt/>
+ * <dd>a broken XML-structure breaks the correct parsing of this file<dd/>
+ * <dt>m3/build.xml<dt/>
+ * <dd>a build file without the name tag<dd/>
+ * </dl>
+ *
  *
  * <b>OSGI:</b>
- * META-INF/MANIFEST.MF a default MANIFEST.MF with a set Bundle-SymbolicName and a set Bundle-Vendor
+ *
+ * <dl>
+ * <dt>META-INF/MANIFEST.MF<dt/>
+ * <dd>a default MANIFEST.MF with a set Bundle-SymbolicName and a set Bundle-Vendor<dd/>
+ * <dt>m1/META-INF/MANIFEST.MF<dt/>
+ * <dd> a MANIFEST.MF with a wildcard Bundle-Name, a set Bundle-SymbolicName and a wildcard<dd/>
+ * <dt>m2/META-INF/MANIFEST.MF<dt/>
+ * <dd>a MANIFEST.MF with a set Bundle-Name and a wildcard Bundle-Vendor<dd/>
+ * <dt>m3/META-INF/MANIFEST.MF<dt/>
+ * <dd>an empty MANIFEST.MF<dd/>
+ * <dt>plugin.properties<dt/>
+ * <dd>a default plugin.properties file<dd/>
+ * </dl>
  * <p>
- * m1/META-INF/MANIFEST.MF a MANIFEST.MF with a wildcard Bundle-Name, a set Bundle-SymbolicName and a wildcard
- * Bundle-Vendor
- * <p>
- * m2/META-INF/MANIFEST.MF a MANIFEST.MF with a set Bundle-Name and a wildcard Bundle-Vendor
- * <p>
- * m3/META-INF/MANIFEST.MF an empty MANIFEST.MF
- * <p>
- * plugin.properties a default plugin.properties file
+ * All tests work the same way: first of all a set of module files will be copied to the workspace. Each module file
+ * will be copied to a separate folder, the first module file is the top-level module. Into each of the modules, a
+ * source code file will be placed. Finally,  Eclipse parser log file will be generated, that has exactly one warning
+ * for each file.
  *
  * @author Frank Christian Geyer
  * @author Deniz Mardin
@@ -102,7 +123,8 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousModulesDetectedForOsgiMavenAndAntInTheHtmlOutput() {
-        String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
@@ -110,15 +132,13 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF"
-        };
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        String[] filesWithModuleConfigurationAndProperties = ArrayUtils
-                .add(filesWithModuleConfiguration, BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties");
-
-        AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, true,
-                filesWithModuleConfigurationAndProperties
-        );
+        AnalysisResult result = createResult(
+                workspaceFiles.length - 1, 
+                true, 
+                workspaceFiles);
 
         verifyModules(result,
                 new PropertyRow(EMPTY_MODULE_NAME, 1),
@@ -132,12 +152,15 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousMavenModulesInTheHtmlOutput() {
-        String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml"};
 
-        AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
-                filesWithModuleConfiguration);
+        AnalysisResult result = createResult(
+                workspaceFiles.length, 
+                false,
+                workspaceFiles);
 
         verifyModules(result,
                 new PropertyRow("MainModule", 1, 100),
@@ -150,11 +173,12 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousAntModulesInTheHtmlOutput() throws IOException, SAXException {
-        String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"};
 
-        AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
-                filesWithModuleConfiguration);
+        AnalysisResult result = createResult(workspaceFiles.length, false,
+                workspaceFiles);
 
         verifyModules(result,
                 new PropertyRow("TestModule", 1, 100),
@@ -166,18 +190,18 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() throws IOException, SAXException {
-        String[] filesWithModuleConfiguration = new String[]{
+        String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF"
         };
 
-        String[] filesWithModuleConfigurationAndProperties = ArrayUtils
-                .add(filesWithModuleConfiguration, (BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"));
+        String[] workspaceFilesAndProperties = ArrayUtils
+                .add(workspaceFiles, (BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"));
 
-        AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
-                filesWithModuleConfigurationAndProperties);
+        AnalysisResult result = createResult(workspaceFiles.length, false,
+                workspaceFilesAndProperties);
 
         verifyModules(result,
                 new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
@@ -199,42 +223,43 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if the project is empty.
      */
     @Test
-    public void shouldContainNoSpecificHtmlOutputForAnEmptyProject() throws IOException, SAXException {
-        checkWebPageForExpectedEmptyResult(buildProjectWithFilesAndReturnResult(NO_MODULE_PATHS, false));
+    public void shouldContainNoSpecificHtmlOutputForAnEmptyProject() {
+        checkWebPageForExpectedEmptyResult(createResult(NO_MODULE_PATHS, false));
     }
 
     /**
      * Verifies that the output of the HTML page is empty if only one module is set by Maven.
      */
     @Test
-    public void shouldContainNoSpecificHtmlOutputForASingleModuleMavenProject() throws IOException, SAXException {
-        String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml"};
-        checkWebPageForExpectedEmptyResult(
-                buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
-                        filesWithModuleConfiguration));
+    public void shouldContainNoSpecificHtmlOutputForASingleModuleMavenProject() {
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml"};
+        verifyThatModulesTabIsNotShownForSingleModule(workspaceFiles);
     }
 
     /**
      * Verifies that the output of the HTML page is empty if only one module is set by Ant.
      */
     @Test
-    public void shouldContainNoHtmlOutputForASingleModuleAntProject() throws IOException, SAXException {
-        String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml"};
-        checkWebPageForExpectedEmptyResult(
-                buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
-                        filesWithModuleConfiguration));
+    public void shouldContainNoHtmlOutputForASingleModuleAntProject() {
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml"};
+        verifyThatModulesTabIsNotShownForSingleModule(workspaceFiles);
     }
 
     /**
      * Verifies that the output of the HTML page is empty if only one module is set by Ant.
      */
     @Test
-    public void shouldContainNoHtmlOutputForASingleModuleOsgiProject() throws IOException, SAXException {
-        String[] filesWithModuleConfiguration = new String[]{
+    public void shouldContainNoHtmlOutputForASingleModuleOsgiProject() {
+        String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF"};
+        verifyThatModulesTabIsNotShownForSingleModule(workspaceFiles);
+    }
+
+    private void verifyThatModulesTabIsNotShownForSingleModule(final String[] workspaceFiles) {
         checkWebPageForExpectedEmptyResult(
-                buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, false,
-                        filesWithModuleConfiguration));
+                createResult(workspaceFiles.length, false, workspaceFiles));
     }
 
     /**
@@ -243,7 +268,8 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() throws IOException {
-        String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
@@ -251,34 +277,23 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF"
-        };
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        String[] filesWithModuleConfigurationAndProperties = ArrayUtils
-                .add(filesWithModuleConfiguration, (BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"));
+        AnalysisResult result = createResult(
+                workspaceFiles.length - 1, 
+                true, 
+                workspaceFiles);
 
-        AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, true,
-                filesWithModuleConfigurationAndProperties);
+        verifyModules(result,
+                new PropertyRow(EMPTY_MODULE_NAME, 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 7),
+                new PropertyRow("Test-Bundle-Name", 1));
 
-        String logOutput = FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
-        Map<String, Long> collect = collectModuleNames(result);
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
-            softly.assertThat(result.getIssues()).hasSize(10);
-            softly.assertThat(result.getIssues().getModules())
-                    .containsExactly(
-                            EMPTY_MODULE_NAME,
-                            "edu.hm.hafner.osgi.symbolicname (TestVendor)",
-                            "edu.hm.hafner.osgi.symbolicname",
-                            "Test-Bundle-Name");
-            softly.assertThat(collect).hasSize(4);
-            softly.assertThat(collect.get(EMPTY_MODULE_NAME)).isEqualTo(1L);
-            softly.assertThat(collect.get("Test-Bundle-Name")).isEqualTo(1L);
-            softly.assertThat(collect.get("edu.hm.hafner.osgi.symbolicname")).isEqualTo(1L);
-            softly.assertThat(collect.get("edu.hm.hafner.osgi.symbolicname (TestVendor)")).isEqualTo(7L);
-            softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedModuleNames(10));
-        }
+        String logOutput = getConsoleLog(result);
+        assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
+        assertThat(logOutput).contains(returnExpectedNumberOfResolvedModuleNames(10));
     }
 
     /**
@@ -286,19 +301,20 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() throws IOException {
-
-        String[] filesWithModuleConfiguration = new String[]{BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+        String[] workspaceFiles = new String[] {
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m3/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m4/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m5/pom.xml"};
 
-        AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, true,
-                filesWithModuleConfiguration
-        );
+        AnalysisResult result = createResult(
+                workspaceFiles.length, 
+                true,
+                workspaceFiles);
 
-        String logOutput = FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
+        String logOutput = getConsoleLog(result);
         Map<String, Long> collect = collectModuleNames(result);
 
         try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
@@ -326,18 +342,19 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() throws IOException {
-
-        String[] filesWithModuleConfiguration = new String[]{
+        String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m2/build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m3/build.xml"
         };
 
-        AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length,
-                true, filesWithModuleConfiguration);
+        AnalysisResult result = createResult(
+                workspaceFiles.length,
+                true, 
+                workspaceFiles);
 
-        String logOutput = FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
+        String logOutput = getConsoleLog(result);
         Map<String, Long> collect = collectModuleNames(result);
 
         try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
@@ -360,21 +377,20 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() throws IOException {
-        String[] filesWithModuleConfiguration = new String[]{
+        String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF"};
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
-        String[] filesWithModuleConfigurationAndProperties = ArrayUtils
-                .add(filesWithModuleConfiguration, BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties");
-
-        AnalysisResult result = buildProjectWithFilesAndReturnResult(filesWithModuleConfiguration.length, true,
-                filesWithModuleConfigurationAndProperties);
+        AnalysisResult result = createResult(
+                workspaceFiles.length - 1,
+                true,
+                workspaceFiles);
 
         Map<String, Long> collect = collectModuleNames(result);
-        String logOutput = FileUtils.readFileToString(result.getOwner().getLogFile(),
-                StandardCharsets.UTF_8);
+        String logOutput = getConsoleLog(result);
 
         try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
             softly.assertThat(result.getIssues()).hasSize(5);
@@ -391,6 +407,10 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
             softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
             softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedModuleNames(5));
         }
+    }
+
+    private String getConsoleLog(final AnalysisResult result) throws IOException {
+        return FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
     }
 
     private String returnExpectedNumberOfResolvedModuleNames(final int expectedNumberOfResolvedModuleNames) {
@@ -445,13 +465,18 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                         Collectors.counting()));
     }
 
-    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) throws IOException, SAXException {
-        WebClient webClient = createWebClient(false);
-        WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-        HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-        List<String> packageLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
+    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
+        try {
+            WebClient webClient = createWebClient(false);
+            WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
+            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
+            List<String> packageLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
 
-        assertThat(packageLinks).isEmpty();
+            assertThat(packageLinks).isEmpty();
+        }
+        catch (IOException | SAXException e) {
+            throw new AssertionError(e);
+        }
     }
 
     private List<String> getLinksWithGivenTargetName(final HtmlPage page, final String targetName) {
@@ -466,7 +491,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         return links;
     }
 
-    private AnalysisResult buildProjectWithFilesAndReturnResult(final int numberOfExpectedModules,
+    private AnalysisResult createResult(final int numberOfExpectedModules,
             final boolean appendNonExistingFile, final String... files) {
         FreeStyleProject project = buildProject(files);
         writeDynamicFile(project, numberOfExpectedModules, appendNonExistingFile,
@@ -505,7 +530,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     protected String createWorkspaceFileName(final String fileName) {
         String modifiedFileName = String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
 
-        String[] moduleFileNamesToKeep = new String[]{
+        String[] moduleFileNamesToKeep = new String[] {
                 "m1/pom.xml", "m2/pom.xml", "m3/pom.xml", "m4/pom.xml", "m5/pom.xml", "pom.xml",
                 "m1/build.xml", "m2/build.xml", "m3/build.xml", "build.xml",
                 "m1/META-INF/MANIFEST.MF", "m2/META-INF/MANIFEST.MF", "m3/META-INF/MANIFEST.MF", "META-INF/MANIFEST.MF", "plugin.properties"
