@@ -1,6 +1,7 @@
+node_modules
 target
 *.iml
 .classpath
 .project
 .settings
-\~*
+pom.xml.versionsBackup

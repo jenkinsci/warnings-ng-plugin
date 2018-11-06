@@ -18,8 +18,6 @@ import org.kohsuke.stapler.HttpResponse;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
@@ -28,6 +26,8 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTe
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static hudson.Functions.*;
 
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
@@ -202,8 +202,6 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).hasSize(8);
-
-        assertThat(result.getIssues()).hasId(id);
         assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
     }
     
@@ -259,7 +257,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(action.getDisplayName()).isEqualTo("Custom Name Warnings");
     }
 
-    private WorkflowRun runWith2GroovyParsers(final boolean isAggregating, String... arguments) {
+    private WorkflowRun runWith2GroovyParsers(final boolean isAggregating, final String... arguments) {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
                 "recordIssues aggregatingResults: "+ isAggregating + ", tools: [" 
@@ -274,15 +272,6 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
         return runSuccessfully(job);
-    }
-
-    private String join(final String[] arguments) {
-        StringBuilder builder = new StringBuilder();
-        for (String argument : arguments) {
-            builder.append(", ");
-            builder.append(argument);
-        }
-        return builder.toString();
     }
 
     /**
@@ -352,8 +341,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private void setFilter(final WorkflowJob job, final String filters) {
-        job.setDefinition(asStage(createScanForIssuesStep(new Pmd()),
-                String.format("publishIssues issues:[issues], filters:[%s]", filters)));
+        String scanWithFIlter = createScanForIssuesStep(new Pmd(), "issues", String.format("filters:[%s]", filters));
+        job.setDefinition(asStage(scanWithFIlter, "publishIssues issues:[issues]"));
     }
 
     /**

@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.collections.impl.factory.Sets;
@@ -14,6 +16,7 @@ import org.kohsuke.stapler.QueryParameter;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
@@ -37,6 +40,8 @@ public class ScanForIssuesStep extends Step {
     private String pattern;
     private StaticAnalysisTool tool;
     private boolean isBlameDisabled;
+
+    private List<RegexpFilter> filters = new ArrayList<>();
 
     /**
      * Creates a new instance of {@link ScanForIssuesStep}.
@@ -68,6 +73,15 @@ public class ScanForIssuesStep extends Step {
     @CheckForNull
     public StaticAnalysisTool getTool() {
         return tool;
+    }
+
+    public List<RegexpFilter> getFilters() {
+        return filters;
+    }
+
+    @DataBoundSetter
+    public void setFilters(final List<RegexpFilter> filters) {
+        this.filters = new ArrayList<>(filters);
     }
 
     /**
@@ -141,7 +155,8 @@ public class ScanForIssuesStep extends Step {
         private final StaticAnalysisTool tool;
         private final String pattern;
         private final boolean isBlameDisabled;
-
+        private final List<RegexpFilter> filters;
+        
         /**
          * Creates a new instance of the step execution object.
          *
@@ -158,6 +173,7 @@ public class ScanForIssuesStep extends Step {
             tool = step.getTool();
             pattern = step.getPattern();
             isBlameDisabled = step.getBlameDisabled();
+            filters = step.getFilters();
         }
 
         @Override
@@ -166,12 +182,12 @@ public class ScanForIssuesStep extends Step {
             TaskListener listener = getTaskListener();
             Blamer blamer = blame(workspace, listener);
             
-            IssuesScanner issuesScanner = new IssuesScanner(tool, workspace, getCharset(reportEncoding),
+            IssuesScanner issuesScanner = new IssuesScanner(tool, filters, workspace, getCharset(reportEncoding),
                     getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()), blamer,
                     new LogHandler(listener, tool.getName()));
             
             return issuesScanner.scan(pattern, getRun().getLogFile());
-        }
+        } 
 
         private Blamer blame(final FilePath workspace, final TaskListener listener)
                 throws IOException, InterruptedException {

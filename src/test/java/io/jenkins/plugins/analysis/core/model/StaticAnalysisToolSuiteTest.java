@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -85,16 +86,16 @@ class StaticAnalysisToolSuiteTest {
      * {@link StaticAnalysisToolSuite} to be used in the tests.
      */
     private class TestStaticAnalysisToolSuite extends StaticAnalysisToolSuite {
-        private final Collection<? extends AbstractParser> parsers;
+        private final Collection<? extends IssueParser> parsers;
 
-        TestStaticAnalysisToolSuite(final AbstractParser... parsers) {
+        TestStaticAnalysisToolSuite(final IssueParser... parsers) {
             super();
 
             this.parsers = asList(parsers);
         }
 
         @Override
-        protected Collection<? extends AbstractParser> getParsers() {
+        protected Collection<? extends IssueParser> getParsers() {
             return parsers;
         }
     }

@@ -1,18 +1,19 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.views.ConsoleDetail;
 
@@ -22,8 +23,7 @@ import io.jenkins.plugins.analysis.core.views.ConsoleDetail;
  * @author Ullrich Hafner
  */
 public class AbsolutePathGenerator {
-    static final String NOTHING_TO_DO = "-> affected files for all issues already have absolute paths";
-
+    static final String NOTHING_TO_DO = "-> affected files for all issues already have absolute paths (resolving real path only)";
     private final FileSystem fileSystem;
 
     /**
@@ -46,7 +46,7 @@ public class AbsolutePathGenerator {
      * @param workspace
      *         the workspace containing the affected files
      */
-    public void run(final Report report, final File workspace) {
+    public void run(final Report report, final Path workspace) {
         Set<String> relativeFileNames = report.getFiles()
                 .stream()
                 .filter(fileName -> fileSystem.isRelative(fileName) && !ConsoleDetail.isInConsoleLog(fileName))
@@ -54,7 +54,7 @@ public class AbsolutePathGenerator {
 
         if (relativeFileNames.isEmpty()) {
             report.logInfo(NOTHING_TO_DO);
-
+            report.stream().forEach(issue -> issue.setFileName(new PathUtil().getAbsolutePath(issue.getFileName())));
             return;
         }
 
@@ -79,18 +79,16 @@ public class AbsolutePathGenerator {
             }
         }
 
-        report.logInfo("-> %d resolved, %d unresolved, %d already absolute", 
+        report.logInfo("-> %d resolved, %d unresolved, %d already absolute",
                 resolvedCount, log.size(), unchangedCount);
         log.logSummary();
     }
 
-    private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final File workspace) {
+    private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final Path workspace) {
         Map<String, String> relativeToAbsoluteMapping = new HashMap<>();
         for (String fileName : relativeFileNames) {
-            String absolute = fileSystem.resolveFile(fileName, workspace);
-            if (!absolute.equals(fileName)) {
-                relativeToAbsoluteMapping.put(fileName, absolute);
-            }
+            fileSystem.resolveAbsolutePath(workspace, fileName)
+                    .ifPresent(a ->  relativeToAbsoluteMapping.put(fileName, a));
         }
         return relativeToAbsoluteMapping;
     }
@@ -100,14 +98,12 @@ public class AbsolutePathGenerator {
      */
     @VisibleForTesting
     static class FileSystem {
-        String resolveFile(final String fileName, final File workspace) {
+        Optional<String> resolveAbsolutePath(final Path parent, final String fileName) {
             try {
-                Path path = workspace.toPath().resolve(fileName);
-    
-                return path.toAbsolutePath().normalize().toRealPath().toString();
+                return Optional.of(new PathUtil().toString(parent.resolve(fileName)));
             }
-            catch (IOException e){
-                return fileName; // fallback
+            catch (IOException ignored) {
+                return Optional.empty();
             }
         }
 

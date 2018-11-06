@@ -36,6 +36,7 @@ public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration
      * @param tool
      *         the ID of the tool to use
      */
+    // FIXME: remove?
     public ToolConfiguration(final StaticAnalysisTool tool) {
         this(tool, StringUtils.EMPTY);
     }
@@ -93,14 +94,14 @@ public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration
     }
 
     /**
-     * Returns whether a user defined ID has been set. This ID will then override the default ID.
-     * 
-     * @return returns {@code true} if a user defined ID is present, {@code false} otherwise
+     * Returns the actual ID of the tool. If no user defined ID is given, then the default ID is returned.
+     *
+     * @return the ID
      */
-    public boolean hasId() {
-        return StringUtils.isNotBlank(id);
+    public String getActualId() {
+        return StringUtils.defaultIfBlank(id, getTool().getId());
     }
-
+    
     /**
      * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
      * the associated {@link StaticAnalysisLabelProvider} of the {@link StaticAnalysisTool} is used.

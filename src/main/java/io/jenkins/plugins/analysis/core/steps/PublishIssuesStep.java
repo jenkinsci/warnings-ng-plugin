@@ -1,9 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +18,6 @@ import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
@@ -58,8 +55,6 @@ public class PublishIssuesStep extends Step {
     private Severity minimumSeverity = Severity.WARNING_LOW;
     private final Thresholds thresholds = new Thresholds();
 
-    private List<RegexpFilter> filters = new ArrayList<>();
-
     private String id;
     private String name;
 
@@ -68,6 +63,9 @@ public class PublishIssuesStep extends Step {
      *
      * @param issues
      *         the reports to publish as {@link Action} in the {@link Job}.
+     *
+     * @throws IllegalArgumentException
+     *         if the array of issues is {@code null} or empty
      */
     @DataBoundConstructor
     public PublishIssuesStep(final AnnotatedReport... issues) {
@@ -378,15 +376,6 @@ public class PublishIssuesStep extends Step {
         getThresholds().failedNewLow = failedNewLow;
     }
 
-    public List<RegexpFilter> getFilters() {
-        return filters;
-    }
-
-    @DataBoundSetter
-    public void setFilters(final List<RegexpFilter> filters) {
-        this.filters = new ArrayList<>(filters);
-    }
-
     @Override
     public StepExecution start(final StepContext stepContext) {
         return new Execution(stepContext, this);
@@ -402,7 +391,6 @@ public class PublishIssuesStep extends Step {
         private final String sourceCodeEncoding;
         private final AnnotatedReport report;
         private final QualityGate qualityGate;
-        private final List<RegexpFilter> filters;
         private final String name;
         private final Thresholds thresholds;
         private final String referenceJobName;
@@ -428,26 +416,22 @@ public class PublishIssuesStep extends Step {
             thresholds = step.getThresholds();
             qualityGate = new QualityGate(thresholds);
             name = StringUtils.defaultString(step.getName());
-            report = new AnnotatedReport();
-            if (StringUtils.isNotBlank(step.getId())) {
-                report.setId(step.getId());
-            }
+            report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), step.reports[0].getId()));
             if (step.reports.length > 1) {
                 report.logInfo("Aggregating reports of:");
                 LabelProviderFactory factory = new LabelProviderFactory();
                 for (AnnotatedReport subReport : step.reports) {
                     StaticAnalysisLabelProvider labelProvider = factory.create(subReport.getId());
-                    this.report.logInfo("-> %s", labelProvider.getToolTip(subReport.size()));
+                    report.logInfo("-> %s", labelProvider.getToolTip(subReport.size()));
                 }
             }
             report.addAll(step.reports);
-            filters = step.getFilters();
         }
 
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
-            IssuesPublisher publisher = new IssuesPublisher(getRun(), report.getReport(), report.getBlames(), filters, 
-                    healthDescriptor, qualityGate, name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
+            IssuesPublisher publisher = new IssuesPublisher(getRun(), report, healthDescriptor, qualityGate, 
+                    name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, 
                     getCharset(sourceCodeEncoding), getLogger());
             return publisher.attachAction();
         }

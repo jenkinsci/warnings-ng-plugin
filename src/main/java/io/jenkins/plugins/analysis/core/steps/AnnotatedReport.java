@@ -1,11 +1,16 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 
 /**
@@ -16,20 +21,16 @@ import io.jenkins.plugins.analysis.core.scm.Blames;
 public class AnnotatedReport implements Serializable {
     private static final long serialVersionUID = -4797152016409014028L;
 
-    private final Report report;
-    private final Blames blames;
+    private final String id;
+    private final Report aggregatedReport = new Report();
+    private final Blames aggregatedBlames = new Blames();
+    private final Map<String, Integer> sizeOfOrigin = new HashMap();
 
     /**
-     * Creates a new instance of {@link AnnotatedReport}.
-     *
-     * @param report
-     *         report with issues
-     * @param blames
-     *         author and commit information
+     * Creates a new instance of {@link AnnotatedReport}. Blames and report will be initialized empty.
      */
-    public AnnotatedReport(final Report report, final Blames blames) {
-        this.report = report;
-        this.blames = blames;
+    public AnnotatedReport(@CheckForNull final String id) {
+        this.id = StringUtils.defaultIfEmpty(id, "analysis");
     }
 
     /**
@@ -38,61 +39,79 @@ public class AnnotatedReport implements Serializable {
      * @param report
      *         report with issues
      */
-    public AnnotatedReport(final Report report) {
-        this(report, new Blames());
+    public AnnotatedReport(@CheckForNull final String id, final Report report) {
+        this(id, report, new Blames());
     }
 
     /**
-     * Creates a new instance of {@link AnnotatedReport}. Blames and report will be initialized empty.
+     * Creates a new instance of {@link AnnotatedReport}.
+     *
+     * @param id
+     *         ID of the report
+     * @param report
+     *         report with issues
+     * @param blames
+     *         author and commit information
      */
-    public AnnotatedReport() {
-        this(new Report());
+    public AnnotatedReport(@CheckForNull final String id, final Report report, final Blames blames) {
+        this(id);
+        
+        addReport(id, report, blames);
     }
 
     /**
      * Creates a new instance of {@link AnnotatedReport} as an aggregation of the specified reports. 
      */
-    public AnnotatedReport(final List<AnnotatedReport> reports) {
-        this();
+    public AnnotatedReport(@CheckForNull final String id, final List<AnnotatedReport> reports) {
+        this(id);
         
         for (AnnotatedReport report : reports) {
-            add(report);
+            add(report, report.getId());
         }
     }
 
+    public Map<String, Integer> getSizeOfOrigin() {
+        return new HashMap<>(sizeOfOrigin);
+    }
+
     public Blames getBlames() {
-        return blames;
+        return aggregatedBlames;
     }
 
     public Report getReport() {
-        return report;
+        return aggregatedReport;
     }
 
     public String getId() {
-        return report.getId();
+        return id;
     }
 
     public int size() {
-        return report.size();
-    }
-
-    public void setId(final String id) {
-        report.setId(id);
+        return aggregatedReport.size();
     }
 
     @FormatMethod
     public void logInfo(final String message, final Object... args) {
-        report.logInfo(message, args);
+        aggregatedReport.logInfo(message, args);
     }
 
     public void addAll(final AnnotatedReport... reports) {
-        for (AnnotatedReport annotatedReport : reports) {
-            add(annotatedReport);
+        for (AnnotatedReport report : reports) {
+            add(report, report.getId());
         }
     }
+    
+    public void add(final AnnotatedReport other, final String id) {
+        addReport(id, other.getReport(), other.getBlames());
+    }
 
-    private void add(final AnnotatedReport annotatedReport) {
-        report.addAll(annotatedReport.getReport());
-        blames.addAll(annotatedReport.getBlames());
+    public void add(final AnnotatedReport other) {
+        add(other, getId());
+    }
+
+    private void addReport(final String id, final Report report, final Blames blames) {
+        aggregatedReport.addAll(report);
+        sizeOfOrigin.merge(id, report.size(), Integer::sum);
+        aggregatedBlames.addAll(blames);
     }
 }

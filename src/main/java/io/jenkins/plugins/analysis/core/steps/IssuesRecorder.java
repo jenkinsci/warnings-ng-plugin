@@ -507,7 +507,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     public List<RegexpFilter> getFilters() {
-        return filters;
+        return new ArrayList<>(filters);
     }
 
     @DataBoundSetter
@@ -541,17 +541,18 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
-            AnnotatedReport totalIssues = new AnnotatedReport();
-            totalIssues.setId(StringUtils.defaultIfEmpty(id, "analysis"));
+            AnnotatedReport totalIssues = new AnnotatedReport(id);
             for (ToolConfiguration toolConfiguration : tools) {
-                totalIssues.addAll(scanWithTool(run, workspace, listener, toolConfiguration));
+                totalIssues.add(scanWithTool(run, workspace, listener, toolConfiguration), 
+                        toolConfiguration.getActualId());
             }
-            String name = StringUtils.defaultIfEmpty(this.name, Messages.Tool_Default_Name());
-            publishResult(run, listener, name, totalIssues, name);
+            String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
+            publishResult(run, listener, toolName, totalIssues, toolName);
         }
         else {
             for (ToolConfiguration toolConfiguration : tools) {
-                AnnotatedReport report = scanWithTool(run, workspace, listener, toolConfiguration);
+                AnnotatedReport report = new AnnotatedReport(toolConfiguration.getActualId());
+                report.add(scanWithTool(run, workspace, listener, toolConfiguration));
                 if (StringUtils.isNotBlank(id) || StringUtils.isNotBlank(name)) {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
                             name, id);
@@ -582,15 +583,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final ToolConfiguration toolConfiguration) throws IOException, InterruptedException {
-        IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), workspace,
+        IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), getFilters(), workspace,
                 getReportCharset(), getSourceCodeCharset(), new FilePath(run.getRootDir()),
                 blame(run, workspace, listener), new LogHandler(listener, toolConfiguration.getActualName()));
-        AnnotatedReport report = issuesScanner.scan(
-                expandEnvironmentVariables(run, listener, toolConfiguration.getPattern()), run.getLogFile());
-        if (toolConfiguration.hasId()) {
-            report.setId(toolConfiguration.getId());
-        }
-        return report;
+        String expandedPattern = expandEnvironmentVariables(run, listener, toolConfiguration.getPattern());
+        return issuesScanner.scan(expandedPattern, run.getLogFile());
     }
 
     private Blamer blame(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
@@ -629,7 +626,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     public void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
             final AnnotatedReport report, final String name) {
-        IssuesPublisher publisher = new IssuesPublisher(run, report.getReport(), report.getBlames(), getFilters(),
+        IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), new QualityGate(thresholds),
                 name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()));

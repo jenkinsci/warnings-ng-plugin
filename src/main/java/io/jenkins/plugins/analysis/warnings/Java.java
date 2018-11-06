@@ -6,7 +6,7 @@ import java.util.Collection;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.AntJavacParser;
 import edu.hm.hafner.analysis.parser.JavacParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -31,7 +31,7 @@ public class Java extends StaticAnalysisToolSuite {
     }
 
     @Override
-    protected Collection<? extends AbstractParser> getParsers() {
+    protected Collection<? extends IssueParser> getParsers() {
         return asList(new JavacParser(), new AntJavacParser());
     }
 

@@ -33,7 +33,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import edu.hm.hafner.util.ResourceTest;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
@@ -42,6 +41,7 @@ import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 
 import hudson.FilePath;
 import hudson.Functions;
@@ -71,7 +71,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /** Issue log files will be renamed to mach this pattern. */
     private static final String FILE_NAME_PATTERN = "%s-issues.txt";
     private static final Charset UTF_8 = StandardCharsets.UTF_8;
-    
+
     /** Step to publish a set of issues. Uses defaults for all options. */
     protected static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
@@ -80,9 +80,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Creates a {@link DumbSlave agent} with the specified label.
      *
-     * @param label
-     *         the label of the agent
-     *
+     * @param label the label of the agent
      * @return the agent
      */
     @SuppressWarnings("illegalcatch")
@@ -98,12 +96,9 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Creates a file with the specified content in the workspace.
      *
-     * @param job
-     *         the job to get the workspace for
-     * @param fileName
-     *         the files to create
-     * @param content
-     *         the content of the file
+     * @param job      the job to get the workspace for
+     * @param fileName the files to create
+     * @param content  the content of the file
      */
     protected void createFileInWorkspace(final TopLevelItem job, final String fileName, final String content) {
         try {
@@ -121,11 +116,8 @@ public abstract class IntegrationTest extends ResourceTest {
      * Copies the specified files to the workspace using a generated file name that uses the same suffix. So the pattern
      * in the static analysis configuration can use the same fixed regular expression for all types of tools.
      *
-     * @param job
-     *         the job to get the workspace for
-     * @param fileNames
-     *         the files to copy
-     *
+     * @param job       the job to get the workspace for
+     * @param fileNames the files to copy
      * @see #FILE_NAME_PATTERN
      */
     protected void copyMultipleFilesToWorkspaceWithSuffix(final TopLevelItem job, final String... fileNames) {
@@ -135,22 +127,18 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Copies the specified files to the workspace. The same file name will be used in the workspace.
      *
-     * @param job
-     *         the job to get the workspace for
-     * @param fileNames
-     *         the files to copy
+     * @param job       the job to get the workspace for
+     * @param fileNames the files to copy
      */
     protected void copyMultipleFilesToWorkspace(final TopLevelItem job, final String... fileNames) {
         copy(job, fileNames, file -> Paths.get(file).getFileName().toString());
     }
 
     /**
-     * Copies the specified files to the workspace. 
+     * Copies the specified files to the workspace.
      *
-     * @param job
-     *         the job to get the workspace for
-     * @param fileName
-     *         the file to copy
+     * @param job      the job to get the workspace for
+     * @param fileName the file to copy
      */
     protected void copySingleFileToWorkspace(final TopLevelItem job, final String fileName) {
         FilePath workspace = getWorkspace(job);
@@ -161,12 +149,9 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Copies the specified files to the workspace. Uses the specified new file name in the workspace.
      *
-     * @param job
-     *         the job to get the workspace for
-     * @param from
-     *         the file to copy
-     * @param to
-     *         the file name in the workspace
+     * @param job  the job to get the workspace for
+     * @param from the file to copy
+     * @param to   the file name in the workspace
      */
     protected void copySingleFileToWorkspace(final TopLevelItem job, final String from, final String to) {
         FilePath workspace = getWorkspace(job);
@@ -174,13 +159,11 @@ public abstract class IntegrationTest extends ResourceTest {
         copySingleFileToWorkspace(workspace, from, to);
     }
 
-     /**
-     * Copies the specified directory recursively to the workspace. 
+    /**
+     * Copies the specified directory recursively to the workspace.
      *
-     * @param job
-     *         the job to get the workspace for
-     * @param directory
-     *         the directory to copy
+     * @param job       the job to get the workspace for
+     * @param directory the directory to copy
      */
     protected void copyDirectoryToWorkspace(final TopLevelItem job, final String directory) {
         try {
@@ -204,17 +187,13 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Copies the specified files to the workspace. Uses the specified new file name in the workspace.
      *
-     * @param agent
-     *         the agent to get the workspace for
-     * @param job
-     *         the job to get the workspace for
-     * @param from
-     *         the file to copy
-     * @param to
-     *         the file name in the workspace
+     * @param agent the agent to get the workspace for
+     * @param job   the job to get the workspace for
+     * @param from  the file to copy
+     * @param to    the file name in the workspace
      */
-    protected void copySingleFileToWorkspace(final Slave agent, final TopLevelItem job, 
-            final String from, final String to) {
+    protected void copySingleFileToWorkspace(final Slave agent, final TopLevelItem job,
+                                             final String from, final String to) {
         FilePath workspace = agent.getWorkspaceFor(job);
         assertThat(workspace).isNotNull();
 
@@ -232,15 +211,13 @@ public abstract class IntegrationTest extends ResourceTest {
 
     private void copy(final TopLevelItem job, final String[] fileNames, final Function<String, String> fileNameMapper) {
         Arrays.stream(fileNames)
-                .forEach(fileName -> copySingleFileToWorkspace(job, fileName, fileNameMapper.apply(fileName)));
+              .forEach(fileName -> copySingleFileToWorkspace(job, fileName, fileNameMapper.apply(fileName)));
     }
 
     /**
      * Creates a pre-defined filename for a workspace file.
      *
-     * @param fileNamePrefix
-     *         prefix of the filename
-     *
+     * @param fileNamePrefix prefix of the filename
      * @return the whole file name of the workspace file
      */
     protected String createWorkspaceFileName(final String fileNamePrefix) {
@@ -251,9 +228,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * Returns the ID of a static analysis tool that is given by its class file. Uses the associated descriptor to
      * obtain the ID.
      *
-     * @param tool
-     *         the class of the tool to get the ID from
-     *
+     * @param tool the class of the tool to get the ID from
      * @return the ID of the analysis tool
      */
     protected String getIdOf(final Class<? extends StaticAnalysisTool> tool) {
@@ -274,11 +249,8 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Creates a new job of the specified type. The job will get a generated name.
      *
-     * @param type
-     *         type of the job
-     * @param <T>
-     *         the project type
-     *
+     * @param type type of the job
+     * @param <T>  the project type
      * @return the created job
      */
     protected <T extends TopLevelItem> T createProject(final Class<T> type) {
@@ -293,13 +265,9 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Creates a new job of the specified type.
      *
-     * @param type
-     *         type of the job
-     * @param name
-     *         the name of the job
-     * @param <T>
-     *         the project type
-     *
+     * @param type type of the job
+     * @param name the name of the job
+     * @param <T>  the project type
      * @return the created job
      */
     protected <T extends TopLevelItem> T createProject(final Class<T> type, final String name) {
@@ -315,11 +283,8 @@ public abstract class IntegrationTest extends ResourceTest {
      * Schedules a build for the specified job. This method waits until the job has been finished. Afterwards, the
      * result of the job is compared to the specified expected result.
      *
-     * @param job
-     *         the job to build
-     * @param status
-     *         the expected job status
-     *
+     * @param job    the job to build
+     * @param status the expected job status
      * @return the build
      */
     @SuppressWarnings("illegalcatch")
@@ -353,9 +318,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Creates a composite pipeline step that consists of a scanner and publisher.
      *
-     * @param tool
-     *         the class of the tool to use
-     *
+     * @param tool the class of the tool to use
      * @return the pipeline script
      */
     protected CpsFlowDefinition parseAndPublish(final StaticAnalysisTool tool) {
@@ -365,9 +328,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Creates a pipeline step that scans for issues of the specified tool.
      *
-     * @param tool
-     *         the class of the tool to use
-     *
+     * @param tool the class of the tool to use
      * @return the pipeline step
      */
     protected String createScanForIssuesStep(final StaticAnalysisTool tool) {
@@ -377,17 +338,15 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Creates a pipeline step that scans for issues of the specified tool.
      *
-     * @param tool
-     *         the class of the tool to use
-     * @param issuesName
-     *         the name of the scanner result variable
-     *
+     * @param tool       the class of the tool to use
+     * @param issuesName the name of the scanner result variable
      * @return the pipeline step
      */
-    protected String createScanForIssuesStep(final StaticAnalysisTool tool, final String issuesName) {
+    protected String createScanForIssuesStep(final StaticAnalysisTool tool, final String issuesName,
+                                             final String... arguments) {
         return String.format(
-                "def %s = scanForIssues tool: %s(), pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
-                issuesName, tool.getSymbolName());
+                "def %s = scanForIssues tool: %s(), pattern:'**/*issues.txt', defaultEncoding:'UTF-8' %s",
+                issuesName, tool.getSymbolName(), join(arguments));
     }
 
     /**
@@ -395,9 +354,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * order to simplify the scanner pattern, all files follow the filename pattern in {@link
      * IntegrationTest#createWorkspaceFileName(String)}.
      *
-     * @param fileNames
-     *         the files to copy to the workspace
-     *
+     * @param fileNames the files to copy to the workspace
      * @return the pipeline job
      */
     protected WorkflowJob createJobWithWorkspaceFiles(final String... fileNames) {
@@ -423,9 +380,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Creates an empty pipeline job with the specified name.
      *
-     * @param name
-     *         the name of the job
-     *
+     * @param name the name of the job
      * @return the pipeline job
      */
     protected WorkflowJob createJob(final String name) {
@@ -441,11 +396,8 @@ public abstract class IntegrationTest extends ResourceTest {
      * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
      * been finished.
      *
-     * @param job
-     *         the job to schedule
-     * @param tool
-     *         the ID of the tool to parse the warnings with
-     *
+     * @param job  the job to schedule
+     * @param tool the ID of the tool to parse the warnings with
      * @return the created {@link AnalysisResult}
      */
     @SuppressWarnings("illegalcatch")
@@ -474,9 +426,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Wraps the specified steps into a stage.
      *
-     * @param steps
-     *         the steps of the stage
-     *
+     * @param steps the steps of the stage
      * @return the pipeline script
      */
     @SuppressWarnings({"UseOfSystemOutOrSystemErr", "PMD.ConsecutiveLiteralAppends"})
@@ -500,8 +450,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Prints the content of the JenkinsFile to StdOut.
      *
-     * @param script
-     *         the script
+     * @param script the script
      */
     @SuppressWarnings("PMD.SystemPrintln")
     private void logJenkinsFile(final String script) {
@@ -514,9 +463,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * Schedules a build for the specified pipeline and waits for the job to finish. The expected result of the build is
      * {@link Result#SUCCESS}.
      *
-     * @param job
-     *         the job to run
-     *
+     * @param job the job to run
      * @return the successful build
      */
     @SuppressWarnings("illegalcatch")
@@ -533,9 +480,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * Returns the {@link ResultAction} for the specified run. Note that this method does only return the first match,
      * even if a test registered multiple actions.
      *
-     * @param build
-     *         the build
-     *
+     * @param build the build
      * @return the action of the specified build
      */
     protected ResultAction getResultAction(final Run<?, ?> build) {
@@ -547,9 +492,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Reads a JenkinsFile (i.e. a {@link FlowDefinition}) from the specified file.
      *
-     * @param fileName
-     *         path to the JenkinsFile
-     *
+     * @param fileName path to the JenkinsFile
      * @return the JenkinsFile as {@link FlowDefinition} instance
      */
     protected FlowDefinition readDefinition(final String fileName) {
@@ -558,9 +501,9 @@ public abstract class IntegrationTest extends ResourceTest {
         return new CpsFlowDefinition(script, true);
     }
 
-    /** 
+    /**
      * Returns the Jenkins rule to manage the Jenkins instance.
-     * 
+     *
      * @return Jenkins rule
      */
     protected abstract JenkinsRule getJenkins();
@@ -569,11 +512,8 @@ public abstract class IntegrationTest extends ResourceTest {
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job.
      *
-     * @param job
-     *         the job to register the recorder for
-     * @param tool
-     *         the tool to scan the warnings
-     *
+     * @param job  the job to register the recorder for
+     * @param tool the tool to scan the warnings
      * @return the created recorder
      */
     @CanIgnoreReturnValue
@@ -585,18 +525,14 @@ public abstract class IntegrationTest extends ResourceTest {
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job.
      *
-     * @param job
-     *         the job to register the recorder for
-     * @param configuration
-     *         the tool configuration to use
-     * @param additionalConfigurations
-     *         the tool configurations to use
-     *
+     * @param job                      the job to register the recorder for
+     * @param configuration            the tool configuration to use
+     * @param additionalConfigurations the tool configurations to use
      * @return the created recorder
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
-            final ToolConfiguration configuration,  final ToolConfiguration... additionalConfigurations) {
+                                            final ToolConfiguration configuration, final ToolConfiguration... additionalConfigurations) {
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.setTools(Lists.mutable.of(additionalConfigurations).with(configuration));
         publisher.setReportEncoding("UTF-8");
@@ -616,7 +552,7 @@ public abstract class IntegrationTest extends ResourceTest {
 
     @CanIgnoreReturnValue
     protected IssuesRecorder enableEclipseWarnings(final FreeStyleProject project,
-            final Consumer<IssuesRecorder> configuration) {
+                                                   final Consumer<IssuesRecorder> configuration) {
         return enableWarnings(project, configuration, createGenericToolConfiguration(new Eclipse()));
     }
 
@@ -632,8 +568,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Clicks a link.
      *
-     * @param element
-     *         a {@link DomElement} which will trigger the redirection to a new page.
+     * @param element a {@link DomElement} which will trigger the redirection to a new page.
      */
     protected HtmlPage clickOnLink(final DomElement element) {
         try {
@@ -688,9 +623,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * Creates a new {@link FreeStyleProject freestyle job} and copies the specified resources to the workspace folder.
      * The job will get a generated name.
      *
-     * @param fileNames
-     *         the files to copy to the workspace
-     *
+     * @param fileNames the files to copy to the workspace
      * @return the created job
      */
     protected FreeStyleProject createFreeStyleProjectWithWorkspaceFiles(final String... fileNames) {
@@ -703,17 +636,14 @@ public abstract class IntegrationTest extends ResourceTest {
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job.
      *
-     * @param job
-     *         the job to register the recorder for
-     * @param tool
-     *         the tool to scan the warnings
-     *
+     * @param job  the job to register the recorder for
+     * @param tool the tool to scan the warnings
      * @return the created recorder
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
-            final Consumer<IssuesRecorder> configuration,
-            final StaticAnalysisTool tool) {
+                                            final Consumer<IssuesRecorder> configuration,
+                                            final StaticAnalysisTool tool) {
         return enableWarnings(job, configuration, createGenericToolConfiguration(tool));
     }
 
@@ -725,22 +655,17 @@ public abstract class IntegrationTest extends ResourceTest {
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job.
      *
-     * @param job
-     *         the job to register the recorder for
-     * @param recorderConfiguration
-     *         configuration of the recorder
-     * @param configuration
-     *         the tool configuration to use
-     * @param additionalConfigurations
-     *         the additional tool configurations to use
-     *
+     * @param job                      the job to register the recorder for
+     * @param recorderConfiguration    configuration of the recorder
+     * @param configuration            the tool configuration to use
+     * @param additionalConfigurations the additional tool configurations to use
      * @return the created recorder
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
-            final Consumer<IssuesRecorder> recorderConfiguration,
-            final ToolConfiguration configuration,
-            final ToolConfiguration... additionalConfigurations) {
+                                            final Consumer<IssuesRecorder> recorderConfiguration,
+                                            final ToolConfiguration configuration,
+                                            final ToolConfiguration... additionalConfigurations) {
         IssuesRecorder recorder = enableWarnings(job, configuration, additionalConfigurations);
         recorderConfiguration.accept(recorder);
         return recorder;
@@ -760,17 +685,13 @@ public abstract class IntegrationTest extends ResourceTest {
      * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
      * been finished.
      *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     * @param assertions
-     *         the assertions for the result
-     *
+     * @param job        the job to schedule
+     * @param status     the expected result for the build
+     * @param assertions the assertions for the result
      * @return the build
      */
     protected Run<?, ?> scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status,
-            final Consumer<AnalysisResult> assertions) {
+                                                     final Consumer<AnalysisResult> assertions) {
         Run<?, ?> build = buildWithStatus(job, status);
         AnalysisResult result = getAnalysisResult(build);
         assertions.accept(result);
@@ -781,11 +702,8 @@ public abstract class IntegrationTest extends ResourceTest {
      * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
      * been finished.
      *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     *
+     * @param job    the job to schedule
+     * @param status the expected result for the build
      * @return the created {@link ResultAction}
      */
     protected AnalysisResult scheduleBuildAndAssertStatus(final AbstractProject<?, ?> job, final Result status) {
@@ -795,11 +713,8 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Schedules a new build for the specified job and returns the finished {@link Run}.
      *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     *
+     * @param job    the job to schedule
+     * @param status the expected result for the build
      * @return the finished {@link Run}.
      */
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
@@ -815,9 +730,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Returns the created {@link AnalysisResult analysis result} of a build.
      *
-     * @param build
-     *         the build that has the action attached
-     *
+     * @param build the build that has the action attached
      * @return the created result
      */
     protected AnalysisResult getAnalysisResult(final Run<?, ?> build) {
@@ -836,9 +749,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Returns the created {@link AnalysisResult analysis results} of a build.
      *
-     * @param build
-     *         the run that has the actions attached
-     *
+     * @param build the run that has the actions attached
      * @return the created results
      */
     protected List<AnalysisResult> getAnalysisResults(final Run<?, ?> build) {
@@ -865,12 +776,9 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Executed the 'icals' command on the windows command line to remove the read permission of a file.
      *
-     * @param path
-     *         File to remove from the read permission
-     * @param command
-     *         part of the icacls command
-     * @param accessMode
-     *         param for the icacls command
+     * @param path       File to remove from the read permission
+     * @param command    part of the icacls command
+     * @param accessMode param for the icacls command
      */
     void setAccessMode(final String path, final String command, final String accessMode) {
         try {
@@ -889,11 +797,8 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Adds a script as a {@link Shell} or {@link BatchFile}.
      *
-     * @param project
-     *         the project
-     * @param script
-     *         the script to run
-     *
+     * @param project the project
+     * @param script  the script to run
      * @return the created script step
      */
     protected Builder addScriptStep(final FreeStyleProject project, final String script) {
@@ -925,4 +830,12 @@ public abstract class IntegrationTest extends ResourceTest {
         project.getBuildersList().remove(builder);
     }
 
+    protected String join(final String[] arguments) {
+        StringBuilder builder = new StringBuilder();
+        for (String argument : arguments) {
+            builder.append(", ");
+            builder.append(argument);
+        }
+        return builder.toString();
+    }
 }

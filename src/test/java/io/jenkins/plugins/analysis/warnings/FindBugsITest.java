@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author Ullrich Hafner
  */
-public class FindBugsTest extends IntegrationTestWithJenkinsPerTest {
+public class FindBugsITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     public void shouldProvideSymbol() {
         FindBugs findBugs = new FindBugs();

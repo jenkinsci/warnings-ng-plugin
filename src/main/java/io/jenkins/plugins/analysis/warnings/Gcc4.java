@@ -3,14 +3,14 @@ package io.jenkins.plugins.analysis.warnings;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
 import edu.hm.hafner.analysis.parser.Gcc4LinkerParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -30,7 +30,7 @@ public class Gcc4 extends StaticAnalysisToolSuite {
     }
 
     @Override
-    protected Collection<? extends AbstractParser> getParsers() {
+    protected Collection<? extends IssueParser> getParsers() {
         return asList(new Gcc4CompilerParser(), new Gcc4LinkerParser());
     }
 

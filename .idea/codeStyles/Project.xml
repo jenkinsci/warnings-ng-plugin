@@ -1,6 +1,5 @@
 <component name="ProjectCodeStyleConfiguration">
   <code_scheme name="Project" version="173">
-    <option name="WRAP_COMMENTS" value="true" />
     <JavaCodeStyleSettings>
       <option name="GENERATE_FINAL_PARAMETERS" value="true" />
       <option name="CLASS_NAMES_IN_JAVADOC" value="3" />

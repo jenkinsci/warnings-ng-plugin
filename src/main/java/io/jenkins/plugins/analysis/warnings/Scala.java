@@ -3,15 +3,15 @@ package io.jenkins.plugins.analysis.warnings;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -31,7 +31,7 @@ public class Scala extends StaticAnalysisToolSuite {
     }
 
     @Override
-    protected Collection<? extends AbstractParser> getParsers() {
+    protected Collection<? extends IssueParser> getParsers() {
         return asList(new ScalacParser(), new SbtScalacParser());
     }
 

@@ -6,7 +6,7 @@ import java.util.Collection;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.EclipseParser;
 import edu.hm.hafner.analysis.parser.EclipseXMLParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
@@ -30,7 +30,7 @@ public class Eclipse extends StaticAnalysisToolSuite {
     }
 
     @Override
-    protected Collection<? extends AbstractParser> getParsers() {
+    protected Collection<? extends IssueParser> getParsers() {
         return asList(new EclipseParser(), new EclipseXMLParser());
     }
 

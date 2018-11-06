@@ -12,7 +12,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>1.0.0-beta4-SNAPSHOT</version>
+  <version>1.0.0-beta4</version>
   <url>https://wiki.jenkins.io/x/1YTeCQ</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static 
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools 
@@ -28,8 +28,8 @@
     <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>1.0.0-beta12</analysis-model-api.version>
-    <analysis-model.version>1.0.0-RC15</analysis-model.version>
+    <analysis-model-api.version>1.0.0-beta13</analysis-model-api.version>
+    <analysis-model.version>1.0.0-RC16</analysis-model.version>
 
     <commons.lang.version>3.8.1</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -685,7 +685,7 @@
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>HEAD</tag>
+    <tag>warnings-ng-1.0.0-beta4</tag>
   </scm>
 
   <repositories>

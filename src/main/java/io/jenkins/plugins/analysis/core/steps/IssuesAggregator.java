@@ -72,25 +72,25 @@ public class IssuesAggregator extends MatrixAggregator {
 
     private void initializeMap(final List<ResultAction> actions) {
         for (ResultAction action : actions) {
-            results.put(action.getId(), Lists.mutable.of(createReport(action.getResult())));
+            results.put(action.getId(), Lists.mutable.of(createReport(action.getId(), action.getResult())));
         }
     }
 
-    private AnnotatedReport createReport(final AnalysisResult result) {
-        return new AnnotatedReport(result.getIssues(), result.getBlames());
+    private AnnotatedReport createReport(final String id, final AnalysisResult result) {
+        return new AnnotatedReport(id, result.getIssues(), result.getBlames());
     }
 
     private void updateMap(final List<ResultAction> actions) {
         for (ResultAction action : actions) {
             List<AnnotatedReport> runs = results.get(action.getId());
-            runs.add(createReport(action.getResult()));
+            runs.add(createReport(action.getId(), action.getResult()));
         }
     }
 
     @Override
     public boolean endBuild() {
         for (Entry<String, List<AnnotatedReport>> reportsPerId : results.entrySet()) {
-            AnnotatedReport aggregatedReport = new AnnotatedReport(reportsPerId.getValue());
+            AnnotatedReport aggregatedReport = new AnnotatedReport(reportsPerId.getKey(), reportsPerId.getValue());
             recorder.publishResult(build, listener, Messages.Tool_Default_Name(), aggregatedReport, StringUtils.EMPTY);
         }
         return true;

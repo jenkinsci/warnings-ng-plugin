@@ -53,7 +53,6 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     @Override
     public Report invoke(final File workspace, final VirtualChannel channel) {
         Report report = new Report();
-        report.setId(id);
         report.logInfo("Searching for all files in '%s' that match the pattern '%s'",
                 workspace.getAbsolutePath(), filePattern);
 
@@ -93,7 +92,6 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         try {
             // FIXME: directly use Path
             Report result = parser.parse(file.toPath(), new JobConfigurationModel().getCharset(encoding));
-            result.setId(id);
             report.addAll(result);
             report.logInfo("Successfully parsed file %s", file);
             report.logInfo("-> found %s (skipped %s)", 

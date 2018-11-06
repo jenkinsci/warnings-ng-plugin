@@ -6,7 +6,7 @@ import java.util.Collection;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.SonarQubeDiffParser;
 import edu.hm.hafner.analysis.parser.SonarQubeIssuesParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -30,7 +30,7 @@ public class SonarQube extends StaticAnalysisToolSuite {
     }
 
     @Override
-    protected Collection<? extends AbstractParser> getParsers() {
+    protected Collection<? extends IssueParser> getParsers() {
         return asList(new SonarQubeIssuesParser(), new SonarQubeDiffParser()); 
     }
 

@@ -114,9 +114,10 @@ public class AnalysisResult implements Serializable {
      * @param previousResult
      *         the analysis result of the previous run
      */
-    public AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final Blames blames,
-            final QualityGateStatus qualityGateStatus, final AnalysisResult previousResult) {
-        this(owner, report, blames, qualityGateStatus, true);
+    public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
+            final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin, 
+            final AnalysisResult previousResult) {
+        this(owner, id, report, blames, qualityGateStatus, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -155,9 +156,9 @@ public class AnalysisResult implements Serializable {
      * @param qualityGateStatus
      *         the quality gate status
      */
-    public AnalysisResult(final Run<?, ?> owner, 
-            final DeltaReport report, final Blames blames, final QualityGateStatus qualityGateStatus) {
-        this(owner, report, blames, qualityGateStatus, true);
+    public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames, 
+            final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin) {
+        this(owner, id, report, blames, qualityGateStatus, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -188,14 +189,14 @@ public class AnalysisResult implements Serializable {
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
-    protected AnalysisResult(final Run<?, ?> owner, final DeltaReport report, final Blames blames, 
-            final QualityGateStatus qualityGateStatus, final boolean canSerialize) {
+    protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames, 
+            final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin, final boolean canSerialize) {
         this.owner = owner;
 
         Report allIssues = report.getAllIssues();
-        id = allIssues.getId();
+        this.id = id;
         size = allIssues.getSize();
-        sizePerOrigin = new HashMap<>(allIssues.getSizeByOrigin());
+        this.sizePerOrigin = new HashMap<>(sizePerOrigin);
         sizePerSeverity = getSizePerSeverity(allIssues);
         referenceBuildId = report.getReferenceBuildId();
 
