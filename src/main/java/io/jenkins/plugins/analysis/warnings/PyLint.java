@@ -2,12 +2,12 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.PyLintParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -44,6 +44,11 @@ public class PyLint extends StaticAnalysisTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_PyLint_ParserName();
+        }
+
+        @Override
+        public String getHelp() {
+            return "<p>Create a ./pylintrc that contains:<p><code>msg-template={path}:{line}: [{msg_id}, {obj}] {msg} ({symbol})</code></p></p><p>Start pylint using the command:<p><code>pylint --rcfile=./pylintrc CODE > pylint.log</code></p></p>";
         }
     }
 }
