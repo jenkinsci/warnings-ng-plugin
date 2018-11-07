@@ -34,7 +34,6 @@ public class DeltaReport {
      */
     public DeltaReport(final Report report, final AnalysisHistory history, final int currentBuildNumber) {
         allIssues = report;
-        allIssues.setReference(String.valueOf(currentBuildNumber));
         if (history.getBuild().isPresent()) {
             Run<?, ?> build = history.getBuild().get();
             report.logInfo("Using reference build '%s' to compute new, fixed, and outstanding issues",
