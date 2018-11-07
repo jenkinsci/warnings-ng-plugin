@@ -8,7 +8,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
@@ -91,11 +90,11 @@ import hudson.model.Result;
  * @author Deniz Mardin
  */
 public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
-    private static final String BUILD_FILE_PATH = "detectors/";
+    private static final String BUILD_FILE_PATH = "detectors/buildfiles/";
     private static final String REPORT_FILE_NAME = "eclipse_prepared-issues.txt";
-    private static final String MAVEN_BUILD_FILE_LOCATION = "buildfiles/maven/";
-    private static final String ANT_BUILD_FILE_LOCATION = "buildfiles/ant/";
-    private static final String OSGI_BUILD_FILE_LOCATION = "buildfiles/osgi/";
+    private static final String MAVEN_BUILD_FILE_LOCATION = "maven/";
+    private static final String ANT_BUILD_FILE_LOCATION = "ant/";
+    private static final String OSGI_BUILD_FILE_LOCATION = "osgi/";
     private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)";
     private static final String EMPTY_MODULE_NAME = "";
     private static final short NO_MODULE_PATHS = 0;
@@ -430,37 +429,12 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     private AnalysisResult createResult(final int numberOfExpectedModules, final boolean appendNonExistingFile,
             final String... workspaceFiles) {
         FreeStyleProject project = createFreeStyleProject();
-        copyMultipleFilesToWorkspaceWithSuffix(project, workspaceFiles);
+        copyWorkspaceFiles(project, workspaceFiles, file -> file.replaceFirst("detectors/buildfiles/\\w*/", ""));
         enableWarnings(project, new Eclipse());
 
-        FilePath workspace = getJenkins().jenkins.getWorkspaceFor(project);
-
         createEclipseWarningsReport(numberOfExpectedModules, appendNonExistingFile,
-                workspace
-        );
+                getJenkins().jenkins.getWorkspaceFor(project));
 
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-    }
-
-    /**
-     * Creates a pre-defined filename for a workspace file.
-     *
-     * @param fileName
-     *         the filename
-     */
-    @Override
-    protected String createWorkspaceFileName(final String fileName) {
-        String modifiedFileName = String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
-
-        String[] moduleFileNamesToKeep = new String[] {
-                "m1/pom.xml", "m2/pom.xml", "m3/pom.xml", "m4/pom.xml", "m5/pom.xml", "pom.xml",
-                "m1/build.xml", "m2/build.xml", "m3/build.xml", "build.xml",
-                "m1/META-INF/MANIFEST.MF", "m2/META-INF/MANIFEST.MF", "m3/META-INF/MANIFEST.MF", "META-INF/MANIFEST.MF", "plugin.properties"
-        };
-
-        return Arrays.stream(moduleFileNamesToKeep)
-                .filter(fileName::endsWith)
-                .findFirst()
-                .orElse(modifiedFileName);
     }
 }

@@ -121,7 +121,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @see #FILE_NAME_PATTERN
      */
     protected void copyMultipleFilesToWorkspaceWithSuffix(final TopLevelItem job, final String... fileNames) {
-        copy(job, fileNames, this::createWorkspaceFileName);
+        copyWorkspaceFiles(job, fileNames, this::createWorkspaceFileName);
     }
 
     /**
@@ -131,7 +131,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @param fileNames the files to copy
      */
     protected void copyMultipleFilesToWorkspace(final TopLevelItem job, final String... fileNames) {
-        copy(job, fileNames, file -> Paths.get(file).getFileName().toString());
+        copyWorkspaceFiles(job, fileNames, file -> Paths.get(file).getFileName().toString());
     }
 
     /**
@@ -203,13 +203,14 @@ public abstract class IntegrationTest extends ResourceTest {
     private void copySingleFileToWorkspace(final FilePath workspace, final String from, final String to) {
         try {
             workspace.child(to).copyFrom(asInputStream(from));
+            System.out.format("Copying file '%s' as workspace file '%s'%n", from, to);
         }
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
         }
     }
 
-    private void copy(final TopLevelItem job, final String[] fileNames, final Function<String, String> fileNameMapper) {
+    protected void copyWorkspaceFiles(final TopLevelItem job, final String[] fileNames, final Function<String, String> fileNameMapper) {
         Arrays.stream(fileNames)
               .forEach(fileName -> copySingleFileToWorkspace(job, fileName, fileNameMapper.apply(fileName)));
     }
