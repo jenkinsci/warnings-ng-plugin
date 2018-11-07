@@ -1,26 +1,17 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
 import org.junit.Test;
-import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.WebResponse;
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HTMLParser;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.analysis.ModuleDetector;
@@ -31,6 +22,7 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
 import static org.assertj.core.api.Assertions.*;
 
+import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
@@ -100,15 +92,14 @@ import hudson.model.Result;
  */
 public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String BUILD_FILE_PATH = "detectors/";
-    private static final String DEFAULT_ECLIPSE_TEST_FILE_PATH = "/eclipse_prepared-issues.txt";
+    private static final String REPORT_FILE_NAME = "eclipse_prepared-issues.txt";
     private static final String MAVEN_BUILD_FILE_LOCATION = "buildfiles/maven/";
     private static final String ANT_BUILD_FILE_LOCATION = "buildfiles/ant/";
     private static final String OSGI_BUILD_FILE_LOCATION = "buildfiles/osgi/";
-    private static final String DEFAULT_ENTRY_PATH = "eclipse/";
-    private static final String DEFAULT_TAB_TO_INVESTIGATE = "moduleName";
     private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)";
     private static final String EMPTY_MODULE_NAME = "";
     private static final short NO_MODULE_PATHS = 0;
+    private static final String PROPERTY = "moduleName";
 
     /**
      * Verifies that the HTML output is correct if there are OSGI, Maven and Ant modules used within the build. This
@@ -129,8 +120,8 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
         AnalysisResult result = createResult(
-                workspaceFiles.length - 1, 
-                true, 
+                workspaceFiles.length - 1,
+                true,
                 workspaceFiles);
 
         verifyModules(result,
@@ -151,7 +142,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml"};
 
         AnalysisResult result = createResult(
-                workspaceFiles.length, 
+                workspaceFiles.length,
                 false,
                 workspaceFiles);
 
@@ -191,7 +182,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
 
         AnalysisResult result = createResult(
-                workspaceFiles.length - 1, 
+                workspaceFiles.length - 1,
                 false,
                 workspaceFiles);
 
@@ -349,7 +340,9 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void verifyModules(final AnalysisResult result, final PropertyRow... modules) {
         HtmlPage details = getWebPage(result);
-        PropertyTable propertyTable = new PropertyTable(details, "moduleName");
+        assertThatModuleTableIsVisible(result, true);
+
+        PropertyTable propertyTable = new PropertyTable(details, PROPERTY);
         assertThat(propertyTable.getTitle()).isEqualTo("Modules");
         assertThat(propertyTable.getColumnName()).isEqualTo("Module");
         assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(modules);
@@ -369,100 +362,84 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         return String.format("-> resolved module names for %s issues", modulesSize);
     }
 
-    private void writeDynamicFile(final FreeStyleProject project, final int modulePaths,
-            final boolean appendNonExistingFile, final String file) {
-        try {
-            for (int i = 1; i <= modulePaths; i++) {
-                String directory = getJenkins().jenkins.getWorkspaceFor(project) + "/m" + i;
-                String sampleClassDummyName = directory + "/ClassWithWarnings.java";
-                PrintWriter writer = new PrintWriter(
-                        new FileOutputStream(getJenkins().jenkins.getWorkspaceFor(project) + file, true));
-                writer.println("[javac] " + i + ". WARNING in " + sampleClassDummyName + " (at line 42)");
-                writer.println("[javac] \tSample Message");
-                writer.println("[javac] \t^^^^^^^^^^^^^^^^^^");
-                writer.println("[javac] Sample Message" + i);
-                writer.close();
-                Path path = Paths.get(sampleClassDummyName);
-                if (!Files.exists(path)) {
-                    Path dirPath = Paths.get(directory);
-                    Files.createDirectories(dirPath);
-                    Files.createFile(path);
-                }
-            }
-
-            if (appendNonExistingFile) {
-                PrintWriter writer = new PrintWriter(
-                        new FileOutputStream(getJenkins().jenkins.getWorkspaceFor(project) + file, true));
-                writer.println("[javac] NOT_EXISTING X. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)");
-                writer.println("[javac] \tSample Message");
-                writer.println("[javac] \t^^^^^^^^^^^^^^^^^^");
-                writer.println("[javac] Sample Message");
-                writer.close();
-            }
+    /**
+     * Creates a new eclipse report file that contains one warning for each of the specified modules. Each module is
+     * part of a separate directory.
+     *
+     * @param modulePaths
+     *         the number of module directories to create
+     * @param appendNonExistingFile
+     *         determines if one additional warning should be created that does not refer to a valid file
+     * @param workspace
+     *         the workspace to copy the files to
+     */
+    private void createEclipseWarningsReport(final int modulePaths,
+            final boolean appendNonExistingFile, final FilePath workspace) {
+        for (int i = 1; i <= modulePaths; i++) {
+            String directory = workspace + "/m" + i;
+            String affectedFile = directory + "/ClassWithWarnings.java";
+            writeEclipseWarning(workspace,
+                    "[javac] 1. WARNING in " + affectedFile + " (at line 42)",
+                    "[javac] \tSample Message",
+                    "[javac] \t^^^^^^^^^^^^^^^^^^",
+                    "[javac] Sample Message");
+            createAffectedFile(directory, affectedFile);
         }
-        catch (IOException exception) {
-            throw new AssertionError(exception);
+
+        if (appendNonExistingFile) {
+            writeEclipseWarning(workspace,
+                    "[javac] NOT_EXISTING X. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)",
+                    "[javac] \tSample Message",
+                    "[javac] \t^^^^^^^^^^^^^^^^^^",
+                    "[javac] Sample Message");
         }
     }
 
-    private WebClient createWebClient(final boolean javaScriptEnabled) {
-        WebClient webClient = getJenkins().createWebClient();
-        webClient.setJavaScriptEnabled(javaScriptEnabled);
-        return webClient;
-    }
-
-    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
+    private void createAffectedFile(final String directory, final String affectedFile) {
         try {
-            WebClient webClient = createWebClient(false);
-            WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
-            List<String> packageLinks = getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE);
-
-            assertThat(packageLinks).isEmpty();
+            Path path = Paths.get(affectedFile);
+            if (!Files.exists(path)) {
+                Path dirPath = Paths.get(directory);
+                Files.createDirectories(dirPath);
+                Files.createFile(path);
+            }
         }
-        catch (IOException | SAXException e) {
+        catch (IOException e) {
             throw new AssertionError(e);
         }
     }
 
-    private List<String> getLinksWithGivenTargetName(final HtmlPage page, final String targetName) {
-        List<DomElement> htmlElement = page.getElementsByIdAndOrName(targetName);
-        ArrayList<String> links = new ArrayList<>();
-        for (DomElement element : htmlElement) {
-            DomNodeList<HtmlElement> domNodeList = element.getElementsByTagName("a");
-            for (HtmlElement htmlElementHref : domNodeList) {
-                links.add(htmlElementHref.getAttribute("href"));
-            }
+    private void writeEclipseWarning(final FilePath workspace, final String... lines) {
+        try {
+            Files.write(Paths.get(workspace.child(REPORT_FILE_NAME).getRemote()), Arrays.asList(lines),
+                    StandardOpenOption.APPEND, StandardOpenOption.CREATE);
         }
-        return links;
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
     }
 
-    private AnalysisResult createResult(final int numberOfExpectedModules,
-            final boolean appendNonExistingFile, final String... files) {
-        FreeStyleProject project = buildProject(files);
-        writeDynamicFile(project, numberOfExpectedModules, appendNonExistingFile, DEFAULT_ECLIPSE_TEST_FILE_PATH);
-        return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
+        assertThatModuleTableIsVisible(result, false);
     }
 
-    private FreeStyleProject buildProject(final String... files) {
-        FreeStyleProject project = createJobWithWorkspaceFile(files);
+    private void assertThatModuleTableIsVisible(final AnalysisResult result, final boolean isVisible) {
+        assertThat(PropertyTable.isVisible(getWebPage(result), PROPERTY)).isEqualTo(isVisible);
+    }
+
+    private AnalysisResult createResult(final int numberOfExpectedModules, final boolean appendNonExistingFile,
+            final String... workspaceFiles) {
+        FreeStyleProject project = createFreeStyleProject();
+        copyMultipleFilesToWorkspaceWithSuffix(project, workspaceFiles);
         enableWarnings(project, new Eclipse());
-        return project;
-    }
 
-    /**
-     * Creates a new {@link FreeStyleProject freestyle job} and copies the specified resources to the workspace folder.
-     * The job will get a generated name.
-     *
-     * @param fileNames
-     *         the files to copy to the workspace
-     *
-     * @return the created job
-     */
-    private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
-        FreeStyleProject job = createFreeStyleProject();
-        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
-        return job;
+        FilePath workspace = getJenkins().jenkins.getWorkspaceFor(project);
+
+        createEclipseWarningsReport(numberOfExpectedModules, appendNonExistingFile,
+                workspace
+        );
+
+        return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
 
     /**

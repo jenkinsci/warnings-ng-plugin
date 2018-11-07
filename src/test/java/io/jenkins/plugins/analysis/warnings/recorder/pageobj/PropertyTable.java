@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
@@ -23,6 +23,31 @@ import static org.assertj.core.api.Assertions.*;
  * @author Ullrich Hafner
  */
 public class PropertyTable {
+    /**
+     * Returns whether the specified property table is visible on the specified page. 
+     *
+     * @param page
+     *         the whole details HTML page
+     * @param property
+     *         the property table to extract
+     * @return {@code true} if the table is visible, {@code false} otherwise
+     */
+    public static boolean isVisible(final HtmlPage page, final String property) {
+        try {
+            getTitleOfTable(page, property);
+            
+            return true;
+        }
+        catch (ElementNotFoundException e) {
+            return false;
+        }
+
+    }
+
+    private static String getTitleOfTable(final HtmlPage page, final String property) {
+        return page.getAnchorByHref(String.format("#%sContent", property)).getTextContent();
+    }
+
     private final String title;
     private final String propertyName;
     private final List<PropertyRow> rows = new ArrayList<>();
@@ -36,8 +61,7 @@ public class PropertyTable {
      *         the property tab to extract
      */
     public PropertyTable(final HtmlPage page, final String property) {
-        HtmlAnchor content = page.getAnchorByHref(String.format("#%sContent", property));
-        title = content.getTextContent();
+        title = getTitleOfTable(page, property);
 
         DomElement propertyElement = page.getElementById(property);
         assertThat(propertyElement).isInstanceOf(HtmlTable.class);
