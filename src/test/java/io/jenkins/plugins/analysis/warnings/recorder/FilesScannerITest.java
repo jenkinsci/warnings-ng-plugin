@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
@@ -14,7 +14,6 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
-import hudson.Functions;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
@@ -76,13 +75,8 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        if (Functions.isWindows()) { // Windows fails before file.canRead actually could be called
-            assertThat(result.getErrorMessages().get(0)).contains("java.io.FileNotFoundException");
-        }
-        else {
-            assertThat(result).hasErrorMessages(
-                    "Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file.");
-        }
+        assertThat(result).hasErrorMessages(
+                "Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file.");
     }
 
     private void makeFileUnreadable(final FreeStyleProject project) {

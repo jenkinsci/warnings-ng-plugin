@@ -1,7 +1,10 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -70,16 +73,12 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
 
     private void scanFiles(final File workspace, final String[] fileNames, final Report report) {
         for (String fileName : fileNames) {
-            File file = new File(fileName);
+            Path file = workspace.toPath().resolve(fileName);
 
-            if (!file.isAbsolute()) {
-                file = new File(workspace, fileName);
-            }
-
-            if (!file.canRead()) {
+            if (!Files.isReadable(file)) {
                 report.logError("Skipping file '%s' because Jenkins has no permission to read the file.", fileName);
             }
-            else if (file.length() <= 0) {
+            else if (isEmpty(file)) {
                 report.logError("Skipping file '%s' because it's empty.", fileName);
             }
             else {
@@ -88,10 +87,18 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         }
     }
 
-    private void aggregateIssuesOfFile(final File file, final Report report) {
+    private boolean isEmpty(final Path file) {
         try {
-            // FIXME: directly use Path
-            Report result = parser.parse(file.toPath(), new JobConfigurationModel().getCharset(encoding));
+            return Files.size(file) <= 0;
+        }
+        catch (IOException e) {
+            return true;
+        }
+    }
+
+    private void aggregateIssuesOfFile(final Path file, final Report report) {
+        try {
+            Report result = parser.parse(file, new JobConfigurationModel().getCharset(encoding));
             report.addAll(result);
             report.logInfo("Successfully parsed file %s", file);
             report.logInfo("-> found %s (skipped %s)", 
