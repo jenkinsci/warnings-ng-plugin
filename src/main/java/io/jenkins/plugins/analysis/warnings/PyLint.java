@@ -48,7 +48,12 @@ public class PyLint extends StaticAnalysisTool {
 
         @Override
         public String getHelp() {
-            return "<p>Create a ./pylintrc that contains:<p><code>msg-template={path}:{line}: [{msg_id}, {obj}] {msg} ({symbol})</code></p></p><p>Start pylint using the command:<p><code>pylint --rcfile=./pylintrc CODE > pylint.log</code></p></p>";
+            return "<p>Create a ./pylintrc that contains:" 
+                    + "<p><code>msg-template={path}:{line}: [{msg_id}, {obj}] {msg} ({symbol})</code></p>" 
+                    + "</p>" 
+                    + "<p>Start pylint using the command:" 
+                    + "<p><code>pylint --rcfile=./pylintrc CODE > pylint.log</code></p>" 
+                    + "</p>";
         }
     }
 }
