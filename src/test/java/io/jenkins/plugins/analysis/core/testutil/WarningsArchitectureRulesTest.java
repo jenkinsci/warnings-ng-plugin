@@ -13,7 +13,7 @@ import static com.tngtech.archunit.lang.conditions.ArchPredicates.*;
  *
  * @author Ullrich Hafner
  */
-// FIXME: forbid calls to Jenkins.getInstance()
+// TODO: forbid calls to Jenkins.getInstance()
 class WarningsArchitectureRulesTest extends edu.hm.hafner.ArchitectureRulesTest {
     @Override
     protected JavaClasses getAllClasses() {
