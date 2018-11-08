@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.steps.Step;
@@ -15,7 +16,6 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -44,19 +44,19 @@ import hudson.util.ListBoxModel;
 public class PublishIssuesStep extends Step {
     private final AnnotatedReport[] reports;
 
-    private String sourceCodeEncoding;
+    private String sourceCodeEncoding = StringUtils.EMPTY;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored
-    private String referenceJobName;
+    private String referenceJobName = StringUtils.EMPTY;
 
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
     private final Thresholds thresholds = new Thresholds();
 
-    private String id;
-    private String name;
+    private String id = StringUtils.EMPTY;
+    private String name = StringUtils.EMPTY;
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -71,9 +71,16 @@ public class PublishIssuesStep extends Step {
     public PublishIssuesStep(final AnnotatedReport... issues) {
         super();
 
-        Ensure.that(issues).isNotEmpty();
+        if (ArrayUtils.isEmpty(issues)) {
+            this.reports = new AnnotatedReport[0];
+        }
+        else {
+            this.reports = Arrays.copyOf(issues, issues.length);
+        }
+    }
 
-        this.reports = Arrays.copyOf(issues, issues.length);
+    public AnnotatedReport[] getIssues() {
+        return reports;
     }
 
     /**
@@ -406,6 +413,11 @@ public class PublishIssuesStep extends Step {
         protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
+            if (step.reports.length == 0) {
+                throw new IllegalArgumentException(
+                        "No reports provided in publish issues step, parameter 'issues' must be set!");
+            }
+
             ignoreQualityGate = step.getIgnoreQualityGate();
             ignoreFailedBuilds = step.getIgnoreFailedBuilds();
             referenceJobName = step.getReferenceJobName();
@@ -417,6 +429,7 @@ public class PublishIssuesStep extends Step {
             qualityGate = new QualityGate(thresholds);
             name = StringUtils.defaultString(step.getName());
             report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), step.reports[0].getId()));
+            
             if (step.reports.length > 1) {
                 report.logInfo("Aggregating reports of:");
                 LabelProviderFactory factory = new LabelProviderFactory();

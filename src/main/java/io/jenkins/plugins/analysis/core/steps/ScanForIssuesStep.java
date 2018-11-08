@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -35,9 +36,9 @@ import hudson.util.FormValidation;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class ScanForIssuesStep extends Step {
-    private String reportEncoding;
-    private String sourceCodeEncoding;
-    private String pattern;
+    private String reportEncoding = StringUtils.EMPTY;
+    private String sourceCodeEncoding = StringUtils.EMPTY;
+    private String pattern = StringUtils.EMPTY;
     private StaticAnalysisTool tool;
     private boolean isBlameDisabled;
 

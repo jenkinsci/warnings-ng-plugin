@@ -30,12 +30,6 @@
     <i:thresholds-new/>
   </f:entry>
 
-  <i:hr title="${%Issue filters}"/>
-
-  <f:entry title="${%Filters}" description="${%description.filter}">
-    <f:repeatableHeteroProperty field="filters" hasHeader="true" addCaption="${%Add Filter}" />
-  </f:entry>
-
   <f:block>
   </f:block>
 

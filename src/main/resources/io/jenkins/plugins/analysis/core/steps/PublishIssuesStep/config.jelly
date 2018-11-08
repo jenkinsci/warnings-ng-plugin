@@ -3,6 +3,21 @@
 
   <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
+  <f:block>
+    This step is only intended for users who want to control scanning and publishing of issues in detail with the 
+    Warnings Next Generation Plugin. Typically, you can scan and publish issues using the simple step 
+    <b>Record compiler warnings and static analysis results</b>. If the default behavior is not sufficient you can 
+    combine the two individual sub-steps
+    <b>Scan files or the console log for warnings or issues</b> and
+    <b>Publish issues created by a static analysis scan</b> individually.
+  </f:block>
+  <f:entry title="${%ID}" description="${%description.id}" field="id">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="${%Name}" description="${%description.name}" field="name">
+    <f:textbox/>
+  </f:entry>
+
   <i:hr title="${%File Encoding}"/>
 
   <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}">
@@ -11,12 +26,5 @@
 
   <i:publish-parameters/>
 
-  <f:entry title="${%ID}" description="${%description.id}" field="id">
-    <f:textbox/>
-  </f:entry>
-  <f:entry title="${%Name}" description="${%description.name}" field="name">
-    <f:textbox/>
-  </f:entry>
-
-
+ 
 </j:jelly>
