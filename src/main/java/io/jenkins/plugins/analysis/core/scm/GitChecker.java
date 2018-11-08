@@ -9,6 +9,7 @@ import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.plugins.git.GitSCM;
+import hudson.plugins.git.extensions.impl.CloneOption;
 import hudson.scm.SCM;
 
 /**
@@ -59,8 +60,13 @@ public class GitChecker {
     public Blamer createBlamer(final Run<?, ?> build, final SCM scm, 
             final FilePath workspace, final TaskListener listener) {
         try {
+            GitSCM gitSCM = asGit(scm);
+            if (isShallow(gitSCM)) {
+                listener.getLogger().println("Skipping issues blame since Git has been configured with shallow clone.");
+                return new NullBlamer();
+            }
             EnvVars environment = build.getEnvironment(listener);
-            GitClient gitClient = asGit(scm).createClient(listener, environment, build, workspace);
+            GitClient gitClient = gitSCM.createClient(listener, environment, build, workspace);
             String gitCommit = environment.getOrDefault("GIT_COMMIT", "HEAD");
 
             return new GitBlamer(gitClient, gitCommit);
@@ -68,6 +74,14 @@ public class GitChecker {
         catch (IOException | InterruptedException e) {
             return new NullBlamer();
         }
+    }
+    
+    private boolean isShallow(final GitSCM git) {
+        CloneOption option = git.getExtensions().get(CloneOption.class);
+        if (option != null) {
+            return option.isShallow();
+        }
+        return false;
     }
 
     private GitSCM asGit(final SCM scm) {
