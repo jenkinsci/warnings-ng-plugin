@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -18,56 +18,61 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
-import hudson.AbortException;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Scans a given input stream for open tasks.
  *
- * @author Ulli Hafner
+ * @author Ullrich Hafner
  */
 public class TaskScanner {
     private static final String WORD_BOUNDARY = "\\b";
+    private static final Pattern INVALID = Pattern.compile("");
 
     /** The regular expression patterns to be used to scan the files. One pattern per priority. */
     private final Map<Severity, Pattern> patterns = new HashMap<Severity, Pattern>();
-    private final boolean ignoreCase;
+    private final CaseMode caseMode;
 
     private boolean isInvalidPattern;
-    private final StringBuilder errorMessage = new StringBuilder();
+    private final StringBuilder errors = new StringBuilder();
 
-    /**
-     * Creates a new instance of {@link TaskScanner}.
-     */
-    public TaskScanner() {
-        this("FIXME", "TODO", "@deprecated", false, false);
+    /** Determines whether the tags are case sensitive or not. */
+    enum CaseMode {
+        IGNORE_CASE, 
+        CASE_SENSITIVE
     }
-
+    
+    /** Determines whether tags are plain strings or regular expressions. */
+    enum MatcherMode {
+        STRING_MATCH, 
+        REGEXP_MATCH
+    }
+    
     /**
      * Creates a new instance of {@link TaskScanner}.
      *
      * @param high
-     *            tag identifiers indicating high priority
+     *            tag identifiers indicating tasks with high severity
      * @param normal
-     *            tag identifiers indicating normal priority
+     *            tag identifiers indicating tasks with normal severity
      * @param low
      *            tag identifiers indicating low priority
-     * @param ignoreCase
+     * @param caseMode
      *            if case should be ignored during matching
-     * @param asRegexp
+     * @param matcherMode
      *            if tag identifiers should be treated as regular expression
      */
-    public TaskScanner(final String high, final String normal, final String low,
-                       final boolean ignoreCase, final boolean asRegexp) {
-        this.ignoreCase = ignoreCase;
+    public TaskScanner(final @CheckForNull String high, final @CheckForNull String normal, final @CheckForNull String low,
+                       final CaseMode caseMode, final MatcherMode matcherMode) {
+        this.caseMode = caseMode;
         if (StringUtils.isNotBlank(high)) {
-            patterns.put(Severity.WARNING_HIGH, compile(high, ignoreCase, asRegexp));
+            patterns.put(Severity.WARNING_HIGH, compile(high, caseMode, matcherMode));
         }
         if (StringUtils.isNotBlank(normal)) {
-            patterns.put(Severity.WARNING_NORMAL, compile(normal, ignoreCase, asRegexp));
+            patterns.put(Severity.WARNING_NORMAL, compile(normal, caseMode, matcherMode));
         }
         if (StringUtils.isNotBlank(low)) {
-            patterns.put(Severity.WARNING_LOW, compile(low, ignoreCase, asRegexp));
+            patterns.put(Severity.WARNING_LOW, compile(low, caseMode, matcherMode));
         }
     }
 
@@ -75,8 +80,8 @@ public class TaskScanner {
         return isInvalidPattern;
     }
 
-    public String getErrorMessage() {
-        return errorMessage.toString();
+    public String getErrors() {
+        return errors.toString();
     }
 
     /**
@@ -84,56 +89,61 @@ public class TaskScanner {
      *
      * @param tagIdentifiers
      *            the identifiers to scan for
-     * @param ignoreCase
+     * @param caseMode
      *            specifies if case should be ignored
-     * @param asRegexp
+     * @param matcherMode
      *            if tag identifiers should be treated as regular expression
      * @return the compiled pattern
      */
-    private Pattern compile(final String tagIdentifiers, final boolean ignoreCase, final boolean asRegexp) {
+    private Pattern compile(final String tagIdentifiers, final CaseMode caseMode, final MatcherMode matcherMode) {
         try {
-            if (asRegexp) {
-                return Pattern.compile(tagIdentifiers);
+            if (matcherMode == MatcherMode.REGEXP_MATCH) {
+                return Pattern.compile(tagIdentifiers); // use the tag as such
             }
 
-            String[] tags;
-            if (tagIdentifiers.indexOf(',') == -1) {
-                tags = new String[] {tagIdentifiers};
-            }
-            else {
-                tags = StringUtils.split(tagIdentifiers, ",");
-            }
             List<String> regexps = new ArrayList<String>();
-            for (int i = 0; i < tags.length; i++) {
-                String tag = tags[i].trim();
-                if (StringUtils.isNotBlank(tag)) {
+            for (String tag : splitTags(tagIdentifiers)) {
+                String trimmed = tag.trim();
+                if (StringUtils.isNotBlank(trimmed)) {
                     StringBuilder actual = new StringBuilder();
-                    if (Character.isLetterOrDigit(tag.charAt(0))) {
+                    if (Character.isLetterOrDigit(trimmed.charAt(0))) {
                         actual.append(WORD_BOUNDARY);
                     }
-                    actual.append(tag);
-                    if (Character.isLetterOrDigit(tag.charAt(tag.length() - 1))) {
+                    actual.append(trimmed);
+                    if (Character.isLetterOrDigit(trimmed.charAt(trimmed.length() - 1))) {
                         actual.append(WORD_BOUNDARY);
                     }
                     regexps.add(actual.toString());
                 }
             }
-            int flags;
-            if (ignoreCase) {
-                flags = Pattern.CASE_INSENSITIVE;
-            }
-            else {
-                flags = 0;
-            }
-            return Pattern.compile("^.*(" + StringUtils.join(regexps.iterator(), "|") + ")(.*)$", flags);
+
+            return Pattern.compile("^.*(" + StringUtils.join(regexps.iterator(), "|") + ")(.*)$", 
+                    mapCaseMode());
         }
         catch (PatternSyntaxException exception) {
             isInvalidPattern = true;
-            errorMessage.append(String.format("Specified pattern is an invalid regular expression: {%s}: {%s}", 
+            errors.append(String.format("Specified pattern is an invalid regular expression: '%s': '%s'", 
                     tagIdentifiers, exception.getMessage()));
-            errorMessage.append('\n');
 
-            return null;
+            return INVALID;
+        }
+    }
+
+    private int mapCaseMode() {
+        if (caseMode == CaseMode.IGNORE_CASE) {
+            return Pattern.CASE_INSENSITIVE;
+        }
+        else {
+            return 0;
+        }
+    }
+
+    private String[] splitTags(final String tagIdentifiers) {
+        if (tagIdentifiers.indexOf(',') == -1) {
+            return new String[] {tagIdentifiers};
+        }
+        else {
+            return StringUtils.split(tagIdentifiers, ",");
         }
     }
 
@@ -146,17 +156,19 @@ public class TaskScanner {
      * @throws IOException
      *             if we can't read the file
      */
-    public Report scan(final Reader reader) throws IOException {
+    public Report scan(final Reader reader) {
+        Report report = new Report();
+        if (isInvalidPattern) {
+            report.logError(errors.toString());  
+            return report;
+        }
+        
         try {
-            if (isInvalidPattern) {
-                throw new AbortException(errorMessage.toString());
-            }
             LineIterator lineIterator = IOUtils.lineIterator(reader);
-            Report report = new Report();
 
             IssueBuilder builder = new IssueBuilder();
             for (int lineNumber = 1; lineIterator.hasNext(); lineNumber++) {
-                String line = (String)lineIterator.next();
+                String line = lineIterator.next();
 
                 for (Severity severity : Severity.getPredefinedValues()) {
                     if (patterns.containsKey(severity)) {
@@ -164,7 +176,7 @@ public class TaskScanner {
                         if (matcher.matches() && matcher.groupCount() == 2) {
                             String message = matcher.group(2).trim();
                             String tag = matcher.group(1);
-                            if (ignoreCase) {
+                            if (caseMode == CaseMode.IGNORE_CASE) {
                                 tag = StringUtils.upperCase(tag);
                             }
                             Issue openTask = builder.setSeverity(severity)
@@ -181,7 +193,12 @@ public class TaskScanner {
             return report;
         }
         finally {
-            reader.close();
+            try {
+                reader.close();
+            }
+            catch (IOException ignore) {
+                // ignore
+            }
         }
     }
 }
