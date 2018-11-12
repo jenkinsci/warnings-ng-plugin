@@ -9,8 +9,9 @@ import java.util.Locale;
 import org.junit.Test;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool.ReportingToolDescriptor;
+import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
 /**
@@ -27,8 +28,8 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldPrintAllRegisteredTools() throws IOException {
-        ArrayList<StaticAnalysisToolDescriptor> descriptors = new ArrayList<>(
-                getJenkins().getInstance().getDescriptorList(StaticAnalysisTool.class));
+        ArrayList<ToolDescriptor> descriptors = new ArrayList<>(
+                getJenkins().getInstance().getDescriptorList(Tool.class));
         descriptors.sort(Comparator.comparing(d -> d.getLabelProvider().getName().toLowerCase(Locale.ENGLISH)));
 
         try (FileWriter fileWriter = new FileWriter("SUPPORTED-FORMATS.md")) {
@@ -49,8 +50,8 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
             file.print("| --- | --- | --- | --- | --- | --- |\n");
 
             for (int i = 0; i < descriptors.size(); i++) {
-                StaticAnalysisToolDescriptor descriptor = descriptors.get(i);
-                final StaticAnalysisLabelProvider labelProvider = descriptor.getLabelProvider();
+                ToolDescriptor descriptor = descriptors.get(i);
+                StaticAnalysisLabelProvider labelProvider = descriptor.getLabelProvider();
                 file.printf("| %d | %s | %s() | %s | %s | %s |%n",
                         i,
                         descriptor.getId(),
@@ -58,7 +59,7 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
                         getIcon(labelProvider, labelProvider.getSmallIconUrl())
                                 + " " + getIcon(labelProvider, labelProvider.getLargeIconUrl()),
                         getName(descriptor),
-                        descriptor.getPattern());
+                        descriptor instanceof ReportingToolDescriptor ? ((ReportingToolDescriptor)descriptor).getPattern() : "-");
             }
         }
     }
@@ -71,7 +72,7 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
                 icon.replace("/plugin/warnings-ng/", "src/main/webapp/"));
     }
 
-    private String getName(final StaticAnalysisToolDescriptor descriptor) {
+    private String getName(final ToolDescriptor descriptor) {
         String name = descriptor.getLabelProvider().getName();
         String url = descriptor.getUrl();
         if (url.isEmpty()) {

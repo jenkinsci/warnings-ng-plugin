@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.P4Parser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Joscha Behrmann
  */
-public class Perforce extends StaticAnalysisTool {
+public class Perforce extends ReportScanningTool {
     private static final long serialVersionUID = 4203426682751724907L;
     static final String ID = "perforce";
 
@@ -34,7 +34,7 @@ public class Perforce extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("perforce")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

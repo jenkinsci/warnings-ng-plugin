@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.LinuxKernelOutputParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Johannes Arzt
  */
-public class LinuxKernelOutput extends StaticAnalysisTool {
+public class LinuxKernelOutput extends ReportScanningTool {
     private static final long serialVersionUID = 6001299329805672199L;
     static final String ID = "linux";
 
@@ -34,7 +34,7 @@ public class LinuxKernelOutput extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("linuxKernelOutput")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

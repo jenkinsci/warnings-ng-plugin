@@ -32,7 +32,6 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
     public void shouldInitializeAndStorePropertiesInJobConfiguration() {
         FreeStyleProject job = createFreeStyleProject();
         enableEclipseWarnings(job, tool -> {
-            tool.setReportEncoding("reportEncoding");
             tool.setSourceCodeEncoding("sourceCodeEncoding");
 
             tool.setBlameDisabled(true);
@@ -51,7 +50,6 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         HtmlPage configPage = getWebPage(job, "configure");
         HtmlForm form = configPage.getFormByName("config");
 
-        verifyAndChangeEntry(form, "reportEncoding", "reportEncoding");
         verifyAndChangeEntry(form, "sourceCodeEncoding", "sourceCodeEncoding");
 
         verifyAndChangeEntry(form, "blameDisabled", true);
@@ -72,7 +70,6 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         submit(form);
 
         IssuesRecorder recorder = getRecorder(job);
-        assertThat(recorder.getReportEncoding()).isEqualTo("new-reportEncoding");
         assertThat(recorder.getSourceCodeEncoding()).isEqualTo("new-sourceCodeEncoding");
 
         assertThat(recorder.getBlameDisabled()).isFalse();

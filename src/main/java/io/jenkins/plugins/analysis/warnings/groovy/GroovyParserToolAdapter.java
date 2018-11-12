@@ -1,15 +1,19 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.IssueParser;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+
+import hudson.Extension;
 
 /**
- * Converts a {@link GroovyParser} instance to a {@link StaticAnalysisTool} instance.
+ * Converts a {@link GroovyParser} instance to a {@link ReportScanningTool} instance.
  *
  * @author Ullrich Hafner
  */
-public class GroovyParserToolAdapter extends StaticAnalysisTool {
+public class GroovyParserToolAdapter extends ReportScanningTool {
     private static final long serialVersionUID = -8466615502157837470L;
 
     private final GroovyParser parser;
@@ -21,13 +25,13 @@ public class GroovyParserToolAdapter extends StaticAnalysisTool {
     }
 
     @Override
-    public String getId() {
-        return parser.getId();
+    public String getActualId() {
+        return StringUtils.defaultIfBlank(getId(), parser.getId());
     }
 
     @Override
-    public String getName() {
-        return parser.getName();
+    public String getActualName() {
+        return StringUtils.defaultIfBlank(getName(), parser.getName());
     }
 
     @Override
@@ -57,5 +61,14 @@ public class GroovyParserToolAdapter extends StaticAnalysisTool {
     @Override
     public int hashCode() {
         return parser.hashCode();
+    }
+
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends ReportingToolDescriptor {
+        /** Creates the descriptor instance. */
+        public Descriptor() {
+            super("groovyAdapter");
+        }
     }
 }

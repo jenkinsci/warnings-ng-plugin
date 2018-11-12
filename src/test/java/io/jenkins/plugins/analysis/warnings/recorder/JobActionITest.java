@@ -7,11 +7,10 @@ import org.junit.Test;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.views.JobAction;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
@@ -60,7 +59,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldHaveSidebarLinkEvenWhenLastActionHasNoResults() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        enableWarnings(project, new ToolConfiguration(new Eclipse(), "**/no-valid-pattern"));
+        enableWarnings(project, createTool(new Eclipse(), "**/no-valid-pattern"));
 
         AnalysisResult emptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(emptyResult).hasTotalSize(0);
@@ -80,7 +79,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldChooseCorrectResultsForTwoTools() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
         enableWarnings(project,
-                new ToolConfiguration(new CheckStyle(), "nothing.found"),
+                createTool(new CheckStyle(), "nothing.found"),
                 createGenericToolConfiguration(new Eclipse()));
 
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);

@@ -15,6 +15,7 @@ public interface Blamer extends Serializable {
      *
      * @param report
      *         the report
+     * @return the blames
      */
-    Blames blame(final Report report);
+    Blames blame(Report report);
 }

@@ -4,14 +4,12 @@
   <f:entry title="${%High severity threshold}"
            description="${%Minimum number of duplicated lines for high severity warnings.}"
            field="highThreshold">
-    <f:textbox default="50"/>
+    <f:number />
   </f:entry>
   <f:entry title="${%Normal severity threshold}"
            description="${%Minimum number of duplicated lines for normal severity warnings.}"
            field="normalThreshold">
     <f:textbox default="25"/>
   </f:entry>
-
-  <i:tool-defaults/>
 
 </j:jelly>

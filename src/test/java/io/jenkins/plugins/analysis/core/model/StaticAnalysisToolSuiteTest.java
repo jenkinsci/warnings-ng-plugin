@@ -16,7 +16,7 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link StaticAnalysisToolSuite}.
+ * Tests the class {@link ReportScanningToolSuite}.
  *
  * @author Arne Schöntag
  */
@@ -27,7 +27,7 @@ class StaticAnalysisToolSuiteTest {
 
     @Test
     void shouldReturnEmptyReportIfSuiteIsEmpty() {
-        TestStaticAnalysisToolSuite suite = new TestStaticAnalysisToolSuite();
+        TestReportScanningToolSuite suite = new TestReportScanningToolSuite();
 
         Report issues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
 
@@ -41,7 +41,7 @@ class StaticAnalysisToolSuiteTest {
         Report issues = createIssues(1);
         when(parser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issues);
 
-        TestStaticAnalysisToolSuite suite = new TestStaticAnalysisToolSuite(parser);
+        TestReportScanningToolSuite suite = new TestReportScanningToolSuite(parser);
 
         Report compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
 
@@ -59,7 +59,7 @@ class StaticAnalysisToolSuiteTest {
         Report issuesSecondParser = createIssues(2);
         when(secondParser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issuesSecondParser);
 
-        TestStaticAnalysisToolSuite suite = new TestStaticAnalysisToolSuite(firstParser, secondParser);
+        TestReportScanningToolSuite suite = new TestReportScanningToolSuite(firstParser, secondParser);
 
         Report compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
 
@@ -83,12 +83,12 @@ class StaticAnalysisToolSuiteTest {
     }
 
     /**
-     * {@link StaticAnalysisToolSuite} to be used in the tests.
+     * {@link ReportScanningToolSuite} to be used in the tests.
      */
-    private class TestStaticAnalysisToolSuite extends StaticAnalysisToolSuite {
+    private class TestReportScanningToolSuite extends ReportScanningToolSuite {
         private final Collection<? extends IssueParser> parsers;
 
-        TestStaticAnalysisToolSuite(final IssueParser... parsers) {
+        TestReportScanningToolSuite(final IssueParser... parsers) {
             super();
 
             this.parsers = asList(parsers);

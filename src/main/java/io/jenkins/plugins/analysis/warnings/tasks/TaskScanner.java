@@ -161,8 +161,6 @@ public class TaskScanner {
      *         the file to scan
      *
      * @return the result stored as java project
-     * @throws IOException
-     *         if we can't read the file
      */
     public Report scan(final Reader reader) {
         Report report = new Report();

@@ -18,16 +18,16 @@ import org.kohsuke.stapler.HttpResponse;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import static hudson.Functions.*;
 
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
@@ -85,7 +85,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("issue11675.txt");
         job.setDefinition(asStage(
                 "sh 'cat issue11675-issues.txt'",
-                "def issues = scanForIssues tool: eclipse()",
+                "def issues = scanForIssues tool: eclipse()", // FIXME: documentation!
                 PUBLISH_ISSUES_STEP));
 
         AnalysisResult result = scheduleBuild(job, new Eclipse());
@@ -184,8 +184,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldShowWarningsOfGroovyParser() {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
-                "def groovy = scanForIssues tool: groovyScript(id: 'groovy-pep8'), "
-                        + "pattern:'**/*issues.txt', defaultEncoding:'UTF-8'",
+                "def groovy = scanForIssues " 
+                        + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'**/*issues.txt', reportEncoding:'UTF-8')",
                 "publishIssues issues:[groovy]"));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
@@ -217,6 +217,9 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(ids).containsExactly("groovy-1", "groovy-2");
     }
 
+    /**
+     * Verifies that a warning will be logged if the user specified name and id <b>and not</b> {@code isAggregating}. 
+     */
     @Test 
     public void shouldLogWarningIfNameIsSetWhenNotAggregating() {
         List<AnalysisResult> results = getAnalysisResults(runWith2GroovyParsers(false,
@@ -257,12 +260,25 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(action.getDisplayName()).isEqualTo("Custom Name Warnings");
     }
 
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and uses this parser twice.
+     * Publishes the results into a single result that uses a different ID and name.
+     */
+    @Test
+    public void shouldUseGroovyParserTwiceAndAggregateIntoSingleResultWithCustomizableName() {
+        WorkflowRun build = runWith2GroovyParsers(true, "name: 'Custom Name'");
+        ResultAction action = getResultAction(build);
+        
+        assertThat(action.getId()).isEqualTo("analysis");
+        assertThat(action.getDisplayName()).isEqualTo("Custom Name Warnings");
+    }
+
     private WorkflowRun runWith2GroovyParsers(final boolean isAggregating, final String... arguments) {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
-                "recordIssues aggregatingResults: "+ isAggregating + ", tools: [" 
-                        + "[pattern: '**/*issues.txt', id: 'groovy-1', tool: groovyScript(id:'groovy-pep8')]," 
-                        + "[pattern: '**/*issues.txt', id: 'groovy-2', tool: groovyScript(id:'groovy-pep8')]" 
+                "recordIssues aggregatingResults: " + isAggregating + ", tools: [" 
+                        + "[tool: groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-1')]," 
+                        + "[tool: groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-2')]" 
                         + "] " + join(arguments)));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
@@ -395,10 +411,10 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
         createFileInWorkspace(job, "xxe.xml", adaptedXxeFileContent);
 
-        List<StaticAnalysisTool> tools = Lists.mutable.of(new CheckStyle(), new Pmd(), new FindBugs(), new JcReport());
-        for (StaticAnalysisTool tool : tools) {
+        List<ReportScanningTool> tools = Lists.mutable.of(new CheckStyle(), new Pmd(), new FindBugs(), new JcReport());
+        for (ReportScanningTool tool : tools) {
             job.setDefinition(asStage(
-                    String.format("def issues = scanForIssues tool: %s(), pattern:'xxe.xml'",
+                    String.format("def issues = scanForIssues tool: %s(pattern:'xxe.xml')",
                             tool.getSymbolName()),
                     "publishIssues issues:[issues]"));
 

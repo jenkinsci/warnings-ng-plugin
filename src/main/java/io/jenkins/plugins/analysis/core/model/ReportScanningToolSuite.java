@@ -12,12 +12,12 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 
 /**
- * A {@link StaticAnalysisTool} that is composed of several tools. Every parser of this suite will be called on the
+ * A {@link ReportScanningTool} that is composed of several tools. Every parser of this suite will be called on the
  * input file, the results will be aggregated afterwards.
  *
  * @author Ullrich Hafner
  */
-public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
+public abstract class ReportScanningToolSuite extends ReportScanningTool {
     @Override
     public final IssueParser createParser() {
         return new CompositeParser(getParsers());
@@ -47,8 +47,6 @@ public abstract class StaticAnalysisToolSuite extends StaticAnalysisTool {
     /**
      * Combines several parsers into a single composite parser. The issues of all the individual parsers will be
      * aggregated.
-     *
-     * @author Ullrich Hafner
      */
     private static class CompositeParser extends IssueParser {
         private final List<IssueParser> parsers = new ArrayList<>();

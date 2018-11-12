@@ -6,7 +6,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.ccm.CcmParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;
 
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Ccm extends StaticAnalysisTool {
+public class Ccm extends ReportScanningTool {
     private static final long serialVersionUID = 7286546914256953672L;
     static final String ID = "ccm";
 
@@ -39,7 +39,7 @@ public class Ccm extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("ccm")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

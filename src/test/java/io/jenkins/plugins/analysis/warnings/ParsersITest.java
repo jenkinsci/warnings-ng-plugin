@@ -9,8 +9,9 @@ import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
 /**
@@ -241,7 +242,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 .contains("The check finds classes that are designed for extension (subclass creation).");
     }
 
-    private void assertThatDescriptionOfIssueIsSet(final StaticAnalysisTool tool, final Issue issue,
+    private void assertThatDescriptionOfIssueIsSet(final Tool tool, final Issue issue,
             final String expectedDescription) {
         StaticAnalysisLabelProvider labelProvider = tool.getLabelProvider();
         assertThat(issue).hasDescription("");
@@ -650,7 +651,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final StaticAnalysisTool tool, 
+    private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool, 
             final String... fileNames) {
         try {
             WorkflowJob job = createJobWithWorkspaceFiles(fileNames);
@@ -662,7 +663,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 
             Report report = result.getIssues();
-            assertThat(report.filter(issue -> issue.getOrigin().equals(tool.getId())))
+            assertThat(report.filter(issue -> issue.getOrigin().equals(tool.getActualId())))
                     .hasSize(expectedSizeOfIssues);
 
             return report;

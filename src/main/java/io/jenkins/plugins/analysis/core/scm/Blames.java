@@ -33,6 +33,9 @@ public class Blames implements Serializable {
 
     /**
      * Creates an empty instance of {@link Blames} that will work on the specified workspace.
+     *
+     * @param workspace
+     *         the workspace to get the Git repository from
      */
     public Blames(final String workspace) {
         this.workspace = normalizeFileName(workspace);

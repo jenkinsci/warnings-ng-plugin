@@ -22,7 +22,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
@@ -120,9 +119,9 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
-        IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "**/checkstyle1*"));
+        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "**/checkstyle1*"));
         buildWithStatus(project, Result.SUCCESS);
-        recorder.setTool(new ToolConfiguration(new CheckStyle(), "**/checkstyle2*"));
+        recorder.setTool(createTool(new CheckStyle(), "**/checkstyle2*"));
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
 
         assertThatRemoteApiEquals(build, "/checkstyle/all/api/xml", "all-issues.xml");

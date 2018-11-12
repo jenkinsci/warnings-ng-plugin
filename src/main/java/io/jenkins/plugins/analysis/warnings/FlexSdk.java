@@ -6,7 +6,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.FlexSdkParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;
 
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class FlexSdk extends StaticAnalysisTool {
+public class FlexSdk extends ReportScanningTool {
     private static final long serialVersionUID = 8786339674737448596L;
     static final String ID = "flex";
 
@@ -34,7 +34,7 @@ public class FlexSdk extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("flexSdk")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

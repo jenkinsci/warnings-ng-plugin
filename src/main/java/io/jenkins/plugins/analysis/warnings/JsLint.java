@@ -6,7 +6,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.LintParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;
 
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class JsLint extends StaticAnalysisTool {
+public class JsLint extends ReportScanningTool {
     private static final long serialVersionUID = 1084258385562354947L;
     
     static final String ID = "jslint";
@@ -40,7 +40,7 @@ public class JsLint extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("jsLint")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

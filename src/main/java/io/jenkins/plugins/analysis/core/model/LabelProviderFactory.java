@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool.StaticAnalysisToolDescriptor;
+import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
 
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
@@ -57,9 +57,9 @@ public class LabelProviderFactory {
      *         provider is returned.
      */
     public StaticAnalysisLabelProvider create(final String id, @CheckForNull final String name) {
-        DescriptorExtensionList<StaticAnalysisTool, StaticAnalysisToolDescriptor> extensions
-                = jenkins.getDescriptorsFor(StaticAnalysisTool.class);
-        for (StaticAnalysisToolDescriptor descriptor : extensions) {
+        DescriptorExtensionList<Tool, ToolDescriptor> extensions
+                = jenkins.getDescriptorsFor(Tool.class);
+        for (ToolDescriptor descriptor : extensions) {
             if (descriptor.getId().equals(id)) {
                 return createNamedLabelProvider(descriptor.getLabelProvider(), name);
             }
@@ -67,8 +67,8 @@ public class LabelProviderFactory {
 
         List<StaticAnalysisToolFactory> factories = jenkins.getExtensionsFor(StaticAnalysisToolFactory.class);
         for (StaticAnalysisToolFactory factory : factories) {
-            for (StaticAnalysisTool tool : factory.getTools()) {
-                if (tool.getId().equals(id)) {
+            for (Tool tool : factory.getTools()) {
+                if (tool.getActualId().equals(id)) {
                     return createNamedLabelProvider(tool.getLabelProvider(), name);
                 }
             }
@@ -84,7 +84,7 @@ public class LabelProviderFactory {
     }
 
     /**
-     * Provides additional {@link StaticAnalysisTool static analysis tool} instances that are created dynamically.
+     * Provides additional {@link Tool static analysis tool} instances that are created dynamically.
      */
     public interface StaticAnalysisToolFactory extends ExtensionPoint {
         /**
@@ -92,6 +92,6 @@ public class LabelProviderFactory {
          *
          * @return the tools
          */
-        List<StaticAnalysisTool> getTools();
+        List<Tool> getTools();
     }
 }

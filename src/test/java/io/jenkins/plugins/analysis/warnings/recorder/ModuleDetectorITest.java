@@ -430,7 +430,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
             final String... workspaceFiles) {
         FreeStyleProject project = createFreeStyleProject();
         copyWorkspaceFiles(project, workspaceFiles, file -> file.replaceFirst("detectors/buildfiles/\\w*/", ""));
-        enableWarnings(project, new Eclipse());
+        enableGenericWarnings(project, new Eclipse());
 
         createEclipseWarningsReport(numberOfExpectedModules, appendNonExistingFile,
                 getJenkins().jenkins.getWorkspaceFor(project));

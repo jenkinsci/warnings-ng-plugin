@@ -68,14 +68,17 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
     /**
      * Returns the model for the details table.
-     * 
-     * @return the table model
-     * @param owner
+     *
+     * @param build
+     *         the build of the results
      * @param url
+     *         the URL of the results
+     *
+     * @return the table model
      */
-    public DetailsTableModel getIssuesModel(final Run<?, ?> owner, final String url) {
-        return new DetailsTableModel(getAgeBuilder(owner, url),
-                getFileNameRenderer(owner), this);
+    public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url) {
+        return new DetailsTableModel(getAgeBuilder(build, url),
+                getFileNameRenderer(build), this);
     }
 
     protected DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
@@ -84,16 +87,20 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
     /**
      * Returns the model for the details table.
-     * 
-     * @return the table model
-     * @param owner
+     *
+     * @param build
+     *         the build of the results
      * @param url
+     *         the URL of the results
      * @param blames
+     *         the SCM blames
+     *
+     * @return the table model
      */
-    public DetailsTableModel getScmModel(final Run<?, ?> owner,
+    public DetailsTableModel getScmModel(final Run<?, ?> build,
             final String url, final Blames blames) {
-        return new ReferenceDetailsModel(getAgeBuilder(owner, url),
-                getFileNameRenderer(owner), this, blames);
+        return new ReferenceDetailsModel(getAgeBuilder(build, url),
+                getFileNameRenderer(build), this, blames);
     }
 
     protected FileNameRenderer getFileNameRenderer(final Run<?, ?> owner) {
@@ -127,16 +134,18 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Sets the human readable name of the tool. 
-     * 
-     * @param name the name of the tool
+     * Sets the human readable name of the tool.
+     *
+     * @param name
+     *         the name of the tool
+     *
      * @return the name
      */
     public StaticAnalysisLabelProvider setName(@CheckForNull final String name) {
         if (StringUtils.isNotBlank(name)) { // don't overwrite with empty
             this.name = name;
         }
-        
+
         return this;
     }
 
@@ -396,5 +405,5 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         public String toString(final Locale locale) {
             return String.format("%s: %s", prefix, suffix);
         }
-    } 
+    }
 }

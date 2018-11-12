@@ -6,7 +6,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.DrMemoryParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;
 
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class DrMemory extends StaticAnalysisTool {
+public class DrMemory extends ReportScanningTool {
     private static final long serialVersionUID = -8292426833255285102L;
     static final String ID = "dr-memory";
 
@@ -34,7 +34,7 @@ public class DrMemory extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("drMemory")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

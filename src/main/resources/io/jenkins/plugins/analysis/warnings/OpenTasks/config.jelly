@@ -1,0 +1,49 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
+
+  <f:entry title="${%Files to scan}" field="pattern"
+           description="${%description.files('http://ant.apache.org/manual/Types/fileset.html')}">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="${%Files to exclude}" field="excludePattern"
+           description="${%description.exclude.files('http://ant.apache.org/manual/Types/fileset.html')}">
+    <f:textbox/>
+  </f:entry>
+  <f:entry title="${%Tasks tags}" description="${%description.tags}">
+    <table>
+      <thead>
+        <tr>
+          <td width="33%">${%High priority}</td>
+          <td width="33%">${%Normal priority}</td>
+          <td width="33%">${%Low priority}</td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <f:textbox name="high" value="${instance.high}"/>
+          </td>
+          <td>
+            <f:textbox name="normal" value="${instance.normal}"/>
+          </td>
+          <td>
+            <f:textbox name="low" value="${instance.low}"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </f:entry>
+  <f:entry title="${%Ignore case}" field="ignoreCase" description="${%description.ignoreCase}">
+    <f:checkbox name="ignoreCase" checked="${instance.ignoreCase}"/>
+  </f:entry>
+  <f:entry title="${%Regular expression}" field="asRegexp" description="${%description.asRegexp}">
+    <f:checkbox name="asRegexp" checked="${instance.asRegexp}"/>
+  </f:entry>
+  <f:entry title="${%Example Text}" field="example" description="${%description.example}">
+    <f:textarea/>
+  </f:entry>
+  
+  <i:tool-defaults/>
+
+
+</j:jelly>

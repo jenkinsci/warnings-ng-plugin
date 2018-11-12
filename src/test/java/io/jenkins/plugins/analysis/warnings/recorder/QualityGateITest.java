@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -13,7 +12,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -233,7 +231,7 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     private IssuesRecorder enableAndConfigureCheckstyle(final AbstractProject<?, ?> job,
             final Consumer<IssuesRecorder> configuration) {
         IssuesRecorder item = new IssuesRecorder();
-        item.setTools(Collections.singletonList(new ToolConfiguration(new CheckStyle(), "**/*issues.txt")));
+        item.setTool(createTool(new CheckStyle(), "**/*issues.txt"));
         job.getPublishersList().add(item);
         configuration.accept(item);
         return item;

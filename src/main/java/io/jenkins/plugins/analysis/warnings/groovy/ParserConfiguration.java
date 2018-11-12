@@ -10,7 +10,8 @@ import org.kohsuke.stapler.DataBoundSetter;
 import edu.hm.hafner.util.NoSuchElementException;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.Tool;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
@@ -75,7 +76,7 @@ public class ParserConfiguration extends GlobalConfiguration {
     }
 
     /**
-     * Returns the parser (wrapped into a {@link StaticAnalysisTool} instance) with the specified ID.
+     * Returns the parser (wrapped into a {@link ReportScanningTool} instance) with the specified ID.
      *
      * @param id
      *         the ID of the parser
@@ -84,7 +85,7 @@ public class ParserConfiguration extends GlobalConfiguration {
      * @throws NoSuchElementException
      *         if there is no such parser with the given ID
      */
-    public StaticAnalysisTool getParser(final String id) {
+    public ReportScanningTool getParser(final String id) {
         for (GroovyParser parser : parsers) {
             if (parser.getId().equals(id)) {
                 return parser.toStaticAnalysisTool();
@@ -125,14 +126,14 @@ public class ParserConfiguration extends GlobalConfiguration {
     }
 
     /**
-     * Registers all Groovy parsers as static analysis tools in the {@link LabelProviderFactory} of the analysis-core
-     * plug-in so that these parsers can be referenced in steps and publishers.
+     * Registers all Groovy parsers as static analysis tools in the {@link LabelProviderFactory} 
+     * so that these parsers can be referenced in actions.
      */
     @Extension
     @SuppressWarnings("unused") // Picked up by Jenkins Extension Scanner
     public static class ParserFactory implements StaticAnalysisToolFactory {
         @Override
-        public List<StaticAnalysisTool> getTools() {
+        public List<Tool> getTools() {
             return getInstance().parsers.stream()
                     .map(GroovyParser::toStaticAnalysisTool)
                     .collect(Collectors.toList());

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.violations.KlocWorkAdapter;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class KlocWork extends StaticAnalysisTool {
+public class KlocWork extends ReportScanningTool {
     private static final long serialVersionUID = -4352260844574399784L;
     static final String ID = "klocwork";
 
@@ -34,7 +34,7 @@ public class KlocWork extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("klocWork")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

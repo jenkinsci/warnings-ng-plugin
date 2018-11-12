@@ -9,7 +9,7 @@ import org.jvnet.hudson.test.TestExtension;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
-import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProviderAssert.*;
+import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProviderAssert.assertThat;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import static org.mockito.Mockito.*;
 
@@ -68,7 +68,7 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
      * Static analysis tool that that implements the extension point.
      */
     @SuppressWarnings("unused")
-    public static class TestTool extends StaticAnalysisTool {
+    public static class TestTool extends ReportScanningTool {
         @Override
         public String getId() {
             return ANNOTATED_ID;
@@ -83,7 +83,7 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
          * Required descriptor for the tool.
          */
         @TestExtension
-        public static final class TestToolDescriptor extends StaticAnalysisToolDescriptor {
+        public static final class TestToolDescriptor extends ReportingToolDescriptor {
             /**
              * Creates a new descriptor.
              */
@@ -106,13 +106,13 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
     @SuppressWarnings("unused")
     public static class TestFactory implements StaticAnalysisToolFactory {
         @Override
-        public List<StaticAnalysisTool> getTools() {
+        public List<Tool> getTools() {
             return Collections.singletonList(createTool(PROVIDER_ID));
         }
 
-        private StaticAnalysisTool createTool(final String id) {
-            StaticAnalysisTool tool = mock(StaticAnalysisTool.class);
-            when(tool.getId()).thenReturn(id);
+        private Tool createTool(final String id) {
+            Tool tool = mock(ReportScanningTool.class);
+            when(tool.getActualId()).thenReturn(id);
             when(tool.getName()).thenReturn(id);
             when(tool.getLabelProvider()).thenReturn(new StaticAnalysisLabelProvider(id, id));
             return tool;

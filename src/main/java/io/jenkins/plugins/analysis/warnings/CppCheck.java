@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.violations.CppCheckAdapter;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class CppCheck extends StaticAnalysisTool {
+public class CppCheck extends ReportScanningTool {
     private static final long serialVersionUID = -5646367160520640291L;
     static final String ID = "cppcheck";
 
@@ -34,7 +34,7 @@ public class CppCheck extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("cppCheck")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

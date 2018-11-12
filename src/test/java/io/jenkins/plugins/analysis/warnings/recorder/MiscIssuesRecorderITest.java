@@ -13,9 +13,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -77,18 +77,18 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldCreateResultWithDifferentNameAndId() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        ToolConfiguration configuration = new ToolConfiguration(new Eclipse(), "**/*issues.txt");
+        ReportScanningTool configuration = createGenericToolConfiguration(new Eclipse());
         String id = "new-id";
         configuration.setId(id);
         String name = "new-name";
         configuration.setName(name);
-        enableWarnings(project, configuration);
+        enableGenericWarnings(project, configuration);
 
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
 
         ResultAction action = getResultAction(build);
         assertThat(action.getId()).isEqualTo(id);
-        assertThat(action.getDisplayName()).startsWith(name) ;
+        assertThat(action.getDisplayName()).startsWith(name);
     }
 
     /**
@@ -116,7 +116,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     public void shouldUseDefaultFileNamePattern() {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, "checkstyle.xml", "checkstyle-result.xml");
-        enableWarnings(project, new ToolConfiguration(new CheckStyle(), StringUtils.EMPTY));
+        enableWarnings(project, createTool(new CheckStyle(), StringUtils.EMPTY));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -165,8 +165,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     private List<AnalysisResult> runJobWithAggregation(final boolean isAggregationEnabled) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "pmd-warnings.xml");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
-                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
-                new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
+                createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
+                createTool(new Pmd(), "**/pmd-warnings-issues.txt"));
 
         return getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
     }
@@ -184,8 +184,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                     recorder.setAggregatingResults(true);
                     recorder.setFilters(Collections.singletonList(new ExcludeFile(".*")));
                 },
-                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
-                new ToolConfiguration(new Pmd(), "**/pmd-warnings-issues.txt"));
+                createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
+                createTool(new Pmd(), "**/pmd-warnings-issues.txt"));
 
         AnalysisResult result = getAnalysisResult(buildWithStatus(project, Result.SUCCESS));
         assertThat(result).hasTotalSize(0);
@@ -215,8 +215,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldUseSameToolTwice() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "checkstyle-twice.xml");
-        ToolConfiguration first = new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt");
-        ToolConfiguration second = new ToolConfiguration(new CheckStyle(), "**/checkstyle-twice-issues.txt");
+        ReportScanningTool first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
+        ReportScanningTool second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
         second.setId("second");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(false), first, second);
 
@@ -247,8 +247,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     private Run<?, ?> runJobWithCheckStyleTwice(final boolean isAggregationEnabled, final Result result) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "checkstyle-twice.xml");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(isAggregationEnabled),
-                new ToolConfiguration(new CheckStyle(), "**/checkstyle-issues.txt"),
-                new ToolConfiguration(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
+                createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
+                createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
 
         return buildWithStatus(project, result);
     }
@@ -262,7 +262,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     public void shouldCreateFixedWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_8_Warnings.txt",
                 "eclipse_5_Warnings.txt");
-        IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
+        IssuesRecorder recorder = enableGenericWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
 
         // First build: baseline
         AnalysisResult baselineResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -323,13 +323,14 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldCreateNoFixedWarningsOrNewWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_8_Warnings.txt");
-        IssuesRecorder recorder = enableWarnings(project, createEclipse("eclipse_8_Warnings-issues.txt"));
+        ReportScanningTool eclipse = createEclipse("eclipse_8_Warnings-issues.txt");
+        IssuesRecorder recorder = enableWarnings(project, eclipse);
 
         // First build: baseline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Second build: actual result
-        recorder.setTool(createEclipse("eclipse_8_Warnings-issues.txt"));
+        recorder.setTool(eclipse);
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(0);
@@ -365,8 +366,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
-    private ToolConfiguration createEclipse(final String pattern) {
-        return new ToolConfiguration(new Eclipse(), pattern);
+    private ReportScanningTool createEclipse(final String pattern) {
+        return createTool(new Eclipse(), pattern);
     }
 
     /**
@@ -381,7 +382,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         buildWithStatus(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
 
-        IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "**/checkstyle1*"));
+        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "**/checkstyle1*"));
 
         AnalysisResult baseline = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(baseline).hasTotalSize(3);
@@ -390,7 +391,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         verifyBaselineDetails(baseline);
 
-        recorder.setTool(new ToolConfiguration(new CheckStyle(), "**/checkstyle2*"));
+        recorder.setTool(createTool(new CheckStyle(), "**/checkstyle2*"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(3);
@@ -524,7 +525,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldShowBaseNamesInFilesTab() {
         FreeStyleProject job = createFreeStyleProjectWithWorkspaceFiles("pmd-absolute-path.xml");
-        enableWarnings(job, new Pmd());
+        enableGenericWarnings(job, new Pmd());
         
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 

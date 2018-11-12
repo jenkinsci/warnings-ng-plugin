@@ -6,8 +6,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
 
 import org.jenkinsci.Symbol;
@@ -18,7 +18,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class CheckStyle extends StaticAnalysisTool {
+public class CheckStyle extends ReportScanningTool {
     private static final long serialVersionUID = -7944828406964963020L;
     static final String ID = "checkstyle";
 
@@ -58,7 +58,7 @@ public class CheckStyle extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("checkStyle")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         private final CheckStyleRules rules;
 
         /** Creates the descriptor instance. */

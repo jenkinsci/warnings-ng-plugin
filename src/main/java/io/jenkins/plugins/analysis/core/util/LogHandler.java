@@ -1,11 +1,10 @@
-package io.jenkins.plugins.analysis.core.steps;
+package io.jenkins.plugins.analysis.core.util;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.util.ToolLogger;
 
 import hudson.model.TaskListener;
 
@@ -15,7 +14,7 @@ import hudson.model.TaskListener;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
-class LogHandler {
+public class LogHandler {
     private final ToolLogger errorLogger;
     private final ToolLogger logger;
     private int infoPosition = 0;
@@ -29,7 +28,7 @@ class LogHandler {
      * @param name
      *         the name of the logger
      */
-    LogHandler(final TaskListener listener, final String name) {
+    public LogHandler(final TaskListener listener, final String name) {
         this(listener, name, 0, 0);
     }
 
@@ -41,7 +40,7 @@ class LogHandler {
      * @param name
      *         the name of the logger
      */
-    LogHandler(final TaskListener listener, final String name, final Report report) {
+    public LogHandler(final TaskListener listener, final String name, final Report report) {
         this(listener, name, report.getInfoMessages().size(), report.getErrorMessages().size());
     }
 

@@ -44,7 +44,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldHaveDuplicateCodeWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
-        enableWarnings(project, new Cpd());
+        enableGenericWarnings(project, new Cpd());
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -61,7 +61,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
-        enableWarnings(project, cpd);
+        enableGenericWarnings(project, cpd);
 
         setHighThresholdAndCheckPriority(2, "High", cpd, project);
         setHighThresholdAndCheckPriority(5, "Normal", cpd, project);
@@ -78,7 +78,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(SIMIAN_REPORT);
         Simian simian = new Simian();
         simian.setNormalThreshold(1);
-        enableWarnings(project, simian);
+        enableGenericWarnings(project, simian);
 
         setHighThresholdAndCheckPriority(2, "High", simian, project);
         setHighThresholdAndCheckPriority(6, "Normal", simian, project);
@@ -94,7 +94,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
-        enableWarnings(project, cpd);
+        enableGenericWarnings(project, cpd);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage details = getWebPage(result);
@@ -126,7 +126,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
-        enableWarnings(project, cpd);
+        enableGenericWarnings(project, cpd);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage details = getWebPage(result);
@@ -148,7 +148,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldShowDuplicationColumnContent() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
-        enableWarnings(project, cpd);
+        enableGenericWarnings(project, cpd);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage details = getWebPage(result);
@@ -177,7 +177,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
-        enableWarnings(project, cpd);
+        enableGenericWarnings(project, cpd);
 
         List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
 
@@ -220,7 +220,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
-        enableWarnings(project, cpd);
+        enableGenericWarnings(project, cpd);
 
         List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
         //only 10 are displayed because of the paging
@@ -242,7 +242,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldDifferInAmountOfDuplicateWarningForPriorities() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
-        enableWarnings(project, cpd);
+        enableGenericWarnings(project, cpd);
 
         assertThatThresholdsAreEvaluated(25, 50, 20, 0, 0, cpd, project);
         assertThatThresholdsAreEvaluated(2, 4, 6, 9, 5, cpd, project);

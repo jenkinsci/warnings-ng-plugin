@@ -28,14 +28,20 @@ public class AnnotatedReport implements Serializable {
 
     /**
      * Creates a new instance of {@link AnnotatedReport}. Blames and report will be initialized empty.
+     *
+     * @param id
+     *         the ID of the report
      */
     public AnnotatedReport(@CheckForNull final String id) {
+        // FIXME Pull ID out
         this.id = StringUtils.defaultIfEmpty(id, "analysis");
     }
 
     /**
      * Creates a new instance of {@link AnnotatedReport}. The blames will be initialized empty.
      *
+     * @param id
+     *         the ID of the report
      * @param report
      *         report with issues
      */
@@ -55,16 +61,21 @@ public class AnnotatedReport implements Serializable {
      */
     public AnnotatedReport(@CheckForNull final String id, final Report report, final Blames blames) {
         this(id);
-        
+
         addReport(id, report, blames);
     }
 
     /**
-     * Creates a new instance of {@link AnnotatedReport} as an aggregation of the specified reports. 
+     * Creates a new instance of {@link AnnotatedReport} as an aggregation of the specified reports.
+     *
+     * @param id
+     *         the ID of the report
+     * @param reports
+     *         the reports to aggregate
      */
     public AnnotatedReport(@CheckForNull final String id, final List<AnnotatedReport> reports) {
         this(id);
-        
+
         for (AnnotatedReport report : reports) {
             add(report, report.getId());
         }
@@ -100,7 +111,7 @@ public class AnnotatedReport implements Serializable {
             add(report, report.getId());
         }
     }
-    
+
     public void add(final AnnotatedReport other, final String id) {
         addReport(id, other.getReport(), other.getBlames());
     }

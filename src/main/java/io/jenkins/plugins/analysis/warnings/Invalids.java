@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.InvalidsParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Invalids extends StaticAnalysisTool {
+public class Invalids extends ReportScanningTool {
     private static final long serialVersionUID = 8400984149210830144L;
     static final String ID = "invalids";
 
@@ -34,7 +34,7 @@ public class Invalids extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("invalids")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

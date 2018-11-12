@@ -105,14 +105,14 @@ public class JenkinsFacade implements Serializable {
      *         type of the describable
      * @param <D>
      *         type of the descriptor
-     * @param descriptorType
+     * @param describableType
      *         the base type that represents the descriptor of the describable
      *
      * @return the discovered instances, might be an empty list
      */
     public <T extends Describable<T>, D extends Descriptor<T>> DescriptorExtensionList<T, D> getDescriptorsFor(
-            final Class<T> descriptorType) {
-        return getJenkins().getDescriptorList(descriptorType);
+            final Class<T> describableType) {
+        return getJenkins().getDescriptorList(describableType);
     }
 
     /**
@@ -210,7 +210,7 @@ public class JenkinsFacade implements Serializable {
      */
     public Set<String> getAllJobs() {
         return getJenkins().getAllItems(Job.class).stream()
-                .map(this::getFullNameOf).distinct().collect(Collectors.toSet());
+                .map(this::getFullNameOf).collect(Collectors.toSet());
     }
 
     /**

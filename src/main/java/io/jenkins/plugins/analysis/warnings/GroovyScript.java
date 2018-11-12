@@ -2,14 +2,14 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.util.Ensure;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 
@@ -21,38 +21,29 @@ import hudson.util.ListBoxModel;
  *
  * @author Ullrich Hafner
  */
-public class GroovyScript extends StaticAnalysisTool {
+public class GroovyScript extends ReportScanningTool {
     private static final long serialVersionUID = 8580859196688994603L;
     static final String ID = "groovy";
 
-    private String id;
+    private String parserId;
 
     /**
      * Creates a new instance of {@link GroovyScript}.
-     */
-    @DataBoundConstructor
-    public GroovyScript() {
-        super();
-        // empty constructor required for stapler
-    }
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Sets the ID of the Groovy parser that should be used.
      *
-     * @param id
+     * @param parserId
      *         ID of the Groovy parser
      */
-    @DataBoundSetter
-    public void setId(final String id) {
-        Ensure.that(ParserConfiguration.getInstance().contains(id)).isTrue(
-                "There is no such parser with ID '%s'", id);
+    @DataBoundConstructor
+    public GroovyScript(final String parserId) {
+        super();
 
-        this.id = id;
+        Ensure.that(ParserConfiguration.getInstance().contains(parserId)).isTrue(
+                "There is no Groovy parser defined in the system configuration with ID '%s'", parserId);
+        this.parserId = parserId;
+    }
+
+    public String getParserId() {
+        return parserId;
     }
 
     @Override
@@ -67,17 +58,27 @@ public class GroovyScript extends StaticAnalysisTool {
 
     @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
-        return new StaticAnalysisLabelProvider(id, getTool().getName());
+        return new StaticAnalysisLabelProvider(parserId, getTool().getName());
     }
 
-    private StaticAnalysisTool getTool() {
-        return ParserConfiguration.getInstance().getParser(id);
+    private ReportScanningTool getTool() {
+        return ParserConfiguration.getInstance().getParser(parserId);
+    }
+
+    @Override
+    public String getActualId() {
+        return StringUtils.defaultIfBlank(getId(), parserId);
+    }
+
+    @Override
+    public String getActualName() {
+        return StringUtils.defaultIfBlank(getName(), getTool().getActualName());
     }
 
     /** Descriptor for this static analysis tool. */
     @Symbol("groovyScript")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

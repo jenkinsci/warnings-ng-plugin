@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.pmd.PmdParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Infer extends StaticAnalysisTool {
+public class Infer extends ReportScanningTool {
     private static final long serialVersionUID = 1536446255698173148L;
     static final String ID = "infer";
 
@@ -39,7 +39,7 @@ public class Infer extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("infer")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

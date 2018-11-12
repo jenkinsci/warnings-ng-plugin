@@ -5,8 +5,8 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -16,7 +16,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class EsLint extends StaticAnalysisTool {
+public class EsLint extends ReportScanningTool {
     private static final long serialVersionUID = -3634797822059504099L;
     
     static final String ID = "eslint";
@@ -41,7 +41,7 @@ public class EsLint extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("esLint")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -11,7 +11,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.FindBugsParser;
 import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;
 
@@ -20,7 +20,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class FindBugs extends StaticAnalysisTool {
+public class FindBugs extends ReportScanningTool {
     private static final long serialVersionUID = 4692318309214830824L;
     static final String ID = "findbugs";
 
@@ -88,7 +88,7 @@ public class FindBugs extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("findBugs")
     @Extension
-    public static class FindBugsDescriptor extends StaticAnalysisToolDescriptor {
+    public static class FindBugsDescriptor extends ReportingToolDescriptor {
         private final FindBugsMessages messages = new FindBugsMessages();
 
         /** Creates the descriptor instance. */

@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.AnsibleLintParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class AnsibleLint extends StaticAnalysisTool {
+public class AnsibleLint extends ReportScanningTool {
     private static final long serialVersionUID = -838846658095256811L;
     static final String ID = "ansiblelint";
 
@@ -34,7 +34,7 @@ public class AnsibleLint extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("ansibleLint")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

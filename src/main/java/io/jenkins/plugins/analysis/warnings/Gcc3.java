@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.GccParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Raphael Furch
  */
-public class Gcc3 extends StaticAnalysisTool {
+public class Gcc3 extends ReportScanningTool {
     private static final long serialVersionUID = -8985462824184450486L;
     static final String ID = "gcc3";
 
@@ -34,7 +34,7 @@ public class Gcc3 extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("gcc3")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

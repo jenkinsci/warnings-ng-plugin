@@ -3,28 +3,25 @@ package io.jenkins.plugins.analysis.warnings;
 import javax.annotation.Nonnull;
 
 import org.jenkinsci.Symbol;
-import org.jvnet.localizer.LocaleProvider;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.parser.FindBugsParser;
-import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import edu.hm.hafner.analysis.Report;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool.ReportingToolDescriptor;
+import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.util.LogHandler;
 
 import hudson.Extension;
+import hudson.FilePath;
+import hudson.model.Run;
 
 /**
  * Provides a files scanner that detects open tasks in source code files.
  *
  * @author Ullrich Hafner
  */
-public class OpenTasks extends StaticAnalysisTool {
+public class OpenTasks extends Tool {
     private static final long serialVersionUID = 4692318309214830824L;
-    static final String ID = "findbugs";
-
-    private boolean useRankAsPriority;
+    static final String ID = "open-tasks";
 
     /** Tag identifiers indicating high priority. */
     private String high;
@@ -41,6 +38,11 @@ public class OpenTasks extends StaticAnalysisTool {
     /** Ant file-set pattern of files to exclude from work. */
     private String excludePattern;
 
+    @Override
+    public Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
+        return new Report();
+    }
+
     /** Creates a new instance of {@link OpenTasks}. */
     @DataBoundConstructor
     public OpenTasks() {
@@ -48,99 +50,19 @@ public class OpenTasks extends StaticAnalysisTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    public boolean getUseRankAsPriority() {
-        return useRankAsPriority;
-    }
-
-    /**
-     * If useRankAsPriority is {@code true}, then the FindBugs parser will use the rank when evaluation the priority.
-     * Otherwise the priority of the FindBugs warning will be mapped.
-     *
-     * @param useRankAsPriority
-     *         {@code true} to use the rank, {@code false} to use the
-     */
-    @DataBoundSetter
-    public void setUseRankAsPriority(final boolean useRankAsPriority) {
-        this.useRankAsPriority = useRankAsPriority;
-    }
-
-    @Override
-    public FindBugsParser createParser() {
-        return new FindBugsParser(RANK);
-    }
-
-    /** Provides the labels for the static analysis tool. */
-    static class FindBugsLabelProvider extends IconLabelProvider {
-        private final FindBugsMessages messages;
-
-        /**
-         * Creates a new {@link FindBugsLabelProvider} with the specified ID.
-         *
-         * @param messages
-         *         the details messages
-         * @param id
-         *         the ID
-         * @param name
-         *         the name of the static analysis tool
-         */
-        FindBugsLabelProvider(final FindBugsMessages messages, final String id, final String name) {
-            super(id, name, id);
-
-            this.messages = messages;
-        }
-
-        @Override
-        public String getDescription(final Issue issue) {
-            return messages.getMessage(issue.getType(), LocaleProvider.getLocale());
-        }
-    }
-
     /** Descriptor for this static analysis tool. */
-    @Symbol("findBugs")
+    @Symbol("openTasks")
     @Extension
-    public static class FindBugsDescriptor extends StaticAnalysisToolDescriptor {
-        private final FindBugsMessages messages = new FindBugsMessages();
-
+    public static class Descriptor extends ReportingToolDescriptor {
         /** Creates the descriptor instance. */
-        public FindBugsDescriptor() {
-            this(ID);
-        }
-
-        /**
-         * Creates the descriptor instance.
-         *
-         * @param id
-         *         ID of the tool
-         */
-        public FindBugsDescriptor(final String id) {
-            super(id);
-
-            messages.initialize();
-        }
-
-        protected FindBugsMessages getMessages() {
-            return messages;
+        public Descriptor() {
+            super(ID);
         }
 
         @Nonnull
         @Override
         public String getDisplayName() {
-            return Messages.Warnings_FindBugs_ParserName();
-        }
-
-        @Override
-        public StaticAnalysisLabelProvider getLabelProvider() {
-            return new FindBugsLabelProvider(messages, getId(), getDisplayName());
-        }
-
-        @Override
-        public String getPattern() {
-            return "**/findbugsXml.xml";
+            return "Open Tasks";
         }
     }
 }

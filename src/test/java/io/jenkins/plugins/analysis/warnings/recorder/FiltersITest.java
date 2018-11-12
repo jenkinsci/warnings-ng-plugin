@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.filter.ExcludeCategory;
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.filter.ExcludeModule;
@@ -22,7 +21,7 @@ import io.jenkins.plugins.analysis.core.filter.IncludeModule;
 import io.jenkins.plugins.analysis.core.filter.IncludePackage;
 import io.jenkins.plugins.analysis.core.filter.IncludeType;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
@@ -51,7 +50,7 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
             FreeStyleProject project = createFreeStyleProject();
             copyDirectoryToWorkspace(project, MODULE_FILTER);
             enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)),
-                    new ToolConfiguration(new Pmd(), "**/pmd.xml"));
+                    createTool(new Pmd(), "**/pmd.xml"));
 
             buildAndVerifyResults(project, entry.getValue());
         }
@@ -81,7 +80,7 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
 
         for (Entry<RegexpFilter, Integer[]> entry : expectedLinesByFilter.entrySet()) {
             FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml");
-            enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new CheckStyle());
+            enableGenericWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new CheckStyle());
 
             buildAndVerifyResults(project, entry.getValue());
         }
@@ -121,7 +120,7 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
 
         for (Entry<RegexpFilter, Integer[]> entry : typeFiltersWithResult.entrySet()) {
             FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("pmd-warnings.xml");
-            enableWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new Pmd());
+            enableGenericWarnings(project, recorder -> recorder.setFilters(toFilter(entry)), new Pmd());
 
             buildAndVerifyResults(project, entry.getValue());
         }
