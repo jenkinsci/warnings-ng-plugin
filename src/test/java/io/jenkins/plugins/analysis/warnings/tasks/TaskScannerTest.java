@@ -34,11 +34,12 @@ class TaskScannerTest extends ResourceTest {
 
         assertThat(report).hasSize(0);
         String errorMessage = "Specified pattern is an invalid regular expression: '\\': "
-                + "'Unexpected internal error near index 1\n\\'";
-        assertThat(report.getErrorMessages()).containsExactly(errorMessage);
+                + "'Unexpected internal error near index 1";
+        assertThat(report.getErrorMessages()).hasSize(1);
+        assertThat(report.getErrorMessages().get(0)).startsWith(errorMessage);
         
         assertThat(scanner.isInvalidPattern()).isTrue();
-        assertThat(scanner.getErrors()).isEqualTo(errorMessage);
+        assertThat(scanner.getErrors()).startsWith(errorMessage);
     }
 
     /**
