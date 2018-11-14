@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings.tasks;
+package io.jenkins.plugins.analysis.warnings.opentasks;
 
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -7,12 +7,13 @@ import java.nio.charset.Charset;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import edu.hm.hafner.util.ResourceTest;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
+import io.jenkins.plugins.analysis.warnings.opentasks.TaskScanner.CaseMode;
+import io.jenkins.plugins.analysis.warnings.opentasks.TaskScanner.MatcherMode;
 
 /**
  * Tests the class {@link TaskScanner}.
@@ -25,12 +26,13 @@ class TaskScannerTest extends ResourceTest {
     private static final String PRIORITY_HIGH_MESSAGE = "here another task with priority HIGH";
     private static final String PRIORITY_NORMAL_MESSAGE = "here we have a task with priority NORMAL";
     private static final String FILE_WITH_TASKS = "file-with-tasks.txt";
+    private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
 
     @Test
     void shouldReportErrorIfPatternIsInvalid() {
         TaskScanner scanner = new TaskScannerBuilder().setHigh("\\").setMatcherMode(MatcherMode.REGEXP_MATCH).build();
 
-        Report report = scanner.scan(read(FILE_WITH_TASKS));
+        Report report = scanner.scan(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
         assertThat(report).hasSize(0);
         String errorMessage = "Specified pattern is an invalid regular expression: '\\': "
@@ -54,7 +56,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.REGEXP_MATCH)
                 .build()
-                .scan(read("regexp.txt"));
+                .scan(read("regexp.txt"), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(5);
         assertThat(tasks.get(0)).hasSeverity(Severity.WARNING_HIGH)
@@ -93,7 +95,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read("issue22744.java", "windows-1251"));
+                .scan(read("issue22744.java", "windows-1251"), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(2);
         assertThat(tasks.get(0)).hasSeverity(Severity.WARNING_HIGH)
@@ -120,7 +122,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read("issue12782.txt"));
+                .scan(read("issue12782.txt"), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(3);
     }
@@ -137,7 +139,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read("tasks-words-test.txt"));
+                .scan(read("tasks-words-test.txt"), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(12)
                 .hasSeverities(0, 0, 7, 5);
@@ -158,7 +160,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read(CASE_TEST_FILE));
+                .scan(read(CASE_TEST_FILE), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(1);
         assertThat(tasks.get(0))
@@ -175,7 +177,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.IGNORE_CASE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read(CASE_TEST_FILE));
+                .scan(read(CASE_TEST_FILE), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(9);
         for (Issue task : tasks) {
@@ -190,7 +192,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.IGNORE_CASE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read(CASE_TEST_FILE));
+                .scan(read(CASE_TEST_FILE), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(12);
         for (Issue task : tasks) {
@@ -209,7 +211,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read(FILE_WITH_TASKS));
+                .scan(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(2)
                 .hasSeverities(0, 1, 1, 0);
@@ -226,7 +228,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read(FILE_WITH_TASKS));
+                .scan(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(1)
                 .hasSeverities(0, 1, 0, 0);
@@ -241,7 +243,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read(FILE_WITH_TASKS));
+                .scan(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(2)
                 .hasSeverities(0, 2, 0, 0);
@@ -256,7 +258,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read(FILE_WITH_TASKS));
+                .scan(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(2)
                 .hasSeverities(0, 2, 0, 0);
@@ -273,7 +275,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(new StringReader(text));
+                .scan(new StringReader(text), ISSUE_BUILDER);
 
         assertThat(high).hasSize(1);
         assertThat(high.get(0)).hasType(FIXME);
@@ -283,7 +285,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(new StringReader(text));
+                .scan(new StringReader(text), ISSUE_BUILDER);
 
         assertThat(normal).hasSize(1);
         assertThat(normal.get(0)).hasType(FIXME);
@@ -300,7 +302,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(read(FILE_WITH_TASKS));
+                .scan(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(4)
                 .hasSeverities(0, 1, 2, 1);
@@ -319,7 +321,7 @@ class TaskScannerTest extends ResourceTest {
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
-                .scan(reader);
+                .scan(reader, ISSUE_BUILDER);
 
         assertThat(tasks).hasSize(0);
     }

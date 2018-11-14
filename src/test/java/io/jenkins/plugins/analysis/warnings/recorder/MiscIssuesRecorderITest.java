@@ -10,6 +10,9 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -20,6 +23,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
+import io.jenkins.plugins.analysis.warnings.OpenTasks;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
@@ -69,6 +73,30 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasInfoMessages(
                 "-> resolved module names for 8 issues",
                 "-> resolved package names of 4 affected files");
+    }
+
+    /**
+     * Runs the open tasks scanner on the Eclipse console log (WARNING is used as tag): the build should report 8 issues.
+     */
+    @Test
+    public void shouldScanForOpenTasks() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
+        OpenTasks tasks = new OpenTasks();
+        tasks.setIncludePattern("**/*.txt");
+        String tag = "WARNING";
+        tasks.setHigh(tag);
+        enableWarnings(project, tasks);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(8);
+        
+        Report report = result.getIssues();
+        for (Issue openTask : report) {
+            assertThat(openTask).hasType(tag).hasSeverity(Severity.WARNING_HIGH);
+            assertThat(openTask.getMessage()).startsWith("in C:\\Desenvolvimento\\Java");
+            assertThat(openTask.getFileName()).endsWith("eclipse-issues.txt");
+        }
     }
 
     /**

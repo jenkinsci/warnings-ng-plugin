@@ -10,6 +10,7 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import jenkins.security.MasterToSlaveCallable;
 
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
@@ -113,7 +114,8 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
     }
 
     /**
-     * Scans the results of a build for issues. 
+     * Scans the results of a build for issues. This method is invoked on Jenkins master. I.e., if a tool
+     * wants to process some build results it is required to run a {@link MasterToSlaveCallable}.
      *
      * @param run
      *         the build 

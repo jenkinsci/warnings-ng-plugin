@@ -18,7 +18,6 @@ import org.kohsuke.stapler.QueryParameter;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool.ReportingToolDescriptor;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
@@ -57,11 +56,6 @@ public class ScanForIssuesStep extends Step {
 
         // empty constructor required for Stapler
     }
-
-    public DescriptorExtensionList<Tool, ReportingToolDescriptor> getToolDescriptors() {
-        return Jenkins.getInstance().<Tool, ReportingToolDescriptor>getDescriptorList(Tool.class);
-    }
-
 
     @CheckForNull
     public Tool getTool() {

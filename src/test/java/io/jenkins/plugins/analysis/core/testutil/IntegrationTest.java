@@ -36,6 +36,7 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import edu.hm.hafner.util.ResourceTest;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -747,7 +748,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
-            final ReportScanningTool tool, final ReportScanningTool... additionalTools) {
+            final Tool tool, final Tool... additionalTools) {
         IssuesRecorder publisher = new IssuesRecorder();
         publisher.addTools(tool, additionalTools);
         job.getPublishersList().add(publisher);

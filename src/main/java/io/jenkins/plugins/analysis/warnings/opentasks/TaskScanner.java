@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings.tasks;
+package io.jenkins.plugins.analysis.warnings.opentasks;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -36,14 +36,18 @@ public class TaskScanner {
     private final StringBuilder errors = new StringBuilder();
 
     /** Determines whether the tags are case sensitive or not. */
-    enum CaseMode {
+    public enum CaseMode {
+        /** Tags are not case sensitive. */
         IGNORE_CASE,
+        /** Tags are case sensitive. */
         CASE_SENSITIVE
     }
 
     /** Determines whether tags are plain strings or regular expressions. */
-    enum MatcherMode {
+    public enum MatcherMode {
+        /** Tags are interpreted as plain string. */
         STRING_MATCH,
+        /** Tags are interpreted as regular expression. */
         REGEXP_MATCH
     }
 
@@ -159,10 +163,12 @@ public class TaskScanner {
      *
      * @param reader
      *         the file to scan
+     * @param builder
+     *         issue builder
      *
      * @return the result stored as java project
      */
-    public Report scan(final Reader reader) {
+    public Report scan(final Reader reader, final IssueBuilder builder) {
         Report report = new Report();
 
         if (isInvalidPattern) {
@@ -173,7 +179,6 @@ public class TaskScanner {
         try {
             LineIterator lineIterator = IOUtils.lineIterator(reader);
 
-            IssueBuilder builder = new IssueBuilder();
             for (int lineNumber = 1; lineIterator.hasNext(); lineNumber++) {
                 String line = lineIterator.next();
 
@@ -182,7 +187,7 @@ public class TaskScanner {
                         Matcher matcher = patterns.get(severity).matcher(line);
                         if (matcher.matches() && matcher.groupCount() == 2) {
                             String message = matcher.group(2).trim();
-                            builder.setMessage(StringUtils.remove(message, ":").trim());
+                            builder.setMessage(StringUtils.removeStart(message, ":").trim());
 
                             String tag = matcher.group(1);
                             if (isUppercase) {

@@ -170,6 +170,7 @@ public abstract class ReportScanningTool extends Tool {
      *
      * @return the parser to use
      */
+    // FIXME: move to descriptor
     public boolean canScanConsoleLog() {
         return true;
     }

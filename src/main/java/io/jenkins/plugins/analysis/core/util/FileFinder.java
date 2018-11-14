@@ -3,9 +3,12 @@ package io.jenkins.plugins.analysis.core.util;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.selectors.TypeSelector;
+import org.apache.tools.ant.types.selectors.TypeSelector.FileType;
 
 import jenkins.MasterToSlaveFileCallable;
 
@@ -19,30 +22,43 @@ import hudson.remoting.VirtualChannel;
 public class FileFinder extends MasterToSlaveFileCallable<String[]> {
     private static final long serialVersionUID = 2970029366847565970L;
 
-    private final String pattern;
+    private final String includesPattern;
+    private final String excludesPattern;
 
     /**
      * Creates a new instance of {@link FileFinder}.
      *
-     * @param pattern the ant file pattern to scan for
+     * @param includesPattern
+     *         the ant file includes pattern to scan for
      */
-    public FileFinder(final String pattern) {
-        super();
-
-        this.pattern = pattern;
+    public FileFinder(final String includesPattern) {
+        this(includesPattern, StringUtils.EMPTY);
     }
 
     /**
-     * Returns an array with the file names of the specified file pattern that
-     * have been found in the workspace.
+     * Creates a new instance of {@link FileFinder}.
+     *
+     * @param includesPattern
+     *         the ant file includes pattern to scan for
+     * @param excludesPattern
+     *         the ant file excludes pattern to scan for
+     */
+    public FileFinder(final String includesPattern, final String excludesPattern) {
+        this.includesPattern = includesPattern;
+        this.excludesPattern = excludesPattern;
+    }
+
+    /**
+     * Returns an array with the file names of the specified file pattern that have been found in the workspace.
      *
      * @param workspace
-     *            root directory of the workspace
+     *         root directory of the workspace
      * @param channel
-     *            not used
+     *         not used
+     *
      * @return the file names of all found files
      * @throws IOException
-     *             if the workspace could not be read
+     *         if the workspace could not be read
      */
     @Override
     public String[] invoke(final File workspace, final VirtualChannel channel) throws IOException {
@@ -50,25 +66,33 @@ public class FileFinder extends MasterToSlaveFileCallable<String[]> {
     }
 
     /**
-     * Returns an array with the file names of the specified file pattern that have been
-     * found in the workspace.
+     * Returns an array with the file names of the specified file pattern that have been found in the workspace.
      *
      * @param workspace
-     *            root directory of the workspace
+     *         root directory of the workspace
+     *
      * @return the file names of all found files
      */
-    public String[] find(final File workspace)  {
+    public String[] find(final File workspace) {
         try {
             FileSet fileSet = new FileSet();
             Project antProject = new Project();
             fileSet.setProject(antProject);
             fileSet.setDir(workspace);
-            fileSet.setIncludes(pattern);
+            fileSet.setIncludes(includesPattern);
+            TypeSelector selector = new TypeSelector();
+            FileType fileType = new FileType();
+            fileType.setValue(FileType.FILE);
+            selector.setType(fileType);
+            fileSet.addType(selector);
+            if (StringUtils.isNotBlank(excludesPattern)) {
+                fileSet.setExcludes(excludesPattern);
+            }
 
             return fileSet.getDirectoryScanner(antProject).getIncludedFiles();
         }
-        catch (BuildException exception) {
-            return new String[0];
+        catch (BuildException ignored) {
+            return new String[0]; // as fallback do not return any file
         }
     }
 }

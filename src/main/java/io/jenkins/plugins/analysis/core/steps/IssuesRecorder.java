@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +20,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
@@ -70,7 +72,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @VisibleForTesting
     static final String NO_REFERENCE_JOB = "-";
 
-    private List<Tool> tools;
+    private transient List<ToolConfiguration> tools;
+    private List<Tool> analysisTools;
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
 
@@ -101,6 +104,25 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         super();
 
         // empty constructor required for Stapler
+    }
+
+    /**
+     * Called after de-serialization to retain backward compatibility.
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        if (tools != null) {
+            analysisTools = new ArrayList<>();
+            for (ToolConfiguration tool : tools) {
+                ReportScanningTool analysisTool = tool.getTool();
+                analysisTool.setId(tool.getId());
+                analysisTool.setName(tool.getName());
+                analysisTool.setPattern(tool.getPattern());
+                analysisTools.add(analysisTool);
+            }
+        }
+        return this;
     }
 
     /**
@@ -144,9 +166,9 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     @CheckForNull
-    public List<ToolConfiguration> getTools() {
-        if (tools != null) {
-            return tools.stream().map(ToolConfiguration::new).collect(Collectors.toList());
+    public List<ToolProxy> getTools() {
+        if (analysisTools != null) {
+            return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
         }
         return new ArrayList<>(); // FIXME: remove
     }
@@ -155,14 +177,25 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * Sets the static analysis tools that will scan files and create issues.
      *
      * @param tools
-     *         the static analysis tools (wrapped as {@link ToolConfiguration})
+     *         the static analysis tools (wrapped as {@link ToolProxy})
      * @deprecated this method is only intended to be called by the UI
      * @see #setTool(Tool) 
      */
     // FIXME: provide other setter
     @DataBoundSetter @Deprecated
-    public void setTools(final List<ToolConfiguration> tools) {
-        this.tools = tools.stream().map(ToolConfiguration::getTool).collect(Collectors.toList());
+    public void setTools(final List<ToolProxy> tools) {
+        this.analysisTools = tools.stream().map(ToolProxy::getTool).collect(Collectors.toList());
+    }
+
+    /**
+     * Sets the static analysis tools that will scan files and create issues.
+     *
+     * @param tools
+     *         the static analysis tools
+     * @see #setTool(Tool) 
+     */
+    public void setTools(final Collection<Tool> tools) {
+        this.analysisTools = new ArrayList<>(tools);
     }
 
     /**
@@ -172,7 +205,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *         the static analysis tool
      */
     public void setTool(final Tool tool) {
-        this.tools = Collections.singletonList(tool);
+        this.analysisTools = Collections.singletonList(tool);
     }
     
     @CheckForNull
@@ -526,21 +559,21 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     private String createLoggerPrefix() {
-        return tools.stream().map(Tool::getActualName).collect(Collectors.joining());
+        return analysisTools.stream().map(Tool::getActualName).collect(Collectors.joining());
     }
 
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
             AnnotatedReport totalIssues = new AnnotatedReport(id);
-            for (Tool tool : tools) {
+            for (Tool tool : analysisTools) {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
             publishResult(run, listener, toolName, totalIssues, toolName);
         }
         else {
-            for (Tool tool : tools) {
+            for (Tool tool : analysisTools) {
                 AnnotatedReport report = new AnnotatedReport(tool.getActualId());
                 report.add(scanWithTool(run, workspace, listener, tool));
                 if (StringUtils.isNotBlank(id) || StringUtils.isNotBlank(name)) {
@@ -622,10 +655,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     public void addTools(final Tool tool, final Tool... additionalTools) {
-        tools = new ArrayList<>();
-        tools.add(tool);
+        analysisTools = new ArrayList<>();
+        analysisTools.add(tool);
         for (Tool additionalTool : additionalTools) {
-            tools.add(additionalTool);
+            analysisTools.add(additionalTool);
         }
     }
 
