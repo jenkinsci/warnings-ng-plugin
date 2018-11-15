@@ -575,7 +575,9 @@ public abstract class IntegrationTest extends ResourceTest {
 
     @CanIgnoreReturnValue
     protected IssuesRecorder enableCheckStyleWarnings(final AbstractProject<?, ?> project) {
-        return enableGenericWarnings(project, new CheckStyle());
+        CheckStyle tool = new CheckStyle();
+        tool.setReportEncoding("UTF-8");
+        return enableGenericWarnings(project, tool);
     }
 
     @CanIgnoreReturnValue
