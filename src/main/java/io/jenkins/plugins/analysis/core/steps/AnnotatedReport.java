@@ -24,7 +24,7 @@ public class AnnotatedReport implements Serializable {
     private final String id;
     private final Report aggregatedReport = new Report();
     private final Blames aggregatedBlames = new Blames();
-    private final Map<String, Integer> sizeOfOrigin = new HashMap();
+    private final Map<String, Integer> sizeOfOrigin = new HashMap<>();
 
     /**
      * Creates a new instance of {@link AnnotatedReport}. Blames and report will be initialized empty.
@@ -81,22 +81,47 @@ public class AnnotatedReport implements Serializable {
         }
     }
 
+    /**
+     * Returns the number of issues per origin.
+     * 
+     * @return number of issues per origin
+     */
     public Map<String, Integer> getSizeOfOrigin() {
         return new HashMap<>(sizeOfOrigin);
     }
 
+    /**
+     * Returns the aggregated blames for all reports.
+     * 
+     * @return the blames
+     */
     public Blames getBlames() {
         return aggregatedBlames;
     }
 
+    /**
+     * Returns the aggregated report.
+     *
+     * @return the blames
+     */
     public Report getReport() {
         return aggregatedReport;
     }
 
+    /**
+     * Returns the ID of this report.
+     * 
+     * @return the ID
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Returns the total number of issues of the aggregated reports.
+     * 
+     * @return total number of issues
+     */
     public int size() {
         return aggregatedReport.size();
     }
