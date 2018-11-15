@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings.opentasks;
+package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.InputStreamReader;
 import java.io.StringReader;
@@ -12,8 +12,8 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import edu.hm.hafner.util.ResourceTest;
-import io.jenkins.plugins.analysis.warnings.opentasks.TaskScanner.CaseMode;
-import io.jenkins.plugins.analysis.warnings.opentasks.TaskScanner.MatcherMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 
 /**
  * Tests the class {@link TaskScanner}.

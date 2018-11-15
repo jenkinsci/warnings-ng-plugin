@@ -1,7 +1,7 @@
-package io.jenkins.plugins.analysis.warnings.opentasks;
+package io.jenkins.plugins.analysis.warnings.tasks;
 
-import io.jenkins.plugins.analysis.warnings.opentasks.TaskScanner.CaseMode;
-import io.jenkins.plugins.analysis.warnings.opentasks.TaskScanner.MatcherMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 
 /**
  * Builder pattern for a {@link TaskScanner}.

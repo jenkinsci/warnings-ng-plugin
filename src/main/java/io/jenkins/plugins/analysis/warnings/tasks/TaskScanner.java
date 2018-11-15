@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings.opentasks;
+package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.IOException;
 import java.io.Reader;
