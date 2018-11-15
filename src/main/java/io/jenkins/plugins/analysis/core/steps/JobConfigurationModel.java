@@ -1,17 +1,22 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import javax.annotation.CheckForNull;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
 
+import hudson.FilePath;
+import hudson.model.AbstractProject;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
@@ -187,4 +192,39 @@ public class JobConfigurationModel {
         return FormValidation.ok();
     }
 
+    /**
+     * Performs on-the-fly validation on the ant pattern for input files.
+     *
+     * @param project
+     *         the project
+     * @param pattern
+     *         the file pattern
+     *
+     * @return the validation result
+     */
+    public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String pattern) {
+        if (project != null) { // there is no workspace in pipelines
+            try {
+                FilePath workspace = project.getSomeWorkspace();
+                if (workspace != null && workspace.exists()) {
+                    return validatePatternInWorkspace(pattern, workspace);
+                }
+            }
+            catch (InterruptedException | IOException ignore) {
+                // ignore and return ok
+            }
+        }
+
+        return FormValidation.ok();
+    }
+
+    private FormValidation validatePatternInWorkspace(final @QueryParameter String pattern,
+            final FilePath workspace) throws IOException, InterruptedException {
+        String result = workspace.validateAntFileMask(pattern, FilePath.VALIDATE_ANT_FILE_MASK_BOUND);
+        if (result != null) {
+            return FormValidation.error(result);
+        }
+        return FormValidation.ok();
+    }
 }

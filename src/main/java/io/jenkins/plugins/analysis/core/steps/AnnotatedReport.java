@@ -126,17 +126,41 @@ public class AnnotatedReport implements Serializable {
         return aggregatedReport.size();
     }
 
+    /**
+     * Logs the specified information message. Use this method to log any useful information when composing this report.
+     *
+     * @param format
+     *         A <a href="../util/Formatter.html#syntax">format string</a>
+     * @param args
+     *         Arguments referenced by the format specifiers in the format string.  If there are more arguments than
+     *         format specifiers, the extra arguments are ignored.  The number of arguments is variable and may be
+     *         zero.
+     */
     @FormatMethod
-    public void logInfo(final String message, final Object... args) {
-        aggregatedReport.logInfo(message, args);
+    public void logInfo(final String format, final Object... args) {
+        aggregatedReport.logInfo(format, args);
     }
 
+    /**
+     * Appends the specified {@link AnnotatedReport reports} to this report. This report will then contain the issues 
+     * of all specified reports, in the same order. The reports will be added with the ID of the added report. 
+     *
+     * @param reports
+     *         the reports to append
+     */
     public void addAll(final AnnotatedReport... reports) {
         for (AnnotatedReport report : reports) {
             add(report, report.getId());
         }
     }
 
+    /**
+     * Appends the specified {@link AnnotatedReport report} to this report. This report will then contain the issues 
+     * of the specified reports, appended to the end and in the same order. The report will be added with the specified ID. 
+     *
+     * @param other
+     *         the other report to append
+     */
     public void add(final AnnotatedReport other, final String id) {
         addReport(id, other.getReport(), other.getBlames());
     }

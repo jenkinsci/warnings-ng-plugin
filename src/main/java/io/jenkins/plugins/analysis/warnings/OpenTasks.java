@@ -2,25 +2,35 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.io.StringReader;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 
+import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool.ReportingToolDescriptor;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.steps.JobConfigurationModel;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.warnings.tasks.AgentScanner;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScannerBuilder;
 
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.model.AbstractProject;
 import hudson.model.Run;
+import hudson.util.FormValidation;
 
 /**
  * Provides a files scanner that detects open tasks in source code files.
@@ -29,7 +39,7 @@ import hudson.model.Run;
  */
 public class OpenTasks extends Tool {
     private static final long serialVersionUID = 4692318309214830824L;
-    
+
     static final String ID = "open-tasks";
 
     private String high;
@@ -141,9 +151,9 @@ public class OpenTasks extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
         try {
-            return workspace.act(new AgentScanner(high, normal, low, 
+            return workspace.act(new AgentScanner(high, normal, low,
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
-                    asRegexp ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH, 
+                    asRegexp ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
                     includePattern, excludePattern));
         }
         catch (IOException e) {
@@ -164,7 +174,9 @@ public class OpenTasks extends Tool {
     /** Descriptor for this static analysis tool. */
     @Symbol("openTasks")
     @Extension
-    public static class Descriptor extends ReportingToolDescriptor {
+    public static class Descriptor extends ToolDescriptor {
+        private final JobConfigurationModel model = new JobConfigurationModel();
+
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
@@ -180,6 +192,87 @@ public class OpenTasks extends Tool {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName());
         }
-    }
 
+        /**
+         * Performs on-the-fly validation on the ant pattern for input files.
+         *
+         * @param project
+         *         the project
+         * @param includePattern
+         *         the file pattern
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckIncludePattern(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String includePattern) {
+            return model.doCheckPattern(project, includePattern);
+        }
+
+        /**
+         * Performs on-the-fly validation on the ant pattern for input files.
+         *
+         * @param project
+         *         the project
+         * @param excludePattern
+         *         the file pattern
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckExcludePattern(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String excludePattern) {
+            return model.doCheckPattern(project, excludePattern);
+        }
+
+        /**
+         * Validates the example text that will be scanned for open tasks.
+         *
+         * @param example
+         *         the text to be scanned for open tasks
+         * @param high
+         *         tag identifiers indicating high priority
+         * @param normal
+         *         tag identifiers indicating normal priority
+         * @param low
+         *         tag identifiers indicating low priority
+         * @param ignoreCase
+         *         if case should be ignored during matching
+         * @param asRegexp
+         *         if the identifiers should be treated as regular expression
+         *
+         * @return validation result
+         */
+        public FormValidation doCheckExample(@QueryParameter final String example,
+                @QueryParameter final String high,
+                @QueryParameter final String normal,
+                @QueryParameter final String low,
+                @QueryParameter final boolean ignoreCase,
+                @QueryParameter final boolean asRegexp) {
+            if (StringUtils.isEmpty(example)) {
+                return FormValidation.ok();
+            }
+
+            TaskScannerBuilder builder = new TaskScannerBuilder();
+            TaskScanner scanner = builder.setHigh(high)
+                    .setNormal(normal)
+                    .setLow(low)
+                    .setCaseMode(ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE)
+                    .setMatcherMode(asRegexp ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH).build();
+
+            if (scanner.isInvalidPattern()) {
+                return FormValidation.error(scanner.getErrors());
+            }
+
+            Report tasks = scanner.scan(new StringReader(example), new IssueBuilder());
+            if (tasks.isEmpty()) {
+                return FormValidation.warning(Messages.OpenTasks_Validation_NoTask());
+            }
+            else if (tasks.size() != 1) {
+                return FormValidation.warning(Messages.OpenTasks_Validation_MultipleTasks(tasks.size()));
+            }
+            else {
+                Issue task = tasks.get(0);
+                return FormValidation.ok(Messages.OpenTasks_Validation_OneTask(task.getType(), task.getMessage()));
+            }
+        }
+    }
 }

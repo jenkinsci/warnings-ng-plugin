@@ -215,30 +215,9 @@ public abstract class ReportScanningTool extends Tool {
          */
         public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String pattern) {
-            if (project != null) { // there is no workspace in pipelines
-                try {
-                    FilePath workspace = project.getSomeWorkspace();
-                    if (workspace != null && workspace.exists()) {
-                        return validatePatternInWorkspace(pattern, workspace);
-                    }
-                }
-                catch (InterruptedException | IOException ignore) {
-                    // ignore and return ok
-                }
-            }
-
-            return FormValidation.ok();
+            return model.doCheckPattern(project, pattern);
         }
-
-        private FormValidation validatePatternInWorkspace(final @QueryParameter String pattern,
-                final FilePath workspace) throws IOException, InterruptedException {
-            String result = workspace.validateAntFileMask(pattern, FilePath.VALIDATE_ANT_FILE_MASK_BOUND);
-            if (result != null) {
-                return FormValidation.error(result);
-            }
-            return FormValidation.ok();
-        }
-
+        
         /**
          * Returns the default filename pattern for this tool. Override if your typically works on a specific file.
          * Note: if you provide a default pattern then it is not possible to scan Jenkins console log of a build.
