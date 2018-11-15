@@ -83,7 +83,7 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
          * Required descriptor for the tool.
          */
         @TestExtension
-        public static final class TestToolDescriptor extends ReportingToolDescriptor {
+        public static final class TestToolDescriptor extends ReportScanningToolDescriptor {
             /**
              * Creates a new descriptor.
              */

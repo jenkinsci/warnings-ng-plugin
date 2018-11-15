@@ -35,7 +35,7 @@ public class Intel extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("intel")
     @Extension
-    public static class Descriptor extends ReportingToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

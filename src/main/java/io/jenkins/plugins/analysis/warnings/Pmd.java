@@ -57,7 +57,7 @@ public class Pmd extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol({"pmd", "pmdParser"})
     @Extension
-    public static class Descriptor extends ReportingToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         private final PmdMessages messages;
 
         /** Creates the descriptor instance. */

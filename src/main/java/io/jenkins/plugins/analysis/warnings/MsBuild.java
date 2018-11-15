@@ -34,7 +34,7 @@ public class MsBuild extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("msBuild")
     @Extension
-    public static class Descriptor extends ReportingToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -34,7 +34,7 @@ public class Cadence extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("cadence")
     @Extension
-    public static class Descriptor extends ReportingToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /**
          * Creates a new instance of {@link Descriptor}.
          */

@@ -23,7 +23,7 @@
     <f:combobox/>
   </f:entry>
 
-  <st:include page="local-config.jelly" optional="true"/>
+  <st:include class="${descriptor.clazz}" page="local-config.jelly" optional="true"/>
 
   <i:tool-defaults/>
 

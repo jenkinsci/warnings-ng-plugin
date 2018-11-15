@@ -36,7 +36,7 @@ public class TagList extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("tagList")
     @Extension
-    public static class Descriptor extends ReportingToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

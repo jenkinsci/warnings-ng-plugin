@@ -9,7 +9,7 @@ import java.util.Locale;
 import org.junit.Test;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool.ReportingToolDescriptor;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool.ReportScanningToolDescriptor;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -59,7 +59,7 @@ public class ToolsLister extends IntegrationTestWithJenkinsPerSuite {
                         getIcon(labelProvider, labelProvider.getSmallIconUrl())
                                 + " " + getIcon(labelProvider, labelProvider.getLargeIconUrl()),
                         getName(descriptor),
-                        descriptor instanceof ReportingToolDescriptor ? ((ReportingToolDescriptor)descriptor).getPattern() : "-");
+                        descriptor instanceof ReportScanningToolDescriptor ? ((ReportScanningToolDescriptor)descriptor).getPattern() : "-");
             }
         }
     }

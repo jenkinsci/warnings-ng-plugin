@@ -88,7 +88,7 @@ public class FindBugs extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("findBugs")
     @Extension
-    public static class FindBugsDescriptor extends ReportingToolDescriptor {
+    public static class FindBugsDescriptor extends ReportScanningToolDescriptor {
         private final FindBugsMessages messages = new FindBugsMessages();
 
         /** Creates the descriptor instance. */

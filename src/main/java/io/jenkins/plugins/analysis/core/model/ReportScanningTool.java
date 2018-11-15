@@ -67,7 +67,7 @@ public abstract class ReportScanningTool extends Tool {
      *
      * @return the name
      * @see #setPattern(String)
-     * @see ReportingToolDescriptor#getPattern()
+     * @see ReportScanningToolDescriptor#getPattern()
      */
     public String getActualPattern() {
         return StringUtils.defaultIfBlank(pattern, getDescriptor().getPattern());
@@ -176,21 +176,21 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     @Override
-    public ReportingToolDescriptor getDescriptor() {
-        return (ReportingToolDescriptor) super.getDescriptor();
+    public ReportScanningToolDescriptor getDescriptor() {
+        return (ReportScanningToolDescriptor) super.getDescriptor();
     }
 
     /** Descriptor for {@link ReportScanningTool}. **/
-    public abstract static class ReportingToolDescriptor extends ToolDescriptor {
+    public abstract static class ReportScanningToolDescriptor extends ToolDescriptor {
         private final JobConfigurationModel model = new JobConfigurationModel();
 
         /**
-         * Creates a new instance of {@link ReportingToolDescriptor} with the given ID.
+         * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
          *
          * @param id
          *         the unique ID of the tool
          */
-        protected ReportingToolDescriptor(final String id) {
+        protected ReportScanningToolDescriptor(final String id) {
             super(id);
         }
 

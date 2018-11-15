@@ -58,7 +58,7 @@ public class CheckStyle extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("checkStyle")
     @Extension
-    public static class Descriptor extends ReportingToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         private final CheckStyleRules rules;
 
         /** Creates the descriptor instance. */

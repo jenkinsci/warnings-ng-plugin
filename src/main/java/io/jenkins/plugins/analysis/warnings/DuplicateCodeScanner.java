@@ -98,7 +98,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
    }
 
     /** Descriptor for this static analysis tool. */
-    abstract static class DryDescriptor extends ReportingToolDescriptor {
+    abstract static class DryDescriptor extends ReportScanningToolDescriptor {
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 
         /**

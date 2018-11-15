@@ -37,7 +37,7 @@ public class ArmCc extends ReportScanningToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("armCc")
     @Extension
-    public static class Descriptor extends ReportingToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
