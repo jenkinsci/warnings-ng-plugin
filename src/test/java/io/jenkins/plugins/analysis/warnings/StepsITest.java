@@ -88,7 +88,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 "def issues = scanForIssues tool: eclipse()", // FIXME: documentation!
                 PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleBuild(job, new Eclipse());
+        final Eclipse tool = new Eclipse();
+        AnalysisResult result = scheduleBuild(job, tool.getActualId());
 
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues()).hasSize(8);
@@ -299,19 +300,24 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File.*.java')");
-        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isEqualTo(16);
+        final Pmd tool = new Pmd();
+        assertThat(scheduleBuild(job, tool.getActualId()).getTotalSize()).isEqualTo(16);
 
         setFilter(job, "excludeFile('File.*.java')");
-        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isZero();
+        final Pmd tool1 = new Pmd();
+        assertThat(scheduleBuild(job, tool1.getActualId()).getTotalSize()).isZero();
 
         setFilter(job, "includeFile('')");
-        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isEqualTo(16);
+        final Pmd tool2 = new Pmd();
+        assertThat(scheduleBuild(job, tool2.getActualId()).getTotalSize()).isEqualTo(16);
 
         setFilter(job, "excludeFile('')");
-        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isEqualTo(16);
+        final Pmd tool3 = new Pmd();
+        assertThat(scheduleBuild(job, tool3.getActualId()).getTotalSize()).isEqualTo(16);
 
         setFilter(job, "");
-        assertThat(scheduleBuild(job, new Pmd()).getTotalSize()).isEqualTo(16);
+        final Pmd tool4 = new Pmd();
+        assertThat(scheduleBuild(job, tool4.getActualId()).getTotalSize()).isEqualTo(16);
 
         verifyIncludeFile(job, "File1.java");
         verifyIncludeFile(job, "File2.java");
@@ -327,11 +333,13 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File1.java'), includeCategory('Category1')");
-        AnalysisResult result = scheduleBuild(job, new Pmd());
+        final Pmd tool = new Pmd();
+        AnalysisResult result = scheduleBuild(job, tool.getActualId());
         assertThat(result.getTotalSize()).isEqualTo(8 + 4);
 
         setFilter(job, "includeFile('File1.java'), excludeCategory('Category1'), excludeType('Type1'), excludeNamespace('.*package1') ");
-        AnalysisResult oneIssue = scheduleBuild(job, new Pmd());
+        final Pmd tool1 = new Pmd();
+        AnalysisResult oneIssue = scheduleBuild(job, tool1.getActualId());
         assertThat(oneIssue.getIssues().getFiles()).containsExactly("File1.java");
         assertThat(oneIssue.getIssues().getCategories()).containsExactly("Category2");
         assertThat(oneIssue.getIssues().getTypes()).containsExactly("Type2");
@@ -340,8 +348,9 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
     private void verifyIncludeFile(final WorkflowJob job, final String fileName) {
         setFilter(job, "includeFile('" + fileName + "')");
-        
-        AnalysisResult result = scheduleBuild(job, new Pmd());
+
+        final Pmd tool = new Pmd();
+        AnalysisResult result = scheduleBuild(job, tool.getActualId());
         
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues().getFiles()).containsExactly(fileName);
@@ -349,8 +358,9 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
     private void verifyExcludeFile(final WorkflowJob job, final String excludedFileName, final String expectedFileName) {
         setFilter(job, "excludeFile('" + excludedFileName + "')");
-        
-        AnalysisResult result = scheduleBuild(job, new Pmd());
+
+        final Pmd tool = new Pmd();
+        AnalysisResult result = scheduleBuild(job, tool.getActualId());
         
         assertThat(result.getTotalSize()).isEqualTo(8);
         assertThat(result.getIssues().getFiles()).containsExactly(expectedFileName);
@@ -371,7 +381,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
         reference.setDefinition(parseAndPublish(new Java()));
 
-        AnalysisResult referenceResult = scheduleBuild(reference, new Java());
+        final Java tool = new Java();
+        AnalysisResult referenceResult = scheduleBuild(reference, tool.getActualId());
 
         assertThat(referenceResult.getTotalSize()).isEqualTo(2);
         assertThat(referenceResult.getIssues()).hasSize(2);
@@ -381,7 +392,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         job.setDefinition(asStage(createScanForIssuesStep(new Java()),
                 "publishIssues issues:[issues], referenceJobName:'reference'"));
 
-        AnalysisResult result = scheduleBuild(reference, new Java());
+        final Java tool1 = new Java();
+        AnalysisResult result = scheduleBuild(reference, tool1.getActualId());
 
         assertThat(result.getTotalSize()).isEqualTo(2);
         assertThat(result.getIssues()).hasSize(2);
@@ -418,7 +430,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                             tool.getSymbolName()),
                     "publishIssues issues:[issues]"));
 
-            scheduleBuild(job, tool);
+            scheduleBuild(job, tool.getActualId());
 
             YouCannotTriggerMe urlHandler = getJenkins().jenkins.getExtensionList(UnprotectedRootAction.class)
                     .get(YouCannotTriggerMe.class);

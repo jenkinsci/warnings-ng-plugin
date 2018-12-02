@@ -50,6 +50,9 @@ public class OpenTasks extends Tool {
     private String includePattern;
     private String excludePattern;
 
+    // FIXME: rename tag setters
+    // FIXME: add source encoding
+    
     /**
      * Returns the Ant file-set pattern of files to work with.
      *
@@ -172,7 +175,7 @@ public class OpenTasks extends Tool {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("openTasks")
+    @Symbol("taskScanner")
     @Extension
     public static class Descriptor extends ToolDescriptor {
         private final JobConfigurationModel model = new JobConfigurationModel();

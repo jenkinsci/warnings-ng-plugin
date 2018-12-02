@@ -136,7 +136,7 @@ public abstract class ReportScanningTool extends Tool {
     private Report scanInConsoleLog(final FilePath workspace, final File consoleLog, final LogHandler logger) {
         Ensure.that(canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
-                getName());
+                getActualName());
 
         waitForConsoleToFlush(logger);
 

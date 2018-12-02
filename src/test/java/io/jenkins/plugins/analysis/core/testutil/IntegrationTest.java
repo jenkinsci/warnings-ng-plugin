@@ -447,19 +447,19 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @param job
      *         the job to schedule
-     * @param tool
-     *         the ID of the tool to parse the warnings with
+     * @param toolId
+     *         the ID of the recording {@link Tool}
      *
      * @return the created {@link AnalysisResult}
      */
     @SuppressWarnings("illegalcatch")
-    protected AnalysisResult scheduleBuild(final WorkflowJob job, final ReportScanningTool tool) {
+    protected AnalysisResult scheduleBuild(final WorkflowJob job, final String toolId) {
         try {
             WorkflowRun run = runSuccessfully(job);
 
             ResultAction action = getResultAction(run);
 
-            assertThat(action.getId()).isEqualTo(tool.getActualId());
+            assertThat(action.getId()).isEqualTo(toolId);
 
             System.out.println("------------------------------------- Infos ------------------------------------");
             System.out.println(action.getResult().getInfoMessages());
@@ -568,7 +568,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected abstract JenkinsRule getJenkins();
 
-  @CanIgnoreReturnValue
+    @CanIgnoreReturnValue
     protected IssuesRecorder enableEclipseWarnings(final AbstractProject<?, ?> project) {
         return enableGenericWarnings(project, new Eclipse());
     }
@@ -690,7 +690,7 @@ public abstract class IntegrationTest extends ResourceTest {
             final Consumer<IssuesRecorder> configuration,
             final ReportScanningTool tool) {
         createGenericToolConfiguration(tool);
-        
+
         return enableWarnings(job, configuration, tool);
     }
 
@@ -756,7 +756,6 @@ public abstract class IntegrationTest extends ResourceTest {
         job.getPublishersList().add(publisher);
         return publisher;
     }
-
 
     protected IssuesRecorder getRecorder(final AbstractProject<?, ?> job) {
         DescribableList<Publisher, Descriptor<Publisher>> publishers = job.getPublishersList();
