@@ -74,6 +74,7 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
 
         Path root = workspace.toPath();
         TaskScanner scanner = createTaskScanner();
+        report.logInfo("Scanning all %d files for open tasks", fileNames.length);
         for (String fileName : fileNames) {
             Path absolute = root.resolve(fileName);
             IssueBuilder issueBuilder = new IssueBuilder().setFileName(absolute.toString());
