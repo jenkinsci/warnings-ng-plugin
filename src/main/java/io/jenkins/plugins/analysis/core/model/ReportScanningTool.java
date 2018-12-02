@@ -204,6 +204,18 @@ public abstract class ReportScanningTool extends Tool {
         }
 
         /**
+         * Performs on-the-fly validation of the character encoding.
+         *
+         * @param reportEncoding
+         *         the character encoding
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+            return model.validateCharset(reportEncoding);
+        }
+
+        /**
          * Performs on-the-fly validation on the ant pattern for input files.
          *
          * @param project

@@ -18,7 +18,7 @@ import hudson.model.Descriptor;
  * Defines the configuration to parse a set of files using a predefined parser.
  *
  * @author Ullrich Hafner
- * @deprecated used to deserialize pre beta-x configurations
+ * @deprecated used to deserialize pre beta-6 configurations
  */
 @Deprecated
 public class ToolConfiguration extends AbstractDescribableImpl<ToolConfiguration> {

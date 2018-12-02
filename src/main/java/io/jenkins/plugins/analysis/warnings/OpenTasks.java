@@ -46,7 +46,7 @@ public class OpenTasks extends Tool {
     private String normal;
     private String low;
     private boolean ignoreCase;
-    private boolean asRegexp;
+    private boolean isRegularExpression;
     private String includePattern;
     private String excludePattern;
 
@@ -139,13 +139,13 @@ public class OpenTasks extends Tool {
      *
      * @return {@code true} if the identifiers should be treated as regular expression
      */
-    public boolean getAsRegexp() {
-        return asRegexp;
+    public boolean getIsRegularExpression() {
+        return isRegularExpression;
     }
 
     @DataBoundSetter
-    public void setAsRegexp(final boolean asRegexp) {
-        this.asRegexp = asRegexp;
+    public void setIsRegularExpression(final boolean isRegularExpression) {
+        this.isRegularExpression = isRegularExpression;
     }
 
     @Override
@@ -153,7 +153,7 @@ public class OpenTasks extends Tool {
         try {
             return workspace.act(new AgentScanner(high, normal, low,
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
-                    asRegexp ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
+                    isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
                     includePattern, excludePattern));
         }
         catch (IOException e) {

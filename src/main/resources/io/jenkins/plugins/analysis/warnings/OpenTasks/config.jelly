@@ -34,12 +34,12 @@
     </table>
   </f:entry>
   <f:entry title="${%Ignore case}" field="ignoreCase" description="${%description.ignoreCase}">
-    <f:checkbox name="ignoreCase" checked="${instance.ignoreCase}"/>
+    <f:checkbox />
   </f:entry>
-  <f:entry title="${%Regular expression}" field="asRegexp" description="${%description.asRegexp}">
-    <f:checkbox name="asRegexp" checked="${instance.asRegexp}"/>
+  <f:entry title="${%Regular expression}" field="isRegularExpression" description="${%description.asRegexp}">
+    <f:checkbox />
   </f:entry>
-  <f:entry title="${%Example Text}" field="example" description="${%description.example}">
+  <f:entry title="${%Test the tags}" field="example" description="${%description.example}">
     <f:textarea/>
   </f:entry>
   
