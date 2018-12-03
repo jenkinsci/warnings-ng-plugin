@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -79,7 +78,6 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
         FileFinder fileFinder = new FileFinder(includePattern, excludePattern);
         String[] fileNames = fileFinder.find(workspace);
         report.logInfo("-> found %d files that will be scanned", fileNames.length);
-        Arrays.stream(fileNames).forEach(file -> report.logInfo("-> %s", file));
         Path root = workspace.toPath();
         TaskScanner scanner = createTaskScanner();
         report.logInfo("Scanning all %d files for open tasks", fileNames.length);
