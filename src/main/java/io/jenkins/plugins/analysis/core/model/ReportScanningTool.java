@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kohsuke.stapler.AncestorInPath;
@@ -90,7 +91,8 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     @Override
-    public Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
+    public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
+            final LogHandler logger) {
         String actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
             return scanInConsoleLog(workspace, run.getLogFile(), logger);

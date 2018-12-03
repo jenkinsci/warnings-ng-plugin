@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings;
 import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
@@ -51,8 +52,7 @@ public class OpenTasks extends Tool {
     private String excludePattern;
 
     // FIXME: rename tag setters
-    // FIXME: add source encoding
-    
+
     /**
      * Returns the Ant file-set pattern of files to work with.
      *
@@ -152,12 +152,13 @@ public class OpenTasks extends Tool {
     }
 
     @Override
-    public Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
+    public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
+            final LogHandler logger) {
         try {
             return workspace.act(new AgentScanner(high, normal, low,
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
-                    includePattern, excludePattern));
+                    includePattern, excludePattern, sourceCodeEncoding));
         }
         catch (IOException e) {
             throw new ParsingException(e);

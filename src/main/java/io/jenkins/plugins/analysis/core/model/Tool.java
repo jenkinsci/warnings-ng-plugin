@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.io.Serializable;
+import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jenkinsci.Symbol;
@@ -121,6 +122,8 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      *         the build 
      * @param workspace
      *         the workspace of the build
+     * @param sourceCodeEncoding
+     *         the encoding to use to read source files
      * @param logger
      *         the logger
      * @throws ParsingException
@@ -129,7 +132,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      *         Signals that the parsing has been aborted by the user
      * @return the created report
      */
-    public abstract Report scan(Run<?, ?> run, FilePath workspace, LogHandler logger)
+    public abstract Report scan(Run<?, ?> run, FilePath workspace, Charset sourceCodeEncoding, LogHandler logger)
             throws ParsingException, ParsingCanceledException;
 
     /** Descriptor for {@link Tool}. **/

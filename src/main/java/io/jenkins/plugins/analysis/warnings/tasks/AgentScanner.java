@@ -2,8 +2,10 @@ package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -32,6 +34,7 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
     private final MatcherMode matcherMode;
     private final String includePattern;
     private final String excludePattern;
+    private final Charset sourceCodeEncoding;
 
     /**
      * Creates a new {@link AgentScanner}.
@@ -50,9 +53,12 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
      *         the files to include
      * @param excludePattern
      *         the files to exclude
+     * @param sourceCodeEncoding
+     *         the encoding to use to read source files
      */
     public AgentScanner(final String high, final String normal, final String low, final CaseMode caseMode,
-            final MatcherMode matcherMode, final String includePattern, final String excludePattern) {
+            final MatcherMode matcherMode, final String includePattern, final String excludePattern,
+            final Charset sourceCodeEncoding) {
         this.high = high;
         this.normal = normal;
         this.low = low;
@@ -60,25 +66,27 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
         this.matcherMode = matcherMode;
         this.includePattern = StringUtils.defaultString(includePattern);
         this.excludePattern = StringUtils.defaultString(excludePattern);
+        this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
     @Override
     public Report invoke(final File workspace, final VirtualChannel channel) throws IOException, InterruptedException {
         Report report = new Report();
-        report.logInfo("Searching for files in workspace '%s' that match the include pattern '%s' and exclude pattern '%s'",
+        report.logInfo(
+                "Searching for files in workspace '%s' that match the include pattern '%s' and exclude pattern '%s'",
                 workspace, includePattern, excludePattern);
 
         FileFinder fileFinder = new FileFinder(includePattern, excludePattern);
         String[] fileNames = fileFinder.find(workspace);
         report.logInfo("-> found %d files that will be scanned", fileNames.length);
-
+        Arrays.stream(fileNames).forEach(file -> report.logInfo("-> %s", file));
         Path root = workspace.toPath();
         TaskScanner scanner = createTaskScanner();
         report.logInfo("Scanning all %d files for open tasks", fileNames.length);
         for (String fileName : fileNames) {
             Path absolute = root.resolve(fileName);
             IssueBuilder issueBuilder = new IssueBuilder().setFileName(absolute.toString());
-            report.addAll(scanner.scan(Files.newBufferedReader(absolute), issueBuilder));
+            report.addAll(scanner.scan(Files.newBufferedReader(absolute, sourceCodeEncoding), issueBuilder));
             if (Thread.interrupted()) {
                 throw new ParsingCanceledException();
             }

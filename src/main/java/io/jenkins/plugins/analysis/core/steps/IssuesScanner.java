@@ -57,7 +57,7 @@ class IssuesScanner {
 
     public AnnotatedReport scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger)
             throws IOException, InterruptedException {
-        Report report = tool.scan(run, workspace, logger);
+        Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
         return postProcess(report, workspace, logger);
     }
