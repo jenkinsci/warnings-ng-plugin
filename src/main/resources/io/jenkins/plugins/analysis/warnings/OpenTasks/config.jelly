@@ -21,13 +21,13 @@
       <tbody>
         <tr>
           <td>
-            <f:textbox name="high" value="${instance.high}"/>
+            <f:textbox name="highTags" value="${instance.highTags}"/>
           </td>
           <td>
-            <f:textbox name="normal" value="${instance.normal}"/>
+            <f:textbox name="normalTags" value="${instance.normalTags}"/>
           </td>
           <td>
-            <f:textbox name="low" value="${instance.low}"/>
+            <f:textbox name="lowTags" value="${instance.lowTags}"/>
           </td>
         </tr>
       </tbody>

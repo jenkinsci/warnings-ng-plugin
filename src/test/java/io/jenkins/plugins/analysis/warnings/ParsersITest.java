@@ -69,7 +69,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindAllOpenTasks() {
         WorkflowJob job = createJobWithWorkspaceFiles("tasks/file-with-tasks.txt");
         job.setDefinition(asStage(
-                "def issues = scanForIssues tool: taskScanner(includePattern:'**/*issues.txt', high:'FIXME', normal:'TODO')",
+                "def issues = scanForIssues tool: " 
+                        + "taskScanner(includePattern:'**/*issues.txt', highTags:'FIXME', normalTags:'TODO')",
                 PUBLISH_ISSUES_STEP));
 
         AnalysisResult result = scheduleBuild(job, "open-tasks");

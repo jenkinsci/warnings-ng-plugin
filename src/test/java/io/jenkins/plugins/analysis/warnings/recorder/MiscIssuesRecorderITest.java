@@ -84,7 +84,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         OpenTasks tasks = new OpenTasks();
         tasks.setIncludePattern("**/*.txt");
         String tag = "WARNING";
-        tasks.setHigh(tag);
+        tasks.setHighTags(tag);
         enableWarnings(project, tasks);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);

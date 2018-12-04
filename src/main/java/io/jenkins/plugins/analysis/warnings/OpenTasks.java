@@ -43,9 +43,9 @@ public class OpenTasks extends Tool {
 
     static final String ID = "open-tasks";
 
-    private String high;
-    private String normal;
-    private String low;
+    private String highTags;
+    private String normalTags;
+    private String lowTags;
     private boolean ignoreCase;
     private boolean isRegularExpression;
     private String includePattern;
@@ -86,13 +86,13 @@ public class OpenTasks extends Tool {
      *
      * @return the high priority tag identifiers
      */
-    public String getHigh() {
-        return high;
+    public String getHighTags() {
+        return highTags;
     }
 
     @DataBoundSetter
-    public void setHigh(final String high) {
-        this.high = high;
+    public void setHighTags(final String highTags) {
+        this.highTags = highTags;
     }
 
     /**
@@ -100,13 +100,13 @@ public class OpenTasks extends Tool {
      *
      * @return the normal priority tag identifiers
      */
-    public String getNormal() {
-        return normal;
+    public String getNormalTags() {
+        return normalTags;
     }
 
     @DataBoundSetter
-    public void setNormal(final String normal) {
-        this.normal = normal;
+    public void setNormalTags(final String normalTags) {
+        this.normalTags = normalTags;
     }
 
     /**
@@ -114,13 +114,13 @@ public class OpenTasks extends Tool {
      *
      * @return the low priority tag identifiers
      */
-    public String getLow() {
-        return low;
+    public String getLowTags() {
+        return lowTags;
     }
 
     @DataBoundSetter
-    public void setLow(final String low) {
-        this.low = low;
+    public void setLowTags(final String lowTags) {
+        this.lowTags = lowTags;
     }
 
     /**
@@ -155,7 +155,7 @@ public class OpenTasks extends Tool {
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
         try {
-            return workspace.act(new AgentScanner(high, normal, low,
+            return workspace.act(new AgentScanner(highTags, normalTags, lowTags,
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
                     includePattern, excludePattern, sourceCodeEncoding));
