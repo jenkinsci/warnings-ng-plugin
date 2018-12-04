@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import edu.hm.hafner.analysis.AbstractIssueParserTest;
+import edu.hm.hafner.analysis.AbstractParserTest;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -15,7 +15,7 @@ import edu.hm.hafner.analysis.parser.EclipseParser;
  *
  * @author Ullrich Hafner
  */
-class DynamicDocumentParserTest extends AbstractIssueParserTest {
+class DynamicDocumentParserTest extends AbstractParserTest {
     DynamicDocumentParserTest () {
         super("eclipse.txt");
     }

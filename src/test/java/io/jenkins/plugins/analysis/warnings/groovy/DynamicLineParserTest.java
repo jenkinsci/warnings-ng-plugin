@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.AbstractIssueParserTest;
+import edu.hm.hafner.analysis.AbstractParserTest;
 import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
@@ -16,7 +16,7 @@ import edu.hm.hafner.analysis.assertj.SoftAssertions;
  *
  * @author Ullrich Hafner
  */
-class DynamicLineParserTest extends AbstractIssueParserTest {
+class DynamicLineParserTest extends AbstractParserTest {
     private static final String FILE_NAME = "file-with-line-numbers.txt";
 
     DynamicLineParserTest() {
