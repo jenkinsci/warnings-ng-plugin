@@ -9,7 +9,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.Armcc5CompilerParser;
 import edu.hm.hafner.analysis.parser.ArmccCompilerParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 
 import hudson.Extension;
 
@@ -18,7 +18,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class ArmCc extends StaticAnalysisToolSuite {
+public class ArmCc extends ReportScanningToolSuite {
     private static final long serialVersionUID = 5712079077224290879L;
     static final String ID = "armcc";
 
@@ -37,7 +37,7 @@ public class ArmCc extends StaticAnalysisToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("armCc")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -5,10 +5,9 @@ import org.junit.Test;
 import org.jvnet.hudson.test.ToolInstallations;
 
 import edu.hm.hafner.analysis.Severity;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.MavenConsole;
 
@@ -48,7 +47,7 @@ public class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite
         MavenModuleSet project = createMavenJob();
         copySingleFileToWorkspace(project, "pom-error.xml", "pom.xml");
  
-        IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new MavenConsole(), ""));
+        IssuesRecorder recorder = enableWarnings(project, createTool(new MavenConsole(), ""));
         recorder.setEnabledForFailure(true);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);

@@ -9,7 +9,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
 import edu.hm.hafner.analysis.parser.Gcc4LinkerParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 
 import hudson.Extension;
 
@@ -18,7 +18,7 @@ import hudson.Extension;
  *
  * @author Raphael Furch
  */
-public class Gcc4 extends StaticAnalysisToolSuite {
+public class Gcc4 extends ReportScanningToolSuite {
     private static final long serialVersionUID = 7699675509414211993L;
     static final String ID = "gcc4";
 
@@ -37,7 +37,7 @@ public class Gcc4 extends StaticAnalysisToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("gcc4")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

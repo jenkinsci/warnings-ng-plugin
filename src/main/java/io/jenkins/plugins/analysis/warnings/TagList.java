@@ -7,7 +7,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.TaglistParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;
 
@@ -16,7 +16,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class TagList extends StaticAnalysisTool {
+public class TagList extends ReportScanningTool {
     private static final long serialVersionUID = 2696608544063390368L;
     
     static final String ID = "taglist";
@@ -36,7 +36,7 @@ public class TagList extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("tagList")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

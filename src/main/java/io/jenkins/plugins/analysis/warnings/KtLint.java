@@ -6,7 +6,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -16,7 +16,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class KtLint extends StaticAnalysisTool {
+public class KtLint extends ReportScanningTool {
     private static final long serialVersionUID = 1897385505660427545L;
     
     static final String ID = "ktlint";
@@ -41,7 +41,7 @@ public class KtLint extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("ktLint")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

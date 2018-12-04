@@ -2,12 +2,12 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.ClangTidyParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class ClangTidy extends StaticAnalysisTool {
+public class ClangTidy extends ReportScanningTool {
     private static final long serialVersionUID = 5834065931433801829L;
     static final String ID = "clang-tidy";
 
@@ -34,7 +34,7 @@ public class ClangTidy extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("clangTidy")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

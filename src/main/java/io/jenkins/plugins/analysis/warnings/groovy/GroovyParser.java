@@ -21,7 +21,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import groovy.lang.Script;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import jenkins.model.Jenkins;
 
 import hudson.Extension;
@@ -182,7 +182,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         }
     }
 
-    StaticAnalysisTool toStaticAnalysisTool() {
+    ReportScanningTool toStaticAnalysisTool() {
         return new GroovyParserToolAdapter(this);
     }
 

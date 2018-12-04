@@ -428,6 +428,7 @@
         <version>${maven-javadoc-plugin.version}</version>
         <configuration>
           <additionalOptions>-Xdoclint:all</additionalOptions>
+          <failOnWarnings>false</failOnWarnings>
         </configuration>
         <executions>
           <execution>

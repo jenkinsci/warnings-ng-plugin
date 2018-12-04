@@ -9,7 +9,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.EclipseParser;
 import edu.hm.hafner.analysis.parser.EclipseXMLParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 
 import hudson.Extension;
 
@@ -18,7 +18,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Eclipse extends StaticAnalysisToolSuite {
+public class Eclipse extends ReportScanningToolSuite {
     private static final long serialVersionUID = -2312612497121380654L;
     static final String ID = "eclipse";
 
@@ -37,7 +37,7 @@ public class Eclipse extends StaticAnalysisToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("eclipse")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

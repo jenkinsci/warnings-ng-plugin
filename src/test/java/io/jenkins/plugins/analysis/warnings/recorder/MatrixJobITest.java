@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPOutputStream;
@@ -19,7 +18,6 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.Resource;
@@ -56,7 +54,7 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
         MatrixProject project = createProject(MatrixProject.class);
 
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(Collections.singletonList(new ToolConfiguration(new Gcc4())));
+        publisher.setTool(new Gcc4());
         project.getPublishersList().add(publisher);
 
         AxisList axis = new AxisList();

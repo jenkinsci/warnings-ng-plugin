@@ -9,8 +9,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
 
 import hudson.Extension;
 
@@ -19,7 +19,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Scala extends StaticAnalysisToolSuite {
+public class Scala extends ReportScanningToolSuite {
     private static final long serialVersionUID = -3425343204163661812L;
     static final String ID = "scala";
 
@@ -38,7 +38,7 @@ public class Scala extends StaticAnalysisToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("scala")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

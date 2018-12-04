@@ -105,17 +105,21 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current build as owner of this action
+     * @param id
+     *         ID of the results
      * @param report
      *         the issues of this result
      * @param blames
      *         author and commit information for all issues
      * @param qualityGateStatus
      *         the quality gate status
+     * @param sizePerOrigin
+     *         the number of issues per origin
      * @param previousResult
      *         the analysis result of the previous run
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin, 
+            final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin,
             final AnalysisResult previousResult) {
         this(owner, id, report, blames, qualityGateStatus, sizePerOrigin, true);
 
@@ -149,14 +153,18 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current build as owner of this action
+     * @param id
+     *         ID of the results
      * @param report
      *         the issues of this result
      * @param blames
      *         author and commit information for all issues
      * @param qualityGateStatus
      *         the quality gate status
+     * @param sizePerOrigin
+     *         the number of issues per origin
      */
-    public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames, 
+    public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin) {
         this(owner, id, report, blames, qualityGateStatus, sizePerOrigin, true);
 
@@ -179,17 +187,21 @@ public class AnalysisResult implements Serializable {
      *
      * @param owner
      *         the current run as owner of this action
+     * @param id
+     *         ID of the results
      * @param report
      *         the issues of this result
      * @param blames
      *         author and commit information for all issues
      * @param qualityGateStatus
-     *         the quality gate to enforce
+     *         the quality gate status
+     * @param sizePerOrigin
+     *         the number of issues per origin
      * @param canSerialize
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
-    protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames, 
+    protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin, final boolean canSerialize) {
         this.owner = owner;
 
@@ -218,7 +230,7 @@ public class AnalysisResult implements Serializable {
         errors = new ArrayList<>(allIssues.getErrorMessages().castToList());
 
         this.qualityGateStatus = qualityGateStatus;
-        
+
         this.blamesReference = new WeakReference<>(blames);
         if (canSerialize) {
             serializeIssues(outstandingIssues, newIssues, fixedIssues);

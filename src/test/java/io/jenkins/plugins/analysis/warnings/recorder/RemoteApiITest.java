@@ -19,10 +19,10 @@ import org.xml.sax.SAXException;
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
@@ -120,15 +120,21 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
-        IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "**/checkstyle1*"));
+        IssuesRecorder recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
         buildWithStatus(project, Result.SUCCESS);
-        recorder.setTool(new ToolConfiguration(new CheckStyle(), "**/checkstyle2*"));
+        recorder.setTool(createCheckstyle("**/checkstyle2*"));
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
 
         assertThatRemoteApiEquals(build, "/checkstyle/all/api/xml", "all-issues.xml");
         assertThatRemoteApiEquals(build, "/checkstyle/new/api/xml", "new-issues.xml");
         assertThatRemoteApiEquals(build, "/checkstyle/fixed/api/xml", "fixed-issues.xml");
         assertThatRemoteApiEquals(build, "/checkstyle/outstanding/api/xml", "outstanding-issues.xml");
+    }
+
+    private ReportScanningTool createCheckstyle(final String pattern) {
+        ReportScanningTool tool = createTool(new CheckStyle(), pattern);
+        tool.setReportEncoding("UTF-8");
+        return tool;
     }
 
     private Run<?, ?> buildCheckStyleJob() {

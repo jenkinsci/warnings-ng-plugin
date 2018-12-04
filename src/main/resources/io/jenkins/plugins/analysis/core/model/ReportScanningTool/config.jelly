@@ -1,0 +1,30 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:i="/issues" xmlns:f="/lib/form">
+
+  <i:tool-help/>
+
+  <j:choose>
+    <j:when test="${size(descriptor.pattern) > 0}">
+      <f:entry title="${%title.pattern}" field="pattern"
+               description="${%description.overridePattern('http://ant.apache.org/manual/Types/fileset.html', descriptor.pattern)}">
+        <f:textbox/>
+      </f:entry>
+    </j:when>
+    <j:otherwise>
+      <f:entry title="${%title.pattern}" field="pattern"
+               description="${%description.consoleOrPattern('http://ant.apache.org/manual/Types/fileset.html')}">
+        <f:textbox/>
+      </f:entry>
+    </j:otherwise>
+  </j:choose>
+
+  <f:entry title="${%title.reportEncoding}" field="reportEncoding"
+           description="${%description.reportEncoding}">
+    <f:combobox/>
+  </f:entry>
+
+  <st:include class="${descriptor.clazz}" page="local-config.jelly" optional="true"/>
+
+  <i:tool-defaults/>
+
+</j:jelly>

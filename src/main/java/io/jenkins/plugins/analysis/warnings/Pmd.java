@@ -7,8 +7,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.pmd.PmdParser;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import hudson.Extension;
 
@@ -17,7 +17,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Pmd extends StaticAnalysisTool {
+public class Pmd extends ReportScanningTool {
     private static final long serialVersionUID = -7600332469176914690L;
     static final String ID = "pmd";
 
@@ -57,7 +57,7 @@ public class Pmd extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol({"pmd", "pmdParser"})
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         private final PmdMessages messages;
 
         /** Creates the descriptor instance. */

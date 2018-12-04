@@ -9,7 +9,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.XlcCompilerParser;
 import edu.hm.hafner.analysis.parser.XlcLinkerParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 
 import hudson.Extension;
 
@@ -18,7 +18,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Xlc extends StaticAnalysisToolSuite {
+public class Xlc extends ReportScanningToolSuite {
     private static final long serialVersionUID = -3811101878455857601L;
     static final String ID = "xlc";
 
@@ -37,7 +37,7 @@ public class Xlc extends StaticAnalysisToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("xlc")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

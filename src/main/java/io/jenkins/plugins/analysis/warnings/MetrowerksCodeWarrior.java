@@ -9,7 +9,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.MetrowerksCwCompilerParser;
 import edu.hm.hafner.analysis.parser.MetrowerksCwLinkerParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 
 import hudson.Extension;
 
@@ -18,7 +18,7 @@ import hudson.Extension;
  *
  * @author Aykut Yilmaz
  */
-public class MetrowerksCodeWarrior extends StaticAnalysisToolSuite {
+public class MetrowerksCodeWarrior extends ReportScanningToolSuite {
     private static final long serialVersionUID = 4315389958099766339L;
     static final String ID = "metrowerks";
 
@@ -37,7 +37,7 @@ public class MetrowerksCodeWarrior extends StaticAnalysisToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("metrowerksCodeWarrior")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

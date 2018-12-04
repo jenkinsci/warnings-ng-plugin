@@ -2,21 +2,15 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
 
   <st:documentation>
-    Shows the default values for a static analysis tool (read only).
+    Provides entries for the custom properties (id, name) of a static analysis tool.
   </st:documentation>
 
-  <f:entry title="${%Default ID}" description="${%description.id}" >
-    <f:readOnlyTextbox value="${descriptor.id}"/>
+  <f:entry title="${%title.id}" description="${%description.id(descriptor.id)}" field="id">
+    <f:textbox/>
   </f:entry>
-  <j:if test="${size(descriptor.pattern) > 0}">
-    <f:entry title="${%title.pattern}" description="${%description.pattern}" >
-      <f:readOnlyTextbox value="${descriptor.pattern}"/>
-    </f:entry>
-  </j:if>
-  <j:if test="${size(descriptor.help) > 0}">
-    <f:block>
-      <j:out value="${descriptor.help}" />
-    </f:block>
-  </j:if>
+
+  <f:entry title="${%title.name}" description="${%description.name(descriptor.name)}" field="name">
+    <f:textbox/>
+  </f:entry>
 
 </j:jelly>

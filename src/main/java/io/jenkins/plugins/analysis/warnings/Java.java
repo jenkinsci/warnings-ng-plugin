@@ -10,7 +10,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.AntJavacParser;
 import edu.hm.hafner.analysis.parser.JavacParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 
 import hudson.Extension;
 
@@ -19,7 +19,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Java extends StaticAnalysisToolSuite {
+public class Java extends ReportScanningToolSuite {
     private static final long serialVersionUID = 2254154391638811877L;
     static final String ID = "java";
 
@@ -38,7 +38,7 @@ public class Java extends StaticAnalysisToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("java")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

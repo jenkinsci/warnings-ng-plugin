@@ -9,8 +9,9 @@ import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
 /**
@@ -63,8 +64,23 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files=&quot;$files $directory/$i&quot;\n"
             + "done</code></pre>";
 
+    /** Runs the TagList parser on output files that contains 6 issues. */
+    @Test
+    public void shouldFindAllOpenTasks() {
+        WorkflowJob job = createJobWithWorkspaceFiles("tasks/file-with-tasks.txt");
+        job.setDefinition(asStage(
+                "def issues = scanForIssues tool: " 
+                        + "taskScanner(includePattern:'**/*issues.txt', highTags:'FIXME', normalTags:'TODO')",
+                PUBLISH_ISSUES_STEP));
+
+        AnalysisResult result = scheduleBuild(job, "open-tasks");
+
+        assertThat(result.getTotalSize()).isEqualTo(2);
+        assertThat(result.getIssues()).hasSize(2).hasSeverities(0, 1, 1, 0);
+    }
+
     /** Runs the SonarQube parsers on two files that contains 6 and 31 issues. */
-    @Test 
+    @Test
     public void shouldFindAllSonarQubeIssues() {
         shouldFindIssuesOfTool(31, new SonarQube(), "sonarqube-api.json");
         shouldFindIssuesOfTool(6, new SonarQube(), "sonarqube-differential.json");
@@ -241,7 +257,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 .contains("The check finds classes that are designed for extension (subclass creation).");
     }
 
-    private void assertThatDescriptionOfIssueIsSet(final StaticAnalysisTool tool, final Issue issue,
+    private void assertThatDescriptionOfIssueIsSet(final Tool tool, final Issue issue,
             final String expectedDescription) {
         StaticAnalysisLabelProvider labelProvider = tool.getLabelProvider();
         assertThat(issue).hasDescription("");
@@ -545,9 +561,9 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFindAllEclipseIssues() {
         shouldFindIssuesOfTool(8, new Eclipse(), "eclipse.txt");
-        
+
         shouldFindIssuesOfTool(6, new Eclipse(), "eclipse-withinfo.xml");
-        
+
         shouldFindIssuesOfTool(8 + 6, new Eclipse(), "eclipse-withinfo.xml", "eclipse.txt");
     }
 
@@ -650,19 +666,19 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final StaticAnalysisTool tool, 
+    private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         try {
             WorkflowJob job = createJobWithWorkspaceFiles(fileNames);
             job.setDefinition(parseAndPublish(tool));
 
-            AnalysisResult result = scheduleBuild(job, tool);
-            
+            AnalysisResult result = scheduleBuild(job, tool.getActualId());
+
             assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 
             Report report = result.getIssues();
-            assertThat(report.filter(issue -> issue.getOrigin().equals(tool.getId())))
+            assertThat(report.filter(issue -> issue.getOrigin().equals(tool.getActualId())))
                     .hasSize(expectedSizeOfIssues);
 
             return report;

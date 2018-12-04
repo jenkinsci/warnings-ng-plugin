@@ -1,0 +1,19 @@
+<p>
+    For each static analysis tool a dedicated parser or scanner will be used to read report files or produce issues in
+    any other way. If your tool is not yet supported you can either define a new Groovy based parser in Jenkins
+    system configuration or provide a new parser within a new small plug-in. If the parser is useful for other teams 
+    as well please share it and provide pull requests for the
+    <a href="https://github.com/jenkinsci/warnings-ng-plugin/pulls">Warnings Next Generation Plug-in</a> and
+    the <a href="https://github.com/jenkinsci/analysis-model/pulls">Analysis Parsers Library</a>.
+</p>
+
+<p>
+    The results of the selected tool are published using a unique ID (i.e. URL) which must not be already used by
+    another tool in this job. This ID is used as link to the results, so choose a short and meaningful name. 
+    If you leave the ID field empty, then the built-in default ID of the registered tool will be used.
+</p>
+
+<p>
+    You can also override the display name of the tool. This name is used in details views, trend captions, and hyper
+    links. If you leave the name field empty, then the built-in default name of the registered tool will be used.
+</p>

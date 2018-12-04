@@ -6,7 +6,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.MsBuildParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;
 
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class PcLint extends StaticAnalysisTool {
+public class PcLint extends ReportScanningTool {
     private static final long serialVersionUID = -6022797743536264094L;
     static final String ID = "pclint";
 
@@ -34,7 +34,7 @@ public class PcLint extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("pcLint")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

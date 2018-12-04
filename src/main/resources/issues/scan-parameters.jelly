@@ -11,10 +11,6 @@
 
   <i:hr title="${%File Encoding}"/>
 
-  <f:entry title="${%title.reportEncoding}" description="${%description.reportEncoding}">
-    <f:combobox field="reportEncoding"/>
-  </f:entry>
-
   <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}">
     <f:combobox field="sourceCodeEncoding"/>
   </f:entry>

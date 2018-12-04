@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.NagFortranParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Joscha Behrmann
  */
-public class NagFortran extends StaticAnalysisTool {
+public class NagFortran extends ReportScanningTool {
     private static final long serialVersionUID = 6623024344311048456L;
     static final String ID = "nag-fortran";
 
@@ -34,7 +34,7 @@ public class NagFortran extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("nagFortran")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

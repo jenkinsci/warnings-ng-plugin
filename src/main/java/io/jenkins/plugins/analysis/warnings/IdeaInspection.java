@@ -5,8 +5,8 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.IdeaInspectionParser;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -16,7 +16,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class IdeaInspection extends StaticAnalysisTool {
+public class IdeaInspection extends ReportScanningTool {
     private static final long serialVersionUID = 6473299663127011037L;
     static final String ID = "idea";
 
@@ -40,7 +40,7 @@ public class IdeaInspection extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("ideaInspection")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -13,8 +13,8 @@ import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 import static j2html.TagCreator.*;
 
 import hudson.model.Run;
@@ -25,7 +25,7 @@ import hudson.util.FormValidation;
  *
  * @author Ullrich Hafner
  */
-public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
+public abstract class DuplicateCodeScanner extends ReportScanningTool {
     private static final long serialVersionUID = -8446643146836067375L;
 
     /** Validates the thresholds user input. */
@@ -92,13 +92,13 @@ public abstract class DuplicateCodeScanner extends StaticAnalysisTool {
         }
 
         @Override
-        public DetailsTableModel getIssuesModel(final Run<?, ?> owner, final String url) {
-            return new DryTableModel(getAgeBuilder(owner, url), getFileNameRenderer(owner), this);
+        public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url) {
+            return new DryTableModel(getAgeBuilder(build, url), getFileNameRenderer(build), this);
         }
    }
 
     /** Descriptor for this static analysis tool. */
-    abstract static class DryDescriptor extends StaticAnalysisToolDescriptor {
+    abstract static class DryDescriptor extends ReportScanningToolDescriptor {
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 
         /**

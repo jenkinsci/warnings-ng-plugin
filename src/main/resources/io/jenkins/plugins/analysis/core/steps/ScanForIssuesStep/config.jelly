@@ -12,13 +12,8 @@
     <b>Publish issues created by a static analysis scan</b> individually.
   </f:block>
 
-  <f:entry description="${%description.tool(rootURL)}">
+  <f:entry>
     <f:dropdownDescriptorSelector field="tool" title="${%title.tool}"/>
-  </f:entry>
-
-  <f:entry title="${%title.pattern}" field="pattern"
-           description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
-    <f:textbox/>
   </f:entry>
 
   <i:scan-parameters/>

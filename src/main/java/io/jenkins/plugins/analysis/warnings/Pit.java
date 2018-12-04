@@ -6,7 +6,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.violations.PitAdapter;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -16,7 +16,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Pit extends StaticAnalysisTool {
+public class Pit extends ReportScanningTool {
     private static final long serialVersionUID = -3769283356498049888L;
     static final String ID = "pit";
 
@@ -40,7 +40,7 @@ public class Pit extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("pit")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

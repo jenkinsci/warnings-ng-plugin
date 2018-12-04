@@ -6,7 +6,7 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.QacSourceCodeAnalyserParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;
 
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class QacSourceCodeAnalyser extends StaticAnalysisTool {
+public class QacSourceCodeAnalyser extends ReportScanningTool {
     private static final long serialVersionUID = 3092674431567484628L;
     static final String ID = "qac";
 
@@ -34,7 +34,7 @@ public class QacSourceCodeAnalyser extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("qacSourceCodeAnalyser")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

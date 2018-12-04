@@ -19,7 +19,6 @@ import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
@@ -130,7 +129,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     private void enableEclipseWarnings(final FreeStyleProject project) {
-        enableWarnings(project, new ToolConfiguration(new Eclipse(), "**/*.txt"));
+        enableWarnings(project, createTool(new Eclipse(), "**/*.txt"));
     }
 
     private FreeStyleProject getJobWithWorkspaceFiles() {
@@ -213,7 +212,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     public void shouldShowNoFilesOutsideWorkspace() {
         FreeStyleProject job = createFreeStyleProject();
         prepareGccLog(job);
-        enableWarnings(job, new ToolConfiguration(new Gcc4(), "**/gcc.log"));
+        enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
         assertThatLogContains(result.getOwner(), "0 copied");

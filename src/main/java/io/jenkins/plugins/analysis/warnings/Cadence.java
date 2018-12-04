@@ -2,12 +2,12 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.CadenceIncisiveParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Cadence extends StaticAnalysisTool {
+public class Cadence extends ReportScanningTool {
     private static final long serialVersionUID = 8284958840616127492L;
     static final String ID = "cadence";
 
@@ -34,7 +34,7 @@ public class Cadence extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("cadence")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /**
          * Creates a new instance of {@link Descriptor}.
          */

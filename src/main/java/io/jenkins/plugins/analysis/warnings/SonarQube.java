@@ -10,7 +10,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.SonarQubeDiffParser;
 import edu.hm.hafner.analysis.parser.SonarQubeIssuesParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisToolSuite;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 
 import hudson.Extension;
 
@@ -19,7 +19,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class SonarQube extends StaticAnalysisToolSuite {
+public class SonarQube extends ReportScanningToolSuite {
     static final String ID = "sonar";
 
     /** Creates a new instance of {@link SonarQube}. */
@@ -37,7 +37,7 @@ public class SonarQube extends StaticAnalysisToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("sonarQube")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -97,3 +97,9 @@ Scala icons are made by converting of http://www.scala-lang.org/resources/img/sm
 License for Go
 
 Go mascot and logo were designed by Renée French and are covered by the Creative Commons Attribution 3.0 license.
+
+------------------------------------------------------------------------------
+
+License for FontAwesome icons
+
+https://fontawesome.com/license

@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import edu.hm.hafner.analysis.Severity;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -139,11 +138,11 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private HealthReport createHealthReportTestSetupEclipse(final int health, final int unhealthy) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse-healthReport.txt");
-        enableWarnings(project, publisher -> {
+        enableGenericWarnings(project, publisher -> {
                     publisher.setHealthy(health);
                     publisher.setUnhealthy(unhealthy);
                 },
-                new ToolConfiguration(new Eclipse(), "**/*issues.txt")
+                createGenericToolConfiguration(new Eclipse())
         );
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }
@@ -155,12 +154,12 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private HealthReport createHealthReportTestSetupCheckstyle(final Severity priority) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-healthReport.xml");
-        enableWarnings(project, publisher -> {
+        enableGenericWarnings(project, publisher -> {
                     publisher.setHealthy(10);
                     publisher.setUnhealthy(15);
                     publisher.setMinimumSeverity(priority.getName());
                 },
-                new ToolConfiguration(new CheckStyle(), "**/*issues.txt")
+                createTool(new CheckStyle(), "**/*issues.txt")
         );
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }

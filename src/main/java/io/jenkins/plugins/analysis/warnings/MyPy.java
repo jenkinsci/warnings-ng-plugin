@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.violations.MyPyAdapter;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class MyPy extends StaticAnalysisTool {
+public class MyPy extends ReportScanningTool {
     private static final long serialVersionUID = -1864782743893780307L;
     static final String ID = "mypy";
 
@@ -34,7 +34,7 @@ public class MyPy extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("myPy")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

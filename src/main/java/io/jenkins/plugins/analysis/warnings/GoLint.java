@@ -5,8 +5,8 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.GoLintParser;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -16,7 +16,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class GoLint extends StaticAnalysisTool {
+public class GoLint extends ReportScanningTool {
     private static final long serialVersionUID = -8739396276813816897L;
     static final String ID = "golint";
 
@@ -35,7 +35,7 @@ public class GoLint extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("goLint")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -1,0 +1,8 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
+
+  <f:entry title="${%title.tool}" description="${%description.tool(rootURL)}" field="parserId">
+    <f:select/>
+  </f:entry>
+
+</j:jelly>

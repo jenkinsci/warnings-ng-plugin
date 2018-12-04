@@ -234,7 +234,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
         FreeStyleProject jobWithFindBugsParser = createJobWithWorkspaceFile(
                 PACKAGE_FILE_PATH + "various/findbugs-packages.xml");
-        enableWarnings(jobWithFindBugsParser, new FindBugs());
+        enableGenericWarnings(jobWithFindBugsParser, new FindBugs());
         AnalysisResult resultWithFindBugsParser = scheduleBuildAndAssertStatus(jobWithFindBugsParser, Result.SUCCESS);
 
         String logOutputForFindBugs = FileUtils.readFileToString(resultWithFindBugsParser.getOwner().getLogFile(),
@@ -382,7 +382,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
     private AnalysisResult buildProject(final String... files) {
         FreeStyleProject project = createJobWithWorkspaceFile(files);
-        enableWarnings(project, new Eclipse());
+        enableGenericWarnings(project, new Eclipse());
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
 

@@ -9,7 +9,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.steps.ToolConfiguration;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
@@ -117,7 +116,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     @Test 
     public void findIssuesWithMultipleFiles() {
         FreeStyleProject project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
-        IssuesRecorder recorder = enableWarnings(project, new ToolConfiguration(new CheckStyle(), "*.xml"));
+        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
         recorder.setFailedTotalAll(6);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
@@ -153,7 +152,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
     private FreeStyleProject createCheckStyleJob(final String workspaceFolder) {
         FreeStyleProject project = createJobWithWorkspaceFile(workspaceFolder);
-        enableWarnings(project, new ToolConfiguration(new CheckStyle(), "*.xml"));
+        enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
         return project;
     }
 

@@ -1,0 +1,14 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Shows the help for a static analysis tool (read only).
+  </st:documentation>
+
+  <j:if test="${size(descriptor.help) > 0}">
+    <f:block>
+      <j:out value="${descriptor.help}" />
+    </f:block>
+  </j:if>
+
+</j:jelly>

@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,7 +20,9 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
@@ -28,6 +31,7 @@ import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
+import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
 import jenkins.tasks.SimpleBuildStep;
 
@@ -68,9 +72,9 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @VisibleForTesting
     static final String NO_REFERENCE_JOB = "-";
 
-    private List<ToolConfiguration> tools;
+    private transient List<ToolConfiguration> tools;
+    private List<Tool> analysisTools;
 
-    private String reportEncoding = StringUtils.EMPTY;
     private String sourceCodeEncoding = StringUtils.EMPTY;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
@@ -100,6 +104,25 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         super();
 
         // empty constructor required for Stapler
+    }
+
+    /**
+     * Called after de-serialization to retain backward compatibility.
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        if (tools != null) {
+            analysisTools = new ArrayList<>();
+            for (ToolConfiguration tool : tools) {
+                ReportScanningTool analysisTool = tool.getTool();
+                analysisTool.setId(tool.getId());
+                analysisTool.setName(tool.getName());
+                analysisTool.setPattern(tool.getPattern());
+                analysisTools.add(analysisTool);
+            }
+        }
+        return this;
     }
 
     /**
@@ -143,8 +166,25 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     @CheckForNull
-    public List<ToolConfiguration> getTools() {
-        return tools;
+    public List<ToolProxy> getTools() {
+        if (analysisTools != null) {
+            return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
+        }
+        return new ArrayList<>(); // FIXME: remove
+    }
+
+    /**
+     * Sets the static analysis tools that will scan files and create issues.
+     *
+     * @param tools
+     *         the static analysis tools (wrapped as {@link ToolProxy})
+     * @deprecated this method is only intended to be called by the UI
+     * @see #setTool(Tool) 
+     */
+    // FIXME: provide other setter
+    @DataBoundSetter @Deprecated
+    public void setTools(final List<ToolProxy> tools) {
+        this.analysisTools = tools.stream().map(ToolProxy::getTool).collect(Collectors.toList());
     }
 
     /**
@@ -152,10 +192,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *
      * @param tools
      *         the static analysis tools
+     * @see #setTool(Tool) 
      */
-    @DataBoundSetter
-    public void setTools(final List<ToolConfiguration> tools) {
-        this.tools = new ArrayList<>(tools);
+    public void setTools(final Collection<Tool> tools) {
+        this.analysisTools = new ArrayList<>(tools);
     }
 
     /**
@@ -164,26 +204,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param tool
      *         the static analysis tool
      */
-    public void setTool(final ToolConfiguration tool) {
-        this.tools = Collections.singletonList(tool);
+    public void setTool(final Tool tool) {
+        this.analysisTools = Collections.singletonList(tool);
     }
-
-    @CheckForNull
-    public String getReportEncoding() {
-        return reportEncoding;
-    }
-
-    /**
-     * Sets the default encoding used to read the log files that contain the warnings.
-     *
-     * @param logFileEncoding
-     *         the encoding, e.g. "ISO-8859-1"
-     */
-    @DataBoundSetter
-    public void setReportEncoding(final String logFileEncoding) {
-        this.reportEncoding = logFileEncoding;
-    }
-
+    
     @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
@@ -535,30 +559,28 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     private String createLoggerPrefix() {
-        return tools.stream().map(ToolConfiguration::getActualName).collect(Collectors.joining());
+        return analysisTools.stream().map(Tool::getActualName).collect(Collectors.joining());
     }
 
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
             AnnotatedReport totalIssues = new AnnotatedReport(id);
-            for (ToolConfiguration toolConfiguration : tools) {
-                totalIssues.add(scanWithTool(run, workspace, listener, toolConfiguration), 
-                        toolConfiguration.getActualId());
+            for (Tool tool : analysisTools) {
+                totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
             publishResult(run, listener, toolName, totalIssues, toolName);
         }
         else {
-            for (ToolConfiguration toolConfiguration : tools) {
-                AnnotatedReport report = new AnnotatedReport(toolConfiguration.getActualId());
-                report.add(scanWithTool(run, workspace, listener, toolConfiguration));
+            for (Tool tool : analysisTools) {
+                AnnotatedReport report = new AnnotatedReport(tool.getActualId());
+                report.add(scanWithTool(run, workspace, listener, tool));
                 if (StringUtils.isNotBlank(id) || StringUtils.isNotBlank(name)) {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
                             name, id);
                 }
-                publishResult(run, listener, toolConfiguration.getActualName(), report,
-                        getReportName(toolConfiguration));
+                publishResult(run, listener, tool.getActualName(), report, getReportName(tool));
             }
         }
     }
@@ -567,27 +589,25 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * Returns the name of the tool. If no name has been set, then an empty string is returned so that the default name
      * will be used.
      *
-     * @param toolConfiguration
+     * @param tool
      *         the tool
      *
      * @return the name
      */
-    private String getReportName(final ToolConfiguration toolConfiguration) {
-        if (toolConfiguration.hasName()) {
-            return toolConfiguration.getName();
+    private String getReportName(final Tool tool) {
+        if (StringUtils.isBlank(tool.getName())) {
+            return StringUtils.EMPTY;
         }
         else {
-            return StringUtils.EMPTY;
+            return tool.getActualName();
         }
     }
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final ToolConfiguration toolConfiguration) throws IOException, InterruptedException {
-        IssuesScanner issuesScanner = new IssuesScanner(toolConfiguration.getTool(), getFilters(), workspace,
-                getReportCharset(), getSourceCodeCharset(), new FilePath(run.getRootDir()),
-                blame(run, workspace, listener), new LogHandler(listener, toolConfiguration.getActualName()));
-        String expandedPattern = expandEnvironmentVariables(run, listener, toolConfiguration.getPattern());
-        return issuesScanner.scan(expandedPattern, run.getLogFile());
+            final Tool tool) throws IOException, InterruptedException {
+        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(),
+                getSourceCodeCharset(), new FilePath(run.getRootDir()), blame(run, workspace, listener));
+        return issuesScanner.scan(run, workspace, new LogHandler(listener, tool.getActualName()));
     }
 
     private Blamer blame(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
@@ -599,10 +619,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private Charset getSourceCodeCharset() {
         return getCharset(sourceCodeEncoding);
-    }
-
-    private Charset getReportCharset() {
-        return getCharset(reportEncoding);
     }
 
     private Charset getCharset(final String encoding) {
@@ -638,6 +654,14 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return new EnvironmentResolver().expandEnvironmentVariables(run.getEnvironment(listener), pattern);
     }
 
+    public void addTools(final Tool tool, final Tool... additionalTools) {
+        analysisTools = new ArrayList<>();
+        analysisTools.add(tool);
+        for (Tool additionalTool : additionalTools) {
+            analysisTools.add(additionalTool);
+        }
+    }
+
     /**
      * Descriptor for this step: defines the context and the UI elements.
      */
@@ -656,15 +680,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         @Override
         public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
-        }
-
-        /**
-         * Returns a model with all available charsets.
-         *
-         * @return a model with all available charsets
-         */
-        public ComboBoxModel doFillReportEncodingItems() {
-            return model.getAllCharsets();
         }
 
         /**

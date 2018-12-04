@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
@@ -18,11 +19,16 @@ import org.kohsuke.stapler.QueryParameter;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
+import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.NullBlamer;
+import io.jenkins.plugins.analysis.core.util.LogHandler;
+import jenkins.model.Jenkins;
 
+import hudson.DescriptorExtensionList;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -36,10 +42,9 @@ import hudson.util.FormValidation;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class ScanForIssuesStep extends Step {
-    private String reportEncoding = StringUtils.EMPTY;
+    private Tool tool;
+    
     private String sourceCodeEncoding = StringUtils.EMPTY;
-    private String pattern = StringUtils.EMPTY;
-    private StaticAnalysisTool tool;
     private boolean isBlameDisabled;
 
     private List<RegexpFilter> filters = new ArrayList<>();
@@ -55,25 +60,19 @@ public class ScanForIssuesStep extends Step {
     }
 
     @CheckForNull
-    public String getPattern() {
-        return pattern;
+    public Tool getTool() {
+        return tool;
     }
 
     /**
-     * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
-     * scanned.
+     * Sets the static analysis tool that will scan files and create issues.
      *
-     * @param pattern
-     *         the pattern to use
+     * @param tool
+     *         the static analysis tool
      */
     @DataBoundSetter
-    public void setPattern(final String pattern) {
-        this.pattern = pattern;
-    }
-
-    @CheckForNull
-    public StaticAnalysisTool getTool() {
-        return tool;
+    public void setTool(final Tool tool) {
+        this.tool = tool;
     }
 
     public List<RegexpFilter> getFilters() {
@@ -97,33 +96,6 @@ public class ScanForIssuesStep extends Step {
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
         this.isBlameDisabled = blameDisabled;
-    }
-
-    /**
-     * Sets the static analysis tool that will scan files and create issues.
-     *
-     * @param tool
-     *         the static analysis tool
-     */
-    @DataBoundSetter
-    public void setTool(final StaticAnalysisTool tool) {
-        this.tool = tool;
-    }
-
-    @CheckForNull
-    public String getReportEncoding() {
-        return reportEncoding;
-    }
-
-    /**
-     * Sets the encoding to use to read the log files that contain the warnings.
-     *
-     * @param reportEncoding
-     *         the encoding, e.g. "ISO-8859-1"
-     */
-    @DataBoundSetter
-    public void setReportEncoding(final String reportEncoding) {
-        this.reportEncoding = reportEncoding;
     }
 
     @CheckForNull
@@ -151,10 +123,8 @@ public class ScanForIssuesStep extends Step {
      * Actually performs the execution of the associated step.
      */
     public static class Execution extends AnalysisExecution<AnnotatedReport> {
-        private final String reportEncoding;
+        private final Tool tool;
         private final String sourceCodeEncoding;
-        private final StaticAnalysisTool tool;
-        private final String pattern;
         private final boolean isBlameDisabled;
         private final List<RegexpFilter> filters;
         
@@ -169,10 +139,8 @@ public class ScanForIssuesStep extends Step {
         protected Execution(@NonNull final StepContext context, final ScanForIssuesStep step) {
             super(context);
 
-            reportEncoding = step.getReportEncoding();
-            sourceCodeEncoding = step.getSourceCodeEncoding();
             tool = step.getTool();
-            pattern = step.getPattern();
+            sourceCodeEncoding = step.getSourceCodeEncoding();
             isBlameDisabled = step.getBlameDisabled();
             filters = step.getFilters();
         }
@@ -181,16 +149,15 @@ public class ScanForIssuesStep extends Step {
         protected AnnotatedReport run() throws IOException, InterruptedException, IllegalStateException {
             FilePath workspace = getWorkspace();
             TaskListener listener = getTaskListener();
-            Blamer blamer = blame(workspace, listener);
+
+            IssuesScanner issuesScanner = new IssuesScanner(tool, filters,  
+                    getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()),
+                    createBlamer(workspace, listener));
             
-            IssuesScanner issuesScanner = new IssuesScanner(tool, filters, workspace, getCharset(reportEncoding),
-                    getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()), blamer,
-                    new LogHandler(listener, tool.getName()));
-            
-            return issuesScanner.scan(pattern, getRun().getLogFile());
+            return issuesScanner.scan(getRun(), workspace, new LogHandler(listener, tool.getActualName()));
         } 
 
-        private Blamer blame(final FilePath workspace, final TaskListener listener)
+        private Blamer createBlamer(final FilePath workspace, final TaskListener listener)
                 throws IOException, InterruptedException {
             if (isBlameDisabled) {
                 return new NullBlamer();
@@ -222,13 +189,18 @@ public class ScanForIssuesStep extends Step {
             return Messages.ScanForIssues_DisplayName();
         }
 
-        /**
-         * Returns a model with all available charsets.
-         *
-         * @return a model with all available charsets
-         */
-        public ComboBoxModel doFillReportEncodingItems() {
-            return model.getAllCharsets();
+        public DescriptorExtensionList<Tool, ToolDescriptor> getToolDescriptors() {
+            DescriptorExtensionList<Tool, ToolDescriptor> list = Jenkins.getInstance().getDescriptorList(Tool.class);
+
+            List<ToolDescriptor> retained = new ArrayList<>();
+            for (ToolDescriptor toolDescriptor : list) {
+                if (StringUtils.equalsAny(toolDescriptor.getId(), "findbugs", "checkstyle", "pmd", "cpd", "eclipse")) {
+                    retained.add(toolDescriptor);
+                }
+            }
+            list.clear();
+            list.addAll(retained);
+            return list;
         }
 
         /**

@@ -37,6 +37,8 @@ The plugin should depend on Jenkins plugin parent pom and on the Warnings Next G
 
 ## Create a parser class
 
+If your tool must parse a report file in order to produce the issues, you need to write a corresponding parser. 
+Otherwise you can continue with section [registering your tool](#register-the-tool).
 Each custom tool requires a parser that will be instantiated to scan the console log (or a report file). The parser 
 must derive from the abstract class `IssueParser`, or one of the child classes. 
 The following base classes can be used as the base class:
@@ -51,12 +53,18 @@ Please have a look at one of the
 [existing parsers](https://github.com/jenkinsci/analysis-model/tree/master/src/main/java/edu/hm/hafner/analysis/parser)
 in order to see how to use these base classes.
 
-## Register the tool in the warnings plugin
+## Register the tool
 
 In order to get picked up by the warnings plugin your parser must be registered as an extension.
-This is achieved by extending from the base class `StaticAnalysisTool` and registering it using the annotation 
-`@Extension` at the associated `Descriptor` class. Typically you do this in Jenkins by adding the descriptor as a
-static nested class of the `StaticAnalysisTool`. Here is an example that can be used as a starting point. 
+This is achieved by extending from the base class `Tool` and registering it using the annotation 
+`@Extension` at your associated `Descriptor` class. Typically you do this in Jenkins by adding the descriptor as a
+static nested class of your `Tool` class. 
+
+Since most of the static analysis tools are based on a report file, the more specific base class `ReportScanningTool` 
+has been provided that should be used in this case - this base class provides already support for adding a report 
+`pattern` and `encoding` property in the user interface. 
+
+Here is an example that can be used as a starting point. 
 
 ```java
 package io.jenkins.plugins.analysis.warnings;
@@ -66,14 +74,14 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.AjcParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;
 
 /**
  * Provides a parser and customized messages for your tool.
  */
-public class YourTool extends StaticAnalysisTool {
+public class YourTool extends ReportScanningTool {
     private static final long serialVersionUID = 1L;
     static final String ID = "your-id";
 
@@ -91,7 +99,7 @@ public class YourTool extends StaticAnalysisTool {
 
     /** Descriptor for this static analysis tool. */
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

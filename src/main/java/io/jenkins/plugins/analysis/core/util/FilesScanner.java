@@ -13,7 +13,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.steps.JobConfigurationModel;
 import jenkins.MasterToSlaveFileCallable;
 
@@ -44,12 +44,12 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
      * @param encoding
      *         encoding of the files to parse
      */
-    public FilesScanner(final String filePattern, final StaticAnalysisTool tool, final String encoding) {
+    public FilesScanner(final String filePattern, final ReportScanningTool tool, final String encoding) {
         super();
 
         this.filePattern = filePattern;
         this.parser = tool.createParser();
-        this.id = tool.getId();
+        this.id = tool.getActualId();
         this.encoding = encoding;
     }
 

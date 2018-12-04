@@ -5,7 +5,7 @@ import javax.annotation.Nonnull;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.SphinxBuildParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class SphinxBuild extends StaticAnalysisTool {
+public class SphinxBuild extends ReportScanningTool {
     private static final long serialVersionUID = -7095926313386515100L;
     static final String ID = "sphinx";
 
@@ -34,7 +34,7 @@ public class SphinxBuild extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("sphinxBuild")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

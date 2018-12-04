@@ -2,12 +2,12 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.IarParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -15,7 +15,7 @@ import hudson.Extension;
  *
  * @author Ullrich Hafner
  */
-public class Iar extends StaticAnalysisTool {
+public class Iar extends ReportScanningTool {
     private static final long serialVersionUID = 6672928932731913714L;
     static final String ID = "iar";
 
@@ -34,7 +34,7 @@ public class Iar extends StaticAnalysisTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("iar")
     @Extension
-    public static class Descriptor extends StaticAnalysisToolDescriptor {
+    public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
