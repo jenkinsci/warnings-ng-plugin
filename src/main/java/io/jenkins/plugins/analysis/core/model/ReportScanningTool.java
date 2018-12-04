@@ -35,8 +35,10 @@ import hudson.util.FormValidation;
  * @author Ullrich Hafner
  */
 public abstract class ReportScanningTool extends Tool {
-    private String pattern;
-    private String reportEncoding;
+    private static final long serialVersionUID = -1962476812276437235L;
+
+    private String pattern = StringUtils.EMPTY;
+    private String reportEncoding = StringUtils.EMPTY;
 
     /**
      * Returns a new parser to scan a log file and return the issues reported in such a file.

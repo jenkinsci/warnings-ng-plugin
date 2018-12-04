@@ -196,8 +196,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          *
          * @return the validation result
          */
-        private FormValidation validate(final int high, final int normal,
-                final String message) {
+        private FormValidation validate(final int high, final int normal, final String message) {
             if (isValid(normal, high)) {
                 return FormValidation.ok();
             }

@@ -26,6 +26,8 @@ import hudson.model.Run;
  * @see ReportScanningTool
  */
 public abstract class Tool extends AbstractDescribableImpl<Tool> implements Serializable {
+    private static final long serialVersionUID = 3305739700153168629L;
+    
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
 

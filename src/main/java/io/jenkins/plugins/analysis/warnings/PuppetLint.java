@@ -2,12 +2,12 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.parser.PuppetLintParser;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**

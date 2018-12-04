@@ -14,6 +14,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
+import io.jenkins.plugins.analysis.core.steps.JobConfigurationModel;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
@@ -33,7 +34,7 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
     private final MatcherMode matcherMode;
     private final String includePattern;
     private final String excludePattern;
-    private final Charset sourceCodeEncoding;
+    private final String sourceCodeEncoding;
 
     /**
      * Creates a new {@link AgentScanner}.
@@ -57,7 +58,7 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
      */
     public AgentScanner(final String high, final String normal, final String low, final CaseMode caseMode,
             final MatcherMode matcherMode, final String includePattern, final String excludePattern,
-            final Charset sourceCodeEncoding) {
+            final String sourceCodeEncoding) {
         this.high = high;
         this.normal = normal;
         this.low = low;
@@ -84,7 +85,7 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
         for (String fileName : fileNames) {
             Path absolute = root.resolve(fileName);
             IssueBuilder issueBuilder = new IssueBuilder().setFileName(absolute.toString());
-            report.addAll(scanner.scan(Files.newBufferedReader(absolute, sourceCodeEncoding), issueBuilder));
+            report.addAll(scanner.scan(Files.newBufferedReader(absolute, getCharset()), issueBuilder));
             if (Thread.interrupted()) {
                 throw new ParsingCanceledException();
             }
@@ -95,6 +96,10 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
             report.logInfo("   %s: %d open tasks", entry.getKey(), entry.getValue());
         }
         return report;
+    }
+
+    private Charset getCharset() {
+        return new JobConfigurationModel().getCharset(sourceCodeEncoding);
     }
 
     private TaskScanner createTaskScanner() {

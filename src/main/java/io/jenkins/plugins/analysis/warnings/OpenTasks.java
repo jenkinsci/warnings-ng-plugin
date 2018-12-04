@@ -43,15 +43,13 @@ public class OpenTasks extends Tool {
 
     static final String ID = "open-tasks";
 
-    private String highTags;
-    private String normalTags;
-    private String lowTags;
+    private String highTags = StringUtils.EMPTY;
+    private String normalTags = StringUtils.EMPTY;
+    private String lowTags = StringUtils.EMPTY;
     private boolean ignoreCase;
     private boolean isRegularExpression;
-    private String includePattern;
-    private String excludePattern;
-
-    // FIXME: rename tag setters
+    private String includePattern = StringUtils.EMPTY;
+    private String excludePattern = StringUtils.EMPTY;
 
     /**
      * Returns the Ant file-set pattern of files to work with.
@@ -158,7 +156,7 @@ public class OpenTasks extends Tool {
             return workspace.act(new AgentScanner(highTags, normalTags, lowTags,
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
-                    includePattern, excludePattern, sourceCodeEncoding));
+                    includePattern, excludePattern, sourceCodeEncoding.name()));
         }
         catch (IOException e) {
             throw new ParsingException(e);

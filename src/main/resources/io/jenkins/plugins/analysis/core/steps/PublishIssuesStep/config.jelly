@@ -11,10 +11,11 @@
     <b>Scan files or the console log for warnings or issues</b> and
     <b>Publish issues created by a static analysis scan</b> individually.
   </f:block>
-  <f:entry title="${%ID}" description="${%description.id}" field="id">
+  
+  <f:entry title="${%title.id}" description="${%description.id}" field="id">
     <f:textbox/>
   </f:entry>
-  <f:entry title="${%Name}" description="${%description.name}" field="name">
+  <f:entry title="${%title.name}" description="${%description.name}" field="name">
     <f:textbox/>
   </f:entry>
 
@@ -25,6 +26,5 @@
   </f:entry>
 
   <i:publish-parameters/>
-
  
 </j:jelly>
