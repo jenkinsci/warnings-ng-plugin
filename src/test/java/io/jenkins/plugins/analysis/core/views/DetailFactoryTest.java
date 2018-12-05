@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
@@ -152,7 +151,7 @@ class DetailFactoryTest {
         Report report = new Report();
 
         IssueBuilder issueBuilder = new IssueBuilder();
-        issueBuilder.setFileName("/jenkins/log");
+        issueBuilder.setFileName(ConsoleDetail.JENKINS_CONSOLE_LOG);
         Issue issue = issueBuilder.build();
 
         report.add(issue);

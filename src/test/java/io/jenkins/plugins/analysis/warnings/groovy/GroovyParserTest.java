@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import java.io.IOException;
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
@@ -14,6 +14,8 @@ import io.jenkins.plugins.analysis.core.model.ConsoleLogReaderFactory;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser.DescriptorImpl;
 import static org.mockito.Mockito.*;
+
+import hudson.model.Run;
 
 /**
  * Tests the class {@link GroovyParser}.
@@ -38,7 +40,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-35262">Issue 35262</a>
      */
     @Test
-    void issue35262() {
+    void issue35262() throws IOException {
         String multiLineRegexp = "(make(?:(?!make)[\\s\\S])*?make-error:.*(?:\\n|\\r\\n?))";
         String textToMatch = toString("issue35262.log");
         String script = toString("issue35262.groovy");
@@ -50,8 +52,9 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         assertThat(descriptor.doCheckExample(textToMatch, multiLineRegexp, script)).isOk();
 
         IssueParser instance = parser.createParser();
-        Report warnings = instance.parse(new ConsoleLogReaderFactory(new StringReader(textToMatch), 
-                StandardCharsets.UTF_8));
+        Run<?, ?> run = mock(Run.class);
+        when(run.getLogReader()).thenReturn(new StringReader(textToMatch));
+        Report warnings = instance.parse(new ConsoleLogReaderFactory(run));
 
         assertThat(warnings).hasSize(1);
     }

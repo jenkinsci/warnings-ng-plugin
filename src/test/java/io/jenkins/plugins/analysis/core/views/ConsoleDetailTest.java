@@ -19,9 +19,7 @@ import hudson.model.Run;
 class ConsoleDetailTest {
     @Test
     void shouldDetectConsoleLog() {
-        assertThat(ConsoleDetail.isInConsoleLog("/path/to/log")).isTrue();        
-        assertThat(ConsoleDetail.isInConsoleLog("/my/log")).isTrue();        
-        assertThat(ConsoleDetail.isInConsoleLog("C:/build/log")).isTrue();        
+        assertThat(ConsoleDetail.isInConsoleLog(ConsoleDetail.JENKINS_CONSOLE_LOG)).isTrue();        
     
         assertThat(ConsoleDetail.isInConsoleLog("logger")).isFalse();        
         assertThat(ConsoleDetail.isInConsoleLog("blog")).isFalse();        

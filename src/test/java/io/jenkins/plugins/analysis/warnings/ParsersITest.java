@@ -371,12 +371,6 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(5, new JcReport(), "jcreport.xml");
     }
 
-    /** Runs the LinuxKernel parser on an output file that contains 26 issues. */
-    @Test
-    public void shouldFindAllLinuxKernelIssues() {
-        shouldFindIssuesOfTool(26, new LinuxKernelOutput(), "kernel.log");
-    }
-
     /** Runs the StyleCop parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllStyleCopIssues() {

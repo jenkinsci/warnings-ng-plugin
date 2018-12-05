@@ -22,7 +22,7 @@ class FileNameRendererTest {
         assertThat(renderer.getFileName(fileIssue)).isEqualTo("file.txt");
         assertThat(renderer.getFileNameAtLine(fileIssue)).isEqualTo("file.txt:20");
 
-        Issue consoleIssue = new IssueBuilder().setFileName("/path/to/" + ConsoleDetail.JENKINS_CONSOLE_LOG).setLineStart(20).build();
+        Issue consoleIssue = new IssueBuilder().setFileName(ConsoleDetail.JENKINS_CONSOLE_LOG).setLineStart(20).build();
 
         assertThat(renderer.getFileName(consoleIssue)).isEqualTo(Messages.ConsoleLog_Name());
         assertThat(renderer.getFileNameAtLine(consoleIssue)).isEqualTo(Messages.ConsoleLog_Name() + ":20");
@@ -62,7 +62,7 @@ class FileNameRendererTest {
     void shouldCreateLinkToConsoleLog() {
         FileNameRenderer renderer = new FileNameRenderer(createBuildFolderStub(false));
 
-        Issue issue = new IssueBuilder().setFileName("/jenkins/log").setLineStart(20).build();
+        Issue issue = new IssueBuilder().setFileName(ConsoleDetail.JENKINS_CONSOLE_LOG).setLineStart(20).build();
         assertThat(renderer.renderAffectedFileLink(issue)).matches("<a href=\"source\\.[0-9a-f-]+/#20\">Console Output:20</a>");
         assertThat(renderer.renderAffectedFileLink(issue)).contains(issue.getId().toString());
     }

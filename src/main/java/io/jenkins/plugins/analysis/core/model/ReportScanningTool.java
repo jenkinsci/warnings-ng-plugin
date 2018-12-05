@@ -96,7 +96,7 @@ public abstract class ReportScanningTool extends Tool {
             final LogHandler logger) {
         String actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
-            return scanInConsoleLog(workspace, getLogReader(run), run.getCharset(), logger);
+            return scanInConsoleLog(workspace, run, logger);
         }
         else {
             if (StringUtils.isBlank(getPattern())) {
@@ -145,8 +145,7 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    private Report scanInConsoleLog(final FilePath workspace, final Reader consoleLog,
-            final Charset charset, final LogHandler logger) {
+    private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run, final LogHandler logger) {
         Ensure.that(canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
@@ -157,7 +156,7 @@ public abstract class ReportScanningTool extends Tool {
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
         logger.log(consoleReport);
 
-        Report report = createParser().parse(new ConsoleLogReaderFactory(consoleLog, charset));
+        Report report = createParser().parse(new ConsoleLogReaderFactory(run));
 
         consoleReport.addAll(report);
 
