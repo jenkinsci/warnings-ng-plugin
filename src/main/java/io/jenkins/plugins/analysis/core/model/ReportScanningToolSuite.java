@@ -1,14 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.nio.charset.Charset;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 
 /**
@@ -49,6 +47,8 @@ public abstract class ReportScanningToolSuite extends ReportScanningTool {
      * aggregated.
      */
     private static class CompositeParser extends IssueParser {
+        private static final long serialVersionUID = -2319098057308618997L;
+
         private final List<IssueParser> parsers = new ArrayList<>();
 
         /**
@@ -64,11 +64,11 @@ public abstract class ReportScanningToolSuite extends ReportScanningTool {
         }
 
         @Override
-        public Report parse(final Path file, final Charset charset, final Function<String, String> preProcessor) {
+        public Report parse(final ReaderFactory readerFactory) {
             Report aggregated = new Report();
             for (IssueParser parser : parsers) {
-                if (parser.accepts(file, charset)) {
-                    aggregated.addAll(parser.parse(file, charset, preProcessor));
+                if (parser.accepts(readerFactory)) {
+                    aggregated.addAll(parser.parse(readerFactory));
                 }
             }
             return aggregated;

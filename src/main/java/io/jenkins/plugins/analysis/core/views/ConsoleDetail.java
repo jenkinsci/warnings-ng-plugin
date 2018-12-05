@@ -16,7 +16,7 @@ import hudson.model.Run;
  */
 public class ConsoleDetail implements ModelObject {
     /** File name of the console log in Jenkins'build folder. */
-    public static final String JENKINS_CONSOLE_LOG = "/log";
+    public static final String JENKINS_CONSOLE_LOG = "jenkins-console.log";
     
     private int lineCount;
 
@@ -30,7 +30,7 @@ public class ConsoleDetail implements ModelObject {
      *         source code file in the workspace
      */
     public static boolean isInConsoleLog(final String fileName) {
-        return fileName.endsWith(JENKINS_CONSOLE_LOG);
+        return JENKINS_CONSOLE_LOG.equals(fileName);
     }
 
     /** The rendered source file. */

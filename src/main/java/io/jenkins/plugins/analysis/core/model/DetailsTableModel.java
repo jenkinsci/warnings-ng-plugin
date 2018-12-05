@@ -6,7 +6,7 @@ import java.util.List;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.IntegerParser;
+import static edu.hm.hafner.util.IntegerParser.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
 import static j2html.TagCreator.*;
@@ -121,6 +121,7 @@ public class DetailsTableModel {
      *
      * @return the columns of one row
      */
+// FIXME: parameters as fields?
     protected List<String> getRow(final Report report, final Issue issue,
             final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer, final String description) {
         List<String> columns = new ArrayList<>();
@@ -169,7 +170,7 @@ public class DetailsTableModel {
      * @return the formatted column
      */
     protected String formatAge(final Issue issue, final AgeBuilder ageBuilder) {
-        return ageBuilder.apply(new IntegerParser().parseInt(issue.getReference()));
+        return ageBuilder.apply(parseInt(issue.getReference()));
     }
 
     /**

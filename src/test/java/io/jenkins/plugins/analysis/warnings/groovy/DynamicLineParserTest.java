@@ -1,11 +1,8 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import java.nio.charset.StandardCharsets;
-
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.AbstractParserTest;
-import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
@@ -42,7 +39,7 @@ class DynamicLineParserTest extends AbstractParserTest {
     }
 
     @Override
-    public AbstractParser createParser() {
+    public DynamicLineParser createParser() {
         return new DynamicLineParser("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)", toString("pep8.groovy"));
     }
     
@@ -50,7 +47,7 @@ class DynamicLineParserTest extends AbstractParserTest {
     void shouldScanAllLinesAndAssignLineNumberAndFileName() {
         DynamicLineParser parser = new DynamicLineParser("^(.*)$", 
                 "return builder.setFileName(fileName).setLineStart(lineNumber).setMessage(matcher.group(1)).build()");
-        Report report = parser.parse(getResourceAsFile(FILE_NAME), StandardCharsets.UTF_8);
+        Report report = parser.parse(createReaderFactory(FILE_NAME));
         
         assertThat(report).hasSize(3);
         for (int i = 0; i < 3; i++) {

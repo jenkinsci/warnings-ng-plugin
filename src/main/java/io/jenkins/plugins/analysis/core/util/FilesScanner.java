@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
+import edu.hm.hafner.analysis.FileReaderFactory;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
@@ -98,7 +99,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
 
     private void aggregateIssuesOfFile(final Path file, final Report report) {
         try {
-            Report result = parser.parse(file, new JobConfigurationModel().getCharset(encoding));
+            Report result = parser.parse(new FileReaderFactory(file, new JobConfigurationModel().getCharset(encoding)));
             report.addAll(result);
             report.logInfo("Successfully parsed file %s", file);
             report.logInfo("-> found %s (skipped %s)", 

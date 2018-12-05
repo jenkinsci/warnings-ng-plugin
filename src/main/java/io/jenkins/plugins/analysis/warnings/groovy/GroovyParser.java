@@ -13,9 +13,9 @@ import org.codehaus.groovy.control.CompilationFailedException;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 
-import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -171,7 +171,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
      * @throws AssertionError
      *         if this parsers configuration is not valid
      */
-    public AbstractParser createParser() {
+    public IssueParser createParser() {
         Ensure.that(isValid()).isTrue();
 
         if (hasMultiLineSupport()) {

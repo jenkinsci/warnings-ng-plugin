@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
@@ -16,12 +16,11 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.steps.JobConfigurationModel;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.util.FilesScanner;
+import io.jenkins.plugins.analysis.core.util.LogHandler;
 
 import hudson.FilePath;
-import hudson.console.ConsoleNote;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -97,7 +96,7 @@ public abstract class ReportScanningTool extends Tool {
             final LogHandler logger) {
         String actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
-            return scanInConsoleLog(workspace, run.getLogFile(), logger);
+            return scanInConsoleLog(workspace, getLogReader(run), run.getCharset(), logger);
         }
         else {
             if (StringUtils.isBlank(getPattern())) {
@@ -106,6 +105,15 @@ public abstract class ReportScanningTool extends Tool {
             }
 
             return scanInWorkspace(workspace, expandPattern(run, actualPattern), logger);
+        }
+    }
+
+    private Reader getLogReader(final Run<?, ?> run) {
+        try {
+            return run.getLogReader();
+        }
+        catch (IOException e) {
+            throw new ParsingException(e);
         }
     }
 
@@ -121,9 +129,9 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    private Report scanInWorkspace(final FilePath workspace, final String pattern, final LogHandler logger) {
+    private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
-            Report report = workspace.act(new FilesScanner(pattern, this, reportEncoding));
+            Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding));
             
             logger.log(report);
 
@@ -137,7 +145,8 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    private Report scanInConsoleLog(final FilePath workspace, final File consoleLog, final LogHandler logger) {
+    private Report scanInConsoleLog(final FilePath workspace, final Reader consoleLog,
+            final Charset charset, final LogHandler logger) {
         Ensure.that(canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
@@ -148,8 +157,7 @@ public abstract class ReportScanningTool extends Tool {
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
         logger.log(consoleReport);
 
-        Report report = createParser().parse(consoleLog.toPath(),
-                new JobConfigurationModel().getCharset(reportEncoding), ConsoleNote::removeNotes);
+        Report report = createParser().parse(new ConsoleLogReaderFactory(consoleLog, charset));
 
         consoleReport.addAll(report);
 
@@ -244,4 +252,5 @@ public abstract class ReportScanningTool extends Tool {
             return StringUtils.EMPTY;
         }
     }
+
 }

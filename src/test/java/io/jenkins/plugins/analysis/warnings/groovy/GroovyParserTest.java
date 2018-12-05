@@ -1,14 +1,16 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.AbstractParser;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.SerializableTest;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.model.ConsoleLogReaderFactory;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser.DescriptorImpl;
 import static org.mockito.Mockito.*;
@@ -47,8 +49,9 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         DescriptorImpl descriptor = createDescriptor();
         assertThat(descriptor.doCheckExample(textToMatch, multiLineRegexp, script)).isOk();
 
-        AbstractParser instance = parser.createParser();
-        Report warnings = instance.parse(new StringReader(textToMatch));
+        IssueParser instance = parser.createParser();
+        Report warnings = instance.parse(new ConsoleLogReaderFactory(new StringReader(textToMatch), 
+                StandardCharsets.UTF_8));
 
         assertThat(warnings).hasSize(1);
     }

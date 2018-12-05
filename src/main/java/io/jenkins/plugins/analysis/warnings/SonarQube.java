@@ -21,6 +21,8 @@ import hudson.Extension;
  * @author Ullrich Hafner
  */
 public class SonarQube extends ReportScanningToolSuite {
+    private static final long serialVersionUID = 2677209865301252855L;
+    
     static final String ID = "sonar";
 
     /** Creates a new instance of {@link SonarQube}. */

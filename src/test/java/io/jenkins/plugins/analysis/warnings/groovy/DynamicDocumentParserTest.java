@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
 import edu.hm.hafner.analysis.AbstractParserTest;
-import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
@@ -21,10 +20,11 @@ class DynamicDocumentParserTest extends AbstractParserTest {
     }
 
     @Override
-    protected AbstractParser createParser() {
+    protected DynamicDocumentParser createParser() {
         return new DynamicDocumentParser(EclipseParser.ANT_ECLIPSE_WARNING_PATTERN, toString("eclipse.groovy"));
     }
 
+    @Override
     protected void assertThatIssuesArePresent(Report report, SoftAssertions softly) {
         Assertions.assertThat(report).hasSize(8);
         Issue annotation = report.get(0);

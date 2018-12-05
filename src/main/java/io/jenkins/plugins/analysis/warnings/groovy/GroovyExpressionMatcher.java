@@ -18,7 +18,7 @@ import groovy.lang.Script;
  *
  * @author Ullrich Hafner
  */
-public class GroovyExpressionMatcher implements Serializable {
+class GroovyExpressionMatcher implements Serializable {
     private static final long serialVersionUID = -2218299240520838315L;
     private static final Logger LOGGER = Logger.getLogger(GroovyExpressionMatcher.class.getName());
     private final Issue falsePositive;
@@ -33,7 +33,7 @@ public class GroovyExpressionMatcher implements Serializable {
      * @param falsePositive
      *         indicates a false positive
      */
-    public GroovyExpressionMatcher(final String script, final Issue falsePositive) {
+    GroovyExpressionMatcher(final String script, final Issue falsePositive) {
         this.script = script;
         this.falsePositive = falsePositive;
     }

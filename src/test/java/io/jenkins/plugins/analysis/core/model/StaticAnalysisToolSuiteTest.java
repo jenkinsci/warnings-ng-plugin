@@ -1,17 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
 import java.util.Collection;
-import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.AbstractParser;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.ResourceTest;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -20,16 +17,14 @@ import static org.mockito.Mockito.*;
  *
  * @author Arne Schöntag
  */
-class StaticAnalysisToolSuiteTest {
-    private static final Charset ENCODING = StandardCharsets.UTF_8;
-    private static final Function<String, String> IDENTITY = Function.identity();
-    private static final Path FILE = mock(Path.class);
+class StaticAnalysisToolSuiteTest extends ResourceTest {
+    private static final ReaderFactory FILE = mock(ReaderFactory.class);
 
     @Test
     void shouldReturnEmptyReportIfSuiteIsEmpty() {
         TestReportScanningToolSuite suite = new TestReportScanningToolSuite();
 
-        Report issues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
+        Report issues = suite.createParser().parse(FILE);
 
         assertThat(issues).isEmpty();
     }
@@ -37,13 +32,13 @@ class StaticAnalysisToolSuiteTest {
     @Test
     @SuppressWarnings("unchecked")
     void shouldReturnReportOfSingleParser() {
-        AbstractParser parser = createParserStub();
+        IssueParser parser = createParserStub();
         Report issues = createIssues(1);
-        when(parser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issues);
+        when(parser.parse(FILE)).thenReturn(issues);
 
         TestReportScanningToolSuite suite = new TestReportScanningToolSuite(parser);
 
-        Report compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
+        Report compositeIssues = suite.createParser().parse(FILE);
 
         assertThat(compositeIssues).isEqualTo(issues);
     }
@@ -51,34 +46,37 @@ class StaticAnalysisToolSuiteTest {
     @Test
     @SuppressWarnings("unchecked")
     void shouldReturnAggregationOfTwoParsers() {
-        AbstractParser firstParser = createParserStub();
+        IssueParser firstParser = createParserStub();
         Report issuesFirstParser = createIssues(1);
-        when(firstParser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issuesFirstParser);
+        when(firstParser.parse(FILE)).thenReturn(issuesFirstParser);
 
-        AbstractParser secondParser = createParserStub();
+        IssueParser secondParser = createParserStub();
         Report issuesSecondParser = createIssues(2);
-        when(secondParser.parse(FILE, ENCODING, IDENTITY)).thenReturn(issuesSecondParser);
+        when(secondParser.parse(FILE)).thenReturn(issuesSecondParser);
 
         TestReportScanningToolSuite suite = new TestReportScanningToolSuite(firstParser, secondParser);
 
-        Report compositeIssues = suite.createParser().parse(FILE, ENCODING, IDENTITY);
+        Report compositeIssues = suite.createParser().parse(FILE);
 
         Report expected = new Report();
         expected.addAll(issuesFirstParser, issuesSecondParser);
         assertThat(compositeIssues).isEqualTo(expected);
     }
 
-    private AbstractParser createParserStub() {
-        AbstractParser stub = mock(AbstractParser.class);
-        when(stub.accepts(any(), any())).thenReturn(true);
+    private IssueParser createParserStub() {
+        IssueParser stub = mock(IssueParser.class);
+        
+        when(stub.accepts(any())).thenReturn(true);
         
         return stub;
     }
 
     private Report createIssues(final int id) {
         Report issues = new Report();
+        
         IssueBuilder issueBuilder = new IssueBuilder();
         issues.add(issueBuilder.setMessage(String.valueOf(id)).build());
+        
         return issues;
     }
 
