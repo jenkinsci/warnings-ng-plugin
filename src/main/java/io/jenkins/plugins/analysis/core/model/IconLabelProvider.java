@@ -1,6 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
-
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+package io.jenkins.plugins.analysis.core.model;
 
 /**
  * Provides icons that have the same name as the URL (or ID) of a tool.
@@ -21,7 +19,7 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
      * @param name
      *         the name of the tool
      */
-    protected IconLabelProvider(final String id, final String name) {
+    public IconLabelProvider(final String id, final String name) {
         this(id, name, id);
     }
 
@@ -35,7 +33,7 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
      * @param iconName
      *         the the unique name of the icon file
      */
-    protected IconLabelProvider(final String id, final String name, final String iconName) {
+    public IconLabelProvider(final String id, final String name, final String iconName) {
         super(id, name);
         
         smallIconUrl = ICONS_URL + iconName + "-24x24.png";

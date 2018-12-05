@@ -26,7 +26,7 @@ import hudson.remoting.VirtualChannel;
  * Searches in the workspace for files matching the given include and exclude pattern and scans each file for open
  * tasks.
  */
-public class AgentScanner extends MasterToSlaveFileCallable<Report> {
+class AgentScanner extends MasterToSlaveFileCallable<Report> {
     private final String high;
     private final String normal;
     private final String low;
@@ -56,7 +56,8 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
      * @param sourceCodeEncoding
      *         the encoding to use to read source files
      */
-    public AgentScanner(final String high, final String normal, final String low, final CaseMode caseMode,
+    @SuppressWarnings("ParameterNumber")
+    AgentScanner(final String high, final String normal, final String low, final CaseMode caseMode,
             final MatcherMode matcherMode, final String includePattern, final String excludePattern,
             final String sourceCodeEncoding) {
         this.high = high;
@@ -110,5 +111,54 @@ public class AgentScanner extends MasterToSlaveFileCallable<Report> {
                 .setMatcherMode(matcherMode)
                 .setCaseMode(caseMode);
         return builder.build();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        AgentScanner that = (AgentScanner) o;
+
+        if (high != null ? !high.equals(that.high) : that.high != null) {
+            return false;
+        }
+        if (normal != null ? !normal.equals(that.normal) : that.normal != null) {
+            return false;
+        }
+        if (low != null ? !low.equals(that.low) : that.low != null) {
+            return false;
+        }
+        if (caseMode != that.caseMode) {
+            return false;
+        }
+        if (matcherMode != that.matcherMode) {
+            return false;
+        }
+        if (includePattern != null ? !includePattern.equals(that.includePattern) : that.includePattern != null) {
+            return false;
+        }
+        if (excludePattern != null ? !excludePattern.equals(that.excludePattern) : that.excludePattern != null) {
+            return false;
+        }
+        return sourceCodeEncoding != null ? sourceCodeEncoding.equals(that.sourceCodeEncoding) :
+                that.sourceCodeEncoding == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = high != null ? high.hashCode() : 0;
+        result = 31 * result + (normal != null ? normal.hashCode() : 0);
+        result = 31 * result + (low != null ? low.hashCode() : 0);
+        result = 31 * result + (caseMode != null ? caseMode.hashCode() : 0);
+        result = 31 * result + (matcherMode != null ? matcherMode.hashCode() : 0);
+        result = 31 * result + (includePattern != null ? includePattern.hashCode() : 0);
+        result = 31 * result + (excludePattern != null ? excludePattern.hashCode() : 0);
+        result = 31 * result + (sourceCodeEncoding != null ? sourceCodeEncoding.hashCode() : 0);
+        return result;
     }
 }

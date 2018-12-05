@@ -24,7 +24,7 @@ import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.CheckStyle;
+import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;

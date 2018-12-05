@@ -9,6 +9,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 

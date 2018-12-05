@@ -10,6 +10,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.FindBugsParser;
 import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 

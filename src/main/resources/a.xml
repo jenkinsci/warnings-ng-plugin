@@ -5027,9 +5027,9 @@
                                                   <tr style="display:none">
                                                     <td>
                                                       <input name="stapler-class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.CheckStyle"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle"/>
                                                       <input name="$class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.CheckStyle"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle"/>
                                                     </td>
                                                   </tr>
                                                   <tr class="dropdownList-end rowvg-end"></tr>
@@ -5603,9 +5603,9 @@
                                                   <tr style="display:none">
                                                     <td>
                                                       <input name="stapler-class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.OpenTasks"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.tasks.OpenTasks"/>
                                                       <input name="$class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.OpenTasks"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.tasks.OpenTasks"/>
                                                     </td>
                                                   </tr>
                                                   <tr class="dropdownList-end rowvg-end"></tr>
@@ -6379,9 +6379,9 @@
                                                   <tr style="display:none">
                                                     <td>
                                                       <input name="stapler-class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.CheckStyle"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle"/>
                                                       <input name="$class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.CheckStyle"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle"/>
                                                     </td>
                                                   </tr>
                                                   <tr class="dropdownList-end rowvg-end"></tr>
@@ -6955,9 +6955,9 @@
                                                   <tr style="display:none">
                                                     <td>
                                                       <input name="stapler-class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.OpenTasks"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.tasks.OpenTasks"/>
                                                       <input name="$class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.OpenTasks"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.tasks.OpenTasks"/>
                                                     </td>
                                                   </tr>
                                                   <tr class="dropdownList-end rowvg-end"></tr>

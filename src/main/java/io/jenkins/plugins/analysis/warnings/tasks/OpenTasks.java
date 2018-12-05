@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.tasks;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -21,11 +21,10 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.JobConfigurationModel;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.warnings.tasks.AgentScanner;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
+import io.jenkins.plugins.analysis.warnings.Messages;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScannerBuilder;
 
 import hudson.Extension;
 import hudson.FilePath;

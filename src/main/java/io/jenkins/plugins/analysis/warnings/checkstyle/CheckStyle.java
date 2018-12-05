@@ -1,16 +1,17 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.checkstyle;
 
 import javax.annotation.Nonnull;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyleRules;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
+import io.jenkins.plugins.analysis.warnings.Messages;
 
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
