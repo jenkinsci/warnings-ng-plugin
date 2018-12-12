@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -73,7 +72,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     static final String NO_REFERENCE_JOB = "-";
 
     private transient List<ToolConfiguration> tools;
-    private List<Tool> analysisTools;
+    private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
 
@@ -112,8 +111,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @return this
      */
     protected Object readResolve() {
-        if (tools != null) {
+        if (analysisTools == null) {
             analysisTools = new ArrayList<>();
+        }
+        // FIXME: remove before 1.0
+        if (tools != null) {
             for (ToolConfiguration tool : tools) {
                 ReportScanningTool analysisTool = tool.getTool();
                 analysisTool.setId(tool.getId());
@@ -165,26 +167,33 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return name;
     }
 
+    /**
+     * Gets the static analysis tools that will scan files and create issues.
+     *
+     * @return the static analysis tools (wrapped as {@link ToolProxy})
+     * @see #getTools
+     * @deprecated this method is only intended to be called by the UI
+     */
     @CheckForNull
-    public List<ToolProxy> getTools() {
-        if (analysisTools != null) {
-            return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
-        }
-        return new ArrayList<>(); // FIXME: remove
+    @Deprecated
+    public List<ToolProxy> getToolProxies() {
+        return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
     }
 
     /**
      * Sets the static analysis tools that will scan files and create issues.
      *
-     * @param tools
+     * @param toolProxies
      *         the static analysis tools (wrapped as {@link ToolProxy})
+     *
+     * @see #setTools(List)
+     * @see #setTool(Tool)
      * @deprecated this method is only intended to be called by the UI
-     * @see #setTool(Tool) 
      */
-    // FIXME: provide other setter
-    @DataBoundSetter @Deprecated
-    public void setTools(final List<ToolProxy> tools) {
-        this.analysisTools = tools.stream().map(ToolProxy::getTool).collect(Collectors.toList());
+    @DataBoundSetter
+    @Deprecated
+    public void setToolProxies(final List<ToolProxy> toolProxies) {
+        this.analysisTools = toolProxies.stream().map(ToolProxy::getTool).collect(Collectors.toList());
     }
 
     /**
@@ -192,10 +201,21 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *
      * @param tools
      *         the static analysis tools
-     * @see #setTool(Tool) 
+     *
+     * @see #setTool(Tool)
      */
-    public void setTools(final Collection<Tool> tools) {
+    @DataBoundSetter
+    public void setTools(final List<Tool> tools) {
         this.analysisTools = new ArrayList<>(tools);
+    }
+
+    /**
+     * Returns the static analysis tools that will scan files and create issues.
+     *
+     * @return the static analysis tools
+     */
+    public List<Tool> getTools() {
+        return analysisTools;
     }
 
     /**
@@ -204,10 +224,22 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param tool
      *         the static analysis tool
      */
+    @DataBoundSetter
     public void setTool(final Tool tool) {
         this.analysisTools = Collections.singletonList(tool);
     }
-    
+
+    /**
+     * Always returns {@code null}. Note: this method is required for
+     * Jenkins data binding.
+     *
+     * @return {@code null}
+     */
+    @CheckForNull
+    public Tool getTool() {
+        return null;
+    }
+
     @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;

@@ -5363,9 +5363,9 @@
                                                   <tr style="display:none">
                                                     <td>
                                                       <input name="stapler-class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.GroovyScript"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.groovy.GroovyScript"/>
                                                       <input name="$class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.GroovyScript"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.groovy.GroovyScript"/>
                                                     </td>
                                                   </tr>
                                                   <tr class="dropdownList-end rowvg-end"></tr>
@@ -6715,9 +6715,9 @@
                                                   <tr style="display:none">
                                                     <td>
                                                       <input name="stapler-class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.GroovyScript"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.groovy.GroovyScript"/>
                                                       <input name="$class" type="hidden"
-                                                             value="io.jenkins.plugins.analysis.warnings.GroovyScript"/>
+                                                             value="io.jenkins.plugins.analysis.warnings.groovy.GroovyScript"/>
                                                     </td>
                                                   </tr>
                                                   <tr class="dropdownList-end rowvg-end"></tr>

@@ -37,7 +37,7 @@ main build page. From there you can also dive into the details:
 ## Transition from the static analysis suite
 
 Previously the same set of features has been provided by the plugins of the static analysis suite 
-(CheckStyle, PMD, FindBugs, Static Analysis Utilities, Analysis Collector, Warnings etc.). 
+(CheckStyle, PMD, FindBugs, Static Analysis Utilities, Analysis Collector, Task Scanner, Warnings etc.). 
 In order to simplify the user experience and the development process, these
 plugins and the core functionality have been merged into the Warnings Next Generation plugin. 
 These old static analysis plugins are not required anymore and are now end-of-life. 
@@ -58,15 +58,15 @@ Freestyle, Matrix or Maven Jobs using the old API used a so called **Post Build 
 each individual plugin. E.g., the FindBugs plugin did provide the post build action 
 *"Publish FindBugs analysis results"*. These old plugin specific actions are not supported anymore, 
 they are now marked with *\[Deprecated\]* in the user interface. 
-Now you need to add a new post build step - this step now is called *"Record static analysis results"*
-for all static analysis tools. The selection of the tool is part of the configuration of this post build step. 
+Now you need to add a new post build step - this step now is called 
+*"Record compiler warnings and static analysis results"* for all static analysis tools. The selection of the tool is part of the configuration of this post build step. 
 Note: the warnings produced by a post build step using the old API cannot not be read by the new post build actions.
 I.e., you can't see a combined history of the old and new results - you simply see two unrelated results. There is
 also no automatic conversion of results stored in the old format available.
 
 ### Migration of plugins depending on analysis-core
 
-The following plugins have been integrated into this version of the Warnings plugin:
+The following plugins have been integrated into this new version of the Warnings plugin:
 
 - Android-Lint Plugin
 - CheckStyle Plugin
@@ -74,13 +74,15 @@ The following plugins have been integrated into this version of the Warnings plu
 - Dry Plugin
 - PMD Plugin
 - FindBugs Plugin
+- Tasks Scanner Plugin
+- Warnings Plugin
 
 All other plugins still need to be integrated or need to be refactored to use the new API.
 
 ## Configuration
 
 The configuration of the plugin is the same for all Jenkins job types. It is enabled in the UI by adding 
-the post build action *"Record static analysis results"* to your job. In pipelines the plugin will be activated 
+the post build action *"Record compiler warnings and static analysis results"* to your job. In pipelines the plugin will be activated 
 by adding the step `recordIssues`. Note that for scripted pipelines some additional features are available to 
 aggregate and group issues, see [section Advanced Pipeline Configuration](#advanced-pipeline-configuration) for details. 
 
@@ -92,17 +94,19 @@ The basic configuration of the plugin is shown in the image above:
 
 ![basic configuration](images/freestyle-start.png) 
 
-First of all you need to specify the tool that should be used to parse the console log or the report file. 
-Depending on the selected tool you might configure some additional parameters as well. E.g., the SpotBugs configuration
-(see image above) provides a flag to select the priority mapping. 
+First of all you need to specify the tool that should be used to create the issues.
+Depending on the selected tool you might configure some additional parameters as well. 
+
+For all parsers that read report files you need to specify the pattern of the report files that should be parsed and scanned for issues. 
+If you do not specify a pattern, then the console log of your build will be scanned. For several popular tools a default
+pattern has been provided: in this case the default pattern will be used if the pattern is empty.  
+
+In order to let the scanner parse correctly your reports it is required to set the encoding of the files, 
+otherwise the platform encoding will be used which might be incorrect. 
 
 Each tool is identified by an ID that is used as URL to the results of the analysis. For each tool, a default URL 
 (and name) is provided that can be changed if required. E.g., if you are going to use a parser multiple
 times then you need to specify different IDs for each of the invocations.  
-
-Then you need to specify the pattern of the report files that should be parsed and scanned for issues. 
-If you do not specify a pattern, then the console log of your build will be scanned. For several popular tools a default
-pattern has been provided: in this case the default pattern will be used if the pattern is empty.  
 
 You can specify multiple tools (and patterns) that will be used with the same configuration. Due to a technical 
 (or marketing) limitation of Jenkins it is not possible to select different configurations by using multiple post build 
@@ -127,11 +131,14 @@ An example pipeline with these options is shown in the following snippet:
 
 ```
 recordIssues 
-    enabledForFailure: true, aggregatingResults : true, 
-    tools: [
-        [tool: java()], 
-        [pattern: 'checkstyle-result.xml', tool: checkStyle()]
-    ]
+    enabledForFailure: true, aggregatingResults: true, 
+    tools: [java(), checkStyle(pattern: 'checkstyle-result.xml', reportEncoding: 'UTF-8')]
+```
+
+If you are using a single tool you can use the property `tool` instead of `tools`: 
+
+```
+recordIssues enabledForFailure: true, aggregatingResults : true, tool: checkStyle(pattern: 'checkstyle-result.xml')
 ```
 
 ### Creating support for a custom tool
@@ -141,33 +148,47 @@ If none of the built-in tools works in your project you have two ways to add add
 #### Deploying a new tool using a custom plugin
 
 The most flexible way is to define a new tool by writing a Java class that will be deployed in your own small 
-Jenkins plugin, see [Providing support for a custom static analysis tool](Custom-Plugin.md) for details. 
+Jenkins plugin, see document ["Providing support for a custom static analysis tool"](Custom-Plugin.md) for details. 
 
 #### Creating a new tool in the user interface
 
 If the format of your log messages is quite simple then you can define support for your tool by creating a simple 
-tool configuration in Jenkins' user interface. This configuration takes a regular expression that will be used to 
-match the console log. If the expression matches, then a Groovy script will be invoked that converts the matching 
-text into a warning instance. Here is an example of such a Groovy based parser:
+tool configuration in Jenkins' user interface. Due to security reasons (Groovy scripts can compromise your master) 
+this configuration is available in the system configuration only. 
+The configuration of a new parser takes a regular expression that will be used to 
+match the report format. If the expression matches, then a Groovy script will be invoked that converts the matching 
+text into an issue instance. Here is an example of such a Groovy based parser:
 
 ![groovy parser](images/groovy-parser.png)  
 
-### Setting the file encoding
+#### Using the defined tool
 
-In order to let the scanner parse correctly your reports and source code files it is required to set the encodings: 
+Once your Groovy parser has been registered you can use it in the tool configuration section of your job: 
+
+![groovy reference](images/groovy-configuration.png)  
+
+First of all, you need to choose the tool "Groovy Parser" in order to get the configuration screen for the Groovy
+parser. Then you can select the parser from the list of available parsers. This list is dynamically created based
+on the parsers that are defined in Jenkins' system configuration section. The custom ID and name properties can 
+be set in the same way as for the other tools.
+
+### Setting the source code file encoding
+
+In order to let the plugin parse and display your source code files it is required to set the encoding for these
+files as well: 
 
 ![encoding configuration](images/encoding.png) 
 
-An example pipeline with these options is shown in the following snippet:
+An example pipeline with these options is shown in the following snippet, note that the encoding of the report 
+files may be set differently if required:
 
 ```
-recordIssues 
-    sourceCodeEncoding: 'UTF-8', reportEncoding : 'ISO-8859-1', tools: [[tool: java()]]
+recordIssues sourceCodeEncoding: 'ISO-8859-1', tool: java(reportEncoding: 'UTF-8')
 ```
 
 ### Control the selection of the reference build (baseline)
 
-One important feature of the Warnings plugin is the classification of issues as new, outstanding and fixed:
+One important feature of the Warnings Next Generation plugin is the classification of issues as new, outstanding and fixed:
 - **new**: all issues, that are part of the current report but have not been shown up in the reference report
 - **fixed**: all issues, that are part of the reference report but are not present in the current report anymore
 - **outstanding**: all issues, that are part of the current and reference report
@@ -181,9 +202,7 @@ control the selection of the reference build.
 An example pipeline with these options is shown in the following snippet:
 
 ```
-recordIssues 
-    tools: [ [tool: java()] ],
-    ignoreQualityGate: false, ignoreFailedBuilds: true, referenceJobName: 'my-project/master'
+recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true, referenceJobName: 'my-project/master'
 ```
 
 ### Filtering issues
@@ -197,9 +216,7 @@ category or type.
 An example pipeline with these options is shown in the following snippet:
 
 ```
-recordIssues 
-    tools: [[pattern: '*.log', tool: java()]], 
-    filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
+recordIssues tool: java(pattern: '*.log'), filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
 ```
 
 ### Quality gate configuration
@@ -214,8 +231,7 @@ the maximum number of issues that can be found and still pass a given quality ga
 An example pipeline with these options is shown in the following snippet:
 
 ```
-recordIssues 
-    tools: [[pattern: '*.log', tool: java()]], unstableTotalHigh: 10, unstableNewAll: 1
+recordIssues tool: java(pattern: '*.log'), unstableTotalHigh: 10, unstableNewAll: 1
 ```
 
 ### Health report configuration
@@ -229,9 +245,7 @@ when creating the health report can be selected.
 An example pipeline with these options is shown in the following snippet:
 
 ```
-recordIssues 
-    tools: [[pattern: '*.log', tool: java()]], 
-    healthy: 10, unhealthy: 100, minimumSeverity: 'HIGH'
+recordIssues tool: java(pattern: '*.log'), healthy: 10, unhealthy: 100, minimumSeverity: 'HIGH'
 ```
 
 This job adjusts the build health based on all warnings with severity HIGH and errors. If the build has 10 warnings
@@ -254,7 +268,7 @@ is shown in the following example:
 ```
 recordIssues 
     enabledForFailure: true, 
-    tools: [[pattern: '*.log', tool: java()]], 
+    tool: java(pattern: '*.log'), 
     filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
 ```
 
@@ -294,15 +308,11 @@ pipeline {
         always {
             junit testResults: '**/target/surefire-reports/TEST-*.xml'
 
-            recordIssues enabledForFailure: true, 
-                tools: [[tool: [$class: 'MavenConsole']], 
-                        [tool: java()], 
-                        [tool: [$class: 'JavaDoc']]]
-            recordIssues enabledForFailure: true, tools: [[tool: [$class: 'CheckStyle']]]
-            recordIssues enabledForFailure: true, tools: [[tool: [$class: 'FindBugs']]]
-            recordIssues enabledForFailure: true, tools: [[tool: [$class: 'SpotBugs']]]
-            recordIssues enabledForFailure: true, tools: [[pattern: '**/target/cpd.xml', tool: [$class: 'Cpd']]]
-            recordIssues enabledForFailure: true, tools: [[pattern: '**/target/pmd.xml', tool: [$class: 'Pmd']]]
+            recordIssues enabledForFailure: true, tools: [mavenConsole(), java(), javaDoc()]
+            recordIssues enabledForFailure: true, tool: checkStyle()
+            recordIssues enabledForFailure: true, tool: spotBugs()
+            recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
+            recordIssues enabledForFailure: true, tools: pmd(pattern: '**/target/pmd.xml')
         }
     }
 }
@@ -337,10 +347,9 @@ node {
         junit testResults: '**/target/*-reports/TEST-*.xml'
 
         def java = scanForIssues tool: java()
-        def javadoc = scanForIssues tool: [$class: 'JavaDoc']
+        def javadoc = scanForIssues tool: javaDoc()
         
-        publishIssues issues:[java, javadoc], 
-            filters:[includePackage('io.jenkins.plugins.analysis.*')]
+        publishIssues issues:[java, javadoc], filters:[includePackage('io.jenkins.plugins.analysis.*')]
     }
 
     stage ('Analysis') {
@@ -348,23 +357,23 @@ node {
 
         sh "${mvnHome}/bin/mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs"
 
-        def checkstyle = scanForIssues tool: [$class: 'CheckStyle'], pattern: '**/target/checkstyle-result.xml'
+        def checkstyle = scanForIssues tool: checkStyle(pattern: '**/target/checkstyle-result.xml')
         publishIssues issues:[checkstyle]
    
-        def pmd = scanForIssues tool: [$class: 'Pmd'], pattern: '**/target/pmd.xml'
+        def pmd = scanForIssues tool: pmd(pattern: '**/target/pmd.xml')
         publishIssues issues:[pmd]
         
-        def cpd = scanForIssues tool: [$class: 'Cpd'], pattern: '**/target/cpd.xml'
+        def cpd = scanForIssues tool: cpd(pattern: '**/target/cpd.xml')
         publishIssues issues:[cpd]
         
-        def findbugs = scanForIssues tool: [$class: 'FindBugs'], pattern: '**/target/findbugsXml.xml'
-        publishIssues issues:[findbugs]
+        def spotbugs = scanForIssues tool: spotBugs(pattern: '**/target/findbugsXml.xml')
+        publishIssues issues:[spotbugs]
 
-        def maven = scanForIssues tool: [$class: 'MavenConsole']
+        def maven = scanForIssues tool: mavenConsole()
         publishIssues issues:[maven]
         
-        publishIssues id:'analysis', name:'White Mountains Issues', 
-            issues:[checkstyle, pmd, findbugs], 
+        publishIssues id:'analysis', name:'All Issues', 
+            issues:[checkstyle, pmd, spotbugs], 
             filters:[includePackage('io.jenkins.plugins.analysis.*')]
     }
 
@@ -459,12 +468,12 @@ recordIssues
 
 ### Source code view
 
-TBD.
+The source code view will be replaced soon, a PR is already work in progress.
 
 
 ### Configuration as code support
 
-The Warnings plugin is compatible with the 
+The Warnings Next Generation plugin is compatible with the 
 [Configuration as Code plugin](https://github.com/jenkinsci/configuration-as-code-plugin). 
 You can import parser configurations (see section [Creating a new tool in the user interface](#creating-a-new-tool-in-the-user-interface)) into Jenkins' system configuration using a YAML configuration in the form 
 of the following example: 
@@ -621,7 +630,6 @@ Examples:
 Some of the existing features of the Warnings plugin are not yet ported to the API. These will be added one by one after the
 first 5.x release of the Warnings plugin: 
 
-- Visualization of open tasks
 - Portlets for Jenkins' dashboard view
 - View column that shows the number of issues in a job
 - Quality gate based on the total number of issues

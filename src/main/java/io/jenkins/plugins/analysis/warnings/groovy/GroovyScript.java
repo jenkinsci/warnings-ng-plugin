@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.groovy;
 
 import javax.annotation.Nonnull;
 
@@ -10,8 +10,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.util.Ensure;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
-import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
+import io.jenkins.plugins.analysis.warnings.Messages;
 
 import hudson.Extension;
 import hudson.util.ListBoxModel;
@@ -97,17 +96,12 @@ public class GroovyScript extends ReportScanningTool {
          * @return the model of the list box
          */
         @SuppressWarnings("unused") // Called from config.jelly
-        public ListBoxModel doFillIdItems() {
+        public ListBoxModel doFillParserIdItems() {
             ListBoxModel options = ParserConfiguration.getInstance().asListBoxModel();
             if (options.isEmpty()) {
                 return options.add(Messages.Warnings_Groovy_NoParsersDefined());
             }
             return options;
-        }
-
-        @Override
-        public String getHelp() {
-            return "Note that due to security reasons scanning the console log using a Groovy script is not allowed.";
         }
     }
 }

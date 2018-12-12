@@ -1,11 +1,11 @@
 # Providing support for a custom static analysis tool
  
-The most flexible way to add a new static analysis tool to the warnings plug-in is to provide a new custom plugin that 
+The most flexible way to add a new static analysis tool to the Warnings Next Generation plugin is to provide a new custom plugin that 
 contains a Java implementation of the tool. 
 
 ## Create a plugin
 
-The plugin should depend on Jenkins plugin parent pom and on the Warnings Next Generation Plugin.
+The plugin should depend on Jenkins plugin parent pom and on the Warnings Next Generation plugin.
 
 ```xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -14,7 +14,7 @@ The plugin should depend on Jenkins plugin parent pom and on the Warnings Next G
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.9</version>
+    <version>3.32</version>
     <relativePath />
   </parent>
 
@@ -26,7 +26,7 @@ The plugin should depend on Jenkins plugin parent pom and on the Warnings Next G
    
   <dependencies>
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
+      <groupId>io.jenkins.plugins</groupId>
       <artifactId>warnings-ng</artifactId>
       <version>[warnings-ng.version]</version>
     </dependency>
@@ -40,13 +40,13 @@ The plugin should depend on Jenkins plugin parent pom and on the Warnings Next G
 If your tool must parse a report file in order to produce the issues, you need to write a corresponding parser. 
 Otherwise you can continue with section [registering your tool](#register-the-tool).
 Each custom tool requires a parser that will be instantiated to scan the console log (or a report file). The parser 
-must derive from the abstract class `IssueParser`, or one of the child classes. 
-The following base classes can be used as the base class:
+must derive from the abstract class `IssueParser` or one of its child classes. 
+The following classes can be used as  base class:
 
-- `AbstractParser`: parses an input stream - you have under full control on how to access the input stream.
-- `RegexpLineParser`: parses all lines of an input stream one by one with a regular expression.
+- `IssueParser`: parses a report file. You have under full control on how to access the report.
+- `RegexpLineParser`: parses all lines of a report one by one with a regular expression.
 - `FastRegexpLineParser`: same as `RegexpLineParser`, but with additional support to skip lines based on string comparisons.
-- `RegexpDocumentParser`: parses the whole input stream by reading it into a string and parsing the whole string 
+- `RegexpDocumentParser`: parses the whole report by reading it into a string and parsing the whole string 
 with a regular expression. This type of parser is quite slow and should only be used if there is no other way.
   
 Please have a look at one of the 
@@ -73,7 +73,6 @@ import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 
-import edu.hm.hafner.analysis.parser.AjcParser;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 import hudson.Extension;

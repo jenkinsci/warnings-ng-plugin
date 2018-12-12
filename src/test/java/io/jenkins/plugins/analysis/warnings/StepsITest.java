@@ -159,6 +159,42 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
+     * Runs the Eclipse parsers using the 'tools' property.
+     */
+    @Test
+    public void shouldUseToolsProperty() {
+        runEclipse("tools: [eclipse(pattern:'**/*issues.txt', reportEncoding:'UTF-8')]");
+    }
+
+    /**
+     * Runs the Eclipse parsers using the 'toolProxies' property.
+     */
+    @Test
+    public void shouldUseToolProxiesProperty() {
+        runEclipse("toolProxies: [[tool: eclipse(pattern:'**/*issues.txt', reportEncoding:'UTF-8')]]");
+    }
+
+    /**
+     * Runs the Eclipse parsers using the 'tool' property.
+     */
+    @Test
+    public void shouldUseToolProperty() {
+        runEclipse("tool: eclipse(pattern:'**/*issues.txt', reportEncoding:'UTF-8')");
+    }
+
+    private void runEclipse(final String property) {
+        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt");
+        job.setDefinition(asStage("recordIssues "
+                + property));
+
+        WorkflowRun run = runSuccessfully(job);
+
+        ResultAction action = getResultAction(run);
+        AnalysisResult result = action.getResult();
+        assertThat(result.getIssues()).hasSize(8);
+    }
+
+    /**
      * Runs the Java parser on an pep8 log file: the build should report no issues. A result should be available with
      * the java ID and name.
      */
@@ -279,8 +315,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
                 "recordIssues aggregatingResults: " + isAggregating + ", tools: [" 
-                        + "[tool: groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-1')]," 
-                        + "[tool: groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-2')]" 
+                        + "groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-1'),"
+                        + "groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-2')"
                         + "] " + join(arguments)));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
