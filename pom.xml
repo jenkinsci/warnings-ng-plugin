@@ -28,8 +28,8 @@
     <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>1.0.0-beta15</analysis-model-api.version>
-    <analysis-model.version>1.0.0-RC18</analysis-model.version>
+    <analysis-model-api.version>1.0.0-beta16</analysis-model-api.version>
+    <analysis-model.version>1.0.0-RC19</analysis-model.version>
 
     <commons.lang.version>3.8.1</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -97,7 +97,7 @@
   <dependencies>
     <!-- Project Dependencies -->
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
+      <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
       <version>${analysis-model-api.version}</version>
     </dependency>
