@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core.model;
 import java.io.IOException;
 import java.io.Reader;
 
+import com.google.errorprone.annotations.MustBeClosed;
+
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.ReaderFactory;
 import io.jenkins.plugins.analysis.core.views.ConsoleDetail;
@@ -45,7 +47,7 @@ public class ConsoleLogReaderFactory extends ReaderFactory {
      *
      * @return a reader
      */
-    @Override
+    @Override @MustBeClosed
     public Reader create() {
         try {
             return run.getLogReader();
