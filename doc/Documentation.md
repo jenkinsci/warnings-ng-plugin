@@ -138,7 +138,7 @@ recordIssues
 If you are using a single tool you can use the property `tool` instead of `tools`: 
 
 ```
-recordIssues enabledForFailure: true, aggregatingResults : true, tool: checkStyle(pattern: 'checkstyle-result.xml')
+recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'checkstyle-result.xml')
 ```
 
 ### Creating support for a custom tool
@@ -312,7 +312,7 @@ pipeline {
             recordIssues enabledForFailure: true, tool: checkStyle()
             recordIssues enabledForFailure: true, tool: spotBugs()
             recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
-            recordIssues enabledForFailure: true, tools: pmd(pattern: '**/target/pmd.xml')
+            recordIssues enabledForFailure: true, tool: pmd(pattern: '**/target/pmd.xml')
         }
     }
 }
@@ -349,7 +349,7 @@ node {
         def java = scanForIssues tool: java()
         def javadoc = scanForIssues tool: javaDoc()
         
-        publishIssues issues:[java, javadoc], filters:[includePackage('io.jenkins.plugins.analysis.*')]
+        publishIssues issues: [java, javadoc], filters: [includePackage('io.jenkins.plugins.analysis.*')]
     }
 
     stage ('Analysis') {
@@ -358,23 +358,23 @@ node {
         sh "${mvnHome}/bin/mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd findbugs:findbugs"
 
         def checkstyle = scanForIssues tool: checkStyle(pattern: '**/target/checkstyle-result.xml')
-        publishIssues issues:[checkstyle]
+        publishIssues issues: [checkstyle]
    
         def pmd = scanForIssues tool: pmd(pattern: '**/target/pmd.xml')
-        publishIssues issues:[pmd]
+        publishIssues issues: [pmd]
         
         def cpd = scanForIssues tool: cpd(pattern: '**/target/cpd.xml')
-        publishIssues issues:[cpd]
+        publishIssues issues: [cpd]
         
         def spotbugs = scanForIssues tool: spotBugs(pattern: '**/target/findbugsXml.xml')
-        publishIssues issues:[spotbugs]
+        publishIssues issues: [spotbugs]
 
         def maven = scanForIssues tool: mavenConsole()
-        publishIssues issues:[maven]
+        publishIssues issues: [maven]
         
-        publishIssues id:'analysis', name:'All Issues', 
-            issues:[checkstyle, pmd, spotbugs], 
-            filters:[includePackage('io.jenkins.plugins.analysis.*')]
+        publishIssues id: 'analysis', name: 'All Issues', 
+            issues: [checkstyle, pmd, spotbugs], 
+            filters: [includePackage('io.jenkins.plugins.analysis.*')]
     }
 
 ``` 
@@ -462,8 +462,7 @@ commit ID.
 
 In order to disable the blame feature, set the property `blameDisabled` to `true`, see the following example:
 ```
-recordIssues 
-    blameDisabled: true, tools: [[pattern: '*.log', tool: java()]]
+recordIssues blameDisabled: true, tool: java([pattern: '*.log')
 ```
 
 ### Source code view
