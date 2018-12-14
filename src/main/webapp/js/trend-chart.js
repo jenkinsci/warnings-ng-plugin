@@ -37,10 +37,6 @@ function renderTrendChart(chartDivId, chartModel) {
         ],
         yAxis: [
             {
-                name: 'count',
-                nameLocation: 'center',
-                nameGap: '25',
-                nameRotate: '90',
                 type: 'value'
             }
         ],
