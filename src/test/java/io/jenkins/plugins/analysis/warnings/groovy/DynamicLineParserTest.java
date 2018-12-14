@@ -46,7 +46,7 @@ class DynamicLineParserTest extends AbstractParserTest {
     @Test
     void shouldScanAllLinesAndAssignLineNumberAndFileName() {
         DynamicLineParser parser = new DynamicLineParser("^(.*)$", 
-                "return builder.setFileName(fileName).setLineStart(lineNumber).setMessage(matcher.group(1)).build()");
+                "return builder.setFileName(fileName).setLineStart(lineNumber).setMessage(matcher.group(1)).buildOptional()");
         Report report = parser.parse(createReaderFactory(FILE_NAME));
         
         assertThat(report).hasSize(3);

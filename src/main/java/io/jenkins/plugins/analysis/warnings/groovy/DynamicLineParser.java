@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import java.util.Optional;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +34,7 @@ class DynamicLineParser extends RegexpLineParser {
     DynamicLineParser(final String regexp, final String script) {
         super(regexp);
 
-        expressionMatcher = new GroovyExpressionMatcher(script, FALSE_POSITIVE);
+        expressionMatcher = new GroovyExpressionMatcher(script);
     }
 
     @Override
@@ -44,7 +45,7 @@ class DynamicLineParser extends RegexpLineParser {
     }
 
     @Override
-    protected Issue createIssue(final Matcher matcher, final IssueBuilder builder) {
+    protected Optional<Issue> createIssue(final Matcher matcher, final IssueBuilder builder) {
         return expressionMatcher.createIssue(matcher, builder, getCurrentLine(), fileName);
     }
 }

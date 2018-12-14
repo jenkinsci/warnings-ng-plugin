@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings.groovy;
 import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -300,7 +301,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                     return FormValidation.error(Messages.GroovyParser_Error_Script_isEmpty());
                 }
 
-                GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(script, null);
+                GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(script);
                 Script compiled = matcher.compile();
                 Ensure.that(compiled).isNotNull();
 
@@ -373,14 +374,16 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             Matcher matcher = pattern.matcher(example);
             try {
                 if (matcher.find()) {
-                    GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script, null);
+                    GroovyExpressionMatcher checker = new GroovyExpressionMatcher(script);
                     Object result = checker.run(matcher, new IssueBuilder(), 0, "UI Example");
-                    if (result instanceof Issue) {
-                        return createOkMessage((Issue) result);
+                    Optional<?> optional = (Optional) result;
+                    if (optional.isPresent()) {
+                        Object wrappedIssue = optional.get();
+                        if (wrappedIssue instanceof Issue) {
+                            return createOkMessage((Issue) wrappedIssue);
+                        }
                     }
-                    else {
-                        return FormValidation.error(Messages.GroovyParser_Error_Example_wrongReturnType(result));
-                    }
+                    return FormValidation.error(Messages.GroovyParser_Error_Example_wrongReturnType(result));
                 }
                 else {
                     return FormValidation.error(Messages.GroovyParser_Error_Example_regexpDoesNotMatch());

@@ -25,4 +25,4 @@ return builder
         .setColumnEnd(columnEnd)
         .setMessage(message)
         .setSeverity(severity)
-        .build()
+        .buildOptional()

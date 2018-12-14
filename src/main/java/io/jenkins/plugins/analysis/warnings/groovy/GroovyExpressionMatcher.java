@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
 import java.io.Serializable;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -21,7 +22,6 @@ import groovy.lang.Script;
 class GroovyExpressionMatcher implements Serializable {
     private static final long serialVersionUID = -2218299240520838315L;
     private static final Logger LOGGER = Logger.getLogger(GroovyExpressionMatcher.class.getName());
-    private final Issue falsePositive;
     private final String script;
     private transient Script compiled;
 
@@ -30,12 +30,9 @@ class GroovyExpressionMatcher implements Serializable {
      *
      * @param script
      *         Groovy script
-     * @param falsePositive
-     *         indicates a false positive
      */
-    GroovyExpressionMatcher(final String script, final Issue falsePositive) {
+    GroovyExpressionMatcher(final String script) {
         this.script = script;
-        this.falsePositive = falsePositive;
     }
 
     private boolean compileScriptIfNotYetDone() {
@@ -62,7 +59,6 @@ class GroovyExpressionMatcher implements Serializable {
      */
     public Script compile() throws CompilationFailedException {
         Binding binding = new Binding();
-        binding.setVariable("falsePositive", falsePositive);
         GroovyShell shell = new GroovyShell(GroovyExpressionMatcher.class.getClassLoader(), binding);
         return shell.parse(script);
     }
@@ -82,13 +78,19 @@ class GroovyExpressionMatcher implements Serializable {
      * @return a new annotation for the specified pattern
      */
     @SuppressWarnings("all")
-    public Issue createIssue(final Matcher matcher, final IssueBuilder builder, final int lineNumber, 
+    public Optional<Issue> createIssue(final Matcher matcher, final IssueBuilder builder, final int lineNumber,
             final String fileName) {
         Object result = run(matcher, builder, lineNumber, fileName);
-        if (result instanceof Issue) {
-            return (Issue) result;
+        if (result instanceof Optional) {
+            Optional<?> optional = (Optional) result;
+            if (optional.isPresent()) {
+                Object wrappedIssue = optional.get();
+                if (wrappedIssue instanceof Issue) {
+                    return Optional.of((Issue)wrappedIssue);
+                }
+            }
         }
-        return falsePositive;
+        return Optional.empty();
     }
 
     /**
@@ -115,7 +117,7 @@ class GroovyExpressionMatcher implements Serializable {
 
             return runScript();
         }
-        return falsePositive;
+        return Optional.empty();
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
@@ -125,7 +127,7 @@ class GroovyExpressionMatcher implements Serializable {
         }
         catch (Exception exception) {
             LOGGER.log(Level.SEVERE, "Groovy dynamic warnings parser: exception during execution: ", exception);
-            return falsePositive;
+            return Optional.empty();
         }
     }
 }

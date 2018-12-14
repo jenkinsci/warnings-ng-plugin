@@ -1,6 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
+import java.util.Optional;
+
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.eclipse.jgit.util.io.AutoLFInputStream.IsBinaryException;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -30,21 +33,19 @@ class GroovyExpressionMatcherTest {
     @Test
     void shouldReturnFalsePositiveIfWrongObjectTypeIsReturned() {
         IssueBuilder builder = new IssueBuilder();
-        Issue falsePositive = builder.build();
-        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(TRUE_SCRIPT, falsePositive);
-        assertThat(matcher.createIssue(null, builder, 0, FILE_NAME)).isSameAs(falsePositive);
+        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(TRUE_SCRIPT);
+        assertThat(matcher.createIssue(null, builder, 0, FILE_NAME)).isEmpty();
     }
 
     @Test
     void shouldReturnFalsePositiveIfScriptIsNotValid() {
         IssueBuilder builder = new IssueBuilder();
-        Issue falsePositive = builder.build();
-        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(ILLEGAL_PARSER_SCRIPT, falsePositive);
-        assertThat(matcher.createIssue(null, builder, 0, FILE_NAME)).isSameAs(falsePositive);
+        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(ILLEGAL_PARSER_SCRIPT);
+        assertThat(matcher.createIssue(null, builder, 0, FILE_NAME)).isEmpty();
     }
 
     private Script createMatcher(final String sourceCode) {
-        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(sourceCode, null);
+        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(sourceCode);
         Script script = matcher.compile();
         assertThat(script).isNotNull();
         return script;
@@ -52,29 +53,25 @@ class GroovyExpressionMatcherTest {
 
     @Test
     void shouldThrowCompilationFailedExceptionIfGroovyScriptContainsErrors() {
-        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(ILLEGAL_PARSER_SCRIPT, null);
+        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(ILLEGAL_PARSER_SCRIPT);
 
         assertThatThrownBy(matcher::compile).isInstanceOf(CompilationFailedException.class);
     }
 
     @Test
     void shouldThrow() {
-        Issue falsePositive = new IssueBuilder().build();
-        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(EXCEPTION_PARSER_SCRIPT, falsePositive);
+        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(EXCEPTION_PARSER_SCRIPT);
 
-        assertThat(matcher.run(null, new IssueBuilder(), 0, FILE_NAME)).isSameAs(falsePositive);
+        assertThat(matcher.run(null, new IssueBuilder(), 0, FILE_NAME)).isEqualTo(Optional.empty());
     }
 
     @Test
     void shouldCreateIssueWithLineNumberAndFileName() {
         Issue falsePositive = new IssueBuilder().build();
         GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(
-                "return builder.setLineStart(lineNumber).setFileName(fileName).build()", falsePositive);
+                "return builder.setLineStart(lineNumber).setFileName(fileName).buildOptional()");
 
         Object result = matcher.run(null, new IssueBuilder(), 15, FILE_NAME);
-        assertThat(result).isInstanceOf(Issue.class);
-        
-        Issue issue = (Issue) result;
-        assertThat(issue).hasLineStart(15).hasFileName("File.txt");
+        assertThat(result).isEqualTo(new IssueBuilder().setLineStart(15).setFileName("File.txt").buildOptional());
     }
 }

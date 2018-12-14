@@ -5,8 +5,12 @@
         Instanz, die in der Variablen <code>matcher</code> an das Skript übergeben wird.
         Das Skript muss einen Rückgabewert vom Typ <code>edu.hm.hafner.analysis.Issue</code> haben.
         Eine <code>Issue</code> Instanz muss mit dem <code>edu.hm.hafner.analysis.IssueBuilder</code> erstellt werden,
-        der in der Variablen <code>builder</code> an das Skript übergeben wird.  Folgende Variablen
-        stehen außerdem zur Verfügung:
+        der in der Variablen <code>builder</code> an das Skript übergeben wird. Hinweis: der Rückgabewert der Methode
+        ist vom Typ<code>Optional&lt;Issue&gt;</code>, d.h. im Falle einer Falschmeldung muss
+        <code>Optional.empty()</code> zurückgeliefert werden.
+    </p>
+    <p>
+        Folgende Variablen stehen außerdem zur Verfügung:
     <dl>
         <dt>lineNumber</dt>
         <dd>die aktuelle Zeilennummer</dd>

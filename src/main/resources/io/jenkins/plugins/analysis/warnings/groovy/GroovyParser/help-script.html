@@ -5,14 +5,16 @@
         instance that is passed to the script in the variable <code>matcher</code>. The script must have a single return
         value of type <code>edu.hm.hafner.analysis.Issue</code>. Use the
         <code>edu.hm.hafner.analysis.IssueBuilder</code> instance that is passed to the script in the variable
-        <code>builder</code> to create a new issue instance. Additional available variables:
+        <code>builder</code> to create a new issue instance. Note that the return type of this script is
+        <code>Optional&lt;Issue&gt;</code>, i.e. if a false positive has been detected,
+        you must return <code>Optional.empty()</code>.
+
+        Additional available variables:
     <dl>
         <dt>fileName</dt>
         <dd>the name of the parsed report file</dd>
         <dt>lineNumber</dt>
         <dd>the current line number</dd>
-        <dt>falsePositive</dt>
-        <dd>a predefined issue instance that marks the current match as false positive</dd>
     </dl>
     </p>
 
@@ -32,7 +34,7 @@ builder.setFileName(matcher.group(1))
         .setCategory(matcher.group(3))
         .setMessage(matcher.group(4))
 
-return builder.build();
+return builder.buildOptional();
   </pre>
     <hr/>
 
