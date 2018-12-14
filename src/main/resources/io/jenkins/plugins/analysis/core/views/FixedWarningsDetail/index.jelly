@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
   <l:layout title="${it.displayName}" norefresh="true">
@@ -8,7 +8,7 @@
 
     <l:main-panel>
 
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/bootstrap.min.css"/>
+      <issues:bootstrap-css/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/datatables.min.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>

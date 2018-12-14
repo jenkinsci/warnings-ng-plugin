@@ -1,0 +1,11 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Includes bootstrap CSS.
+  </st:documentation>
+
+  <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/bootstrap.min.css"/>
+  <link rel="stylesheet" href="${resURL}/css/style.css"/>
+
+</j:jelly>
