@@ -453,12 +453,6 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(4, new GnuFortran(), "GnuFortran.txt");
     }
 
-    /** Runs the GnuMakeGcc parser on an output file that contains 15 issues. */
-    @Test
-    public void shouldFindAllGnuMakeGccIssues() {
-        shouldFindIssuesOfTool(15, new GnuMakeGcc(), "gnuMakeGcc.txt");
-    }
-
     /** Runs the MsBuild parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllMsBuildIssues() {
