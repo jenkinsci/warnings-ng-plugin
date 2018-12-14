@@ -23,6 +23,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.jupiter.api.Tag;
 import org.jvnet.hudson.test.JenkinsRule;
+import org.jvnet.hudson.test.JenkinsRule.JSONWebResponse;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
 
@@ -943,5 +944,14 @@ public abstract class IntegrationTest extends ResourceTest {
             builder.append(argument);
         }
         return builder.toString();
+    }
+
+    protected JSONWebResponse callJsonRemoteApi(final String url) {
+        try {
+            return getJenkins().getJSON(url);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
     }
 }

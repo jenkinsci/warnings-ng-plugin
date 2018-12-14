@@ -31,8 +31,6 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  */
 public class JobAction implements Action {
-    private static final Logger LOGGER = Logger.getLogger(JobAction.class.getName());
-
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
     private final HealthDescriptor healthDescriptor;

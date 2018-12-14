@@ -70,7 +70,7 @@ class IssuesPublisher {
      *
      * @return the created result action
      */
-    public ResultAction attachAction() {
+    ResultAction attachAction() {
         logger.log("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
 
         ResultSelector selector = ensureThatIdIsUnique();
@@ -80,6 +80,8 @@ class IssuesPublisher {
 
         ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding);
         run.addAction(action);
+
+        run.addOrReplaceAction(new AggregationAction());
 
         return action;
     }
@@ -150,4 +152,5 @@ class IssuesPublisher {
         }
         return new AnalysisHistory(baseline, selector, qualityGateEvaluationMode, jobResultEvaluationMode);
     }
+
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Tests the class {@link LineModel}.
@@ -38,17 +39,14 @@ class LineModelTest {
         model.addSeries(series);
 
         assertThatJson(model).node("xAxisLabels")
-                .isArray()
-                .ofLength(5)
-                .thatContains("#1")
-                .thatContains("#2")
-                .thatContains("#3")
-                .thatContains("#4")
-                .thatContains("#5");
+                .isArray().hasSize(5)
+                .contains("#1")
+                .contains("#2")
+                .contains("#3")
+                .contains("#4")
+                .contains("#5");
 
-        assertThatJson(model).node("series")
-                .isArray()
-                .ofLength(3);
+        assertThatJson(model).node("series").isArray().hasSize(3);
 
         System.out.println(model);
     }

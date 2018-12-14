@@ -40,5 +40,4 @@ public class ReportApi {
     public int getSize() {
         return report.getSize();
     }
-
 }

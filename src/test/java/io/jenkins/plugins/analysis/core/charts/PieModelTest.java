@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThatJson;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import net.sf.json.JSONArray;
 
 /**
@@ -24,10 +24,8 @@ class PieModelTest {
 
         JSONArray array = JSONArray.fromObject(models);
 
-        assertThatJson(array)
-                .isArray()
-                .ofLength(2)
-                .thatContains(first)
-                .thatContains(second);
+        assertThatJson(array).isArray().hasSize(2)
+                .contains(first)
+                .contains(second);
     }
 }

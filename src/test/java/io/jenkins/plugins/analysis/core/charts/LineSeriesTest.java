@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.charts;
 import org.junit.jupiter.api.Test;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Tests the class {@link LineSeries}.
@@ -23,7 +24,7 @@ class LineSeriesTest {
         assertThatJson(lineSeries).node("name").isEqualTo(SEVERITY);
         assertThatJson(lineSeries).node("stack").isEqualTo(STACKED);
         assertThatJson(lineSeries).node("type").isEqualTo(LINE);
-        assertThatJson(lineSeries).node("data").isArray().ofLength(0);
+        assertThatJson(lineSeries).node("data").isArray().hasSize(0);
     }
 
     @Test
@@ -35,6 +36,6 @@ class LineSeriesTest {
         assertThatJson(lineSeries).node("name").isEqualTo(SEVERITY);
         assertThatJson(lineSeries).node("stack").isEqualTo(STACKED);
         assertThatJson(lineSeries).node("type").isEqualTo(LINE);
-        assertThatJson(lineSeries).node("data").isArray().ofLength(1).thatContains(22);
+        assertThatJson(lineSeries).node("data").isArray().hasSize(1).contains(22);
     }
 }

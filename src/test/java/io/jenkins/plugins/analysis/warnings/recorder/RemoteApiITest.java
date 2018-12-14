@@ -11,20 +11,27 @@ import java.io.IOException;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule.JSONWebResponse;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.xml.XmlPage;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.Pmd;
+import io.jenkins.plugins.analysis.warnings.SpotBugs;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -41,14 +48,20 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ISSUES_REMOTE_API_EXPECTED_XML = "issues.xml";
     private static final String FOLDER_PREFIX = "rest-api/";
 
+    /** Ensures that XML unit does ignore white space. */
+    @BeforeClass
+    public static void initXmlUnit() {
+        XMLUnit.setIgnoreWhitespace(true);
+    }
+
     /**
      * Verifies a top-level REST API call that returns a representation of {@link AnalysisResultApi}.
      */
     @Test
     public void shouldReturnSummaryForTopLevelApiCall() {
-        // Skip elements with absolute paths or other platform specific information 
+        // Skip elements with absolute paths or other platform specific information
         verifyRemoteApi("/checkstyle/api/xml"
-                + "?exclude=/*/errorMessage"  
+                + "?exclude=/*/errorMessage"
                 + "&exclude=/*/infoMessage"
                 + "&exclude=/*/owner/url", RESULT_REMOTE_API_EXPECTED_XML);
     }
@@ -68,7 +81,6 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatRemoteApiEquals(final Run<?, ?> build, final String url, final String expectedXml) {
-        XMLUnit.setIgnoreWhitespace(true);
         Document actualDocument = callRemoteApi(build, url);
         Document expectedDocument = readExpectedXml(FOLDER_PREFIX + expectedXml);
         Diff diff = XMLUnit.compareXML(expectedDocument, actualDocument);
@@ -112,11 +124,9 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies that the numbers of new, fixed and outstanding warnings are correctly computed, if the warnings are from
-     * the same file but have different properties (e.g. line number). Checks that the fallback-fingerprint is using
-     * several properties of the issue if the source code has not been found.
+     * Verifies that the remote API for new, fixed and outstanding warnings is correctly returning the filtered
+     * results.
      */
-    // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
     @Test
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
@@ -129,6 +139,41 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatRemoteApiEquals(build, "/checkstyle/new/api/xml", "new-issues.xml");
         assertThatRemoteApiEquals(build, "/checkstyle/fixed/api/xml", "fixed-issues.xml");
         assertThatRemoteApiEquals(build, "/checkstyle/outstanding/api/xml", "outstanding-issues.xml");
+    }
+
+    /** Verifies that the remote API for the tools aggregation correctly returns the summary. */
+    @Test
+    public void shouldReturnAggregation() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+        enableWarnings(project, createCheckstyle("**/checkstyle1*"),
+                createGenericToolConfiguration(new Pmd()), createGenericToolConfiguration(new SpotBugs()));
+        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+
+        JSONWebResponse json = callJsonRemoteApi(build.getUrl() + "warnings-ng/api/json");
+        JSONObject result = json.getJSONObject();
+
+        assertThatJson(result).node("tools").isArray().hasSize(3);
+        JSONArray tools = result.getJSONArray("tools");
+
+        assertThatToolsContains(tools, "checkstyle", "CheckStyle Warnings", 3);
+        assertThatToolsContains(tools, "pmd", "PMD Warnings", 0);
+        assertThatToolsContains(tools, "spotbugs", "SpotBugs Warnings", 0);
+    }
+
+    private void assertThatToolsContains(final JSONArray tools,
+            final String expectedId, final String expectedName, final int expectedSize) {
+        for (int i = 0; i < 3; i++) {
+            if (tools.getString(i).contains(expectedId)) {
+                assertThatJson(tools.get(i)).node("id").isEqualTo(expectedId);
+                assertThatJson(tools.get(i)).node("name").isEqualTo(expectedName);
+                assertThatJson(tools.get(i)).node("latestUrl").asString()
+                        .matches("http://localhost:\\d+/jenkins/job/test\\d+/1/" + expectedId);
+                assertThatJson(tools.get(i)).node("size").isEqualTo(expectedSize);
+                return;
+            }
+        }
+
+        fail("No node found with id %s in %s", expectedId, tools.toString(2));
     }
 
     private ReportScanningTool createCheckstyle(final String pattern) {
