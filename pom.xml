@@ -28,8 +28,8 @@
     <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>1.0.0-beta17</analysis-model-api.version>
-    <analysis-model.version>1.0.0-RC20</analysis-model.version>
+    <analysis-model-api.version>1.0.0-beta18-SNAPSHOT</analysis-model-api.version>
+    <analysis-model.version>1.0.0-RC21-SNAPSHOT</analysis-model.version>
 
     <commons.lang.version>3.8.1</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -584,7 +584,7 @@
           <effort>Max</effort>
           <relaxed>false</relaxed>
           <fork>true</fork>
-          <excludeFilterFile>etc/findbugs-exclusion-filter.xml</excludeFilterFile>
+          <excludeFilterFile>etc/spotbugs-exclusion-filter.xml</excludeFilterFile>
           <includeTests>true</includeTests>
         </configuration>
       </plugin>

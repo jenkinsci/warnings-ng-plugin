@@ -1,11 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import javax.annotation.Nonnull;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.charset.MalformedInputException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -157,12 +161,23 @@ public class OpenTasks extends Tool {
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
                     includePattern, excludePattern, sourceCodeEncoding.name()));
         }
+//        catch (MalformedInputException e) {
+//            return createErrorReport("Can't read source code files, provided encoding '%s' seems to be wrong",
+//                    sourceCodeEncoding);
+//        }
         catch (IOException e) {
-            throw new ParsingException(e);
+            return createErrorReport("Exception while reading the source code files:%n%s%n%s",
+                    ExceptionUtils.getRootCause(e), ExceptionUtils.getStackTrace(e));
         }
         catch (InterruptedException ignored) {
             throw new ParsingCanceledException();
         }
+    }
+
+    private Report createErrorReport(final String format, final Object... args) {
+        Report report = new Report();
+        report.logError(format, args);
+        return report;
     }
 
     /** Creates a new instance of {@link OpenTasks}. */
@@ -263,16 +278,21 @@ public class OpenTasks extends Tool {
                 return FormValidation.error(scanner.getErrors());
             }
 
-            Report tasks = scanner.scan(new StringReader(example), new IssueBuilder());
-            if (tasks.isEmpty()) {
-                return FormValidation.warning(Messages.OpenTasks_Validation_NoTask());
+            try (BufferedReader reader = new BufferedReader(new StringReader(example))) {
+                Report tasks = scanner.scanTasks(reader.lines().iterator(), new IssueBuilder().setFileName("UI example"));
+                if (tasks.isEmpty()) {
+                    return FormValidation.warning(Messages.OpenTasks_Validation_NoTask());
+                }
+                else if (tasks.size() != 1) {
+                    return FormValidation.warning(Messages.OpenTasks_Validation_MultipleTasks(tasks.size()));
+                }
+                else {
+                    Issue task = tasks.get(0);
+                    return FormValidation.ok(Messages.OpenTasks_Validation_OneTask(task.getType(), task.getMessage()));
+                }
             }
-            else if (tasks.size() != 1) {
-                return FormValidation.warning(Messages.OpenTasks_Validation_MultipleTasks(tasks.size()));
-            }
-            else {
-                Issue task = tasks.get(0);
-                return FormValidation.ok(Messages.OpenTasks_Validation_OneTask(task.getType(), task.getMessage()));
+            catch (IOException e) {
+                return FormValidation.error(e.getMessage()); // should never happen
             }
         }
     }

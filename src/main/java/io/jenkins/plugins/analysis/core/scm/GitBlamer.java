@@ -63,7 +63,7 @@ public class GitBlamer implements Blamer {
 
             ObjectId headCommit = git.revParse(gitCommit);
             if (headCommit == null) {
-                report.logError("Could not retrieve HEAD commit, aborting.");
+                report.logError("Could not retrieve HEAD commit, aborting");
                 return new Blames();
             }
             report.logInfo("Git commit ID = '%s'", headCommit.getName());
@@ -72,13 +72,11 @@ public class GitBlamer implements Blamer {
             report.logInfo("Job workspace = '%s'", workspacePath);
             return git.withRepository(new BlameCallback(report, headCommit, workspacePath));
         }
-        catch (IOException e) {
-            report.logError("Computing blame information failed with an exception:%n%s%n%s",
-                    e.getMessage(), ExceptionUtils.getStackTrace(e));
+        catch (IOException exception) {
+            report.logException(exception, "Computing blame information failed with an exception:");
         }
         catch (GitException exception) {
-            report.logError("Can't determine head commit using 'git rev-parse'. Skipping blame. %n%s",
-                    exception.getMessage());
+            report.logException(exception, "Can't determine head commit using 'git rev-parse'. Skipping blame.");
         }
         catch (InterruptedException e) {
             // nothing to do, already logged

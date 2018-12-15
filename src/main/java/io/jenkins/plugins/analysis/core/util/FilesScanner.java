@@ -77,10 +77,10 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
             Path file = workspace.toPath().resolve(fileName);
 
             if (!Files.isReadable(file)) {
-                report.logError("Skipping file '%s' because Jenkins has no permission to read the file.", fileName);
+                report.logError("Skipping file '%s' because Jenkins has no permission to read the file", fileName);
             }
             else if (isEmpty(file)) {
-                report.logError("Skipping file '%s' because it's empty.", fileName);
+                report.logError("Skipping file '%s' because it's empty", fileName);
             }
             else {
                 aggregateIssuesOfFile(file, report);
@@ -107,7 +107,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
                     plural(report.getDuplicatesSize(), "duplicate"));
         }
         catch (ParsingException exception) {
-            report.logError("Parsing of file '%s' failed due to an exception: \n\n%s", file, getStackTrace(exception));
+            report.logException(exception, "Parsing of file '%s' failed due to an exception:", file);
         }
         catch (ParsingCanceledException ignored) {
             report.logInfo("Parsing of file %s has been canceled", file);
@@ -122,9 +122,5 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         builder.insert(0, ' ');
         builder.insert(0, count);
         return builder.toString();
-    }
-
-    private String getStackTrace(final ParsingException exception) {
-        return ExceptionUtils.getStackTrace(ObjectUtils.defaultIfNull(exception.getCause(), exception));
     }
 }

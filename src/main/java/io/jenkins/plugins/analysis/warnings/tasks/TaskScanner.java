@@ -1,18 +1,23 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.IOException;
-import java.io.Reader;
+import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
+import java.nio.charset.MalformedInputException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Stream;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.LineIterator;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
@@ -159,16 +164,44 @@ public class TaskScanner {
     }
 
     /**
-     * Scans the specified input stream for open tasks.
+     * Scans the specified file for open tasks.
      *
-     * @param reader
+     * @param file
      *         the file to scan
-     * @param builder
-     *         issue builder
+     * @param charset
+     *         encoding of the file
      *
-     * @return the result stored as java project
+     * @return the open tasks
      */
-    public Report scan(final Reader reader, final IssueBuilder builder) {
+    public Report scan(final Path file, final Charset charset) {
+        try (Stream<String> lines = Files.lines(file, charset)) {
+            return scanTasks(lines.iterator(), new IssueBuilder().setFileName(file.toString()));
+        }
+        catch (IOException | UncheckedIOException exception) {
+            Report report = new Report();
+            if (exception.getCause() instanceof MalformedInputException) {
+                report.logError("Can't read source file '%s', defined encoding '%s' seems to be wrong",
+                        file, charset);
+            }
+            else {
+                report.logException(exception, "Exception while reading the source code file '%s':", file);
+            }
+
+            return report;
+        }
+    }
+
+    /**
+     * Scans the specified source code lines for open tasks.
+     *
+     * @param lines
+     *         the source code lines
+     * @param builder
+     *         the builder to create issue instances
+     *
+     * @return the open tasks
+     */
+    public Report scanTasks(final Iterator<String> lines, final IssueBuilder builder) {
         Report report = new Report();
 
         if (isInvalidPattern) {
@@ -176,42 +209,29 @@ public class TaskScanner {
             return report;
         }
 
-        try {
-            LineIterator lineIterator = IOUtils.lineIterator(reader);
+        for (int lineNumber = 1; lines.hasNext(); lineNumber++) {
+            String line = lines.next();
 
-            for (int lineNumber = 1; lineIterator.hasNext(); lineNumber++) {
-                String line = lineIterator.next();
+            for (Severity severity : Severity.getPredefinedValues()) {
+                if (patterns.containsKey(severity)) {
+                    Matcher matcher = patterns.get(severity).matcher(line);
+                    if (matcher.matches() && matcher.groupCount() == 2) {
+                        String message = matcher.group(2).trim();
+                        builder.setMessage(StringUtils.removeStart(message, ":").trim());
 
-                for (Severity severity : Severity.getPredefinedValues()) {
-                    if (patterns.containsKey(severity)) {
-                        Matcher matcher = patterns.get(severity).matcher(line);
-                        if (matcher.matches() && matcher.groupCount() == 2) {
-                            String message = matcher.group(2).trim();
-                            builder.setMessage(StringUtils.removeStart(message, ":").trim());
-
-                            String tag = matcher.group(1);
-                            if (isUppercase) {
-                                builder.setType(StringUtils.upperCase(tag));
-                            }
-                            else {
-                                builder.setType(tag);
-                            }
-                            report.add(builder.setSeverity(severity).setLineStart(lineNumber).build());
+                        String tag = matcher.group(1);
+                        if (isUppercase) {
+                            builder.setType(StringUtils.upperCase(tag));
                         }
+                        else {
+                            builder.setType(tag);
+                        }
+                        report.add(builder.setSeverity(severity).setLineStart(lineNumber).build());
                     }
                 }
             }
-
-            return report;
         }
-        finally {
-            try {
-                reader.close();
-            }
-            catch (IOException ignore) {
-                // ignore
-            }
-        }
+        return report;
     }
 }
 
