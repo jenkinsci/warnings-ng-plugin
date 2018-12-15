@@ -98,6 +98,7 @@ public class AffectedFilesResolver {
         FilteredLog log = new FilteredLog(report, 
                 "Can't copy some affected workspace files to Jenkins build folder:");
         Set<String> files = report.getFiles();
+        files.remove("-");
         for (String file : files) {
             if (exists(file)) {
                 if (isInWorkspace(file, workspace)) {

@@ -147,7 +147,7 @@ public class GitBlamer implements Blamer {
             
             log.logSummary();
             if (blames.isEmpty()) {
-                report.logError("Created no blame requests - Git blame will be skipped");
+                report.logInfo("Created no blame requests - Git blame will be skipped");
             }
             else {
                 report.logInfo(

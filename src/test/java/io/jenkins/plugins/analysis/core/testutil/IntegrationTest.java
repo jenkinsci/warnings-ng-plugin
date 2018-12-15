@@ -25,12 +25,14 @@ import org.junit.jupiter.api.Tag;
 import org.jvnet.hudson.test.JenkinsRule;
 import org.jvnet.hudson.test.JenkinsRule.JSONWebResponse;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
+import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
@@ -951,6 +953,15 @@ public abstract class IntegrationTest extends ResourceTest {
             return getJenkins().getJSON(url);
         }
         catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    protected Document callXmlRemoteApi(final String url) {
+        try {
+            return getJenkins().createWebClient().goToXml(url).getXmlDocument();
+        }
+        catch (IOException | SAXException e) {
             throw new AssertionError(e);
         }
     }

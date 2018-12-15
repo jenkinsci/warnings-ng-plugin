@@ -49,7 +49,7 @@ public class AbsolutePathGenerator {
     public void run(final Report report, final Path workspace) {
         Set<String> relativeFileNames = report.getFiles()
                 .stream()
-                .filter(fileName -> fileSystem.isRelative(fileName) && !ConsoleDetail.isInConsoleLog(fileName))
+                .filter(fileName -> isValidRelativeFileName(fileName))
                 .collect(Collectors.toSet());
 
         if (relativeFileNames.isEmpty()) {
@@ -82,6 +82,12 @@ public class AbsolutePathGenerator {
         report.logInfo("-> %d resolved, %d unresolved, %d already absolute",
                 resolvedCount, log.size(), unchangedCount);
         log.logSummary();
+    }
+
+    private boolean isValidRelativeFileName(final String fileName) {
+        return !"-".equals(fileName)
+                && fileSystem.isRelative(fileName)
+                && !ConsoleDetail.isInConsoleLog(fileName);
     }
 
     private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final Path workspace) {

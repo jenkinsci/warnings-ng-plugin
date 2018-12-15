@@ -78,7 +78,7 @@ class AbsolutePathGeneratorTest {
      * Ensures that absolute paths are not changed while relative paths are resolved.
      */
     @Test
-    void shouldNotTouchAbsolutePath() {
+    void shouldNotTouchAbsolutePathOrEmptyPath() {
         String relative = "relative.txt";
         String absolutePath = WORKSPACE_PATH + "/" + relative;
 
@@ -86,20 +86,22 @@ class AbsolutePathGeneratorTest {
         when(fileSystem.resolveAbsolutePath(WORKSPACE, relative)).thenReturn(Optional.of(absolutePath));
         when(fileSystem.isRelative(absolutePath)).thenReturn(false);
         when(fileSystem.isRelative(relative)).thenReturn(true);
+        when(fileSystem.isRelative("-")).thenReturn(true);
 
         Report report = createIssuesSingleton(relative, ISSUE_BUILDER.setOrigin(ID));
         Issue issueWithAbsolutePath = ISSUE_BUILDER.setFileName("/absolute/path.txt").build();
         report.add(issueWithAbsolutePath);
-        Issue issueWithSelfReference = ISSUE_BUILDER.setFileName("/jenkins/log").build();
-        report.add(issueWithSelfReference);
+        Issue issueWithoutFileName = ISSUE_BUILDER.setFileName("-").build();
+        report.add(issueWithoutFileName);
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
         generator.run(report, WORKSPACE);
 
         assertThat(report.iterator())
                 .containsExactly(ISSUE_BUILDER.setFileName(absolutePath).build(),
-                        issueWithAbsolutePath, issueWithSelfReference);
+                        issueWithAbsolutePath, issueWithoutFileName);
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("2 already absolute");
+        assertThat(report.getErrorMessages()).isEmpty();
     }
 }

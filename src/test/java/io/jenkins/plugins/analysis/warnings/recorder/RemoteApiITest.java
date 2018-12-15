@@ -81,7 +81,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatRemoteApiEquals(final Run<?, ?> build, final String url, final String expectedXml) {
-        Document actualDocument = callRemoteApi(build, url);
+        Document actualDocument = callXmlRemoteApi(build.getUrl() + url);
         Document expectedDocument = readExpectedXml(FOLDER_PREFIX + expectedXml);
         Diff diff = XMLUnit.compareXML(expectedDocument, actualDocument);
 
@@ -95,7 +95,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     public void assertXmlApiWithXPathNavigationMatchesExpected() {
         Run<?, ?> build = buildCheckStyleJob();
 
-        Document actualDocument = callRemoteApi(build, "/checkstyle/api/xml?xpath=/*/qualityGateStatus");
+        Document actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?xpath=/*/qualityGateStatus");
 
         assertThat(actualDocument.getDocumentElement().getTagName()).isEqualTo("qualityGateStatus");
         assertThat(actualDocument.getDocumentElement().getFirstChild().getNodeValue()).isEqualTo("INACTIVE");
@@ -111,7 +111,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     public void assertXmlApiWithDepthContainsDeepElements() throws XPathExpressionException {
         Run<?, ?> build = buildCheckStyleJob();
 
-        Document actualDocument = callRemoteApi(build, "/checkstyle/api/xml?depth=1");
+        Document actualDocument = callXmlRemoteApi(build.getUrl() + "/checkstyle/api/xml?depth=1");
 
         // navigate to one deep level element that is not visible at depth 0
         XPath xpath = XPathFactory.newInstance().newXPath();
@@ -186,16 +186,6 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CHECKSTYLE_FILE);
         enableCheckStyleWarnings(project);
         return buildWithResult(project, Result.SUCCESS);
-    }
-
-    private Document callRemoteApi(final Run<?, ?> run, final String url) {
-        try {
-            XmlPage page = getJenkins().createWebClient().goToXml(run.getUrl() + url);
-            return page.getXmlDocument();
-        }
-        catch (IOException | SAXException e) {
-            throw new AssertionError(e);
-        }
     }
 
     private Document readExpectedXml(final String fileName) {
