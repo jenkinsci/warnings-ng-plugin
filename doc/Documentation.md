@@ -260,7 +260,7 @@ which could then be used independently from each other.
 #### Simple Pipeline configuration 
 
 The simple pipeline configuration is provided by the step `recordIssues`, it provides the same properties as 
-the post build action (see [above](#graphical-configuration)). This step scans for issues
+the post build action (see [above](#configuration)). This step scans for issues
 in a given set of files (or in the console log) and reports these issues in your build. You can use the 
 snippet generator to create a working snippet that calls this step. A typical example of this step 
 is shown in the following example:
@@ -489,12 +489,74 @@ unclassified:
 
 ### Remote API
 
-The plugin provides two REST API endpoints. 
+The plugin provides the following REST API endpoints. 
+
+#### Aggregation summary of all analysis results
+
+All static analysis tools that have been configured in a build can be queried by using the URL 
+`[build-url]/warnings-ng/api/json` (or `[build-url]/warnings-ng/api/xml`). This aggregation shows ID, name, URL and 
+total number of issues for each tool.
+
+```json
+{
+  "_class": "io.jenkins.plugins.analysis.core.restapi.AggregationApi",
+  "tools": [
+    {
+      "id": "maven",
+      "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/maven",
+      "name": "Maven Warnings",
+      "size": 9
+    },
+    {
+      "id": "java",
+      "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/java",
+      "name": "Java Warnings",
+      "size": 1
+    },
+    {
+      "id": "javadoc",
+      "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/javadoc",
+      "name": "JavaDoc Warnings",
+      "size": 0
+    },
+    {
+      "id": "checkstyle",
+      "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/checkstyle",
+      "name": "CheckStyle Warnings",
+      "size": 0
+    },
+    {
+      "id": "pmd",
+      "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/pmd",
+      "name": "PMD Warnings",
+      "size": 671
+    },
+    {
+      "id": "spotbugs",
+      "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/spotbugs",
+      "name": "SpotBugs Warnings",
+      "size": 0
+    },
+    {
+      "id": "cpd",
+      "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/cpd",
+      "name": "CPD Warnings",
+      "size": 123
+    },
+    {
+      "id": "open-tasks",
+      "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/open-tasks",
+      "name": "Open Tasks Scanner Warnings",
+      "size": 11
+    }
+  ]
+}
+```
 
 #### Summary of the analysis result
 
-You can obtain a summary of a particular analysis report by using the URL `[tool-id]/api/xml` 
-(or `[tool-id]/api/json`). The summary contains the number of issues, the quality gate status, and all 
+You can obtain a summary of a particular analysis report by using the URL `[build-url]/[tool-id]/api/xml` 
+(or `[build-url]/[tool-id]/api/json`). The summary contains the number of issues, the quality gate status, and all 
 info and error messages.
 
 Here is an example XML report:
@@ -543,10 +605,10 @@ Here is an example XML report:
 The reported issues are also available as REST API. You can either query all issues or only the 
 new, fixed, or outstanding issues. The corresponding URLs are:
 
-1. `[tool-id]/all/api/xml`: lists all issues
-2. `[tool-id]/fixed/api/xml`: lists all fixed issues
-3. `[tool-id]/new/api/xml`: lists all new issues
-4. `[tool-id]/outstanding/api/xml`: lists all outstanding issues
+1. `[build-url]/[tool-id]/all/api/xml`: lists all issues
+2. `[build-url]/[tool-id]/fixed/api/xml`: lists all fixed issues
+3. `[build-url]/[tool-id]/new/api/xml`: lists all new issues
+4. `[build-url]/[tool-id]/outstanding/api/xml`: lists all outstanding issues
 
 Here is an example JSON report:
 
