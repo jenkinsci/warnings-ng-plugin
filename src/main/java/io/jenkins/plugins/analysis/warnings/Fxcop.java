@@ -27,11 +27,6 @@ public class Fxcop extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public FxCopParser createParser() {
         return new FxCopParser();
     }
@@ -43,6 +38,11 @@ public class Fxcop extends ReportScanningTool {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Nonnull

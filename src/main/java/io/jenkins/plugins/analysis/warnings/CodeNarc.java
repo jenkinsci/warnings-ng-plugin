@@ -27,11 +27,6 @@ public class CodeNarc extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public CodeNarcAdapter createParser() {
         return new CodeNarcAdapter();
     }
@@ -49,6 +44,11 @@ public class CodeNarc extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Violations_CodeNarc();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
     }
 }

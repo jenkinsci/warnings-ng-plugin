@@ -27,11 +27,6 @@ public class DupFinder extends DuplicateCodeScanner {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public DupFinderParser createParser() {
         return new DupFinderParser();
     }
@@ -56,6 +51,11 @@ public class DupFinder extends DuplicateCodeScanner {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_DupFinder_ParserName();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override

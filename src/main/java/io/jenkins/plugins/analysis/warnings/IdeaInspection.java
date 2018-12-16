@@ -29,15 +29,10 @@ public class IdeaInspection extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public IdeaInspectionParser createParser() {
         return new IdeaInspectionParser();
     }
-   
+
     /** Descriptor for this static analysis tool. */
     @Symbol("ideaInspection")
     @Extension
@@ -56,6 +51,11 @@ public class IdeaInspection extends ReportScanningTool {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName());
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override

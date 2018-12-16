@@ -27,11 +27,6 @@ public class JsHint extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public JsHintAdapter createParser() {
         return new JsHintAdapter();
     }
@@ -49,6 +44,11 @@ public class JsHint extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Violations_JSHint();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
     }
 }

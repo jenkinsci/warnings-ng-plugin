@@ -51,11 +51,6 @@ public class GroovyScript extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false; // due to security reasons running a groovy script on master is prohibited
-    }
-
-    @Override
     public StaticAnalysisLabelProvider getLabelProvider() {
         return new StaticAnalysisLabelProvider(parserId, getTool().getName());
     }
@@ -87,6 +82,11 @@ public class GroovyScript extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Groovy_DescribableName();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false; // due to security reasons (JENKINS-54832) running a groovy script on master is prohibited
         }
 
         /**

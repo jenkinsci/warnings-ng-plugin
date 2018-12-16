@@ -31,11 +31,6 @@ public class Ccm extends ReportScanningTool {
         return new CcmParser();
     }
 
-    @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("ccm")
     @Extension
@@ -49,6 +44,11 @@ public class Ccm extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Ccm_ParserName();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
     }
 }

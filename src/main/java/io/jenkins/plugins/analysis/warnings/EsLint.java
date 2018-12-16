@@ -30,11 +30,6 @@ public class EsLint extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public CheckStyleParser createParser() {
         return new CheckStyleParser();
     }
@@ -52,6 +47,11 @@ public class EsLint extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_ESlint_Name();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override

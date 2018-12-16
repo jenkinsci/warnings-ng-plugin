@@ -28,11 +28,6 @@ public class TsLint extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public CheckStyleParser createParser() {
         return new CheckStyleParser();
     }
@@ -50,6 +45,11 @@ public class TsLint extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_TSLint_Name();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override

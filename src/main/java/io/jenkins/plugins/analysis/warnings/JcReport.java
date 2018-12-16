@@ -27,11 +27,6 @@ public class JcReport extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public JcReportParser createParser() {
         return new JcReportParser();
     }
@@ -49,6 +44,11 @@ public class JcReport extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_JCReport_ParserName();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
     }
 }

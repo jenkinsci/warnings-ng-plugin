@@ -34,11 +34,6 @@ public class FindBugs extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
     public boolean getUseRankAsPriority() {
         return useRankAsPriority;
     }
@@ -63,7 +58,6 @@ public class FindBugs extends ReportScanningTool {
     /** Provides the labels for the static analysis tool. */
     static class FindBugsLabelProvider extends IconLabelProvider {
         private final FindBugsMessages messages;
-
         /**
          * Creates a new {@link FindBugsLabelProvider} with the specified ID.
          *
@@ -85,7 +79,6 @@ public class FindBugs extends ReportScanningTool {
             return messages.getMessage(issue.getType(), LocaleProvider.getLocale());
         }
     }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("findBugs")
     @Extension
@@ -127,6 +120,11 @@ public class FindBugs extends ReportScanningTool {
         @Override
         public String getPattern() {
             return "**/findbugsXml.xml";
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
     }
 }

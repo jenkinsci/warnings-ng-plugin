@@ -4,6 +4,7 @@ import javax.annotation.CheckForNull;
 
 import java.util.Collection;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.Messages;
 import io.jenkins.plugins.analysis.core.restapi.AggregationApi;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
@@ -17,6 +18,7 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
+@SuppressFBWarnings(value = "SE", justification = "transient field owner ist restored using a Jenkins callback")
 class AggregationAction implements RunAction2 {
     private transient Run<?, ?> owner;
 

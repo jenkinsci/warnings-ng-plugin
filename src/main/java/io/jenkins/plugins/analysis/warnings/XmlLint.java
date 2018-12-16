@@ -27,11 +27,6 @@ public class XmlLint extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public XmlLintAdapter createParser() {
         return new XmlLintAdapter();
     }
@@ -49,6 +44,11 @@ public class XmlLint extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Violations_XmlLint();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
     }
 }

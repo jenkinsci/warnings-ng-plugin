@@ -29,11 +29,6 @@ public class ResharperInspectCode extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public ResharperInspectCodeAdapter createParser() {
         return new ResharperInspectCodeAdapter();
     }
@@ -52,7 +47,12 @@ public class ResharperInspectCode extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Warnings_ReshaperInspectCode_ParserName();
         }
-        
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
+        }
+
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName());

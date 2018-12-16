@@ -27,11 +27,6 @@ public class Gendarme extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public GendarmeParser createParser() {
         return new GendarmeParser();
     }
@@ -49,6 +44,11 @@ public class Gendarme extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Gendarme_ParserName();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
     }
 }

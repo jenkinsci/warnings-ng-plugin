@@ -27,11 +27,6 @@ public class CssLint extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public LintParser createParser() {
         return new LintParser();
     }
@@ -49,6 +44,11 @@ public class CssLint extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_CssLint_ParserName();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
     }
 }

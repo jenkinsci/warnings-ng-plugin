@@ -19,7 +19,7 @@ import hudson.Extension;
  */
 public class KtLint extends ReportScanningTool {
     private static final long serialVersionUID = 1897385505660427545L;
-    
+
     static final String ID = "ktlint";
 
     /** Creates a new instance of {@link KtLint}. */
@@ -27,11 +27,6 @@ public class KtLint extends ReportScanningTool {
     public KtLint() {
         super();
         // empty constructor required for stapler
-    }
-
-    @Override
-    public boolean canScanConsoleLog() {
-        return false;
     }
 
     @Override
@@ -52,6 +47,11 @@ public class KtLint extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_KtLint_Name();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override

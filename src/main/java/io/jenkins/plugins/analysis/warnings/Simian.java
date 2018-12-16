@@ -27,11 +27,6 @@ public class Simian extends DuplicateCodeScanner {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public SimianParser createParser() {
         return new SimianParser(getHighThreshold(), getNormalThreshold());
     }
@@ -56,6 +51,11 @@ public class Simian extends DuplicateCodeScanner {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Simian_ParserName();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override

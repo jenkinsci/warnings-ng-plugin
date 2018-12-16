@@ -146,7 +146,7 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run, final LogHandler logger) {
-        Ensure.that(canScanConsoleLog()).isTrue(
+        Ensure.that(getDescriptor().canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
 
@@ -173,17 +173,6 @@ public abstract class ReportScanningTool extends Tool {
         catch (final InterruptedException ignored) {
             // ignore
         }
-    }
-
-    /**
-     * Returns whether this parser can scan the console log. Typically, only line based parsers can scan the console
-     * log. XML parsers should always parse a given file only.
-     *
-     * @return the parser to use
-     */
-    // FIXME: move to descriptor
-    public boolean canScanConsoleLog() {
-        return true;
     }
 
     @Override
@@ -250,6 +239,17 @@ public abstract class ReportScanningTool extends Tool {
         public String getPattern() {
             return StringUtils.EMPTY;
         }
+
+        /**
+         * Returns whether this parser can scan the console log. Typically, only line based parsers can scan the console
+         * log. XML parsers should always parse a given file only.
+         *
+         * @return the parser to use
+         */
+        public boolean canScanConsoleLog() {
+            return true;
+        }
+
     }
 
 }

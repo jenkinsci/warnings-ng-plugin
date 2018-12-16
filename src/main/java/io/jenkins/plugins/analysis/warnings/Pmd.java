@@ -30,11 +30,6 @@ public class Pmd extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public PmdParser createParser() {
         return new PmdParser();
     }
@@ -67,6 +62,11 @@ public class Pmd extends ReportScanningTool {
 
             messages = new PmdMessages();
             messages.initialize();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Nonnull

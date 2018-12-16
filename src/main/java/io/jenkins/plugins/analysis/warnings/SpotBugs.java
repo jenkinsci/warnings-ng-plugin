@@ -23,11 +23,6 @@ public class SpotBugs extends FindBugs {
         // empty constructor required for stapler
     }
 
-    @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
     /** Descriptor for this static analysis tool. */
     @Extension
     @Symbol("spotBugs")
@@ -46,6 +41,11 @@ public class SpotBugs extends FindBugs {
         @Override
         public String getPattern() {
             return "**/target/spotbugsXml.xml";
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override

@@ -28,11 +28,6 @@ public class JsLint extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public LintParser createParser() {
         return new LintParser();
     }
@@ -50,6 +45,11 @@ public class JsLint extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_JSLint_ParserName();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override

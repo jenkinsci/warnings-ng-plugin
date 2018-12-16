@@ -27,11 +27,6 @@ public class StyleCop extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public StyleCopParser createParser() {
         return new StyleCopParser();
     }
@@ -49,6 +44,11 @@ public class StyleCop extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_StyleCop_ParserName();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
     }
 }

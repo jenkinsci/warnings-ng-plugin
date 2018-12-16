@@ -29,11 +29,6 @@ public class Pit extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public PitAdapter createParser() {
         return new PitAdapter();
     }
@@ -51,6 +46,11 @@ public class Pit extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Violations_PIT();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override

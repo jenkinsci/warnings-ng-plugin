@@ -27,11 +27,6 @@ public class Infer extends ReportScanningTool {
     }
 
     @Override
-    public boolean canScanConsoleLog() {
-        return false;
-    }
-
-    @Override
     public PmdParser createParser() {
         return new PmdParser();
     }
@@ -49,6 +44,11 @@ public class Infer extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Infer_Name();
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
         }
 
         @Override
