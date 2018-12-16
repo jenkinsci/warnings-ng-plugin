@@ -75,7 +75,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasErrorMessages(
-                "Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file.");
+                "Skipping file 'no_read_permissions.xml' because Jenkins has no permission to read the file");
     }
 
     private void makeFileUnreadable(final FreeStyleProject project) {
@@ -92,7 +92,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
-        assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty.");
+        assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty");
     }
 
     /**
@@ -127,7 +127,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
                 "Successfully parsed file " + getCheckStyleFile(project),
                 "-> found 6 issues (skipped 0 duplicates)",
                 "-> found 2 files");
-        assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty.");
+        assertThat(result).hasErrorMessages("Skipping file 'zero_length_file.xml' because it's empty");
     }
 
     /**
