@@ -5,8 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.nio.charset.Charset;
-import java.nio.charset.MalformedInputException;
-import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -19,7 +17,6 @@ import org.kohsuke.stapler.QueryParameter;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
-import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -161,23 +158,14 @@ public class OpenTasks extends Tool {
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
                     includePattern, excludePattern, sourceCodeEncoding.name()));
         }
-//        catch (MalformedInputException e) {
-//            return createErrorReport("Can't read source code files, provided encoding '%s' seems to be wrong",
-//                    sourceCodeEncoding);
-//        }
         catch (IOException e) {
-            return createErrorReport("Exception while reading the source code files:%n%s%n%s",
-                    ExceptionUtils.getRootCause(e), ExceptionUtils.getStackTrace(e));
+            Report report = new Report();
+            report.logException(e, "Exception while reading the source code files:");
+            return report;
         }
         catch (InterruptedException ignored) {
             throw new ParsingCanceledException();
         }
-    }
-
-    private Report createErrorReport(final String format, final Object... args) {
-        Report report = new Report();
-        report.logError(format, args);
-        return report;
     }
 
     /** Creates a new instance of {@link OpenTasks}. */
@@ -268,9 +256,9 @@ public class OpenTasks extends Tool {
             }
 
             TaskScannerBuilder builder = new TaskScannerBuilder();
-            TaskScanner scanner = builder.setHigh(high)
-                    .setNormal(normal)
-                    .setLow(low)
+            TaskScanner scanner = builder.setHighTasks(high)
+                    .setNormalTasks(normal)
+                    .setLowTasks(low)
                     .setCaseMode(ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE)
                     .setMatcherMode(asRegexp ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH).build();
 

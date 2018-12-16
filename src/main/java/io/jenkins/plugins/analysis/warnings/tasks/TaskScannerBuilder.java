@@ -21,7 +21,7 @@ public class TaskScannerBuilder {
      *
      * @return this
      */
-    public TaskScannerBuilder setHigh(final String high) {
+    public TaskScannerBuilder setHighTasks(final String high) {
         this.high = high;
         return this;
     }
@@ -34,7 +34,7 @@ public class TaskScannerBuilder {
      *
      * @return this
      */
-    public TaskScannerBuilder setNormal(final String normal) {
+    public TaskScannerBuilder setNormalTasks(final String normal) {
         this.normal = normal;
         return this;
     }
@@ -47,7 +47,7 @@ public class TaskScannerBuilder {
      *
      * @return this
      */
-    public TaskScannerBuilder setLow(final String low) {
+    public TaskScannerBuilder setLowTasks(final String low) {
         this.low = low;
         return this;
     }

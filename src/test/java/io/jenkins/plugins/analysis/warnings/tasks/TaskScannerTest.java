@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.Iterator;
@@ -32,7 +31,7 @@ class TaskScannerTest extends ResourceTest {
 
     @Test
     void shouldReportErrorIfPatternIsInvalid() {
-        TaskScanner scanner = new TaskScannerBuilder().setHigh("\\").setMatcherMode(MatcherMode.REGEXP_MATCH).build();
+        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\").setMatcherMode(MatcherMode.REGEXP_MATCH).build();
 
         Report report = scanner.scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
@@ -54,7 +53,7 @@ class TaskScannerTest extends ResourceTest {
     @Test
     void shouldParseRegularExpressionsIssue17225() {
         Report tasks = new TaskScannerBuilder()
-                .setHigh("^.*(TODO(?:[0-9]*))(.*)$")
+                .setHighTasks("^.*(TODO(?:[0-9]*))(.*)$")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.REGEXP_MATCH)
                 .build()
@@ -91,9 +90,9 @@ class TaskScannerTest extends ResourceTest {
     @Test
     void issue22744() {
         Report tasks = new TaskScannerBuilder()
-                .setHigh("FIXME")
-                .setNormal("TODO")
-                .setLow("")
+                .setHighTasks("FIXME")
+                .setNormalTasks("TODO")
+                .setLowTasks("")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -118,9 +117,9 @@ class TaskScannerTest extends ResourceTest {
     @Test
     void issue12782() {
         Report tasks = new TaskScannerBuilder()
-                .setHigh("!!!!!")
-                .setNormal("!!!")
-                .setLow("")
+                .setHighTasks("!!!!!")
+                .setNormalTasks("!!!")
+                .setLowTasks("")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -135,9 +134,9 @@ class TaskScannerTest extends ResourceTest {
     @Test
     void shouldScanFileWithWords() {
         Report tasks = new TaskScannerBuilder()
-                .setHigh("WARNING")
-                .setNormal("TODO")
-                .setLow("@todo")
+                .setHighTasks("WARNING")
+                .setNormalTasks("TODO")
+                .setLowTasks("@todo")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -158,7 +157,7 @@ class TaskScannerTest extends ResourceTest {
 
     private void verifyOneTaskWhenCheckingCase(final String tag, final int lineNumber) {
         Report tasks = new TaskScannerBuilder()
-                .setNormal(tag)
+                .setNormalTasks(tag)
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -175,7 +174,7 @@ class TaskScannerTest extends ResourceTest {
     @Test
     void shouldIgnoreCaseInSource() {
         Report tasks = new TaskScannerBuilder()
-                .setNormal("todo")
+                .setNormalTasks("todo")
                 .setCaseMode(CaseMode.IGNORE_CASE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -190,7 +189,7 @@ class TaskScannerTest extends ResourceTest {
     @Test
     void shouldIgnoreCaseInTag() {
         Report tasks = new TaskScannerBuilder()
-                .setNormal("Todo, TodoS")
+                .setNormalTasks("Todo, TodoS")
                 .setCaseMode(CaseMode.IGNORE_CASE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -207,9 +206,9 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldUseDefaults() {
-        Report tasks = new TaskScannerBuilder().setHigh("FIXME")
-                .setNormal("TODO")
-                .setLow("@deprecated")
+        Report tasks = new TaskScannerBuilder().setHighTasks("FIXME")
+                .setNormalTasks("TODO")
+                .setLowTasks("@deprecated")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -226,7 +225,7 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldFindHighPriority() {
-        Report tasks = new TaskScannerBuilder().setHigh(FIXME)
+        Report tasks = new TaskScannerBuilder().setHighTasks(FIXME)
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -241,7 +240,7 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldIgnoreSpaceInTags() {
-        Report tasks = new TaskScannerBuilder().setHigh(" FIXME , TODO ")
+        Report tasks = new TaskScannerBuilder().setHighTasks(" FIXME , TODO ")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -256,7 +255,7 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldHaveTwoItemsWithHighPriority() {
-        Report tasks = new TaskScannerBuilder().setHigh("FIXME,TODO")
+        Report tasks = new TaskScannerBuilder().setHighTasks("FIXME,TODO")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -273,7 +272,7 @@ class TaskScannerTest extends ResourceTest {
     void shouldIdentifyTags() {
         String text = "FIXME: this is a fixme";
         Report high = new TaskScannerBuilder()
-                .setHigh("FIXME,TODO")
+                .setHighTasks("FIXME,TODO")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -283,7 +282,7 @@ class TaskScannerTest extends ResourceTest {
         assertThat(high.get(0)).hasType(FIXME);
 
         Report normal = new TaskScannerBuilder()
-                .setNormal("XXX, HELP, FIXME, TODO")
+                .setNormalTasks("XXX, HELP, FIXME, TODO")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -302,9 +301,9 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldScanAllPriorities() {
-        Report tasks = new TaskScannerBuilder().setHigh(FIXME)
-                .setNormal("FIXME,TODO")
-                .setLow("TODO")
+        Report tasks = new TaskScannerBuilder().setHighTasks(FIXME)
+                .setNormalTasks("FIXME,TODO")
+                .setLowTasks("TODO")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
@@ -319,9 +318,9 @@ class TaskScannerTest extends ResourceTest {
      */
     @Test
     void shouldScanFileWithoutTasks() {
-        Report tasks = new TaskScannerBuilder().setHigh("FIXME")
-                .setNormal("TODO")
-                .setLow("@deprecated")
+        Report tasks = new TaskScannerBuilder().setHighTasks("FIXME")
+                .setNormalTasks("TODO")
+                .setLowTasks("@deprecated")
                 .setCaseMode(CaseMode.CASE_SENSITIVE)
                 .setMatcherMode(MatcherMode.STRING_MATCH)
                 .build()
