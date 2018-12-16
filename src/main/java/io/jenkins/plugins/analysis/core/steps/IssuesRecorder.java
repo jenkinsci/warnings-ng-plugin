@@ -199,6 +199,23 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Sets the static analysis tools that will scan files and create issues.
+     *
+     * @param tool
+     *         the static analysis tool
+     * @param additionalTools
+     *         additional static analysis tools (might be empty)
+     *
+     * @see #setTool(Tool)
+     * @see #setTools(List)
+     */
+    public void setTools(final Tool tool, final Tool... additionalTools) {
+        analysisTools = new ArrayList<>();
+        analysisTools.add(tool);
+        Collections.addAll(analysisTools, additionalTools);
+    }
+
+    /**
      * Returns the static analysis tools that will scan files and create issues.
      *
      * @return the static analysis tools
@@ -658,29 +675,16 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *         the name of the logger
      * @param report
      *         the analysis report to publish
-     * @param name
+     * @param reportName
      *         the name of the report (might be empty)
      */
-    public void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-            final AnnotatedReport report, final String name) {
+    void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
+            final AnnotatedReport report, final String reportName) {
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), new QualityGate(thresholds),
-                name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
+                reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()));
         publisher.attachAction();
-    }
-
-    private String expandEnvironmentVariables(final Run<?, ?> run, final TaskListener listener, final String pattern)
-            throws IOException, InterruptedException {
-        return new EnvironmentResolver().expandEnvironmentVariables(run.getEnvironment(listener), pattern);
-    }
-
-    public void addTools(final Tool tool, final Tool... additionalTools) {
-        analysisTools = new ArrayList<>();
-        analysisTools.add(tool);
-        for (Tool additionalTool : additionalTools) {
-            analysisTools.add(additionalTool);
-        }
     }
 
     /**

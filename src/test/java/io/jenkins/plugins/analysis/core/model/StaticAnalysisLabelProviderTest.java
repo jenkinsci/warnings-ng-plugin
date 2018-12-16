@@ -1,12 +1,10 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.Report;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.CompositeLocalizable;
@@ -53,35 +51,6 @@ class StaticAnalysisLabelProviderTest {
 
         assertThat(noNameLabelProvider).hasId(ID);
         assertThat(noNameLabelProvider).hasName(noNameLabelProvider.getDefaultName());
-    }
-
-    private void assertThatColumnsAreValid(final Report report, final List<String> columns, final int index) {
-        int column = 0;
-        assertThat(columns.get(column++)).isEqualTo(
-                "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;MESSAGE&lt;/strong&gt;&lt;/p&gt; DESCRIPTION\"></div>");
-        String actual = columns.get(column++);
-        assertThat(actual).matches(createFileLinkMatcher("file-" + index, 15));
-        if (report.hasPackages()) {
-            assertThat(columns.get(column++)).isEqualTo(createPropertyLink("packageName", "package-" + index));
-        }
-        if (report.hasCategories()) {
-            assertThat(columns.get(column++)).isEqualTo(createPropertyLink("category", "category-" + index));
-        }
-        if (report.hasTypes()) {
-            assertThat(columns.get(column++)).isEqualTo(createPropertyLink("type", "type-" + index));
-        }
-        assertThat(columns.get(column++)).isEqualTo("<a href=\"HIGH\">High</a>");
-        assertThat(columns.get(column)).isEqualTo("1");
-    }
-
-    private String createPropertyLink(final String property, final String value) {
-        return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
-    }
-
-    private String createFileLinkMatcher(final String fileName, final int lineNumber) {
-        return "<a href=\\\"source.[0-9a-f-]+/#" + lineNumber + "\\\">"
-                + fileName + ":" + lineNumber
-                + "</a>";
     }
 
     /**

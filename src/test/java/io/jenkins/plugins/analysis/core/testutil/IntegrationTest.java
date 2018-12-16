@@ -32,7 +32,6 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.xml.XmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
@@ -755,7 +754,7 @@ public abstract class IntegrationTest extends ResourceTest {
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
             final Tool tool, final Tool... additionalTools) {
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.addTools(tool, additionalTools);
+        publisher.setTools(tool, additionalTools);
         job.getPublishersList().add(publisher);
         return publisher;
     }

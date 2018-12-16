@@ -108,15 +108,6 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    private Reader getLogReader(final Run<?, ?> run) {
-        try {
-            return run.getLogReader();
-        }
-        catch (IOException e) {
-            throw new ParsingException(e);
-        }
-    }
-
     private String expandPattern(final Run<?, ?> run, final String actualPattern) {
         try {
             EnvironmentResolver environmentResolver = new EnvironmentResolver();
@@ -249,7 +240,5 @@ public abstract class ReportScanningTool extends Tool {
         public boolean canScanConsoleLog() {
             return true;
         }
-
     }
-
 }
