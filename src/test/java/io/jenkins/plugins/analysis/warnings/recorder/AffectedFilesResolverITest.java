@@ -87,11 +87,12 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result).getFileName()));
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    @SuppressFBWarnings("RV")
     private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
-        result.getIssues().forEach(
-                issue -> AffectedFilesResolver.getFile(result.getOwner(), issue.getFileName()).toFile().delete());
+        for (Issue issue : result.getIssues()) {
+            boolean hasBeenDeleted = AffectedFilesResolver.getFile(result.getOwner(), issue.getFileName())
+                    .toFile().delete();
+            assertThat(hasBeenDeleted).isTrue();
+        }
     }
 
     private IssueRow getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
