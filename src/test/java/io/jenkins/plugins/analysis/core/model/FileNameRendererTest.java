@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.views.ConsoleDetail;
@@ -12,6 +13,7 @@ import static org.mockito.Mockito.*;
 /**
  * Tests the class {@link FileNameRenderer}.
  */
+@SuppressFBWarnings("DMI")
 class FileNameRendererTest {
     @Test
     void shouldExtractBaseName() {

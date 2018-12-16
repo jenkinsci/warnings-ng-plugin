@@ -192,7 +192,9 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
     private static boolean hasCorrectJobResult(final Run<?, ?> run,
             final JobResultEvaluationMode jobResultEvaluationMode) {
         if (jobResultEvaluationMode == NO_JOB_FAILURE) {
-            return run.getResult() != null && run.getResult().isBetterThan(Result.FAILURE);
+            Result result = run.getResult();
+
+            return result != null && result.isBetterThan(Result.FAILURE);
         }
         return true;
     }

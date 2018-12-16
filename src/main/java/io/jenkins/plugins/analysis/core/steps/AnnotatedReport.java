@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,7 @@ public class AnnotatedReport implements Serializable {
 
     /**
      * Returns the number of issues per origin.
-     * 
+     *
      * @return number of issues per origin
      */
     public Map<String, Integer> getSizeOfOrigin() {
@@ -92,7 +93,7 @@ public class AnnotatedReport implements Serializable {
 
     /**
      * Returns the aggregated blames for all reports.
-     * 
+     *
      * @return the blames
      */
     public Blames getBlames() {
@@ -110,7 +111,7 @@ public class AnnotatedReport implements Serializable {
 
     /**
      * Returns the ID of this report.
-     * 
+     *
      * @return the ID
      */
     public String getId() {
@@ -119,7 +120,7 @@ public class AnnotatedReport implements Serializable {
 
     /**
      * Returns the total number of issues of the aggregated reports.
-     * 
+     *
      * @return total number of issues
      */
     public int size() {
@@ -127,7 +128,8 @@ public class AnnotatedReport implements Serializable {
     }
 
     /**
-     * Logs the specified information message. Use this method to log any useful information when composing this report.
+     * Logs the specified information message. Use this method to log any useful information when composing this
+     * report.
      *
      * @param format
      *         A <a href="../util/Formatter.html#syntax">format string</a>
@@ -142,36 +144,39 @@ public class AnnotatedReport implements Serializable {
     }
 
     /**
-     * Appends the specified {@link AnnotatedReport reports} to this report. This report will then contain the issues 
-     * of all specified reports, in the same order. The reports will be added with the ID of the added report. 
+     * Appends the specified {@link AnnotatedReport reports} to this report. This report will then contain the issues of
+     * all specified reports, in the same order. The reports will be added with the ID of the added report.
      *
      * @param reports
      *         the reports to append
      */
-    public void addAll(final AnnotatedReport... reports) {
+    public void addAll(final Collection<AnnotatedReport> reports) {
         for (AnnotatedReport report : reports) {
             add(report, report.getId());
         }
     }
 
     /**
-     * Appends the specified {@link AnnotatedReport report} to this report. This report will then contain the issues 
-     * of the specified reports, appended to the end and in the same order. The report will be added with the specified ID. 
+     * Appends the specified {@link AnnotatedReport report} to this report. This report will then contain the issues of
+     * the specified reports, appended to the end and in the same order. The report will be added with the specified
+     * ID.
      *
      * @param other
      *         the other report to append
+     * @param actualId
+     *         the ID to use when adding the report
      */
-    public void add(final AnnotatedReport other, final String id) {
-        addReport(id, other.getReport(), other.getBlames());
+    public void add(final AnnotatedReport other, final String actualId) {
+        addReport(actualId, other.getReport(), other.getBlames());
     }
 
     public void add(final AnnotatedReport other) {
         add(other, getId());
     }
 
-    private void addReport(final String id, final Report report, final Blames blames) {
+    private void addReport(final String actualId, final Report report, final Blames blames) {
         aggregatedReport.addAll(report);
-        sizeOfOrigin.merge(id, report.size(), Integer::sum);
+        sizeOfOrigin.merge(actualId, report.size(), Integer::sum);
         aggregatedBlames.addAll(blames);
     }
 }

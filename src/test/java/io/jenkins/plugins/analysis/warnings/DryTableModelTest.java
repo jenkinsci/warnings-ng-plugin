@@ -9,6 +9,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
@@ -28,6 +29,7 @@ class DryTableModelTest {
     private static final String DESCRIPTION = "DESCRIPTION";
 
     @Test
+    @SuppressFBWarnings("DMI")
     void shouldConvertIssueToArrayOfColumns() {
         Locale.setDefault(Locale.ENGLISH);
 

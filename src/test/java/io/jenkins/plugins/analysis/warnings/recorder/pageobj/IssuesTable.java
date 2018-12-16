@@ -13,6 +13,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -31,6 +32,7 @@ public class IssuesTable {
      * @param page
      *         the whole details HTML page
      */
+    @SuppressFBWarnings("BC")
     public IssuesTable(final HtmlPage page) {
         HtmlAnchor content = page.getAnchorByHref("#issuesContent");
         clickOnLink(content);

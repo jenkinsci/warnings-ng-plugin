@@ -7,6 +7,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ModuleDetector;
 import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.mockito.Mockito.*;
 
 /**
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.*;
  */
 class ModuleResolverTest {
     @Test
+    @SuppressFBWarnings("DMI")
     void shouldAssignModuleName() {
         Report report = new Report();
         IssueBuilder builder = new IssueBuilder();

@@ -15,6 +15,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -60,6 +61,7 @@ public class PropertyTable {
      * @param property
      *         the property tab to extract
      */
+    @SuppressFBWarnings("BC")
     public PropertyTable(final HtmlPage page, final String property) {
         title = getTitleOfTable(page, property);
 

@@ -67,7 +67,6 @@ class GroovyExpressionMatcherTest {
 
     @Test
     void shouldCreateIssueWithLineNumberAndFileName() {
-        Issue falsePositive = new IssueBuilder().build();
         GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(
                 "return builder.setLineStart(lineNumber).setFileName(fileName).buildOptional()");
 

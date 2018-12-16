@@ -12,6 +12,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator.FileSystem;
 import static org.mockito.Mockito.*;
 
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressFBWarnings("DMI")
 class AbsolutePathGeneratorTest {
     private static final String WORKSPACE_PATH = "path";
     private static final Path WORKSPACE = Paths.get(WORKSPACE_PATH);

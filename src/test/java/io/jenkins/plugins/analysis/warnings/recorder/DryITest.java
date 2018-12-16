@@ -15,6 +15,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
@@ -281,6 +282,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalLowPrioritySize()).isEqualTo(low);
     }
 
+    @SuppressFBWarnings("BC")
     private HtmlTable getIssuesTable(final HtmlPage page) {
         DomElement table = page.getElementById("issues");
 

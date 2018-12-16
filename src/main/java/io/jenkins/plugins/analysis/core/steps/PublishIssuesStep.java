@@ -1,7 +1,9 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -43,7 +45,7 @@ import hudson.util.ListBoxModel;
  */
 @SuppressWarnings("InstanceVariableMayNotBeInitialized")
 public class PublishIssuesStep extends Step {
-    private final AnnotatedReport[] reports;
+    private final List<AnnotatedReport> reports;
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
 
@@ -69,19 +71,19 @@ public class PublishIssuesStep extends Step {
      *         if the array of issues is {@code null} or empty
      */
     @DataBoundConstructor
-    public PublishIssuesStep(final AnnotatedReport... issues) {
+    public PublishIssuesStep(@CheckForNull final List<AnnotatedReport> issues) {
         super();
 
-        if (ArrayUtils.isEmpty(issues)) {
-            this.reports = new AnnotatedReport[0];
+        if (issues == null) {
+            this.reports = new ArrayList<>();
         }
         else {
-            this.reports = Arrays.copyOf(issues, issues.length);
+            this.reports = new ArrayList<>(issues);
         }
     }
 
-    public AnnotatedReport[] getIssues() {
-        return reports;
+    public List<AnnotatedReport> getIssues() {
+        return new ArrayList<>(reports);
     }
 
     /**
@@ -414,7 +416,7 @@ public class PublishIssuesStep extends Step {
         protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
-            if (step.reports.length == 0) {
+            if (step.reports.isEmpty()) {
                 throw new IllegalArgumentException(
                         "No reports provided in publish issues step, parameter 'issues' must be set!");
             }
@@ -429,9 +431,9 @@ public class PublishIssuesStep extends Step {
             thresholds = step.getThresholds();
             qualityGate = new QualityGate(thresholds);
             name = StringUtils.defaultString(step.getName());
-            report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), step.reports[0].getId()));
+            report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), step.reports.get(0).getId()));
             
-            if (step.reports.length > 1) {
+            if (step.reports.size() > 1) {
                 report.logInfo("Aggregating reports of:");
                 LabelProviderFactory factory = new LabelProviderFactory();
                 for (AnnotatedReport subReport : step.reports) {

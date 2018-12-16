@@ -221,7 +221,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @return the static analysis tools
      */
     public List<Tool> getTools() {
-        return analysisTools;
+        return new ArrayList<>(analysisTools);
     }
 
     /**
