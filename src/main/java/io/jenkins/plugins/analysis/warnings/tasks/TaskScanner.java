@@ -23,13 +23,14 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
 
 /**
  * Scans a given input stream for open tasks.
  *
  * @author Ullrich Hafner
  */
-public class TaskScanner {
+class TaskScanner {
     private static final String WORD_BOUNDARY = "\\b";
     private static final Pattern INVALID = Pattern.compile("");
 
@@ -59,29 +60,45 @@ public class TaskScanner {
     /**
      * Creates a new instance of {@link TaskScanner}.
      *
-     * @param high
+     * @param highTags
      *         tag identifiers indicating tasks with high severity
-     * @param normal
+     * @param normalTags
      *         tag identifiers indicating tasks with normal severity
-     * @param low
+     * @param lowTags
      *         tag identifiers indicating low priority
      * @param caseMode
      *         if case should be ignored during matching
      * @param matcherMode
      *         if tag identifiers should be treated as regular expression
      */
-    public TaskScanner(final @CheckForNull String high, final @CheckForNull String normal,
-            final @CheckForNull String low,
+    TaskScanner(final @CheckForNull String highTags, final @CheckForNull String normalTags,
+            final @CheckForNull String lowTags,
             final CaseMode caseMode, final MatcherMode matcherMode) {
         this.isUppercase = caseMode == CaseMode.IGNORE_CASE;
-        if (StringUtils.isNotBlank(high)) {
-            patterns.put(Severity.WARNING_HIGH, compile(high, caseMode, matcherMode));
+        if (StringUtils.isNotBlank(highTags)) {
+            patterns.put(Severity.WARNING_HIGH, compile(highTags, caseMode, matcherMode));
         }
-        if (StringUtils.isNotBlank(normal)) {
-            patterns.put(Severity.WARNING_NORMAL, compile(normal, caseMode, matcherMode));
+        if (StringUtils.isNotBlank(normalTags)) {
+            patterns.put(Severity.WARNING_NORMAL, compile(normalTags, caseMode, matcherMode));
         }
-        if (StringUtils.isNotBlank(low)) {
-            patterns.put(Severity.WARNING_LOW, compile(low, caseMode, matcherMode));
+        if (StringUtils.isNotBlank(lowTags)) {
+            patterns.put(Severity.WARNING_LOW, compile(lowTags, caseMode, matcherMode));
+        }
+    }
+
+    String getTaskTags() {
+        if (isInvalidPattern) {
+            return "Invalid patterns detected:\n" + getErrors();
+        }
+        else {
+            StringBuilder builder = new StringBuilder();
+            for (Severity severity : Severity.getPredefinedValues()) {
+                if (patterns.containsKey(severity)) {
+                    builder.append(String.format("-> %s : %s%n", LocalizedSeverity.getLocalizedString(severity),
+                            patterns.get(severity)));
+                }
+            }
+            return builder.toString();
         }
     }
 
@@ -90,7 +107,7 @@ public class TaskScanner {
      *
      * @return {@code true} if one of the tag patterns is invalid, {@code false} if everything is fine
      */
-    public boolean isInvalidPattern() {
+    boolean isInvalidPattern() {
         return isInvalidPattern;
     }
 
@@ -201,7 +218,7 @@ public class TaskScanner {
      *
      * @return the open tasks
      */
-    public Report scanTasks(final Iterator<String> lines, final IssueBuilder builder) {
+    Report scanTasks(final Iterator<String> lines, final IssueBuilder builder) {
         Report report = new Report();
 
         if (isInvalidPattern) {

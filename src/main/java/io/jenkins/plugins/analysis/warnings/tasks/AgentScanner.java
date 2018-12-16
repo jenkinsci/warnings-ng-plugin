@@ -81,8 +81,9 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         String[] fileNames = fileFinder.find(workspace);
         report.logInfo("-> found %d files that will be scanned", fileNames.length);
         Path root = workspace.toPath();
-        TaskScanner scanner = createTaskScanner();
         report.logInfo("Scanning all %d files for open tasks", fileNames.length);
+        TaskScanner scanner = createTaskScanner();
+        report.logInfo(scanner.getTaskTags());
         for (String fileName : fileNames) {
             report.addAll(scanner.scan(root.resolve(fileName), getCharset()));
 

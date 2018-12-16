@@ -5,50 +5,52 @@ import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 
 /**
  * Builder pattern for a {@link TaskScanner}.
+ *
+ * @author Ullrich Hafner
  */
-public class TaskScannerBuilder {
-    private String high;
-    private String normal;
+class TaskScannerBuilder {
+    private String highTasks;
+    private String normalTasks;
     private String low;
     private CaseMode caseMode;
     private MatcherMode matcherMode;
 
     /**
-     * Sets the tag identifiers indicating tasks with high severity.
+     * Sets the tag identifiers indicating tasks with highTasks severity.
      *
      * @param high
      *         the identifiers
      *
      * @return this
      */
-    public TaskScannerBuilder setHighTasks(final String high) {
-        this.high = high;
+    TaskScannerBuilder setHighTasks(final String high) {
+        this.highTasks = high;
         return this;
     }
 
     /**
-     * Sets the tag identifiers indicating tasks with normal severity.
+     * Sets the tag identifiers indicating tasks with normalTasks severity.
      *
      * @param normal
      *         the identifiers
      *
      * @return this
      */
-    public TaskScannerBuilder setNormalTasks(final String normal) {
-        this.normal = normal;
+    TaskScannerBuilder setNormalTasks(final String normal) {
+        this.normalTasks = normal;
         return this;
     }
 
     /**
      * Sets the tag identifiers indicating tasks with low severity.
      *
-     * @param low
+     * @param lowTasks
      *         the identifiers
      *
      * @return this
      */
-    public TaskScannerBuilder setLowTasks(final String low) {
-        this.low = low;
+    TaskScannerBuilder setLowTasks(final String lowTasks) {
+        this.low = lowTasks;
         return this;
     }
 
@@ -60,7 +62,7 @@ public class TaskScannerBuilder {
      *
      * @return this
      */
-    public TaskScannerBuilder setCaseMode(final CaseMode caseMode) {
+    TaskScannerBuilder setCaseMode(final CaseMode caseMode) {
         this.caseMode = caseMode;
         return this;
     }
@@ -73,7 +75,7 @@ public class TaskScannerBuilder {
      *
      * @return this
      */
-    public TaskScannerBuilder setMatcherMode(final MatcherMode matcherMode) {
+    TaskScannerBuilder setMatcherMode(final MatcherMode matcherMode) {
         this.matcherMode = matcherMode;
         return this;
     }
@@ -83,7 +85,7 @@ public class TaskScannerBuilder {
      *
      * @return a new {@link TaskScanner}
      */
-    public TaskScanner build() {
-        return new TaskScanner(high, normal, low, caseMode, matcherMode);
+    TaskScanner build() {
+        return new TaskScanner(highTasks, normalTasks, low, caseMode, matcherMode);
     }
 }
