@@ -71,7 +71,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @VisibleForTesting
     static final String NO_REFERENCE_JOB = "-";
 
-    private transient List<ToolConfiguration> tools;
     private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
@@ -113,16 +112,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     protected Object readResolve() {
         if (analysisTools == null) {
             analysisTools = new ArrayList<>();
-        }
-        // FIXME: remove before 1.0
-        if (tools != null) {
-            for (ToolConfiguration tool : tools) {
-                ReportScanningTool analysisTool = tool.getTool();
-                analysisTool.setId(tool.getId());
-                analysisTool.setName(tool.getName());
-                analysisTool.setPattern(tool.getPattern());
-                analysisTools.add(analysisTool);
-            }
         }
         return this;
     }
