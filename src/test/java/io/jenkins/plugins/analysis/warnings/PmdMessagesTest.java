@@ -13,7 +13,7 @@ class PmdMessagesTest {
     private static final int EXPECTED_RULE_SETS_SIZE = 8;
 
     @Test
-    public void shouldInitializeRuleSets() {
+    void shouldInitializeRuleSets() {
         PmdMessages messages = new PmdMessages();
         assertThat(messages.initialize())
                 .as("Wrong number of rule sets found")
@@ -25,7 +25,7 @@ class PmdMessagesTest {
                 + "of assignment is an indication that the programmer doesn't completely understand what is going on in the code.\n"
                 + "\n"
                 + "NOTE: This sort of assignment may used in some cases to dereference objects and encourage garbage collection.\n"
-                + "        <pre>\n"
+                + "        <pre><code>\n"
                 + " \n"
                 + "public void bar() {\n"
                 + "  Object x = null; // this is OK\n"
@@ -35,6 +35,9 @@ class PmdMessagesTest {
                 + "     // big, complex piece of code here\n"
                 + "}\n"
                 + "\n"
-                + "        </pre>");
+                + "        </code></pre>\n"
+                        + "<a href=\"https://pmd.github.io/pmd-6.10.0/pmd_rules_java_errorprone.html#nullassignment\">\n"
+                        + "    See PMD documentation.\n"
+                        + "</a>\n");
     }
 }

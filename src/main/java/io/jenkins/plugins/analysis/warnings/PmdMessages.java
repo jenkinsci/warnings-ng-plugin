@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
+import static j2html.TagCreator.*;
 import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleSet;
 import net.sourceforge.pmd.RuleSetFactory;
@@ -78,11 +79,15 @@ public class PmdMessages {
      * @return the message string to be shown for the specified rule
      */
     private String createMessage(final Rule rule) {
+        StringBuilder message = new StringBuilder(rule.getDescription());
         List<String> examples = rule.getExamples();
         if (!examples.isEmpty()) {
-            return rule.getDescription() + "<pre>" + examples.get(0) + "</pre>";
+            message.append(pre().with(code(examples.get(0))).renderFormatted());
         }
-        return rule.getDescription();
+        if (StringUtils.isNotBlank(rule.getExternalInfoUrl())) {
+            message.append(a().withHref(rule.getExternalInfoUrl()).withText("See PMD documentation.").renderFormatted());
+        }
+        return message.toString();
     }
 }
 
