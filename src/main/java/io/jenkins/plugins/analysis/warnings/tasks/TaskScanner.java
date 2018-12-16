@@ -90,8 +90,11 @@ class TaskScanner {
         if (isInvalidPattern) {
             return "Invalid patterns detected:\n" + getErrors();
         }
+        else if (patterns.isEmpty()) {
+            return "No task tags have been defined. Configuration Error?\n";
+        }
         else {
-            StringBuilder builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder("Using the following tasks patterns:\n");
             for (Severity severity : Severity.getPredefinedValues()) {
                 if (patterns.containsKey(severity)) {
                     builder.append(String.format("-> %s : %s%n", LocalizedSeverity.getLocalizedString(severity),
