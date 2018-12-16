@@ -18,7 +18,7 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
-@SuppressFBWarnings(value = "SE", justification = "transient field owner ist restored using a Jenkins callback")
+@SuppressFBWarnings(value = "UWF", justification = "transient field owner ist restored using a Jenkins callback")
 class AggregationAction implements RunAction2 {
     private transient Run<?, ?> owner;
 

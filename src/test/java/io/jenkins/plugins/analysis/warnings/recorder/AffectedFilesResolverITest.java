@@ -88,12 +88,10 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored")
-    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED_BAD_PRACTICE")
+    @SuppressFBWarnings("RV")
     private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
-        result.getIssues()
-                .forEach(issue -> AffectedFilesResolver.getFile(result.getOwner(), issue.getFileName())
-                        .toFile()
-                        .delete());
+        result.getIssues().forEach(
+                issue -> AffectedFilesResolver.getFile(result.getOwner(), issue.getFileName()).toFile().delete());
     }
 
     private IssueRow getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
@@ -235,7 +233,8 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         try {
             FilePath workspace = getWorkspace(job);
             workspace.mkdirs();
-            String logMessage = String.format("%s/config.xml:451: warning: foo defined but not used%n", job.getRootDir());
+            String logMessage = String.format("%s/config.xml:451: warning: foo defined but not used%n",
+                    job.getRootDir());
             Files.write(Paths.get(workspace.child("gcc.log").getRemote()), logMessage.getBytes());
         }
         catch (IOException | InterruptedException e) {

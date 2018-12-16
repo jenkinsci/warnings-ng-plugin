@@ -16,6 +16,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -35,6 +36,7 @@ public class DuplicationTable {
      * @param hasPackages
      *         determines if the packages column is visible
      */
+    @SuppressFBWarnings("BC")
     public DuplicationTable(final HtmlPage page, final boolean hasPackages) {
         HtmlAnchor content = page.getAnchorByHref("#issuesContent");
         clickOnLink(content);

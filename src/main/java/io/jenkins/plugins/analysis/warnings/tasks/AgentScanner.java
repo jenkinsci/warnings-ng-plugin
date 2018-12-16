@@ -27,6 +27,8 @@ import hudson.remoting.VirtualChannel;
  * tasks.
  */
 class AgentScanner extends MasterToSlaveFileCallable<Report> {
+    private static final long serialVersionUID = -4417487030800559491L;
+
     private final String high;
     private final String normal;
     private final String low;
