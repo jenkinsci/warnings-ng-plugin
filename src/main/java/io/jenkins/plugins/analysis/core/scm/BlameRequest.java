@@ -18,7 +18,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
  */
 public class BlameRequest implements Iterable<Integer>, Serializable {
     private static final long serialVersionUID = -7491390234189584964L;
-    
+
     static final String EMPTY = "-";
 
     private final String fileName;
@@ -80,9 +80,17 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
      *         the commit ID
      */
     void setCommit(final int lineNumber, final String id) {
-        setStringValue(commitByLine, lineNumber, id);
+        setInternedStringValue(commitByLine, lineNumber, id);
     }
 
+    /**
+     * Returns the commit ID for the specified line.
+     *
+     * @param line
+     *         the affected line
+     *
+     * @return the commit ID
+     */
     public String getCommit(final int line) {
         return getStringValue(commitByLine, line);
     }
@@ -96,9 +104,17 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
      *         the author name
      */
     void setName(final int lineNumber, final String name) {
-        setStringValue(nameByLine, lineNumber, name);
+        setInternedStringValue(nameByLine, lineNumber, name);
     }
 
+    /**
+     * Returns the author name for the specified line.
+     *
+     * @param line
+     *         the affected line
+     *
+     * @return the author name
+     */
     public String getName(final int line) {
         return getStringValue(nameByLine, line);
     }
@@ -112,9 +128,17 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
      *         the email address of the author
      */
     void setEmail(final int lineNumber, final String emailAddress) {
-        setStringValue(emailByLine, lineNumber, emailAddress);
+        setInternedStringValue(emailByLine, lineNumber, emailAddress);
     }
 
+    /**
+     * Returns the author email for the specified line.
+     *
+     * @param line
+     *         the affected line
+     *
+     * @return the author email
+     */
     public String getEmail(final int line) {
         return getStringValue(emailByLine, line);
     }
@@ -126,8 +150,8 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
         return EMPTY;
     }
 
-    private String setStringValue(final Map<Integer, String> map, final int lineNumber, final String value) {
-        return map.put(lineNumber, value.intern());
+    private void setInternedStringValue(final Map<Integer, String> map, final int lineNumber, final String value) {
+        map.put(lineNumber, value.intern());
     }
 
     /**
@@ -144,9 +168,9 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
             for (Integer otherLine : otherRequest) {
                 if (!lines.contains(otherLine)) {
                     lines.add(otherLine);
-                    setStringValue(commitByLine, otherLine, otherRequest.getCommit(otherLine));
-                    setStringValue(nameByLine, otherLine, otherRequest.getName(otherLine));
-                    setStringValue(emailByLine, otherLine, otherRequest.getEmail(otherLine));
+                    setInternedStringValue(commitByLine, otherLine, otherRequest.getCommit(otherLine));
+                    setInternedStringValue(nameByLine, otherLine, otherRequest.getName(otherLine));
+                    setInternedStringValue(emailByLine, otherLine, otherRequest.getEmail(otherLine));
                 }
             }
         }

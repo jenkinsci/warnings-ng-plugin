@@ -9,13 +9,13 @@ import edu.hm.hafner.analysis.assertj.SoftAssertions;
 import edu.hm.hafner.analysis.parser.EclipseParser;
 
 /**
- * Tests the class {@link DynamicDocumentParser}. Creates a new Eclipse parser in Groovy. All Eclipse test cases
- * are reused.
+ * Tests the class {@link DynamicDocumentParser}. Creates a new Eclipse parser in Groovy. All Eclipse test cases are
+ * reused.
  *
  * @author Ullrich Hafner
  */
 class DynamicDocumentParserTest extends AbstractParserTest {
-    DynamicDocumentParserTest () {
+    DynamicDocumentParserTest() {
         super("eclipse.txt");
     }
 
@@ -28,6 +28,12 @@ class DynamicDocumentParserTest extends AbstractParserTest {
     protected void assertThatIssuesArePresent(final Report report, final SoftAssertions softly) {
         Assertions.assertThat(report).hasSize(8);
         Issue annotation = report.get(0);
-        softly.assertThat(annotation).hasSeverity(Severity.WARNING_NORMAL).hasLineStart(3).hasLineEnd(3).hasMessage("The serializable class AttributeException does not declare a static final serialVersionUID field of type long").hasFileName("C:/Desenvolvimento/Java/jfg/src/jfg/AttributeException.java");
+        softly.assertThat(annotation)
+                .hasSeverity(Severity.WARNING_NORMAL)
+                .hasLineStart(3)
+                .hasLineEnd(3)
+                .hasMessage(
+                        "The serializable class AttributeException does not declare a static final serialVersionUID field of type long")
+                .hasFileName("C:/Desenvolvimento/Java/jfg/src/jfg/AttributeException.java");
     }
 }

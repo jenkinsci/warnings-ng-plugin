@@ -40,11 +40,12 @@ public class IncludeFile extends RegexpFilter {
      *
      * @author Ullrich Hafner
      */
-    @Extension @Symbol("includeFile")
+    @Extension
+    @Symbol("includeFile")
     public static class DescriptorImpl extends RegexpFilterDescriptor {
         @Nonnull
         @Override
-        public String getDisplayName () {
+        public String getDisplayName() {
             return Messages.Filter_Include_File();
         }
     }

@@ -97,7 +97,7 @@ class BlamesTest {
         assertThat(blames.get(ANOTHER_ABSOLUTE_PATH)).isEqualTo(secondBlame);
         
         String wrongFile = "wrong file";
-        assertThatThrownBy(() -> { blames.get(wrongFile); })
+        assertThatThrownBy(() -> blames.get(wrongFile))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessageContaining(wrongFile);
     }

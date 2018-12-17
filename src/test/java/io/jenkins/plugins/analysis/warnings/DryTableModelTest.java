@@ -54,7 +54,7 @@ class DryTableModelTest {
 
         Report report = new Report();
         report.add(issue).add(duplicate);
-        
+
         assertThat(model.getHeaders(report)).hasSize(6);
         assertThat(model.getWidths(report)).hasSize(6);
         List<List<String>> rows = model.getContent(report);
@@ -68,7 +68,7 @@ class DryTableModelTest {
         assertThat(columns.get(3)).isEqualTo("15");
         assertThat(columns.get(4)).contains("file-2:5").contains(duplicate.getId().toString());
         assertThat(columns.get(5)).isEqualTo("1");
-   }
+    }
 
     private DetailsTableModel createModel() {
         DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);

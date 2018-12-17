@@ -96,7 +96,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url) {
             return new DryTableModel(getAgeBuilder(build, url), getFileNameRenderer(build), this);
         }
-   }
+    }
 
     /** Descriptor for this static analysis tool. */
     abstract static class DryDescriptor extends ReportScanningToolDescriptor {

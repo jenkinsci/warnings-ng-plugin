@@ -75,10 +75,10 @@ class BlameRequestTest {
     @Test
     void shouldReturnMeaningfulDefaults() {
         BlameRequest request = new BlameRequest("file", 1);
-        
+
         assertThat(request.getCommit(2)).isEqualTo(EMPTY);
         assertThat(request.getEmail(2)).isEqualTo(EMPTY);
         assertThat(request.getName(2)).isEqualTo(EMPTY);
     }
 
-    }
+}

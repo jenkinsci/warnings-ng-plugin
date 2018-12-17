@@ -169,6 +169,14 @@ public final class AnnotatedReport implements Serializable {
         addReport(actualId, other.getReport(), other.getBlames());
     }
 
+    /**
+     * Appends the specified {@link AnnotatedReport report} to this report. This report will then contain the issues of
+     * the specified reports, appended to the end and in the same order. The report will be added with the default ID
+     * of this report.
+     *
+     * @param other
+     *         the other report to append
+     */
     public void add(final AnnotatedReport other) {
         add(other, getId());
     }

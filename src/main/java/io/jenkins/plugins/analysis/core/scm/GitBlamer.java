@@ -68,7 +68,7 @@ public class GitBlamer implements Blamer {
             }
             report.logInfo("Git commit ID = '%s'", headCommit.getName());
 
-            String workspacePath = getWorkspacePath(workspace);
+            String workspacePath = getWorkspacePath();
             report.logInfo("Job workspace = '%s'", workspacePath);
             return git.withRepository(new BlameCallback(report, headCommit, workspacePath));
         }
@@ -84,7 +84,7 @@ public class GitBlamer implements Blamer {
         return new Blames();
     }
 
-    private String getWorkspacePath(final FilePath workspace) throws IOException {
+    private String getWorkspacePath() throws IOException {
         return Paths.get(workspace.getRemote()).toAbsolutePath().normalize().toRealPath().toString();
     }
 
@@ -107,7 +107,7 @@ public class GitBlamer implements Blamer {
         @Override
         public Blames invoke(final Repository repo, final VirtualChannel channel) throws InterruptedException {
             BlameRunner blameRunner = new BlameRunner(repo, headCommit);
-            Blames blames = extractAffectedFiles(report);
+            Blames blames = extractAffectedFiles();
 
             for (BlameRequest request : blames.getRequests()) {
                 run(request, blameRunner);
@@ -127,12 +127,9 @@ public class GitBlamer implements Blamer {
          * Extracts the relative file names of the files that contain annotations to make sure every file is blamed only
          * once.
          *
-         * @param report
-         *         the issues to extract the file names from
-         *
          * @return a mapping of absolute to relative file names of the conflicting files
          */
-        private Blames extractAffectedFiles(final Report report) {
+        private Blames extractAffectedFiles() {
             Blames blames = new Blames(workspace);
 
             FilteredLog log = new FilteredLog(report, "Can't create blame requests for some affected files:");
