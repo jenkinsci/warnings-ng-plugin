@@ -417,6 +417,7 @@ public class PublishIssuesStep extends Step {
          * @param step
          *         the actual step to execute
          */
+        @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
         protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 

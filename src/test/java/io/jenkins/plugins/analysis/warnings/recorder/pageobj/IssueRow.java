@@ -22,7 +22,8 @@ public class IssueRow {
     public static final String TYPE = "Type";
     public static final String PRIORITY = "Severity";
     public static final String AGE = "Age";
-    
+    private static final String NOT_SET = "-";
+
     private final Map<String, String> valueByName = new HashMap<>();
     private final Map<String, HtmlTableCell> cellsByName = new HashMap<>();
 
@@ -70,7 +71,7 @@ public class IssueRow {
     }
 
     private void put(final String key, final String value) {
-        if (!"-".equals(value)) {
+        if (!NOT_SET.equals(value)) {
             valueByName.put(key, value);
         }
     }

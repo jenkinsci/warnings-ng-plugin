@@ -248,6 +248,7 @@ public class OpenTasks extends Tool {
          *
          * @return validation result
          */
+        @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
         public FormValidation doCheckExample(@QueryParameter final String example,
                 @QueryParameter final String high,
                 @QueryParameter final String normal,
