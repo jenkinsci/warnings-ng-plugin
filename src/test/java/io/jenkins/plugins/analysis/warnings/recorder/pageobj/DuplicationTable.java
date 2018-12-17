@@ -208,20 +208,20 @@ public class DuplicationTable {
         }
 
         public HtmlPage clickSourceCode() {
-            if (fileNameLink != null) {
-                return clickOnLink(fileNameLink);
+            if (fileNameLink == null) {
+                throw new AssertionError("No source code column link found");
             }
             else {
-                throw new AssertionError("No source code column link found");
+                return clickOnLink(fileNameLink);
             }
         }
         
         public HtmlPage clickSeverity() {
-            if (priorityLink != null) {
-                return clickOnLink(priorityLink);
+            if (priorityLink == null) {
+                throw new AssertionError("No severity column link found");
             }
             else {
-                throw new AssertionError("No severity column link found");
+                return clickOnLink(priorityLink);
             }
         }
         

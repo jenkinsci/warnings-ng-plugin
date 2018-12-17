@@ -87,6 +87,7 @@ public class ScanForIssuesStep extends Step {
      *
      * @return {@code true} if SCM blaming should be disabled
      */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getBlameDisabled() {
         return isBlameDisabled;
     }

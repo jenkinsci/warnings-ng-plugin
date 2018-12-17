@@ -87,7 +87,11 @@ public class Blames implements Serializable {
      *         the logger to report errors to
      */
     public void addLine(final String fileName, final int lineStart, final FilteredLog log) {
-        if (!contains(fileName)) {
+        if (contains(fileName)) {
+            BlameRequest request = blamesPerFile.get(fileName);
+            request.addLineNumber(lineStart);
+        }
+        else {
             if (fileName.startsWith(workspace)) {
                 String relativeFileName = fileName.substring(workspace.length());
                 String cleanFileName = StringUtils.removeStart(relativeFileName, "/");
@@ -96,10 +100,6 @@ public class Blames implements Serializable {
             else {
                 log.logError("- Skipping non-workspace file %s", fileName);
             }
-        }
-        else {
-            BlameRequest request = blamesPerFile.get(fileName);
-            request.addLineNumber(lineStart);
         }
     }
 

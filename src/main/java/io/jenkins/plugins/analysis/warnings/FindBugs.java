@@ -34,6 +34,7 @@ public class FindBugs extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getUseRankAsPriority() {
         return useRankAsPriority;
     }

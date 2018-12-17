@@ -27,6 +27,8 @@ public class ToolProxy extends AbstractDescribableImpl<ToolProxy> {
      */
     @DataBoundConstructor
     public ToolProxy(final Tool tool) {
+        super();
+
         this.tool = tool;
     }
 

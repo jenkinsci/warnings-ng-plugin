@@ -37,6 +37,8 @@ public class FileFinder extends MasterToSlaveFileCallable<String[]> {
      *         the ant file pattern to scan for
      */
     public FileFinder(final String pattern) {
+        super();
+
         this.pattern = pattern;
 
     }

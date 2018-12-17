@@ -4,7 +4,6 @@ import javax.annotation.CheckForNull;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -16,7 +15,6 @@ import io.jenkins.plugins.analysis.core.history.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import jenkins.model.Jenkins;
 import net.sf.json.JSONObject;
 
@@ -33,7 +31,6 @@ import hudson.model.Run;
 public class JobAction implements Action {
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
-    private final HealthDescriptor healthDescriptor;
 
     /**
      * Creates a new instance of {@link JobAction}.
@@ -42,14 +39,10 @@ public class JobAction implements Action {
      *         the job that owns this action
      * @param labelProvider
      *         the label provider
-     * @param healthDescriptor
-     *         the health descriptor
      */
-    public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider,
-            final HealthDescriptor healthDescriptor) {
+    public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider) {
         this.owner = owner;
         this.labelProvider = labelProvider;
-        this.healthDescriptor = healthDescriptor;
     }
 
     @Override

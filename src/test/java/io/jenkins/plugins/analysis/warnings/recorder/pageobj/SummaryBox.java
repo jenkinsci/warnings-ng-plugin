@@ -36,12 +36,12 @@ public class SummaryBox {
         title = buildPage.getElementById(id + "-title");
         summary = buildPage.getElementById(id + "-summary");
 
-        if (summary != null) {
-            List<DomElement> elements = summary.getByXPath("./ul/li");
-            items = elements.stream().map(el -> StringUtils.strip(el.getTextContent())).collect(Collectors.toList());
+        if (summary == null) {
+            items = new ArrayList<>();
         }
         else {
-            items = new ArrayList<>();
+            List<DomElement> elements = summary.getByXPath("./ul/li");
+            items = elements.stream().map(el -> StringUtils.strip(el.getTextContent())).collect(Collectors.toList());
         }
     }
 

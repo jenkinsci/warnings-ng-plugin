@@ -33,7 +33,7 @@ public class BlameFactory {
      *
      * @return the blamer
      */
-    public static Blamer createBlamer(Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
+    public static Blamer createBlamer(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
         Jenkins instance = Jenkins.getInstance();
         if (instance.getPlugin("git") != null) {
             SCM scm = getScm(run);

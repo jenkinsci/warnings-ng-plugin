@@ -33,7 +33,6 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private final String filePattern;
     private final IssueParser parser;
     private final String encoding;
-    private final String id;
 
     /**
      * Creates a new instance of {@link FilesScanner}.
@@ -50,7 +49,6 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
 
         this.filePattern = filePattern;
         this.parser = tool.createParser();
-        this.id = tool.getActualId();
         this.encoding = encoding;
     }
 

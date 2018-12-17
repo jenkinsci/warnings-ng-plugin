@@ -126,6 +126,7 @@ public class OpenTasks extends Tool {
      *
      * @return {@code true}  if case should be ignored during the scanning
      */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getIgnoreCase() {
         return ignoreCase;
     }
@@ -140,6 +141,7 @@ public class OpenTasks extends Tool {
      *
      * @return {@code true} if the identifiers should be treated as regular expression
      */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getIsRegularExpression() {
         return isRegularExpression;
     }

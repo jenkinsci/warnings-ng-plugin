@@ -119,7 +119,7 @@ public class AnalysisResult implements Serializable {
      *         the analysis result of the previous run
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin,
+            final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin,
             final AnalysisResult previousResult) {
         this(owner, id, report, blames, qualityGateStatus, sizePerOrigin, true);
 
@@ -165,7 +165,7 @@ public class AnalysisResult implements Serializable {
      *         the number of issues per origin
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin) {
+            final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin) {
         this(owner, id, report, blames, qualityGateStatus, sizePerOrigin, true);
 
         if (report.isEmpty()) {
@@ -202,7 +202,7 @@ public class AnalysisResult implements Serializable {
      */
     @VisibleForTesting
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final QualityGateStatus qualityGateStatus, Map<String, Integer> sizePerOrigin, final boolean canSerialize) {
+            final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin, final boolean canSerialize) {
         this.owner = owner;
 
         Report allIssues = report.getAllIssues();

@@ -25,7 +25,7 @@ class DynamicDocumentParserTest extends AbstractParserTest {
     }
 
     @Override
-    protected void assertThatIssuesArePresent(Report report, SoftAssertions softly) {
+    protected void assertThatIssuesArePresent(final Report report, final SoftAssertions softly) {
         Assertions.assertThat(report).hasSize(8);
         Issue annotation = report.get(0);
         softly.assertThat(annotation).hasSeverity(Severity.WARNING_NORMAL).hasLineStart(3).hasLineEnd(3).hasMessage("The serializable class AttributeException does not declare a static final serialVersionUID field of type long").hasFileName("C:/Desenvolvimento/Java/jfg/src/jfg/AttributeException.java");

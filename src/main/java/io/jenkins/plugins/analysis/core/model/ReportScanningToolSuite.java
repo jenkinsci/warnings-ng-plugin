@@ -16,6 +16,8 @@ import edu.hm.hafner.analysis.Report;
  * @author Ullrich Hafner
  */
 public abstract class ReportScanningToolSuite extends ReportScanningTool {
+    private static final long serialVersionUID = 6735084787002912588L;
+
     @Override
     public final IssueParser createParser() {
         return new CompositeParser(getParsers());

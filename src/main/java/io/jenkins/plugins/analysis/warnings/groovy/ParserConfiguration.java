@@ -32,6 +32,8 @@ public class ParserConfiguration extends GlobalConfiguration {
      * Loads the configuration from disk.
      */
     public ParserConfiguration() {
+        super();
+
         load();
     }
 

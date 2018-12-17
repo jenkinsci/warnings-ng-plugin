@@ -132,6 +132,7 @@ public class PublishIssuesStep extends Step {
         this.ignoreQualityGate = ignoreQualityGate;
     }
 
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getIgnoreQualityGate() {
         return ignoreQualityGate;
     }
@@ -149,6 +150,7 @@ public class PublishIssuesStep extends Step {
         this.ignoreFailedBuilds = ignoreFailedBuilds;
     }
 
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getIgnoreFailedBuilds() {
         return ignoreFailedBuilds;
     }

@@ -17,6 +17,7 @@ import org.kohsuke.stapler.QueryParameter;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
@@ -271,6 +272,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
      *         {@code false} if every tool should get an individual result.
      */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getAggregatingResults() {
         return isAggregatingResults;
     }
@@ -285,6 +287,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *
      * @return {@code true} if SCM blaming should be disabled
      */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getBlameDisabled() {
         return isBlameDisabled;
     }
@@ -300,6 +303,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
      *         enabled for successful or unstable builds only
      */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getEnabledForFailure() {
         return isEnabledForFailure;
     }
@@ -323,6 +327,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.ignoreQualityGate = ignoreQualityGate;
     }
 
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getIgnoreQualityGate() {
         return ignoreQualityGate;
     }
@@ -340,6 +345,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.ignoreFailedBuilds = ignoreFailedBuilds;
     }
 
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getIgnoreFailedBuilds() {
         return ignoreFailedBuilds;
     }

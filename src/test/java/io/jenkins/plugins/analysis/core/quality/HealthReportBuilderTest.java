@@ -18,12 +18,7 @@ import hudson.model.HealthReport;
  *
  * @author Alexandra Wenzel
  */
-@SuppressWarnings("ALL")
 class HealthReportBuilderTest {
-    /** Description message. */
-    private static final String DESCRIPTION_MESSAGE = "Static Analysis: ";
-    private static final String DESCRIPTION_MESSAGE_ENDING_PLURAL = " warnings found.";
-    private static final String DESCRIPTION_MESSAGE_ENDING_SINGULAR = " warning found.";
     private static final String HEALTH_REPORT_MESSAGE = "Healthy Message";
 
     /**

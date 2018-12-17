@@ -60,6 +60,8 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     AgentScanner(final String highTasks, final String normalTasks, final String lowTasks, final CaseMode caseMode,
             final MatcherMode matcherMode, final String includePattern, final String excludePattern,
             final String sourceCodeEncoding) {
+        super();
+
         this.highTasks = highTasks;
         this.normalTasks = normalTasks;
         this.lowTasks = lowTasks;
@@ -113,7 +115,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         return builder.build();
     }
 
-    @Override
+    @Override @SuppressWarnings("all")
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
@@ -149,7 +151,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
                 sourceCodeEncoding.equals(that.sourceCodeEncoding) : that.sourceCodeEncoding == null;
     }
 
-    @Override
+    @Override @SuppressWarnings("all")
     public int hashCode() {
         int result = highTasks != null ? highTasks.hashCode() : 0;
         result = 31 * result + (normalTasks != null ? normalTasks.hashCode() : 0);

@@ -23,7 +23,6 @@ class GitBlameRunnerTest {
     private static final String EMAIL = "email";
     private static final String NAME = "name";
     private static final String WORKSPACE = "workspace";
-    private static final String COMMIT = "commit";
 
     @Test
     void shouldMapResultToRequestWithOneLine() throws GitAPIException {
