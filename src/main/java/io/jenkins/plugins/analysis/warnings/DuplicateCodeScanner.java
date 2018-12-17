@@ -151,7 +151,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
      * Validates the number of lines thresholds.
      */
     @SuppressWarnings("ParameterHidesMemberVariable")
-    public static class ThresholdValidation {
+    static class ThresholdValidation {
         /** Minimum number of duplicate lines for a warning with severity high. */
         static final int DEFAULT_HIGH_THRESHOLD = 50;
         /** Minimum number of duplicate lines for a warning with severity normal. */
@@ -246,8 +246,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
     /**
      * Provides a table that contains the duplication references as well.
      */
-    public static class DryTableModel extends DetailsTableModel {
-        public DryTableModel(final AgeBuilder ageBuilder,
+    static class DryTableModel extends DetailsTableModel {
+        DryTableModel(final AgeBuilder ageBuilder,
                 final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider) {
             super(ageBuilder, fileNameRenderer, descriptionProvider);
@@ -285,27 +285,27 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
         @Override
         protected List<String> getRow(final Report report, final Issue issue,
-                final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer, final String description) {
+                final String description) {
             List<String> columns = new ArrayList<>();
             columns.add(formatDetails(issue, description));
-            columns.add(formatFileName(issue, fileNameRenderer));
+            columns.add(formatFileName(issue));
             if (report.hasPackages()) {
                 columns.add(formatProperty("packageName", issue.getPackageName()));
             }
             columns.add(formatSeverity(issue.getSeverity()));
             columns.add(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
-            columns.add(formatTargets(issue, fileNameRenderer));
-            columns.add(formatAge(issue, ageBuilder));
+            columns.add(formatTargets(issue));
+            columns.add(formatAge(issue));
             return columns;
         }
 
-        private String formatTargets(final Issue issue, final FileNameRenderer fileNameRenderer) {
+        private String formatTargets(final Issue issue) {
             Serializable properties = issue.getAdditionalProperties();
             if (properties instanceof DuplicationGroup) {
                 List<Issue> duplications = ((DuplicationGroup) properties).getDuplications();
                 duplications.remove(issue); // do not show reference to this issue
 
-                return ul(each(duplications, link -> li(fileNameRenderer.createAffectedFileLink(link)))).render();
+                return ul(each(duplications, link -> li(formatFileName(link)))).render();
             }
             return "-";
         }

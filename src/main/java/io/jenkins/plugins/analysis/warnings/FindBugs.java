@@ -80,6 +80,7 @@ public class FindBugs extends ReportScanningTool {
             return messages.getMessage(issue.getType(), LocaleProvider.getLocale());
         }
     }
+
     /** Descriptor for this static analysis tool. */
     @Symbol("findBugs")
     @Extension

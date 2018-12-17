@@ -14,11 +14,11 @@ import static j2html.TagCreator.*;
 /**
  * Provides the model for the issues details table. The model consists of the following parts:
  *
- * <ul> 
- *     <li>header name for each column</li> 
- *     <li>width for each column</li> 
- *     <li>content for each row</li> 
- *     <li>content for whole table</li> 
+ * <ul>
+ * <li>header name for each column</li>
+ * <li>width for each column</li>
+ * <li>content for each row</li>
+ * <li>content for whole table</li>
  * </ul>
  *
  * @author Ullrich Hafner
@@ -28,8 +28,18 @@ public class DetailsTableModel {
     private final FileNameRenderer fileNameRenderer;
     private final DescriptionProvider descriptionProvider;
 
+    /**
+     * Creates a new instance of {@link DetailsTableModel}.
+     *
+     * @param ageBuilder
+     *         renders the age column
+     * @param fileNameRenderer
+     *         renders the file name column
+     * @param descriptionProvider
+     *         renders the description text
+     */
     public DetailsTableModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-            final DescriptionProvider descriptionProvider) { // method reference
+            final DescriptionProvider descriptionProvider) {
         this.ageBuilder = ageBuilder;
         this.fileNameRenderer = fileNameRenderer;
         this.descriptionProvider = descriptionProvider;
@@ -100,7 +110,7 @@ public class DetailsTableModel {
     public List<List<String>> getContent(final Report report) {
         List<List<String>> rows = new ArrayList<>();
         for (Issue issue : report) {
-            rows.add(getRow(report, issue, ageBuilder, fileNameRenderer, descriptionProvider.getDescription(issue)));
+            rows.add(getRow(report, issue, descriptionProvider.getDescription(issue)));
         }
         return rows;
     }
@@ -112,21 +122,15 @@ public class DetailsTableModel {
      *         the report to show in the table
      * @param issue
      *         the issue to get the column properties for
-     * @param ageBuilder
-     *         age builder to compute the age of a build
-     * @param fileNameRenderer
-     *         creates a link to the affected file (if accessible)
      * @param description
      *         description of the issue
      *
      * @return the columns of one row
      */
-// FIXME: parameters as fields?
-    protected List<String> getRow(final Report report, final Issue issue,
-            final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer, final String description) {
+    protected List<String> getRow(final Report report, final Issue issue, final String description) {
         List<String> columns = new ArrayList<>();
         columns.add(formatDetails(issue, description));
-        columns.add(formatFileName(issue, fileNameRenderer));
+        columns.add(formatFileName(issue));
         if (report.hasPackages()) {
             columns.add(formatProperty("packageName", issue.getPackageName()));
         }
@@ -137,7 +141,7 @@ public class DetailsTableModel {
             columns.add(formatProperty("type", issue.getType()));
         }
         columns.add(formatSeverity(issue.getSeverity()));
-        columns.add(formatAge(issue, ageBuilder));
+        columns.add(formatAge(issue));
         return columns;
     }
 
@@ -164,12 +168,10 @@ public class DetailsTableModel {
      *
      * @param issue
      *         the issue in a table row
-     * @param ageBuilder
-     *         renders the age
      *
      * @return the formatted column
      */
-    protected String formatAge(final Issue issue, final AgeBuilder ageBuilder) {
+    protected String formatAge(final Issue issue) {
         return ageBuilder.apply(parseInt(issue.getReference()));
     }
 
@@ -206,12 +208,10 @@ public class DetailsTableModel {
      *
      * @param issue
      *         the issue to show the file name for
-     * @param fileNameRenderer
-     *         creates a link to the affected file (if accessible)
      *
      * @return the formatted file name
      */
-    protected String formatFileName(final Issue issue, final FileNameRenderer fileNameRenderer) {
+    protected String formatFileName(final Issue issue) {
         return fileNameRenderer.renderAffectedFileLink(issue);
     }
 }

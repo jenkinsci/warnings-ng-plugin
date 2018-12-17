@@ -49,12 +49,12 @@ public class ReferenceDetailsModel extends DetailsTableModel {
     }
 
     @Override
-    protected List<String> getRow(final Report report, final Issue issue, final AgeBuilder ageBuilder,
-            final FileNameRenderer fileNameRenderer, final String description) {
+    protected List<String> getRow(final Report report, final Issue issue,
+            final String description) {
         List<String> columns = new ArrayList<>();
         columns.add(formatDetails(issue, description));
-        columns.add(formatFileName(issue, fileNameRenderer));
-        columns.add(formatAge(issue, ageBuilder));
+        columns.add(formatFileName(issue));
+        columns.add(formatAge(issue));
         if (blames.contains(issue.getFileName())) {
             BlameRequest blameRequest = blames.get(issue.getFileName());
             int line = issue.getLineStart();

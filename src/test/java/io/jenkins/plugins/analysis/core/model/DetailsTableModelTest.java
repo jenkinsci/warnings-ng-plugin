@@ -60,7 +60,7 @@ class DetailsTableModelTest {
 
         DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
 
-        return new DetailsTableModel(ageBuilder, fileNameRenderer, descriptionProvider);
+        return new DetailsTableModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION);
     }
 
     @Test
