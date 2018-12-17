@@ -182,6 +182,7 @@ public class PropertyTable {
             return size;
         }
 
+        @SuppressWarnings("PMD.CollapsibleIfStatements")
         @Override
         public boolean equals(final Object o) {
             if (this == o) {

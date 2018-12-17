@@ -1,7 +1,7 @@
-import java.io.FileWriter;
+package io.jenkins.plugins.analysis;
+
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -9,8 +9,8 @@ import java.util.Locale;
 
 import org.junit.Test;
 
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool.ReportScanningToolDescriptor;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;

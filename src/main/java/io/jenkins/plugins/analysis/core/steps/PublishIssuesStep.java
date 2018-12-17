@@ -43,7 +43,7 @@ import hudson.util.ListBoxModel;
  * Otherwise a default ID is used to publish the results. In any case, the computed ID can be overwritten by specifying
  * an ID as step parameter.
  */
-@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.PublishIssuesStep"})
+@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount"})
 public class PublishIssuesStep extends Step {
     private final List<AnnotatedReport> reports;
 

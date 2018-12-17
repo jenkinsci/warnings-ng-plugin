@@ -38,7 +38,7 @@ import hudson.util.FormValidation;
 /**
  * Scan files or the console log for issues.
  */
-@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.PublishIssuesStep"})
+@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessivePublicCount"})
 public class ScanForIssuesStep extends Step {
     private Tool tool;
     
@@ -122,6 +122,8 @@ public class ScanForIssuesStep extends Step {
      * Actually performs the execution of the associated step.
      */
     public static class Execution extends AnalysisExecution<AnnotatedReport> {
+        private static final long serialVersionUID = -4627988939459725361L;
+
         private final Tool tool;
         private final String sourceCodeEncoding;
         private final boolean isBlameDisabled;

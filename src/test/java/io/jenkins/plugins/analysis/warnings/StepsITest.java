@@ -19,7 +19,6 @@ import org.kohsuke.stapler.HttpResponse;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import static hudson.Functions.*;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
@@ -317,7 +316,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 "recordIssues aggregatingResults: " + isAggregating + ", tools: [" 
                         + "groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-1'),"
                         + "groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-2')"
-                        + "] " + join(arguments)));
+                        + "] " + String.join(", ", arguments)));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         String id = "groovy-pep8";

@@ -102,8 +102,6 @@ public class IssueRow {
     }
 
     public boolean hasLink(final String id) {
-        HtmlTableCell htmlTableCell = cellsByName.get(id);
-        DomElement firstElementChild = htmlTableCell.getFirstElementChild();
-        return firstElementChild instanceof HtmlAnchor;
+        return cellsByName.get(id).getFirstElementChild() instanceof HtmlAnchor;
     }
 }

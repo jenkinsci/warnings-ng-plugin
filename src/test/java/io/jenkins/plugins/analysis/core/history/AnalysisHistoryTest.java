@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.history;
+package io.jenkins.plugins.analysis.core.history; // NOPMD
 
 import java.util.Optional;
 
