@@ -39,12 +39,15 @@ public class LogHandler {
      *         the task listener that will print all log messages
      * @param name
      *         the name of the logger
+     * @param report
+     *         the report to log the messages from
      */
     public LogHandler(final TaskListener listener, final String name, final Report report) {
         this(listener, name, report.getInfoMessages().size(), report.getErrorMessages().size());
     }
 
-    private LogHandler(final TaskListener listener, final String name, final int infoPosition, final int errorPosition) {
+    private LogHandler(final TaskListener listener, final String name, final int infoPosition,
+            final int errorPosition) {
         logger = createLogger(listener, name);
         errorLogger = createErrorLogger(listener, name);
         this.infoPosition = infoPosition;

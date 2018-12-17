@@ -393,7 +393,7 @@ public abstract class IntegrationTest extends ResourceTest {
             final String... arguments) {
         return String.format(
                 "def %s = scanForIssues tool: %s(pattern:'**/*issues.txt', reportEncoding:'UTF-8')%s",
-                issuesName, tool.getSymbolName(), String.join(", ", arguments));
+                issuesName, tool.getSymbolName(), join(arguments));
     }
 
     /**
@@ -936,6 +936,15 @@ public abstract class IntegrationTest extends ResourceTest {
 
     protected void removeBuilder(final FreeStyleProject project, final Builder builder) {
         project.getBuildersList().remove(builder);
+    }
+
+    protected String join(final String... arguments) {
+        StringBuilder builder = new StringBuilder();
+        for (String argument : arguments) {
+            builder.append(", ");
+            builder.append(argument);
+        }
+        return builder.toString();
     }
 
     protected JSONWebResponse callJsonRemoteApi(final String url) {

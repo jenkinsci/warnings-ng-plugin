@@ -234,7 +234,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 + "A high number of imports can indicate a high degree of coupling within an object. This rule \n"
                 + "counts the number of unique imports and reports a violation if the count is above the \n"
                 + "user-specified threshold.\n"
-                + "        <pre>\n"
+                + "        <pre><code>\n"
                 + "\n"
                 + "import blah.blah.Baz;\n"
                 + "import blah.blah.Bif;\n"
@@ -243,7 +243,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 + "    public void doWork() {}\n"
                 + "}\n"
                 + "\n"
-                + "        </pre>");
+                + "        </code></pre>"
+                + "<a href=\"https://pmd.github.io/pmd-6.10.0/pmd_rules_java_errorprone.html#nullassignment\">\n"
+                + "    See PMD documentation.\n"
+                + "</a>\n");
     }
 
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */

@@ -316,7 +316,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 "recordIssues aggregatingResults: " + isAggregating + ", tools: [" 
                         + "groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-1'),"
                         + "groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-2')"
-                        + "] " + String.join(", ", arguments)));
+                        + "] " + join(arguments)));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         String id = "groovy-pep8";
