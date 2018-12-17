@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -26,6 +27,7 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
+import sun.jvm.hotspot.utilities.AssertionFailure;
 
 import hudson.FilePath;
 import hudson.Functions;
@@ -88,10 +90,15 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
-        for (Issue issue : result.getIssues()) {
-            boolean hasBeenDeleted = AffectedFilesResolver.getFile(result.getOwner(), issue.getFileName())
-                    .toFile().delete();
-            assertThat(hasBeenDeleted).isTrue();
+        Set<String> files = result.getIssues().getFiles();
+        for (String fileName : files) {
+            Path file = AffectedFilesResolver.getFile(result.getOwner(), fileName);
+            try {
+                Files.delete(file);
+            }
+            catch (IOException ignore) {
+                // ignore
+            }
         }
     }
 

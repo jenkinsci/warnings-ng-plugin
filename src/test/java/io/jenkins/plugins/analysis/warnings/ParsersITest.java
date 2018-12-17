@@ -243,8 +243,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 + "    public void doWork() {}\n"
                 + "}\n"
                 + "\n"
-                + "        </code></pre>"
-                + "<a href=\"https://pmd.github.io/pmd-6.10.0/pmd_rules_java_errorprone.html#nullassignment\">\n"
+                + "        </code></pre>\n"
+                + "<a href=\"https://pmd.github.io/pmd-6.10.0/pmd_rules_java_design.html#excessiveimports\">\n"
                 + "    See PMD documentation.\n"
                 + "</a>\n");
     }
