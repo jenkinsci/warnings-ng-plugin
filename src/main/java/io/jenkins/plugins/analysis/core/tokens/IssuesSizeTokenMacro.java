@@ -25,13 +25,6 @@ import hudson.model.TaskListener;
 public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
     private String tool;
 
-    /**
-     * Creates a new instance of {@link IssuesSizeTokenMacro}.
-     */
-    public IssuesSizeTokenMacro() {
-        super();
-    }
-
     @Parameter
     public void setTool(final String tool) {
         this.tool = tool;
@@ -67,12 +60,7 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
             return run.getActions(ResultAction.class);
         }
         else {
-            ByIdResultSelector selector = new ByIdResultSelector(tool);
-            Optional<ResultAction> action = selector.get(run);
-            if (action.isPresent()) {
-                return Collections.singletonList(action.get());
-            }
-            return Collections.emptyList();
+            return new ByIdResultSelector(tool).get(run).map(Collections::singletonList).orElse(Collections.emptyList());
         }
     }
 }

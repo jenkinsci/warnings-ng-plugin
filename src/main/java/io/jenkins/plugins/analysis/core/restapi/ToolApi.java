@@ -17,7 +17,7 @@ public class ToolApi {
     private final String name;
     private final String id;
     private final String latestUrl;
-    private int size;
+    private final int size;
 
     /**
      * Creates a new instance of {@link ToolApi}.

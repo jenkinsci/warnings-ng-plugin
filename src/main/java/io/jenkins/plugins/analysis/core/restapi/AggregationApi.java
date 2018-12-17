@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import io.jenkins.plugins.analysis.core.views.ResultAction;
  */
 @ExportedBean
 public class AggregationApi {
-    private Collection<ResultAction> results;
+    private final Collection<ResultAction> results;
 
     /**
      * Creates a new {@link AggregationApi}.
@@ -27,7 +28,7 @@ public class AggregationApi {
      *         the results to collect
      */
     public AggregationApi(final Collection<ResultAction> results) {
-        this.results = results;
+        this.results = new ArrayList<>(results);
     }
 
     @Exported(inline = true)

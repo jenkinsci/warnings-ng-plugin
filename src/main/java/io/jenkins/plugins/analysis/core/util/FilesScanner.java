@@ -112,6 +112,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         }
     }
 
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private String plural(final int count, final String itemName) {
         StringBuilder builder = new StringBuilder(itemName);
         if (count != 1) {

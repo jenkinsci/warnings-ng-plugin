@@ -23,6 +23,8 @@ import hudson.remoting.VirtualChannel;
  * @author Ullrich Hafner
  */
 abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<T> {
+    private static final long serialVersionUID = -127479018279069250L;
+
     AnalysisExecution(final StepContext context) {
         super(context);
     }

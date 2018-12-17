@@ -253,6 +253,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
                         .withClasses("model-link", "inside").render()));
     }
 
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private Object getWarningsCount(final AnalysisResult analysisRun) {
         int size = analysisRun.getTotalSize();
         if (size == 0) {
@@ -322,6 +323,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         return new CompositeLocalizable(getName(), createToolTipSuffix(numberOfItems));
     }
 
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
     private Localizable createToolTipSuffix(final int numberOfItems) {
         if (numberOfItems == 0) {
             return Messages._Tool_NoIssues();

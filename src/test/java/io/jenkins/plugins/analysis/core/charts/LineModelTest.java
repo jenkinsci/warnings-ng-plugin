@@ -14,7 +14,6 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * @author Ullrich Hafner
  */
 class LineModelTest {
-
     private static final String COLOR = "#fff";
 
     @Test
@@ -47,7 +46,5 @@ class LineModelTest {
                 .contains("#5");
 
         assertThatJson(model).node("series").isArray().hasSize(3);
-
-        System.out.println(model);
     }
 }

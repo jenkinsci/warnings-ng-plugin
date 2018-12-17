@@ -67,7 +67,7 @@ import hudson.util.DescribableList;
  *
  * @author Ullrich Hafner
  */
-@Tag("IntegrationTest")
+@Tag("IntegrationTest") @SuppressWarnings({"PMD.SystemPrintln", "classdataabstractioncoupling", "classfanoutcomplexity"})
 public abstract class IntegrationTest extends ResourceTest {
     /** Issue log files will be renamed to mach this pattern. */
     private static final String FILE_NAME_PATTERN = "%s-issues.txt";

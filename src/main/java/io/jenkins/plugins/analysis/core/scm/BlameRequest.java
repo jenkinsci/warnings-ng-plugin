@@ -21,7 +21,7 @@ public class BlameRequest implements Iterable<Integer>, Serializable {
     
     static final String EMPTY = "-";
 
-    private String fileName;
+    private final String fileName;
     private final Set<Integer> lines = new HashSet<Integer>();
     private final Map<Integer, String> commitByLine = new HashMap<Integer, String>();
     private final Map<Integer, String> nameByLine = new HashMap<Integer, String>();

@@ -609,7 +609,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener)
             throws IOException, InterruptedException {
         if (isAggregatingResults) {
-            AnnotatedReport totalIssues = new AnnotatedReport(id);
+            AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, "analysis"));
             for (Tool tool : analysisTools) {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }

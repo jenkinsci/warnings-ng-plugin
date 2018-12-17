@@ -20,7 +20,7 @@ import hudson.scm.SCM;
  *
  * @author Lukas Krose
  */
-public class BlameFactory {
+public final class BlameFactory {
     /**
      * Selects a matching SCM blamer for the specified job.
      *
@@ -67,5 +67,9 @@ public class BlameFactory {
             }
         }
         return new NullSCM();
+    }
+
+    private BlameFactory() {
+        // prevents instantiation
     }
 }

@@ -38,7 +38,7 @@ import hudson.util.FormValidation;
 /**
  * Scan files or the console log for issues.
  */
-@SuppressWarnings("InstanceVariableMayNotBeInitialized")
+@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.PublishIssuesStep"})
 public class ScanForIssuesStep extends Step {
     private Tool tool;
     

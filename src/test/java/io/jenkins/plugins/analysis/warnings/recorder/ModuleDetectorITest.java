@@ -97,7 +97,6 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String OSGI_BUILD_FILE_LOCATION = "osgi/";
     private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)";
     private static final String EMPTY_MODULE_NAME = "";
-    private static final short NO_MODULE_PATHS = 0;
     private static final String PROPERTY = "moduleName";
 
     /**
@@ -299,7 +298,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldContainNoSpecificHtmlOutputForAnEmptyProject() {
-        checkWebPageForExpectedEmptyResult(createResult(NO_MODULE_PATHS, false));
+        checkWebPageForExpectedEmptyResult(createResult(0, false));
     }
 
     /**

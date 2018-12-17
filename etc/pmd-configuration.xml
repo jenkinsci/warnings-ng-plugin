@@ -55,6 +55,7 @@
     <exclude name="ExcessiveMethodLength"/>
     <exclude name="UseObjectForClearerAPI"/>
     <exclude name="AvoidCatchingGenericException"/>
+    <exclude name="FinalFieldCouldBeStatic"/>
   </rule>
   <rule ref="category/java/errorprone.xml">
     <exclude name="DataflowAnomalyAnalysis"/>
@@ -72,6 +73,7 @@
     <exclude name="UseConcurrentHashMap"/>
   </rule>
   <rule ref="category/java/performance.xml">
+    <exclude name="AppendCharacterWithChar"/>
     <exclude name="AvoidInstantiatingObjectsInLoops"/>
     <exclude name="RedundantFieldInitializer"/>
     <exclude name="ConsecutiveAppendsShouldReuse"/>

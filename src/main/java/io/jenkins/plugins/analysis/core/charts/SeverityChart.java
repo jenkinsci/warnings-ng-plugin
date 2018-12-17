@@ -10,6 +10,8 @@ import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
  * @author Ullrich Hafner
  */
 public class SeverityChart {
+    private static final int MAX_BUILDS = 50;
+
     /**
      * Creates the chart for the specified results.
      *
@@ -33,7 +35,7 @@ public class SeverityChart {
             low.add(result.getTotalLowPrioritySize());
 
             model.addXAxisLabel(result.getBuild().getDisplayName()); // TODO: de-normalize
-            if (model.size() > 50) {
+            if (model.size() > MAX_BUILDS) {
                 break;
             }
         }

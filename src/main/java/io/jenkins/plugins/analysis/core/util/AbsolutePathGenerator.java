@@ -108,7 +108,7 @@ public class AbsolutePathGenerator {
             try {
                 return Optional.of(new PathUtil().toString(parent.resolve(fileName)));
             }
-            catch (IOException ignored) {
+            catch (IOException | InvalidPathException ignored) {
                 return Optional.empty();
             }
         }

@@ -41,6 +41,7 @@ import hudson.security.Permission;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class JenkinsFacade implements Serializable {
     private static final long serialVersionUID = 1904631270145841113L;
 

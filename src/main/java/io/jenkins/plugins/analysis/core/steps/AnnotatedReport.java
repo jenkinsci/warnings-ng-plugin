@@ -33,9 +33,8 @@ public class AnnotatedReport implements Serializable {
      * @param id
      *         the ID of the report
      */
-    public AnnotatedReport(@CheckForNull final String id) {
-        // FIXME Pull ID out
-        this.id = StringUtils.defaultIfEmpty(id, "analysis");
+    public AnnotatedReport(final String id) {
+        this.id = id;
     }
 
     /**

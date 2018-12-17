@@ -131,8 +131,8 @@ public abstract class ReportScanningTool extends Tool {
         catch (IOException e) {
             throw new ParsingException(e);
         }
-        catch (InterruptedException ignored) {
-            throw new ParsingCanceledException();
+        catch (InterruptedException e) {
+            throw new ParsingCanceledException(e);
         }
     }
 

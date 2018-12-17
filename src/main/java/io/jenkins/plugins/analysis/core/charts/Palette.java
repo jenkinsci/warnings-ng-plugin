@@ -21,7 +21,7 @@ public enum Palette {
     private final String normal;
     private final String hover;
 
-    private Palette(final String normal, final String hover) {
+    Palette(final String normal, final String hover) {
         this.normal = normal;
         this.hover = hover;
     }
