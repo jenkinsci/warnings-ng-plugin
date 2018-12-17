@@ -54,7 +54,7 @@ class AnnotatedReportTest {
 //    
 
     /**
-     * FIXME: write comment.
+     * FIXME: write some tests.
      */
     @Test
     void should() {

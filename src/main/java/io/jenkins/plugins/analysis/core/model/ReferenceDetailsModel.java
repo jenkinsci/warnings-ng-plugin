@@ -10,14 +10,21 @@ import io.jenkins.plugins.analysis.core.scm.BlameRequest;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 
 /**
- * FIXME: write comment.
+ * Provides the model for the source control details table. The model consists of the following parts:
+ *
+ * <ul>
+ * <li>header name for each column</li>
+ * <li>width for each column</li>
+ * <li>content for each row</li>
+ * <li>content for whole table</li>
+ * </ul>
  *
  * @author Ullrich Hafner
  */
-public class ReferenceDetailsModel extends DetailsTableModel {
+class ReferenceDetailsModel extends DetailsTableModel {
     private final Blames blames;
 
-    public ReferenceDetailsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+    ReferenceDetailsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
             final DescriptionProvider descriptionProvider, final Blames blames) {
         super(ageBuilder, fileNameRenderer, descriptionProvider);
         
