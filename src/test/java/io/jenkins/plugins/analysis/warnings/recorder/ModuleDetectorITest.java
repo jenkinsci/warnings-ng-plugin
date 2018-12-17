@@ -306,9 +306,8 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldContainNoSpecificHtmlOutputForASingleModuleMavenProject() {
-        String[] workspaceFiles = new String[] {
-                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml"};
-        verifyThatModulesTabIsNotShownForSingleModule(workspaceFiles);
+        verifyThatModulesTabIsNotShownForSingleModule(
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml");
     }
 
     /**
@@ -316,9 +315,8 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldContainNoHtmlOutputForASingleModuleAntProject() {
-        String[] workspaceFiles = new String[] {
-                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml"};
-        verifyThatModulesTabIsNotShownForSingleModule(workspaceFiles);
+        verifyThatModulesTabIsNotShownForSingleModule(
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml");
     }
 
     /**
@@ -326,12 +324,11 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldContainNoHtmlOutputForASingleModuleOsgiProject() {
-        String[] workspaceFiles = new String[] {
-                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF"};
-        verifyThatModulesTabIsNotShownForSingleModule(workspaceFiles);
+        verifyThatModulesTabIsNotShownForSingleModule(
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF");
     }
 
-    private void verifyThatModulesTabIsNotShownForSingleModule(final String[] workspaceFiles) {
+    private void verifyThatModulesTabIsNotShownForSingleModule(final String... workspaceFiles) {
         checkWebPageForExpectedEmptyResult(
                 createResult(workspaceFiles.length, false, workspaceFiles));
     }

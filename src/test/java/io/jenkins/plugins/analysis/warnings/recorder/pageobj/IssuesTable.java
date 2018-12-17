@@ -66,6 +66,7 @@ public class IssuesTable {
         return columnNames;
     }
 
+    @SuppressWarnings("PMD.SystemPrintln")
     private void waitForAjaxCall(final HtmlTableBody body) {
         while ("No data available in table".equals(
                 body.getRows().get(0).getCells().get(0).getFirstChild().getTextContent())) {

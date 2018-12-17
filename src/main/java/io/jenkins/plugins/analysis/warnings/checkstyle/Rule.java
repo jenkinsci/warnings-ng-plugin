@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class Rule {
     /** Description to indicate that the rules stored in this plug-in don't match with the generators version. */
     static final String UNDEFINED_DESCRIPTION = StringUtils.EMPTY;

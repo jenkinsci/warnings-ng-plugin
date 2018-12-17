@@ -14,6 +14,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.google.errorprone.annotations.MustBeClosed;
+
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.ModuleDetector;
@@ -27,6 +29,7 @@ import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModuleResolver;
 import jenkins.MasterToSlaveFileCallable;
@@ -201,6 +204,7 @@ class IssuesScanner {
      * Provides file system operations using real IO.
      */
     private static final class DefaultFileSystem implements FileSystem {
+        @MustBeClosed
         @Override
         public InputStream open(final String fileName) throws IOException {
             return Files.newInputStream(Paths.get(fileName));

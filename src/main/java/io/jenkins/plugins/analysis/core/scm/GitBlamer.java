@@ -88,12 +88,17 @@ public class GitBlamer implements Blamer {
         return Paths.get(workspace.getRemote()).toAbsolutePath().normalize().toRealPath().toString();
     }
 
+    /**
+     * Starts the blame commands.
+     */
     static class BlameCallback implements RepositoryCallback<Blames> {
+        private static final long serialVersionUID = 8794666938104738260L;
+
         private final Report report;
         private final ObjectId headCommit;
         private final String workspace;
 
-        public BlameCallback(final Report report, final ObjectId headCommit, final String workspace) {
+        BlameCallback(final Report report, final ObjectId headCommit, final String workspace) {
             this.report = report;
             this.headCommit = headCommit;
             this.workspace = workspace;

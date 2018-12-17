@@ -156,7 +156,7 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
      * @param expectedLines
      *         issue line numbers that are expected
      */
-    private void buildAndVerifyResults(final FreeStyleProject project, final Integer[] expectedLines) {
+    private void buildAndVerifyResults(final FreeStyleProject project, final Integer... expectedLines) {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(getLines(result)).containsOnly(expectedLines);

@@ -22,9 +22,9 @@ import hudson.util.ListBoxModel;
  */
 public class GroovyScript extends ReportScanningTool {
     private static final long serialVersionUID = 8580859196688994603L;
-    static final String ID = "groovy";
+    private static final String ID = "groovy";
 
-    private String parserId;
+    private final String parserId;
 
     /**
      * Creates a new instance of {@link GroovyScript}.

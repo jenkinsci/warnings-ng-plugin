@@ -397,6 +397,8 @@ public class PublishIssuesStep extends Step {
      * Actually performs the execution of the associated step.
      */
     public static class Execution extends AnalysisExecution<ResultAction> {
+        private static final long serialVersionUID = 6438321240776419897L;
+
         private final HealthDescriptor healthDescriptor;
         private final boolean ignoreQualityGate;
         private final boolean ignoreFailedBuilds;

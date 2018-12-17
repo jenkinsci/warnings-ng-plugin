@@ -18,6 +18,7 @@ import edu.hm.hafner.analysis.SecureDigester;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public final class FindBugsMessages {
     private static final String NO_MESSAGE_FOUND = "no message found";
 

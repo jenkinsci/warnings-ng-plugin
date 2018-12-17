@@ -30,7 +30,6 @@ class StaticAnalysisToolSuiteTest extends ResourceTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void shouldReturnReportOfSingleParser() {
         IssueParser parser = createParserStub();
         Report issues = createIssues(1);
@@ -44,7 +43,6 @@ class StaticAnalysisToolSuiteTest extends ResourceTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     void shouldReturnAggregationOfTwoParsers() {
         IssueParser firstParser = createParserStub();
         Report issuesFirstParser = createIssues(1);
@@ -84,6 +82,7 @@ class StaticAnalysisToolSuiteTest extends ResourceTest {
      * {@link ReportScanningToolSuite} to be used in the tests.
      */
     private class TestReportScanningToolSuite extends ReportScanningToolSuite {
+        private static final long serialVersionUID = -1564903699146113905L;
         private final Collection<? extends IssueParser> parsers;
 
         TestReportScanningToolSuite(final IssueParser... parsers) {

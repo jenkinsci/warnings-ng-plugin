@@ -38,10 +38,11 @@ import hudson.util.FormValidation;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class OpenTasks extends Tool {
     private static final long serialVersionUID = 4692318309214830824L;
 
-    static final String ID = "open-tasks";
+    private static final String ID = "open-tasks";
 
     private String highTags = StringUtils.EMPTY;
     private String normalTags = StringUtils.EMPTY;

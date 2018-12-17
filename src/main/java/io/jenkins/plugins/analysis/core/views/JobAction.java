@@ -29,6 +29,8 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  */
 public class JobAction implements Action {
+    private static final int MIN_BUILDS = 2;
+
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
 
@@ -139,7 +141,7 @@ public class JobAction implements Action {
 
         Iterator<AnalysisResult> iterator = history.iterator();
         for (int count = 1; iterator.hasNext(); count++) {
-            if (count >= 2) {
+            if (count >= MIN_BUILDS) {
                 return true;
             }
             iterator.next();

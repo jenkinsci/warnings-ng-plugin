@@ -19,7 +19,7 @@ import io.jenkins.plugins.analysis.core.scm.Blames;
  *
  * @author Ullrich Hafner
  */
-public class AnnotatedReport implements Serializable {
+public final class AnnotatedReport implements Serializable {
     private static final long serialVersionUID = -4797152016409014028L;
 
     private final String id;

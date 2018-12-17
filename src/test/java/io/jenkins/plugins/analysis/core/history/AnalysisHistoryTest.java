@@ -191,43 +191,43 @@ class AnalysisHistoryTest {
      */
     private static Iterable<Object> createTestDataForSuccessfulQualityGateAndNoFailedBuild() {
         return asList(
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result (SUCCESS, quality gate is not active)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result (SUCCESS, quality gate has been passed)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result (UNSTABLE, quality gate is not active)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result (UNSTABLE, quality gate has been passed)")
                         .build(),
 
-                new BuildHistoryBuilder().hasExpectedResult(NONE)
+                new BuildHistoryBuilder().setExpectedResult(NONE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.FAILED)
                         .setTestName("Job should have no analysis result if quality gate has been missed (SUCCESS)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(NONE)
+                new BuildHistoryBuilder().setExpectedResult(NONE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.WARNING)
                         .setTestName("Job should have no analysis result if quality gate has a warning (SUCCESS)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(NONE)
+                new BuildHistoryBuilder().setExpectedResult(NONE)
                         .setJobResult(Result.FAILURE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have no analysis result even if quality gate is not active (FAILED)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(NONE)
+                new BuildHistoryBuilder().setExpectedResult(NONE)
                         .setJobResult(Result.FAILURE)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have no analysis result even if quality gate has been passed (FAILED)")
@@ -242,43 +242,43 @@ class AnalysisHistoryTest {
      */
     private static Iterable<Object> createTestDataForIgnoredQualityGateAndIgnoredBuildResult() {
         return asList(
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result (SUCCESS, quality gate is not active)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result (SUCCESS, quality gate has been passed)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result (UNSTABLE, quality gate is not active)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result (UNSTABLE, quality gate has been passed)")
                         .build(),
 
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.FAILED)
                         .setTestName("Job should have analysis result if quality gate has been missed (SUCCESS)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.WARNING)
                         .setTestName("Job should have analysis result if quality gate has a warning (SUCCESS)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.FAILURE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result even if quality gate is not active (FAILED)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.FAILURE)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result even if quality gate has been passed (FAILED)")
@@ -293,44 +293,44 @@ class AnalysisHistoryTest {
      */
     private static Iterable<Object> createTestDataForSuccessfulQualityGateAndIgnoredBuildResult() {
         return asList(
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result (SUCCESS, quality gate is not active)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result (SUCCESS, quality gate has been passed)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result (UNSTABLE, quality gate is not active)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result (UNSTABLE, quality gate has been passed)")
                         .build(),
 
-                new BuildHistoryBuilder().hasExpectedResult(NONE)
+                new BuildHistoryBuilder().setExpectedResult(NONE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.FAILED)
                         .setTestName("Job should have no analysis result if quality gate has been missed (SUCCESS)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(NONE)
+                new BuildHistoryBuilder().setExpectedResult(NONE)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.WARNING)
                         .setTestName("Job should have no analysis result if quality gate has a warning (SUCCESS)")
                         .build(),
 
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.FAILURE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result even if quality gate is not active (FAILED)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.FAILURE)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result even if quality gate has been passed (FAILED)")
@@ -345,44 +345,44 @@ class AnalysisHistoryTest {
      */
     private static Iterable<Object> createTestDataForIgnoredQualityGateAndNoFailedBuild() {
         return asList(
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result (SUCCESS, quality gate is not active)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result (SUCCESS, quality gate has been passed)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have analysis result (UNSTABLE, quality gate is not active)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.UNSTABLE)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have analysis result (UNSTABLE, quality gate has been passed)")
                         .build(),
 
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.FAILED)
                         .setTestName("Job should have analysis result if quality gate has been missed (SUCCESS)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(FIRST)
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
                         .setJobResult(Result.SUCCESS)
                         .setQualityGateStatus(QualityGateStatus.WARNING)
                         .setTestName("Job should have analysis result if quality gate has a warning (SUCCESS)")
                         .build(),
 
-                new BuildHistoryBuilder().hasExpectedResult(NONE)
+                new BuildHistoryBuilder().setExpectedResult(NONE)
                         .setJobResult(Result.FAILURE)
                         .setQualityGateStatus(QualityGateStatus.INACTIVE)
                         .setTestName("Job should have no analysis result even if quality gate is not active (FAILED)")
                         .build(),
-                new BuildHistoryBuilder().hasExpectedResult(NONE)
+                new BuildHistoryBuilder().setExpectedResult(NONE)
                         .setJobResult(Result.FAILURE)
                         .setQualityGateStatus(QualityGateStatus.PASSED)
                         .setTestName("Job should have no analysis result even if quality gate has been passed (FAILED)")
@@ -412,7 +412,7 @@ class AnalysisHistoryTest {
             return this;
         }
 
-        public BuildHistoryBuilder hasExpectedResult(final ExpectedResult expectedResult) {
+        public BuildHistoryBuilder setExpectedResult(final ExpectedResult expectedResult) {
             this.expectedResult = expectedResult;
             return this;
         }

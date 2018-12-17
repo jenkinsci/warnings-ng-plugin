@@ -10,7 +10,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings({"FieldCanBeLocal", "PMD.DataClass"})
 public class LineSeries {
     private final String name;
     @SuppressFBWarnings("SS_SHOULD_BE_STATIC")

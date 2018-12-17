@@ -5,6 +5,7 @@ package io.jenkins.plugins.analysis.warnings.checkstyle;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class Topic {
     /** The name of this topic. */
     private String name;

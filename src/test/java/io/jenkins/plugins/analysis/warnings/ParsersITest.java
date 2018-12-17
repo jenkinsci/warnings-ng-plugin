@@ -654,7 +654,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(0, new Java(), "eclipse.txt");
     }
 
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
     private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         try {

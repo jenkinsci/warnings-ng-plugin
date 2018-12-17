@@ -12,7 +12,7 @@ import hudson.util.FormValidation.Kind;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"ParameterHidesMemberVariable", "NonBooleanMethodNameMayNotStartWithQuestion"})
+@SuppressWarnings({"ParameterHidesMemberVariable", "NonBooleanMethodNameMayNotStartWithQuestion", "PMD.LinguisticNaming"})
 public class FormValidationAssert extends AbstractAssert<FormValidationAssert, FormValidation> {
     private static final String EXPECTED_BUT_WAS_MESSAGE = "%nExpecting %s of:%n <%s>%nto be:%n <%s>%nbut was:%n <%s>.";
 

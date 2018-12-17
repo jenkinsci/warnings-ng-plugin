@@ -69,6 +69,8 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
      */
     @SuppressWarnings("unused")
     public static class TestTool extends ReportScanningTool {
+        private static final long serialVersionUID = 8456938025794683739L;
+
         @Override
         public String getId() {
             return ANNOTATED_ID;

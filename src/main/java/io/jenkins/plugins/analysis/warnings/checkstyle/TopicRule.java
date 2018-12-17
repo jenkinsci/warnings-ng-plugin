@@ -61,8 +61,7 @@ public class TopicRule extends NodeCreateRule {
         String suffixRemoved = StringUtils.substringBeforeLast(prefixRemoved, "<");
 
         String endSourceRemoved = StringUtils.replace(suffixRemoved, "</source>", "</code></pre>");
-        String startSourceRemoved = StringUtils.replace(endSourceRemoved, "<source>", "<pre><code>");
 
-        return startSourceRemoved;
+        return StringUtils.replace(endSourceRemoved, "<source>", "<pre><code>");
     }
 }

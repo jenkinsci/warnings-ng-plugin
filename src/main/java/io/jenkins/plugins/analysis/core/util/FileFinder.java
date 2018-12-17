@@ -44,6 +44,8 @@ public class FileFinder extends MasterToSlaveFileCallable<String[]> {
      *         the ant file excludes pattern to scan for
      */
     public FileFinder(final String includesPattern, final String excludesPattern) {
+        super();
+
         this.includesPattern = includesPattern;
         this.excludesPattern = excludesPattern;
     }
