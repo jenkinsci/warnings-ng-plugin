@@ -11,10 +11,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.FilteredLog;
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
+
 import io.jenkins.plugins.analysis.core.views.ConsoleDetail;
 
 /**
@@ -23,7 +23,7 @@ import io.jenkins.plugins.analysis.core.views.ConsoleDetail;
  * @author Ullrich Hafner
  */
 public class AbsolutePathGenerator {
-    static final String NOTHING_TO_DO = "-> affected files for all issues already have absolute paths (resolving real path only)";
+    static final String NOTHING_TO_DO = "-> none of the issues requires resolving of absolute path";
     private final FileSystem fileSystem;
 
     /**
@@ -47,56 +47,58 @@ public class AbsolutePathGenerator {
      *         the workspace containing the affected files
      */
     public void run(final Report report, final Path workspace) {
-        Set<String> relativeFileNames = report.getFiles()
+        Set<String> filesToProcess = report.getFiles()
                 .stream()
-                .filter(fileName -> isValidRelativeFileName(fileName))
+                .filter(this::isInterestingFileName)
                 .collect(Collectors.toSet());
 
-        if (relativeFileNames.isEmpty()) {
+        if (filesToProcess.isEmpty()) {
             report.logInfo(NOTHING_TO_DO);
             report.stream().forEach(issue -> issue.setFileName(new PathUtil().getAbsolutePath(issue.getFileName())));
             return;
         }
 
-        Map<String, String> relativeToAbsoluteMapping = resolveAbsoluteNames(relativeFileNames, workspace);
-
         FilteredLog log = new FilteredLog(report, "Can't resolve absolute paths for some files:");
-        int resolvedCount = 0;
-        int unchangedCount = 0;
-        for (Issue issue : report) {
-            if (relativeToAbsoluteMapping.containsKey(issue.getFileName())) {
-                String absoluteFileName = relativeToAbsoluteMapping.get(issue.getFileName());
-                issue.setFileName(absoluteFileName);
-                resolvedCount++;
-            }
-            else {
-                if (relativeFileNames.contains(issue.getFileName())) {
-                    log.logError("- %s", issue.getFileName());
-                }
-                else {
-                    unchangedCount++;
-                }
-            }
-        }
 
-        report.logInfo("-> %d resolved, %d unresolved, %d already absolute",
-                resolvedCount, log.size(), unchangedCount);
+        Map<String, String> pathMapping = resolveAbsoluteNames(filesToProcess, workspace, log);
+        report.stream()
+                .filter(issue -> pathMapping.containsKey(issue.getFileName()))
+                .forEach(issue -> issue.setFileName(pathMapping.get(issue.getFileName())));
+
         log.logSummary();
     }
 
-    private boolean isValidRelativeFileName(final String fileName) {
-        return !"-".equals(fileName)
-                && fileSystem.isRelative(fileName)
-                && !ConsoleDetail.isInConsoleLog(fileName);
+    private boolean isInterestingFileName(final String fileName) {
+        return !"-".equals(fileName) && !ConsoleDetail.isInConsoleLog(fileName);
     }
 
-    private Map<String, String> resolveAbsoluteNames(final Set<String> relativeFileNames, final Path workspace) {
-        Map<String, String> relativeToAbsoluteMapping = new HashMap<>();
-        for (String fileName : relativeFileNames) {
-            fileSystem.resolveAbsolutePath(workspace, fileName)
-                    .ifPresent(a ->  relativeToAbsoluteMapping.put(fileName, a));
+    private Map<String, String> resolveAbsoluteNames(final Set<String> affectedFiles, final Path workspace,
+            final FilteredLog log) {
+        Map<String, String> pathMapping = new HashMap<>();
+        int errors = 0;
+        int unchanged = 0;
+        int changed = 0;
+
+        for (String fileName : affectedFiles) {
+            Optional<String> absolutePath = fileSystem.resolveAbsolutePath(workspace, fileName);
+            if (absolutePath.isPresent()) {
+                String resolved = absolutePath.get();
+                pathMapping.put(fileName, resolved);
+                if (fileName.equals(resolved)) {
+                    unchanged++;
+                }
+                else {
+                    changed++;
+                }
+            }
+            else {
+                log.logError("- %s", fileName);
+                errors++;
+            }
         }
-        return relativeToAbsoluteMapping;
+        log.logInfo("-> %d resolved, %d unresolved, %d already resolved", changed, errors, unchanged);
+
+        return pathMapping;
     }
 
     /**
