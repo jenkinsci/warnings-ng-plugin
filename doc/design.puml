@@ -1,0 +1,11 @@
+@startuml
+
+component "charts"
+component "filters"
+component "model"
+component "views"
+
+charts ..> model
+filters ..> model
+views ..> model
+@enduml

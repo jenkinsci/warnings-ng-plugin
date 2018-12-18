@@ -1,21 +1,22 @@
-package io.jenkins.plugins.analysis.core.history;
+package io.jenkins.plugins.analysis.core.views;
 
-import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import javax.annotation.Nonnull;
 
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 import hudson.model.Result;
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.QualityGate;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+
+import static io.jenkins.plugins.analysis.core.views.AnalysisHistory.JobResultEvaluationMode.*;
+import static io.jenkins.plugins.analysis.core.views.AnalysisHistory.QualityGateEvaluationMode.*;
 
 /**
  * Provides a history of static analysis results. The history starts from a baseline build and provides access to a
@@ -60,13 +61,13 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      */
     public enum JobResultEvaluationMode {
         /**
-         * Only those jobs are considered that did not fail. I.e. jobs with result {@link Result#UNSTABLE} or 
-         * {@link Result#SUCCESS}.
+         * Only those jobs are considered that did not fail. I.e. jobs with result {@link Result#UNSTABLE} or {@link
+         * Result#SUCCESS}.
          */
         NO_JOB_FAILURE,
 
         /**
-         * All jobs are considered regardless of the result. If the job has an overall result of {@link Result#FAILURE} 
+         * All jobs are considered regardless of the result. If the job has an overall result of {@link Result#FAILURE}
          * then it will be considered as well.
          */
         IGNORE_JOB_RESULT

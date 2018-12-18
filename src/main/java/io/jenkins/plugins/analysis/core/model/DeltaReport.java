@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
+import io.jenkins.plugins.analysis.core.views.AnalysisHistory;
 
 import hudson.model.Run;
 

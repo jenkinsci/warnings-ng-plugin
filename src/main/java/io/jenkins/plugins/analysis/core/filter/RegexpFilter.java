@@ -5,12 +5,12 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.Ensure;
 
+import org.kohsuke.stapler.QueryParameter;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
@@ -75,7 +75,7 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
             }
             catch (PatternSyntaxException exception) {
                 return FormValidation.error(Messages.pattern_error(exception.getLocalizedMessage()));
-            }        
+            }
         }
     }
 }

@@ -29,7 +29,7 @@ public final class SeverityPalette {
         if (severity == Severity.WARNING_LOW) {
             return Palette.LIME;
         }
-        return Palette.PURPLE; 
+        return Palette.PURPLE;
     }
 
     private SeverityPalette() {

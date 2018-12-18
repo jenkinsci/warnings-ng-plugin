@@ -93,7 +93,7 @@ public class LineModel {
 
     /**
      * Returns the number of points in the series.
-     * 
+     *
      * @return number of points
      */
     public int size() {

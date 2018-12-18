@@ -17,13 +17,12 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
+import io.jenkins.plugins.analysis.core.model.LocalizedSeverity;
 
 /**
  * Scans a given input stream for open tasks.

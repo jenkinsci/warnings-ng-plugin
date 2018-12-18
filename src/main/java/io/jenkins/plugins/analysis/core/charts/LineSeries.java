@@ -26,7 +26,8 @@ public class LineSeries {
      *
      * @param name
      *         the name of the series
-     * @param color the color of the series
+     * @param color
+     *         the color of the series
      */
     public LineSeries(final String name, final String color) {
         this.name = name;

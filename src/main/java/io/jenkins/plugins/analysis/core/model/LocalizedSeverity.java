@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.views;
+package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Severity;
 

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.history; // NOPMD
+package io.jenkins.plugins.analysis.core.views; // NOPMD
 
 import java.util.Optional;
 
@@ -9,20 +9,21 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
-import io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistoryTest.ExpectedResult.*;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
-import static java.util.Arrays.*;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 import hudson.model.Result;
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.views.AnalysisHistory.JobResultEvaluationMode;
+import io.jenkins.plugins.analysis.core.views.AnalysisHistory.QualityGateEvaluationMode;
+
+import static io.jenkins.plugins.analysis.core.views.AnalysisHistory.JobResultEvaluationMode.*;
+import static io.jenkins.plugins.analysis.core.views.AnalysisHistory.QualityGateEvaluationMode.*;
+import static io.jenkins.plugins.analysis.core.views.AnalysisHistoryTest.ExpectedResult.*;
+import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link AnalysisHistory}.

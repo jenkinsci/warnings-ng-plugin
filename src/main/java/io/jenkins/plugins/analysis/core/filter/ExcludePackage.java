@@ -2,15 +2,14 @@ package io.jenkins.plugins.analysis.core.filter;
 
 import javax.annotation.Nonnull;
 
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
-import io.jenkins.plugins.analysis.core.model.Messages;
 
+import org.kohsuke.stapler.DataBoundConstructor;
 import hudson.Extension;
-import hudson.model.Descriptor;
+import org.jenkinsci.Symbol;
+
+import io.jenkins.plugins.analysis.core.model.Messages;
 
 /**
  * Defines a filter criteria for a {@link Report}.
@@ -41,7 +40,8 @@ public class ExcludePackage extends RegexpFilter {
      *
      * @author Ullrich Hafner
      */
-    @Extension @Symbol({"excludePackage", "excludeNamespace"})
+    @Extension
+    @Symbol({"excludePackage", "excludeNamespace"})
     public static class DescriptorImpl extends RegexpFilterDescriptor {
         @Nonnull
         @Override

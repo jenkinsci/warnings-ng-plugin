@@ -17,7 +17,7 @@ public enum Palette {
     ORANGE("#FFCC80", "#FFE0B2"),
     BROWN("#BCAAA4", "#D7CCC8"),
     BLUE("#90CAF9", "#90CAF9");
-    
+
     private final String normal;
     private final String hover;
 

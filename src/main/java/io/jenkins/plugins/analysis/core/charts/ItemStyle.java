@@ -8,10 +8,11 @@ package io.jenkins.plugins.analysis.core.charts;
 public class ItemStyle {
     private final String color;
 
-    /** 
+    /**
      * Creates a new item style with the specified color.
-     * 
-     * @param color the color to use
+     *
+     * @param color
+     *         the color to use
      */
     public ItemStyle(final String color) {
         this.color = color;

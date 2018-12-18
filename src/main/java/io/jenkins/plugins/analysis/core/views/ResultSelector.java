@@ -1,10 +1,10 @@
-package io.jenkins.plugins.analysis.core.history;
+package io.jenkins.plugins.analysis.core.views;
 
 import java.util.Optional;
 
-import io.jenkins.plugins.analysis.core.views.ResultAction;
-
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.views.ResultAction;
 
 /**
  * Selects a {@link ResultAction} from all registered actions in a given job.

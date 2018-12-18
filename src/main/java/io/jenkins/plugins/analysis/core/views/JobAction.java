@@ -10,8 +10,6 @@ import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 
 import io.jenkins.plugins.analysis.core.charts.SeverityChart;
-import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
-import io.jenkins.plugins.analysis.core.history.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;

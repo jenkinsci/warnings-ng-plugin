@@ -6,10 +6,10 @@ import java.util.Optional;
 
 import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.history.AnalysisHistory;
-import io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode;
-import io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode;
-import io.jenkins.plugins.analysis.core.history.ResultSelector;
+import io.jenkins.plugins.analysis.core.views.AnalysisHistory;
+import io.jenkins.plugins.analysis.core.views.AnalysisHistory.JobResultEvaluationMode;
+import io.jenkins.plugins.analysis.core.views.AnalysisHistory.QualityGateEvaluationMode;
+import io.jenkins.plugins.analysis.core.views.ResultSelector;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
@@ -19,8 +19,8 @@ import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.views.ResultAction;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.JobResultEvaluationMode.*;
-import static io.jenkins.plugins.analysis.core.history.AnalysisHistory.QualityGateEvaluationMode.*;
+import static io.jenkins.plugins.analysis.core.views.AnalysisHistory.JobResultEvaluationMode.*;
+import static io.jenkins.plugins.analysis.core.views.AnalysisHistory.QualityGateEvaluationMode.*;
 
 import hudson.model.Job;
 import hudson.model.Run;

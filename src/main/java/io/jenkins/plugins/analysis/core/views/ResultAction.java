@@ -6,10 +6,20 @@ import java.util.Collection;
 import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kohsuke.stapler.StaplerProxy;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import jenkins.model.RunAction2;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
+
+import org.kohsuke.stapler.StaplerProxy;
+import hudson.model.Action;
+import hudson.model.HealthReport;
+import hudson.model.HealthReportingAction;
+import hudson.model.Result;
+import hudson.model.Run;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -17,14 +27,6 @@ import io.jenkins.plugins.analysis.core.model.Summary;
 import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.quality.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import jenkins.model.RunAction2;
-import jenkins.tasks.SimpleBuildStep.LastBuildAction;
-
-import hudson.model.Action;
-import hudson.model.HealthReport;
-import hudson.model.HealthReportingAction;
-import hudson.model.Result;
-import hudson.model.Run;
 
 /**
  * Controls the live cycle of the results in a job. This action persists the results of a build and displays them on the
@@ -111,10 +113,10 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return getLabelProvider().getId();
     }
 
-    @Override 
+    @Override
     @CheckForNull
     public HealthReport getBuildHealth() {
-        return new HealthReportBuilder().computeHealth(healthDescriptor, getLabelProvider(), 
+        return new HealthReportBuilder().computeHealth(healthDescriptor, getLabelProvider(),
                 getResult().getSizePerSeverity());
     }
 

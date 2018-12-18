@@ -1,8 +1,9 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
+import io.jenkins.plugins.analysis.core.model.LocalizedSeverity;
 
 /**
  * Builds the model for a graph showing all issues by severity.
@@ -44,7 +45,7 @@ public class SeverityChart {
     }
 
     private LineSeries createSeries(final Severity severity) {
-        return new LineSeries(LocalizedSeverity.getLocalizedString(severity), 
+        return new LineSeries(LocalizedSeverity.getLocalizedString(severity),
                 SeverityPalette.getColor(severity).getNormal());
     }
 }

@@ -8,8 +8,7 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.Severity;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import io.jenkins.plugins.analysis.core.views.LocalizedSeverity;
+import io.jenkins.plugins.analysis.core.model.LocalizedSeverity;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
 

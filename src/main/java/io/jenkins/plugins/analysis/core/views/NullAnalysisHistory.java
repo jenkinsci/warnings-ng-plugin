@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.history;
+package io.jenkins.plugins.analysis.core.views;
 
 import java.util.Optional;
 
@@ -15,7 +15,7 @@ public class NullAnalysisHistory extends AnalysisHistory {
      */
     public NullAnalysisHistory() {
         super(null, null);
-    }
+    } // FIXME: does not work anymore
 
     @Override
     public Optional<AnalysisResult> getResult() {
