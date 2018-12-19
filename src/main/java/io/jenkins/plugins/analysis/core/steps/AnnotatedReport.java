@@ -6,12 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
-
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 import io.jenkins.plugins.analysis.core.scm.Blames;
 
 /**
@@ -171,8 +170,8 @@ public final class AnnotatedReport implements Serializable {
 
     /**
      * Appends the specified {@link AnnotatedReport report} to this report. This report will then contain the issues of
-     * the specified reports, appended to the end and in the same order. The report will be added with the default ID
-     * of this report.
+     * the specified reports, appended to the end and in the same order. The report will be added with the default ID of
+     * this report.
      *
      * @param other
      *         the other report to append

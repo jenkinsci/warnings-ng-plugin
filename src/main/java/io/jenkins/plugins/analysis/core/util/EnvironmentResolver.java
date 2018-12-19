@@ -39,6 +39,7 @@ public class EnvironmentResolver {
      *         environment variables
      * @param nonExpandedValue
      *         the value to expand
+     *
      * @return the expanded value
      */
     public String expandEnvironmentVariables(@CheckForNull final EnvVars environment, final String nonExpandedValue) {

@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.views.ResultAction;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -96,7 +95,7 @@ class ByIdResultSelectorTest {
     @Test
     void testToString() {
         ByIdResultSelector selector = new ByIdResultSelector("1");
-        assertThat(selector.toString()).isEqualTo("io.jenkins.plugins.analysis.core.views.ResultAction with ID 1");
+        assertThat(selector.toString()).isEqualTo("io.jenkins.plugins.analysis.core.model.ResultAction with ID 1");
     }
 
     private Run<?, ?> createRunStub(final List<ResultAction> resultActions) {

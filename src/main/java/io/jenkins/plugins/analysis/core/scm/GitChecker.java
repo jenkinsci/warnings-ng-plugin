@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.scm;
 import java.io.IOException;
 
 import org.jenkinsci.plugins.gitclient.GitClient;
-
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.model.Run;
@@ -25,7 +24,6 @@ import hudson.scm.SCM;
  *
  * @author Ullrich Hafner
  */
-// Next Release
 // TODO: Whom should we blame if the whole file is marked? Or if a range is marked and multiple authors are in the range
 // TODO: Links in commits?
 // TODO: Check if we should also create new Jenkins users
@@ -57,7 +55,7 @@ public class GitChecker {
      *
      * @return {@code true} new users can be created automatically, {@code false} otherwise
      */
-    public Blamer createBlamer(final Run<?, ?> build, final SCM scm, 
+    public Blamer createBlamer(final Run<?, ?> build, final SCM scm,
             final FilePath workspace, final TaskListener listener) {
         try {
             GitSCM gitSCM = asGit(scm);
@@ -75,7 +73,7 @@ public class GitChecker {
             return new NullBlamer();
         }
     }
-    
+
     private boolean isShallow(final GitSCM git) {
         CloneOption option = git.getExtensions().get(CloneOption.class);
         if (option != null) {

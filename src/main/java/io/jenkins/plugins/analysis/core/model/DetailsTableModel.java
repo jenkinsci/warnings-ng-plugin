@@ -6,8 +6,11 @@ import java.util.List;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import static edu.hm.hafner.util.IntegerParser.*;
+
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+
+import static edu.hm.hafner.util.IntegerParser.*;
 import static j2html.TagCreator.*;
 
 /**

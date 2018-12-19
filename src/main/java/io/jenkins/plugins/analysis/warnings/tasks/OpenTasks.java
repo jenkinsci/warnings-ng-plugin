@@ -7,7 +7,7 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
+
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -20,7 +20,7 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.steps.JobConfigurationModel;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.warnings.Messages;
@@ -182,7 +182,7 @@ public class OpenTasks extends Tool {
     @Symbol("taskScanner")
     @Extension
     public static class Descriptor extends ToolDescriptor {
-        private final JobConfigurationModel model = new JobConfigurationModel();
+        private final ModelValidation model = new ModelValidation();
 
         /** Creates the descriptor instance. */
         public Descriptor() {

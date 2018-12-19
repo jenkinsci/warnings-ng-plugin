@@ -2,12 +2,15 @@ package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.util.VisibleForTesting;
-import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
-import io.jenkins.plugins.analysis.core.views.ConsoleDetail;
-import static j2html.TagCreator.*;
+
 import j2html.tags.DomContent;
 
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
+
+import static j2html.TagCreator.*;
 
 /**
  * Renders the name of an affected file of an issue. If the affected file is accessible, then a hyper link is created.
@@ -62,7 +65,7 @@ public class FileNameRenderer {
      * @return the link (if the file is accessible)
      */
     public DomContent createAffectedFileLink(final Issue issue) {
-        if (ConsoleDetail.isInConsoleLog(issue.getFileName()) || facade.canAccessAffectedFileOf(issue))  {
+        if (ConsoleLogHandler.isInConsoleLog(issue.getFileName()) || facade.canAccessAffectedFileOf(issue)) {
             return a().withHref(getSourceCodeUrl(issue)).withText(getFileNameAtLine(issue));
         }
         else {
@@ -103,7 +106,7 @@ public class FileNameRenderer {
      * @return the file name
      */
     public String getFileName(final Issue issue) {
-        if (ConsoleDetail.isInConsoleLog(issue.getFileName())) {
+        if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
             return Messages.ConsoleLog_Name();
         }
         else {

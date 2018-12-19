@@ -1,8 +1,6 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -23,6 +21,13 @@ import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+
+import hudson.FilePath;
+import hudson.model.Computer;
+import hudson.model.Run;
+import hudson.remoting.VirtualChannel;
+import jenkins.MasterToSlaveFileCallable;
+
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
@@ -32,12 +37,6 @@ import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModuleResolver;
-import jenkins.MasterToSlaveFileCallable;
-
-import hudson.FilePath;
-import hudson.model.Computer;
-import hudson.model.Run;
-import hudson.remoting.VirtualChannel;
 
 /**
  * Scans report files or the console log for issues.

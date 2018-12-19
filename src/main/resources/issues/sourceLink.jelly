@@ -3,7 +3,7 @@
 
   <st:documentation>
     Renders a file as link if the file could be read by the current user. Otherwise a plain text is rendered.
-    <st:attribute name="it" use="required" type="io.jenkins.plugins.analysis.core.views.IssuesDetail">
+    <st:attribute name="it" use="required" type="io.jenkins.plugins.analysis.core.model.IssuesDetail">
       The view that provides the logic.
     </st:attribute>
     <st:attribute name="issue" use="required" type="edu.hm.hafner.analysis.Issue">

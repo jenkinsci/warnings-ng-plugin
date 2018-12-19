@@ -5,6 +5,7 @@ import java.util.List;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.scm.BlameRequest;
 import io.jenkins.plugins.analysis.core.scm.Blames;
@@ -27,7 +28,7 @@ class ReferenceDetailsModel extends DetailsTableModel {
     ReferenceDetailsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
             final DescriptionProvider descriptionProvider, final Blames blames) {
         super(ageBuilder, fileNameRenderer, descriptionProvider);
-        
+
         this.blames = blames;
     }
 

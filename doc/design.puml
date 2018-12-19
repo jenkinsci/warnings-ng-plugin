@@ -4,8 +4,20 @@ component "charts"
 component "filters"
 component "model"
 component "views"
+component "quality"
+component "restapi"
+
+component "scm"
+component "tokens"
 
 charts ..> model
 filters ..> model
 views ..> model
+restapi ..> model
+
+model ..> scm
+model ..> quality
+
+tokens ..> views
+
 @enduml

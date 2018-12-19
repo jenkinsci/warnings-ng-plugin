@@ -22,7 +22,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import io.jenkins.plugins.analysis.core.model.LocalizedSeverity;
+import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
 /**
  * Scans a given input stream for open tasks.

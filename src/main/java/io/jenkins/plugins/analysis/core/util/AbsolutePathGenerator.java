@@ -15,8 +15,6 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
-import io.jenkins.plugins.analysis.core.views.ConsoleDetail;
-
 /**
  * Resolves absolute paths of the affected files of a set of issues.
  *
@@ -69,7 +67,7 @@ public class AbsolutePathGenerator {
     }
 
     private boolean isInterestingFileName(final String fileName) {
-        return !"-".equals(fileName) && !ConsoleDetail.isInConsoleLog(fileName);
+        return !"-".equals(fileName) && !ConsoleLogHandler.isInConsoleLog(fileName);
     }
 
     private Map<String, String> resolveAbsoluteNames(final Set<String> affectedFiles, final Path workspace,

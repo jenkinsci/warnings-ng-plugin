@@ -4,19 +4,20 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundSetter;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
-import jenkins.security.MasterToSlaveCallable;
 
+import org.kohsuke.stapler.DataBoundSetter;
+import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.Run;
+import jenkins.security.MasterToSlaveCallable;
+
+import io.jenkins.plugins.analysis.core.util.LogHandler;
 
 /**
  * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
@@ -27,7 +28,7 @@ import hudson.model.Run;
  */
 public abstract class Tool extends AbstractDescribableImpl<Tool> implements Serializable {
     private static final long serialVersionUID = 3305739700153168629L;
-    
+
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
 
@@ -67,7 +68,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      * @param name
      *         the name of the results
      *
-     * @see ToolDescriptor#getName() 
+     * @see ToolDescriptor#getName()
      */
     @DataBoundSetter
     public void setName(final String name) {
@@ -78,11 +79,11 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         return name;
     }
 
-    /** 
+    /**
      * Returns the actual name of the tool. If no user defined name is given, then the default name is returned.
      *
      * @return the name
-     * @see #setName(String) 
+     * @see #setName(String)
      * @see ToolDescriptor#getName()
      */
     public String getActualName() {
@@ -117,22 +118,23 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
     }
 
     /**
-     * Scans the results of a build for issues. This method is invoked on Jenkins master. I.e., if a tool
-     * wants to process some build results it is required to run a {@link MasterToSlaveCallable}.
+     * Scans the results of a build for issues. This method is invoked on Jenkins master. I.e., if a tool wants to
+     * process some build results it is required to run a {@link MasterToSlaveCallable}.
      *
      * @param run
-     *         the build 
+     *         the build
      * @param workspace
      *         the workspace of the build
      * @param sourceCodeEncoding
      *         the encoding to use to read source files
      * @param logger
      *         the logger
+     *
+     * @return the created report
      * @throws ParsingException
      *         Signals that during parsing a non recoverable error has been occurred
      * @throws ParsingCanceledException
      *         Signals that the parsing has been aborted by the user
-     * @return the created report
      */
     public abstract Report scan(Run<?, ?> run, FilePath workspace, Charset sourceCodeEncoding, LogHandler logger)
             throws ParsingException, ParsingCanceledException;
@@ -160,7 +162,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
         /**
          * Returns the default name of this tool.
-         * 
+         *
          * @return the name
          */
         public String getName() {

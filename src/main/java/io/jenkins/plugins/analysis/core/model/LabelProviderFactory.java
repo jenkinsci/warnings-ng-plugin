@@ -1,16 +1,17 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import javax.annotation.CheckForNull;
 import java.util.List;
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
-import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
 
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
+
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
 
 /**
  * Creates {@link StaticAnalysisLabelProvider} instances based on a provided ID and name.

@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
+import edu.hm.hafner.analysis.Issue;
+
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
-
-import edu.hm.hafner.analysis.Issue;
 
 /**
  * Remote API for an {@link Issue}. Simple Java Bean that exposes several methods of an {@link Issue} instance.

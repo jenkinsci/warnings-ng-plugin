@@ -17,10 +17,10 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
@@ -229,7 +229,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     public void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
         Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.FAILURE);
         assertThatLogContains(build, "ID checkstyle is already used by another action: "
-                + "io.jenkins.plugins.analysis.core.views.ResultAction for CheckStyle");
+                + "io.jenkins.plugins.analysis.core.model.ResultAction for CheckStyle");
 
         AnalysisResult result = getAnalysisResult(build);
         assertThat(result).hasId("checkstyle");

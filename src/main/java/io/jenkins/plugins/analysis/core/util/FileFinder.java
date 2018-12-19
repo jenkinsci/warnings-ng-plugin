@@ -10,9 +10,8 @@ import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.selectors.TypeSelector;
 import org.apache.tools.ant.types.selectors.TypeSelector.FileType;
 
-import jenkins.MasterToSlaveFileCallable;
-
 import hudson.remoting.VirtualChannel;
+import jenkins.MasterToSlaveFileCallable;
 
 /**
  * Scans the workspace and finds all files matching a given ant pattern.

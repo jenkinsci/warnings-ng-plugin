@@ -3,10 +3,12 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.util.VisibleForTesting;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
-import static j2html.TagCreator.*;
+
 import j2html.tags.ContainerTag;
+
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+
+import static j2html.TagCreator.*;
 
 /**
  * Summary message of a static analysis run. This message is shown as part of the 'summary.jelly' information of the
@@ -55,7 +57,8 @@ public class Summary {
      * @return the summary
      */
     public String create() {
-        return div(labelProvider.getTitle(analysisResult, !analysisResult.getErrorMessages().isEmpty()), createDescription())
+        return div(labelProvider.getTitle(analysisResult, !analysisResult.getErrorMessages().isEmpty()),
+                createDescription())
                 .withId(labelProvider.getId() + "-summary")
                 .renderFormatted();
     }

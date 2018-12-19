@@ -3,9 +3,6 @@ package io.jenkins.plugins.analysis.core.scm;
 import java.util.Collection;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-
-import jenkins.model.Jenkins;
-
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -14,6 +11,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.scm.NullSCM;
 import hudson.scm.SCM;
+import jenkins.model.Jenkins;
 
 /**
  * Selects a matching SCM blamer for the specified job. Currently, only Git is supported.
@@ -42,9 +40,9 @@ public final class BlameFactory {
                 return gitChecker.createBlamer(run, scm, workspace, listener);
             }
         }
-        
+
         listener.getLogger().println("Skipping issues blame since Git is the only supported SCM up to now.");
-        
+
         return new NullBlamer();
     }
 

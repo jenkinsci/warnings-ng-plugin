@@ -7,25 +7,17 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
+
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
-import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
-import io.jenkins.plugins.analysis.core.scm.BlameFactory;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
-import io.jenkins.plugins.analysis.core.scm.NullBlamer;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
-import jenkins.model.Jenkins;
-
 import hudson.DescriptorExtensionList;
 import hudson.EnvVars;
 import hudson.Extension;
@@ -34,6 +26,16 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
+import jenkins.model.Jenkins;
+
+import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
+import io.jenkins.plugins.analysis.core.scm.BlameFactory;
+import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.NullBlamer;
+import io.jenkins.plugins.analysis.core.util.LogHandler;
 
 /**
  * Scan files or the console log for issues.
@@ -41,7 +43,7 @@ import hudson.util.FormValidation;
 @SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessivePublicCount"})
 public class ScanForIssuesStep extends Step {
     private Tool tool;
-    
+
     private String sourceCodeEncoding = StringUtils.EMPTY;
     private boolean isBlameDisabled;
 
@@ -128,7 +130,7 @@ public class ScanForIssuesStep extends Step {
         private final String sourceCodeEncoding;
         private final boolean isBlameDisabled;
         private final List<RegexpFilter> filters;
-        
+
         /**
          * Creates a new instance of the step execution object.
          *
@@ -151,12 +153,12 @@ public class ScanForIssuesStep extends Step {
             FilePath workspace = getWorkspace();
             TaskListener listener = getTaskListener();
 
-            IssuesScanner issuesScanner = new IssuesScanner(tool, filters,  
+            IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()),
                     createBlamer(workspace, listener));
-            
+
             return issuesScanner.scan(getRun(), workspace, new LogHandler(listener, tool.getActualName()));
-        } 
+        }
 
         private Blamer createBlamer(final FilePath workspace, final TaskListener listener)
                 throws IOException, InterruptedException {
@@ -172,7 +174,7 @@ public class ScanForIssuesStep extends Step {
      */
     @Extension
     public static class Descriptor extends StepDescriptor {
-        private final JobConfigurationModel model = new JobConfigurationModel();
+        private final ModelValidation model = new ModelValidation();
 
         @Override
         public Set<Class<?>> getRequiredContext() {

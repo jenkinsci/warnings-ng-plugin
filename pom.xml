@@ -456,10 +456,9 @@
         </executions>
         <configuration>
           <packages>
-            <package>io.jenkins.plugins.analysis.core.history</package>
             <package>io.jenkins.plugins.analysis.core.scm</package>
-            <package>io.jenkins.plugins.analysis.core.quality</package>
             <package>io.jenkins.plugins.analysis.core.model</package>
+            <package>io.jenkins.plugins.analysis.core.util</package>
           </packages>
           <entryPointClassPackage>io.jenkins.plugins.analysis.core.assertions</entryPointClassPackage>
           <excludes>

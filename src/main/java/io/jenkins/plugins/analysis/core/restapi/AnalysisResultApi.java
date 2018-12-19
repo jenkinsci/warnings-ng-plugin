@@ -2,24 +2,24 @@ package io.jenkins.plugins.analysis.core.restapi;
 
 import java.util.List;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
-
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
-
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+
 /**
- * Remote API for the {@link AnalysisResult}. Simple Java Bean that exposes several methods of an {@link AnalysisResult}
- * instance.
+ * Remote API for the {@link StaticAnalysisRun}. Simple Java Bean that exposes several methods of an {@link
+ * StaticAnalysisRun} instance.
  *
  * @author Ullrich Hafner
  */
 @ExportedBean
 public class AnalysisResultApi {
-    private final AnalysisResult result;
+    private final StaticAnalysisRun result;
 
     /**
      * Creates a new {@link AnalysisResultApi}.
@@ -27,7 +27,7 @@ public class AnalysisResultApi {
      * @param result
      *         the result to expose the properties from
      */
-    public AnalysisResultApi(final AnalysisResult result) {
+    public AnalysisResultApi(final StaticAnalysisRun result) {
         this.result = result;
     }
 
@@ -61,7 +61,8 @@ public class AnalysisResultApi {
         return result.getQualityGateStatus();
     }
 
-    @Exported @CheckForNull
+    @Exported
+    @CheckForNull
     public Run<?, ?> getReferenceBuild() {
         return result.getReferenceBuild().orElse(null);
     }

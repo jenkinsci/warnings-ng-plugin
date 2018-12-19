@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.steps.JobConfigurationModel;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
@@ -102,7 +102,7 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     }
 
     private Charset getCharset() {
-        return new JobConfigurationModel().getCharset(sourceCodeEncoding);
+        return new ModelValidation().getCharset(sourceCodeEncoding);
     }
 
     private TaskScanner createTaskScanner() {

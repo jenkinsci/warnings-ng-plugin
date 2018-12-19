@@ -1,24 +1,27 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import javax.annotation.CheckForNull;
 import java.util.Locale;
 import java.util.function.Function;
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.jvnet.localizer.Localizable;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.util.VisibleForTesting;
-import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.scm.Blames;
-import static j2html.TagCreator.*;
+
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
 import j2html.tags.UnescapedText;
 
+import org.jvnet.localizer.Localizable;
 import hudson.model.BallColor;
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+
+import static j2html.TagCreator.*;
 
 /**
  * A generic label provider for static analysis results. Creates pre-defined labels that are parameterized with a string

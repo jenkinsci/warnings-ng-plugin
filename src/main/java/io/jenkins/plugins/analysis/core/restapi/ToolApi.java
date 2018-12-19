@@ -3,12 +3,9 @@ package io.jenkins.plugins.analysis.core.restapi;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import io.jenkins.plugins.analysis.core.model.Tool;
-import net.sf.json.JSONObject;
-
 /**
- * Remote API model for a {@link Tool static analysis tool} that has been invoked in a build. Simple Java Bean that
- * exposes several methods of a {@link Tool} instance.
+ * Remote API model for a static analysis tool that has been invoked in a build. Simple Java Bean that
+ * exposes several methods of a tool instance.
  *
  * @author Ullrich Hafner
  */

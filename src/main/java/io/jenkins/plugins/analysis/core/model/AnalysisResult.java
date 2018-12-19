@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.model; // NOPMD
 
-import javax.annotation.CheckForNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -28,15 +28,17 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.scm.Blames;
 
 import hudson.XmlFile;
 import hudson.model.Run;
 import hudson.util.XStream2;
+
+import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and
@@ -46,7 +48,7 @@ import hudson.util.XStream2;
  */
 @SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass"})
-public class AnalysisResult implements Serializable {
+public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final long serialVersionUID = 1110545450292087475L;
 
     private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
@@ -202,7 +204,8 @@ public class AnalysisResult implements Serializable {
      */
     @VisibleForTesting
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin, final boolean canSerialize) {
+            final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin,
+            final boolean canSerialize) {
         this.owner = owner;
 
         Report allIssues = report.getAllIssues();
@@ -316,11 +319,7 @@ public class AnalysisResult implements Serializable {
         return id;
     }
 
-    /**
-     * Returns the run that created this static analysis result.
-     *
-     * @return the run
-     */
+    @Override
     public Run<?, ?> getOwner() {
         return owner;
     }
@@ -336,20 +335,12 @@ public class AnalysisResult implements Serializable {
         lock = new ReentrantLock();
     }
 
-    /**
-     * Returns the error messages of the analysis run.
-     *
-     * @return the error messages
-     */
+    @Override
     public ImmutableList<String> getErrorMessages() {
         return Lists.immutable.withAll(errors);
     }
 
-    /**
-     * Returns the info messages of the analysis run.
-     *
-     * @return the info messages
-     */
+    @Override
     public ImmutableList<String> getInfoMessages() {
         return Lists.immutable.withAll(messages);
     }
@@ -484,20 +475,12 @@ public class AnalysisResult implements Serializable {
         return report;
     }
 
-    /**
-     * Returns the build number since the associated job has no issues.
-     *
-     * @return the build number since there are no issues, or -1 if issues have been reported
-     */
+    @Override
     public int getNoIssuesSinceBuild() {
         return noIssuesSinceBuild;
     }
 
-    /**
-     * Returns the build number since the associated job has a successful static analysis result.
-     *
-     * @return the build number since the static analysis result is successful, or -1 if the result is not successful
-     */
+    @Override
     public int getSuccessfulSinceBuild() {
         return successfulSinceBuild;
     }
@@ -512,11 +495,7 @@ public class AnalysisResult implements Serializable {
         return qualityGateStatus.isSuccessful();
     }
 
-    /**
-     * Returns the {@link QualityGateStatus} of the {@link QualityGate} evaluation of the static analysis run.
-     *
-     * @return the quality gate status
-     */
+    @Override
     public QualityGateStatus getQualityGateStatus() {
         return qualityGateStatus;
     }
@@ -526,11 +505,7 @@ public class AnalysisResult implements Serializable {
         return getId() + " : " + getTotalSize() + " issues";
     }
 
-    /**
-     * Returns the reference static analysis run that has been used to compute the new issues.
-     *
-     * @return the reference build
-     */
+    @Override
     public Optional<Run<?, ?>> getReferenceBuild() {
         if (NO_REFERENCE.equals(referenceBuildId)) {
             return Optional.empty();
@@ -566,32 +541,17 @@ public class AnalysisResult implements Serializable {
         return Maps.immutable.ofAll(sizePerSeverity).toMap();
     }
 
-    /**
-     * Returns the associated build that this run was part of.
-     *
-     * @return the associated build
-     */
+    @Override
     public AnalysisBuild getBuild() {
         return new RunAdapter(owner);
     }
 
-    /**
-     * Returns the total number of issues in this analysis run.
-     *
-     * @return total number of issues
-     */
+    @Override
     public int getTotalSize() {
         return size;
     }
 
-    /**
-     * Returns the total number of issues in this analysis run that have the specified {@link Severity}.
-     *
-     * @param severity
-     *         the severity of the issues to match
-     *
-     * @return total number of issues
-     */
+    @Override
     public int getTotalSizeOf(final Severity severity) {
         return sizePerSeverity.getOrDefault(severity, 0);
     }
@@ -632,23 +592,12 @@ public class AnalysisResult implements Serializable {
         return getTotalSizeOf(Severity.WARNING_LOW);
     }
 
-    /**
-     * Returns the number of new issues in this analysis run.
-     *
-     * @return number of new issues
-     */
+    @Override
     public int getNewSize() {
         return newSize;
     }
 
-    /**
-     * Returns the new number of issues in this analysis run that have the specified {@link Severity}.
-     *
-     * @param severity
-     *         the severity of the issues to match
-     *
-     * @return total number of issues
-     */
+    @Override
     public int getNewSizeOf(final Severity severity) {
         return newSizePerSeverity.getOrDefault(severity, 0);
     }
@@ -689,11 +638,7 @@ public class AnalysisResult implements Serializable {
         return getNewSizeOf(Severity.WARNING_LOW);
     }
 
-    /**
-     * Returns the number of fixed issues in this analysis run.
-     *
-     * @return number of fixed issues
-     */
+    @Override
     public int getFixedSize() {
         return fixedSize;
     }

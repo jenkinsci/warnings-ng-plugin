@@ -4,16 +4,17 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import io.jenkins.plugins.analysis.core.views.AnalysisHistory;
 
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisSummary;
 
 /**
  * Provides the delta between the issues reports of two different builds.
  *
  * @author Ullrich Hafner
  */
-public class DeltaReport {
+public class DeltaReport implements StaticAnalysisSummary {
     private static final Report EMPTY_REPORT = new Report();
 
     private final Report allIssues;
@@ -58,7 +59,7 @@ public class DeltaReport {
         }
     }
 
-    public boolean  isEmpty() {
+    public boolean isEmpty() {
         return allIssues.isEmpty();
     }
 

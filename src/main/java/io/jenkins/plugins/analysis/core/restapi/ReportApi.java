@@ -3,10 +3,10 @@ package io.jenkins.plugins.analysis.core.restapi;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.hm.hafner.analysis.Report;
+
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
-
-import edu.hm.hafner.analysis.Report;
 
 /**
  * Remote API for a {@link Report}. Simple Java Bean that exposes several methods of a {@link Report} instance.

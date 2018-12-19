@@ -29,8 +29,10 @@
           <package name="" withSubpackages="true" static="false" />
           <emptyLine />
           <package name="org.kohsuke" withSubpackages="true" static="false" />
-          <package name="hudson" withSubpackages="true" static="false" />
           <package name="org.jenkinsci" withSubpackages="true" static="false" />
+          <package name="org.jvnet.localizer" withSubpackages="true" static="false" />
+          <package name="hudson" withSubpackages="true" static="false" />
+          <package name="jenkins" withSubpackages="true" static="false" />
           <emptyLine />
           <package name="io" withSubpackages="true" static="false" />
           <emptyLine />

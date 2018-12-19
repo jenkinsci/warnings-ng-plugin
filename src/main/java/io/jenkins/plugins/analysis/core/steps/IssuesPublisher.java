@@ -5,29 +5,32 @@ import java.util.Map;
 import java.util.Optional;
 
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.views.AnalysisHistory;
-import io.jenkins.plugins.analysis.core.views.AnalysisHistory.JobResultEvaluationMode;
-import io.jenkins.plugins.analysis.core.views.AnalysisHistory.QualityGateEvaluationMode;
-import io.jenkins.plugins.analysis.core.views.ResultSelector;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
-import io.jenkins.plugins.analysis.core.model.DeltaReport;
-import io.jenkins.plugins.analysis.core.quality.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.quality.QualityGate;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.scm.Blames;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
-import static io.jenkins.plugins.analysis.core.views.AnalysisHistory.JobResultEvaluationMode.*;
-import static io.jenkins.plugins.analysis.core.views.AnalysisHistory.QualityGateEvaluationMode.*;
 
 import hudson.model.Job;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.model.AggregationAction;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.DeltaReport;
+import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
+import io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode;
+import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode;
+import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.model.ResultSelector;
+
+import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
+import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
+
 /**
- * Publishes issues: Stores the created issues in an {@link AnalysisResult}. The result is attached to the
- * {@link Run} by registering a {@link ResultAction}.
+ * Publishes issues: Stores the created issues in an {@link AnalysisResult}. The result is attached to the {@link Run}
+ * by registering a {@link ResultAction}.
  *
  * @author Ullrich Hafner
  */
@@ -45,7 +48,7 @@ class IssuesPublisher {
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
-                    final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
+            final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger) {
         this.report = report;
@@ -74,7 +77,8 @@ class IssuesPublisher {
         logger.log("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
 
         ResultSelector selector = ensureThatIdIsUnique();
-        AnalysisResult result = createAnalysisResult(report.getReport(), selector, report.getBlames(), report.getSizeOfOrigin());
+        AnalysisResult result = createAnalysisResult(report.getReport(), selector, report.getBlames(),
+                report.getSizeOfOrigin());
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                 result.getTotalSize(), result.getNewSize(), result.getFixedSize());
 
@@ -104,8 +108,10 @@ class IssuesPublisher {
         reportHealth(filtered);
         logger.log(filtered);
         return new AnalysisHistory(run, selector).getResult()
-                .map(previous -> new AnalysisResult(run, getId(), deltaReport, blames, qualityGateStatus, sizeOfOrigin, previous))
-                .orElseGet(() -> new AnalysisResult(run, getId(), deltaReport, blames, qualityGateStatus, sizeOfOrigin));
+                .map(previous -> new AnalysisResult(run, getId(), deltaReport, blames, qualityGateStatus, sizeOfOrigin,
+                        previous))
+                .orElseGet(
+                        () -> new AnalysisResult(run, getId(), deltaReport, blames, qualityGateStatus, sizeOfOrigin));
     }
 
     private void reportHealth(final Report filtered) {

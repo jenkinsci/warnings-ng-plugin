@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.core.scm;
 
-import javax.annotation.CheckForNull;
 import java.io.IOException;
 import java.nio.file.Paths;
+import javax.annotation.CheckForNull;
 
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.blame.BlameResult;
@@ -12,14 +11,14 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.jenkinsci.plugins.gitclient.GitClient;
-import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import org.jenkinsci.plugins.gitclient.GitClient;
+import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 import hudson.FilePath;
 import hudson.plugins.git.GitException;
 import hudson.remoting.VirtualChannel;
@@ -32,7 +31,7 @@ import hudson.remoting.VirtualChannel;
  * @author Ullrich Hafner
  * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
  */
-@SuppressFBWarnings(value = "SE", justification = "GitClient implementation is Serializable")    
+@SuppressFBWarnings(value = "SE", justification = "GitClient implementation is Serializable")
 public class GitBlamer implements Blamer {
     private static final long serialVersionUID = -619059996626444900L;
 
@@ -144,7 +143,7 @@ public class GitBlamer implements Blamer {
                     }
                 }
             }
-            
+
             log.logSummary();
             if (blames.isEmpty()) {
                 report.logInfo("Created no blame requests - Git blame will be skipped");

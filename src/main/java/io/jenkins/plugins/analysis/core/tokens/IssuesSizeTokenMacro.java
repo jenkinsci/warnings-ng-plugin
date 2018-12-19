@@ -2,19 +2,18 @@ package io.jenkins.plugins.analysis.core.tokens;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+
 import org.jenkinsci.plugins.tokenmacro.DataBoundTokenMacro;
-
-import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
-
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+
+import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 
 /**
  * Provides a token that evaluates to the number of issues.
@@ -36,7 +35,8 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
     }
 
     @Override
-    public String evaluate(final AbstractBuild<?, ?> abstractBuild, final TaskListener taskListener, final String macroName) {
+    public String evaluate(final AbstractBuild<?, ?> abstractBuild, final TaskListener taskListener,
+            final String macroName) {
         return extractIssuesSize(abstractBuild);
     }
 
@@ -60,7 +60,9 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
             return run.getActions(ResultAction.class);
         }
         else {
-            return new ByIdResultSelector(tool).get(run).map(Collections::singletonList).orElse(Collections.emptyList());
+            return new ByIdResultSelector(tool).get(run)
+                    .map(Collections::singletonList)
+                    .orElse(Collections.emptyList());
         }
     }
 }

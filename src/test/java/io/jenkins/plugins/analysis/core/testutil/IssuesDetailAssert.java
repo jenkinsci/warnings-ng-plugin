@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.assertj.core.api.AbstractAssert;
 
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.views.IssuesDetail;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 
 /**
  * Assertions for {@link IssuesDetail}.

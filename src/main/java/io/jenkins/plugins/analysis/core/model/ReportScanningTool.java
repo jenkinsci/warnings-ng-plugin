@@ -1,13 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
@@ -15,17 +11,21 @@ import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
-import io.jenkins.plugins.analysis.core.steps.JobConfigurationModel;
-import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
-import io.jenkins.plugins.analysis.core.util.FilesScanner;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
 
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
+
+import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
+import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
+import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
 
 /**
  * Describes a static analysis tool that reports issues by scanning a report file. Report files are identified using an
@@ -111,7 +111,7 @@ public abstract class ReportScanningTool extends Tool {
     private String expandPattern(final Run<?, ?> run, final String actualPattern) {
         try {
             EnvironmentResolver environmentResolver = new EnvironmentResolver();
-    
+
             return environmentResolver.expandEnvironmentVariables(
                     run.getEnvironment(TaskListener.NULL), actualPattern);
         }
@@ -123,7 +123,7 @@ public abstract class ReportScanningTool extends Tool {
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
             Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding));
-            
+
             logger.log(report);
 
             return report;
@@ -173,7 +173,7 @@ public abstract class ReportScanningTool extends Tool {
 
     /** Descriptor for {@link ReportScanningTool}. **/
     public abstract static class ReportScanningToolDescriptor extends ToolDescriptor {
-        private final JobConfigurationModel model = new JobConfigurationModel();
+        private final ModelValidation model = new ModelValidation();
 
         /**
          * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
@@ -220,7 +220,7 @@ public abstract class ReportScanningTool extends Tool {
                 @QueryParameter final String pattern) {
             return model.doCheckPattern(project, pattern);
         }
-        
+
         /**
          * Returns the default filename pattern for this tool. Override if your typically works on a specific file.
          * Note: if you provide a default pattern then it is not possible to scan Jenkins console log of a build.

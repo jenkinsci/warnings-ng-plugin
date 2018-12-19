@@ -7,9 +7,9 @@ import org.junit.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
-import io.jenkins.plugins.analysis.core.views.AnalysisHistory;
+import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import io.jenkins.plugins.analysis.core.quality.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 
 import hudson.model.FreeStyleProject;

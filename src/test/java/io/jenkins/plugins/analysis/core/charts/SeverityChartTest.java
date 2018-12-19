@@ -6,9 +6,11 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.quality.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.model.LocalizedSeverity;
+
+import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
+import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
 
@@ -22,7 +24,7 @@ class SeverityChartTest {
     void shouldCreatePriorityChart() {
         SeverityChart chart = new SeverityChart();
 
-        List<AnalysisResult> results = new ArrayList<>();
+        List<StaticAnalysisRun> results = new ArrayList<>();
         results.add(createResult(1, 2, 3, "#1"));
         results.add(createResult(2, 4, 6, "#2"));
         
@@ -51,12 +53,12 @@ class SeverityChartTest {
                 .contains(valueSecondBuild);
     }
 
-    private AnalysisResult createResult(final int high, final int normal, final int low, final String label) {
-        AnalysisResult buildResult = mock(AnalysisResult.class);
+    private StaticAnalysisRun createResult(final int high, final int normal, final int low, final String label) {
+        StaticAnalysisRun buildResult = mock(StaticAnalysisRun.class);
 
-        when(buildResult.getTotalHighPrioritySize()).thenReturn(high);
-        when(buildResult.getTotalNormalPrioritySize()).thenReturn(normal);
-        when(buildResult.getTotalLowPrioritySize()).thenReturn(low);
+        when(buildResult.getTotalSizeOf(Severity.WARNING_HIGH)).thenReturn(high);
+        when(buildResult.getTotalSizeOf(Severity.WARNING_NORMAL)).thenReturn(normal);
+        when(buildResult.getTotalSizeOf(Severity.WARNING_LOW)).thenReturn(low);
 
         AnalysisBuild build = mock(AnalysisBuild.class);
         when(build.getDisplayName()).thenReturn(label);

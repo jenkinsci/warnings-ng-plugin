@@ -3,9 +3,6 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.List;
 import java.util.Optional;
 
-import io.jenkins.plugins.analysis.core.views.ResultSelector;
-import io.jenkins.plugins.analysis.core.views.ResultAction;
-
 import hudson.model.Run;
 
 /**

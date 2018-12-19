@@ -13,6 +13,8 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
+
 /**
  * Base class for static analysis step executions. Provides several helper methods to obtain the defined {@link
  * StepContext context} elements.
@@ -129,7 +131,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
      * @return the default charset for the specified encoding string
      */
     protected Charset getCharset(final String charset) {
-        return new JobConfigurationModel().getCharset(charset);
+        return new ModelValidation().getCharset(charset);
     }
 
 }
