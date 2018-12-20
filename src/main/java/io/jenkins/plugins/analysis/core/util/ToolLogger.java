@@ -10,11 +10,11 @@ import com.google.errorprone.annotations.FormatMethod;
  *
  * @author Ullrich Hafner
  */
-public class ToolLogger {
+class ToolLogger {
     private final String toolName;
     private final PrintStream delegate;
 
-    public ToolLogger(final PrintStream logger, final String toolName) {
+    ToolLogger(final PrintStream logger, final String toolName) {
         if (toolName.contains("[")) {
             this.toolName = toolName + " ";
         }
@@ -35,7 +35,7 @@ public class ToolLogger {
      *         zero.
      */
     @FormatMethod
-    public void log(final String format, final Object... args) {
+    void log(final String format, final Object... args) {
         print(String.format(format, args));
     }
 
@@ -45,7 +45,7 @@ public class ToolLogger {
      * @param lines
      *         the messages to log
      */
-    public void logEachLine(final Collection<String> lines) {
+    void logEachLine(final Collection<String> lines) {
         lines.forEach(this::print);
     }
 

@@ -5,7 +5,7 @@ package io.jenkins.plugins.analysis.core.util;
  *
  * @author Ullrich Hafner
  */
-public class ConsoleLogHandler {
+public final class ConsoleLogHandler {
     /** ID that indicates that an issue references a line in the console log of a build. */
     public static final String JENKINS_CONSOLE_LOG_FILE_NAME_ID = "jenkins-console.log";
 
@@ -20,5 +20,9 @@ public class ConsoleLogHandler {
      */
     public static boolean isInConsoleLog(final String fileName) {
         return JENKINS_CONSOLE_LOG_FILE_NAME_ID.equals(fileName);
+    }
+
+    private ConsoleLogHandler() {
+        // prevents instantiation
     }
 }

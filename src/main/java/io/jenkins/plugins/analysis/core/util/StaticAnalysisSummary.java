@@ -2,6 +2,9 @@ package io.jenkins.plugins.analysis.core.util;
 
 import edu.hm.hafner.analysis.Severity;
 
+/**
+ * Provides a summary of a static analysis run. I.e., the number of issues (totals and new issues).
+ */
 public interface StaticAnalysisSummary {
     /**
      * Returns the total number of issues in this analysis run.

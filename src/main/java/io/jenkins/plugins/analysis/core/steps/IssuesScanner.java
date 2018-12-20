@@ -18,6 +18,7 @@ import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.ModuleDetector;
 import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
+import edu.hm.hafner.analysis.ModuleResolver;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
@@ -36,7 +37,6 @@ import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.util.ModuleResolver;
 
 /**
  * Scans report files or the console log for issues.

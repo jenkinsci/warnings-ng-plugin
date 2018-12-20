@@ -6,6 +6,9 @@ import org.eclipse.collections.api.list.ImmutableList;
 
 import hudson.model.Run;
 
+/**
+ * Provides detailed information for the results of a static analysis run.
+ */
 public interface StaticAnalysisRun extends StaticAnalysisSummary {
     /**
      * Returns the run that created this static analysis result.

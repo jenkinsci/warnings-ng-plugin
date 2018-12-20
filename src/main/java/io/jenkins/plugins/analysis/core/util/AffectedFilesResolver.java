@@ -55,7 +55,7 @@ public class AffectedFilesResolver {
      * @throws IOException
      *         if the file could not be found
      */
-    public static InputStream asStream(final Run<?, ?> build, final String fileName) throws IOException {
+    static InputStream asStream(final Run<?, ?> build, final String fileName) throws IOException {
         return Files.newInputStream(getFile(build, fileName));
     }
 

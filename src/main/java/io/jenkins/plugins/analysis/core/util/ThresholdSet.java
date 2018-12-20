@@ -13,7 +13,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.FormattedLogger;
  *
  * @author Michael Schmid
  */
-public class ThresholdSet implements Serializable {
+class ThresholdSet implements Serializable {
     private static final long serialVersionUID = -853511213890047492L;
 
     private final int totalThreshold;
@@ -33,7 +33,7 @@ public class ThresholdSet implements Serializable {
      * @param lowThreshold
      *         threshold for the number of issues of {@link Severity#WARNING_LOW}
      */
-    public ThresholdSet(final int totalThreshold, final int highThreshold, final int normalThreshold,
+    ThresholdSet(final int totalThreshold, final int highThreshold, final int normalThreshold,
             final int lowThreshold) {
         this.totalThreshold = totalThreshold;
         this.highThreshold = highThreshold;
@@ -166,7 +166,7 @@ public class ThresholdSet implements Serializable {
     /**
      * Creates {@link ThresholdSet} instances using the builder pattern.
      */
-    public static class ThresholdSetBuilder {
+    static class ThresholdSetBuilder {
         private int totalThreshold = 0;
         private int highThreshold = 0;
         private int normalThreshold = 0;
@@ -189,7 +189,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setTotalThreshold(final int totalThreshold) {
+        ThresholdSetBuilder setTotalThreshold(final int totalThreshold) {
             this.totalThreshold = totalThreshold;
             return this;
         }
@@ -202,7 +202,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setTotalThreshold(final String totalThreshold) {
+        ThresholdSetBuilder setTotalThreshold(final String totalThreshold) {
             return setTotalThreshold(asInt(totalThreshold));
         }
 
@@ -214,7 +214,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setHighThreshold(final int highThreshold) {
+        ThresholdSetBuilder setHighThreshold(final int highThreshold) {
             this.highThreshold = highThreshold;
             return this;
         }
@@ -227,7 +227,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setHighThreshold(final String highThreshold) {
+        ThresholdSetBuilder setHighThreshold(final String highThreshold) {
             return setHighThreshold(asInt(highThreshold));
         }
 
@@ -239,7 +239,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setNormalThreshold(final int normalThreshold) {
+        ThresholdSetBuilder setNormalThreshold(final int normalThreshold) {
             this.normalThreshold = normalThreshold;
             return this;
         }
@@ -252,7 +252,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setNormalThreshold(final String normalThreshold) {
+        ThresholdSetBuilder setNormalThreshold(final String normalThreshold) {
             return setNormalThreshold(asInt(normalThreshold));
         }
 
@@ -264,7 +264,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setLowThreshold(final int lowThreshold) {
+        ThresholdSetBuilder setLowThreshold(final int lowThreshold) {
             this.lowThreshold = lowThreshold;
             return this;
         }
@@ -277,7 +277,7 @@ public class ThresholdSet implements Serializable {
          *
          * @return this
          */
-        public ThresholdSetBuilder setLowThreshold(final String lowThreshold) {
+        ThresholdSetBuilder setLowThreshold(final String lowThreshold) {
             return setLowThreshold(asInt(lowThreshold));
         }
 

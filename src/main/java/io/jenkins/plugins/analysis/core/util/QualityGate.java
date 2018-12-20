@@ -58,7 +58,7 @@ public class QualityGate implements Serializable {
         newUnstableThreshold = builder.build();
     }
 
-    QualityGate(final ThresholdSet totalFailedThreshold, final ThresholdSet totalUnstableThreshold,
+    private QualityGate(final ThresholdSet totalFailedThreshold, final ThresholdSet totalUnstableThreshold,
             final ThresholdSet newFailedThreshold, final ThresholdSet newUnstableThreshold) {
         this.totalFailedThreshold = totalFailedThreshold;
         this.totalUnstableThreshold = totalUnstableThreshold;
@@ -166,7 +166,7 @@ public class QualityGate implements Serializable {
     /**
      * Creates {@link QualityGate} instances using the builder pattern.
      */
-    public static class QualityGateBuilder {
+    static class QualityGateBuilder {
         private ThresholdSet totalUnstableThreshold = new ThresholdSet(0, 0, 0, 0);
         private ThresholdSet totalFailedThreshold = new ThresholdSet(0, 0, 0, 0);
         private ThresholdSet newUnstableThreshold = new ThresholdSet(0, 0, 0, 0);
@@ -177,7 +177,7 @@ public class QualityGate implements Serializable {
          *
          * @return the created quality gate
          */
-        public QualityGate build() {
+        QualityGate build() {
             return new QualityGate(totalFailedThreshold, totalUnstableThreshold, newFailedThreshold,
                     newUnstableThreshold);
         }
@@ -190,7 +190,7 @@ public class QualityGate implements Serializable {
          *
          * @return a quality gate builder with total unstable threshold
          */
-        public QualityGateBuilder setTotalUnstableThreshold(final ThresholdSet totalUnstableThreshold) {
+        QualityGateBuilder setTotalUnstableThreshold(final ThresholdSet totalUnstableThreshold) {
             this.totalUnstableThreshold = totalUnstableThreshold;
             return this;
         }
@@ -203,7 +203,7 @@ public class QualityGate implements Serializable {
          *
          * @return a quality gate builder with total failed threshold
          */
-        public QualityGateBuilder setTotalFailedThreshold(final ThresholdSet totalFailedThreshold) {
+        QualityGateBuilder setTotalFailedThreshold(final ThresholdSet totalFailedThreshold) {
             this.totalFailedThreshold = totalFailedThreshold;
             return this;
         }
@@ -216,7 +216,7 @@ public class QualityGate implements Serializable {
          *
          * @return a quality gate builder with new unstable threshold
          */
-        public QualityGateBuilder setNewUnstableThreshold(final ThresholdSet newUnstableThreshold) {
+        QualityGateBuilder setNewUnstableThreshold(final ThresholdSet newUnstableThreshold) {
             this.newUnstableThreshold = newUnstableThreshold;
             return this;
         }
@@ -229,7 +229,7 @@ public class QualityGate implements Serializable {
          *
          * @return a quality gate builder with new failed threshold
          */
-        public QualityGateBuilder setNewFailedThreshold(final ThresholdSet newFailedThreshold) {
+        QualityGateBuilder setNewFailedThreshold(final ThresholdSet newFailedThreshold) {
             this.newFailedThreshold = newFailedThreshold;
             return this;
         }

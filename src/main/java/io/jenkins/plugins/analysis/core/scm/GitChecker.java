@@ -28,7 +28,7 @@ import hudson.scm.SCM;
 // TODO: Links in commits?
 // TODO: Check if we should also create new Jenkins users
 // TODO: Blame needs only run for new warnings
-public class GitChecker {
+class GitChecker {
     /**
      * Returns whether the specified SCM is git.
      *
@@ -37,7 +37,7 @@ public class GitChecker {
      *
      * @return {@code true} if the SCM is git, {@code false} otherwise
      */
-    public boolean isGit(final SCM scm) {
+    boolean isGit(final SCM scm) {
         return scm instanceof GitSCM;
     }
 
@@ -55,7 +55,7 @@ public class GitChecker {
      *
      * @return {@code true} new users can be created automatically, {@code false} otherwise
      */
-    public Blamer createBlamer(final Run<?, ?> build, final SCM scm,
+    Blamer createBlamer(final Run<?, ?> build, final SCM scm,
             final FilePath workspace, final TaskListener listener) {
         try {
             GitSCM gitSCM = asGit(scm);
