@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.testutil;
+package io.jenkins.plugins.analysis.warnings;
 
 import java.net.URL;
 

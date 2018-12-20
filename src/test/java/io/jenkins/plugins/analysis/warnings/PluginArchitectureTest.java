@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.testutil;
+package io.jenkins.plugins.analysis.warnings;
 
 import javax.xml.parsers.SAXParser;
 
@@ -26,7 +26,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
  */
 // TODO: forbid calls to Jenkins.getInstance()
 @AnalyzeClasses(packages = "io.jenkins.plugins.analysis..")
-class WarningsArchitectureRulesTest {
+class PluginArchitectureTest {
     /** Digester must not be used directly, rather use a SecureDigester instance. */
     @ArchTest
     static final ArchRule NO_DIGESTER_CONSTRUCTOR_CALLED =
@@ -43,7 +43,6 @@ class WarningsArchitectureRulesTest {
             noClasses()
                     .that().dontHaveModifier(JavaModifier.ABSTRACT)
                     .and().haveSimpleNameEndingWith("Test")
-                    .and().haveNameNotMatching(WarningsArchitectureRulesTest.class.getName())
                     .and(dont(have(simpleNameEndingWith("ITest"))))
                     .should().bePublic();
 
