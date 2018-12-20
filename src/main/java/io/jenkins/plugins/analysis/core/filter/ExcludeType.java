@@ -6,10 +6,8 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
 import org.kohsuke.stapler.DataBoundConstructor;
-import hudson.Extension;
 import org.jenkinsci.Symbol;
-
-import io.jenkins.plugins.analysis.core.model.Messages;
+import hudson.Extension;
 
 /**
  * Defines a filter criteria for a {@link Report}.

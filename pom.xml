@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>3.28</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -14,8 +15,8 @@
   <name>Warnings Next Generation Plugin</name>
   <version>1.0.0-beta10-SNAPSHOT</version>
   <url>https://wiki.jenkins.io/x/1YTeCQ</url>
-  <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static 
-    analysis tools and visualizes the results. It has built-in support for numerous static analysis tools 
+  <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
+    analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
     (including several compilers), see the list of supported report formats.
   </description>
 
@@ -28,8 +29,8 @@
     <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>1.0.0-beta20</analysis-model-api.version>
-    <analysis-model.version>1.0.0-RC23</analysis-model.version>
+    <analysis-model-api.version>1.0.0-beta21-SNAPSHOT</analysis-model-api.version>
+    <analysis-model.version>1.0.0-RC24-SNAPSHOT</analysis-model.version>
 
     <commons.lang.version>3.8.1</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -46,7 +47,7 @@
     <junit-platform-launcher.version>1.3.2</junit-platform-launcher.version>
     <mockito.version>2.23.4</mockito.version>
     <assertj.version>3.11.1</assertj.version>
-    <archunit.version>0.8.3</archunit.version>
+    <archunit.version>0.9.3</archunit.version>
     <json-unit-fluent.version>2.2.0</json-unit-fluent.version>
     <xmlunit.version>1.5</xmlunit.version>
 
@@ -317,7 +318,13 @@
     </dependency>
     <dependency>
       <groupId>com.tngtech.archunit</groupId>
-      <artifactId>archunit-junit</artifactId>
+      <artifactId>archunit-junit5-api</artifactId>
+      <version>${archunit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.tngtech.archunit</groupId>
+      <artifactId>archunit-junit5-engine</artifactId>
       <version>${archunit.version}</version>
       <scope>test</scope>
     </dependency>
@@ -463,6 +470,7 @@
           <entryPointClassPackage>io.jenkins.plugins.analysis.core.assertions</entryPointClassPackage>
           <excludes>
             <exclude>.*ITest</exclude>
+            <exclude>.*Action</exclude>
           </excludes>
           <cleanTargetDir>true</cleanTargetDir>
           <hierarchical>false</hierarchical>
@@ -617,6 +625,13 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire.plugin}</version>
+          <dependencies>
+            <dependency>
+              <groupId>com.tngtech.archunit</groupId>
+              <artifactId>archunit-junit5-engine</artifactId>
+              <version>${archunit.version}</version>
+            </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>

@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis;
+package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
 import java.io.PrintWriter;

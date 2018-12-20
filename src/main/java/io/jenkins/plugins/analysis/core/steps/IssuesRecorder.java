@@ -21,6 +21,8 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
+import hudson.init.InitMilestone;
+import hudson.init.Initializer;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Result;
@@ -38,16 +40,16 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.util.Thresholds;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.Thresholds;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -698,6 +700,12 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @Symbol("recordIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
+        /** Retain backward compatibility. */
+        @Initializer(before = InitMilestone.PLUGINS_STARTED)
+        public static void addAliases() {
+            Run.XSTREAM2.addCompatibilityAlias("io.jenkins.plugins.analysis.core.views.ResultAction", ResultAction.class);
+        }
+
         private final ModelValidation model = new ModelValidation();
 
         @Nonnull

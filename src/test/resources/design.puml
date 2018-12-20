@@ -1,0 +1,42 @@
+@startuml
+
+skinparam componentStyle uml2
+skinparam component {
+  BorderColor #a0a0a0
+  BackgroundColor #f8f8f8
+}
+
+[Warnings] <<..analysis.warnings..>>
+[Steps] <<..core.steps>>
+
+[Model] <<..core.model>>
+
+[Charts] <<..core.charts>>
+[Filter] <<..core.filter>>
+[Rest API] <<..core.restapi>>
+[SCM] <<..core.scm>>
+[Tokens] <<..core.tokens>>
+[Utilities] <<..core.util>> <<..api>>
+
+[Warnings] --> [Utilities]
+[Warnings] --> [Model]
+
+[Steps] --> [Utilities]
+[Steps] --> [Model]
+[Steps] --> [SCM]
+[Steps] ---> [Filter]
+
+[Tokens] --> [Model]
+
+[Model] --> [Utilities]
+[Model] --> [Charts]
+[Model] --> [SCM]
+[Model] --> [Rest API]
+
+[Charts] --> [Utilities]
+[Rest API] --> [Utilities]
+[Filter] --> [Utilities]
+
+
+
+@enduml

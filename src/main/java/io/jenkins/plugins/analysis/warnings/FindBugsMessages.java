@@ -72,7 +72,6 @@ public final class FindBugsMessages {
      */
     public List<Pattern> parse(final InputStream file) throws IOException, SAXException {
         SecureDigester digester = new SecureDigester(FindBugsMessages.class);
-
         List<Pattern> patterns = new ArrayList<>();
         digester.push(patterns);
 

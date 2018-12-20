@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import hudson.model.Result;
 import hudson.model.Run;
 
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

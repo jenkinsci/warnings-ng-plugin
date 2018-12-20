@@ -3,21 +3,13 @@
 component "charts"
 component "filters"
 component "model"
-component "views"
-component "quality"
 component "restapi"
-
 component "scm"
+component "steps"
 component "tokens"
+component "util"
 
-charts ..> model
-filters ..> model
-views ..> model
-restapi ..> model
-
-model ..> scm
-model ..> quality
-
-tokens ..> views
+charts ..> util
+restapi ..> util
 
 @enduml

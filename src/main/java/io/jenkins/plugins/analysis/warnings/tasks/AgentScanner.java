@@ -12,13 +12,14 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.analysis.core.util.FileFinder;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
-import jenkins.MasterToSlaveFileCallable;
 
 import hudson.remoting.VirtualChannel;
+import jenkins.MasterToSlaveFileCallable;
+
+import io.jenkins.plugins.analysis.core.util.FileFinder;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 
 /**
  * Searches in the workspace for files matching the given include and exclude pattern and scans each file for open
@@ -83,9 +84,9 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
         String[] fileNames = fileFinder.find(workspace);
         report.logInfo("-> found %d files that will be scanned", fileNames.length);
         Path root = workspace.toPath();
-        report.logInfo("Scanning all %d files for open tasks", fileNames.length);
         TaskScanner scanner = createTaskScanner();
         report.logInfo(scanner.getTaskTags());
+        report.logInfo("Scanning all %d files for open tasks", fileNames.length);
         for (String fileName : fileNames) {
             report.addAll(scanner.scan(root.resolve(fileName), getCharset()));
 
@@ -93,10 +94,10 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
                 throw new ParsingCanceledException();
             }
         }
-        report.logInfo("-> found a total of %d open tasks", report.size());
+        report.logInfo("Found a total of %d open tasks", report.size());
         Map<String, Integer> countPerType = report.getPropertyCount(Issue::getType);
         for (Entry<String, Integer> entry : countPerType.entrySet()) {
-            report.logInfo("   %s: %d open tasks", entry.getKey(), entry.getValue());
+            report.logInfo("-> %s: %d open tasks", entry.getKey(), entry.getValue());
         }
         return report;
     }
