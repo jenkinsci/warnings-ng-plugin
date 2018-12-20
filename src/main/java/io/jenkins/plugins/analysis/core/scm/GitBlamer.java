@@ -6,6 +6,7 @@ import javax.annotation.CheckForNull;
 
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
 import org.eclipse.jgit.blame.BlameResult;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
@@ -157,12 +158,12 @@ public class GitBlamer implements Blamer {
         }
 
         void run(final BlameRequest request, final BlameRunner blameRunner) {
-            FilteredLog log = new FilteredLog(report, "Git blame reported several errors:");
+            FilteredLog log = new FilteredLog(report, "Git blame errors:");
             String fileName = request.getFileName();
             try {
                 BlameResult blame = blameRunner.run(fileName);
                 if (blame == null) {
-                    log.logError("No blame results for request <%s>.%n", request);
+                    log.logError("- no blame results for request <%s>.%n", request);
                 }
                 else {
                     for (int line : request) {
@@ -170,7 +171,7 @@ public class GitBlamer implements Blamer {
                         if (lineIndex < blame.getResultContents().size()) {
                             PersonIdent who = blame.getSourceAuthor(lineIndex);
                             if (who == null) {
-                                log.logError("No author information found for line %d in file %s", lineIndex,
+                                log.logError("- no author information found for line %d in file %s", lineIndex,
                                         fileName);
                             }
                             else {
@@ -179,7 +180,7 @@ public class GitBlamer implements Blamer {
                             }
                             RevCommit commit = blame.getSourceCommit(lineIndex);
                             if (commit == null) {
-                                log.logError("No commit ID found for line %d in file %s", lineIndex, fileName);
+                                log.logError("- no commit ID found for line %d in file %s", lineIndex, fileName);
                             }
                             else {
                                 request.setCommit(line, commit.getName());
@@ -188,8 +189,8 @@ public class GitBlamer implements Blamer {
                     }
                 }
             }
-            catch (GitAPIException e) {
-                log.logError("Error running git blame on %s with revision %s", fileName, headCommit);
+            catch (GitAPIException | JGitInternalException exception) {
+                log.logException(exception, "- error running git blame on '%s' with revision '%s'", fileName, headCommit);
             }
             log.logSummary();
         }

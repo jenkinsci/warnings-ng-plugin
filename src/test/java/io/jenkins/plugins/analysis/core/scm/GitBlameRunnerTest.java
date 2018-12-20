@@ -1,17 +1,22 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import org.eclipse.jgit.api.errors.GitAPIException;
+import org.eclipse.jgit.api.errors.JGitInternalException;
+import org.eclipse.jgit.api.errors.NoHeadException;
 import org.eclipse.jgit.blame.BlameResult;
 import org.eclipse.jgit.diff.RawText;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.PersonIdent;
 import org.eclipse.jgit.revwalk.RevCommit;
 import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.Issue;
 
 import edu.hm.hafner.analysis.Report;
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+
 import io.jenkins.plugins.analysis.core.scm.GitBlamer.BlameCallback;
 import io.jenkins.plugins.analysis.core.scm.GitBlamer.BlameRunner;
+
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -23,6 +28,27 @@ class GitBlameRunnerTest {
     private static final String EMAIL = "email";
     private static final String NAME = "name";
     private static final String WORKSPACE = "workspace";
+
+    @Test @Issue("JENKINS-55273")
+    void shouldNotFailOnExceptions() throws GitAPIException {
+        verifyExceptionHandling(NoHeadException.class);
+        verifyExceptionHandling(JGitInternalException.class);
+    }
+
+    private void verifyExceptionHandling(final Class<? extends Exception> exception) throws GitAPIException {
+        Report report = new Report();
+
+        BlameCallback callback = new BlameCallback(report, mock(ObjectId.class), WORKSPACE);
+
+        BlameRequest request = new BlameRequest("exception", 1);
+        BlameRunner runner = mock(BlameRunner.class);
+        when(runner.run("exception")).thenThrow(exception);
+        callback.run(request, runner);
+
+        assertThat(report.getErrorMessages()).hasSize(3);
+        assertThat(report.getErrorMessages().get(1)).startsWith("- error running git blame on 'exception' with revision");
+        assertThat(report.getErrorMessages().get(2)).startsWith(exception.getName());
+    }
 
     @Test
     void shouldMapResultToRequestWithOneLine() throws GitAPIException {
