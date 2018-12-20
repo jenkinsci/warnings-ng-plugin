@@ -258,7 +258,7 @@ public class IssuesDetail implements ModelObject {
     public JSONObject getBuildTrend() {
         SeverityChart severityChart = new SeverityChart();
 
-        AnalysisHistory history = new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
+        History history = new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
         return JSONObject.fromObject(severityChart.create(history));
     }
 

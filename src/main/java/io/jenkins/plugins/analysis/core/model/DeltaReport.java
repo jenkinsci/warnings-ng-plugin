@@ -33,7 +33,7 @@ public class DeltaReport implements StaticAnalysisSummary {
      * @param currentBuildNumber
      *         the number of the current build, the reference of all new warnings will be set to this number
      */
-    public DeltaReport(final Report report, final AnalysisHistory history, final int currentBuildNumber) {
+    public DeltaReport(final Report report, final History history, final int currentBuildNumber) {
         allIssues = report;
         if (history.getBuild().isPresent()) {
             Run<?, ?> build = history.getBuild().get();

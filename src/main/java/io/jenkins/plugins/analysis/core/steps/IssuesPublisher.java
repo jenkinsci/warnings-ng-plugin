@@ -13,6 +13,7 @@ import io.jenkins.plugins.analysis.core.model.AggregationAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
 import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.model.History;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.scm.Blames;
@@ -148,7 +149,7 @@ class IssuesPublisher {
         return qualityGateStatus;
     }
 
-    private AnalysisHistory createAnalysisHistory(final ResultSelector selector) {
+    private History createAnalysisHistory(final ResultSelector selector) {
         Run<?, ?> baseline = run;
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);

@@ -29,7 +29,7 @@ import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGate
  *
  * @author Ullrich Hafner
  */
-public class AnalysisHistory implements Iterable<AnalysisResult> {
+public class AnalysisHistory implements History {
     /** The build to start the history from. */
     private final Run<?, ?> baseline;
     /** Selects a result of the same type. */
@@ -117,6 +117,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      *
      * @return the baseline action
      */
+    @Override
     public Optional<ResultAction> getBaselineAction() {
         return selector.get(baseline);
     }
@@ -126,6 +127,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      *
      * @return the baseline result
      */
+    @Override
     public Optional<AnalysisResult> getBaselineResult() {
         return getBaselineAction().map(ResultAction::getResult);
     }
@@ -135,6 +137,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      *
      * @return the historical result
      */
+    @Override
     public Optional<AnalysisResult> getResult() {
         return getPreviousAction().map(ResultAction::getResult);
     }
@@ -144,6 +147,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      *
      * @return the historical result
      */
+    @Override
     public Optional<Run<?, ?>> getBuild() {
         return getPreviousAction().map(ResultAction::getOwner);
     }
@@ -154,6 +158,7 @@ public class AnalysisHistory implements Iterable<AnalysisResult> {
      *
      * @return the issues of the historical build
      */
+    @Override
     public Report getIssues() {
         return getResult().map(AnalysisResult::getIssues).orElseGet(Report::new);
     }

@@ -65,7 +65,7 @@ public class JobAction implements Action {
         return owner;
     }
 
-    private AnalysisHistory createBuildHistory() {
+    private History createBuildHistory() {
         Run<?, ?> lastFinishedRun = owner.getLastCompletedBuild();
         if (lastFinishedRun == null) {
             return new NullAnalysisHistory();
@@ -132,7 +132,7 @@ public class JobAction implements Action {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public boolean isTrendVisible() {
-        AnalysisHistory history = createBuildHistory();
+        History history = createBuildHistory();
 
         Iterator<AnalysisResult> iterator = history.iterator();
         for (int count = 1; iterator.hasNext(); count++) {

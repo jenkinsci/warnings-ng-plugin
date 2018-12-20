@@ -14,7 +14,7 @@ import edu.hm.hafner.util.NoSuchElementException;
  *
  * @author Ullrich Hafner
  */
-class PropertyStatistics {
+public class PropertyStatistics {
     private final Map<String, ? extends Report> issuesByProperty;
     private final Function<String, String> propertyFormatter;
     private final String property;
@@ -30,7 +30,7 @@ class PropertyStatistics {
      * @param propertyFormatter
      *         the formatter that show the property
      */
-    PropertyStatistics(final Report report,
+    public PropertyStatistics(final Report report,
             final String property, final Function<String, String> propertyFormatter) {
         this.property = property;
         this.propertyFormatter = propertyFormatter;
