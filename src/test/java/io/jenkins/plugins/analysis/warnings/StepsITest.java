@@ -9,28 +9,30 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.collections.impl.factory.Lists;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import org.junit.Assume;
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
-import org.kohsuke.stapler.HttpResponse;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+
+import org.kohsuke.stapler.HttpResponse;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import hudson.model.UnprotectedRootAction;
+import hudson.util.HttpResponses;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 
-import hudson.model.UnprotectedRootAction;
-import hudson.util.HttpResponses;
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 
 /**
  * Integration tests of the warnings plug-in in pipelines.
@@ -85,7 +87,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("issue11675.txt");
         job.setDefinition(asStage(
                 "sh 'cat issue11675-issues.txt'",
-                "def issues = scanForIssues tool: eclipse()", // FIXME: documentation!
+                "def issues = scanForIssues tool: eclipse()",
                 PUBLISH_ISSUES_STEP));
 
         final Eclipse tool = new Eclipse();
