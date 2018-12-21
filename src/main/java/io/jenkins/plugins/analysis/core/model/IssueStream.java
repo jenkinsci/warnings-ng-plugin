@@ -32,7 +32,7 @@ public class IssueStream {
      *
      * @return the stream
      */
-    public XStream2 createStream() {
+    XStream2 createStream() {
         XStream2 xStream2 = new XStream2();
         xStream2.registerConverter(new LineRangeListConverter(xStream2));
         xStream2.registerConverter(new TreeStringConverter(xStream2));

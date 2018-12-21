@@ -82,6 +82,8 @@
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     <pitest-maven.plugin>1.4.3</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.8</pitest-maven.junit5.plugin>
+    <revapi-maven-plugin.version>0.10.5</revapi-maven-plugin.version>
+    <revapi-java.version>0.18.1</revapi-java.version>
 
     <!-- Enabled while there are fatal Findbugs issues -->
     <findbugs.failOnError>false</findbugs.failOnError>
@@ -588,6 +590,38 @@
           <excludeFilterFile>etc/spotbugs-exclusion-filter.xml</excludeFilterFile>
           <includeTests>true</includeTests>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.revapi</groupId>
+        <artifactId>revapi-maven-plugin</artifactId>
+        <version>${revapi-maven-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.revapi</groupId>
+            <artifactId>revapi-java</artifactId>
+            <version>${revapi-java.version}</version>
+          </dependency>
+        </dependencies>
+        <configuration>
+          <analysisConfiguration><![CDATA[
+                {
+                  "revapi": {
+                    "semver": {
+                      "ignore": {
+                        "enabled": true
+                      }
+                    }
+                  }
+                }
+            ]]></analysisConfiguration>
+        </configuration>
+
+        <!-- FIXME: enable after release 1.0.0 -->
+        <!--<executions>-->
+          <!--<execution>-->
+            <!--<goals><goal>check</goal></goals>-->
+          <!--</execution>-->
+        <!--</executions>-->
       </plugin>
     </plugins>
     <pluginManagement>

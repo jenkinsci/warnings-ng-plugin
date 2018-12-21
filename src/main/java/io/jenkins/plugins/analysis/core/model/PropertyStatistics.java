@@ -30,7 +30,7 @@ public class PropertyStatistics {
      * @param propertyFormatter
      *         the formatter that show the property
      */
-    public PropertyStatistics(final Report report,
+    PropertyStatistics(final Report report,
             final String property, final Function<String, String> propertyFormatter) {
         this.property = property;
         this.propertyFormatter = propertyFormatter;

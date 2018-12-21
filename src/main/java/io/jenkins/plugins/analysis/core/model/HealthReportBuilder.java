@@ -31,7 +31,7 @@ public class HealthReportBuilder {
      * @return the healthiness of a build
      */
     @CheckReturnValue
-    public HealthReport computeHealth(final HealthDescriptor healthDescriptor,
+    HealthReport computeHealth(final HealthDescriptor healthDescriptor,
             final StaticAnalysisLabelProvider labelProvider,
             final Map<Severity, Integer> sizePerSeverity) {
         int relevantIssuesSize = 0;

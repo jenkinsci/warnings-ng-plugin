@@ -25,6 +25,7 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
  * @author Ullrich Hafner
  */
 // TODO: forbid calls to Jenkins.getInstance()
+@SuppressWarnings("hideutilityclassconstructor")
 @AnalyzeClasses(packages = "io.jenkins.plugins.analysis..")
 class PluginArchitectureTest {
     /** Digester must not be used directly, rather use a SecureDigester instance. */

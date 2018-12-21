@@ -30,7 +30,7 @@ public class InfoErrorDetail implements ModelObject {
      * @param toolDisplayName
      *         display name of the static analysis tool
      */
-    public InfoErrorDetail(final Run<?, ?> owner, final ImmutableList<String> errorMessages,
+    InfoErrorDetail(final Run<?, ?> owner, final ImmutableList<String> errorMessages,
             final ImmutableList<String> infoMessages, final String toolDisplayName) {
         this.owner = owner;
         this.errorMessages = errorMessages;

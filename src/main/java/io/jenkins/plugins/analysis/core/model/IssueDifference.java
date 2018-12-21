@@ -26,7 +26,7 @@ public class IssueDifference {
      * @param referenceIssues
      *         the issues of a previous report (reference)
      */
-    public IssueDifference(final Report currentIssues, final int currentBuildNumber, final Report referenceIssues) {
+    IssueDifference(final Report currentIssues, final int currentBuildNumber, final Report referenceIssues) {
         newIssues = currentIssues.copy();
         fixedIssues = referenceIssues.copy();
         outstandingIssues = new Report();
