@@ -3,11 +3,12 @@
         The Groovy script works on the
         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html">Matcher</a>
         instance that is passed to the script in the variable <code>matcher</code>. The script must have a single return
-        value of type <code>edu.hm.hafner.analysis.Issue</code>. Use the
+        value of type <code>Optional&lt;edu.hm.hafner.analysis.Issue&gt;</code>. Use the
         <code>edu.hm.hafner.analysis.IssueBuilder</code> instance that is passed to the script in the variable
-        <code>builder</code> to create a new issue instance. Note that the return type of this script is
-        <code>Optional&lt;Issue&gt;</code>, i.e. if a false positive has been detected,
-        you must return <code>Optional.empty()</code>.
+        <code>builder</code> to create a new issue instance. Note that the method <code>buildOptional()</code> creates an
+        <code>Optional</code> with a wrapped <code>Issue</code> instance, you rarely need to call the
+        <code>build()</code> method that directly creates an <code>Issue</code>. If a false positive has been detected
+        by the regular expression, you must return <code>Optional.empty()</code>.
 
         Additional available variables:
     <dl>

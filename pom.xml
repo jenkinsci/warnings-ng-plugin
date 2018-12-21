@@ -614,13 +614,11 @@
                 }
             ]]></analysisConfiguration>
         </configuration>
-
-        <!-- FIXME: enable after release 1.0.0 -->
-        <!--<executions>-->
-          <!--<execution>-->
-            <!--<goals><goal>check</goal></goals>-->
-          <!--</execution>-->
-        <!--</executions>-->
+        <executions>
+          <execution>
+            <goals><goal>check</goal></goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
     <pluginManagement>

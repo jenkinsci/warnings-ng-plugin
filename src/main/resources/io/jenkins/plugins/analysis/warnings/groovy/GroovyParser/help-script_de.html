@@ -3,7 +3,7 @@
         Das Groovy Skript arbeitet mit der
         <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html">Matcher</a>
         Instanz, die in der Variablen <code>matcher</code> an das Skript übergeben wird.
-        Das Skript muss einen Rückgabewert vom Typ <code>edu.hm.hafner.analysis.Issue</code> haben.
+        Das Skript muss einen Rückgabewert vom Typ <code>Optional&lt;edu.hm.hafner.analysis.Issue&gt;</code> haben.
         Eine <code>Issue</code> Instanz muss mit dem <code>edu.hm.hafner.analysis.IssueBuilder</code> erstellt werden,
         der in der Variablen <code>builder</code> an das Skript übergeben wird. Hinweis: der Rückgabewert der Methode
         ist vom Typ<code>Optional&lt;Issue&gt;</code>, d.h. im Falle einer Falschmeldung muss
@@ -12,10 +12,10 @@
     <p>
         Folgende Variablen stehen außerdem zur Verfügung:
     <dl>
+        <dt>fileName</dt>
+        <dd>der Name der analysierten Report Datei</dd>
         <dt>lineNumber</dt>
         <dd>die aktuelle Zeilennummer</dd>
-        <dt>falsePositive</dt>
-        <dd>eine vordefinierte Issue Instanz, die den aktuellen Treffer als eine Falschmeldung markiert</dd>
     </dl>
     </p>
 
@@ -35,7 +35,7 @@ builder.setFileName(matcher.group(1))
         .setCategory(matcher.group(3))
         .setMessage(matcher.group(4))
 
-return builder.build();
+return builder.buildOptional();
   </pre>
     <hr/>
 
