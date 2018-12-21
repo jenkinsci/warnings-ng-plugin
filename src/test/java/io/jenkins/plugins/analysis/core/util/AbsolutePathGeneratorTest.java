@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -103,7 +104,7 @@ class AbsolutePathGeneratorTest {
         report.add(builder1.setFileName("").build());
         report.add(builder1.setFileName("relative.txt").build());
         report.add(builder1.setDirectory(workspace).setFileName("relative.txt").build());
-        report.add(builder1.setDirectory(workspace).setFileName("../../core/util/relative.txt").build());
+        report.add(builder1.setDirectory(workspace).setFileName(normalize("../../core/util/relative.txt")).build());
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(new FileSystem());
         generator.run(report, Paths.get(resourceFolder));
@@ -138,7 +139,7 @@ class AbsolutePathGeneratorTest {
         URI resourceFolder = getResourceFolder();
         String workspace = resourceFolder.getPath();
 
-        Issue issue = new IssueBuilder().setDirectory(workspace).setFileName(fileName).build();
+        Issue issue = new IssueBuilder().setDirectory(workspace).setFileName(normalize(fileName)).build();
         report.add(issue);
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(new FileSystem());
@@ -146,6 +147,10 @@ class AbsolutePathGeneratorTest {
 
         assertThat(report.get(0).getFileName()).as("Resolving file '%s'", fileName).isEqualTo(workspace + RELATIVE_FILE);
         assertThat(report.getErrorMessages()).isEmpty();
+    }
+
+    private String normalize(final String fileName) {
+        return fileName.replace("/", File.separator);
     }
 
     @Test
