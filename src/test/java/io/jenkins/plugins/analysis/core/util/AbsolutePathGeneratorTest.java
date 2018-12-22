@@ -91,13 +91,22 @@ class AbsolutePathGeneratorTest {
     }
 
     /**
+     * Returns whether the OS under test is Windows or Unix.
+     *
+     * @return {@code true} if the OS is Windows, {@code false} otherwise
+     */
+    protected boolean isWindows() {
+        return File.pathSeparatorChar == ';';
+    }
+
+    /**
      * Ensures that absolute paths are not changed while relative paths are resolved.
      */
     @Test
     void shouldNotTouchAbsolutePathOrEmptyPath() {
         Report report = new Report();
         URI resourceFolder = getResourceFolder();
-        String workspace = resourceFolder.getPath();
+        String workspace = getUriPath(resourceFolder);
 
         IssueBuilder builder1 = new IssueBuilder();
 
@@ -124,6 +133,16 @@ class AbsolutePathGeneratorTest {
         assertThat(report.getErrorMessages()).isEmpty();
     }
 
+    private String getUriPath(final URI resourceFolder) {
+        String workspace = resourceFolder.getPath();
+        if (isWindows()) {
+            if (workspace.startsWith("/")) {
+                workspace = workspace.substring(1);
+            }
+        }
+        return workspace;
+    }
+
     /**
      * Ensures that existing absolute paths are resolved.
      */
@@ -137,7 +156,7 @@ class AbsolutePathGeneratorTest {
     private void verifyNormalizedPath(final String fileName) {
         Report report = new Report();
         URI resourceFolder = getResourceFolder();
-        String workspace = resourceFolder.getPath();
+        String workspace = getUriPath(resourceFolder);
 
         Issue issue = new IssueBuilder().setDirectory(workspace).setFileName(normalize(fileName)).build();
         report.add(issue);
@@ -145,7 +164,9 @@ class AbsolutePathGeneratorTest {
         AbsolutePathGenerator generator = new AbsolutePathGenerator(new FileSystem());
         generator.run(report, Paths.get(resourceFolder));
 
-        assertThat(report.get(0).getFileName()).as("Resolving file '%s'", fileName).isEqualTo(workspace + RELATIVE_FILE);
+        assertThat(report.get(0).getFileName())
+                .as("Resolving file '%s'", normalize(fileName))
+                .isEqualTo(workspace + RELATIVE_FILE);
         assertThat(report.getErrorMessages()).isEmpty();
     }
 
