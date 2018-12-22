@@ -3,10 +3,9 @@ package io.jenkins.plugins.analysis.warnings.groovy;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.IssueParser;
+
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
-import hudson.Extension;
 
 /**
  * Converts a {@link GroovyParser} instance to a {@link ReportScanningTool} instance.
@@ -64,7 +63,6 @@ public class GroovyParserToolAdapter extends ReportScanningTool {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
