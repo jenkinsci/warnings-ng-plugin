@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/v1.0.0...HEAD)
 
+### Fixed
+- [JENKINS-55298](https://issues.jenkins-ci.org/browse/JENKINS-55298): Improved documentation of Groovy script syntax 
+- [JENKINS-55293](https://issues.jenkins-ci.org/browse/JENKINS-55293): Improved health report validation error messages 
+
 ## 1.0.0 - 2018-12-20
 
 First public release.

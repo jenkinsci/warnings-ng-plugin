@@ -154,8 +154,8 @@ public class ModelValidation {
      * @return the validation result
      */
     public FormValidation validateHealthy(final int healthy, final int unhealthy) {
-        if (healthy == 0 && unhealthy > 0) {
-            return FormValidation.error(Messages.FieldValidator_Error_ThresholdHealthyMissing());
+        if (healthy > 0 && unhealthy <= 0) {
+            return FormValidation.ok();
         }
         return validateHealthReportConstraints(healthy, healthy, unhealthy);
     }
@@ -171,21 +171,27 @@ public class ModelValidation {
      * @return the validation result
      */
     public FormValidation validateUnhealthy(final int healthy, final int unhealthy) {
+        if (healthy < 0 && unhealthy == 0) {
+            return FormValidation.ok();
+        }
         if (healthy > 0 && unhealthy == 0) {
             return FormValidation.error(Messages.FieldValidator_Error_ThresholdUnhealthyMissing());
         }
         return validateHealthReportConstraints(unhealthy, healthy, unhealthy);
     }
 
-    private FormValidation validateHealthReportConstraints(final int nonNegative,
+    private FormValidation validateHealthReportConstraints(final int positive,
             final int healthy, final int unhealthy) {
-        if (nonNegative < 0) {
-            return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
-        }
         if (healthy == 0 && unhealthy == 0) {
             return FormValidation.ok();
         }
+        if (positive <= 0) {
+            return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
+        }
         if (healthy >= unhealthy) {
+            if (unhealthy <=0) {
+                return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
+            }
             return FormValidation.error(Messages.FieldValidator_Error_ThresholdOrder());
         }
         return FormValidation.ok();

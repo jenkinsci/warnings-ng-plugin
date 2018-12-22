@@ -7,16 +7,14 @@ import java.util.HashSet;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.Issue;
 
 import edu.hm.hafner.analysis.Severity;
 
 import hudson.model.Job;
 import hudson.util.ComboBoxModel;
-import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
-
-import io.jenkins.plugins.analysis.core.testutil.Assertions;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static io.jenkins.plugins.analysis.core.testutil.SoftAssertions.*;
@@ -122,58 +120,44 @@ class ModelValidationTest {
 
     @Test
     void doCheckHealthyShouldBeOkWithValidValues() {
-        // healthy = 0 = unhealthy
         ModelValidation model = new ModelValidation();
-        FormValidation actualResult = model.validateHealthy(0, 0);
-        Assertions.assertThat(actualResult).isOk();
 
-        // healthy < unhealthy
-        actualResult = model.validateHealthy(1, 2);
-        Assertions.assertThat(actualResult).isOk();
+        assertThat(model.validateHealthy(1, 2)).isOk();
+        assertThat(model.validateUnhealthy(1, 2)).isOk();
+        assertThat(model.validateHealthy(2, 3)).isOk();
+        assertThat(model.validateUnhealthy(2, 3)).isOk();
+        assertThat(model.validateHealthy(200, 300)).isOk();
+        assertThat(model.validateUnhealthy(200, 300)).isOk();
+
+        // Special case: both unset or both zero.
+        assertThat(model.validateHealthy(0, 0)).isOk();
+        assertThat(model.validateUnhealthy(0, 0)).isOk();
     }
 
-    @Test
+    @Test @Issue("JENKINS-55293")
     void doCheckHealthyShouldBeNotOkWithInvalidValues() {
-        // healthy < 0
         ModelValidation model = new ModelValidation();
-        FormValidation actualResult = model.validateHealthy(-1, 0);
-        Assertions.assertThat(actualResult).isError();
 
-        // healthy = 0 , unhealthy > 0
-        actualResult = model.validateHealthy(0, 1);
-        Assertions.assertThat(actualResult).isError();
+        assertThat(model.validateHealthy(-1, 0))
+                .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
+        assertThat(model.validateUnhealthy(-1, 0)).isOk();
 
-        // healthy > 0 , unhealthy > healthy
-        actualResult = model.validateHealthy(2, 1);
-        Assertions.assertThat(actualResult).isError();
-    }
+        assertThat(model.validateHealthy(0, 1))
+                .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
+        assertThat(model.validateUnhealthy(0, 1)).isOk();
 
-    @Test
-    void doCheckUnhealthyShouldBeOkWithValidValues() {
-        // unhealthy > healthy > 0
-        ModelValidation model = new ModelValidation();
-        FormValidation actualResult = model.validateUnhealthy(1, 2);
-        Assertions.assertThat(actualResult).isOk();
+        assertThat(model.validateHealthy(1, 0)).isOk();
+        assertThat(model.validateUnhealthy(1, 0))
+                .isError().hasMessage(Messages.FieldValidator_Error_ThresholdUnhealthyMissing());
 
-        // unhealthy > healthy = 0
-        actualResult = model.validateUnhealthy(0, 1);
-        Assertions.assertThat(actualResult).isOk();
-    }
+        assertThat(model.validateHealthy(1, 1))
+                .isError().hasMessage(Messages.FieldValidator_Error_ThresholdOrder());
+        assertThat(model.validateUnhealthy(1, 1))
+                .isError().hasMessage(Messages.FieldValidator_Error_ThresholdOrder());
 
-    @Test
-    void doCheckUnhealthyShouldBeNotOkWithInvalidValues() {
-        // healthy > unhealthy = 0
-        ModelValidation model = new ModelValidation();
-        FormValidation actualResult = model.validateUnhealthy(1, 0);
-        Assertions.assertThat(actualResult).isError();
-
-        // healthy > unhealthy > 0
-        actualResult = model.validateUnhealthy(1, 1);
-        Assertions.assertThat(actualResult).isError();
-
-        // unhealthy < 0
-        actualResult = model.validateUnhealthy(0, -1);
-        Assertions.assertThat(actualResult).isError();
+        assertThat(model.validateHealthy(1, -1)).isOk();
+        assertThat(model.validateUnhealthy(1, -1))
+                .isError().hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
     }
 
     @Test
