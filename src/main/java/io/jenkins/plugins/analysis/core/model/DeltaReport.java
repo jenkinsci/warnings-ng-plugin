@@ -91,6 +91,7 @@ public class DeltaReport implements StaticAnalysisSummary {
      *
      * @return total number of issues
      */
+    @Override
     public int getTotalSizeOf(final Severity severity) {
         return allIssues.getSizeOf(severity);
     }
@@ -103,14 +104,17 @@ public class DeltaReport implements StaticAnalysisSummary {
      *
      * @return total number of issues
      */
+    @Override
     public int getNewSizeOf(final Severity severity) {
         return newIssues.getSizeOf(severity);
     }
 
+    @Override
     public int getTotalSize() {
         return allIssues.size();
     }
 
+    @Override
     public int getNewSize() {
         return newIssues.size();
     }
