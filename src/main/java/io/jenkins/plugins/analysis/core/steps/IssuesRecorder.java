@@ -34,6 +34,7 @@ import hudson.tasks.Recorder;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
@@ -212,6 +213,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @see #setTools(List)
      */
     public void setTools(final Tool tool, final Tool... additionalTools) {
+        ensureThatToolIsValid(tool);
+        for (Tool additionalTool : additionalTools) {
+            ensureThatToolIsValid(additionalTool);
+        }
         analysisTools = new ArrayList<>();
         analysisTools.add(tool);
         Collections.addAll(analysisTools, additionalTools);
@@ -234,7 +239,24 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @DataBoundSetter
     public void setTool(final Tool tool) {
+        ensureThatToolIsValid(tool);
+
         this.analysisTools = Collections.singletonList(tool);
+    }
+
+    private void ensureThatToolIsValid(final Tool tool) {
+        if (tool == null) {
+            Jenkins instance = Jenkins.getInstance();
+            if (instance.getPlugin("pmd") != null) {
+                throw new IllegalArgumentException("No valid tool defined! You probably used the symbol 'pmd' in "
+                        + "your tool definition. This symbol is also used in the PMD plugin. In this case you must "
+                        + "use the symbol 'pmdParser' instead, see JENKINS-55328. The symbol 'pmd' can be used only "
+                        + "if the PMD plugin is not installed.");
+            }
+            throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
+                    + "definition that is also a symbol in another plugin. Please create a new bug report in Jenkins "
+                    + "issue tracker.");
+        }
     }
 
     /**
@@ -608,6 +630,9 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener)
             throws IOException, InterruptedException {
+        for (Tool tool : getTools()) {
+            ensureThatToolIsValid(tool);
+        }
         if (isAggregatingResults) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, "analysis"));
             for (Tool tool : analysisTools) {
