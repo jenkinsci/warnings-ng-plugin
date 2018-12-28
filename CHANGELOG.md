@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-1.0.1...master)
 
-## [1.0.1](https://github.com/jenkinsci/analysis-model/compare/warnings-ng-1.0.0...warnings-ng-1.0.1) - 2018-12-28
+## [1.0.1](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-1.0.0...warnings-ng-1.0.1) - 2018-12-28
 
 ### Fixed
 - [JENKINS-55328](https://issues.jenkins-ci.org/browse/JENKINS-55328): Show error message if symbol, 'pmd' is used
