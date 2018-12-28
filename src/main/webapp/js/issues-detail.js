@@ -241,9 +241,15 @@
         var id = $(this).attr('id');
         var orderBy = localStorage.getItem(id + '#orderBy');
         var orderDirection = localStorage.getItem(id + '#orderDirection');
+        var dataTable = $(this).DataTable();
         if (orderBy && orderDirection) {
             var order = [orderBy, orderDirection];
-            $(this).DataTable().order(order).draw();
+            try {
+                dataTable.order(order).draw();
+            }
+            catch (ignore) { // TODO: find a way to determine the number of columns here
+                dataTable.order([[1, 'asc']]).draw();
+            }
         }
         // Store paging size
         $(this).on('length.dt', function ( e, settings, len ) {
@@ -251,7 +257,7 @@
         });
         var storedLength = localStorage.getItem(id + '#table-length');
         if ($.isNumeric(storedLength)) {
-            $(this).DataTable().page.len(storedLength);
+            dataTable.page.len(storedLength);
         }
     });
 
