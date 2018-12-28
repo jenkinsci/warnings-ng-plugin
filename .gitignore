@@ -5,3 +5,4 @@ target
 .project
 .settings
 pom.xml.versionsBackup
+.DS_Store
