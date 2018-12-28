@@ -2,13 +2,13 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import edu.hm.hafner.analysis.parser.MavenConsoleParser;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
+import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
+
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 /**
  * Provides a parser and customized messages for the Maven console output.
@@ -44,6 +44,11 @@ public class MavenConsole extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Maven_ParserName();
+        }
+
+        @Override
+        protected boolean isConsoleLog() {
+            return true;
         }
     }
 }

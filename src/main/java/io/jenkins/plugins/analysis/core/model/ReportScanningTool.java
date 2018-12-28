@@ -22,6 +22,7 @@ import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
@@ -149,6 +150,11 @@ public abstract class ReportScanningTool extends Tool {
 
         Report report = createParser().parse(new ConsoleLogReaderFactory(run));
 
+        if (getDescriptor().isConsoleLog()) {
+            report.stream().filter(issue -> !issue.hasFileName())
+                    .forEach(issue -> issue.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID));
+        }
+
         consoleReport.addAll(report);
 
         logger.log(consoleReport);
@@ -239,6 +245,17 @@ public abstract class ReportScanningTool extends Tool {
          */
         public boolean canScanConsoleLog() {
             return true;
+        }
+
+        /**
+         * Returns whether the issues reported by this tool reference a location in the report itself (and not in an
+         * external file). Then all these issues will get a synthetic file name so that the console log will be shown
+         * in the UI.
+         *
+         * @return {@code true} if the issues reference the console log, {@code false} otherwise
+         */
+        protected boolean isConsoleLog() {
+            return false;
         }
     }
 }
