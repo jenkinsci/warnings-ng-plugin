@@ -11,10 +11,12 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import edu.hm.hafner.util.ResourceTest;
+
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
+
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 
 /**
  * Tests the class {@link TaskScanner}.

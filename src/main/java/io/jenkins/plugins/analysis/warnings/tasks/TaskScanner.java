@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.charset.MalformedInputException;
+import java.nio.charset.UnmappableCharacterException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
 /**
@@ -198,7 +200,8 @@ class TaskScanner {
         }
         catch (IOException | UncheckedIOException exception) {
             Report report = new Report();
-            if (exception.getCause() instanceof MalformedInputException) {
+            Throwable cause = exception.getCause();
+            if (cause instanceof MalformedInputException || cause instanceof UnmappableCharacterException) {
                 report.logError("Can't read source file '%s', defined encoding '%s' seems to be wrong",
                         file, charset);
             }

@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.Map;
@@ -74,10 +73,9 @@ class AgentScanner extends MasterToSlaveFileCallable<Report> {
     }
 
     @Override
-    public Report invoke(final File workspace, final VirtualChannel channel) throws IOException, InterruptedException {
+    public Report invoke(final File workspace, final VirtualChannel channel) {
         Report report = new Report();
-        report.logInfo(
-                "Searching for files in workspace '%s' that match the include pattern '%s' and exclude pattern '%s'",
+        report.logInfo("Searching for files in workspace '%s' that match the include pattern '%s' and exclude pattern '%s'",
                 workspace, includePattern, excludePattern);
 
         FileFinder fileFinder = new FileFinder(includePattern, excludePattern);
