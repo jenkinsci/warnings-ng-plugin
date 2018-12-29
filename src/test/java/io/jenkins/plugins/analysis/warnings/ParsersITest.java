@@ -1,19 +1,21 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Assume;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import static hudson.Functions.*;
+
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 
 /**
  * Integration tests of all parsers of the warnings plug-in in pipelines.
@@ -65,7 +67,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files=&quot;$files $directory/$i&quot;\n"
             + "done</code></pre>";
 
-    /** Runs the TagList parser on output files that contains 6 issues. */
+    /** Runs the TagList parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllOpenTasks() {
         WorkflowJob job = createJobWithWorkspaceFiles("tasks/file-with-tasks.txt");
@@ -88,103 +90,103 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(37, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
     }
 
-    /** Runs the TagList parser on output files that contains 6 issues. */
+    /** Runs the TagList parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllTagListIssues() {
         shouldFindIssuesOfTool(4, new TagList(), "taglist.xml");
     }
 
-    /** Runs the Ccm parser on output files that contains 6 issues. */
+    /** Runs the Ccm parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllCcmIssues() {
         shouldFindIssuesOfTool(6, new Ccm(), "ccm.xml");
     }
 
-    /** Runs the ruboCop parser on output files that contains 2 issues. */
+    /** Runs the ruboCop parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllRuboCopIssues() {
         shouldFindIssuesOfTool(2, new RuboCop(), "rubocop.log");
     }
 
-    /** Runs the Android Lint parser on output files that contains 2 issues. */
+    /** Runs the Android Lint parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllAndroidLintIssues() {
         shouldFindIssuesOfTool(2, new AndroidLint(), "android-lint.xml");
     }
 
-    /** Runs the CodeNarc parser on output files that contains 11 issues. */
+    /** Runs the CodeNarc parser on an output file that contains 11 issues. */
     @Test
     public void shouldFindAllCodeNArcIssues() {
         shouldFindIssuesOfTool(11, new CodeNarc(), "codeNarc.xml");
     }
 
-    /** Runs the Cppcheck parser on output files that contains 3 issues. */
+    /** Runs the Cppcheck parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllCppCheckIssues() {
         shouldFindIssuesOfTool(3, new CppCheck(), "cppcheck.xml");
     }
 
-    /** Runs the DocFx parser on output files that contains 3 issues. */
+    /** Runs the DocFx parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllDocFXIssues() {
         shouldFindIssuesOfTool(3, new DocFx(), "docfx.json");
     }
 
-    /** Runs the ErrorProne parser on output files that contains 5 issues. */
+    /** Runs the ErrorProne parser on an output file that contains 9 issues. */
     @Test
     public void shouldFindAllErrorProneIssues() {
-        shouldFindIssuesOfTool(5, new ErrorProne(), "error-prone.log");
+        shouldFindIssuesOfTool(9, new ErrorProne(), "errorprone-maven.log");
     }
 
-    /** Runs the Flake8 parser on output files that contains 12 issues. */
+    /** Runs the Flake8 parser on an output file that contains 12 issues. */
     @Test
     public void shouldFindAllFlake8Issues() {
         shouldFindIssuesOfTool(12, new Flake8(), "flake8.txt");
     }
 
-    /** Runs the JSHint parser on output files that contains 6 issues. */
+    /** Runs the JSHint parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllJsHintIssues() {
         shouldFindIssuesOfTool(6, new JsHint(), "jshint.xml");
     }
 
-    /** Runs the Klocwork parser on output files that contains 2 issues. */
+    /** Runs the Klocwork parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllKlocWorkIssues() {
         shouldFindIssuesOfTool(2, new KlocWork(), "klocwork.xml");
     }
 
-    /** Runs the MyPy parser on output files that contains 5 issues. */
+    /** Runs the MyPy parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllMyPyIssues() {
         shouldFindIssuesOfTool(5, new MyPy(), "mypy.txt");
     }
 
-    /** Runs the PIT parser on output files that contains 25 issues. */
+    /** Runs the PIT parser on an output file that contains 25 issues. */
     @Test
     public void shouldFindAllPitIssues() {
         shouldFindIssuesOfTool(22, new Pit(), "pit.xml");
     }
 
-    /** Runs the PyDocStyle parser on output files that contains 33 issues. */
+    /** Runs the PyDocStyle parser on an output file that contains 33 issues. */
     @Test
     public void shouldFindAllPyDocStyleIssues() {
         shouldFindIssuesOfTool(33, new PyDocStyle(), "pydocstyle.txt");
     }
 
-    /** Runs the XML Lint parser on output files that contains 3 issues. */
+    /** Runs the XML Lint parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllXmlLintStyleIssues() {
         shouldFindIssuesOfTool(3, new XmlLint(), "xmllint.txt");
     }
 
-    /** Runs the zptlint parser on output files that contains 2 issues. */
+    /** Runs the zptlint parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllZptLintStyleIssues() {
         shouldFindIssuesOfTool(2, new ZptLint(), "zptlint.log");
     }
 
-    /** Runs the CPD parser on output files that contains 2 issues. */
+    /** Runs the CPD parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllCpdIssues() {
         Report report = shouldFindIssuesOfTool(2, new Cpd(), "cpd.xml");
@@ -192,13 +194,13 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatDescriptionOfIssueIsSet(new Cpd(), report.get(0), CODE_FRAGMENT);
     }
 
-    /** Runs the Simian parser on output files that contains 4 issues. */
+    /** Runs the Simian parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllSimianIssues() {
         shouldFindIssuesOfTool(4, new Simian(), "simian.xml");
     }
 
-    /** Runs the DupFinder parser on output files that contains 2 issues. */
+    /** Runs the DupFinder parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllDupFinderIssues() {
         Report report = shouldFindIssuesOfTool(2, new DupFinder(), "dupfinder.xml");
@@ -207,7 +209,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 "<pre><code>if (items == null) throw new ArgumentNullException(&quot;items&quot;);</code></pre>");
     }
 
-    /** Runs the Armcc parser on output files that contains 3 + 3 issues. */
+    /** Runs the Armcc parser on output files that contain 3 + 3 issues. */
     @Test
     public void shouldFindAllArmccIssues() {
         shouldFindIssuesOfTool(3 + 3, new ArmCc(), "armcc5.txt", "armcc.txt");
