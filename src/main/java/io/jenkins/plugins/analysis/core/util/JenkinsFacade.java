@@ -6,8 +6,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -16,8 +14,6 @@ import java.util.stream.Stream;
 
 import org.acegisecurity.AccessDeniedException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.eclipse.collections.impl.factory.Lists;
 
 import com.google.errorprone.annotations.MustBeClosed;
 
@@ -53,12 +49,7 @@ public class JenkinsFacade implements Serializable {
      */
     @MustBeClosed
     public Stream<String> readConsoleLog(final Run<?, ?> build) {
-        try {
-            return Files.lines(build.getLogFile().toPath(), StandardCharsets.UTF_8);
-        }
-        catch (IOException e) {
-            return Lists.fixedSize.of(ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)).stream();
-        }
+        return new ConsoleLogReaderFactory(build).readStream();
     }
 
     /**
