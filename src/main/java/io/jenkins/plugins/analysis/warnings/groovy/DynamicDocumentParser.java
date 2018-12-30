@@ -47,8 +47,7 @@ class DynamicDocumentParser extends RegexpDocumentParser {
 
     @Override
     protected Optional<Issue> createIssue(final Matcher matcher, final IssueBuilder builder) {
-        return expressionMatcher.createIssue(matcher, builder, 
-                NO_LINE_NUMBER_AVAILABLE, fileName);
+        return expressionMatcher.createIssue(matcher, builder, NO_LINE_NUMBER_AVAILABLE, fileName);
     }
 }
 
