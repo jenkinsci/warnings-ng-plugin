@@ -251,11 +251,15 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                 throw new IllegalArgumentException("No valid tool defined! You probably used the symbol 'pmd' in "
                         + "your tool definition. This symbol is also used in the PMD plugin. In this case you must "
                         + "use the symbol 'pmdParser' instead, see JENKINS-55328. The symbol 'pmd' can be used only "
-                        + "if the PMD plugin is not installed.");
+                        + "if the PMD plugin is not installed. "
+                        + "Additionally check if your step is called 'checkStyle' and not 'checkstyle', since "
+                        + "'checkstyle' is a reserved keyword in the CheckStyle plugin!");
             }
             throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
-                    + "definition that is also a symbol in another plugin. Please create a new bug report in Jenkins "
-                    + "issue tracker.");
+                    + "definition that is also a symbol in another plugin. "
+                    + "E.g. the CheckStyle plugin defines a step 'checkstyle', the Warnings plugin uses the "
+                    + "symbol 'checkStyle'!"
+                    + "If not please create a new bug report in Jenkins issue tracker.");
         }
     }
 

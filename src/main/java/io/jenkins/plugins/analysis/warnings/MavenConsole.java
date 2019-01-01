@@ -50,5 +50,10 @@ public class MavenConsole extends ReportScanningTool {
         protected boolean isConsoleLog() {
             return true;
         }
+
+        @Override
+        public boolean isPostProcessingEnabled() {
+            return false;
+        }
     }
 }

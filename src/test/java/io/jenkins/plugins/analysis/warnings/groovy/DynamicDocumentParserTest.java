@@ -26,7 +26,6 @@ class DynamicDocumentParserTest extends AbstractParserTest {
                     "([\\^]+).*" +                            // group 6 column pointers (^^^^^)
                     "\\r?\\n(?:\\s*\\[.*\\]\\s*)?" +          // newline then optional ignored text in [] (eg [javac])
                     "(.*)";                                   // group 7 'message'
-
     DynamicDocumentParserTest() {
         super("eclipse.txt");
     }
@@ -44,8 +43,7 @@ class DynamicDocumentParserTest extends AbstractParserTest {
                 .hasSeverity(Severity.WARNING_NORMAL)
                 .hasLineStart(3)
                 .hasLineEnd(3)
-                .hasMessage(
-                        "The serializable class AttributeException does not declare a static final serialVersionUID field of type long")
+                .hasMessage("The serializable class AttributeException does not declare a static final serialVersionUID field of type long")
                 .hasFileName("C:/Desenvolvimento/Java/jfg/src/jfg/AttributeException.java");
     }
 }

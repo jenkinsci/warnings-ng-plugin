@@ -7,17 +7,18 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.LookaheadParser;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.ReaderFactory;
-import edu.hm.hafner.analysis.RegexpLineParser;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.LookaheadStream;
 
 /**
  * A line parser that uses a configurable regular expression and Groovy script to parse warnings.
  *
  * @author Ullrich Hafner
  */
-class DynamicLineParser extends RegexpLineParser {
+class DynamicLineParser extends LookaheadParser {
     private static final long serialVersionUID = -4450779127190928924L;
 
     private final GroovyExpressionMatcher expressionMatcher;
@@ -45,8 +46,9 @@ class DynamicLineParser extends RegexpLineParser {
     }
 
     @Override
-    protected Optional<Issue> createIssue(final Matcher matcher, final IssueBuilder builder) {
-        return expressionMatcher.createIssue(matcher, builder, getCurrentLine(), fileName);
+    protected Optional<Issue> createIssue(final Matcher matcher, final LookaheadStream lookahead,
+            final IssueBuilder builder) throws ParsingException {
+        return expressionMatcher.createIssue(matcher, builder, lookahead.getLine(), fileName);
     }
 }
 

@@ -2,15 +2,15 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
+import edu.hm.hafner.analysis.parser.ErrorProneParser;
 
-import edu.hm.hafner.analysis.parser.violations.ErrorProneAdapter;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
+import hudson.Extension;
+
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
-import hudson.Extension;
 
 /**
  * Provides a parser and customized messages for Error Prone.
@@ -29,8 +29,8 @@ public class ErrorProne extends ReportScanningTool {
     }
 
     @Override
-    public ErrorProneAdapter createParser() {
-        return new ErrorProneAdapter();
+    public ErrorProneParser createParser() {
+        return new ErrorProneParser();
     }
 
     /** Descriptor for this static analysis tool. */
