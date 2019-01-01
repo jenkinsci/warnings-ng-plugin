@@ -16,6 +16,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -215,11 +217,11 @@ public class PropertyTable {
 
         @Override
         public String toString() {
-            return new ToStringBuilder(this)
+            return new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
                     .append("width", width)
                     .append("name", name)
                     .append("size", size)
-                    .toString();
+                    . toString();
         }
     }
 }

@@ -14,16 +14,18 @@ import org.xml.sax.SAXException;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.analysis.ModuleDetector;
+
+import hudson.FilePath;
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
-import static org.assertj.core.api.Assertions.*;
 
-import hudson.FilePath;
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Integration test for the {@link ModuleDetector}.
@@ -195,7 +197,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * doesn't check for correct precedence in every possible case as this might fail.
      */
     @Test
-    public void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() throws IOException {
+    public void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() {
         String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
@@ -224,7 +226,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that various Maven .pom files are handled correctly.
      */
     @Test
-    public void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() throws IOException {
+    public void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() {
         String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
@@ -250,7 +252,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that various Ant .build files are handled correctly.
      */
     @Test
-    public void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() throws IOException {
+    public void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() {
         String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
@@ -273,7 +275,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that various OSGI .MF files are handled correctly.
      */
     @Test
-    public void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() throws IOException {
+    public void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() {
         String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
@@ -377,16 +379,18 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
                     "[javac] 1. WARNING in " + affectedFile + " (at line 42)",
                     "[javac] \tSample Message",
                     "[javac] \t^^^^^^^^^^^^^^^^^^",
-                    "[javac] Sample Message");
+                    "[javac] Sample Message",
+                    "[javac] ----------");
             createAffectedFile(directory, affectedFile);
         }
 
         if (appendNonExistingFile) {
             writeEclipseWarning(workspace,
-                    "[javac] NOT_EXISTING X. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)",
+                    "[javac] NOT_EXISTING 99. WARNING in /NOT_EXISTING/PATH/NOT_EXISTING_FILE (at line 42)",
                     "[javac] \tSample Message",
                     "[javac] \t^^^^^^^^^^^^^^^^^^",
-                    "[javac] Sample Message");
+                    "[javac] Sample Message",
+                    "[javac] ----------");
         }
     }
 
