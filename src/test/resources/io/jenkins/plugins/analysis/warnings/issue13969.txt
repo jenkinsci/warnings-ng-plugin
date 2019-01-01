@@ -1,0 +1,17 @@
+[INFO] Compiling 5 source files to /media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core/target/classes
+[WARNING] /media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core/src/com/faktorzehn/pa2msgpm/core/loader/PmModelImporter.java:[369,0] 
+	private boolean compare(List<String> rowTableValues, List<String> allowedValues) {
+	                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The method compare(List<String>, List<String>) from the type PmModelImporter is never used locally
+[WARNING] /media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core/src/com/faktorzehn/pa2msgpm/core/loader/PmModelImporter.java:[391,0] 
+	private List<String> getTableValues(PropertyRestrictionType restrictionType) {
+	                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The method getTableValues(PropertyRestrictionType) from the type PmModelImporter is never used locally
+2 problems (2 warnings)
+
+
+[WARNING] /media/ssd/multi-x-processor/workspace/msgPM_Access/com.faktorzehn.pa2msgpm.core.test/src/com/faktorzehn/pa2msgpm/core/importer/PropertyImporterTest.java:[56,0] 
+	private static final OperationResponseType ERROR_RESPONSE = new OperationResponseType(1, "ERROR");
+	                                           ^^^^^^^^^^^^^^
+The value of the field PropertyImporterTest.ERROR_RESPONSE is not used
+1 problem (1 warning)

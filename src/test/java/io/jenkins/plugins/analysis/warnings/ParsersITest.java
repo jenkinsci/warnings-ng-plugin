@@ -494,10 +494,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(14 + 7, new Gcc4(), "gcc4.txt", "gcc4ld.txt");
     }
 
-    /** Runs the Maven console parser on an output file that contains 4 issues. */
+    /** Runs the Maven console parser on output files that contain 4 + 3 issues. */
     @Test
     public void shouldFindAllMavenConsoleIssues() {
-        shouldFindIssuesOfTool(4, new MavenConsole(), "maven-console.txt");
+        shouldFindIssuesOfTool(4 + 3, new MavenConsole(), "maven-console.txt", "issue13969.txt");
     }
 
     /** Runs the MetrowerksCWCompiler parser on two output files that contains 5 + 3 issues. */

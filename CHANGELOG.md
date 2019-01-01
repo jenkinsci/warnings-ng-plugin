@@ -6,9 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-1.0.1...master)
 
+### Added
+- Added support for [ErrorProne](http://errorprone.info) in maven builds. 
+Parser now reports description with link to external documentation.
+
 ### Fixed
-- Check if order column in browsers local storage is valid before applying it (report on Gitter).
-- [JENKINS-55337](https://issues.jenkins-ci.org/browse/JENKINS-55337): Show Maven warnings in console log view
+- Fixed rendering of issues table: check if order column in browsers local storage is valid before applying it (report on Gitter).
+- [JENKINS-55337](https://issues.jenkins-ci.org/browse/JENKINS-55337): Navigate to maven warnings in console log view
+- Maven Parser: Disabled post processing on agent since there are no source files involved.
 
 ## [1.0.1](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-1.0.0...warnings-ng-1.0.1) - 2018-12-28
 
