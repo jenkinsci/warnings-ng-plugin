@@ -213,5 +213,16 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         public String getUrl() {
             return StringUtils.EMPTY;
         }
+
+        /**
+         * Returns whether post processing on the agent is enabled for this tool. If enabled, for all issues
+         * absolute paths, fingerprints, packages and modules will be detected. Additionally, all affected files
+         * will be saved in the build so that these files can be shown in the UI later on.,
+         *
+         * @return {@code true} if post processing is enabled, {@code false} otherwise
+         */
+        public boolean isPostProcessingEnabled() {
+            return true;
+        }
     }
 }

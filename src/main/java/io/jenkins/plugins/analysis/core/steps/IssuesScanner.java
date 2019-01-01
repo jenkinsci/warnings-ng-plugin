@@ -63,7 +63,12 @@ class IssuesScanner {
             throws IOException, InterruptedException {
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
-        return postProcess(report, workspace, logger);
+        if (tool.getDescriptor().isPostProcessingEnabled()) {
+            return postProcess(report, workspace, logger);
+        }
+        else {
+            return new AnnotatedReport(tool.getActualId(), filter(report, filters, tool.getActualId()));
+        }
     }
 
     private AnnotatedReport postProcess(final Report report, final FilePath workspace, final LogHandler logger)
@@ -96,6 +101,29 @@ class IssuesScanner {
             return computer.getName();
         }
         return StringUtils.EMPTY;
+    }
+
+    static Report filter(final Report report, final List<RegexpFilter> filters, final String id) {
+        int actualFilterSize = 0;
+        IssueFilterBuilder builder = new IssueFilterBuilder();
+        for (RegexpFilter filter : filters) {
+            if (StringUtils.isNotBlank(filter.getPattern())) {
+                filter.apply(builder);
+                actualFilterSize++;
+            }
+        }
+        Report filtered = report.filter(builder.build());
+        if (actualFilterSize > 0) {
+            filtered.logInfo(
+                    "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
+                    filters.size(), report.size(), report.size() - filtered.size(), filtered.size());
+        }
+        else {
+            filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
+        }
+
+        filtered.stream().forEach(issue -> issue.setOrigin(id));
+        return filtered;
     }
 
     /**
@@ -131,8 +159,8 @@ class IssuesScanner {
             resolveModuleNames(originalReport, workspace);
             resolvePackageNames(originalReport);
 
-            Report filtered = filter(originalReport);
-            filtered.stream().forEach(issue -> issue.setOrigin(id));
+            Report filtered = filter(originalReport, filters, id);
+
             createFingerprints(filtered);
             Blames blames = blamer.blame(filtered);
             return new AnnotatedReport(id, filtered, blames);
@@ -143,28 +171,6 @@ class IssuesScanner {
 
             AbsolutePathGenerator generator = new AbsolutePathGenerator();
             generator.run(report, workspace.toPath());
-        }
-
-        private Report filter(final Report report) {
-            int actualFilterSize = 0;
-            IssueFilterBuilder builder = new IssueFilterBuilder();
-            for (RegexpFilter filter : filters) {
-                if (StringUtils.isNotBlank(filter.getPattern())) {
-                    filter.apply(builder);
-                    actualFilterSize++;
-                }
-            }
-            Report filtered = report.filter(builder.build());
-            if (actualFilterSize > 0) {
-                filtered.logInfo(
-                        "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
-                        filters.size(), report.size(), report.size() - filtered.size(), filtered.size());
-            }
-            else {
-                filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
-            }
-
-            return filtered;
         }
 
         private void copyAffectedFiles(final Report report, final File workspace) throws InterruptedException {
