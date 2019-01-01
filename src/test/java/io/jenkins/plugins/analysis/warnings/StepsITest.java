@@ -79,25 +79,30 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      * output file is copied to the console log using a shell cat command.
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-11675">Issue 11675</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-55368">Issue 55368</a>
      */
     @Test
-    public void issue11675() {
+    public void shouldRemoveConsoleNotes() {
+        assertThatConsoleNotesAreRemoved("issue11675.txt", 8);
+        assertThatConsoleNotesAreRemoved("issue55368.txt", 1);
+    }
+
+    private void assertThatConsoleNotesAreRemoved(final String fileName, final int expectedSize) {
         Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
 
-        WorkflowJob job = createJobWithWorkspaceFiles("issue11675.txt");
+        WorkflowJob job = createJobWithWorkspaceFiles(fileName);
         job.setDefinition(asStage(
-                "sh 'cat issue11675-issues.txt'",
+                "sh 'cat *.txt'",
                 "def issues = scanForIssues tool: eclipse()",
                 PUBLISH_ISSUES_STEP));
 
-        final Eclipse tool = new Eclipse();
-        AnalysisResult result = scheduleBuild(job, tool.getActualId());
+        AnalysisResult result = scheduleBuild(job, new Eclipse().getActualId());
 
-        assertThat(result.getTotalSize()).isEqualTo(8);
-        assertThat(result.getIssues()).hasSize(8);
+        assertThat(result.getTotalSize()).isEqualTo(expectedSize);
+        assertThat(result.getIssues()).hasSize(expectedSize);
 
         Report report = result.getIssues();
-        assertThat(report.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(8);
+        assertThat(report.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(expectedSize);
         for (Issue annotation : report) {
             assertThat(annotation.getMessage()).matches("[a-zA-Z].*");
         }
