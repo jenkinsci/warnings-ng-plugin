@@ -222,7 +222,7 @@ recordIssues tool: java(pattern: '*.log'), filters: [includeFile('MyFile.*.java'
 ### Quality gate configuration
 
 You can define several quality gates that will be checked after the issues have been reported. These quality gates
-let you to modify Jenkins' build status so that you immediately see if the desired quality of your product is met. 
+let you modify Jenkins' build status so that you immediately see if the desired quality of your product is met. 
 A build can be set to **unstable** or **failed** for each of these quality gates. All quality gates use a simple metric:
 the maximum number of issues that can be found and still pass a given quality gate.   
 
@@ -393,7 +393,7 @@ Using this feature makes it a lot easier to keep the quality of your project und
 only on those warnings that have been introduced recently. 
 
 Note: the detection of new warnings is based on a complex algorithm that tries to track the same warning in
-two two different versions of the source code. Depending on the extend of the modification of the source code
+two different versions of the source code. Depending on the extent of the modification of the source code
 it might produce some false positives, i.e., you might still get some new and fixed warnings even if there should 
 be none. The accuracy of this algorithm is still ongoing research and will be refined in the next couple of months. 
 
@@ -678,7 +678,7 @@ Here is an example JSON report:
 ### Token macro support
 
 The Warnings plugin provides the token `ANALYSIS_ISSUES_COUNT` that could be used in additional post build processing
-steps, e.g. in the mailer. In order to use this tokens you need to install the latest release of the 
+steps, e.g. in the mailer. In order to use this token you need to install the latest release of the 
 [Token Macro plugin](https://plugins.jenkins.io/token-macro). 
 The token has an optional parameter `tool` that could be used to select a particular analysis result. 
 Examples:
