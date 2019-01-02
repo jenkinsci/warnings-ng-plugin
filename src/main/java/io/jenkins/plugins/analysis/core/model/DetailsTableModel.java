@@ -3,9 +3,13 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+
+import j2html.tags.UnescapedText;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
@@ -160,9 +164,14 @@ public class DetailsTableModel {
      * @return the formatted column
      */
     protected String formatDetails(final Issue issue, final String description) {
-        return div().withClass("details-control")
-                .attr("data-description", join(p(strong(issue.getMessage())), description).render())
-                .render();
+        UnescapedText details;
+        if (StringUtils.isBlank(issue.getMessage())) {
+            details = new UnescapedText(description);
+        }
+        else {
+            details = join(p(strong(issue.getMessage())), description);
+        }
+        return div().withClass("details-control").attr("data-description", details.render()).render();
     }
 
     /**
