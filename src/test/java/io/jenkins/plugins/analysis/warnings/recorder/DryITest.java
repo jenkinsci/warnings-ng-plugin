@@ -16,18 +16,20 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
 import io.jenkins.plugins.analysis.warnings.Simian;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable.DuplicationRow;
 
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Integration tests for the DRY parsers of the warnings plug-in in freestyle jobs.
@@ -188,7 +190,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(divElement.getAttribute("class")).isEqualTo("details-control");
         assertThat(divElement.getAttribute("data-description")).isEqualTo(
-                "<p><strong></strong></p> <pre><code>public static void functionOne()\n  "
+                "<pre><code>public static void functionOne()\n  "
                         + "{\n    System.out.println(&quot;testfile for redundancy&quot;);</code></pre>");
         DomElement file = firstTableRowCells.get(1);
         assertThat(file.getTextContent()).isEqualTo("Main.java:11");

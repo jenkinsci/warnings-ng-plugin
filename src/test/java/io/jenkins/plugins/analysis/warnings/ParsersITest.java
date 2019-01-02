@@ -370,10 +370,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(8, new SunC(), "sunc.txt");
     }
 
-    /** Runs the JcReport parser on an output file that contains 5 issues. */
+    /** Runs the JcReport parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllJcReportIssues() {
-        shouldFindIssuesOfTool(5, new JcReport(), "jcreport.xml");
+        shouldFindIssuesOfTool(6, new JcReport(), "jcreport.xml");
     }
 
     /** Runs the StyleCop parser on an output file that contains 5 issues. */
