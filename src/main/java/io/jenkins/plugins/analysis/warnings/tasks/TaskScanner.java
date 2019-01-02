@@ -227,7 +227,7 @@ class TaskScanner {
         Report report = new Report();
 
         if (isInvalidPattern) {
-            report.logError(errors.toString());
+            report.logError("%s", errors.toString());
             return report;
         }
 
