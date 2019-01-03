@@ -3,7 +3,7 @@
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
   <l:layout title="${it.displayName}" norefresh="true">
     <!-- header start source detail -->
-    <script src="${rootURL}/plugin/warnings-ng/js/libs/prism.js"></script>
+    <script src="${resURL}/plugin/warnings-ng/js/libs/prism.js"></script>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/prism.css"/>
