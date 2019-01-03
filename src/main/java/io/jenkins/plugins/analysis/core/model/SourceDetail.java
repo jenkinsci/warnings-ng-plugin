@@ -158,7 +158,7 @@ public class SourceDetail implements ModelObject {
                 }
 
                 if(newBlock) {
-                    writer.append("</code><code class=\"highlight\">");
+                    writer.append("</code><code class=\"highlight\" id=\"focus\">");
                 }
 
             }

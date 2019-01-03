@@ -2,14 +2,11 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
   <l:layout title="${it.displayName}" norefresh="true">
-    <!-- header start source detail -->
-    <script src="${resURL}/plugin/warnings-ng/js/libs/prism.js"></script>
+
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/prism.css"/>
     <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-prism.css"/>
-
-    <!-- header end source detail -->
 
     <st:include it="${it.owner}" page="sidepanel.jelly" />
     <l:main-panel>
@@ -19,4 +16,10 @@
 
     </l:main-panel>
   </l:layout>
+
+  <script src="${resURL}/plugin/warnings-ng/js/libs/prism.js"/>
+  <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
+  <script src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
+  <script src="${resURL}/plugin/warnings-ng/js/source-detail.js"/>
+
 </j:jelly>
