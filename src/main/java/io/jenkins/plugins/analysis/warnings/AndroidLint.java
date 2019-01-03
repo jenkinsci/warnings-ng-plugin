@@ -2,15 +2,15 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import edu.hm.hafner.analysis.parser.violations.AndroidLintParserAdapter;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
+import hudson.Extension;
+
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
-import org.jenkinsci.Symbol;
-import hudson.Extension;
 
 /**
  * Provides a parser and customized messages for Android Lint.
@@ -34,7 +34,7 @@ public class AndroidLint extends ReportScanningTool {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("androidLint")
+    @Symbol({"androidLintParser", "androidLint"})
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
