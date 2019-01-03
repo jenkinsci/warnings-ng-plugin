@@ -2,15 +2,15 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import edu.hm.hafner.analysis.parser.JavaDocParser;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
+import hudson.Extension;
+
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
-import hudson.Extension;
 
 /**
  * Provides customized messages for the JavaDoc parser.
@@ -19,7 +19,7 @@ import hudson.Extension;
  */
 public class JavaDoc extends ReportScanningTool {
     private static final long serialVersionUID = -3987566418736570996L;
-    static final String ID = "javadoc";
+    static final String ID = "javadoc-warnings";
 
     /** Creates a new instance of {@link JavaDoc}. */
     @DataBoundConstructor
