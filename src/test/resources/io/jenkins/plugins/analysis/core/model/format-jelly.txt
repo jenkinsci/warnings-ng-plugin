@@ -1,4 +1,5 @@
 <?jelly escape-by-default='true'?>
+<script src="${resURL}/plugin/warnings-ng/js/libs/prism.js"/>
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
   <l:layout title="${it.displayName}" norefresh="true">

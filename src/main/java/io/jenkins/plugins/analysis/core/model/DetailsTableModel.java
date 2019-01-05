@@ -13,6 +13,7 @@ import j2html.tags.UnescapedText;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.analysis.core.util.Sanitizer;
 
 import static edu.hm.hafner.util.IntegerParser.*;
 import static j2html.TagCreator.*;
@@ -30,6 +31,8 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 public class DetailsTableModel {
+    private static final Sanitizer SANITIZER = new Sanitizer();
+
     private final AgeBuilder ageBuilder;
     private final FileNameRenderer fileNameRenderer;
     private final DescriptionProvider descriptionProvider;
@@ -171,7 +174,7 @@ public class DetailsTableModel {
         else {
             details = join(p(strong(issue.getMessage())), description);
         }
-        return div().withClass("details-control").attr("data-description", details.render()).render();
+        return div().withClass("details-control").attr("data-description", render(details)).render();
     }
 
     /**
@@ -211,7 +214,7 @@ public class DetailsTableModel {
      * @return the formatted column
      */
     protected String formatProperty(final String property, final String value) {
-        return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), value);
+        return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), render(value));
     }
 
     /**
@@ -224,5 +227,29 @@ public class DetailsTableModel {
      */
     protected String formatFileName(final Issue issue) {
         return fileNameRenderer.renderAffectedFileLink(issue);
+    }
+
+    /**
+     * Renders the specified HTML code. Removes unsafe HTML constructs.
+     *
+     * @param text
+     *         the HTML to render
+     *
+     * @return safe HTML
+     */
+    protected String render(final UnescapedText text) {
+        return SANITIZER.render(text);
+    }
+
+    /**
+     * Renders the specified HTML code. Removes unsafe HTML constructs.
+     *
+     * @param html
+     *         the HTML to render
+     *
+     * @return safe HTML
+     */
+    protected String render(final String html) {
+        return SANITIZER.render(html);
     }
 }

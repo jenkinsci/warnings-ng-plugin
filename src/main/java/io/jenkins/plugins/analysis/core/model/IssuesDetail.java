@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.set.ImmutableSet;
 
 import edu.hm.hafner.analysis.Issue;
@@ -26,8 +25,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
-import hudson.markup.MarkupFormatter;
-import hudson.markup.RawHtmlMarkupFormatter;
 import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -61,9 +58,6 @@ public class IssuesDetail implements ModelObject {
     private final StaticAnalysisLabelProvider labelProvider;
     private final List<String> errorMessages = new ArrayList<>();
     private final List<String> infoMessages = new ArrayList<>();
-
-    /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
-    private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
 
     private final AnalysisResult result;
 
@@ -313,7 +307,7 @@ public class IssuesDetail implements ModelObject {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public boolean isBlameDisabled() {
-        return result.getBlames().isEmpty(); 
+        return result.getBlames().isEmpty();
     }
 
     /**
@@ -352,24 +346,6 @@ public class IssuesDetail implements ModelObject {
     @SuppressWarnings("unused") // Called by jelly view
     public TabLabelProvider getTabLabelProvider() {
         return new TabLabelProvider(getIssues());
-    }
-
-    /**
-     * Sanitizes HTML elements in the specified HTML page so that the result contains only safe HTML tags.
-     *
-     * @param html
-     *         the HTML page
-     *
-     * @return the sanitized HTML page
-     */
-    @SuppressWarnings("unused") // Called by jelly view
-    public String sanitize(final String html) {
-        try {
-            return sanitizer.translate(html);
-        }
-        catch (IOException ignore) {
-            return StringUtils.EMPTY;
-        }
     }
 
     /**

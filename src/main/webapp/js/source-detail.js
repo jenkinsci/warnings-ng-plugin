@@ -7,7 +7,7 @@
         });
     };
     $(document).ready(function() {
-        $('#focus').scrollView();
+        $('.highlight').scrollView();
     });
 })(jQuery);
 
