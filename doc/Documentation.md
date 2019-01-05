@@ -172,6 +172,13 @@ parser. Then you can select the parser from the list of available parsers. This 
 on the parsers that are defined in Jenkins' system configuration section. The custom ID and name properties can 
 be set in the same way as for the other tools.
 
+In order to use a Groovy parser in a pipeline you need to use a script statement of the following form:
+
+```
+recordIssues sourceCodeEncoding: 'UTF-8', 
+    tool: groovyScript(parserId: 'groovy-id-in-system-config', pattern:'**/*report.log', reportEncoding:'UTF-8')
+```
+
 ### Setting the source code file encoding
 
 In order to let the plugin parse and display your source code files it is required to set the encoding for these
