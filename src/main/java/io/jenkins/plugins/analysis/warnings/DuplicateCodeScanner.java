@@ -4,22 +4,26 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
+import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
+
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import hudson.model.Run;
+import hudson.util.FormValidation;
+
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import static j2html.TagCreator.*;
 
-import hudson.model.Run;
-import hudson.util.FormValidation;
+import static io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider.*;
+import static j2html.TagCreator.*;
 
 /**
  * Provides settings for duplicate code scanners.
@@ -93,8 +97,28 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
+        public String getSourceCodeDescription(final Run<?, ?> build, final Issue issue) {
+            return formatTargets(getFileNameRenderer(build), issue, "../");
+        }
+
+        @Override
         public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url) {
             return new DryTableModel(getAgeBuilder(build, url), getFileNameRenderer(build), this);
+        }
+
+        static String formatTargets(final FileNameRenderer fileNameRenderer, final Issue issue) {
+            return formatTargets(fileNameRenderer, issue, StringUtils.EMPTY);
+        }
+
+        static String formatTargets(final FileNameRenderer fileNameRenderer, final Issue issue, final String prefix) {
+            Serializable properties = issue.getAdditionalProperties();
+            if (properties instanceof DuplicationGroup) {
+                List<Issue> duplications = ((DuplicationGroup) properties).getDuplications();
+                duplications.remove(issue); // do not show reference to this issue
+
+                return ul(each(duplications, link -> li(fileNameRenderer.createAffectedFileLink(link, prefix)))).render();
+            }
+            return "-";
         }
     }
 
@@ -284,8 +308,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        protected List<String> getRow(final Report report, final Issue issue,
-                final String description) {
+        protected List<String> getRow(final Report report, final Issue issue, final String description) {
             List<String> columns = new ArrayList<>();
             columns.add(formatDetails(issue, description));
             columns.add(formatFileName(issue));
@@ -294,20 +317,9 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
             }
             columns.add(formatSeverity(issue.getSeverity()));
             columns.add(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
-            columns.add(formatTargets(issue));
+            columns.add(formatTargets(getFileNameRenderer(), issue));
             columns.add(formatAge(issue));
             return columns;
-        }
-
-        private String formatTargets(final Issue issue) {
-            Serializable properties = issue.getAdditionalProperties();
-            if (properties instanceof DuplicationGroup) {
-                List<Issue> duplications = ((DuplicationGroup) properties).getDuplications();
-                duplications.remove(issue); // do not show reference to this issue
-
-                return ul(each(duplications, link -> li(formatFileName(link)))).render();
-            }
-            return "-";
         }
     }
 }

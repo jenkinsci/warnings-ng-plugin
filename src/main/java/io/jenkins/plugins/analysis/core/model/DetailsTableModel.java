@@ -9,6 +9,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
+import j2html.tags.DomContent;
 import j2html.tags.UnescapedText;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
@@ -52,6 +53,15 @@ public class DetailsTableModel {
         this.ageBuilder = ageBuilder;
         this.fileNameRenderer = fileNameRenderer;
         this.descriptionProvider = descriptionProvider;
+    }
+
+    /**
+     * Returns the file name renderer.
+     *
+     * @return the file name renderer
+     */
+    protected FileNameRenderer getFileNameRenderer() {
+        return fileNameRenderer;
     }
 
     /**
@@ -227,6 +237,18 @@ public class DetailsTableModel {
      */
     protected String formatFileName(final Issue issue) {
         return fileNameRenderer.renderAffectedFileLink(issue);
+    }
+
+    /**
+     * Formats the text of the file name column. The text actually is a link to the UI representation of the file.
+     *
+     * @param issue
+     *         the issue to show the file name for
+     *
+     * @return the formatted file name
+     */
+    protected DomContent getFileNameLink(final Issue issue) {
+        return fileNameRenderer.createAffectedFileLink(issue);
     }
 
     /**

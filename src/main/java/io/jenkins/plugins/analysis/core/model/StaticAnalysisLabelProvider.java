@@ -17,8 +17,8 @@ import org.jvnet.localizer.Localizable;
 import hudson.model.BallColor;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
 import static j2html.TagCreator.*;
@@ -340,6 +340,20 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     @Override
     public String getDescription(final Issue issue) {
         return issue.getDescription();
+    }
+
+    /**
+     * Returns an additional description of the specified issue that will be shown with the source code.
+     *
+     * @param build
+     *         the current build
+     * @param issue
+     *         the issue
+     *
+     * @return the additional description
+     */
+    public String getSourceCodeDescription(final Run<?, ?> build, final Issue issue) {
+        return getDescription(issue);
     }
 
     /**
