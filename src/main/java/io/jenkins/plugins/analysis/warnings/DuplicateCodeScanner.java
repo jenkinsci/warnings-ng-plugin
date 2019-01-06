@@ -10,6 +10,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 
+import j2html.tags.UnescapedText;
+
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import hudson.model.Run;
@@ -21,6 +23,7 @@ import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.analysis.core.util.Sanitizer;
 
 import static io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider.*;
 import static j2html.TagCreator.*;
@@ -81,6 +84,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
     /** Provides icons for DRY parsers. */
     static class DryLabelProvider extends IconLabelProvider {
+        private static final Sanitizer SANITIZER = new Sanitizer();
+
         protected DryLabelProvider(final String id, final String name) {
             super(id, name, "dry");
         }
@@ -89,11 +94,15 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         public String getDescription(final Issue issue) {
             Serializable properties = issue.getAdditionalProperties();
             if (properties instanceof DuplicationGroup) {
-                return pre().with(code(((DuplicationGroup) properties).getCodeFragment())).render();
+                return pre().with(new UnescapedText(getCodeFragment((DuplicationGroup) properties))).renderFormatted();
             }
             else {
                 return super.getDescription(issue);
             }
+        }
+
+        private String getCodeFragment(final DuplicationGroup duplicationGroup) {
+            return SANITIZER.render(code(duplicationGroup.getCodeFragment()));
         }
 
         @Override
