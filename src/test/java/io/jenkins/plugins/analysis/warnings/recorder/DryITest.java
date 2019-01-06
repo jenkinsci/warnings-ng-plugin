@@ -191,7 +191,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(divElement.getAttribute("class")).isEqualTo("details-control");
         assertThat(divElement.getAttribute("data-description")).isEqualTo(
                 "<pre><code>public static void functionOne()\n  "
-                        + "{\n    System.out.println(&quot;testfile for redundancy&quot;);</code></pre>");
+                        + "{\n    System.out.println(&#34;testfile for redundancy&#34;);</code></pre>\n");
         DomElement file = firstTableRowCells.get(1);
         assertThat(file.getTextContent()).isEqualTo("Main.java:11");
 
