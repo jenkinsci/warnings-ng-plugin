@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core.model;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -24,10 +26,12 @@ class SourcePrinterTest extends ResourceTest {
         Issue issue = builder.build();
 
         Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue, StringUtils.EMPTY));
-        assertThat(document.text()).isEqualToIgnoringWhitespace(toString("format-java.txt"));
+        String expectedFile = toString("format-java.txt");
 
-        assertThat(document.getElementsByTag("pre"))
-                .isEqualTo("Something");
+        assertThat(document.text()).isEqualToIgnoringWhitespace(expectedFile);
+
+        Elements pre = document.getElementsByTag("pre");
+        assertThat(pre.text()).isEqualToIgnoringWhitespace(expectedFile);
     }
 
     @Test
@@ -40,7 +44,7 @@ class SourcePrinterTest extends ResourceTest {
                 .isEmpty();
     }
 
-    @Test
+    @Test @Disabled("Implement Validation")
     void shouldCreateSourceWithLineNumber() {
         IssueBuilder builder = new IssueBuilder();
         SourcePrinter printer = new SourcePrinter();
@@ -50,7 +54,7 @@ class SourcePrinterTest extends ResourceTest {
                 .isEqualTo("Something");
     }
 
-    @Test
+    @Test @Disabled("Implement Validation")
     void shouldCreateSourceWithoutDescription() {
         IssueBuilder builder = new IssueBuilder();
         SourcePrinter printer = new SourcePrinter();
