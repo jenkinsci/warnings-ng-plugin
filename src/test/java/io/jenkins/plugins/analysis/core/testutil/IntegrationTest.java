@@ -25,6 +25,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -965,5 +966,16 @@ public abstract class IntegrationTest extends ResourceTest {
         catch (IOException | SAXException e) {
             throw new AssertionError(e);
         }
+    }
+
+    protected String extractSourceCodeFromDetailsPage(final HtmlPage contentPage) {
+        DomElement domElement = contentPage.getElementById("main-panel");
+
+        StringBuilder builder = new StringBuilder();
+        for (HtmlElement code : domElement.getElementsByTagName("code")) {
+            builder.append(code.asText());
+        }
+
+        return builder.toString();
     }
 }
