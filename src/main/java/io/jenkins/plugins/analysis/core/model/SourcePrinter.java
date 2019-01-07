@@ -17,6 +17,7 @@ import static j2html.TagCreator.*;
 /**
  * Renders a source code file into a HTML snippet using Prism.js.
  *
+ * @author Philippe Arteau
  * @author Ullrich Hafner
  */
 public class SourcePrinter {
