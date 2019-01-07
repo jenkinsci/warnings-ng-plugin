@@ -4,8 +4,9 @@
 
 
 pre > code.highlight {
-
-    border-bottom: 3px dashed red;
+    background: hsla(24, 20%, 50%,.08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
+    display: block;
 }
 
 .fa-exclamation-triangle  {
@@ -29,8 +30,8 @@ pre > code.highlight {
     padding:0px;
     white-space: normal;
 }
-.analysis-detail > pre {
 
+.analysis-detail > pre {
     padding: 9.5px;
     margin: 0 0 10px;
     font-size: 13px;
@@ -43,9 +44,7 @@ pre > code.highlight {
     border-radius: 4px;
 }
 
-
-
-/** Collapse style**/
+/** Collapse style **/
 
 .collapse-open {
     display: none;
@@ -67,7 +66,6 @@ pre > code.highlight {
     visibility: visible;
     display:block;
 }
-
 
 .collapse-btn {
     cursor: pointer;
@@ -94,7 +92,6 @@ pre > code.highlight {
 .collapse-open:checked ~ .collapse-btn:before {
     content: "\f139"; /* https://fontawesome.com/icons/chevron-circle-down */
 }
-
 
 .collapse-inner {
     padding:10px;

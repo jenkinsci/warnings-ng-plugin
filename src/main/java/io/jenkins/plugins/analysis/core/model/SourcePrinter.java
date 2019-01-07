@@ -37,10 +37,6 @@ public class SourcePrinter {
      * @return the source code as colorized HTML
      */
     public String render(final Stream<String> lines, final Issue issue, final String description) {
-        return pre().with(new UnescapedText(renderCodeBlock(lines, issue, description))).renderFormatted();
-    }
-
-    private String renderCodeBlock(final Stream<String> lines, final Issue issue, final String description) {
         LookaheadStream stream = new LookaheadStream(lines);
 
         int start = issue.getLineStart();
@@ -51,10 +47,12 @@ public class SourcePrinter {
         StringBuilder after = readBlockUntilLine(stream, Integer.MAX_VALUE);
 
         String language = selectLanguageClass(issue);
-        return asCode(before, language, "line-numbers")
+        String code = asCode(before, language, "line-numbers")
                 + asCode(marked, language, "highlight")
                 + createInfoPanel(issue, description, start)
                 + asCode(after, language);
+
+        return pre().with(new UnescapedText(code)).renderFormatted();
     }
 
     private StringBuilder readBlockUntilLine(final LookaheadStream stream, final int end) {
@@ -92,45 +90,64 @@ public class SourcePrinter {
                         div().withClasses("collapse-inner", "analysis-detail").with(new UnescapedText(description))));
     }
 
-    private String selectLanguageClass(final Issue extension) {
-        switch (StringUtils.substringAfterLast(extension.getFileName(), ".")) {
-            case "jav":
-            case "java":
-                return "language-java";
+    private String selectLanguageClass(final Issue issue) {
+        switch (StringUtils.defaultIfEmpty(StringUtils.substringAfterLast(issue.getBaseName(), "."),
+                issue.getBaseName())) {
             case "htm":
             case "html":
             case "xml":
             case "xsd":
                 return "language-markup";
-            case "erb":
-            case "jsp":
-            case "tag":
-                return "language-erb";
-            case "rb":
-                return "language-ruby";
-            case "kt":
-                return "language-kotlin";
+            case "css":
+                return "language-css";
             case "js":
                 return "language-javascript";
             case "c":
                 return "language-c";
             case "cs":
                 return "language-csharp";
-            case "vb":
-                return "language-vbnet";
             case "cpp":
                 return "language-cpp";
+            case "Dockerfile":
+                return "language-docker";
+            case "go":
+                return "language-go";
             case "groovy":
                 return "language-groovy";
+            case "json":
+                return "language-json";
+            case "md":
+                return "language-markdown";
+            case "erb":
+            case "jsp":
+            case "tag":
+                return "language-erb";
+            case "jav":
+            case "java":
+                return "language-java";
+            case "rb":
+                return "language-ruby";
+            case "kt":
+                return "language-kotlin";
+            case "vb":
+                return "language-vbnet";
             case "pl":
                 return "language-perl";
             case "php":
                 return "language-php";
             case "py":
                 return "language-python";
+            case "sql":
+                return "language-sql";
             case "scala":
             case "sc":
                 return "language-scala";
+            case "swift":
+                return "language-swift";
+            case "ts":
+                return "language-typescript";
+            case "yaml":
+                return "language-yaml";
             default:
                 return "language-clike"; // Best effort for unknown extensions
         }
