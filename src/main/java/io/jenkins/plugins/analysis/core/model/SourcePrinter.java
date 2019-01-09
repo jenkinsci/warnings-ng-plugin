@@ -79,7 +79,7 @@ public class SourcePrinter {
         return div().withClass("analysis-warning").with(
                 label().withClass("collapse-btn").with(
                         img().withSrc(iconUrl),
-                        span().withClass("analysis-warning-title").with(new UnescapedText(message))));
+                        span().withClass("analysis-warning-title").with(unescape(message))));
     }
 
     private ContainerTag createDescription(final String message, final String description, final int line,
@@ -89,9 +89,13 @@ public class SourcePrinter {
                 input().withClass("collapse-open").withId(id).attr("type", "checkbox"),
                 label().withClass("collapse-btn").attr("for", id).with(
                         img().withSrc(iconUrl),
-                        span().withClass("analysis-warning-title").with(new UnescapedText(message))),
+                        span().withClass("analysis-warning-title").with(unescape(message))),
                 div().withClass("collapse-panel").with(
-                        div().withClasses("collapse-inner", "analysis-detail").with(new UnescapedText(description))));
+                        div().withClasses("collapse-inner", "analysis-detail").with(unescape(description))));
+    }
+
+    private UnescapedText unescape(final String message) {
+        return new UnescapedText(SANITIZER.render(message));
     }
 
     private String selectLanguageClass(final Issue issue) {
@@ -158,6 +162,6 @@ public class SourcePrinter {
     }
 
     private String asCode(final StringBuilder text, final String... classes) {
-        return SANITIZER.render(code().withClasses(classes).with(new UnescapedText(text.toString())));
+        return code().withClasses(classes).with(unescape(text.toString())).render();
     }
 }
