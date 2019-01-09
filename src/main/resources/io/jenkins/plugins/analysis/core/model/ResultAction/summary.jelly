@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson">
-  <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
-  <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
+<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:issues="/issues">
+
+  <issues:fontawesome-css/>
   <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
   <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">

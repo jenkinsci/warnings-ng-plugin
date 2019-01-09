@@ -2,7 +2,6 @@
  * Styles used in the SourceDetail/index.jelly view.
  */
 
-
 pre > code.highlight {
     background: hsla(24, 20%, 50%,.08);
     background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
@@ -10,24 +9,28 @@ pre > code.highlight {
 }
 
 .fa-exclamation-triangle  {
-    color: red;
+    color: #b4b4b4;
 }
 
 .analysis-warning {
     white-space: normal;
-
+    border-radius: 4px;
     border:1px solid #CCC;
     background-color:white;
     font-family: Arial, Helvetica, sans-serif; /* Avoid the font override from the pre to affect the message */
+    -moz-box-shadow:    2px 2px 18px 0 #ccc;
+    -webkit-box-shadow: 2px 2px 18px 0 #ccc;
+    box-shadow:         2px 2px 18px 0 #ccc;
 }
 
 .analysis-warning-title {
-    color: red;
+    color: black;
+    padding-left: 0.25em;
 }
 
 .analysis-detail {
-    margin:0px;
-    padding:0px;
+    margin:0;
+    padding:0;
     white-space: normal;
 }
 
@@ -72,13 +75,13 @@ pre > code.highlight {
     display: block;
     padding: 15px 10px;
     margin-bottom: 0;
-    color: #4285f4;
+    background: #FFF9C4;
     font-weight: normal;
     transition: background-color .2s ease;
 }
 
 .collapse-btn:hover {
-    background: #eee;
+    background-color: #FFF59D;
 }
 
 .collapse-open ~ .collapse-btn:before {
@@ -87,6 +90,7 @@ pre > code.highlight {
     content: "\f13a"; /* https://fontawesome.com/icons/chevron-circle-down */
     float: right;
     font-size: 16px;
+    color: #b4b4b4;
 }
 
 .collapse-open:checked ~ .collapse-btn:before {
