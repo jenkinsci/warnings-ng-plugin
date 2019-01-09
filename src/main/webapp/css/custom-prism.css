@@ -28,6 +28,10 @@ pre > code.highlight {
     padding-left: 0.25em;
 }
 
+.analysis-title-column {
+    vertical-align: middle;
+}
+
 .analysis-detail {
     margin:0;
     padding:0;
@@ -89,6 +93,7 @@ pre > code.highlight {
     font-weight: 900;
     content: "\f13a"; /* https://fontawesome.com/icons/chevron-circle-down */
     float: right;
+    padding-top: 6px;
     font-size: 16px;
     color: #b4b4b4;
 }
