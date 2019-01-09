@@ -83,7 +83,7 @@ public class CheckStyle extends ReportScanningTool {
 
         @Override
         public String getPattern() {
-            return "**/checkstyle-result.xml";
+            return "**/target/checkstyle-result.xml";
         }
 
         @Override

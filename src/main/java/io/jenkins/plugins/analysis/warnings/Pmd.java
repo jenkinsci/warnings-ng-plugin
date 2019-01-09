@@ -82,7 +82,7 @@ public class Pmd extends ReportScanningTool {
 
         @Override
         public String getPattern() {
-            return "**/pmd.xml";
+            return "**/target/pmd.xml";
         }
 
         @Override

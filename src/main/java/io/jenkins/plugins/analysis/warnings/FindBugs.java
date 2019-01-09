@@ -121,7 +121,7 @@ public class FindBugs extends ReportScanningTool {
 
         @Override
         public String getPattern() {
-            return "**/findbugsXml.xml";
+            return "**/target/findbugsXml.xml";
         }
 
         @Override

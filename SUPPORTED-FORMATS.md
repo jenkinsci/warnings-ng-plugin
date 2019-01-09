@@ -22,13 +22,13 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 6 | buckminster | buckminster() | - - | Buckminster |  |
 | 7 | cadence | cadence() | - - | Cadence Incisive |  |
 | 8 | ccm | ccm() | - - | CCM |  |
-| 9 | checkstyle | checkStyle() | ![CheckStyle](src/main/webapp/icons/checkstyle-24x24.png) ![CheckStyle](src/main/webapp/icons/checkstyle-48x48.png) | [CheckStyle](https://checkstyle.org) | **/checkstyle-result.xml |
+| 9 | checkstyle | checkStyle() | ![CheckStyle](src/main/webapp/icons/checkstyle-24x24.png) ![CheckStyle](src/main/webapp/icons/checkstyle-48x48.png) | [CheckStyle](https://checkstyle.org) | **/target/checkstyle-result.xml |
 | 10 | clang | clang() | - - | Clang (LLVM based) |  |
 | 11 | clang-tidy | clangTidy() | - - | Clang-Tidy |  |
 | 12 | code-analysis | codeAnalysis() | - - | CodeAnalysis |  |
 | 13 | codenarc | codeNarc() | - - | CodeNarc |  |
 | 14 | coolflux | coolflux() | - - | Coolflux DSP Compiler |  |
-| 15 | cpd | cpd() | ![CPD](src/main/webapp/icons/dry-24x24.png) ![CPD](src/main/webapp/icons/dry-48x48.png) | [CPD](https://pmd.github.io/pmd-6.6.0/pmd_userdocs_cpd.html) | **/cpd.xml |
+| 15 | cpd | cpd() | ![CPD](src/main/webapp/icons/dry-24x24.png) ![CPD](src/main/webapp/icons/dry-48x48.png) | [CPD](https://pmd.github.io/latest/pmd_userdocs_cpd.html) | **/target/cpd.xml |
 | 16 | cppcheck | cppCheck() | - - | CPPCheck |  |
 | 17 | cpplint | cppLint() | - - | CppLint |  |
 | 18 | csslint | cssLint() | - - | CssLint |  |
@@ -40,7 +40,7 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 24 | erlc | erlc() | - - | Erlang Compiler (erlc) |  |
 | 25 | error-prone | errorProne() | ![Error Prone](src/main/webapp/icons/bug-24x24.png) ![Error Prone](src/main/webapp/icons/bug-48x48.png) | [Error Prone](https://errorprone.info) |  |
 | 26 | eslint | esLint() | ![ESlint](src/main/webapp/icons/eslint-24x24.png) ![ESlint](src/main/webapp/icons/eslint-48x48.png) | [ESlint](https://eslint.org) |  |
-| 27 | findbugs | findBugs() | ![FindBugs](src/main/webapp/icons/findbugs-24x24.png) ![FindBugs](src/main/webapp/icons/findbugs-48x48.png) | FindBugs | **/findbugsXml.xml |
+| 27 | findbugs | findBugs() | ![FindBugs](src/main/webapp/icons/findbugs-24x24.png) ![FindBugs](src/main/webapp/icons/findbugs-48x48.png) | FindBugs | **/target/findbugsXml.xml |
 | 28 | flake8 | flake8() | - - | Flake8 |  |
 | 29 | flex | flexSdk() | - - | Flex SDK Compiler |  |
 | 30 | fxcop | fxcop() | - - | FxCop |  |
@@ -65,12 +65,12 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 49 | klocwork | klocWork() | - - | Klocwork |  |
 | 50 | ktlint | ktLint() | ![Ktlint](src/main/webapp/icons/ktlint-24x24.png) ![Ktlint](src/main/webapp/icons/ktlint-48x48.png) | [Ktlint](https://ktlint.github.io) |  |
 | 51 | maven | mavenConsole() | - - | Maven |  |
-| 52 | taglist | tagList() | - - | [Maven Taglist Plugin](https://www.mojohaus.org/taglist-maven-plugin) |  |
+| 52 | taglist | tagList() | - - | [Maven Taglist Plugin](https://www.mojohaus.org/taglist-maven-plugin) | **/target/taglist/taglist.xml |
 | 53 | metrowerks | metrowerksCodeWarrior() | - - | Metrowerks CodeWarrior |  |
 | 54 | msbuild | msBuild() | - - | MSBuild |  |
 | 55 | mypy | myPy() | - - | MyPy |  |
 | 56 | nag-fortran | nagFortran() | - - | NAG Fortran Compiler |  |
-| 57 | open-tasks | taskScanner() | ![Open Tasks Scanner](src/main/webapp/icons/open-tasks-24x24.png) ![Open Tasks Scanner](src/main/webapp/icons/open-tasks-48x48.png) | Open Tasks Scanner | - |
+| 57 | open-tasks | taskScanner() | ![Open Tasks Scanner](src/main/webapp/icons/open-tasks-24x24.png) ![Open Tasks Scanner](src/main/webapp/icons/open-tasks-48x48.png) | Open Tasks Scanner |  |
 | 58 | invalids | invalids() | - - | Oracle Invalids |  |
 | 59 | pclint | pcLint() | - - | PC-Lint |  |
 | 60 | pep8 | pep8() | - - | Pep8 |  |
@@ -79,7 +79,7 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 63 | php | php() | - - | PHP Runtime |  |
 | 64 | php-code-sniffer | phpCodeSniffer() | - - | [PHP_CodeSniffer](https://github.com/squizlabs/PHP_CodeSniffer) |  |
 | 65 | pit | pit() | ![Pit Test Coverage](src/main/webapp/icons/pit-24x24.png) ![Pit Test Coverage](src/main/webapp/icons/pit-48x48.png) | [Pit Test Coverage](http://pitest.org) |  |
-| 66 | pmd | pmdParser() | ![PMD](src/main/webapp/icons/pmd-24x24.png) ![PMD](src/main/webapp/icons/pmd-48x48.png) | [PMD](https://pmd.github.io) | **/pmd.xml |
+| 66 | pmd | pmdParser() | ![PMD](src/main/webapp/icons/pmd-24x24.png) ![PMD](src/main/webapp/icons/pmd-48x48.png) | [PMD](https://pmd.github.io) | **/target/pmd.xml |
 | 67 | prefast | prefast() | - - | PREfast |  |
 | 68 | puppetlint | puppetLint() | - - | Puppet-Lint |  |
 | 69 | pydocstyle | pyDocStyle() | - - | Pydocstyle |  |
