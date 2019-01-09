@@ -19,13 +19,15 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  * @author Ullrich Hafner
  */
 class SourcePrinterTest extends ResourceTest {
+    private static final String ICON_URL = "TODO";
+
     @Test
     void shouldCreateSourceWithoutLineNumber() {
         IssueBuilder builder = new IssueBuilder();
         SourcePrinter printer = new SourcePrinter();
         Issue issue = builder.build();
 
-        Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue, StringUtils.EMPTY));
+        Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue, StringUtils.EMPTY, ICON_URL));
         String expectedFile = toString("format-java.txt");
 
         assertThat(document.text()).isEqualToIgnoringWhitespace(expectedFile);
@@ -40,7 +42,7 @@ class SourcePrinterTest extends ResourceTest {
         SourcePrinter printer = new SourcePrinter();
         Issue issue = builder.build();
 
-        assertThat(Jsoup.parse(printer.render(asStream("format-jelly.txt"), issue, StringUtils.EMPTY)).text())
+        assertThat(Jsoup.parse(printer.render(asStream("format-jelly.txt"), issue, StringUtils.EMPTY, ICON_URL)).text())
                 .isEmpty();
     }
 
@@ -50,7 +52,7 @@ class SourcePrinterTest extends ResourceTest {
         SourcePrinter printer = new SourcePrinter();
         Issue issue = builder.setLineStart(7).setMessage("Hello Message").build();
 
-        assertThat(printer.render(asStream("format-java.txt"), issue, "description"))
+        assertThat(printer.render(asStream("format-java.txt"), issue, "description", ICON_URL))
                 .isEqualTo("Something");
     }
 
@@ -60,7 +62,7 @@ class SourcePrinterTest extends ResourceTest {
         SourcePrinter printer = new SourcePrinter();
         Issue issue = builder.setLineStart(7).setMessage("Hello Message").build();
 
-        assertThat(printer.render(asStream("format-java.txt"), issue, StringUtils.EMPTY))
+        assertThat(printer.render(asStream("format-java.txt"), issue, StringUtils.EMPTY, ICON_URL))
                 .isEqualTo("Something");
     }
 }

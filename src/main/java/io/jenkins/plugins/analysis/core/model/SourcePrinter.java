@@ -33,10 +33,12 @@ public class SourcePrinter {
      *         the issue to show
      * @param description
      *         an additional description for the issue
-     *
+     * @param iconUrl
+     *         absolute URL to the small icon of the static analysis tool
      * @return the source code as colorized HTML
      */
-    public String render(final Stream<String> lines, final Issue issue, final String description) {
+    public String render(final Stream<String> lines, final Issue issue, final String description,
+            final String iconUrl) {
         LookaheadStream stream = new LookaheadStream(lines);
 
         int start = issue.getLineStart();
@@ -49,7 +51,7 @@ public class SourcePrinter {
         String language = selectLanguageClass(issue);
         String code = asCode(before, language, "line-numbers")
                 + asCode(marked, language, "highlight")
-                + createInfoPanel(issue, description, start)
+                + createInfoPanel(issue, description, start, iconUrl)
                 + asCode(after, language);
 
         return pre().with(new UnescapedText(code)).renderFormatted();
@@ -64,27 +66,29 @@ public class SourcePrinter {
         return marked;
     }
 
-    private String createInfoPanel(final Issue issue, final String description, final int start) {
+    private String createInfoPanel(final Issue issue, final String description, final int start,
+            final String iconUrl) {
         if (StringUtils.isEmpty(description)) {
-            return createMessage(issue.getMessage()).render();
+            return createMessage(issue.getMessage(), iconUrl).render();
 
         }
-        return createDescription(issue.getMessage(), description, start).render();
+        return createDescription(issue.getMessage(), description, start, iconUrl).render();
     }
 
-    private ContainerTag createMessage(final String message) {
+    private ContainerTag createMessage(final String message, final String iconUrl) {
         return div().withClass("analysis-warning").with(
                 label().withClass("collapse-btn").with(
-                        i().withClasses("fas", "fa-exclamation-triangle"),
+                        img().withSrc(iconUrl),
                         span().withClass("analysis-warning-title").with(new UnescapedText(message))));
     }
 
-    private ContainerTag createDescription(final String message, final String description, final int line) {
+    private ContainerTag createDescription(final String message, final String description, final int line,
+            final String iconUrl) {
         String id = "collapse-" + line;
         return div().withClass("analysis-warning").with(
                 input().withClass("collapse-open").withId(id).attr("type", "checkbox"),
                 label().withClass("collapse-btn").attr("for", id).with(
-                        i().withClasses("fas", "fa-exclamation-triangle"),
+                        img().withSrc(iconUrl),
                         span().withClass("analysis-warning-title").with(new UnescapedText(message))),
                 div().withClass("collapse-panel").with(
                         div().withClasses("collapse-inner", "analysis-detail").with(new UnescapedText(description))));

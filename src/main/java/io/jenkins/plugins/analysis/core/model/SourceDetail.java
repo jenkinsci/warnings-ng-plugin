@@ -33,18 +33,22 @@ public class SourceDetail implements ModelObject {
      *         the issue to show in the source file
      * @param description
      *         a detailed description of the specified issue
+     * @param iconUrl
+     *         absolute URL to the small icon of the static analysis tool
      */
-    public SourceDetail(final Run<?, ?> owner, final Reader affectedFile, final Issue issue, final String description) {
+    public SourceDetail(final Run<?, ?> owner, final Reader affectedFile, final Issue issue, final String description,
+            final String iconUrl) {
         this.owner = owner;
 
         baseName = issue.getBaseName();
-        sourceCode = render(affectedFile, issue, description);
+        sourceCode = render(affectedFile, issue, description, iconUrl);
     }
 
-    private String render(final Reader affectedFile, final Issue issue, final String description) {
+    private String render(final Reader affectedFile, final Issue issue, final String description,
+            final String iconUrl) {
         try (BufferedReader reader = new BufferedReader(affectedFile)) {
             SourcePrinter sourcePrinter = new SourcePrinter();
-            return sourcePrinter.render(reader.lines(), issue, description);
+            return sourcePrinter.render(reader.lines(), issue, description, iconUrl);
         }
         catch (IOException e) {
             return String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e));

@@ -11,15 +11,16 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
+import hudson.model.BallColor;
+import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-
-import hudson.model.Run;
 
 /**
  * Tests the class {@link Summary}.
@@ -299,7 +300,7 @@ class SummaryTest {
 
     private StaticAnalysisLabelProvider createLabelProvider(final String checkstyle, final String checkStyle) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.getImagePath(any())).thenReturn("color");
+        when(jenkins.getImagePath(any(BallColor.class))).thenReturn("color");
         when(jenkins.getAbsoluteUrl(any())).thenReturn("absoluteUrl");
         return new StaticAnalysisLabelProvider(checkstyle, checkStyle, jenkins);
     }

@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.errorprone.annotations.MustBeClosed;
 
+import org.kohsuke.stapler.Stapler;
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 import hudson.model.AbstractItem;
@@ -165,6 +166,18 @@ public class JenkinsFacade implements Serializable {
      */
     public String getImagePath(final BallColor color) {
         return color.getImageOf("16x16");
+    }
+
+    /**
+     * Returns the absolute URL for the specified icon.
+     *
+     * @param icon
+     *         the icon URL
+     *
+     * @return the absolute URL
+     */
+    public String getImagePath(final String icon) {
+        return Stapler.getCurrentRequest().getContextPath() + Jenkins.RESOURCE_PATH + icon;
     }
 
     /**
