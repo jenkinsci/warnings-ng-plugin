@@ -143,7 +143,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldUseDefaultFileNamePattern() {
         FreeStyleProject project = createFreeStyleProject();
-        copySingleFileToWorkspace(project, "checkstyle.xml", "checkstyle-result.xml");
+        copySingleFileToWorkspace(project, "checkstyle.xml", "target/checkstyle-result.xml");
         enableWarnings(project, createTool(new CheckStyle(), StringUtils.EMPTY));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);

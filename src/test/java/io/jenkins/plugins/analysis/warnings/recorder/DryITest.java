@@ -180,6 +180,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(2);
         cpd.setHighThreshold(4);
+        cpd.setPattern("**/cpd.xml");
         enableGenericWarnings(project, cpd);
 
         List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
