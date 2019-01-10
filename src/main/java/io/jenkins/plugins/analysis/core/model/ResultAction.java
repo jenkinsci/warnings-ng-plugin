@@ -8,6 +8,7 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.StaplerProxy;
@@ -57,6 +58,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * @param charset
      *         the charset to use to display source files
      */
+    // FIXME: is ID the same as label providers ID?
     public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
             final String id, final String name, final Charset charset) {
         this.owner = owner;
@@ -96,7 +98,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         onAttached(r);
     }
 
-    @Override
+    @Override @NonNull
     public String getDisplayName() {
         return getLabelProvider().getLinkName();
     }
@@ -151,6 +153,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return {@code true} if a large image is defined, {@code false} otherwise
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public boolean hasLargeImage() {
         return StringUtils.isNotBlank(getLargeImageName());
     }
@@ -160,6 +163,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return the URL of the image
      */
+    @SuppressWarnings({"unused", "WeakerAccess"}) // Called by jelly view
     public String getLargeImageName() {
         return getLabelProvider().getLargeIconUrl();
     }
@@ -169,6 +173,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return the URL of the image
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public String getSmallImageName() {
         return getSmallImage();
     }
@@ -178,6 +183,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return the URL of the image
      */
+    @SuppressWarnings({"unused", "WeakerAccess"}) // Called by jelly view
     public String getSmallImage() {
         return getLabelProvider().getSmallIconUrl();
     }

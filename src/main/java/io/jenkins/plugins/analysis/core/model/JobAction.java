@@ -42,12 +42,21 @@ public class JobAction implements Action {
         this.labelProvider = labelProvider;
     }
 
+    /**
+     * Returns the ID of this action and the ID of the associated results.
+     *
+     * @return the ID
+     */
+    public String getId() {
+        return labelProvider.getId();
+    }
+
     @Override
     public String getDisplayName() {
         return labelProvider.getLinkName();
     }
 
-    /**Dry
+    /**
      * Returns the title of the trend graph.
      *
      * @return the title of the trend graph.
@@ -104,12 +113,22 @@ public class JobAction implements Action {
      * @throws IOException
      *         in case of an error
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        Optional<ResultAction> action = createBuildHistory().getBaselineAction();
+        Optional<ResultAction> action = getLatestAction();
         if (action.isPresent()) {
             response.sendRedirect2(String.format("../%d/%s", action.get().getOwner().getNumber(), 
                     labelProvider.getId()));
         }
+    }
+
+    /**
+     * Returns the latest static analysis results for this job.
+     *
+     * @return the latest results (if available)
+     */
+    public Optional<ResultAction> getLatestAction() {
+        return createBuildHistory().getBaselineAction();
     }
 
     /**

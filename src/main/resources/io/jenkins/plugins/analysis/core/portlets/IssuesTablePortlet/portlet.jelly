@@ -1,0 +1,35 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard">
+
+  <dp:decorate portlet="${it}" width="1">
+    <tr>
+      <td>
+
+        <j:set var="visibleJobs" value="${it.getVisibleJobs(jobs)}"/>
+        <table class="table table-hover table-striped" id="${it.id}">
+          <thead>
+            <tr>
+              <th>${%Job}</th>
+              <j:forEach var="toolName" items="${it.getToolNames(visibleJobs)}">
+                <th>${toolName}</th>
+              </j:forEach>
+            </tr>
+          </thead>
+          <tbody>
+            <j:forEach var="job" items="${visibleJobs}">
+              <tr>
+                <td class="pane">
+                  <dp:jobLink job="${job}"/>
+                </td>
+                <j:forEach var="total" items="${it.getTotals(job)}">
+                  <th>${total}</th>
+                </j:forEach>
+              </tr>
+            </j:forEach>
+          </tbody>
+        </table>
+
+      </td>
+    </tr>
+  </dp:decorate>
+</j:jelly>

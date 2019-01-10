@@ -60,6 +60,7 @@
     <workflow-job.version>2.16</workflow-job.version>
     <structs.version>1.10</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
+    <dashboard-view.version>2.9.4</dashboard-view.version>
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.11.0</maven-pmd-plugin.version>
@@ -259,6 +260,12 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>git</artifactId>
       <version>${git-plugin.version}</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>dashboard-view</artifactId>
+      <version>${dashboard-view.version}</version>
       <optional>true</optional>
     </dependency>
 
