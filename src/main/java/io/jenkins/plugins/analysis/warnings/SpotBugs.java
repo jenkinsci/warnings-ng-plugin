@@ -40,7 +40,7 @@ public class SpotBugs extends FindBugs {
 
         @Override
         public String getPattern() {
-            return "**/target/spotbugsXml.xml";
+            return "**/spotbugsXml.xml";
         }
 
         @Override

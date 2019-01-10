@@ -49,6 +49,11 @@ public class TagList extends ReportScanningTool {
         }
 
         @Override
+        public String getPattern() {
+            return "**/taglist.xml";
+        }
+
+        @Override
         public String getUrl() {
             return "https://www.mojohaus.org/taglist-maven-plugin";
         }

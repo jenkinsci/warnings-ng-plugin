@@ -41,9 +41,9 @@ analysis tools is defined in the POM and the `etc` and `.idea` folders:
 - [Error Prone](http://errorprone.info)
 - [IntelliJ](https://www.jetbrains.com/help/idea/code-inspection.html)
 
-This configuration will be picked up automatically if you build the project using maven. If you install the CheckStyle 
+This configuration will be picked up automatically if you build the project using Maven. If you install the CheckStyle 
 plugin of IntelliJ then the correct set of CheckStyle rules will used automatically. Moreover, the code formatter and 
-the inspection rules will be automatically picked up bey IntelliJ.
+the inspection rules will be automatically picked up by IntelliJ.
 
 ## Proposing Changes
 
