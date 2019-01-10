@@ -159,8 +159,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         Report report = result.getIssues();
         assertThat(report.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(10); // maven eclipse detects to maven javac warnings
         assertThat(report.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
-        assertThat(report.filter(issue -> "javadoc".equals(issue.getOrigin()))).hasSize(6);
-        assertThat(report.getTools()).containsExactlyInAnyOrder("java", "javadoc", "eclipse");
+        assertThat(report.filter(issue -> "javadoc-warnings".equals(issue.getOrigin()))).hasSize(6);
+        assertThat(report.getTools()).containsExactlyInAnyOrder("java", "javadoc-warnings", "eclipse");
         assertThat(result.getIssues()).hasSize(10 + 2 + 6);
     }
 
