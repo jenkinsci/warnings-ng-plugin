@@ -211,7 +211,7 @@ public class JenkinsFacade implements Serializable {
      *
      * @return the full name
      */
-    public String getFullNameOf(final Job job) {
+    public String getFullNameOf(final Job<?, ?> job) {
         return job.getFullName(); // getFullName is final
     }
 

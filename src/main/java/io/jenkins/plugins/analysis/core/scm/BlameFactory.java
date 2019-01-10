@@ -55,7 +55,7 @@ public final class BlameFactory {
             }
         }
         else if (run instanceof AbstractBuild) {
-            AbstractProject project = ((AbstractBuild) run).getProject();
+            AbstractProject<?, ?> project = ((AbstractBuild) run).getProject();
             if (project.getScm() != null) {
                 return project.getScm();
             }
