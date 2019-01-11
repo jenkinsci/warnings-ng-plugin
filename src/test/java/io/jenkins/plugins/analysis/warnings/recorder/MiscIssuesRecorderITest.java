@@ -13,27 +13,31 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty;
+
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+import hudson.model.Run;
+
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
-import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
+import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Pmd;
+import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SummaryBox;
+import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
-import hudson.model.Run;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -44,6 +48,29 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  */
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
+    /**
+     * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
+     */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-55514")
+    public void shouldMapSeverityFilterForFindBugs() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("findbugs-severities.xml");
+
+        FindBugs findbugs = new FindBugs();
+        findbugs.setUseRankAsPriority(true);
+        enableGenericWarnings(project, findbugs);
+
+        assertThat(scheduleBuildAndAssertStatus(project, Result.SUCCESS)).hasTotalSize(12)
+                .hasTotalHighPrioritySize(0)
+                .hasTotalNormalPrioritySize(0)
+                .hasTotalLowPrioritySize(12);
+
+        findbugs.setUseRankAsPriority(false);
+        assertThat(scheduleBuildAndAssertStatus(project, Result.SUCCESS)).hasTotalSize(12)
+                .hasTotalHighPrioritySize(1)
+                .hasTotalNormalPrioritySize(11)
+                .hasTotalLowPrioritySize(0);
+    }
+
     /**
      * Runs the Eclipse parser on an empty workspace: the build should report 0 issues and an error message.
      */
@@ -76,7 +103,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     /**
-     * Runs the open tasks scanner on the Eclipse console log (WARNING is used as tag): the build should report 8 issues.
+     * Runs the open tasks scanner on the Eclipse console log (WARNING is used as tag): the build should report 8
+     * issues.
      */
     @Test
     public void shouldScanForOpenTasks() {
@@ -90,7 +118,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(8);
-        
+
         Report report = result.getIssues();
         for (Issue openTask : report) {
             assertThat(openTask).hasType(tag).hasSeverity(Severity.WARNING_HIGH);
@@ -554,7 +582,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     public void shouldShowBaseNamesInFilesTab() {
         FreeStyleProject job = createFreeStyleProjectWithWorkspaceFiles("pmd-absolute-path.xml");
         enableGenericWarnings(job, new Pmd());
-        
+
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(5);

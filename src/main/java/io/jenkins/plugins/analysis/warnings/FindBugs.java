@@ -2,19 +2,20 @@ package io.jenkins.plugins.analysis.warnings;
 
 import javax.annotation.Nonnull;
 
-import org.jenkinsci.Symbol;
-import org.jvnet.localizer.LocaleProvider;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.FindBugsParser;
-import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.jenkinsci.Symbol;
+import org.jvnet.localizer.LocaleProvider;
 import hudson.Extension;
+
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+
+import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
 
 /**
  * Provides a parser and customized messages for FindBugs.
@@ -53,7 +54,7 @@ public class FindBugs extends ReportScanningTool {
 
     @Override
     public FindBugsParser createParser() {
-        return new FindBugsParser(RANK);
+        return new FindBugsParser(useRankAsPriority ? RANK : CONFIDENCE);
     }
 
     /** Provides the labels for the static analysis tool. */
