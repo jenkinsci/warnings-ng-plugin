@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Job;
@@ -21,7 +22,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
  * @author Ullrich Hafner
  */
 public class IssuesTablePortlet extends DashboardPortlet {
-    private boolean hideNoIssues;
+    private boolean hideCleanJobs;
 
     /**
      * A mapping of tools IDs to tool names. Note that this map will be initialized by #{@link
@@ -40,6 +41,17 @@ public class IssuesTablePortlet extends DashboardPortlet {
         super(name);
     }
 
+    @SuppressWarnings("unused") // called by Stapler
+    public boolean getHideCleanJobs() {
+        return hideCleanJobs;
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    @DataBoundSetter
+    public void setHideCleanJobs(final boolean hideCleanJobs) {
+        this.hideCleanJobs = hideCleanJobs;
+    }
+
     /**
      * Returns all visible jobs. If activated in the configuration, jobs with no issues will be hidden.
      *
@@ -48,8 +60,9 @@ public class IssuesTablePortlet extends DashboardPortlet {
      *
      * @return the filtered jobs
      */
+    @SuppressWarnings({"unused", "WeakerAccess"}) // Called by jelly view
     public Collection<Job<?, ?>> getVisibleJobs(final Collection<Job<?, ?>> jobs) {
-        return hideNoIssues ? removeZeroIssuesJobs(jobs) : jobs;
+        return hideCleanJobs ? removeZeroIssuesJobs(jobs) : jobs;
     }
 
     private Collection<Job<?, ?>> removeZeroIssuesJobs(final Collection<Job<?, ?>> jobs) {
@@ -68,7 +81,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
     public Collection<String> getToolNames(final Collection<Job<?, ?>> visibleJobs) {
         createToolMapping(visibleJobs);
 
-        return toolNamesById.values();
+        return getToolNamesById().values();
     }
 
     /**
@@ -97,11 +110,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
      */
     @SuppressWarnings({"unused", "WeakerAccess"}) // Called by jelly view
     public Collection<String> getTotals(final Job<?, ?> job) {
-        if (toolNamesById == null) {
-            throw new IllegalStateException("Method createToolMapping has not been called yet.");
-        }
-
-        return toolNamesById.keySet().stream().map(id -> countIssues(job, id)).collect(Collectors.toList());
+        return getToolNamesById().keySet().stream().map(id -> countIssues(job, id)).collect(Collectors.toList());
     }
 
     private String countIssues(final Job<?, ?> job, final String id) {
@@ -117,7 +126,25 @@ public class IssuesTablePortlet extends DashboardPortlet {
     }
 
     private boolean isVisible(final Job<?, ?> job) {
-        return true; // TODO: implement visibility
+        if (!hideCleanJobs) {
+            return true;
+        }
+
+        // TODO: when selecting individual actions this will not work
+        return job.getActions(JobAction.class)
+                .stream()
+                .map(JobAction::getLatestAction)
+                .filter(Optional::isPresent)
+                .map(Optional::get).anyMatch(resultAction -> resultAction.getResult().getTotalSize() > 0);
+
+    }
+
+    private TreeMap<String, String> getToolNamesById() {
+        if (toolNamesById == null) {
+            throw new IllegalStateException("Method createToolMapping has not been called yet.");
+        }
+
+        return toolNamesById;
     }
 
     /**

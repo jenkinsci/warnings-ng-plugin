@@ -41,7 +41,7 @@ class IssuesTablePortletTest {
     void shouldShowTableWithOneJob() {
         IssuesTablePortlet issues = new IssuesTablePortlet("issues");
 
-        List<Job<?, ?>> jobs = createJobs(createJob (1, SPOT_BUGS_ID, SPOT_BUGS_NAME));
+        List<Job<?, ?>> jobs = createJobs(createJob(1, SPOT_BUGS_ID, SPOT_BUGS_NAME));
 
         assertThat(issues.getToolNames(jobs)).containsExactly(SPOT_BUGS_NAME);
         assertThat(issues.getTotals(jobs.get(0))).containsExactly("1");
@@ -83,8 +83,42 @@ class IssuesTablePortletTest {
         jobs.add(second);
 
         assertThat(issues.getToolNames(jobs)).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+        assertThat(issues.getVisibleJobs(jobs)).containsExactly(first, second);
         assertThat(issues.getTotals(first)).containsExactly("2", "1");
         assertThat(issues.getTotals(second)).containsExactly("4", "3");
+    }
+
+    @Test
+    void shouldFilterZeroIssuesJobs() {
+        IssuesTablePortlet issues = new IssuesTablePortlet("issues");
+        issues.setHideCleanJobs(true);
+
+        List<Job<?, ?>> jobs = new ArrayList<>();
+        Job first = createJobWithActions(createAction(0, SPOT_BUGS_ID, SPOT_BUGS_NAME),
+                createAction(0, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+        jobs.add(first);
+        Job second = createJobWithActions(createAction(3, SPOT_BUGS_ID, SPOT_BUGS_NAME),
+                createAction(4, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+        jobs.add(second);
+
+        assertThat(issues.getToolNames(jobs)).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+        assertThat(issues.getVisibleJobs(jobs)).containsExactly(second);
+    }
+
+    @Test
+    void shouldFilterNonActionJobs() {
+        IssuesTablePortlet issues = new IssuesTablePortlet("issues");
+        issues.setHideCleanJobs(true);
+
+        List<Job<?, ?>> jobs = new ArrayList<>();
+        Job first = createJobWithActions();
+        jobs.add(first);
+        Job second = createJobWithActions(createAction(3, SPOT_BUGS_ID, SPOT_BUGS_NAME),
+                createAction(4, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+        jobs.add(second);
+
+        assertThat(issues.getToolNames(jobs)).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+        assertThat(issues.getVisibleJobs(jobs)).containsExactly(second);
     }
 
     @Test

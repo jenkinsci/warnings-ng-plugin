@@ -1,33 +1,50 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard">
+<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:issues="/issues">
+
+  <issues:bootstrap-css/>
+  <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
+
+  <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
+  <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
+  <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
 
   <dp:decorate portlet="${it}" width="1">
     <tr>
       <td>
 
         <j:set var="visibleJobs" value="${it.getVisibleJobs(jobs)}"/>
-        <table class="table table-hover table-striped" id="${it.id}">
-          <thead>
-            <tr>
-              <th>${%Job}</th>
-              <j:forEach var="toolName" items="${it.getToolNames(visibleJobs)}">
-                <th>${toolName}</th>
-              </j:forEach>
-            </tr>
-          </thead>
-          <tbody>
-            <j:forEach var="job" items="${visibleJobs}">
-              <tr>
-                <td class="pane">
-                  <dp:jobLink job="${job}"/>
-                </td>
-                <j:forEach var="total" items="${it.getTotals(job)}">
-                  <th>${total}</th>
+        <j:choose>
+          <j:when test="${!visibleJobs.isEmpty()}">
+            <table class="table table-hover table-striped" id="${it.id}">
+              <thead>
+                <tr>
+                  <th>${%Job}</th>
+                  <j:forEach var="toolName" items="${it.getToolNames(visibleJobs)}">
+                    <th>${toolName}</th>
+                  </j:forEach>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="job" items="${visibleJobs}">
+                  <tr>
+                    <td class="pane">
+                      <dp:jobLink job="${job}"/>
+                    </td>
+                    <j:forEach var="total" items="${it.getTotals(job)}">
+                      <td>${total}</td>
+                    </j:forEach>
+                  </tr>
                 </j:forEach>
-              </tr>
-            </j:forEach>
-          </tbody>
-        </table>
+              </tbody>
+            </table>
+          </j:when>
+          <j:otherwise>
+            <issues:zero-issues/>
+          </j:otherwise>
+        </j:choose>
+
 
       </td>
     </tr>
