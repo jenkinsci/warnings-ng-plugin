@@ -13,6 +13,7 @@ skinparam component {
 
 [Charts] <<..core.charts>>
 [Filter] <<..core.filter>>
+[Portlets] <<..core.portlets>>
 [Rest API] <<..core.restapi>>
 [SCM] <<..core.scm>>
 [Tokens] <<..core.tokens>>
@@ -27,6 +28,7 @@ skinparam component {
 [Steps] ---> [Filter]
 
 [Tokens] --> [Model]
+[Portlets] --> [Model]
 
 [Model] --> [Utilities]
 [Model] --> [Charts]
