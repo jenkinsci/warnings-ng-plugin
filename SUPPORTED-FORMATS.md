@@ -28,7 +28,7 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 12 | code-analysis | codeAnalysis() | - - | CodeAnalysis |  |
 | 13 | codenarc | codeNarc() | - - | CodeNarc |  |
 | 14 | coolflux | coolflux() | - - | Coolflux DSP Compiler |  |
-| 15 | cpd | cpd() | ![CPD](src/main/webapp/icons/dry-24x24.png) ![CPD](src/main/webapp/icons/dry-48x48.png) | [CPD](https://pmd.github.io/pmd-6.6.0/pmd_userdocs_cpd.html) | **/cpd.xml |
+| 15 | cpd | cpd() | ![CPD](src/main/webapp/icons/dry-24x24.png) ![CPD](src/main/webapp/icons/dry-48x48.png) | [CPD](https://pmd.github.io/latest/pmd_userdocs_cpd.html) | **/cpd.xml |
 | 16 | cppcheck | cppCheck() | - - | CPPCheck |  |
 | 17 | cpplint | cppLint() | - - | CppLint |  |
 | 18 | csslint | cssLint() | - - | CssLint |  |
@@ -65,12 +65,12 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 49 | klocwork | klocWork() | - - | Klocwork |  |
 | 50 | ktlint | ktLint() | ![Ktlint](src/main/webapp/icons/ktlint-24x24.png) ![Ktlint](src/main/webapp/icons/ktlint-48x48.png) | [Ktlint](https://ktlint.github.io) |  |
 | 51 | maven | mavenConsole() | - - | Maven |  |
-| 52 | taglist | tagList() | - - | [Maven Taglist Plugin](https://www.mojohaus.org/taglist-maven-plugin) |  |
+| 52 | taglist | tagList() | - - | [Maven Taglist Plugin](https://www.mojohaus.org/taglist-maven-plugin) | **/taglist.xml |
 | 53 | metrowerks | metrowerksCodeWarrior() | - - | Metrowerks CodeWarrior |  |
 | 54 | msbuild | msBuild() | - - | MSBuild |  |
 | 55 | mypy | myPy() | - - | MyPy |  |
 | 56 | nag-fortran | nagFortran() | - - | NAG Fortran Compiler |  |
-| 57 | open-tasks | taskScanner() | ![Open Tasks Scanner](src/main/webapp/icons/open-tasks-24x24.png) ![Open Tasks Scanner](src/main/webapp/icons/open-tasks-48x48.png) | Open Tasks Scanner | - |
+| 57 | open-tasks | taskScanner() | ![Open Tasks Scanner](src/main/webapp/icons/open-tasks-24x24.png) ![Open Tasks Scanner](src/main/webapp/icons/open-tasks-48x48.png) | Open Tasks Scanner |  |
 | 58 | invalids | invalids() | - - | Oracle Invalids |  |
 | 59 | pclint | pcLint() | - - | PC-Lint |  |
 | 60 | pep8 | pep8() | - - | Pep8 |  |
@@ -94,7 +94,7 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 78 | simian | simian() | ![Simian](src/main/webapp/icons/dry-24x24.png) ![Simian](src/main/webapp/icons/dry-48x48.png) | Simian |  |
 | 79 | sonar | sonarQube() | ![SonarQube](src/main/webapp/icons/sonar-24x24.png) ![SonarQube](src/main/webapp/icons/sonar-48x48.png) | SonarQube | **/sonar-report.json |
 | 80 | sphinx | sphinxBuild() | - - | Sphinx-build |  |
-| 81 | spotbugs | spotBugs() | ![SpotBugs](src/main/webapp/icons/spotbugs-24x24.png) ![SpotBugs](src/main/webapp/icons/spotbugs-48x48.png) | [SpotBugs](https://spotbugs.github.io) | **/target/spotbugsXml.xml |
+| 81 | spotbugs | spotBugs() | ![SpotBugs](src/main/webapp/icons/spotbugs-24x24.png) ![SpotBugs](src/main/webapp/icons/spotbugs-48x48.png) | [SpotBugs](https://spotbugs.github.io) | **/spotbugsXml.xml |
 | 82 | stylecop | styleCop() | - - | StyleCop |  |
 | 83 | sunc | sunC() | - - | SUN C++ Compiler |  |
 | 84 | swiftlint | swiftLint() | - - | [SwiftLint](https://github.com/realm/SwiftLint) |  |
