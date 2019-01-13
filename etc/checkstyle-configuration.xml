@@ -141,10 +141,8 @@
     <module name="UpperEll"/>
     <module name="IllegalCatch"/>
     <module name="IllegalImport">
-      <property name="illegalPkgs" value="junit"/>
-    </module>
-    <module name="IllegalImport">
-      <property name="illegalPkgs" value="net.jcip.annotations"/>
+      <property name="illegalPkgs" value="junit, net.jcip.annotations, javax.annotation"/>
+      <property name="illegalClasses" value="edu.umd.cs.findbugs.annotations.CheckForNull"/>
     </module>
   </module>
   <module name="FileTabCharacter">
