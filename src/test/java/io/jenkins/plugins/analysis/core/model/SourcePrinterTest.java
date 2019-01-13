@@ -41,18 +41,6 @@ class SourcePrinterTest extends ResourceTest {
     }
 
     @Test
-    void shouldNotRenderContentOfJellyFile() {
-        IssueBuilder builder = new IssueBuilder();
-        Issue issue = builder.build();
-
-        SourcePrinter printer = new SourcePrinter();
-
-        Document document = Jsoup.parse(printer.render(asStream("format-jelly.txt"), issue,
-                NO_DESCRIPTION, ICON_URL));
-        assertThat(document.text()).isEmpty();
-    }
-
-    @Test
     void shouldCreateSourceWithLineNumber() {
         IssueBuilder builder = new IssueBuilder();
         Issue issue = builder.setLineStart(7).setMessage(MESSAGE).build();
@@ -93,5 +81,36 @@ class SourcePrinterTest extends ResourceTest {
                 .isEqualTo(MESSAGE);
         assertThat(document.getElementsByClass("analysis-detail")).isEmpty();
         assertThat(document.getElementsByClass("collapse-panel")).isEmpty();
+    }
+
+    @Test
+    void shouldFilterTagsInCode() {
+        IssueBuilder builder = new IssueBuilder();
+        Issue issue = builder.setLineStart(2).build();
+
+        SourcePrinter printer = new SourcePrinter();
+
+        Document document = Jsoup.parse(printer.render(asStream("format-jelly.txt"), issue,
+                NO_DESCRIPTION, ICON_URL));
+        assertThat(document.getElementsByTag("code").html())
+                .isEqualTo("Before Text\nWarning Text\nAfter Text");
+    }
+
+    @Test
+    void shouldFilterTagsInMessageAndDescription() {
+        IssueBuilder builder = new IssueBuilder();
+        Issue issue = builder.setLineStart(7).setMessage("Hello <b>Message</b> <script>execute</script>").build();
+
+        SourcePrinter printer = new SourcePrinter();
+
+        Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
+                "Hello <b>Description</b> <script>execute</script>", ICON_URL));
+
+        assertThatCodeIsEqualToSourceText(document);
+
+        assertThat(document.getElementsByClass("analysis-warning-title").html())
+                .isEqualToIgnoringWhitespace("Hello <b>Message</b>");
+        assertThat(document.getElementsByClass("analysis-detail").html())
+                .isEqualToIgnoringWhitespace("Hello <b>Description</b>");
     }
 }
