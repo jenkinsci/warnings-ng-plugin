@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added support for [ErrorProne](http://errorprone.info) in maven builds. 
 Parser now reports description with link to external documentation.
+- [JENKINS-55500](https://issues.jenkins-ci.org/browse/JENKINS-55500): Added a portlet that renders a two-dimensional 
+table of issues per type and job
 
 ### Changed
 - [API]: Replaced `CheckForNull` annotations with `Nullable` in order to enable 

@@ -1,0 +1,60 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:issues="/issues">
+
+  <dp:decorate portlet="${it}" width="1">
+    <tr>
+      <td>
+
+        <j:set var="visibleJobs" value="${it.getVisibleJobs(jobs)}"/>
+        <j:choose>
+          <j:when test="${!visibleJobs.isEmpty()}">
+            <j:if test="${!it.getShowIcons()}">
+              <j:set var="sortable" value="sortable" />
+            </j:if>
+            <!-- TODO: replace the old-school table with datatables.js as well -->
+            <table class="pane bigtable ${sortable}" id="${it.id}">
+              <thead>
+                <tr>
+                  <th class="pane-header" align="left" initialSortDir="down" >
+                    ${%Job}
+                  </th>
+                  <j:forEach var="toolName" items="${it.getToolNames(visibleJobs)}">
+                    <th class="pane-header" align="right">
+                      <j:out value="${toolName}"/>
+                    </th>
+                  </j:forEach>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="job" items="${visibleJobs}">
+                  <tr>
+                    <td class="pane">
+                      <dp:jobLink job="${job}"/>
+                    </td>
+                    <j:forEach var="total" items="${it.getTotals(job)}">
+                      <td class="pane" align="right">${total}</td>
+                    </j:forEach>
+                  </tr>
+                </j:forEach>
+              </tbody>
+            </table>
+          </j:when>
+          <j:otherwise>
+            <issues:bootstrap-css/>
+            <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+            <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
+            <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
+
+            <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
+            <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
+            <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
+
+            <issues:zero-issues/>
+          </j:otherwise>
+        </j:choose>
+
+
+      </td>
+    </tr>
+  </dp:decorate>
+</j:jelly>
