@@ -8,8 +8,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -29,13 +29,13 @@ import hudson.util.FormValidation;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
 
 /**
  * Scan files or the console log for issues.
@@ -59,7 +59,7 @@ public class ScanForIssuesStep extends Step {
         // empty constructor required for Stapler
     }
 
-    @CheckForNull
+    @Nullable
     public Tool getTool() {
         return tool;
     }
@@ -99,7 +99,7 @@ public class ScanForIssuesStep extends Step {
         this.isBlameDisabled = blameDisabled;
     }
 
-    @CheckForNull
+    @Nullable
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }

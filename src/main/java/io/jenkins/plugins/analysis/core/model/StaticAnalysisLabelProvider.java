@@ -2,12 +2,12 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Locale;
 import java.util.function.Function;
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
@@ -17,8 +17,8 @@ import org.jvnet.localizer.Localizable;
 import hudson.model.BallColor;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
 import static j2html.TagCreator.*;
@@ -36,7 +36,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
 
     private final String id;
-    @CheckForNull
+    @Nullable
     private String name;
     private final JenkinsFacade jenkins;
 
@@ -58,12 +58,12 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @param name
      *         the name of the static analysis tool
      */
-    public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name) {
+    public StaticAnalysisLabelProvider(final String id, @Nullable final String name) {
         this(id, name, new JenkinsFacade());
     }
 
     @VisibleForTesting
-    StaticAnalysisLabelProvider(final String id, @CheckForNull final String name, final JenkinsFacade jenkins) {
+    StaticAnalysisLabelProvider(final String id, @Nullable final String name, final JenkinsFacade jenkins) {
         this.id = id;
         this.name = name;
         this.jenkins = jenkins;
@@ -144,7 +144,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *
      * @return the name
      */
-    public StaticAnalysisLabelProvider setName(@CheckForNull final String name) {
+    public StaticAnalysisLabelProvider setName(@Nullable final String name) {
         if (StringUtils.isNotBlank(name)) { // don't overwrite with empty
             this.name = name;
         }

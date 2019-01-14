@@ -1,17 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
-
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.MetrowerksCwCompilerParser;
 import edu.hm.hafner.analysis.parser.MetrowerksCwLinkerParser;
-import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
 import hudson.Extension;
+
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 
 /**
  * Provides a parser and customized messages for the Metrowerks CodeWarrior compiler and linker.
@@ -43,7 +43,7 @@ public class MetrowerksCodeWarrior extends ReportScanningToolSuite {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_MetrowerksCodeWarrior_ParserName();

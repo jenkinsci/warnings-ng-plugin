@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.restapi;
 
 import java.util.List;
 
-import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -62,7 +62,7 @@ public class AnalysisResultApi {
     }
 
     @Exported
-    @CheckForNull
+    @Nullable
     public Run<?, ?> getReferenceBuild() {
         return result.getReferenceBuild().orElse(null);
     }

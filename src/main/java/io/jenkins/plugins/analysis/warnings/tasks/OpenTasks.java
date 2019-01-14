@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
-import javax.annotation.Nonnull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -8,30 +7,31 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
 
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.AncestorInPath;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.Report;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.warnings.Messages;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
-import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
+import org.kohsuke.stapler.AncestorInPath;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
 import hudson.util.FormValidation;
+
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.analysis.warnings.Messages;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
+import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 
 /**
  * Provides a files scanner that detects open tasks in source code files.
@@ -189,7 +189,7 @@ public class OpenTasks extends Tool {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_OpenTasks_Name();

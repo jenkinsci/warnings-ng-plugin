@@ -15,7 +15,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
-import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import static org.assertj.core.api.Assertions.*;
 
@@ -141,9 +141,9 @@ public class DuplicationTable {
         private final int age;
         private final int lineCount;
         
-        @CheckForNull
+        @Nullable
         private DomElement fileNameLink;
-        @CheckForNull
+        @Nullable
         private DomElement priorityLink;
 
         /**

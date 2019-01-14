@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.util.NoSuchElementException;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Provides access to the blame information of report. Collects all blames for a set of affected files. Additionally,
@@ -41,7 +41,7 @@ public class Blames implements Serializable {
         this.workspace = normalizeFileName(workspace);
     }
 
-    private String normalizeFileName(@CheckForNull final String platformFileName) {
+    private String normalizeFileName(@Nullable final String platformFileName) {
         return StringUtils.replace(StringUtils.strip(platformFileName), "\\", "/");
     }
 

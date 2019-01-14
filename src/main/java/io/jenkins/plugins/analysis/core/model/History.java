@@ -2,9 +2,9 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Iterator;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 import edu.hm.hafner.analysis.Report;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import hudson.model.Run;
 
@@ -20,6 +20,6 @@ public interface History extends Iterable<AnalysisResult> {
     Report getIssues();
 
     @Override
-    @Nonnull
+    @NonNull
     Iterator<AnalysisResult> iterator();
 }

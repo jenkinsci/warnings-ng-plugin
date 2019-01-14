@@ -9,7 +9,7 @@ import java.util.Map;
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import io.jenkins.plugins.analysis.core.scm.Blames;
 
@@ -44,7 +44,7 @@ public final class AnnotatedReport implements Serializable {
      * @param report
      *         report with issues
      */
-    public AnnotatedReport(@CheckForNull final String id, final Report report) {
+    public AnnotatedReport(@Nullable final String id, final Report report) {
         this(id, report, new Blames());
     }
 
@@ -58,7 +58,7 @@ public final class AnnotatedReport implements Serializable {
      * @param blames
      *         author and commit information
      */
-    public AnnotatedReport(@CheckForNull final String id, final Report report, final Blames blames) {
+    public AnnotatedReport(@Nullable final String id, final Report report, final Blames blames) {
         this(id);
 
         addReport(id, report, blames);
@@ -72,7 +72,7 @@ public final class AnnotatedReport implements Serializable {
      * @param reports
      *         the reports to aggregate
      */
-    public AnnotatedReport(@CheckForNull final String id, final List<AnnotatedReport> reports) {
+    public AnnotatedReport(@Nullable final String id, final List<AnnotatedReport> reports) {
         this(id);
 
         for (AnnotatedReport report : reports) {

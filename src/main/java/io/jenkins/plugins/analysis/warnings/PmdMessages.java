@@ -9,11 +9,12 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 
-import static j2html.TagCreator.*;
 import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleSet;
 import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleSetNotFoundException;
+
+import static j2html.TagCreator.*;
 
 /**
  * Provides access to rule descriptions and examples.

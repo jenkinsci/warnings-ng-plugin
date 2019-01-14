@@ -1,19 +1,19 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
-
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.SbtScalacParser;
 import edu.hm.hafner.analysis.parser.ScalacParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
+import hudson.Extension;
+
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
-import hudson.Extension;
 
 /**
  * Provides a parser and customized messages for the Scala compiler.
@@ -45,7 +45,7 @@ public class Scala extends ReportScanningToolSuite {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_ScalaParser_ParserName();

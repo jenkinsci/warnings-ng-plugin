@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.FindBugsParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -109,7 +108,7 @@ public class FindBugs extends ReportScanningTool {
             return messages;
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_FindBugs_ParserName();

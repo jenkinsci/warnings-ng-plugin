@@ -1,14 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
+import edu.hm.hafner.analysis.parser.DoxygenParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
-
-import edu.hm.hafner.analysis.parser.DoxygenParser;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-
 import org.jenkinsci.Symbol;
 import hudson.Extension;
+
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 /**
  * Provides a parser and customized messages for Doxygen.
@@ -45,7 +44,7 @@ public class Doxygen extends ReportScanningTool {
             return Messages.Warning_SlowMultiLineParser();
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Doxygen_ParserName();

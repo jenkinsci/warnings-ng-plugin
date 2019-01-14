@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
-import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
-
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 /**
@@ -32,7 +31,7 @@ public class SpotBugs extends FindBugs {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_SpotBugs_ParserName();

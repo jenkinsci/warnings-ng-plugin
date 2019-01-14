@@ -1,19 +1,19 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.StringUtils;
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.util.Ensure;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
+import hudson.Extension;
+import hudson.util.ListBoxModel;
+
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.warnings.Messages;
-
-import hudson.Extension;
-import hudson.util.ListBoxModel;
 
 /**
  * Selects a {@link GroovyParser} using the specified ID.
@@ -78,7 +78,7 @@ public class GroovyScript extends ReportScanningTool {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Groovy_DescribableName();

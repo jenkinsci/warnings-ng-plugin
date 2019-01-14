@@ -4,19 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundSetter;
-
 import edu.hm.hafner.util.NoSuchElementException;
+
+import org.kohsuke.stapler.DataBoundSetter;
+import org.jenkinsci.Symbol;
+import hudson.Extension;
+import hudson.util.ListBoxModel;
+import jenkins.model.GlobalConfiguration;
+import jenkins.model.Jenkins;
+
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import jenkins.model.GlobalConfiguration;
-import jenkins.model.Jenkins;
-
-import hudson.Extension;
-import hudson.util.ListBoxModel;
 
 /**
  * Global configuration of Groovy based parsers. These parsers are dynamically registered.

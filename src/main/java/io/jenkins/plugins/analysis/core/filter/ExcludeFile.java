@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.core.filter;
 
-import javax.annotation.Nonnull;
-
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -41,7 +40,7 @@ public class ExcludeFile extends RegexpFilter {
     @Extension
     @Symbol("excludeFile")
     public static class DescriptorImpl extends RegexpFilterDescriptor {
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Filter_Exclude_File();

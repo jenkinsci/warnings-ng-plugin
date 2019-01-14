@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.scm;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import javax.annotation.CheckForNull;
 
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -16,6 +15,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.plugins.gitclient.GitClient;
@@ -208,7 +208,7 @@ class GitBlamer implements Blamer {
             this.headCommit = headCommit;
         }
 
-        @CheckForNull
+        @Nullable
         BlameResult run(final String fileName) throws GitAPIException {
             BlameCommand blame = new BlameCommand(repo);
             blame.setFilePath(fileName);

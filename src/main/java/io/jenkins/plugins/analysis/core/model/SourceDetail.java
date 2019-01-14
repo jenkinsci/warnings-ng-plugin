@@ -12,11 +12,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
+import edu.hm.hafner.analysis.Issue;
+
 import de.java2html.converter.JavaSource2HTMLConverter;
 import de.java2html.javasource.JavaSource;
 import de.java2html.javasource.JavaSourceParser;
 import de.java2html.options.JavaSourceConversionOptions;
-import edu.hm.hafner.analysis.Issue;
 
 import hudson.model.ModelObject;
 import hudson.model.Run;

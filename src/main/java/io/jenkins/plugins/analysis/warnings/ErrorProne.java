@@ -1,8 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
-
 import edu.hm.hafner.analysis.parser.ErrorProneParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -42,7 +41,7 @@ public class ErrorProne extends ReportScanningTool {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Violations_ErrorProne();

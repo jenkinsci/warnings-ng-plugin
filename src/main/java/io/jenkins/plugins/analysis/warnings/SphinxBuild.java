@@ -1,14 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
+import edu.hm.hafner.analysis.parser.SphinxBuildParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
-
-import edu.hm.hafner.analysis.parser.SphinxBuildParser;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-
 import org.jenkinsci.Symbol;
 import hudson.Extension;
+
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 /**
  * Provides a parser and customized messages for Sphinx build warnings.
@@ -40,7 +39,7 @@ public class SphinxBuild extends ReportScanningTool {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_SphinxBuild_ParserName();

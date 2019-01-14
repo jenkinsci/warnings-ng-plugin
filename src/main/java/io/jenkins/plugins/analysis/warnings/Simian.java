@@ -1,14 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
-
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
 import hudson.Extension;
+
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides a parser and customized messages for Simian duplication scanner.
@@ -47,7 +46,7 @@ public class Simian extends DuplicateCodeScanner {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Simian_ParserName();

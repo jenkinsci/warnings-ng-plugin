@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Optional;
@@ -11,25 +10,28 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
-import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.QueryParameter;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import groovy.lang.Script;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import jenkins.model.Jenkins;
 
+import groovy.lang.Script;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
+import jenkins.model.Jenkins;
+
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 /**
  * Defines the properties of a warnings parser that uses a Groovy script to parse the warnings log.
@@ -420,7 +422,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             }
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return StringUtils.EMPTY;

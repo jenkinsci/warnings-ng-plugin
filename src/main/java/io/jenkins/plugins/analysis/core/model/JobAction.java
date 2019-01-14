@@ -3,7 +3,8 @@ package io.jenkins.plugins.analysis.core.model;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Optional;
-import javax.annotation.CheckForNull;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import net.sf.json.JSONObject;
 
@@ -81,7 +82,7 @@ public class JobAction implements Action {
      *
      * @return the icon URL for the side-panel in the job screen
      */
-    @Override @CheckForNull
+    @Override @Nullable
     public String getIconFileName() {
         return createBuildHistory().getBaselineResult()
                 .map(result -> Jenkins.RESOURCE_PATH + labelProvider.getSmallIconUrl())

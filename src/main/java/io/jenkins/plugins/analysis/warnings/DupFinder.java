@@ -1,14 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
-
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
 import hudson.Extension;
+
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides a parser and customized messages for Resharper DupFinder.
@@ -47,7 +46,7 @@ public class DupFinder extends DuplicateCodeScanner {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_DupFinder_ParserName();

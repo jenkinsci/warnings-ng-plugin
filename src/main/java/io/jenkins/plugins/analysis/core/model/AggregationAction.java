@@ -2,8 +2,8 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.CheckForNull;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.Api;
@@ -22,19 +22,19 @@ import io.jenkins.plugins.analysis.core.restapi.ToolApi;
 public class AggregationAction implements RunAction2 {
     private transient Run<?, ?> owner;
 
-    @CheckForNull
+    @Nullable
     @Override
     public String getIconFileName() {
         return null; // No UI representation up to now
     }
 
-    @CheckForNull
+    @Nullable
     @Override
     public String getDisplayName() {
         return Messages.Aggregation_Name();
     }
 
-    @CheckForNull
+    @Nullable
     @Override
     public String getUrlName() {
         return "warnings-ng";

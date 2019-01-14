@@ -4,22 +4,23 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
+
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import hudson.model.Run;
+import hudson.util.FormValidation;
+
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import static j2html.TagCreator.*;
 
-import hudson.model.Run;
-import hudson.util.FormValidation;
+import static j2html.TagCreator.*;
 
 /**
  * Provides settings for duplicate code scanners.

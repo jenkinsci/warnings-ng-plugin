@@ -1,15 +1,15 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import javax.annotation.Nonnull;
-
 import org.apache.commons.lang3.StringUtils;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import org.kohsuke.stapler.DataBoundConstructor;
-
-import io.jenkins.plugins.analysis.core.model.Tool;
-
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+
+import io.jenkins.plugins.analysis.core.model.Tool;
 
 /**
  * Proxy to a static analysis tool.
@@ -53,7 +53,7 @@ public class ToolProxy extends AbstractDescribableImpl<ToolProxy> {
      */
     @Extension
     public static class DescriptorImpl extends Descriptor<ToolProxy> {
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return StringUtils.EMPTY;

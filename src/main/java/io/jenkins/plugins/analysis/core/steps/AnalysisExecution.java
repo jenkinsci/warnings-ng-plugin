@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
-
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;

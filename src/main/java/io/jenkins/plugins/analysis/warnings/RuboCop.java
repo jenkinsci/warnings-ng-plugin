@@ -1,17 +1,16 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
-
-import org.kohsuke.stapler.DataBoundConstructor;
-
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.RuboCopParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
+import hudson.Extension;
+
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
-import org.jenkinsci.Symbol;
-import hudson.Extension;
 
 /**
  * Provides parsers and customized messages for RuboCop.
@@ -44,7 +43,7 @@ public class RuboCop extends ReportScanningTool {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_RuboCop_ParserName();

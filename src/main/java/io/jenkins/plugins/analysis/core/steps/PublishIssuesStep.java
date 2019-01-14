@@ -9,8 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
 import edu.hm.hafner.analysis.Severity;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -30,12 +30,12 @@ import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.Thresholds;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
 
 /**
  * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
@@ -71,7 +71,7 @@ public class PublishIssuesStep extends Step {
      *         if the array of issues is {@code null} or empty
      */
     @DataBoundConstructor
-    public PublishIssuesStep(@CheckForNull final List<AnnotatedReport> issues) {
+    public PublishIssuesStep(@Nullable final List<AnnotatedReport> issues) {
         super();
 
         if (issues == null) {
@@ -170,7 +170,7 @@ public class PublishIssuesStep extends Step {
         return referenceJobName;
     }
 
-    @CheckForNull
+    @Nullable
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -186,7 +186,7 @@ public class PublishIssuesStep extends Step {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
-    @CheckForNull
+    @Nullable
     public int getHealthy() {
         return healthy;
     }
@@ -202,7 +202,7 @@ public class PublishIssuesStep extends Step {
         this.healthy = healthy;
     }
 
-    @CheckForNull
+    @Nullable
     public int getUnhealthy() {
         return unhealthy;
     }
@@ -218,12 +218,12 @@ public class PublishIssuesStep extends Step {
         this.unhealthy = unhealthy;
     }
 
-    @CheckForNull
+    @Nullable
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
 
-    @CheckForNull
+    @Nullable
     public Severity getMinimumSeverityAsSeverity() {
         return minimumSeverity;
     }

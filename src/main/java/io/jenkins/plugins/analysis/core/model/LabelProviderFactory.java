@@ -1,17 +1,17 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.List;
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 /**
  * Creates {@link StaticAnalysisLabelProvider} instances based on a provided ID and name.
@@ -57,7 +57,7 @@ public class LabelProviderFactory {
      * @return The label provider of the selected static analysis tool. If the tool is not found then a default label
      *         provider is returned.
      */
-    public StaticAnalysisLabelProvider create(final String id, @CheckForNull final String name) {
+    public StaticAnalysisLabelProvider create(final String id, @Nullable final String name) {
         DescriptorExtensionList<Tool, ToolDescriptor> extensions
                 = jenkins.getDescriptorsFor(Tool.class);
         for (ToolDescriptor descriptor : extensions) {

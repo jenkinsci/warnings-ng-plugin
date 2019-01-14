@@ -6,13 +6,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -166,7 +166,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @see #getTools
      * @deprecated this method is only intended to be called by the UI
      */
-    @CheckForNull
+    @Nullable
     @Deprecated
     public List<ToolProxy> getToolProxies() {
         return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
@@ -275,12 +275,12 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *
      * @return {@code null}
      */
-    @CheckForNull
+    @Nullable
     public Tool getTool() {
         return null;
     }
 
-    @CheckForNull
+    @Nullable
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -410,7 +410,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return referenceJobName;
     }
 
-    @CheckForNull
+    @Nullable
     public int getHealthy() {
         return healthy;
     }
@@ -426,7 +426,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.healthy = healthy;
     }
 
-    @CheckForNull
+    @Nullable
     public int getUnhealthy() {
         return unhealthy;
     }
@@ -442,7 +442,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.unhealthy = unhealthy;
     }
 
-    @CheckForNull
+    @Nullable
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
@@ -622,8 +622,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     @Override
-    public void perform(@Nonnull final Run<?, ?> run, @Nonnull final FilePath workspace,
-            @Nonnull final Launcher launcher, @Nonnull final TaskListener listener)
+    public void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
+            @NonNull final Launcher launcher, @NonNull final TaskListener listener)
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
@@ -744,7 +744,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
         private final ModelValidation model = new ModelValidation();
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.ScanAndPublishIssues_DisplayName();

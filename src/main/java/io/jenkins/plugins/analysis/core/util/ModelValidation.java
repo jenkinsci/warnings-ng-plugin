@@ -5,12 +5,12 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Set;
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -64,7 +64,7 @@ public class ModelValidation {
      *
      * @return the default charset for the specified encoding string
      */
-    public Charset getCharset(@CheckForNull final String charset) {
+    public Charset getCharset(@Nullable final String charset) {
         try {
             if (StringUtils.isNotBlank(charset)) {
                 return Charset.forName(charset);
@@ -189,7 +189,7 @@ public class ModelValidation {
             return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
         }
         if (healthy >= unhealthy) {
-            if (unhealthy <=0) {
+            if (unhealthy <= 0) {
                 return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
             }
             return FormValidation.error(Messages.FieldValidator_Error_ThresholdOrder());

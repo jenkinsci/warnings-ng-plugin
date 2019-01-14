@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.parser.pmd.PmdParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -69,7 +68,7 @@ public class Pmd extends ReportScanningTool {
             return false;
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_PMD_ParserName();

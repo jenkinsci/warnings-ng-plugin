@@ -1,19 +1,19 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
-
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.AntJavacParser;
 import edu.hm.hafner.analysis.parser.JavacParser;
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
 import hudson.Extension;
+
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides a parser and customized messages for the Java compiler.
@@ -45,7 +45,7 @@ public class Java extends ReportScanningToolSuite {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_JavaParser_ParserName();

@@ -16,7 +16,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.CheckForNull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -27,15 +26,16 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.XmlFile;
 import hudson.model.Run;
 import hudson.util.XStream2;
 
+import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
@@ -77,22 +77,22 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     /**
      * All outstanding issues: i.e. all issues, that are part of the current and reference report.
      */
-    @CheckForNull
+    @Nullable
     private transient WeakReference<Report> outstandingIssuesReference;
     /**
      * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the reference
      * report.
      */
-    @CheckForNull
+    @Nullable
     private transient WeakReference<Report> newIssuesReference;
     /**
      * All fixed issues: i.e. all issues, that are part of the reference report but are not present in the current
      * report anymore.
      */
-    @CheckForNull
+    @Nullable
     private transient WeakReference<Report> fixedIssuesReference;
     /** All SCM blames. Provides a mapping of file names to SCM commit information like author, email or commit ID. */
-    @CheckForNull
+    @Nullable
     private transient WeakReference<Blames> blamesReference;
 
     /** Determines since which build we have zero warnings. */

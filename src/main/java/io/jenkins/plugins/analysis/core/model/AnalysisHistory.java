@@ -3,10 +3,10 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 
 import edu.hm.hafner.analysis.Report;
-import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import hudson.model.Result;
 import hudson.model.Run;
@@ -172,7 +172,7 @@ public class AnalysisHistory implements History {
         return Optional.empty();
     }
 
-    private static Optional<Run<?, ?>> getRunWithResult(final @CheckForNull Run<?, ?> start,
+    private static Optional<Run<?, ?>> getRunWithResult(final @Nullable Run<?, ?> start,
             final ResultSelector selector,
             final QualityGateEvaluationMode qualityGateEvaluationMode,
             final JobResultEvaluationMode jobResultEvaluationMode) {
@@ -210,7 +210,7 @@ public class AnalysisHistory implements History {
     }
 
     @Override
-    @Nonnull
+    @NonNull
     public Iterator<AnalysisResult> iterator() {
         return new AnalysisResultIterator(baseline, selector);
     }
