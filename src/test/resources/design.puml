@@ -29,6 +29,7 @@ skinparam component {
 
 [Tokens] --> [Model]
 [Portlets] --> [Model]
+[Portlets] --> [Utilities]
 
 [Model] --> [Utilities]
 [Model] --> [Charts]
