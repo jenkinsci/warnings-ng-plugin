@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -71,8 +70,7 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
-    @VisibleForTesting
-    static final String NO_REFERENCE_JOB = "-";
+    private static final String NO_REFERENCE_JOB = "-";
 
     private List<Tool> analysisTools = new ArrayList<>();
 

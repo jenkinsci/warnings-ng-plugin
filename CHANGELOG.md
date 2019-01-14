@@ -11,12 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Parser now reports description with link to external documentation.
 
 ### Changed
-- [API]: Replaced `CheckForNull` annotations with `Nullable` in order to enable [NullAway](https://github.com/uber/NullAway) checker in build
+- [API]: Replaced `CheckForNull` annotations with `Nullable` in order to enable 
+[NullAway](https://github.com/uber/NullAway) checker in build
 
 ### Fixed
-- [JENKINS-55514](https://issues.jenkins-ci.org/browse/JENKINS-55514): Fixed handling of severity mappings with FindBugs (rank vs. priority) 
-- [JENKINS-55513](https://issues.jenkins-ci.org/browse/JENKINS-55513) Fixed rendering of issues table: check if order column in browsers local storage is valid before applying it (report on Gitter).
-- [JENKINS-55337](https://issues.jenkins-ci.org/browse/JENKINS-55337): Navigate to maven warnings in console log view
+- [JENKINS-55514](https://issues.jenkins-ci.org/browse/JENKINS-55514): 
+Fixed handling of severity mappings with FindBugs (rank vs. priority) 
+- [JENKINS-55513](https://issues.jenkins-ci.org/browse/JENKINS-55513): 
+Fixed rendering of issues table: check if order column in browsers local storage is valid before applying it (report on Gitter).
+- [JENKINS-55337](https://issues.jenkins-ci.org/browse/JENKINS-55337): 
+Navigate to maven warnings in console log view
 - Maven Parser: Disabled post processing on agent since there are no source files involved.
 - Do not show empty paragraph if issues have no message.
 
