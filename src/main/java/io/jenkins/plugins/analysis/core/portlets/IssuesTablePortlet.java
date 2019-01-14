@@ -6,6 +6,8 @@ import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 
+import edu.hm.hafner.util.VisibleForTesting;
+
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import hudson.Extension;
@@ -14,7 +16,12 @@ import hudson.model.Job;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 
 import io.jenkins.plugins.analysis.core.model.JobAction;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+
+import static j2html.TagCreator.*;
 
 /**
  * A dashboard view portlet that renders a two-dimensional table of issues per type and job.
@@ -22,6 +29,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
  * @author Ullrich Hafner
  */
 public class IssuesTablePortlet extends DashboardPortlet {
+    // FIXME: add sanitizer before going live
     private boolean hideCleanJobs;
 
     /**
@@ -29,6 +37,10 @@ public class IssuesTablePortlet extends DashboardPortlet {
      * #getToolNames(Collection)}: it cannot be used before this method has been called.
      */
     private TreeMap<String, String> toolNamesById;
+    private boolean showIcons;
+
+    private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();
+    private JenkinsFacade jenkinsFacade = new JenkinsFacade();
 
     /**
      * Creates a new instance of {@link IssuesTablePortlet}.
@@ -41,15 +53,49 @@ public class IssuesTablePortlet extends DashboardPortlet {
         super(name);
     }
 
+    @VisibleForTesting
+    void setLabelProviderFactory(final LabelProviderFactory labelProviderFactory) {
+        this.labelProviderFactory = labelProviderFactory;
+    }
+
+    @VisibleForTesting
+    void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
+        this.jenkinsFacade = jenkinsFacade;
+    }
+
     @SuppressWarnings("unused") // called by Stapler
     public boolean getHideCleanJobs() {
         return hideCleanJobs;
     }
 
+    /**
+     * Determines if all jobs that have no issues from the selected static analysis tools should be hidden.
+     *
+     * @param hideCleanJobs
+     *         if {@code true} then all jobs with no issues will be hidden, {@code false} otherwise
+     */
     @SuppressWarnings("WeakerAccess")
     @DataBoundSetter
     public void setHideCleanJobs(final boolean hideCleanJobs) {
         this.hideCleanJobs = hideCleanJobs;
+    }
+
+    @SuppressWarnings("unused") // called by Stapler
+    public boolean getShowIcons() {
+        return showIcons;
+    }
+
+    /**
+     * Determines if the table column headers should show icons or text.
+     *
+     * @param showIcons
+     *         if {@code true} the table column headers will show the tool icon, otherwise the name of the tool is
+     *         shown
+     */
+    @SuppressWarnings("unused") // called by Stapler
+    @DataBoundSetter
+    public void setShowIcons(final boolean showIcons) {
+        this.showIcons = showIcons;
     }
 
     /**
@@ -81,7 +127,21 @@ public class IssuesTablePortlet extends DashboardPortlet {
     public Collection<String> getToolNames(final Collection<Job<?, ?>> visibleJobs) {
         createToolMapping(visibleJobs);
 
+        if (showIcons) {
+            return getToolNamesById().keySet().stream()
+                    .map(id -> labelProviderFactory.create(id))
+                    .map(this::getImageTag)
+                    .collect(Collectors.toList());
+        }
         return getToolNamesById().values();
+    }
+
+    private String getImageTag(final StaticAnalysisLabelProvider labelProvider) {
+        return img()
+                .withAlt(labelProvider.getName())
+                .withTitle(labelProvider.getLinkName())
+                .withSrc(jenkinsFacade.getImagePath(labelProvider.getSmallIconUrl()))
+                .render();
     }
 
     /**
@@ -96,8 +156,13 @@ public class IssuesTablePortlet extends DashboardPortlet {
                 .map(JobAction::getLatestAction)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .collect(Collectors.toMap(ResultAction::getId, ResultAction::getDisplayName, (r1, r2) -> r1,
-                        TreeMap::new));
+                .collect(Collectors.toMap(ResultAction::getId, this::getToolName, (r1, r2) -> r1, TreeMap::new));
+    }
+
+    private String getToolName(final ResultAction action) {
+        StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(action.getId(), action.getName());
+
+        return labelProvider.getName();
     }
 
     /**

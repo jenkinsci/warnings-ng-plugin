@@ -79,6 +79,15 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     /**
+     * Returns the name of the static analysis tool.
+     *
+     * @return the ID
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
      * Returns the associated build/run that created the static analysis result.
      *
      * @return the run
@@ -213,7 +222,12 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return String.format("%s for %s", getClass().getName(), getLabelProvider().getName());
     }
 
-    private StaticAnalysisLabelProvider getLabelProvider() {
+    /**
+     * Returns the {@link StaticAnalysisLabelProvider} for this action.
+     *
+     * @return the label provider for this tool
+     */
+    public StaticAnalysisLabelProvider getLabelProvider() {
         return new LabelProviderFactory().create(id, name);
     }
 
