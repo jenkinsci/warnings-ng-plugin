@@ -278,6 +278,9 @@
         var table = $(id);
         if (table.length) {
             var dataTable = table.DataTable({
+                language: {
+                    emptyTable: "Loading - please wait ..."
+                },
                 pagingType: 'numbers',  // Page number button only
                 order: [[1, 'asc']],
                 columnDefs: [{
