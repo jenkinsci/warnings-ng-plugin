@@ -67,8 +67,8 @@ public class IssuesTable {
     }
 
     @SuppressWarnings("PMD.SystemPrintln")
-    private void waitForAjaxCall(final HtmlTableBody body) {
-        while ("No data available in table".equals(
+    static void waitForAjaxCall(final HtmlTableBody body) {
+        while ("Loading - please wait ...".equals(
                 body.getRows().get(0).getCells().get(0).getFirstChild().getTextContent())) {
             System.out.println("Waiting for Ajax call to populate issues table ...");
             body.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);

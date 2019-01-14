@@ -67,21 +67,12 @@ public class DuplicationTable {
         assertThat(bodies).hasSize(1);
 
         HtmlTableBody mainBody = bodies.get(0);
-        waitForAjaxCall(mainBody);
+        IssuesTable.waitForAjaxCall(mainBody);
         List<HtmlTableRow> contentRows = mainBody.getRows();
 
         for (HtmlTableRow row : contentRows) {
             List<HtmlTableCell> rowCells = row.getCells();
             rows.add(new DuplicationRow(rowCells, hasPackages));
-        }
-    }
-
-    @SuppressWarnings("PMD.SystemPrintln")
-    private void waitForAjaxCall(final HtmlTableBody body) {
-        while ("No data available in table".equals(
-                body.getRows().get(0).getCells().get(0).getFirstChild().getTextContent())) {
-            System.out.println("Waiting for Ajax call to populate issues table ...");
-            body.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
         }
     }
 
