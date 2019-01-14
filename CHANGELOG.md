@@ -9,10 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added support for [ErrorProne](http://errorprone.info) in maven builds. 
 Parser now reports description with link to external documentation.
+- [JENKINS-55500](https://issues.jenkins-ci.org/browse/JENKINS-55500): Added a portlet that renders a two-dimensional 
+table of issues per type and job
 
 ### Fixed
 - [JENKINS-55514](https://issues.jenkins-ci.org/browse/JENKINS-55514): Fixed handling of severity mappings with FindBugs (rank vs. priority) 
-- [JENKINS-55513](https://issues.jenkins-ci.org/browse/JENKINS-55513) Fixed rendering of issues table: check if order column in browsers local storage is valid before applying it (report on Gitter).
+- [JENKINS-55513](https://issues.jenkins-ci.org/browse/JENKINS-55513): Fixed rendering of issues table: check if order column in browsers local storage is valid before applying it.
 - [JENKINS-55337](https://issues.jenkins-ci.org/browse/JENKINS-55337): Navigate to maven warnings in console log view
 - Maven Parser: Disabled post processing on agent since there are no source files involved.
 - Do not show empty paragraph if issues have no message.
