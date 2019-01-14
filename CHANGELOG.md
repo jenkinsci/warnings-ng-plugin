@@ -15,12 +15,14 @@ Parser now reports description with link to external documentation.
 [NullAway](https://github.com/uber/NullAway) checker in build
 
 ### Fixed
-- [JENKINS-55513](https://issues.jenkins-ci.org/browse/JENKINS-55513): 
-Show 'loading...' message while the issues are loaded dynamically from the server.
 - [JENKINS-55514](https://issues.jenkins-ci.org/browse/JENKINS-55514): 
 Fixed handling of severity mappings with FindBugs (rank vs. priority).
+- [JENKINS-55513](https://issues.jenkins-ci.org/browse/JENKINS-55513): 
+Show 'loading...' message while the issues are loaded dynamically from the server.
 - [JENKINS-55511](https://issues.jenkins-ci.org/browse/JENKINS-55511): 
-Fixed rendering of issues table: check if order column in browsers local storage is valid before applying it (report on Gitter).
+Fixed rendering of issues table: check if order column in browsers local storage is valid before applying it.
+- [JENKINS-55495](https://issues.jenkins-ci.org/browse/JENKINS-55495): 
+Use Bootstrap to render the fixed issues table.
 - [JENKINS-55337](https://issues.jenkins-ci.org/browse/JENKINS-55337): 
 Navigate to maven warnings in console log view
 - Maven Parser: Disabled post processing on agent since there are no source files involved.

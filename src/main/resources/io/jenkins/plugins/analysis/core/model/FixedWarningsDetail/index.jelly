@@ -28,23 +28,31 @@
             <col class="col-width-5"/>
             <col class="col-width-1"/>
             <col class="col-width-1"/>
-            <col class="col-width-3"/>
-            <col class="col-width-2"/>
+            <j:if test="${it.issues.hasCategories()}">
+              <col class="col-width-2"/>
+            </j:if>
+            <j:if test="${it.issues.hasTypes()}">
+              <col class="col-width-3"/>
+            </j:if>
           </colgroup>
           <thead>
             <tr>
               <th>${%File}</th>
               <th>${%Line}</th>
               <th>${%Severity}</th>
-              <th>${%Type}</th>
-              <th>${%Category}</th>
+              <j:if test="${it.issues.hasCategories()}">
+                <th>${%Category}</th>
+              </j:if>
+              <j:if test="${it.issues.hasTypes()}">
+                <th>${%Type}</th>
+              </j:if>
             </tr>
           </thead>
           <tbody>
             <j:forEach var="issue" items="${it.issues}">
               <tr>
-                <td class="pane">${it.getFileDisplayName(issue)}</td>
-                <td class="pane">
+                <td>${it.getFileDisplayName(issue)}</td>
+                <td>
                   <j:choose>
                     <j:when test="${issue.lineStart &lt; 1}">
                       -
@@ -54,9 +62,13 @@
                     </j:otherwise>
                   </j:choose>
                 </td>
-                <td class="pane">${it.getLocalizedSeverity(issue.severity)}</td>
-                <td class="pane">${issue.type}</td>
-                <td class="pane">${issue.category}</td>
+                <td>${it.getLocalizedSeverity(issue.severity)}</td>
+                <j:if test="${it.issues.hasCategories()}">
+                  <td>${issue.category}</td>
+                </j:if>
+                <j:if test="${it.issues.hasTypes()}">
+                  <td>${issue.type}</td>
+                </j:if>
               </tr>
             </j:forEach>
           </tbody>
