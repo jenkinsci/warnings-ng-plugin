@@ -34,6 +34,47 @@ main build page. From there you can also dive into the details:
     - annotated source code of the affected files
     - trend charts of the issues 
     
+## Table of Contents
+
+  * [Transition from the static analysis suite](#transition-from-the-static-analysis-suite)
+     * [Migration of Pipelines](#migration-of-pipelines)
+     * [Migration of all other jobs](#migration-of-all-other-jobs)
+     * [Migration of plugins depending on analysis-core](#migration-of-plugins-depending-on-analysis-core)
+  * [Configuration](#configuration)
+     * [Tool selection](#tool-selection)
+     * [Creating support for a custom tool](#creating-support-for-a-custom-tool)
+        * [Deploying a new tool using a custom plugin](#deploying-a-new-tool-using-a-custom-plugin)
+        * [Creating a new tool in the user interface](#creating-a-new-tool-in-the-user-interface)
+        * [Using the defined tool](#using-the-defined-tool)
+     * [Setting the source code file encoding](#setting-the-source-code-file-encoding)
+     * [Control the selection of the reference build (baseline)](#control-the-selection-of-the-reference-build-baseline)
+     * [Filtering issues](#filtering-issues)
+     * [Quality gate configuration](#quality-gate-configuration)
+     * [Health report configuration](#health-report-configuration)
+     * [Pipeline configuration](#pipeline-configuration)
+        * [Simple Pipeline configuration](#simple-pipeline-configuration)
+        * [Declarative Pipeline configuration](#declarative-pipeline-configuration)
+        * [Advanced Pipeline configuration](#advanced-pipeline-configuration)
+  * [New features](#new-features)
+     * [Issues history: new, fixed, and outstanding issues](#issues-history-new-fixed-and-outstanding-issues)
+     * [Severities](#severities)
+     * [Build trend](#build-trend)
+     * [Issues overview](#issues-overview)
+     * [Issues details](#issues-details)
+     * [Source code blames (for Git projects)](#source-code-blames-for-git-projects)
+     * [Source code view](#source-code-view)
+     * [Dashboard view support](#dashboard-view-support)
+     * [Configuration as code support](#configuration-as-code-support)
+     * [Remote API](#remote-api)
+        * [Aggregation summary of all analysis results](#aggregation-summary-of-all-analysis-results)
+        * [Summary of the analysis result](#summary-of-the-analysis-result)
+        * [Details of the analysis result](#details-of-the-analysis-result)
+     * [Token macro support](#token-macro-support)
+  * [Not Yet Supported Features](#not-yet-supported-features)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
+
+    
 ## Transition from the static analysis suite
 
 Previously the same set of features has been provided by the plugins of the static analysis suite 
@@ -474,8 +515,18 @@ recordIssues blameDisabled: true, tool: java([pattern: '*.log')
 
 ### Source code view
 
-The source code view will be replaced soon, a PR is already work in progress.
+The source code view now uses the JS library [Prism](https://prismjs.com) to show warnings in an affected file. 
+This library provides syntax highlighting for the most popular languages and renders everything on the client side.
 
+![source view](images/source-view.png)
+
+### Dashboard view support
+
+Support for Jenkins [dashboard view](https://wiki.jenkins.io/display/JENKINS/Dashboard+View) is quite limited up to now.
+Currently, only one portlet is available, that shows the number of issues for a job (separated by each tool). The 
+remaining portlets from the old static analysis collector plugin will be added step by step.
+
+![issues portlet](images/issues-portlet.png)
 
 ### Configuration as code support
 
