@@ -28,8 +28,8 @@
     <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>2.0.0-20190115.093755-5</analysis-model-api.version>
-    <analysis-model.version>2.0.0-20190115.093640-6</analysis-model.version>
+    <analysis-model-api.version>2.0.0-20190115.102042-6</analysis-model-api.version>
+    <analysis-model.version>2.0.0-20190115.100903-7</analysis-model.version>
 
     <commons.lang.version>3.8.1</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -47,8 +47,8 @@
     <mockito.version>2.23.4</mockito.version>
     <assertj.version>3.11.1</assertj.version>
     <archunit.version>0.9.3</archunit.version>
-    <json-unit-fluent.version>2.2.0</json-unit-fluent.version>
-    <xmlunit.version>1.5</xmlunit.version>
+    <json-unit-fluent.version>2.3.0</json-unit-fluent.version>
+    <xmlunit.version>1.6</xmlunit.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <token-macro.version>2.5</token-macro.version>
@@ -67,15 +67,15 @@
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     <pmd.version>6.10.0</pmd.version>
     <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
-    <checkstyle.version>8.15</checkstyle.version>
-    <spotbugs-maven-plugin.version>3.1.9</spotbugs-maven-plugin.version>
+    <checkstyle.version>8.16</checkstyle.version>
+    <spotbugs-maven-plugin.version>3.1.10</spotbugs-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
-    <maven-surefire.plugin>2.22.1</maven-surefire.plugin>
+    <maven-surefire.plugin>3.0.0-M3</maven-surefire.plugin>
     <jar.maven.plugin>3.0.2</jar.maven.plugin>
     <maven-error-prone-plugin.version>2.8.5</maven-error-prone-plugin.version>
     <error-prone.version>2.3.1</error-prone.version>
     <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
-    <depgraph-maven-plugin.version>3.2.2</depgraph-maven-plugin.version>
+    <depgraph-maven-plugin.version>3.3.0</depgraph-maven-plugin.version>
     <animal-sniffer-maven-plugin.version>1.17</animal-sniffer-maven-plugin.version>
     <maven-hpi-plugin.version>2.5</maven-hpi-plugin.version>
     <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
@@ -83,7 +83,7 @@
     <pitest-maven.plugin>1.4.3</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.8</pitest-maven.junit5.plugin>
     <revapi-maven-plugin.version>0.10.5</revapi-maven-plugin.version>
-    <revapi-java.version>0.18.1</revapi-java.version>
+    <revapi-java.version>0.18.2</revapi-java.version>
 
     <!-- Enabled while there are fatal Findbugs issues -->
     <findbugs.failOnError>false</findbugs.failOnError>
