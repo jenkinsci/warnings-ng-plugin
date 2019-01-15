@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ListIterator;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.analysis.Issue;
@@ -255,14 +252,6 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
                 .stream()
                 .filter(issue -> issue.getFileName().endsWith("Main.java"))
                 .findFirst().orElseThrow(NoSuchElementException::new);
-    }
-
-    private void removeElementsByTagName(final DomNodeList<HtmlElement> domNodeList) {
-        ListIterator<HtmlElement> listIterator = domNodeList.listIterator();
-        while (listIterator.hasNext()) {
-            listIterator.next().remove();
-            listIterator = domNodeList.listIterator();
-        }
     }
 
     private AnalysisResult buildEclipseProject(final String... files) {
