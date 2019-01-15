@@ -34,10 +34,14 @@ node ('linux') {
 
             archiveArtifacts artifacts: '**/target/*.hpi', fingerprint: true
             junit testResults: '**/target/*-reports/TEST-*.xml'
-            warnings consoleParsers: [[parserName: 'Java Compiler (javac)'], [parserName: 'JavaDoc'], [parserName: 'Maven']]
-            checkstyle pattern: '**/target/checkstyle-result.xml'
-            findbugs pattern: '**/target/*Xml.xml'
-            pmd pattern: '**/target/pmd.xml'
+            recordIssues enabledForFailure: true, tool: mavenConsole()
+            recordIssues enabledForFailure: true, tools: [java(), javaDoc()], sourceCodeEncoding: 'UTF-8'
+            recordIssues enabledForFailure: true, tool: errorProne(), sourceCodeEncoding: 'UTF-8'
+            recordIssues enabledForFailure: true, tool: checkStyle(), sourceCodeEncoding: 'UTF-8'
+            recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml'), sourceCodeEncoding: 'UTF-8'
+            recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml'), sourceCodeEncoding: 'UTF-8'
+            recordIssues enabledForFailure: true, tool: spotBugs(), sourceCodeEncoding: 'UTF-8'
+            recordIssues enabledForFailure: true, tool: taskScanner(includePattern:'**/*.java', excludePattern:'target/**/*', highTags:'FIXME', normalTags:'TODO'), sourceCodeEncoding: 'UTF-8'
             jacoco()
         }
     }
