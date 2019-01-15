@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -219,7 +219,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
      */
     @Extension(optional = true)
     public static class IssuesTablePortletDescriptor extends Descriptor<DashboardPortlet> {
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.IssuesTablePortlet_Name();
