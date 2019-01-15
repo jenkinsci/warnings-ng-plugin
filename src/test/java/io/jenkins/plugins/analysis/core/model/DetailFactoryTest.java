@@ -17,23 +17,16 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
-import io.jenkins.plugins.analysis.core.model.ConsoleDetail;
-import io.jenkins.plugins.analysis.core.model.DetailFactory;
-import io.jenkins.plugins.analysis.core.model.FixedWarningsDetail;
-import io.jenkins.plugins.analysis.core.model.InfoErrorDetail;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
-import io.jenkins.plugins.analysis.core.model.SourceDetail;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
-
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 import hudson.model.ModelObject;
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link DetailFactory}.
@@ -190,7 +183,7 @@ class DetailFactoryTest {
         Object details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
                 RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
         assertThat(details).isInstanceOf(SourceDetail.class);
-        assertThat(((SourceDetail) details).getSourceCode()).contains("IOException:&nbsp;file&nbsp;error");
+        assertThat(((SourceDetail) details).getSourceCode()).contains("IOException: file error");
     }
 
     /**

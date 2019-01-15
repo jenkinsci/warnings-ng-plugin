@@ -55,7 +55,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "    shift input parameter (twice) to leave only files to copy\n"
             + "    *******************************************************************************\n"
             + "\n"
-            + "files=&quot;&quot;\n"
+            + "files&#61;&#34;&#34;\n"
             + "shift\n"
             + "shift\n"
             + "\n"
@@ -64,7 +64,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "\n"
             + "for i in $*\n"
             + "do\n"
-            + "files=&quot;$files $directory/$i&quot;\n"
+            + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
     /** Runs the TagList parser on an output file that contains 6 issues. */
@@ -206,7 +206,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         Report report = shouldFindIssuesOfTool(2, new DupFinder(), "dupfinder.xml");
 
         assertThatDescriptionOfIssueIsSet(new DupFinder(), report.get(0),
-                "<pre><code>if (items == null) throw new ArgumentNullException(&quot;items&quot;);</code></pre>");
+                "<pre><code>if (items &#61;&#61; null) throw new ArgumentNullException(&#34;items&#34;);</code></pre>");
     }
 
     /** Runs the Armcc parser on output files that contain 3 + 3 issues. */

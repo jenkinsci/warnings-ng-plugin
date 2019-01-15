@@ -10,16 +10,21 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+
+import hudson.FilePath;
+import hudson.Functions;
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+import hudson.model.Run;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
@@ -27,11 +32,7 @@ import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 
-import hudson.FilePath;
-import hudson.Functions;
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
-import hudson.model.Run;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Integration tests for the class {@link AffectedFilesResolver}.
@@ -57,7 +58,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         IssueRow row = getIssuesTableRow(result, 1);
         assertThat(row.hasLink(IssueRow.FILE)).isTrue();
 
-        assertThat(extractSourceCodeFromHtml(getSourceCodePage(result))).contains(readSourceCode(project));
+        assertThat(extractSourceCodeFromDetailsPage(getSourceCodePage(result))).isEqualToIgnoringWhitespace(readSourceCode(project));
 
         deleteAffectedFilesInBuildFolder(result);
 
@@ -106,19 +107,8 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         return issues.getRow(rowNumber);
     }
 
-    private String extractSourceCodeFromHtml(final HtmlPage contentPage) {
-        DomElement domElement = contentPage.getElementById("main-panel");
-        DomNodeList<HtmlElement> list = domElement.getElementsByTagName("a");
-        removeElementsByTagName(list);
-        return replaceWhitespace(contentPage.getElementById("main-panel").asText());
-    }
-
-    private String replaceWhitespace(final String s) {
-        return s.replaceAll("\\s", "");
-    }
-
     private String readSourceCode(final FreeStyleProject project) {
-        return replaceWhitespace(toString(getSourceInWorkspace(project)));
+        return toString(getSourceInWorkspace(project));
     }
 
     // TODO: Navigate to source code from details page 

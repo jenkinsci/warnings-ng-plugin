@@ -1,0 +1,3 @@
+<l:main-panel>Before<script>execute</script> Text</l:main-panel>
+<l:main-panel>Warning<script>execute</script> Text</l:main-panel>
+<l:main-panel>After<script>execute</script> Text</l:main-panel>

@@ -1,0 +1,107 @@
+/**
+ * Styles used in the SourceDetail/index.jelly view.
+ */
+
+pre > code.highlight {
+    background: hsla(24, 20%, 50%,.08);
+    background: linear-gradient(to right, hsla(24, 20%, 50%,.1) 70%, hsla(24, 20%, 50%,0));
+    display: block;
+}
+
+.fa-exclamation-triangle  {
+    color: #b4b4b4;
+}
+
+.analysis-warning {
+    white-space: normal;
+    border-radius: 4px;
+    border:1px solid #CCC;
+    background-color:white;
+    font-family: Arial, Helvetica, sans-serif; /* Avoid the font override from the pre to affect the message */
+    -moz-box-shadow:    2px 2px 18px 0 #ccc;
+    -webkit-box-shadow: 2px 2px 18px 0 #ccc;
+    box-shadow:         2px 2px 18px 0 #ccc;
+}
+
+.analysis-warning-title {
+    color: black;
+    padding-left: 0.25em;
+}
+
+.analysis-title-column {
+    vertical-align: middle;
+}
+
+.analysis-detail {
+    margin:0;
+    padding:0;
+    white-space: normal;
+}
+
+.analysis-detail > pre {
+    padding: 9.5px;
+    margin: 1em 0 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    word-break: break-all;
+    word-wrap: break-word;
+    color: #333333;
+    background-color: #f5f5f5;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+
+/** Collapse style **/
+
+.collapse-open {
+    display: none;
+}
+
+.collapse-panel {
+    display:none;
+    visibility: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height .1s,
+    visibility .3s,
+    opacity .3s;
+}
+
+.collapse-open:checked ~ .collapse-panel {
+    max-height: 100%;
+    opacity: 100;
+    visibility: visible;
+    display:block;
+}
+
+.collapse-btn {
+    cursor: pointer;
+    display: block;
+    padding: 15px 10px;
+    margin-bottom: 0;
+    background: #FFF9C4;
+    font-weight: normal;
+    transition: background-color .2s ease;
+}
+
+.collapse-btn:hover {
+    background-color: #FFF59D;
+}
+
+.collapse-open ~ .collapse-btn:before {
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    content: "\f13a"; /* https://fontawesome.com/icons/chevron-circle-down */
+    float: right;
+    padding-top: 6px;
+    font-size: 16px;
+    color: #b4b4b4;
+}
+
+.collapse-open:checked ~ .collapse-btn:before {
+    content: "\f139"; /* https://fontawesome.com/icons/chevron-circle-down */
+}
+
+.collapse-inner {
+    padding:10px;
+}

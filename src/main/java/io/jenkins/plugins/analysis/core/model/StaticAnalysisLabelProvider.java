@@ -343,6 +343,20 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
+     * Returns an additional description of the specified issue that will be shown with the source code.
+     *
+     * @param build
+     *         the current build
+     * @param issue
+     *         the issue
+     *
+     * @return the additional description
+     */
+    public String getSourceCodeDescription(final Run<?, ?> build, final Issue issue) {
+        return getDescription(issue);
+    }
+
+    /**
      * Functional interface that maps the age of a build from an integer value to a String value.
      */
     public interface AgeBuilder extends Function<Integer, String> {

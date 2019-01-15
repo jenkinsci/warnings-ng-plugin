@@ -10,8 +10,7 @@
 
       <issues:bootstrap-css/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/datatables.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
+      <issues:fontawesome-css/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
       <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>

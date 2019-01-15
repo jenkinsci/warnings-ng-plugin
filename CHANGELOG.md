@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-1.0.1...master)
 
 ### Added
-- Added support for [ErrorProne](http://errorprone.info) in maven builds. 
+- New source code view based on [Prism](https://prismjs.com/). Provides client side syntax highlighting for 
+several languages. Thanks to Philippe Arteau for the [PR](https://github.com/jenkinsci/warnings-plugin/pull/146).
+- Support for [ErrorProne](http://errorprone.info) in maven builds. 
 Parser now reports description with link to external documentation.
 - [JENKINS-55500](https://issues.jenkins-ci.org/browse/JENKINS-55500): Added a portlet that renders a two-dimensional 
 table of issues per type and job

@@ -49,6 +49,7 @@
     <archunit.version>0.9.3</archunit.version>
     <json-unit-fluent.version>2.3.0</json-unit-fluent.version>
     <xmlunit.version>1.6</xmlunit.version>
+    <jsoup.version>1.7.2</jsoup.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <token-macro.version>2.5</token-macro.version>
@@ -181,11 +182,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-text</artifactId>
       <version>${commons.text.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>de.java2html</groupId>
-      <artifactId>java2html</artifactId>
-      <version>5.0</version>
     </dependency>
     <dependency>
       <groupId>com.j2html</groupId>
@@ -347,6 +343,12 @@
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>${json.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

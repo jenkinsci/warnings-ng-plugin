@@ -1,13 +1,28 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
+
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+
   <l:layout title="${it.displayName}" norefresh="true">
     <st:include it="${it.owner}" page="sidepanel.jelly" />
+
     <l:main-panel>
+      <script src="${resURL}/plugin/warnings-ng/js/libs/prism.js"/>
+
+      <issues:fontawesome-css/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/prism.css"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-prism.css"/>
+
       <h1>${%sourcedetail.header(it.displayName)}</h1>
 
-      <j:out value="${it.sourceCode}" />
+      <j:out value="${it.sourceCode}"/>
+
+      <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
+      <script src="${resURL}/plugin/warnings-ng/js/source-detail.js"/>
 
     </l:main-panel>
   </l:layout>
+
+
 </j:jelly>

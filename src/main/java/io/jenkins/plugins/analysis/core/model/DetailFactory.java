@@ -105,13 +105,15 @@ public class DetailFactory {
                 }
             }
             else {
+                String description = labelProvider.getSourceCodeDescription(owner, issue);
+                String icon = jenkins.getImagePath(labelProvider.getSmallIconUrl());
                 try (Reader affectedFile = jenkins.readBuildFile(owner, issue.getFileName(), sourceEncoding)) {
-                    return new SourceDetail(owner, affectedFile, issue, labelProvider.getDescription(issue));
+                    return new SourceDetail(owner, affectedFile, issue, description, icon);
                 }
                 catch (IOException e) {
                     StringReader fallback = new StringReader(
                             String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)));
-                    return new SourceDetail(owner, fallback, issue, labelProvider.getDescription(issue));
+                    return new SourceDetail(owner, fallback, issue, description, icon);
                 }
             }
         }

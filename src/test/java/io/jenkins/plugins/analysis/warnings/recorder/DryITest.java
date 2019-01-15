@@ -138,10 +138,9 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(issues.getRows()).hasSize(10);
 
         HtmlPage sourceCodePage = issues.getRow(0).clickSourceCode();
-        DomElement tableElement = sourceCodePage.getElementById("main-panel");
 
-        String htmlFile = toString(FOLDER + "expected_html_code_block.html").trim();
-        assertThat(tableElement.asText()).isEqualTo(htmlFile);
+        String htmlFile = toString(FOLDER + "Main.source");
+        assertThat(extractSourceCodeFromDetailsPage(sourceCodePage)).isEqualToIgnoringWhitespace(htmlFile);
     }
 
     /**
@@ -191,7 +190,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(divElement.getAttribute("class")).isEqualTo("details-control");
         assertThat(divElement.getAttribute("data-description")).isEqualTo(
                 "<p><strong>Found duplicated code.</strong></p> <pre><code>public static void functionOne()\n  "
-                        + "{\n    System.out.println(&quot;testfile for redundancy&quot;);</code></pre>");
+                        + "{\n    System.out.println(&#34;testfile for redundancy&#34;);</code></pre>");
         DomElement file = firstTableRowCells.get(1);
         assertThat(file.getTextContent()).isEqualTo("Main.java:11");
 

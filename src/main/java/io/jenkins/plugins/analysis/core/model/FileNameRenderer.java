@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.util.VisibleForTesting;
 
@@ -65,8 +67,22 @@ public class FileNameRenderer {
      * @return the link (if the file is accessible)
      */
     public DomContent createAffectedFileLink(final Issue issue) {
+        return createAffectedFileLink(issue, StringUtils.EMPTY);
+    }
+
+    /**
+     * Returns an HTML link that references the UI representation of the affected file of the specified issue.
+     *
+     * @param issue
+     *         the issue to create the link for
+     * @param prefix
+     *         prefix to the file name URL
+     *
+     * @return the link (if the file is accessible)
+     */
+    public DomContent createAffectedFileLink(final Issue issue, final String prefix) {
         if (ConsoleLogHandler.isInConsoleLog(issue.getFileName()) || facade.canAccessAffectedFileOf(issue)) {
-            return a().withHref(getSourceCodeUrl(issue)).withText(getFileNameAtLine(issue));
+            return a().withHref(prefix + getSourceCodeUrl(issue)).withText(getFileNameAtLine(issue));
         }
         else {
             return text(getFileNameAtLine(issue));

@@ -2,6 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
+
   <issues:layout title="${it.displayName}" norefresh="true">
 
     <st:include it="${it.owner}" page="sidepanel.jelly"/>
@@ -11,15 +12,13 @@
       <issues:bootstrap-css/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/datatables.min.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
+      <issues:fontawesome-css/>
 
       <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
       <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
       <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
       <script src="${resURL}/plugin/warnings-ng/js/libs/datatables.min.js"/>
       <script src="${resURL}/plugin/warnings-ng/js/libs/echarts.common.min.js"/>
-
 
       <div class="fluid-container">
 
