@@ -36,7 +36,6 @@ node ('linux') {
             junit testResults: '**/target/*-reports/TEST-*.xml'
             recordIssues enabledForFailure: true, tool: mavenConsole()
             recordIssues enabledForFailure: true, tools: [java(), javaDoc()], sourceCodeEncoding: 'UTF-8'
-            recordIssues enabledForFailure: true, tool: errorProne(), sourceCodeEncoding: 'UTF-8'
             recordIssues enabledForFailure: true, tool: checkStyle(), sourceCodeEncoding: 'UTF-8'
             recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml'), sourceCodeEncoding: 'UTF-8'
             recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml'), sourceCodeEncoding: 'UTF-8'
