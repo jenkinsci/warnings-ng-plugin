@@ -93,7 +93,9 @@ class SourcePrinterTest extends ResourceTest {
         Document document = Jsoup.parse(printer.render(asStream("format-jelly.txt"), issue,
                 NO_DESCRIPTION, ICON_URL));
         assertThat(document.getElementsByTag("code").html())
-                .isEqualTo("Before Text\nWarning Text\nAfter Text");
+                .isEqualTo("&lt;l:main-panel&gt;Before&lt;script&gt;execute&lt;/script&gt; Text&lt;/l:main-panel&gt;\n"
+                        + "&lt;l:main-panel&gt;Warning&lt;script&gt;execute&lt;/script&gt; Text&lt;/l:main-panel&gt;\n"
+                        + "&lt;l:main-panel&gt;After&lt;script&gt;execute&lt;/script&gt; Text&lt;/l:main-panel&gt;");
     }
 
     @Test
@@ -112,5 +114,22 @@ class SourcePrinterTest extends ResourceTest {
                 .isEqualToIgnoringWhitespace("Hello <b>Message</b>");
         assertThat(document.getElementsByClass("analysis-detail").html())
                 .isEqualToIgnoringWhitespace("Hello <b>Description</b>");
+    }
+
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-55679")
+    void shouldRenderXmlFiles() {
+        SourcePrinter printer = new SourcePrinter();
+
+        IssueBuilder builder = new IssueBuilder();
+        Issue issue = builder.build();
+
+        Document document = Jsoup.parse(printer.render(asStream("format.xml"), issue,
+                NO_DESCRIPTION, ICON_URL));
+        String expectedFile = toString("format.xml");
+
+        assertThat(document.text()).isEqualToIgnoringWhitespace(expectedFile);
+
+        Elements pre = document.getElementsByTag("pre");
+        assertThat(pre.text()).isEqualToIgnoringWhitespace(expectedFile);
     }
 }

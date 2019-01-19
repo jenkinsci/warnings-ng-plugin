@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.util.LookaheadStream;
@@ -100,6 +101,7 @@ public class SourcePrinter {
         return new UnescapedText(SANITIZER.render(message));
     }
 
+    @SuppressWarnings("javancss")
     private String selectLanguageClass(final Issue issue) {
         switch (StringUtils.defaultIfEmpty(StringUtils.substringAfterLast(issue.getBaseName(), "."),
                 issue.getBaseName())) {
@@ -164,6 +166,6 @@ public class SourcePrinter {
     }
 
     private String asCode(final StringBuilder text, final String... classes) {
-        return code().withClasses(classes).with(unescape(text.toString())).render();
+        return code().withClasses(classes).with(unescape(StringEscapeUtils.escapeHtml4(text.toString()))).render();
     }
 }

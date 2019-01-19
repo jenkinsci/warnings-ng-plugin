@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issue>
+  <category>category</category>
+  <type>type</type>
+  <severity>HIGH</severity>
+  <message>message</message>
+  <lineStart>1</lineStart>
+  <lineEnd>2</lineEnd>
+  <columnStart>3</columnStart>
+  <columnEnd>4</columnEnd>
+  <lineRanges>
+    <lineRange>
+      <start>5</start>
+      <end>6</end>
+    </lineRange>
+  </lineRanges>
+  <id>92f6ced2-c836-44cc-bbf1-0e8176d02f75</id>
+  <description>description</description>
+  <reference>reference</reference>
+  <origin>origin</origin>
+  <moduleName>module-name</moduleName>
+  <packageName>package-name</packageName>
+  <fileName>file-name</fileName>
+  <fingerprint>fingerprint</fingerprint>
+</issue>
