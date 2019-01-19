@@ -257,7 +257,7 @@
         });
         var storedLength = localStorage.getItem(id + '#table-length');
         if ($.isNumeric(storedLength)) {
-            dataTable.page.len(storedLength);
+            dataTable.page.len(storedLength).draw();
         }
     });
 

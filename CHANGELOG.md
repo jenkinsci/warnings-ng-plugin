@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added direct links to the analysis results from the dashboard view portlet. 
 
+### Fixed
+- [JENKINS-55674](https://issues.jenkins-ci.org/browse/JENKINS-55674), [JENKINS-55564](https://issues.jenkins-ci.org/browse/JENKINS-55564): 
+redraw tables after restoring the paging size.
+
 ## [2.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-1.0.1...warnings-ng-2.0.0) - 2019-1-15
 
 ### Added
