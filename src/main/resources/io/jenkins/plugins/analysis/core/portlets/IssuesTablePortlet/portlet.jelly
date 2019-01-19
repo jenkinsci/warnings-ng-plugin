@@ -5,20 +5,20 @@
     <tr>
       <td>
 
-        <j:set var="visibleJobs" value="${it.getVisibleJobs(jobs)}"/>
+        <j:set var="model" value="${it.getModel(jobs)}"/>
         <j:choose>
-          <j:when test="${!visibleJobs.isEmpty()}">
+          <j:when test="${size(model) > 0}">
             <j:if test="${!it.getShowIcons()}">
-              <j:set var="sortable" value="sortable" />
+              <j:set var="sortable" value="sortable"/>
             </j:if>
             <!-- TODO: replace the old-school table with datatables.js as well -->
             <table class="pane bigtable ${sortable}" id="${it.id}">
               <thead>
                 <tr>
-                  <th class="pane-header" align="left" initialSortDir="down" >
+                  <th class="pane-header" align="left" initialSortDir="down">
                     ${%Job}
                   </th>
-                  <j:forEach var="toolName" items="${it.getToolNames(visibleJobs)}">
+                  <j:forEach var="toolName" items="${model.toolNames}">
                     <th class="pane-header" align="right">
                       <j:out value="${toolName}"/>
                     </th>
@@ -26,18 +26,29 @@
                 </tr>
               </thead>
               <tbody>
-                <j:forEach var="job" items="${visibleJobs}">
+                <j:forEach var="row" items="${model.rows}">
                   <tr>
                     <td class="pane">
-                      <dp:jobLink job="${job}"/>
+                      <dp:jobLink job="${row.job}"/>
                     </td>
-                    <j:forEach var="total" items="${it.getTotals(job)}">
-                      <td class="pane" align="right">${total}</td>
+                    <j:forEach var="result" items="${row.results}">
+                      <j:set var="total" value="${result.total}"/>
+                      <j:choose>
+                        <j:when test="${total.isPresent()}">
+                          <td class="pane" align="right">
+                            <a href="${rootURL}/${result.url}">${total.asInt}</a>
+                          </td>
+                        </j:when>
+                        <j:otherwise>
+                          <td class="pane" align="right">-</td>
+                        </j:otherwise>
+                      </j:choose>
                     </j:forEach>
                   </tr>
                 </j:forEach>
               </tbody>
             </table>
+
           </j:when>
           <j:otherwise>
             <issues:bootstrap-css/>

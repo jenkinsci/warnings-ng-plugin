@@ -115,6 +115,15 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return getLabelProvider().getId();
     }
 
+    /**
+     * Returns the URL of this action, relative to the context root of Jenkins.
+     *
+     * @return the relative URL, like job/foo/32/analysis/
+     */
+    public String getRelativeUrl() {
+        return getOwner().getUrl() + getUrlName();
+    }
+
     @Override
     @Nullable
     public HealthReport getBuildHealth() {

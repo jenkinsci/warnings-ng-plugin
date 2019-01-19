@@ -1,9 +1,15 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.TreeMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -20,6 +26,7 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.analysis.core.util.Sanitizer;
 
 import static j2html.TagCreator.*;
 
@@ -29,14 +36,9 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 public class IssuesTablePortlet extends DashboardPortlet {
-    // FIXME: add sanitizer before going live
-    private boolean hideCleanJobs;
+    private static final Sanitizer SANITIZER = new Sanitizer();
 
-    /**
-     * A mapping of tools IDs to tool names. Note that this map will be initialized by #{@link
-     * #getToolNames(Collection)}: it cannot be used before this method has been called.
-     */
-    private TreeMap<String, String> toolNamesById;
+    private boolean hideCleanJobs;
     private boolean showIcons;
 
     private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();
@@ -92,102 +94,36 @@ public class IssuesTablePortlet extends DashboardPortlet {
      *         if {@code true} the table column headers will show the tool icon, otherwise the name of the tool is
      *         shown
      */
-    @SuppressWarnings("unused") // called by Stapler
+    @SuppressWarnings({"unused", "WeakerAccess"}) // called by Stapler
     @DataBoundSetter
     public void setShowIcons(final boolean showIcons) {
         this.showIcons = showIcons;
     }
 
-    /**
-     * Returns all visible jobs. If activated in the configuration, jobs with no issues will be hidden.
-     *
-     * @param jobs
-     *         the jobs shown in the view
-     *
-     * @return the filtered jobs
-     */
-    @SuppressWarnings({"unused", "WeakerAccess"}) // Called by jelly view
-    public Collection<Job<?, ?>> getVisibleJobs(final Collection<Job<?, ?>> jobs) {
+    private List<Job<?, ?>> getVisibleJobs(final List<Job<?, ?>> jobs) {
         return hideCleanJobs ? removeZeroIssuesJobs(jobs) : jobs;
     }
 
-    private Collection<Job<?, ?>> removeZeroIssuesJobs(final Collection<Job<?, ?>> jobs) {
+    private List<Job<?, ?>> removeZeroIssuesJobs(final List<Job<?, ?>> jobs) {
         return jobs.stream().filter(this::isVisible).collect(Collectors.toList());
-    }
-
-    /**
-     * Returns the names of the static analysis tools that should be shown in the table.
-     *
-     * @param visibleJobs
-     *         the jobs shown in the view
-     *
-     * @return the names of the static analysis tools (ordered by ID)
-     */
-    @SuppressWarnings({"unused", "WeakerAccess"}) // Called by jelly view
-    public Collection<String> getToolNames(final Collection<Job<?, ?>> visibleJobs) {
-        createToolMapping(visibleJobs);
-
-        if (showIcons) {
-            return getToolNamesById().keySet().stream()
-                    .map(id -> labelProviderFactory.create(id))
-                    .map(this::getImageTag)
-                    .collect(Collectors.toList());
-        }
-        return getToolNamesById().values();
-    }
-
-    private String getImageTag(final StaticAnalysisLabelProvider labelProvider) {
-        return img()
-                .withAlt(labelProvider.getName())
-                .withTitle(labelProvider.getLinkName())
-                .withSrc(jenkinsFacade.getImagePath(labelProvider.getSmallIconUrl()))
-                .render();
-    }
-
-    /**
-     * Searches for all available {@link ResultAction actions} of the visible jobs and stores the IDs and names.
-     *
-     * @param jobs
-     *         the visible jobs
-     */
-    private void createToolMapping(final Collection<Job<?, ?>> jobs) {
-        toolNamesById = jobs.stream()
-                .flatMap(job -> job.getActions(JobAction.class).stream())
-                .map(JobAction::getLatestAction)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toMap(ResultAction::getId, this::getToolName, (r1, r2) -> r1, TreeMap::new));
     }
 
     private String getToolName(final ResultAction action) {
         StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(action.getId(), action.getName());
 
-        return labelProvider.getName();
+        String label = render(labelProvider.getName());
+        if (showIcons) {
+            return img()
+                    .withAlt(label)
+                    .withTitle(render(labelProvider.getLinkName()))
+                    .withSrc(jenkinsFacade.getImagePath(labelProvider.getSmallIconUrl()))
+                    .render();
+        }
+        return label;
     }
 
-    /**
-     * Returns the number of issues in the specified job grouped by static analysis tool.
-     *
-     * @param job
-     *         the job to get the issues for
-     *
-     * @return the number of issues grouped by static analysis tool and ordered by ID
-     */
-    @SuppressWarnings({"unused", "WeakerAccess"}) // Called by jelly view
-    public Collection<String> getTotals(final Job<?, ?> job) {
-        return getToolNamesById().keySet().stream().map(id -> countIssues(job, id)).collect(Collectors.toList());
-    }
-
-    private String countIssues(final Job<?, ?> job, final String id) {
-        return job.getActions(JobAction.class)
-                .stream()
-                .filter(jobAction -> jobAction.getId().equals(id))
-                .findFirst()
-                .map(JobAction::getLatestAction)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(resultAction -> String.valueOf(resultAction.getResult().getTotalSize()))
-                .orElse("-");
+    private String render(final String html) {
+        return StringUtils.strip(SANITIZER.render(html));
     }
 
     private boolean isVisible(final Job<?, ?> job) {
@@ -201,15 +137,173 @@ public class IssuesTablePortlet extends DashboardPortlet {
                 .map(JobAction::getLatestAction)
                 .filter(Optional::isPresent)
                 .map(Optional::get).anyMatch(resultAction -> resultAction.getResult().getTotalSize() > 0);
-
     }
 
-    private TreeMap<String, String> getToolNamesById() {
-        if (toolNamesById == null) {
-            throw new IllegalStateException("Method createToolMapping has not been called yet.");
+    /**
+     * Returns a model for the table with the results per job.
+     *
+     * @param jobs
+     *         the jobs that will be rendered in the rows
+     *
+     * @return the table model
+     */
+    public PortletTableModel getModel(final List<Job<?, ?>> jobs) {
+        return new PortletTableModel(getVisibleJobs(jobs), this::getToolName);
+    }
+
+    /**
+     * Provides the model for the two-dimensional table of issues per type and job.
+     */
+    public static class PortletTableModel {
+        private final List<TableRow> rows;
+        private final Collection<String> toolNames;
+
+        PortletTableModel(final List<Job<?, ?>> visibleJobs, final Function<ResultAction, String> namePrinter) {
+            TreeMap<String, String> toolNamesById = mapToolIdsToNames(visibleJobs, namePrinter);
+
+            toolNames = toolNamesById.values();
+            rows = new ArrayList<>();
+
+            populateRows(visibleJobs, toolNamesById);
         }
 
-        return toolNamesById;
+        private TreeMap<String, String> mapToolIdsToNames(final List<Job<?, ?>> visibleJobs,
+                final Function<ResultAction, String> namePrinter) {
+            return visibleJobs.stream()
+                    .flatMap(job -> job.getActions(JobAction.class).stream())
+                    .map(JobAction::getLatestAction)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toMap(ResultAction::getId, namePrinter, (r1, r2) -> r1, TreeMap::new));
+        }
+
+        private void populateRows(final List<Job<?, ?>> visibleJobs, final TreeMap<String, String> toolNamesById) {
+            for (Job<?, ?> job : visibleJobs) {
+                TableRow row = new TableRow(job);
+                for (String id : toolNamesById.keySet()) {
+                    Result result = job.getActions(JobAction.class)
+                            .stream()
+                            .filter(jobAction -> jobAction.getId().equals(id))
+                            .findFirst()
+                            .map(JobAction::getLatestAction)
+                            .filter(Optional::isPresent)
+                            .map(Optional::get)
+                            .map(Result::new)
+                            .orElse(Result.EMPTY);
+                    row.add(result);
+                }
+                rows.add(row);
+            }
+        }
+
+        /**
+         * Returns the number of rows in this model.
+         *
+         * @return the number of rows
+         */
+        public int size() {
+            return rows.size();
+        }
+
+        /**
+         * Returns the names of the tools that should be used as column header of the table.
+         *
+         * @return the tool names (may contain valid HTML)
+         */
+        public Collection<String> getToolNames() {
+            return toolNames;
+        }
+
+        /**
+         * Returns the rows of the table (as {@link TableRow} instances).
+         *
+         * @return the rows
+         */
+        public List<TableRow> getRows() {
+            return rows;
+        }
+    }
+
+    /**
+     * Provides the model for a row of the table.
+     */
+    public static class TableRow {
+        private final Job<?, ?> job;
+        private final List<Result> results = new ArrayList<>();
+
+        TableRow(final Job<?, ?> job) {
+            this.job = job;
+        }
+
+        /**
+         * Returns the job of the table.
+         *
+         * @return the job
+         */
+        public Job<?, ?> getJob() {
+            return job;
+        }
+
+        /**
+         * Returns the result for each of the selected static analysis tools for the given job.
+         *
+         * @return the analysis results of a job
+         */
+        public List<Result> getResults() {
+            return results;
+        }
+
+        /**
+         * Adds a new static analysis result to the row.
+         *
+         * @param result the result to add
+         */
+        void add(final Result result) {
+            results.add(result);
+        }
+    }
+
+    /**
+     * Provides the model for a cell of the table, that contains the static analysis result.
+     */
+    public static class Result {
+        static final Result EMPTY = new Result(StringUtils.EMPTY);
+
+        private int size;
+        private final String url;
+
+        private Result(final String urlName) {
+            url = urlName;
+        }
+
+        Result(final ResultAction action) {
+            this(action.getRelativeUrl());
+
+            size = action.getResult().getTotalSize();
+        }
+
+        /**
+         * Returns the total number of issues for the selected static analysis tool in a given job.
+         *
+         * @return the number of issues for a tool in a given job
+         */
+        public OptionalInt getTotal() {
+            if (StringUtils.isEmpty(url)) {
+                return OptionalInt.empty();
+            }
+            else {
+                return OptionalInt.of(size);
+            }
+        }
+
+        /**
+         * Returns the URL of the associated action, relative to the context root of Jenkins.
+         *
+         * @return the URL to the results
+         */
+        public String getUrl() {
+            return url;
+        }
     }
 
     /**
