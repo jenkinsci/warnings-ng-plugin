@@ -3,23 +3,18 @@ package io.jenkins.plugins.analysis.core.portlets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
-import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 
 import hudson.model.Job;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.PortletTableModel;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Result;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.TableRow;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
+import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -29,14 +24,9 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class IssuesTablePortletTest {
-    private static final String SPOT_BUGS_ID = "spotbugs";
-    private static final String SPOT_BUGS_NAME = "SpotBugs";
-    private static final String CHECK_STYLE_ID = "checkstyle";
-    private static final String CHECK_STYLE_NAME = "CheckStyle";
-
     @Test
     void shouldShowTableWithOneJob() {
-        Job<?, ?> job = createJob(1, CHECK_STYLE_ID, CHECK_STYLE_NAME);
+        Job<?, ?> job = createJob(CHECK_STYLE_ID, CHECK_STYLE_NAME, 1);
 
         PortletTableModel model = createModel(asList(job));
 
@@ -50,8 +40,8 @@ class IssuesTablePortletTest {
 
     @Test
     void shouldShowTableWithTwoJobs() {
-        Job<?, ?> firstRow = createJob(1, SPOT_BUGS_ID, SPOT_BUGS_NAME);
-        Job<?, ?> secondRow = createJob(2, SPOT_BUGS_ID, SPOT_BUGS_NAME);
+        Job<?, ?> firstRow = createJob(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1);
+        Job<?, ?> secondRow = createJob(SPOT_BUGS_ID, SPOT_BUGS_NAME, 2);
 
         PortletTableModel model = createModel(asList(firstRow, secondRow));
 
@@ -125,7 +115,7 @@ class IssuesTablePortletTest {
         IssuesTablePortlet portlet = new IssuesTablePortlet("portlet");
 
         String htmlName = "<b>ToolName</b> <script>execute</script>";
-        Job<?, ?> job = createJob(1, SPOT_BUGS_ID, htmlName);
+        Job<?, ?> job = createJob(SPOT_BUGS_ID, htmlName, 1);
 
         LabelProviderFactory factory = mock(LabelProviderFactory.class);
         registerTool(factory, SPOT_BUGS_ID, htmlName);
@@ -282,10 +272,6 @@ class IssuesTablePortletTest {
         assertThat(result.getTotal().getAsInt()).isEqualTo(expectedSize);
     }
 
-    private String url(final String id) {
-        return "job/build/" + id;
-    }
-
     private IssuesTablePortlet createPortlet() {
         IssuesTablePortlet portlet = new IssuesTablePortlet("portlet");
 
@@ -297,53 +283,9 @@ class IssuesTablePortletTest {
         return portlet;
     }
 
-    private void registerTool(final LabelProviderFactory factory, final String id, final String name) {
-        StaticAnalysisLabelProvider tool = mock(StaticAnalysisLabelProvider.class);
-        when(factory.create(id, name)).thenReturn(tool);
-        when(factory.create(id)).thenReturn(tool);
-        when(tool.getSmallIconUrl()).thenReturn(id + ".png");
-        when(tool.getName()).thenReturn(name);
-        when(tool.getLinkName()).thenReturn(name);
-    }
-
     private List<Job<?, ?>> asList(final Job<?, ?>... analysisJobs) {
         List<Job<?, ?>> jobs = new ArrayList<>();
         Collections.addAll(jobs, analysisJobs);
         return jobs;
-    }
-
-    private Job createJobWithActions(final JobAction... actions) {
-        Job job = mock(Job.class);
-
-        when(job.getActions(JobAction.class)).thenReturn(Lists.fixedSize.of(actions));
-
-        return job;
-    }
-
-    private Job<?, ?> createJob(final int size, final String id, final String name) {
-        Job job = mock(Job.class);
-        JobAction jobAction = createAction(size, id, name);
-
-        when(job.getActions(JobAction.class)).thenReturn(Collections.singletonList(jobAction));
-
-        return job;
-    }
-
-    private JobAction createAction(final int size, final String id, final String name) {
-        JobAction jobAction = mock(JobAction.class);
-
-        ResultAction resultAction = mock(ResultAction.class);
-        when(jobAction.getLatestAction()).thenReturn(Optional.of(resultAction));
-        when(jobAction.getId()).thenReturn(id);
-
-        AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getTotalSize()).thenReturn(size);
-
-        when(resultAction.getResult()).thenReturn(result);
-        when(resultAction.getId()).thenReturn(id);
-        when(resultAction.getName()).thenReturn(name);
-        when(resultAction.getRelativeUrl()).thenReturn(url(id));
-
-        return jobAction;
     }
 }

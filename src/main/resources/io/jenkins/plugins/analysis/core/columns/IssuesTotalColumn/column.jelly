@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core">
+
+  <td>
+    <j:set var="total" value="${it.getTotal(job)}"/>
+    <j:set var="url" value="${it.getUrl(job)}"/>
+    <j:choose>
+      <j:when test="${total.isPresent() and size(url) > 0}">
+        <a href="${rootURL}/${job.url}/${url}">${total.asInt}</a>
+      </j:when>
+      <j:when test="${total.isPresent()}">
+        ${total.asInt}
+      </j:when>
+      <j:otherwise>
+        -
+      </j:otherwise>
+    </j:choose>
+  </td>
+
+</j:jelly>

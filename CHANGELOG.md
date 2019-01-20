@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.0.0...master)
 
 ### Added
-- Added direct links to the analysis results from the dashboard view portlet. 
+- Direct links to the analysis results from the dashboard view portlet. 
+- [JENKINS-52755](https://issues.jenkins-ci.org/browse/JENKINS-52755), [JENKINS-54239](https://issues.jenkins-ci.org/browse/JENKINS-54239):
+View column that shows the number of issues.
 
 ### Fixed
 - [JENKINS-55674](https://issues.jenkins-ci.org/browse/JENKINS-55674), [JENKINS-55564](https://issues.jenkins-ci.org/browse/JENKINS-55564): 

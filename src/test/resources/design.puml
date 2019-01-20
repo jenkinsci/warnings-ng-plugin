@@ -14,6 +14,7 @@ skinparam component {
 [Charts] <<..core.charts>>
 [Filter] <<..core.filter>>
 [Portlets] <<..core.portlets>>
+[Columns] <<..core.columns>>
 [Rest API] <<..core.restapi>>
 [SCM] <<..core.scm>>
 [Tokens] <<..core.tokens>>
@@ -30,6 +31,8 @@ skinparam component {
 [Tokens] --> [Model]
 [Portlets] --> [Model]
 [Portlets] --> [Utilities]
+[Columns] --> [Model]
+[Columns] --> [Utilities]
 
 [Model] --> [Utilities]
 [Model] --> [Charts]

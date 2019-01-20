@@ -210,6 +210,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
          *
          * @return the tool names (may contain valid HTML)
          */
+        @SuppressWarnings("WeakerAccess") // called by view
         public Collection<String> getToolNames() {
             return toolNames;
         }
