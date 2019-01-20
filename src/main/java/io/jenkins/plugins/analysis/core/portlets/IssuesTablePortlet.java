@@ -7,10 +7,12 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.util.StringContainsUtils;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -25,6 +27,7 @@ import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 
@@ -40,6 +43,8 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
     private boolean hideCleanJobs;
     private boolean showIcons;
+    private boolean selectTools = false;
+    private List<ToolSelection> tools = new ArrayList<>();
 
     private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();
     private JenkinsFacade jenkinsFacade = new JenkinsFacade();
@@ -100,6 +105,45 @@ public class IssuesTablePortlet extends DashboardPortlet {
         this.showIcons = showIcons;
     }
 
+    @SuppressWarnings("unused") // called by Stapler
+    public boolean getSelectTools() {
+        return selectTools;
+    }
+
+    /**
+     * Determines whether all available tools should be selected or if the selection should be done individually.
+     *
+     * @param selectTools
+     *         if {@code true} the selection of tools can be done manually by selecting the corresponding ID, otherwise
+     *         all available tools in a job are automatically selected
+     */
+    @SuppressWarnings("WeakerAccess") // called by Stapler
+    @DataBoundSetter
+    public void setSelectTools(final boolean selectTools) {
+        this.selectTools = selectTools;
+    }
+
+    public List<ToolSelection> getTools() {
+        return tools;
+    }
+
+    private String[] getIds() {
+        return tools.stream().map(ToolSelection::getId).toArray(String[]::new);
+    }
+
+    /**
+     * Returns the tools that should be taken into account when summing up the totals of a job.
+     *
+     * @param tools
+     *         the tools to select
+     *
+     * @see #setSelectTools(boolean)
+     */
+    @DataBoundSetter
+    public void setTools(final List<ToolSelection> tools) {
+        this.tools = tools;
+    }
+
     private List<Job<?, ?>> getVisibleJobs(final List<Job<?, ?>> jobs) {
         return hideCleanJobs ? removeZeroIssuesJobs(jobs) : jobs;
     }
@@ -131,12 +175,21 @@ public class IssuesTablePortlet extends DashboardPortlet {
             return true;
         }
 
-        // TODO: when selecting individual actions this will not work
         return job.getActions(JobAction.class)
                 .stream()
+                .filter(createToolFilter())
                 .map(JobAction::getLatestAction)
                 .filter(Optional::isPresent)
                 .map(Optional::get).anyMatch(resultAction -> resultAction.getResult().getTotalSize() > 0);
+    }
+
+    private Predicate<JobAction> createToolFilter() {
+        if (selectTools) {
+            return action -> StringContainsUtils.containsAnyIgnoreCase(action.getId(), getIds());
+        }
+        else {
+            return jobAction -> true;
+        }
     }
 
     /**
@@ -148,7 +201,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
      * @return the table model
      */
     public PortletTableModel getModel(final List<Job<?, ?>> jobs) {
-        return new PortletTableModel(getVisibleJobs(jobs), this::getToolName);
+        return new PortletTableModel(getVisibleJobs(jobs), this::getToolName, createToolFilter());
     }
 
     /**
@@ -158,8 +211,9 @@ public class IssuesTablePortlet extends DashboardPortlet {
         private final List<TableRow> rows;
         private final Collection<String> toolNames;
 
-        PortletTableModel(final List<Job<?, ?>> visibleJobs, final Function<ResultAction, String> namePrinter) {
-            TreeMap<String, String> toolNamesById = mapToolIdsToNames(visibleJobs, namePrinter);
+        PortletTableModel(final List<Job<?, ?>> visibleJobs, final Function<ResultAction, String> namePrinter,
+                final Predicate<JobAction> filter) {
+            TreeMap<String, String> toolNamesById = mapToolIdsToNames(visibleJobs, namePrinter, filter);
 
             toolNames = toolNamesById.values();
             rows = new ArrayList<>();
@@ -168,9 +222,10 @@ public class IssuesTablePortlet extends DashboardPortlet {
         }
 
         private TreeMap<String, String> mapToolIdsToNames(final List<Job<?, ?>> visibleJobs,
-                final Function<ResultAction, String> namePrinter) {
+                final Function<ResultAction, String> namePrinter,
+                final Predicate<JobAction> filter) {
             return visibleJobs.stream()
-                    .flatMap(job -> job.getActions(JobAction.class).stream())
+                    .flatMap(job -> job.getActions(JobAction.class).stream().filter(filter))
                     .map(JobAction::getLatestAction)
                     .filter(Optional::isPresent)
                     .map(Optional::get)

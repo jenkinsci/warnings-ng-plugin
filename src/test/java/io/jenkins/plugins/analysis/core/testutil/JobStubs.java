@@ -11,6 +11,7 @@ import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.model.ToolSelection;
 
 import static org.mockito.Mockito.*;
 
@@ -69,6 +70,7 @@ public final class JobStubs {
      *
      * @param actions
      *         the actions to attach, might be empty
+     *
      * @return the job stub
      */
     public static Job createJobWithActions(final JobAction... actions) {
@@ -88,6 +90,7 @@ public final class JobStubs {
      *         the name of the static analysis tool
      * @param size
      *         the total number of issues for the tool
+     *
      * @return the {@link Job} stub
      */
     public static Job<?, ?> createJob(final String id, final String name, final int size) {
@@ -103,6 +106,7 @@ public final class JobStubs {
      *         the name of the static analysis tool
      * @param size
      *         the total number of issues for the tool
+     *
      * @return the {@link JobAction} stub
      */
     public static JobAction createAction(final int size, final String id, final String name) {
@@ -121,6 +125,20 @@ public final class JobStubs {
         when(resultAction.getRelativeUrl()).thenReturn(url(id));
 
         return jobAction;
+    }
+
+    /**
+     * Creates a new {@link ToolSelection} for the specified ID.
+     *
+     * @param id
+     *         the ID of the static analysis tool
+     *
+     * @return the tool selection
+     */
+    public static ToolSelection createTool(final String id) {
+        ToolSelection toolSelection = new ToolSelection();
+        toolSelection.setId(id);
+        return toolSelection;
     }
 
     private JobStubs() {

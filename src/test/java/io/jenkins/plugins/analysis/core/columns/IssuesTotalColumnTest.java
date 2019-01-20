@@ -7,8 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import hudson.model.Job;
 
-import io.jenkins.plugins.analysis.core.model.ToolSelection;
-
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -83,16 +81,11 @@ class IssuesTotalColumnTest {
         assertThat(column.getTotal(job)).isEmpty();
         assertThat(column.getUrl(job)).isEmpty();
 
+        // TODO: does that make sense?
         column.setTools(Collections.emptyList());
 
         assertThat(column.getTotal(job)).isEmpty();
         assertThat(column.getUrl(job)).isEmpty();
-    }
-
-    private ToolSelection createTool(final String id) {
-        ToolSelection toolSelection = new ToolSelection();
-        toolSelection.setId(id);
-        return toolSelection;
     }
 
     private void verifySumOfChecksStyleAndSpotBugs(final IssuesTotalColumn column) {

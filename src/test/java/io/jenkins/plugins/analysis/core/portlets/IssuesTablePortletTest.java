@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -16,6 +15,7 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.util.Lists.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -28,14 +28,9 @@ class IssuesTablePortletTest {
     void shouldShowTableWithOneJob() {
         Job<?, ?> job = createJob(CHECK_STYLE_ID, CHECK_STYLE_NAME, 1);
 
-        PortletTableModel model = createModel(asList(job));
+        PortletTableModel model = createModel(list(job));
 
-        assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME);
-
-        List<TableRow> rows = model.getRows();
-        assertThat(rows).hasSize(1);
-
-        verifyRow(rows.get(0), job, CHECK_STYLE_ID, 1);
+        verifySingleTool(job, model, CHECK_STYLE_ID, CHECK_STYLE_NAME, 1);
     }
 
     @Test
@@ -43,7 +38,7 @@ class IssuesTablePortletTest {
         Job<?, ?> firstRow = createJob(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1);
         Job<?, ?> secondRow = createJob(SPOT_BUGS_ID, SPOT_BUGS_NAME, 2);
 
-        PortletTableModel model = createModel(asList(firstRow, secondRow));
+        PortletTableModel model = createModel(list(firstRow, secondRow));
 
         assertThat(model.getToolNames()).containsExactly(SPOT_BUGS_NAME);
 
@@ -56,12 +51,16 @@ class IssuesTablePortletTest {
 
     @Test
     void shouldShowTableWithTwoTools() {
-        Job job = createJobWithActions(
+        Job<?, ?> job = createJobWithActions(
                 createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME),
                 createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
 
-        PortletTableModel model = createModel(asList(job));
+        PortletTableModel model = createModel(list(job));
 
+        verifySpotBugsAndCheckStyle(job, model);
+    }
+
+    private void verifySpotBugsAndCheckStyle(final Job job, final PortletTableModel model) {
         assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
 
         List<TableRow> rows = model.getRows();
@@ -78,6 +77,48 @@ class IssuesTablePortletTest {
     }
 
     @Test
+    void shouldShowTableWithTwoSelectedTools() {
+        Job<?, ?> job = createJobWithActions(
+                createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME),
+                createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+
+        IssuesTablePortlet portlet = createPortlet();
+        portlet.setSelectTools(true);
+        portlet.setTools(list(createTool(SPOT_BUGS_ID), createTool(CHECK_STYLE_ID)));
+
+        List<Job<?, ?>> jobs = list(job);
+        verifySpotBugsAndCheckStyle(job, portlet.getModel(jobs));
+
+        portlet.setTools(list(createTool(SPOT_BUGS_ID)));
+        verifySingleTool(job, portlet.getModel(jobs), SPOT_BUGS_ID, SPOT_BUGS_NAME, 1);
+
+        portlet.setTools(list(createTool(CHECK_STYLE_ID)));
+        verifySingleTool(job, portlet.getModel(jobs), CHECK_STYLE_ID, CHECK_STYLE_NAME, 2);
+
+        portlet.setTools(Collections.emptyList());
+
+        PortletTableModel model = portlet.getModel(jobs);
+        assertThat(model.getToolNames()).isEmpty();
+
+        List<TableRow> rows = model.getRows();
+        assertThat(rows).hasSize(1);
+
+        TableRow actualRow = rows.get(0);
+        assertThat(actualRow.getJob()).isSameAs(job);
+        assertThat(actualRow.getResults()).isEmpty();
+    }
+
+    private void verifySingleTool(final Job job, final PortletTableModel model,
+            final String expectedId, final String expectedName, final int expectedSize) {
+        assertThat(model.getToolNames()).containsExactly(expectedName);
+
+        List<TableRow> rows = model.getRows();
+        assertThat(rows).hasSize(1);
+
+        verifyRow(rows.get(0), job, expectedId, expectedSize);
+    }
+
+    @Test
     void shouldShowIconsOfTools() {
         IssuesTablePortlet portlet = createPortlet();
         portlet.setShowIcons(true);
@@ -87,11 +128,11 @@ class IssuesTablePortletTest {
         when(jenkinsFacade.getImagePath("spotbugs.png")).thenReturn("/path/to/spotbugs.png");
         portlet.setJenkinsFacade(jenkinsFacade);
 
-        Job job = createJobWithActions(
+        Job<?, ?> job = createJobWithActions(
                 createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME),
                 createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
 
-        PortletTableModel model = portlet.getModel(asList(job));
+        PortletTableModel model = portlet.getModel(list(job));
 
         assertThat(model.getToolNames()).containsExactly(
                 "<img alt=\"CheckStyle\" title=\"CheckStyle\" src=\"/path/to/checkstyle.png\">",
@@ -122,20 +163,20 @@ class IssuesTablePortletTest {
 
         portlet.setLabelProviderFactory(factory);
 
-        PortletTableModel model = portlet.getModel(asList(job));
+        PortletTableModel model = portlet.getModel(list(job));
         assertThat(model.getToolNames()).containsExactly("<b>ToolName</b>");
     }
 
     @Test
     void shouldShowTableWithTwoToolsAndTwoJobs() {
-        Job first = createJobWithActions(
+        Job<?, ?> first = createJobWithActions(
                 createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME),
                 createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
-        Job second = createJobWithActions(
+        Job<?, ?> second = createJobWithActions(
                 createAction(3, SPOT_BUGS_ID, SPOT_BUGS_NAME),
                 createAction(4, CHECK_STYLE_ID, CHECK_STYLE_NAME));
 
-        PortletTableModel model = createModel(asList(first, second));
+        PortletTableModel model = createModel(list(first, second));
 
         assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
 
@@ -166,14 +207,14 @@ class IssuesTablePortletTest {
         IssuesTablePortlet portlet = createPortlet();
         portlet.setHideCleanJobs(true);
 
-        Job first = createJobWithActions(
+        Job<?, ?> first = createJobWithActions(
                 createAction(0, SPOT_BUGS_ID, SPOT_BUGS_NAME),
                 createAction(0, CHECK_STYLE_ID, CHECK_STYLE_NAME));
-        Job second = createJobWithActions(
+        Job<?, ?> second = createJobWithActions(
                 createAction(3, SPOT_BUGS_ID, SPOT_BUGS_NAME),
                 createAction(4, CHECK_STYLE_ID, CHECK_STYLE_NAME));
 
-        PortletTableModel model = portlet.getModel(asList(first, second));
+        PortletTableModel model = portlet.getModel(list(first, second));
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
@@ -193,12 +234,12 @@ class IssuesTablePortletTest {
         IssuesTablePortlet portlet = createPortlet();
         portlet.setHideCleanJobs(true);
 
-        Job first = createJobWithActions();
-        Job second = createJobWithActions(
+        Job<?, ?> first = createJobWithActions();
+        Job<?, ?> second = createJobWithActions(
                 createAction(3, SPOT_BUGS_ID, SPOT_BUGS_NAME),
                 createAction(4, CHECK_STYLE_ID, CHECK_STYLE_NAME));
 
-        PortletTableModel model = portlet.getModel(asList(first, second));
+        PortletTableModel model = portlet.getModel(list(first, second));
 
         List<TableRow> rows = model.getRows();
         assertThat(rows).hasSize(1);
@@ -215,12 +256,12 @@ class IssuesTablePortletTest {
 
     @Test
     void shouldShowTableWithTwoJobsWithDifferentTools() {
-        Job first = createJobWithActions(
+        Job<?, ?> first = createJobWithActions(
                 createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME));
-        Job second = createJobWithActions(
+        Job<?, ?> second = createJobWithActions(
                 createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
 
-        PortletTableModel model = createModel(asList(first, second));
+        PortletTableModel model = createModel(list(first, second));
 
         assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
 
@@ -281,11 +322,5 @@ class IssuesTablePortletTest {
         portlet.setLabelProviderFactory(factory);
 
         return portlet;
-    }
-
-    private List<Job<?, ?>> asList(final Job<?, ?>... analysisJobs) {
-        List<Job<?, ?>> jobs = new ArrayList<>();
-        Collections.addAll(jobs, analysisJobs);
-        return jobs;
     }
 }
