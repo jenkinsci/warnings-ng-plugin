@@ -1,7 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -13,6 +15,9 @@ import org.kohsuke.stapler.DataBoundSetter;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Job;
+import hudson.util.ComboBoxModel;
+import jenkins.model.Jenkins;
 
 /**
  * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
@@ -89,5 +94,22 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
     @Extension
     public static class ToolSelectionDescriptor extends Descriptor<ToolSelection> {
         // empty constructor required for stapler
+
+        /**
+         * Returns a model with all available charsets.
+         *
+         * @return a model with all available charsets
+         */
+        public ComboBoxModel doFillIdItems() {
+            ComboBoxModel model = new ComboBoxModel();
+            Set<String> ids = Jenkins.getInstance()
+                    .getAllItems(Job.class)
+                    .stream()
+                    .flatMap(job -> job.getActions(JobAction.class).stream())
+                    .map(JobAction::getId).collect(Collectors.toSet());
+            model.addAll(ids);
+            return model;
+        }
+
     }
 }
