@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.util.StringContainsUtils;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -31,6 +30,7 @@ import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 
+import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 import static j2html.TagCreator.*;
 
 /**
@@ -127,10 +127,6 @@ public class IssuesTablePortlet extends DashboardPortlet {
         return tools;
     }
 
-    private String[] getIds() {
-        return tools.stream().map(ToolSelection::getId).toArray(String[]::new);
-    }
-
     /**
      * Returns the tools that should be taken into account when summing up the totals of a job.
      *
@@ -177,19 +173,10 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
         return job.getActions(JobAction.class)
                 .stream()
-                .filter(createToolFilter())
+                .filter(createToolFilter(selectTools, tools))
                 .map(JobAction::getLatestAction)
                 .filter(Optional::isPresent)
                 .map(Optional::get).anyMatch(resultAction -> resultAction.getResult().getTotalSize() > 0);
-    }
-
-    private Predicate<JobAction> createToolFilter() {
-        if (selectTools) {
-            return action -> StringContainsUtils.containsAnyIgnoreCase(action.getId(), getIds());
-        }
-        else {
-            return jobAction -> true;
-        }
     }
 
     /**
@@ -201,7 +188,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
      * @return the table model
      */
     public PortletTableModel getModel(final List<Job<?, ?>> jobs) {
-        return new PortletTableModel(getVisibleJobs(jobs), this::getToolName, createToolFilter());
+        return new PortletTableModel(getVisibleJobs(jobs), this::getToolName, createToolFilter(selectTools, tools));
     }
 
     /**

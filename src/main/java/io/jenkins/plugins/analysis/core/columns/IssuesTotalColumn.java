@@ -5,12 +5,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.util.StringContainsUtils;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -24,6 +22,8 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
+
+import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
 /**
  * Shows the number of issues of a job in a column of a Jenkins view. This column provides an auto-selection mode that
@@ -65,10 +65,6 @@ public class IssuesTotalColumn extends ListViewColumn {
         return tools;
     }
 
-    private String[] getIds() {
-        return tools.stream().map(ToolSelection::getId).toArray(String[]::new);
-    }
-
     /**
      * Returns the tools that should be taken into account when summing up the totals of a job.
      *
@@ -92,15 +88,8 @@ public class IssuesTotalColumn extends ListViewColumn {
      */
     @SuppressWarnings("WeakerAccess") // called bv view
     public OptionalInt getTotal(final Job<?, ?> job) {
-        Predicate<JobAction> predicate;
-        if (selectTools) {
-            predicate = action -> StringContainsUtils.containsAnyIgnoreCase(action.getId(), getIds());
-        }
-        else {
-            predicate = action -> true;
-        }
         return job.getActions(JobAction.class).stream()
-                .filter(predicate)
+                .filter(createToolFilter(selectTools, tools))
                 .map(JobAction::getLatestAction)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -117,13 +106,12 @@ public class IssuesTotalColumn extends ListViewColumn {
      * @return the URL to the results, if this column renders the results of a unique tool, empty string otherwise
      */
     public String getUrl(final Job<?, ?> job) {
-        String[] selectedIds = getIds();
-
         Set<String> actualIds = job.getActions(JobAction.class)
                 .stream()
                 .map(JobAction::getId)
                 .collect(Collectors.toSet());
 
+        String[] selectedIds = getIds(tools);
         if (selectedIds.length == 1) {
             String url = selectedIds[0];
             if (actualIds.contains(url)) {
