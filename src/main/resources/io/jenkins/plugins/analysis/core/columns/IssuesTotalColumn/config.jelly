@@ -1,6 +1,9 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
 
+  <f:entry title="${%Name}" field="name">
+    <f:textbox default="${%# Issues}"/>
+  </f:entry>
   <i:select-tools/>
 
 </j:jelly>

@@ -35,6 +35,7 @@ import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 public class IssuesTotalColumn extends ListViewColumn {
     private boolean selectTools = false;
     private List<ToolSelection> tools = new ArrayList<>();
+    private String name = "# Issues";
 
     /** Creates a new instance of {@link ToolSelection}. */
     @DataBoundConstructor
@@ -63,6 +64,21 @@ public class IssuesTotalColumn extends ListViewColumn {
 
     public List<ToolSelection> getTools() {
         return tools;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the display name of the column.
+     *
+     * @param name
+     *         the name of the column
+     */
+    @DataBoundSetter
+    public void setName(final String name) {
+        this.name = name;
     }
 
     /**
