@@ -8,6 +8,7 @@ import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
@@ -105,6 +106,10 @@ public class IssuesTotalColumn extends ListViewColumn {
         this.labelProviderFactory = labelProviderFactory;
     }
 
+    private LabelProviderFactory getLabelProviderFactory() {
+        return ObjectUtils.defaultIfNull(labelProviderFactory, new LabelProviderFactory());
+    }
+
     /**
      * Returns the total number of issues for the selected static analysis tool in a given job.
      *
@@ -140,7 +145,7 @@ public class IssuesTotalColumn extends ListViewColumn {
                 .map(JobAction::getLatestAction)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(result -> new AnalysisResultDescription(result, labelProviderFactory))
+                .map(result -> new AnalysisResultDescription(result, getLabelProviderFactory()))
                 .collect(Collectors.toList());
     }
 

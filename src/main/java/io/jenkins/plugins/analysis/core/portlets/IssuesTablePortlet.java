@@ -10,6 +10,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
@@ -65,9 +66,17 @@ public class IssuesTablePortlet extends DashboardPortlet {
         this.labelProviderFactory = labelProviderFactory;
     }
 
+    private LabelProviderFactory getLabelProviderFactory() {
+        return ObjectUtils.defaultIfNull(labelProviderFactory, new LabelProviderFactory());
+    }
+
     @VisibleForTesting
     void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
         this.jenkinsFacade = jenkinsFacade;
+    }
+
+    private JenkinsFacade getJenkinsFacade() {
+        return ObjectUtils.defaultIfNull(jenkinsFacade, new JenkinsFacade());
     }
 
     @SuppressWarnings("unused") // called by Stapler
@@ -149,14 +158,14 @@ public class IssuesTablePortlet extends DashboardPortlet {
     }
 
     private String getToolName(final ResultAction action) {
-        StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(action.getId(), action.getName());
+        StaticAnalysisLabelProvider labelProvider = getLabelProviderFactory().create(action.getId(), action.getName());
 
         String label = render(labelProvider.getName());
         if (showIcons) {
             return img()
                     .withAlt(label)
                     .withTitle(render(labelProvider.getLinkName()))
-                    .withSrc(jenkinsFacade.getImagePath(labelProvider.getSmallIconUrl()))
+                    .withSrc(getJenkinsFacade().getImagePath(labelProvider.getSmallIconUrl()))
                     .render();
         }
         return label;
