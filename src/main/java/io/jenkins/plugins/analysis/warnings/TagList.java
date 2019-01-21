@@ -1,6 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.ReaderFactory;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.TaglistParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -17,7 +20,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class TagList extends ReportScanningTool {
     private static final long serialVersionUID = 2696608544063390368L;
-    
+
     static final String ID = "taglist";
 
     /** Creates a new instance of {@link TagList}. */
@@ -29,7 +32,7 @@ public class TagList extends ReportScanningTool {
 
     @Override
     public IssueParser createParser() {
-        return new TaglistParser();
+        return new TaglistParserWrapper();
     }
 
     /** Descriptor for this static analysis tool. */
@@ -56,5 +59,34 @@ public class TagList extends ReportScanningTool {
         public String getUrl() {
             return "https://www.mojohaus.org/taglist-maven-plugin";
         }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
+        }
     }
+
+    private static class TaglistParserWrapper extends TaglistParser {
+        private static final long serialVersionUID = 173978860195164797L;
+
+        TaglistParserWrapper() {
+            // Empty
+        }
+
+        @Override
+        public Report parse(ReaderFactory readerFactory) throws ParsingException {
+            Report report = super.parse(readerFactory);
+
+            report.stream().forEach(issue -> {
+                String origFile = issue.getFileName();
+
+                // Guessing at real file name
+                String updated = origFile.replace('.', '/').concat(".java");
+                issue.setFileName(updated);
+            });
+
+            return report;
+        }
+    }
+
 }
