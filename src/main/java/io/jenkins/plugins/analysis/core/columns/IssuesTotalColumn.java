@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.columns;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -20,7 +22,9 @@ import hudson.views.ListViewColumnDescriptor;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.JobAction;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
@@ -36,6 +40,8 @@ public class IssuesTotalColumn extends ListViewColumn {
     private boolean selectTools = false;
     private List<ToolSelection> tools = new ArrayList<>();
     private String name = "# Issues";
+
+    private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();
 
     /** Creates a new instance of {@link ToolSelection}. */
     @DataBoundConstructor
@@ -94,6 +100,11 @@ public class IssuesTotalColumn extends ListViewColumn {
         this.tools = tools;
     }
 
+    @VisibleForTesting
+    void setLabelProviderFactory(final LabelProviderFactory labelProviderFactory) {
+        this.labelProviderFactory = labelProviderFactory;
+    }
+
     /**
      * Returns the total number of issues for the selected static analysis tool in a given job.
      *
@@ -111,6 +122,24 @@ public class IssuesTotalColumn extends ListViewColumn {
                 .map(Optional::get)
                 .map(ResultAction::getResult)
                 .mapToInt(AnalysisResult::getTotalSize).reduce(Integer::sum);
+    }
+
+    /**
+     * Returns the total number of issues for the selected static analysis tool in a given job.
+     *
+     * @param job
+     *         the job to select
+     *
+     * @return the number of issues for a tool in a given job
+     */
+    @SuppressWarnings("WeakerAccess") // called bv view
+    public List<AnalysisResultDescription> getDetails(final Job<?, ?> job) {
+        return job.getActions(JobAction.class).stream()
+                .filter(createToolFilter(selectTools, tools))
+                .map(JobAction::getLatestAction)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(result -> new AnalysisResultDescription(result, labelProviderFactory)).collect(Collectors.toList());
     }
 
     /**
@@ -153,6 +182,78 @@ public class IssuesTotalColumn extends ListViewColumn {
         @Override
         public String getDisplayName() {
             return Messages.IssuesTotalColumn_Name();
+        }
+    }
+
+    /**
+     * Model for one {@link AnalysisResult} in a job.
+     */
+    public static class AnalysisResultDescription {
+        private final String icon;
+        private final String name;
+        private final int total;
+        private final String url;
+
+        @VisibleForTesting
+        AnalysisResultDescription(final String icon, final String name, final int total, final String url) {
+            this.icon = icon;
+            this.name = name;
+            this.total = total;
+            this.url = url;
+        }
+
+        AnalysisResultDescription(final ResultAction result, final LabelProviderFactory labelProviderFactory) {
+            StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(result.getId(), result.getName());
+            this.name = labelProvider.getLinkName();
+            this.icon = labelProvider.getSmallIconUrl();
+            total = result.getResult().getTotalSize();
+            url = result.getUrlName();
+        }
+
+        public String getIcon() {
+            return icon;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public int getTotal() {
+            return total;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+            AnalysisResultDescription that = (AnalysisResultDescription) o;
+            return total == that.total
+                    && Objects.equals(icon, that.icon)
+                    && Objects.equals(name, that.name)
+                    && Objects.equals(url, that.url);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(icon, name, total, url);
+        }
+
+        @Override
+        public String toString() {
+            return "AnalysisResultDescription{"
+                    + "icon='" + icon + '\''
+                    + ", name='" + name + '\''
+                    + ", total=" + total
+                    + ", url='" + url + '\''
+                    + '}';
         }
     }
 }

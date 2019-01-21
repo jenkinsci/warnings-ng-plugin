@@ -123,6 +123,7 @@ public final class JobStubs {
         when(resultAction.getId()).thenReturn(id);
         when(resultAction.getName()).thenReturn(name);
         when(resultAction.getRelativeUrl()).thenReturn(url(id));
+        when(resultAction.getUrlName()).thenReturn(id);
 
         return jobAction;
     }

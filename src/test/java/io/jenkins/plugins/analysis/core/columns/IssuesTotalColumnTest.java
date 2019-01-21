@@ -7,8 +7,13 @@ import org.junit.jupiter.api.Test;
 
 import hudson.model.Job;
 
+import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn.AnalysisResultDescription;
+import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
+import io.jenkins.plugins.analysis.core.testutil.JobStubs;
+
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link IssuesTotalColumn}.
@@ -18,7 +23,7 @@ import static org.assertj.core.api.Assertions.*;
 class IssuesTotalColumnTest {
     @Test
     void shouldShowNoResultIfNoAction() {
-        IssuesTotalColumn column = new IssuesTotalColumn();
+        IssuesTotalColumn column = createColumn();
         column.setSelectTools(false);
 
         Job<?, ?> job = createJobWithActions();
@@ -29,7 +34,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowResultOfOneAction() {
-        IssuesTotalColumn column = new IssuesTotalColumn();
+        IssuesTotalColumn column = createColumn();
         column.setSelectTools(false);
 
         Job<?, ?> job = createJob(CHECK_STYLE_ID, CHECK_STYLE_NAME, 1);
@@ -41,7 +46,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowTotalOfTwoActionsWhenSelectAllIsChecked() {
-        IssuesTotalColumn column = new IssuesTotalColumn();
+        IssuesTotalColumn column = createColumn();
         column.setSelectTools(false);
 
         verifySumOfChecksStyleAndSpotBugs(column);
@@ -49,7 +54,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowTotalOfTwoActionsWhenSelectingIndividually() {
-        IssuesTotalColumn column = new IssuesTotalColumn();
+        IssuesTotalColumn column = createColumn();
         column.setSelectTools(true);
         column.setTools(Arrays.asList(createTool(CHECK_STYLE_ID), createTool(SPOT_BUGS_ID)));
 
@@ -58,7 +63,7 @@ class IssuesTotalColumnTest {
 
     @Test
     void shouldShowTotalOfSelectedTool() {
-        IssuesTotalColumn column = new IssuesTotalColumn();
+        IssuesTotalColumn column = createColumn();
         column.setSelectTools(true);
         column.setTools(Collections.singletonList(createTool(CHECK_STYLE_ID)));
 
@@ -88,6 +93,15 @@ class IssuesTotalColumnTest {
         assertThat(column.getUrl(job)).isEmpty();
     }
 
+    private IssuesTotalColumn createColumn() {
+        IssuesTotalColumn column = new IssuesTotalColumn();
+        LabelProviderFactory labelProviderFactory = mock(LabelProviderFactory.class);
+        JobStubs.registerTool(labelProviderFactory, CHECK_STYLE_ID, CHECK_STYLE_NAME);
+        JobStubs.registerTool(labelProviderFactory, SPOT_BUGS_ID, SPOT_BUGS_NAME);
+        column.setLabelProviderFactory(labelProviderFactory);
+        return column;
+    }
+
     private void verifySumOfChecksStyleAndSpotBugs(final IssuesTotalColumn column) {
         Job<?, ?> job = createJobWithActions(
                 createAction(1, CHECK_STYLE_ID, CHECK_STYLE_NAME),
@@ -96,5 +110,9 @@ class IssuesTotalColumnTest {
         assertThat(column.getTotal(job)).isNotEmpty();
         assertThat(column.getTotal(job)).hasValue(1 + 2);
         assertThat(column.getUrl(job)).isEmpty();
+
+        assertThat(column.getDetails(job)).containsExactly(
+                new AnalysisResultDescription("checkstyle.png", CHECK_STYLE_NAME, 1, CHECK_STYLE_ID),
+                new AnalysisResultDescription("spotbugs.png", SPOT_BUGS_NAME, 2, SPOT_BUGS_ID));
     }
 }
