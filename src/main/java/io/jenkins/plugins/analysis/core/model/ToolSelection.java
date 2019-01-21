@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.StringContainsUtils;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -20,11 +19,9 @@ import hudson.util.ComboBoxModel;
 import jenkins.model.Jenkins;
 
 /**
- * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
- * compiler log or static analysis report file, consider deriving from {@link ReportScanningTool}.
+ * UI proxy to let users select a static analysis report based on the UI.
  *
  * @author Ullrich Hafner
- * @see ReportScanningTool
  */
 public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
     private String id = StringUtils.EMPTY;
