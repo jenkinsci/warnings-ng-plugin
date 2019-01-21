@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - provide direct links to the analysis results
 - [JENKINS-52755](https://issues.jenkins-ci.org/browse/JENKINS-52755), [JENKINS-54239](https://issues.jenkins-ci.org/browse/JENKINS-54239):
 View column that shows the number of issues.
+- Click on trend chart to navigate to selected analysis results. 
 
 ### Fixed
 - [JENKINS-55674](https://issues.jenkins-ci.org/browse/JENKINS-55674), [JENKINS-55564](https://issues.jenkins-ci.org/browse/JENKINS-55564): 

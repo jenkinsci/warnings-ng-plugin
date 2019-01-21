@@ -121,7 +121,8 @@ public class IssuesTotalColumn extends ListViewColumn {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(ResultAction::getResult)
-                .mapToInt(AnalysisResult::getTotalSize).reduce(Integer::sum);
+                .mapToInt(AnalysisResult::getTotalSize)
+                .reduce(Integer::sum);
     }
 
     /**
@@ -139,7 +140,8 @@ public class IssuesTotalColumn extends ListViewColumn {
                 .map(JobAction::getLatestAction)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
-                .map(result -> new AnalysisResultDescription(result, labelProviderFactory)).collect(Collectors.toList());
+                .map(result -> new AnalysisResultDescription(result, labelProviderFactory))
+                .collect(Collectors.toList());
     }
 
     /**
