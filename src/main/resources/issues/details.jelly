@@ -11,7 +11,7 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">${%Details}
-            <img class="icon-right" src="${it.labelProvider.largeIconUrl}"></img>
+            <img class="icon-right" src="${resURL}/${it.labelProvider.largeIconUrl}"></img>
           </h5>
 
           <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
