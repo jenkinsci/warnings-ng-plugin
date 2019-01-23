@@ -17,7 +17,6 @@ import org.eclipse.collections.api.set.ImmutableSet;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.VisibleForTesting;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -26,8 +25,8 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 import hudson.model.Api;
-import hudson.model.Item;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 
@@ -37,7 +36,6 @@ import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
 /**
@@ -48,6 +46,8 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 @SuppressWarnings("PMD.ExcessiveImports")
 @ExportedBean
 public class IssuesDetail implements ModelObject {
+    private static final ResetReferenceCommand RESET_REFERENCE_COMMAND = new ResetReferenceCommand();
+
     private final Run<?, ?> owner;
 
     private final Report report;
@@ -64,7 +64,6 @@ public class IssuesDetail implements ModelObject {
 
     private final AnalysisResult result;
 
-    private JenkinsFacade jenkinsFacade = new JenkinsFacade();
 
     /**
      * Creates a new detail model with the corresponding view {@code IssuesDetail/index.jelly}.
@@ -129,11 +128,6 @@ public class IssuesDetail implements ModelObject {
                 labelProvider, sourceEncoding);
         infoMessages.addAll(result.getInfoMessages().castToList());
         errorMessages.addAll(result.getErrorMessages().castToList());
-    }
-
-    @VisibleForTesting
-    void JenkinsFacade(final JenkinsFacade jenkinsFacade) {
-        this.jenkinsFacade = jenkinsFacade;
     }
 
     /**
@@ -399,24 +393,12 @@ public class IssuesDetail implements ModelObject {
         return displayName;
     }
 
+    @RequirePOST
     public void doResetReference(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        if (jenkinsFacade.hasPermission(Item.CONFIGURE)) {
-            // FIXME: only for QuaGateEvaluationMode
-           resetReferenceBuild(owner);
-        }
+        RESET_REFERENCE_COMMAND.execute(owner, labelProvider.getId());
+
         try {
             response.sendRedirect2("../");
-        }
-        catch (IOException ignore) {
-            // ignore
-        }
-    }
-
-    @VisibleForTesting
-    public static void resetReferenceBuild(final Run<?, ?> build) {
-        try {
-            build.addOrReplaceAction(new ResetReferenceAction());
-            build.save();
         }
         catch (IOException ignore) {
             // ignore

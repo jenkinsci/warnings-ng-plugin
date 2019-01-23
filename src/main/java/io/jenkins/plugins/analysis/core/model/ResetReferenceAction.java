@@ -14,7 +14,22 @@ import io.jenkins.plugins.analysis.core.util.QualityGate;
  * @author Ullrich Hafner
  */
 public class ResetReferenceAction implements Action {
-    // TODO: remember the ID?
+    private String id;
+
+    /**
+     * Creates a new action for the specified tool ID.
+     *
+     * @param id
+     *         the ID of the tool to reset the reference build
+     */
+    ResetReferenceAction(final String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
     @Nullable
     @Override
     public String getIconFileName() {

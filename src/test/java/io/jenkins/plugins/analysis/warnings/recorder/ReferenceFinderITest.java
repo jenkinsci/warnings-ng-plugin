@@ -13,7 +13,7 @@ import hudson.model.Run;
 import hudson.tasks.Builder;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import io.jenkins.plugins.analysis.core.model.ResetReferenceCommand;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
@@ -49,7 +49,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
                         .hasTotalSize(8)
                         .hasNewSize(6)
                         .hasQualityGateStatus(QualityGateStatus.WARNING));
-        IssuesDetail.resetReferenceBuild(unstable);
+        createResetAction(unstable, "eclipse");
 
         // #3 SUCCESS (Reference #1)
         cleanAndCopy(project, "eclipse4Warnings.txt");
@@ -107,11 +107,12 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
 
         // #2 UNSTABLE
         cleanAndCopy(project, "eclipse8Warnings.txt");
-        scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
+        Run<?, ?> unstable = scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(8)
                         .hasNewSize(6)
                         .hasQualityGateStatus(QualityGateStatus.WARNING));
+        createResetAction(unstable, "wrong-id"); // checks that this has no influence
 
         // #3 SUCCESS (Reference #1)
         cleanAndCopy(project, "eclipse4Warnings.txt");
@@ -121,6 +122,11 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
                         .hasNewSize(2)
                         .hasQualityGateStatus(QualityGateStatus.PASSED)
                         .hasReferenceBuild(Optional.of(expectedReference)));
+    }
+
+    private void createResetAction(final Run<?, ?> unstable, final String id) {
+        ResetReferenceCommand resetCommand = new ResetReferenceCommand();
+        resetCommand.resetReferenceBuild(unstable, id);
     }
 
     /**

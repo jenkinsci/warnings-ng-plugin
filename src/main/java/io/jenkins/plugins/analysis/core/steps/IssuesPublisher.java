@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -159,16 +160,20 @@ class IssuesPublisher {
                 baseline = referenceJob.get().getLastBuild();
             }
         }
-        return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(filtered), jobResultEvaluationMode);
+        return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(filtered),
+                jobResultEvaluationMode);
     }
 
     private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {
         Run<?, ?> previous = run.getPreviousCompletedBuild();
         if (previous != null) {
-            if (previous.getAction(ResetReferenceAction.class) != null) {
-                filtered.logInfo("Resetting reference build, ignoring quality gate result for one build");
+            List<ResetReferenceAction> actions = previous.getActions(ResetReferenceAction.class);
+            for (ResetReferenceAction action : actions) {
+                if (report.getId().equals(action.getId())) {
+                    filtered.logInfo("Resetting reference build, ignoring quality gate result for one build");
 
-                return IGNORE_QUALITY_GATE;
+                    return IGNORE_QUALITY_GATE;
+                }
             }
         }
         return qualityGateEvaluationMode;
