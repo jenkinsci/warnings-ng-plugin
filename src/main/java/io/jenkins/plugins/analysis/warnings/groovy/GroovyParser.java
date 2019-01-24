@@ -23,6 +23,7 @@ import groovy.lang.Script;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.interceptor.RequirePOST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
@@ -294,6 +295,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          *
          * @return the validation result
          */
+        @RequirePOST
         public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
             if (isNotAllowedToRunScripts()) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;

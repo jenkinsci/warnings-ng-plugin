@@ -15,6 +15,8 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 
+import org.jenkinsci.plugins.scriptsecurity.sandbox.groovy.GroovySandbox;
+
 /**
  * Creates a warning based on a regular expression match and groovy script.
  *
@@ -60,7 +62,8 @@ class GroovyExpressionMatcher implements Serializable {
      */
     public Script compile() throws CompilationFailedException {
         Binding binding = new Binding();
-        GroovyShell shell = new GroovyShell(GroovyExpressionMatcher.class.getClassLoader(), binding);
+        GroovyShell shell = new GroovyShell(GroovySandbox.createSecureClassLoader(GroovyExpressionMatcher.class.getClassLoader()),
+                binding, GroovySandbox.createSecureCompilerConfiguration());
         return shell.parse(script);
     }
 
