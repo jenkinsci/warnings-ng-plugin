@@ -11,16 +11,17 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.SerializableTest;
 
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import hudson.model.Run;
+
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser.DescriptorImpl;
 
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
-
-import hudson.model.Run;
 
 /**
  * Tests the class {@link GroovyParser}.
@@ -152,23 +153,23 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
                 toString("multiline.groovy"))).isOk();
     }
 
-    @Issue("SECURITY-1295")
-    @Test
-    public void blockASTTest() throws Exception {
-        DescriptorImpl d = createDescriptor();
-        assertThat(d.doCheckScript("import groovy.transform.*\n" +
-                "import jenkins.model.Jenkins\n" +
-                "import hudson.model.FreeStyleProject\n" +
-                "@ASTTest(value={ assert Jenkins.getInstance().createProject(FreeStyleProject.class, \"should-not-exist\") })\n" +
-                "@Field int x\n" +
-                "echo 'hello'\n").toString(), containsString("Annotation ASTTest cannot be used in the sandbox"));
+    @Test @Issue("SECURITY-1295")
+    void blockASTTest() {
+        DescriptorImpl descriptor = createDescriptor();
+
+        assertThat(descriptor.doCheckScript("import groovy.transform.*\n"
+                + "import jenkins.model.Jenkins\n"
+                + "import hudson.model.FreeStyleProject\n"
+                + "@ASTTest(value={ assert Jenkins.getInstance().createProject(FreeStyleProject.class, \"should-not-exist\") })\n"
+                + "@Field int x\n"
+                + "echo 'hello'\n").toString(),
+                containsString("Annotation ASTTest cannot be used in the sandbox"));
     }
 
-    @Issue("SECURITY-1295")
-    @Test
-    public void blockGrab() throws Exception {
-        DescriptorImpl d = createDescriptor();
-        assertThat(d.doCheckScript("@Grab(group='foo', module='bar', version='1.0')\ndef foo\n").toString(),
+    @Test @Issue("SECURITY-1295")
+    void blockGrab() {
+        DescriptorImpl descriptor = createDescriptor();
+        assertThat(descriptor.doCheckScript("@Grab(group='foo', module='bar', version='1.0')\ndef foo\n").toString(),
                 containsString("Annotation Grab cannot be used in the sandbox"));
     }
 
