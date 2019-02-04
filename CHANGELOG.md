@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.1.2...master)
 
+### Added
+- [JENKINS-22526](https://issues.jenkins-ci.org/browse/JENKINS-22526), 
+[JENKINS-17196](https://issues.jenkins-ci.org/browse/JENKINS-17196):
+Added action to reset the reference build (quality gate evaluation).
+
+### Fixed
+- Fixed validation of Groovy parsers
+
 ## [2.1.2](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.1.1...warnings-ng-2.1.2) - 2019-1-28
 
 ### Fixed
