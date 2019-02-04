@@ -333,6 +333,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          *
          * @return the validation result
          */
+        @RequirePOST
         public FormValidation doCheckExample(@QueryParameter final String example,
                 @QueryParameter final String regexp, @QueryParameter final String script) {
             if (isNotAllowedToRunScripts()) {
