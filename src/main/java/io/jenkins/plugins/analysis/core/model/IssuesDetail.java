@@ -25,7 +25,6 @@ import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import org.kohsuke.stapler.export.ExportedBean;
-import org.kohsuke.stapler.interceptor.RequirePOST;
 import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -46,7 +45,7 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 @SuppressWarnings("PMD.ExcessiveImports")
 @ExportedBean
 public class IssuesDetail implements ModelObject {
-    private static final ResetReferenceCommand RESET_REFERENCE_COMMAND = new ResetReferenceCommand();
+    private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
 
     private final Run<?, ?> owner;
 
@@ -63,7 +62,6 @@ public class IssuesDetail implements ModelObject {
     private final List<String> infoMessages = new ArrayList<>();
 
     private final AnalysisResult result;
-
 
     /**
      * Creates a new detail model with the corresponding view {@code IssuesDetail/index.jelly}.
@@ -199,6 +197,14 @@ public class IssuesDetail implements ModelObject {
         return data;
     }
 
+    /**
+     * Returns the UI model for the specified table.
+     *
+     * @param id
+     *         the ID of the table
+     *
+     * @return the UI model as JSON
+     */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getTableModel(final String id) {
@@ -393,9 +399,16 @@ public class IssuesDetail implements ModelObject {
         return displayName;
     }
 
-    @RequirePOST
-    public void doResetReference(final StaplerRequest request, final StaplerResponse response) throws IOException {
-        RESET_REFERENCE_COMMAND.execute(owner, labelProvider.getId());
+    /**
+     * Resets the quality gate for the owner of this view. Redirects to the top level page afterwards.
+     *
+     * @param request
+     *         Stapler request
+     * @param response
+     *         Stapler response
+     */
+    public void doResetReference(final StaplerRequest request, final StaplerResponse response) {
+        RESET_QUALITY_GATE_COMMAND.execute(owner, labelProvider.getId());
 
         try {
             response.sendRedirect2("../");

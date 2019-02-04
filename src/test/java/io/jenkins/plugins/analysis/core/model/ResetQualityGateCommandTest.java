@@ -15,11 +15,11 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link ResetReferenceCommand}.
+ * Tests the class {@link ResetQualityGateCommand}.
  *
  * @author Ullrich Hafner
  */
-class ResetReferenceCommandTest {
+class ResetQualityGateCommandTest {
     private static final String ID = "id";
 
     @Test
@@ -29,7 +29,7 @@ class ResetReferenceCommandTest {
     }
 
     private void verifyEnabledWithQualityGateStatus(final QualityGateStatus status) {
-        ResetReferenceCommand command = new ResetReferenceCommand();
+        ResetQualityGateCommand command = new ResetQualityGateCommand();
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
         ResultAction resultAction = createResultAction(status, ID);
@@ -40,7 +40,7 @@ class ResetReferenceCommandTest {
 
     @Test
     void shouldBeDisabledIfUserHasNoConfigureRights() {
-        ResetReferenceCommand command = new ResetReferenceCommand();
+        ResetQualityGateCommand command = new ResetQualityGateCommand();
 
         command.setJenkinsFacade(configureCorrectUserRights(false));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, ID);
@@ -51,7 +51,7 @@ class ResetReferenceCommandTest {
 
     @Test
     void shouldBeDisabledIfActionAlreadyExists() {
-        ResetReferenceCommand command = new ResetReferenceCommand();
+        ResetQualityGateCommand command = new ResetQualityGateCommand();
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, ID);
@@ -63,7 +63,7 @@ class ResetReferenceCommandTest {
 
     @Test
     void shouldBeDisabledIfQualityGateIsSuccessful() {
-        ResetReferenceCommand command = new ResetReferenceCommand();
+        ResetQualityGateCommand command = new ResetQualityGateCommand();
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
         ResultAction resultAction = createResultAction(QualityGateStatus.PASSED, ID);
@@ -75,7 +75,7 @@ class ResetReferenceCommandTest {
 
     @Test
     void shouldBeDisabledIfNoResultAction() {
-        ResetReferenceCommand command = new ResetReferenceCommand();
+        ResetQualityGateCommand command = new ResetQualityGateCommand();
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
         Run<?, ?> selectedBuild = mock(Run.class);
@@ -88,7 +88,7 @@ class ResetReferenceCommandTest {
 
     @Test
     void shouldBeDisabledIfOtherResultAction() {
-        ResetReferenceCommand command = new ResetReferenceCommand();
+        ResetQualityGateCommand command = new ResetQualityGateCommand();
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, "other");

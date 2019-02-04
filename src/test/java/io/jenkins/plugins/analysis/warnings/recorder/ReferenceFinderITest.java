@@ -13,7 +13,7 @@ import hudson.model.Run;
 import hudson.tasks.Builder;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
-import io.jenkins.plugins.analysis.core.model.ResetReferenceCommand;
+import io.jenkins.plugins.analysis.core.model.ResetQualityGateCommand;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
@@ -50,6 +50,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
                         .hasNewSize(6)
                         .hasQualityGateStatus(QualityGateStatus.WARNING));
         createResetAction(unstable, "eclipse");
+        createResetAction(unstable, "additional");
 
         // #3 SUCCESS (Reference #1)
         cleanAndCopy(project, "eclipse4Warnings.txt");
@@ -125,7 +126,7 @@ public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
     }
 
     private void createResetAction(final Run<?, ?> unstable, final String id) {
-        ResetReferenceCommand resetCommand = new ResetReferenceCommand();
+        ResetQualityGateCommand resetCommand = new ResetQualityGateCommand();
         resetCommand.resetReferenceBuild(unstable, id);
     }
 

@@ -6,6 +6,8 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.ContainerTag;
 
+import hudson.model.Run;
+
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
 import static j2html.TagCreator.*;
@@ -30,6 +32,13 @@ public class Summary {
     private final StaticAnalysisLabelProvider labelProvider;
     private final AnalysisResult analysisResult;
     private final LabelProviderFactoryFacade facade;
+
+    private ResetQualityGateCommand resetQualityGateCommand = new ResetQualityGateCommand();
+
+    @VisibleForTesting
+    void setResetQualityGateCommand(final ResetQualityGateCommand resetQualityGateCommand) {
+        this.resetQualityGateCommand = resetQualityGateCommand;
+    }
 
     /**
      * Creates a new {@link Summary}.
@@ -76,10 +85,15 @@ public class Summary {
                 .condWith(analysisResult.getFixedSize() > 0,
                         li(labelProvider.getFixedIssuesLabel(analysisResult.getFixedSize())))
                 .condWith(analysisResult.getQualityGateStatus() != QualityGateStatus.INACTIVE,
-                        li(labelProvider.getQualityGateResult(analysisResult.getQualityGateStatus())));
+                        li(labelProvider.getQualityGateResult(analysisResult.getQualityGateStatus(),
+                                hasResetReference(analysisResult.getOwner(), analysisResult.getId()))));
         return analysisResult.getReferenceBuild()
                 .map(reference -> ul.with(li(labelProvider.getReferenceBuild(reference))))
                 .orElse(ul);
+    }
+
+    private boolean hasResetReference(final Run<?, ?> owner, final String id) {
+        return resetQualityGateCommand.isEnabled(owner, id);
     }
 
     private String getToolNames() {
