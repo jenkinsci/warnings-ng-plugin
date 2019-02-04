@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.nio.charset.Charset;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
 import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.History;
+import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
 import io.jenkins.plugins.analysis.core.scm.Blames;
@@ -104,7 +106,7 @@ class IssuesPublisher {
     @SuppressWarnings("PMD.PrematureDeclaration")
     private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector,
             final Blames blames, final Map<String, Integer> sizeOfOrigin) {
-        DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector), run.getNumber());
+        DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector, filtered), run.getNumber());
         QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
         reportHealth(filtered);
         logger.log(filtered);
@@ -149,15 +151,32 @@ class IssuesPublisher {
         return qualityGateStatus;
     }
 
-    private History createAnalysisHistory(final ResultSelector selector) {
+    private History createAnalysisHistory(final ResultSelector selector, final Report filtered) {
         Run<?, ?> baseline = run;
+
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
             if (referenceJob.isPresent()) {
                 baseline = referenceJob.get().getLastBuild();
             }
         }
-        return new AnalysisHistory(baseline, selector, qualityGateEvaluationMode, jobResultEvaluationMode);
+        return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(filtered),
+                jobResultEvaluationMode);
+    }
+
+    private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {
+        Run<?, ?> previous = run.getPreviousCompletedBuild();
+        if (previous != null) {
+            List<ResetReferenceAction> actions = previous.getActions(ResetReferenceAction.class);
+            for (ResetReferenceAction action : actions) {
+                if (report.getId().equals(action.getId())) {
+                    filtered.logInfo("Resetting reference build, ignoring quality gate result for one build");
+
+                    return IGNORE_QUALITY_GATE;
+                }
+            }
+        }
+        return qualityGateEvaluationMode;
     }
 
 }

@@ -84,6 +84,16 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
                 getFileNameRenderer(build), this);
     }
 
+    /**
+     * Creates a {@link DefaultAgeBuilder} for the specified run and url.
+     *
+     * @param owner
+     *         the run to get the age from
+     * @param url
+     *         the url to the results
+     *
+     * @return the age builder
+     */
     protected DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
         return new DefaultAgeBuilder(owner.getNumber(), url);
     }
@@ -106,6 +116,14 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
                 getFileNameRenderer(build), this, blames);
     }
 
+    /**
+     * Creates a {@link FileNameRenderer} for the specified run.
+     *
+     * @param owner
+     *         the run to get the file names for
+     *
+     * @return the age builder
+     */
     protected FileNameRenderer getFileNameRenderer(final Run<?, ?> owner) {
         return new FileNameRenderer(owner);
     }
@@ -281,6 +299,24 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the legend of the trend chart
      */
     public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus) {
+        return getQualityGateResult(qualityGateStatus, true);
+    }
+
+    /**
+     * Returns the HTML text showing the result of the quality gate.
+     *
+     * @param qualityGateStatus
+     *         the status of the quality gate
+     * @param hasResetLink
+     *         determines whether the reset reference link is shown
+     *
+     * @return the legend of the trend chart
+     */
+    public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus, final boolean hasResetLink) {
+        if (hasResetLink) {
+            return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus),
+                    a("(reset)").withHref(getId() + "/resetReference"));
+        }
         return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus));
     }
 

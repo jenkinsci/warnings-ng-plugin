@@ -45,6 +45,8 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 @SuppressWarnings("PMD.ExcessiveImports")
 @ExportedBean
 public class IssuesDetail implements ModelObject {
+    private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
+
     private final Run<?, ?> owner;
 
     private final Report report;
@@ -195,6 +197,14 @@ public class IssuesDetail implements ModelObject {
         return data;
     }
 
+    /**
+     * Returns the UI model for the specified table.
+     *
+     * @param id
+     *         the ID of the table
+     *
+     * @return the UI model as JSON
+     */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getTableModel(final String id) {
@@ -387,6 +397,25 @@ public class IssuesDetail implements ModelObject {
     @Override
     public String getDisplayName() {
         return displayName;
+    }
+
+    /**
+     * Resets the quality gate for the owner of this view. Redirects to the top level page afterwards.
+     *
+     * @param request
+     *         Stapler request
+     * @param response
+     *         Stapler response
+     */
+    public void doResetReference(final StaplerRequest request, final StaplerResponse response) {
+        RESET_QUALITY_GATE_COMMAND.execute(owner, labelProvider.getId());
+
+        try {
+            response.sendRedirect2("../");
+        }
+        catch (IOException ignore) {
+            // ignore
+        }
     }
 
     /**

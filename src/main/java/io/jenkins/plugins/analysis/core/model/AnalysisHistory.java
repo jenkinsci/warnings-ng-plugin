@@ -112,52 +112,26 @@ public class AnalysisHistory implements History {
         this.jobResultEvaluationMode = jobResultEvaluationMode;
     }
 
-    /**
-     * Returns the baseline action (if already available).
-     *
-     * @return the baseline action
-     */
     @Override
     public Optional<ResultAction> getBaselineAction() {
         return selector.get(baseline);
     }
 
-    /**
-     * Returns the baseline result (if already available).
-     *
-     * @return the baseline result
-     */
     @Override
     public Optional<AnalysisResult> getBaselineResult() {
         return getBaselineAction().map(ResultAction::getResult);
     }
 
-    /**
-     * Returns the historical result (if there is any).
-     *
-     * @return the historical result
-     */
     @Override
     public Optional<AnalysisResult> getResult() {
         return getPreviousAction().map(ResultAction::getResult);
     }
 
-    /**
-     * Returns the build that contains the historical result (if there is any).
-     *
-     * @return the historical result
-     */
     @Override
     public Optional<Run<?, ?>> getBuild() {
         return getPreviousAction().map(ResultAction::getOwner);
     }
 
-    /**
-     * Returns the issues of the historical result. If there is no historical build found, then an empty set of issues
-     * is returned.
-     *
-     * @return the issues of the historical build
-     */
     @Override
     public Report getIssues() {
         return getResult().map(AnalysisResult::getIssues).orElseGet(Report::new);
