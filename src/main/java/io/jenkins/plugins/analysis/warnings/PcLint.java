@@ -44,5 +44,15 @@ public class PcLint extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Warnings_PCLint_ParserName();
         }
+
+        @Override
+        public String getHelp() {
+            return "<p>Use the following PC-Lint properties to create an output file in the correct format: <pre><code>"
+                    + "-v // turn off verbosity\n"
+                    + "-width(0) // don't insert line breaks (unlimited output width)\n"
+                    + "-\"format=%f(%l): %t %n: %m\"\n"
+                    + "-hs1 // The height of a message should be 1\n"
+                    + "</code></pre></p>";
+        }
     }
 }
