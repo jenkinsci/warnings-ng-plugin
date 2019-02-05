@@ -110,10 +110,24 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
     /** Runs the all Java parsers on three output files: the build should report issues of all tools. */
     @Test
-    public void shouldCombineIssuesOfSeveralFiles() {
+    public void shouldFilterByMessage() {
         publishResultsWithIdAndName(
                 "publishIssues issues:[java, eclipse, javadoc]",
                 "java", "Java Warnings");
+    }
+
+    /** Runs the JavaDoc parser and uses a message filter to change the number of recorded warnings. */
+    @Test
+    public void shouldCombineIssuesOfSeveralFiles() {
+        WorkflowJob job = createJobWithWorkspaceFiles("javadoc.txt");
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
+                        + "filters:[includeMessage('.*@link.*'), excludeMessage('.*removeSpecChangeListener.*')]")); // 4 @link and one with removeSpecChangeListener
+
+        WorkflowRun run = runSuccessfully(job);
+
+        AnalysisResult result = getAnalysisResult(run);
+        assertThat(result.getIssues()).hasSize(3);
     }
 
     /**

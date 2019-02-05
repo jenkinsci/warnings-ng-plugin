@@ -17,6 +17,7 @@ Added action to reset the reference build (quality gate evaluation).
 [JENKINS-55839](https://issues.jenkins-ci.org/browse/JENKINS-55839),
 [JENKINS-51439](https://issues.jenkins-ci.org/browse/JENKINS-51439): 
 Group issues by folder if no package is available.
+- [JENKINS-55442](https://issues.jenkins-ci.org/browse/JENKINS-55442): Added include/exclude filters for issue messages. 
 
 ### Fixed
 - Fixed validation of Groovy parsers
