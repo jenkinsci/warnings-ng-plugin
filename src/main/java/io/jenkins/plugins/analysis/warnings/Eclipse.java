@@ -46,7 +46,11 @@ public class Eclipse extends ReportScanningToolSuite {
 
         @Override
         public String getHelp() {
-            return "<p><p>Create an output file that contains Eclipse ECJ output, in either XML or text format.</p><p>To log in XML format, specify &quot;.xml&quot; as the file extension to the -log argument:</p><p><code>java -jar ecj.jar -log &lt;logfile&gt;.xml &lt;other arguments&gt;</code></p><p>To log in text format, specify any file extension except &quot;.xml&quot; to the -log argument:</p><p><code>java -jar ecj.jar -log &lt;logfile&gt;.log &lt;other arguments&gt;</code></p></p>";
+            return "<p><p>Create an output file that contains Eclipse ECJ output, in either XML or text format.</p>"
+                    + "<p>To log in XML format, specify &quot;.xml&quot; as the file extension to the -log argument:</p>"
+                    + "<p>"
+                    + "<code>java -jar ecj.jar -log &lt;logfile&gt;.xml &lt;other arguments&gt;</code></p>"
+                    + "<p>To log in text format, specify any file extension except &quot;.xml&quot; to the -log argument:</p><p><code>java -jar ecj.jar -log &lt;logfile&gt;.log &lt;other arguments&gt;</code></p></p>";
         }
 
         @NonNull
