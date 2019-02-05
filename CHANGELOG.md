@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [JENKINS-22526](https://issues.jenkins-ci.org/browse/JENKINS-22526), 
 [JENKINS-17196](https://issues.jenkins-ci.org/browse/JENKINS-17196):
 Added action to reset the reference build (quality gate evaluation).
+- [JENKINS-51267](https://issues.jenkins-ci.org/browse/JENKINS-51267), 
+[JENKINS-51438](https://issues.jenkins-ci.org/browse/JENKINS-51438),
+[JENKINS-55730](https://issues.jenkins-ci.org/browse/JENKINS-55730),
+[JENKINS-55775](https://issues.jenkins-ci.org/browse/JENKINS-55775),
+[JENKINS-55839](https://issues.jenkins-ci.org/browse/JENKINS-55839),
+[JENKINS-51439](https://issues.jenkins-ci.org/browse/JENKINS-51439): 
+Group issues by folder if no package is available.
 
 ### Fixed
 - Fixed validation of Groovy parsers

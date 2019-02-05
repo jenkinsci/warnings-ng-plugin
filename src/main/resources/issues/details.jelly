@@ -19,6 +19,9 @@
             <issues:property-tab property="origin" name="${l.tools}" elements="${i.tools}"/>
             <issues:property-tab property="moduleName" name="${l.modules}" elements="${i.modules}"/>
             <issues:property-tab property="packageName" name="${l.packages}" elements="${i.packages}"/>
+            <j:if test="${i.hasFolders()}">
+              <issues:property-tab property="folder" name="${l.folders}" elements="${i.folders}"/>
+            </j:if>
             <issues:property-tab property="fileName" name="${l.files}" elements="${i.files}"/>
             <issues:property-tab property="category" name="${l.categories}" elements="${i.categories}"/>
             <issues:property-tab property="type" name="${l.types}" elements="${i.types}"/>
@@ -41,6 +44,9 @@
             <issues:property property="origin" name="${l.toolName}" elements="${i.tools}"/>
             <issues:property property="moduleName" name="${l.moduleName}" elements="${i.modules}"/>
             <issues:property property="packageName" name="${l.packageName}" elements="${i.packages}"/>
+            <j:if test="${i.hasFolders()}">
+              <issues:property property="folder" name="${l.folderName}" elements="${i.folders}"/>
+            </j:if>
             <issues:property property="fileName" name="${l.fileName}" elements="${i.files}"/>
             <issues:property property="category" name="${l.category}" elements="${i.categories}"/>
             <issues:property property="type" name="${l.type}" elements="${i.types}"/>
