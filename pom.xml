@@ -28,8 +28,8 @@
     <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>2.1.0-SNAPSHOT</analysis-model-api.version>
-    <analysis-model.version>2.1.0-SNAPSHOT</analysis-model.version>
+    <analysis-model-api.version>2.1.0</analysis-model-api.version>
+    <analysis-model.version>2.1.0</analysis-model.version>
 
     <commons.lang.version>3.8.1</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -611,17 +611,11 @@
           </dependency>
         </dependencies>
         <configuration>
-          <analysisConfiguration><![CDATA[
-                {
-                  "revapi": {
-                    "semver": {
-                      "ignore": {
-                        "enabled": true
-                      }
-                    }
-                  }
-                }
-            ]]></analysisConfiguration>
+          <analysisConfiguration>
+            <revapi.semver.ignore>
+              <enabled>true</enabled>
+            </revapi.semver.ignore>
+          </analysisConfiguration>
         </configuration>
         <executions>
           <execution>
