@@ -38,6 +38,8 @@ import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 
+import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
+
 /**
  * Scans report files or the console log for issues.
  *
@@ -85,10 +87,22 @@ class IssuesScanner {
                     sourceCodeEncoding);
 
             result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                    jenkinsRootDir, blamer, filters));
+                    createAffectedFilesFolder(report), blamer, filters));
         }
         logger.log(result.getReport());
         return result;
+    }
+
+    private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {
+        FilePath buildDirectory = jenkinsRootDir.child(AFFECTED_FILES_FOLDER_NAME);
+        try {
+            buildDirectory.mkdirs();
+        }
+        catch (IOException exception) {
+            report.logException(exception,
+                    "Can't create directory '%s' for affected workspace files.", buildDirectory);
+        }
+        return buildDirectory;
     }
 
     private String getAgentName(final FilePath workspace) {
@@ -136,18 +150,18 @@ class IssuesScanner {
         private final String id;
         private final Report originalReport;
         private final String sourceCodeEncoding;
-        private final FilePath jenkinsRootDir;
+        private final FilePath affectedFilesFolder;
         private final Blamer blamer;
         private final List<RegexpFilter> filters;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final FilePath jenkinsRootDir, final Blamer blamer, final List<RegexpFilter> filters) {
+                final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters) {
             super();
 
             this.id = id;
             originalReport = report;
             this.sourceCodeEncoding = sourceCodeEncoding;
-            this.jenkinsRootDir = jenkinsRootDir;
+            this.affectedFilesFolder = affectedFilesFolder;
             this.blamer = blamer;
             this.filters = filters;
         }
@@ -174,9 +188,9 @@ class IssuesScanner {
         }
 
         private void copyAffectedFiles(final Report report, final File workspace) throws InterruptedException {
-            report.logInfo("Copying affected files to Jenkins' build folder %s", jenkinsRootDir);
+            report.logInfo("Copying affected files to Jenkins' build folder '%s'", affectedFilesFolder);
 
-            new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(report, jenkinsRootDir, workspace);
+            new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(report, affectedFilesFolder, workspace);
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {

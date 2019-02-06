@@ -23,7 +23,8 @@ import hudson.model.Run;
  * @author Ullrich Hafner
  */
 public class AffectedFilesResolver {
-    private static final String AFFECTED_FILES_FOLDER_NAME = "files-with-issues";
+    /** Sub folder with the affected files. */
+    public static final String AFFECTED_FILES_FOLDER_NAME = "files-with-issues";
 
     /**
      * Returns whether the affected file in Jenkins' build folder does exist and is readable.
@@ -80,7 +81,7 @@ public class AffectedFilesResolver {
      *
      * @param report
      *         the issues
-     * @param jenkinsBuildRoot
+     * @param affectedFilesFolder
      *         directory to store the copied files in
      * @param workspace
      *         local directory of the workspace, all source files must be part of this directory
@@ -89,7 +90,7 @@ public class AffectedFilesResolver {
      *         if the user cancels the processing
      */
     public void copyFilesWithAnnotationsToBuildFolder(final Report report,
-            final FilePath jenkinsBuildRoot, final File workspace)
+            final FilePath affectedFilesFolder, final File workspace)
             throws InterruptedException {
         int copied = 0;
         int notFound = 0;
@@ -103,7 +104,7 @@ public class AffectedFilesResolver {
             if (exists(file)) {
                 if (isInWorkspace(file, workspace)) {
                     try {
-                        copy(jenkinsBuildRoot, file);
+                        copy(affectedFilesFolder, file);
                         copied++;
                     }
                     catch (IOException exception) {
@@ -124,8 +125,8 @@ public class AffectedFilesResolver {
         log.logSummary();
     }
 
-    private void copy(final FilePath jenkinsBuildRoot, final String file) throws IOException, InterruptedException {
-        FilePath remoteBuildFolderCopy = createBuildDirectory(jenkinsBuildRoot).child(getTempName(file));
+    private void copy(final FilePath affectedFilesFolder, final String file) throws IOException, InterruptedException {
+        FilePath remoteBuildFolderCopy = affectedFilesFolder.child(getTempName(file));
         FilePath localSourceFile = new FilePath(Paths.get(file).toFile());
         localSourceFile.copyTo(remoteBuildFolderCopy);
     }
@@ -160,19 +161,6 @@ public class AffectedFilesResolver {
         catch (InvalidPathException ignored) {
             return false;
         }
-    }
-
-    private FilePath createBuildDirectory(final FilePath jenkinsBuildRoot)
-            throws IOException, InterruptedException {
-        FilePath directory = jenkinsBuildRoot.child(AFFECTED_FILES_FOLDER_NAME);
-        try {
-            directory.mkdirs();
-        }
-        catch (IOException exception) {
-            throw new IOException("Can't create directory for workspace files that contain issues: "
-                    + directory.getName(), exception);
-        }
-        return directory;
     }
 
     /**
