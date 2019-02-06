@@ -167,7 +167,7 @@ class IssuesScanner {
         }
 
         private void resolveAbsolutePaths(final Report report, final File workspace) {
-            report.logInfo("Resolving absolute file names for all issues");
+            report.logInfo("Resolving absolute file names for all issues in workspace '%s'", workspace.toString());
 
             AbsolutePathGenerator generator = new AbsolutePathGenerator();
             generator.run(report, workspace.toPath());
