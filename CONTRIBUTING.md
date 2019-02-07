@@ -1,10 +1,18 @@
-# Contributing to the Static Analysis Suite
+# Contributing to the Warnings Next Generation Plugin
 
-This page provides information about contributing code to Jenkins' Warnings plug-in.
+This page provides information about contributing code to Jenkins' Warnings NExt Generation plug-in.
 
 :exclamation: There's a lot more to the Jenkins project than just code. For information on contributing to the Jenkins'
 project overall, check out [Jenkins' contributing landing page](https://jenkins.io/participate/).
  
+## Beginner Topics
+
+If you don't have a specific problem or task in mind, i.e.,  you simply want to participate in this open source project 
+I would suggest to have a look at the 
+[open issues in our issues tracker](https://issues.jenkins-ci.org/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20%3D%warnings-ng-plugin%20AND%20labels%20in%20(help-wanted%2C%20newbie-friendly)%20order%20by%20updated%20DESC). 
+I marked several newbie friendly issues with the labels `newbie-friendly` and `help-wanted`. These are a good starting
+point to get in touch with this Jenkins plugin.
+
 ## Parser Implementations
 
 If you are planning to provide your own parser, please also have a look at the project 
