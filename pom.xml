@@ -72,6 +72,7 @@
     <spotbugs-maven-plugin.version>3.1.10</spotbugs-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.2</jacoco-maven-plugin.version>
     <maven-surefire.plugin>3.0.0-M3</maven-surefire.plugin>
+    <maven-failsafe.plugin>3.0.0-M3</maven-failsafe.plugin>
     <jar.maven.plugin>3.0.2</jar.maven.plugin>
     <maven-error-prone-plugin.version>2.8.5</maven-error-prone-plugin.version>
     <error-prone.version>2.3.1</error-prone.version>
@@ -657,6 +658,12 @@
         <plugin>
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire.plugin}</version>
+          <configuration>
+            <excludes>
+              <exclude>**/*ITest.*</exclude>
+              <exclude>**/InjectedTest.*</exclude>
+            </excludes>
+          </configuration>
           <dependencies>
             <dependency>
               <groupId>com.tngtech.archunit</groupId>
@@ -664,6 +671,25 @@
               <version>${archunit.version}</version>
             </dependency>
           </dependencies>
+        </plugin>
+        <plugin>
+          <artifactId>maven-failsafe-plugin</artifactId>
+          <version>${maven-failsafe.plugin}</version>
+          <configuration>
+            <includes>
+              <include>**/*ITest.*</include>
+              <include>**/*InjectedTest.*</include>
+            </includes>
+            <reuseForks>false</reuseForks>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
