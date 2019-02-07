@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.0...master)
 
+## [2.2.1](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.0...warnings-ng-2.2.1) - 2019-2-07
+
+### Fixed
+- [JENKINS-55846](https://issues.jenkins-ci.org/browse/JENKINS-55846): 
+ErrorProne parser: Added support for Gradle reports.
+
 ## [2.2.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.1.2...warnings-ng-2.2.0) - 2019-2-07
 
 ### Added

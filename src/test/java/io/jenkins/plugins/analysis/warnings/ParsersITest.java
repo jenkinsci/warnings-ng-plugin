@@ -132,10 +132,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new DocFx(), "docfx.json");
     }
 
-    /** Runs the ErrorProne parser on an output file that contains 9 issues. */
+    /** Runs the ErrorProne parser on output files that contain 9 + 2 issues. */
     @Test
     public void shouldFindAllErrorProneIssues() {
-        shouldFindIssuesOfTool(9, new ErrorProne(), "errorprone-maven.log");
+        shouldFindIssuesOfTool(9 + 2, new ErrorProne(), "errorprone-maven.log", "gradle-error-prone.log");
     }
 
     /** Runs the Flake8 parser on an output file that contains 12 issues. */

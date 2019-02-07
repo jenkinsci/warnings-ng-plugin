@@ -1,0 +1,13 @@
+D:\Jenkins\workspace\Develop Debug Branch Tests\app\src\main\java\com\zao\testapp\util\json\JSONParser.java:35: warning: [TypeParameterUnusedInFormals] Declaring a type parameter that is only used in the return type is a misuse of generics: operations on the type parameter are unchecked, it hides unsafe casts at invocations of the method, and it interacts badly with method overload resolution.
+    <T> T parseFromJSONString(@Nullable String jsonString, @NonNull Type type);
+          ^
+    (see https://errorprone.info/bugpattern/TypeParameterUnusedInFormals)
+D:\Jenkins\workspace\Develop Debug Branch Tests\app\src\main\java\com\zao\testapp\util\json\impl\gson\JSONParserGson.java:77: warning: [TypeParameterUnusedInFormals] Declaring a type parameter that is only used in the return type is a misuse of generics: operations on the type parameter are unchecked, it hides unsafe casts at invocations of the method, and it interacts badly with method overload resolution.
+    public <T> T parseFromJSONString(@Nullable final String jsonString, @NonNull final Type type) {
+                 ^
+    (see https://errorprone.info/bugpattern/TypeParameterUnusedInFormals)
+Note: Some input files use or override a deprecated API.
+Note: Recompile with -Xlint:deprecation for details.
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+2 warnings

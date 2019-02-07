@@ -1,6 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.Collection;
+
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.ErrorProneParser;
+import edu.hm.hafner.analysis.parser.GradleErrorProneParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -8,7 +12,7 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -16,7 +20,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Ullrich Hafner
  */
-public class ErrorProne extends ReportScanningTool {
+public class ErrorProne extends ReportScanningToolSuite {
     private static final long serialVersionUID = -511511623854186032L;
     static final String ID = "error-prone";
 
@@ -28,8 +32,8 @@ public class ErrorProne extends ReportScanningTool {
     }
 
     @Override
-    public ErrorProneParser createParser() {
-        return new ErrorProneParser();
+    protected Collection<? extends IssueParser> getParsers() {
+        return asList(new ErrorProneParser(), new GradleErrorProneParser());
     }
 
     /** Descriptor for this static analysis tool. */
