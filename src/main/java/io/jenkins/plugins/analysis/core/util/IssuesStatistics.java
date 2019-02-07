@@ -49,63 +49,63 @@ public class IssuesStatistics {
         this.deltaLowSize = deltaLowSize;
     }
 
-    public int getTotalSize() {
-        return totalSize;
+    public static int getTotalSize(final IssuesStatistics instance) {
+        return instance.totalSize;
     }
 
-    public int getNewSize() {
-        return newSize;
+    public static int getNewSize(final IssuesStatistics instance) {
+        return instance.newSize;
     }
 
-    public int getDeltaSize() {
-        return deltaSize;
+    public static int getDeltaSize(final IssuesStatistics instance) {
+        return instance.deltaSize;
     }
 
-    public int getTotalErrorSize() {
-        return totalErrorSize;
+    public static int getTotalErrorSize(final IssuesStatistics instance) {
+        return instance.totalErrorSize;
     }
 
-    public int getNewErrorSize() {
-        return newErrorSize;
+    public static int getNewErrorSize(final IssuesStatistics instance) {
+        return instance.newErrorSize;
     }
 
-    public int getDeltaErrorSize() {
-        return deltaErrorSize;
+    public static int getDeltaErrorSize(final IssuesStatistics instance) {
+        return instance.deltaErrorSize;
     }
 
-    public int getTotalHighSize() {
-        return totalHighSize;
+    public static int getTotalHighSize(final IssuesStatistics instance) {
+        return instance.totalHighSize;
     }
 
-    public int getNewHighSize() {
-        return newHighSize;
+    public static int getNewHighSize(final IssuesStatistics instance) {
+        return instance.newHighSize;
     }
 
-    public int getDeltaHighSize() {
-        return deltaHighSize;
+    public static int getDeltaHighSize(final IssuesStatistics instance) {
+        return instance.deltaHighSize;
     }
 
-    public int getTotalNormalSize() {
-        return totalNormalSize;
+    public static int getTotalNormalSize(final IssuesStatistics instance) {
+        return instance.totalNormalSize;
     }
 
-    public int getNewNormalSize() {
-        return newNormalSize;
+    public static int getNewNormalSize(final IssuesStatistics instance) {
+        return instance.newNormalSize;
     }
 
-    public int getDeltaNormalSize() {
-        return deltaNormalSize;
+    public static int getDeltaNormalSize(final IssuesStatistics instance) {
+        return instance.deltaNormalSize;
     }
 
-    public int getTotalLowSize() {
-        return totalLowSize;
+    public static int getTotalLowSize(final IssuesStatistics instance) {
+        return instance.totalLowSize;
     }
 
-    public int getNewLowSize() {
-        return newLowSize;
+    public static int getNewLowSize(final IssuesStatistics instance) {
+        return instance.newLowSize;
     }
 
-    public int getDeltaLowSize() {
-        return deltaLowSize;
+    public static int getDeltaLowSize(final IssuesStatistics instance) {
+        return instance.deltaLowSize;
     }
 }

@@ -97,4 +97,22 @@ public class IssuesStatisticsBuilder {
                 totalHighSize, newHighSize, deltaHighSize, totalNormalSize, newNormalSize, deltaNormalSize,
                 totalLowSize, newLowSize, deltaLowSize);
     }
+
+    void clear() {
+        totalSize = 0;
+        newSize = 0;
+        deltaSize = 0;
+        totalErrorSize = 0;
+        newErrorSize = 0;
+        deltaErrorSize = 0;
+        totalHighSize = 0;
+        newHighSize = 0;
+        deltaHighSize = 0;
+        totalNormalSize = 0;
+        newNormalSize = 0;
+        deltaNormalSize = 0;
+        totalLowSize = 0;
+        newLowSize = 0;
+        deltaLowSize = 0;
+    }
 }
