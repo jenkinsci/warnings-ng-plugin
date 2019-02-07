@@ -429,6 +429,42 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>${maven-surefire.plugin}</version>
+        <configuration>
+          <excludes>
+            <exclude>**/*ITest.*</exclude>
+            <exclude>**/InjectedTest.*</exclude>
+          </excludes>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>com.tngtech.archunit</groupId>
+            <artifactId>archunit-junit5-engine</artifactId>
+            <version>${archunit.version}</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+      <plugin>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>${maven-failsafe.plugin}</version>
+        <configuration>
+          <includes>
+            <include>**/*ITest.*</include>
+            <include>**/*InjectedTest.*</include>
+          </includes>
+          <reuseForks>false</reuseForks>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>findbugs-maven-plugin</artifactId>
         <executions>
@@ -654,42 +690,6 @@
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>versions-maven-plugin</artifactId>
           <version>${versions-maven-plugin.version}</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <version>${maven-surefire.plugin}</version>
-          <configuration>
-            <excludes>
-              <exclude>**/*ITest.*</exclude>
-              <exclude>**/InjectedTest.*</exclude>
-            </excludes>
-          </configuration>
-          <dependencies>
-            <dependency>
-              <groupId>com.tngtech.archunit</groupId>
-              <artifactId>archunit-junit5-engine</artifactId>
-              <version>${archunit.version}</version>
-            </dependency>
-          </dependencies>
-        </plugin>
-        <plugin>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven-failsafe.plugin}</version>
-          <configuration>
-            <includes>
-              <include>**/*ITest.*</include>
-              <include>**/*InjectedTest.*</include>
-            </includes>
-            <reuseForks>false</reuseForks>
-          </configuration>
-          <executions>
-            <execution>
-              <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
         <plugin>
           <artifactId>maven-enforcer-plugin</artifactId>
