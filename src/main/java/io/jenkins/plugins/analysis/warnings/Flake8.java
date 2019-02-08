@@ -44,5 +44,10 @@ public class Flake8 extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Violations_Flake8();
         }
+
+        @Override
+        public String getHelp() {
+            return "<p>Run flake8 as <code>flake8 --format=pylint</code></p>";
+        }
     }
 }
