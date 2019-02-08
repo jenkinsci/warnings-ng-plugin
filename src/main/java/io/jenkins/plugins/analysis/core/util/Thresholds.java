@@ -6,8 +6,10 @@ import java.io.Serializable;
  * Data object that simply stores the thresholds.
  *
  * @author Ullrich Hafner
+ * @deprecated replaced by {@link QualityGate}
  */
 @SuppressWarnings("all")
+@Deprecated
 public class Thresholds implements Serializable {
     private static final long serialVersionUID = 7500037879938406050L;
 

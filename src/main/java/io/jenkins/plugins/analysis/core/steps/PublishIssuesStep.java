@@ -32,9 +32,10 @@ import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.Thresholds;
 
 /**
@@ -56,10 +57,15 @@ public class PublishIssuesStep extends Step {
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
+
+    @Deprecated
     private final Thresholds thresholds = new Thresholds();
+
+    private List<QualityGate> qualityGates = new ArrayList<>();
 
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
+
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -240,6 +246,21 @@ public class PublishIssuesStep extends Step {
         this.minimumSeverity = Severity.valueOf(minimumSeverity, Severity.WARNING_LOW);
     }
 
+    /**
+     * Defines the optional list of quality gates.
+     *
+     * @param qualityGates the quality gates
+     */
+    @DataBoundSetter
+    public void setQualityGates(final List<QualityGate> qualityGates) {
+        this.qualityGates = qualityGates;
+    }
+
+    public List<QualityGate> getQualityGates() {
+        return qualityGates;
+    }
+
+
     Thresholds getThresholds() {
         return thresholds;
     }
@@ -404,9 +425,8 @@ public class PublishIssuesStep extends Step {
         private final boolean ignoreFailedBuilds;
         private final String sourceCodeEncoding;
         private final AnnotatedReport report;
-        private final QualityGate qualityGate;
+        private final List<QualityGate> qualityGates;
         private final String name;
-        private final Thresholds thresholds;
         private final String referenceJobName;
 
         /**
@@ -433,8 +453,14 @@ public class PublishIssuesStep extends Step {
             healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                     step.getMinimumSeverityAsSeverity());
 
-            thresholds = step.getThresholds();
-            qualityGate = new QualityGate(thresholds);
+            qualityGates = new ArrayList<>();
+            if (step.getQualityGates().isEmpty()) {
+                qualityGates.addAll(QualityGate.map(step.getThresholds()));
+            }
+            else {
+                qualityGates.addAll(step.getQualityGates());
+            }
+
             name = StringUtils.defaultString(step.getName());
             report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), step.reports.get(0).getId()));
 
@@ -451,6 +477,9 @@ public class PublishIssuesStep extends Step {
 
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
+            QualityGateEvaluator qualityGate = new QualityGateEvaluator();
+            qualityGate.addAll(qualityGates);
+
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
                     getCharset(sourceCodeEncoding), getLogger());

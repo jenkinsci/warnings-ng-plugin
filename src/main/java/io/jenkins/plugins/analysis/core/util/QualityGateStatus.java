@@ -4,12 +4,17 @@ import hudson.model.BallColor;
 import hudson.model.Result;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator.FormattedLogger;
+
 /**
- * QualityGateStatus of a {@link QualityGate}.
+ * Result of a {@link QualityGateEvaluator#evaluate(IssuesStatistics, FormattedLogger)} call.
  *
  * @author Ullrich Hafner
  */
 public enum QualityGateStatus {
+    /** Quality gate is inactive, so result evaluation is not available. */
+    INACTIVE(Result.NOT_BUILT),
+
     /** Quality gate has been passed. */
     PASSED(Result.SUCCESS),
 
@@ -17,10 +22,7 @@ public enum QualityGateStatus {
     WARNING(Result.UNSTABLE),
 
     /** Quality gate has been missed: severity is an error. */
-    FAILED(Result.FAILURE),
-
-    /** Quality gate is inactive, so result evaluation is not available. */
-    INACTIVE(Result.NOT_BUILT);
+    FAILED(Result.FAILURE);
 
     private final Result result;
 
@@ -48,12 +50,25 @@ public enum QualityGateStatus {
 
     /**
      * Sets the result of the specified run to the associated value of this quality gate status.
-     * 
-     * @param run the run to set the result for
+     *
+     * @param run
+     *         the run to set the result for
      */
     public void setResult(final Run<?, ?> run) {
         if (!isSuccessful()) {
             run.setResult(result);
         }
+    }
+
+    /**
+     * Returns whether this status is worse than the specified status.
+     *
+     * @param other
+     *         the other status
+     *
+     * @return {@code true} if this status is worse than the other status, {@code false} otherwise
+     */
+    public boolean isWorseThan(final QualityGateStatus other) {
+        return ordinal() > other.ordinal();
     }
 }

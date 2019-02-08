@@ -25,7 +25,7 @@ import io.jenkins.plugins.analysis.core.model.ResultSelector;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
@@ -43,7 +43,7 @@ class IssuesPublisher {
     private final HealthDescriptor healthDescriptor;
     private final String name;
     private final Charset sourceCodeEncoding;
-    private final QualityGate qualityGate;
+    private final QualityGateEvaluator qualityGate;
     private final String referenceJobName;
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
@@ -51,7 +51,7 @@ class IssuesPublisher {
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
-            final HealthDescriptor healthDescriptor, final QualityGate qualityGate,
+            final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger) {
         this.report = report;
@@ -135,7 +135,7 @@ class IssuesPublisher {
         QualityGateStatus qualityGateStatus;
         if (qualityGate.isEnabled()) {
             filtered.logInfo("Evaluating quality gates");
-            qualityGateStatus = qualityGate.evaluate(deltaReport, filtered::logInfo);
+            qualityGateStatus = qualityGate.evaluate(deltaReport.getStatistics(), filtered::logInfo);
             if (qualityGateStatus.isSuccessful()) {
                 filtered.logInfo("-> All quality gates have been passed");
             }

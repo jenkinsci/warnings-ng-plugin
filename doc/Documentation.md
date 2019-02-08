@@ -272,7 +272,7 @@ recordIssues tool: java(pattern: '*.log'), filters: [includeFile('MyFile.*.java'
 You can define several quality gates that will be checked after the issues have been reported. These quality gates
 let you modify Jenkins' build status so that you immediately see if the desired quality of your product is met. 
 A build can be set to **unstable** or **failed** for each of these quality gates. All quality gates use a simple metric:
-the maximum number of issues that can be found and still pass a given quality gate.   
+the number of issues that will fail a given quality gate. 
 
 ![quality gate](images/quality-gate.png) 
 
@@ -651,9 +651,9 @@ Here is an example XML report:
   <infoMessage>Creating fingerprints for all affected code blocks to track issues over different builds</infoMessage>
   <infoMessage>No filter has been set, publishing all 3 issues</infoMessage>
   <infoMessage>No valid reference build found - all reported issues will be considered outstanding</infoMessage>
-  <infoMessage>Evaluating quality gates</infoMessage>
+  <infoMessage>Evaluating quality qualityGates</infoMessage>
   <infoMessage>-> WARNING - Total number of issues: 3 - Quality Gate: 1</infoMessage>
-  <infoMessage>-> Some quality gates have been missed: overall result is WARNING</infoMessage>
+  <infoMessage>-> Some quality qualityGates have been missed: overall result is WARNING</infoMessage>
   <infoMessage>Health report is disabled - skipping</infoMessage>
 </analysisResultApi>
 ```

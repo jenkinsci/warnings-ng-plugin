@@ -19,6 +19,7 @@ import edu.hm.hafner.analysis.Report;
 import org.kohsuke.stapler.HttpResponse;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
+import hudson.model.Result;
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
 
@@ -110,7 +111,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
     /** Runs the all Java parsers on three output files: the build should report issues of all tools. */
     @Test
-    public void shouldFilterByMessage() {
+    public void shouldCombineIssuesOfSeveralFiles() {
         publishResultsWithIdAndName(
                 "publishIssues issues:[java, eclipse, javadoc]",
                 "java", "Java Warnings");
@@ -118,7 +119,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
     /** Runs the JavaDoc parser and uses a message filter to change the number of recorded warnings. */
     @Test
-    public void shouldCombineIssuesOfSeveralFiles() {
+    public void shouldFilterByMessage() {
         WorkflowJob job = createJobWithWorkspaceFiles("javadoc.txt");
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
@@ -128,6 +129,32 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult result = getAnalysisResult(run);
         assertThat(result.getIssues()).hasSize(3);
+    }
+
+    /** Runs the JavaDoc parser and enforces quality gates. */
+    @Test
+    public void shouldEnforceQualityGate() {
+        WorkflowJob job = createJobWithWorkspaceFiles("javadoc.txt");
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
+                        + "qualityGates: [[size: 6, type: 'TOTAL', warning: true]]"));
+        run(job, Result.UNSTABLE);
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
+                        + "qualityGates: [[size: 6, type: 'TOTAL', warning: false]]"));
+        run(job, Result.FAILURE);
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
+                        + "qualityGates: [[size: 6, type: 'TOTAL_NORMAL', warning: true]]"));
+        run(job, Result.UNSTABLE);
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
+                        + "qualityGates: [[size: 6, type: 'TOTAL_NORMAL', warning: false]]"));
+        run(job, Result.FAILURE);
     }
 
     /**

@@ -4,12 +4,14 @@ import java.util.Optional;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
+import edu.hm.hafner.analysis.Severity;
+
 import hudson.model.Run;
 
 /**
  * Provides detailed information for the results of a static analysis run.
  */
-public interface StaticAnalysisRun extends StaticAnalysisSummary {
+public interface StaticAnalysisRun {
     /**
      * Returns the run that created this static analysis result.
      *
@@ -39,7 +41,7 @@ public interface StaticAnalysisRun extends StaticAnalysisSummary {
     int getSuccessfulSinceBuild();
 
     /**
-     * Returns the {@link QualityGateStatus} of the {@link QualityGate} evaluation of the static analysis run.
+     * Returns the {@link QualityGateStatus} of the {@link QualityGateEvaluator} evaluation of the static analysis run.
      *
      * @return the quality gate status
      */
@@ -72,4 +74,38 @@ public interface StaticAnalysisRun extends StaticAnalysisSummary {
      * @return number of fixed issues
      */
     int getFixedSize();
+
+    /**
+     * Returns the total number of issues in this analysis run.
+     *
+     * @return total number of issues
+     */
+    int getTotalSize();
+
+    /**
+     * Returns the total number of issues in this analysis run that have the specified {@link Severity}.
+     *
+     * @param severity
+     *         the severity of the issues to match
+     *
+     * @return total number of issues
+     */
+    int getTotalSizeOf(Severity severity);
+
+    /**
+     * Returns the number of new issues in this analysis run.
+     *
+     * @return number of new issues
+     */
+    int getNewSize();
+
+    /**
+     * Returns the new number of issues in this analysis run that have the specified {@link Severity}.
+     *
+     * @param severity
+     *         the severity of the issues to match
+     *
+     * @return total number of issues
+     */
+    int getNewSizeOf(Severity severity);
 }
