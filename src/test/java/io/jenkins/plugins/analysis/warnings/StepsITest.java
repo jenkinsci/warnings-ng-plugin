@@ -417,13 +417,11 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJobWithWorkspaceFiles("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File1.java'), includeCategory('Category1')");
-        final Pmd tool = new Pmd();
-        AnalysisResult result = scheduleBuild(job, tool.getActualId());
+        AnalysisResult result = scheduleBuild(job, new Pmd().getActualId());
         assertThat(result.getTotalSize()).isEqualTo(8 + 4);
 
         setFilter(job, "includeFile('File1.java'), excludeCategory('Category1'), excludeType('Type1'), excludeNamespace('.*package1') ");
-        final Pmd tool1 = new Pmd();
-        AnalysisResult oneIssue = scheduleBuild(job, tool1.getActualId());
+        AnalysisResult oneIssue = scheduleBuild(job, new Pmd().getActualId());
         assertThat(oneIssue.getIssues().getFiles()).containsExactly("File1.java");
         assertThat(oneIssue.getIssues().getCategories()).containsExactly("Category2");
         assertThat(oneIssue.getIssues().getTypes()).containsExactly("Type2");
@@ -451,8 +449,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private void setFilter(final WorkflowJob job, final String filters) {
-        String scanWithFIlter = createScanForIssuesStep(new Pmd(), "issues", String.format("filters:[%s]", filters));
-        job.setDefinition(asStage(scanWithFIlter, "publishIssues issues:[issues]"));
+        String scanWithFilter = createScanForIssuesStep(new Pmd(), "issues", String.format("filters:[%s]", filters));
+        job.setDefinition(asStage(scanWithFilter, "publishIssues issues:[issues]"));
     }
 
     /**

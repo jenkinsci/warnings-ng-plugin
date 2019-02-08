@@ -265,145 +265,177 @@ public class PublishIssuesStep extends Step {
         return thresholds;
     }
 
+    @Deprecated
     public int getUnstableTotalAll() {
         return getThresholds().unstableTotalAll;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setUnstableTotalAll(final int unstableTotalAll) {
         getThresholds().unstableTotalAll = unstableTotalAll;
     }
 
+    @Deprecated
     public int getUnstableTotalHigh() {
         return getThresholds().unstableTotalHigh;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setUnstableTotalHigh(final int unstableTotalHigh) {
         getThresholds().unstableTotalHigh = unstableTotalHigh;
     }
 
+    @Deprecated
     public int getUnstableTotalNormal() {
         return getThresholds().unstableTotalNormal;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setUnstableTotalNormal(final int unstableTotalNormal) {
         getThresholds().unstableTotalNormal = unstableTotalNormal;
     }
 
+    @Deprecated
     public int getUnstableTotalLow() {
         return getThresholds().unstableTotalLow;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setUnstableTotalLow(final int unstableTotalLow) {
         getThresholds().unstableTotalLow = unstableTotalLow;
     }
 
+    @Deprecated
     public int getUnstableNewAll() {
         return getThresholds().unstableNewAll;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setUnstableNewAll(final int unstableNewAll) {
         getThresholds().unstableNewAll = unstableNewAll;
     }
 
+    @Deprecated
     public int getUnstableNewHigh() {
         return getThresholds().unstableNewHigh;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setUnstableNewHigh(final int unstableNewHigh) {
         getThresholds().unstableNewHigh = unstableNewHigh;
     }
 
+    @Deprecated
     public int getUnstableNewNormal() {
         return getThresholds().unstableNewNormal;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setUnstableNewNormal(final int unstableNewNormal) {
         getThresholds().unstableNewNormal = unstableNewNormal;
     }
 
+    @Deprecated
     public int getUnstableNewLow() {
         return getThresholds().unstableNewLow;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setUnstableNewLow(final int unstableNewLow) {
         getThresholds().unstableNewLow = unstableNewLow;
     }
 
+    @Deprecated
     public int getFailedTotalAll() {
         return getThresholds().failedTotalAll;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setFailedTotalAll(final int failedTotalAll) {
         getThresholds().failedTotalAll = failedTotalAll;
     }
 
+    @Deprecated
     public int getFailedTotalHigh() {
         return getThresholds().failedTotalHigh;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setFailedTotalHigh(final int failedTotalHigh) {
         getThresholds().failedTotalHigh = failedTotalHigh;
     }
 
+    @Deprecated
     public int getFailedTotalNormal() {
         return getThresholds().failedTotalNormal;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setFailedTotalNormal(final int failedTotalNormal) {
         getThresholds().failedTotalNormal = failedTotalNormal;
     }
 
+    @Deprecated
     public int getFailedTotalLow() {
         return getThresholds().failedTotalLow;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setFailedTotalLow(final int failedTotalLow) {
         getThresholds().failedTotalLow = failedTotalLow;
     }
 
+    @Deprecated
     public int getFailedNewAll() {
         return getThresholds().failedNewAll;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setFailedNewAll(final int failedNewAll) {
         getThresholds().failedNewAll = failedNewAll;
     }
 
+    @Deprecated
     public int getFailedNewHigh() {
         return getThresholds().failedNewHigh;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setFailedNewHigh(final int failedNewHigh) {
         getThresholds().failedNewHigh = failedNewHigh;
     }
 
+    @Deprecated
     public int getFailedNewNormal() {
         return getThresholds().failedNewNormal;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setFailedNewNormal(final int failedNewNormal) {
         getThresholds().failedNewNormal = failedNewNormal;
     }
 
+    @Deprecated
     public int getFailedNewLow() {
         return getThresholds().failedNewLow;
     }
 
+    @Deprecated
     @DataBoundSetter
     public void setFailedNewLow(final int failedNewLow) {
         getThresholds().failedNewLow = failedNewLow;
