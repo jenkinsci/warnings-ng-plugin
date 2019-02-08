@@ -19,7 +19,7 @@ import hudson.model.Run;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
-import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 
 /**
  * Controls the live cycle of the results in a job. This action persists the results of a build and displays them on the
@@ -215,7 +215,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     /**
      * Returns whether the static analysis result is considered successfully with respect to the used {@link
-     * QualityGate}.
+     * QualityGateEvaluator}.
      *
      * @return {@code true} if the result is successful, {@code false} if the result has been set to {@link
      *         Result#UNSTABLE} or {@link Result#FAILURE}.

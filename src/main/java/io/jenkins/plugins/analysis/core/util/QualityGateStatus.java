@@ -4,8 +4,10 @@ import hudson.model.BallColor;
 import hudson.model.Result;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator.FormattedLogger;
+
 /**
- * QualityGateStatus of a {@link QualityGate}.
+ * Result of a {@link QualityGateEvaluator#evaluate(IssuesStatistics, FormattedLogger)} call.
  *
  * @author Ullrich Hafner
  */
@@ -64,7 +66,7 @@ public enum QualityGateStatus {
      * @param other
      *         the other status
      *
-     * @return {@code true} if this status is worse than the other status, {@code false} oherwise
+     * @return {@code true} if this status is worse than the other status, {@code false} otherwise
      */
     public boolean isWorseThan(final QualityGateStatus other) {
         return ordinal() > other.ordinal();

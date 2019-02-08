@@ -4,12 +4,12 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 import hudson.model.Action;
 
-import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 
 /**
- * Marker for a build to indicate that this build should serve as new reference build for the {@link QualityGate}
- * evaluation of the next build. This marker helps to reset the reference build computation in order to restart the new
- * issue computation.
+ * Marker for a build to indicate that this build should serve as new reference build for the {@link
+ * QualityGateEvaluator} evaluation of the next build. This marker helps to reset the reference build computation in
+ * order to restart the new issue computation.
  *
  * @author Ullrich Hafner
  */

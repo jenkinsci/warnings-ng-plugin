@@ -49,6 +49,9 @@ import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGate.GateStrength;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.Thresholds;
 
 /**
@@ -58,7 +61,7 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  * <p>
  * Additional features:
  * <ul>
- * <li>It provides a {@link QualityGate} that is checked after each run. If the quality gate is not passed, then the
+ * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed, then the
  * build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
  * properties.</li>
  * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
@@ -83,7 +86,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
-    private final Thresholds thresholds = new Thresholds();
 
     private List<RegexpFilter> filters = new ArrayList<>();
 
@@ -94,6 +96,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private String id;
     private String name;
+
+    private List<QualityGate> qualityGates = new ArrayList<>();
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -114,7 +118,41 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         if (analysisTools == null) {
             analysisTools = new ArrayList<>();
         }
+        if (qualityGates == null) {
+            qualityGates = new ArrayList<>();
+            if (thresholds != null) {
+                qualityGates.addAll(QualityGate.map(thresholds));
+            }
+        }
         return this;
+    }
+
+    /**
+     * Defines the optional list of quality gates.
+     *
+     * @param qualityGates the quality gates
+     */
+    @DataBoundSetter
+    public void setQualityGates(final List<QualityGate> qualityGates) {
+        this.qualityGates = qualityGates;
+    }
+
+    /**
+     * Appends the specified quality gates to the end of the list of quality gates.
+     *
+     * @param size
+     *         the minimum number of issues that fails the quality gate
+     * @param type
+     *         the type of the quality gate
+     * @param strength
+     *         determines whether the quality gate is a warning or failure
+     */
+    public void addQualityGate(final int size, final QualityGateType type, final GateStrength strength) {
+        qualityGates.add(new QualityGate(size, type, strength));
+    }
+
+    public List<QualityGate> getQualityGates() {
+        return qualityGates;
     }
 
     /**
@@ -408,7 +446,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return referenceJobName;
     }
 
-    @Nullable
     public int getHealthy() {
         return healthy;
     }
@@ -424,7 +461,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.healthy = healthy;
     }
 
-    @Nullable
     public int getUnhealthy() {
         return unhealthy;
     }
@@ -455,154 +491,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setMinimumSeverity(final String minimumSeverity) {
         this.minimumSeverity = Severity.valueOf(minimumSeverity, Severity.WARNING_LOW);
-    }
-
-    Thresholds getThresholds() {
-        return thresholds;
-    }
-
-    public int getUnstableTotalAll() {
-        return getThresholds().unstableTotalAll;
-    }
-
-    @DataBoundSetter
-    public void setUnstableTotalAll(final int unstableTotalAll) {
-        getThresholds().unstableTotalAll = unstableTotalAll;
-    }
-
-    public int getUnstableTotalHigh() {
-        return getThresholds().unstableTotalHigh;
-    }
-
-    @DataBoundSetter
-    public void setUnstableTotalHigh(final int unstableTotalHigh) {
-        getThresholds().unstableTotalHigh = unstableTotalHigh;
-    }
-
-    public int getUnstableTotalNormal() {
-        return getThresholds().unstableTotalNormal;
-    }
-
-    @DataBoundSetter
-    public void setUnstableTotalNormal(final int unstableTotalNormal) {
-        getThresholds().unstableTotalNormal = unstableTotalNormal;
-    }
-
-    public int getUnstableTotalLow() {
-        return getThresholds().unstableTotalLow;
-    }
-
-    @DataBoundSetter
-    public void setUnstableTotalLow(final int unstableTotalLow) {
-        getThresholds().unstableTotalLow = unstableTotalLow;
-    }
-
-    public int getUnstableNewAll() {
-        return getThresholds().unstableNewAll;
-    }
-
-    @DataBoundSetter
-    public void setUnstableNewAll(final int unstableNewAll) {
-        getThresholds().unstableNewAll = unstableNewAll;
-    }
-
-    public int getUnstableNewHigh() {
-        return getThresholds().unstableNewHigh;
-    }
-
-    @DataBoundSetter
-    public void setUnstableNewHigh(final int unstableNewHigh) {
-        getThresholds().unstableNewHigh = unstableNewHigh;
-    }
-
-    public int getUnstableNewNormal() {
-        return getThresholds().unstableNewNormal;
-    }
-
-    @DataBoundSetter
-    public void setUnstableNewNormal(final int unstableNewNormal) {
-        getThresholds().unstableNewNormal = unstableNewNormal;
-    }
-
-    public int getUnstableNewLow() {
-        return getThresholds().unstableNewLow;
-    }
-
-    @DataBoundSetter
-    public void setUnstableNewLow(final int unstableNewLow) {
-        getThresholds().unstableNewLow = unstableNewLow;
-    }
-
-    public int getFailedTotalAll() {
-        return getThresholds().failedTotalAll;
-    }
-
-    @DataBoundSetter
-    public void setFailedTotalAll(final int failedTotalAll) {
-        getThresholds().failedTotalAll = failedTotalAll;
-    }
-
-    public int getFailedTotalHigh() {
-        return getThresholds().failedTotalHigh;
-    }
-
-    @DataBoundSetter
-    public void setFailedTotalHigh(final int failedTotalHigh) {
-        getThresholds().failedTotalHigh = failedTotalHigh;
-    }
-
-    public int getFailedTotalNormal() {
-        return getThresholds().failedTotalNormal;
-    }
-
-    @DataBoundSetter
-    public void setFailedTotalNormal(final int failedTotalNormal) {
-        getThresholds().failedTotalNormal = failedTotalNormal;
-    }
-
-    public int getFailedTotalLow() {
-        return getThresholds().failedTotalLow;
-    }
-
-    @DataBoundSetter
-    public void setFailedTotalLow(final int failedTotalLow) {
-        getThresholds().failedTotalLow = failedTotalLow;
-    }
-
-    public int getFailedNewAll() {
-        return getThresholds().failedNewAll;
-    }
-
-    @DataBoundSetter
-    public void setFailedNewAll(final int failedNewAll) {
-        getThresholds().failedNewAll = failedNewAll;
-    }
-
-    public int getFailedNewHigh() {
-        return getThresholds().failedNewHigh;
-    }
-
-    @DataBoundSetter
-    public void setFailedNewHigh(final int failedNewHigh) {
-        getThresholds().failedNewHigh = failedNewHigh;
-    }
-
-    public int getFailedNewNormal() {
-        return getThresholds().failedNewNormal;
-    }
-
-    @DataBoundSetter
-    public void setFailedNewNormal(final int failedNewNormal) {
-        getThresholds().failedNewNormal = failedNewNormal;
-    }
-
-    public int getFailedNewLow() {
-        return getThresholds().failedNewLow;
-    }
-
-    @DataBoundSetter
-    public void setFailedNewLow(final int failedNewLow) {
-        getThresholds().failedNewLow = failedNewLow;
     }
 
     public List<RegexpFilter> getFilters() {
@@ -720,12 +608,211 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
             final AnnotatedReport report, final String reportName) {
+        QualityGateEvaluator qualityGate = new QualityGateEvaluator();
+        if (qualityGates.isEmpty()) {
+            qualityGates.addAll(QualityGate.map(getThresholds()));
+        }
+        qualityGate.addAll(qualityGates);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
-                new HealthDescriptor(healthy, unhealthy, minimumSeverity), new QualityGate(thresholds),
+                new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()));
         publisher.attachAction();
     }
+
+    /**
+     * Not used anymore.
+     *
+     * @deprecated replaced by {@link #getQualityGates()}
+     */
+    @Deprecated
+    private final transient Thresholds thresholds = new Thresholds(); // replaced by qualityGates
+
+    // CHECKSTYLE:OFF
+    /**
+     * @deprecated replaced by {@link #getQualityGates()}
+     */
+    @Deprecated
+    Thresholds getThresholds() {
+        return thresholds;
+    }
+
+    @Deprecated
+    public int getUnstableTotalAll() {
+        return getThresholds().unstableTotalAll;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalAll(final int unstableTotalAll) {
+        getThresholds().unstableTotalAll = unstableTotalAll;
+    }
+
+    @Deprecated
+    public int getUnstableTotalHigh() {
+        return getThresholds().unstableTotalHigh;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalHigh(final int unstableTotalHigh) {
+        getThresholds().unstableTotalHigh = unstableTotalHigh;
+    }
+
+    @Deprecated
+    public int getUnstableTotalNormal() {
+        return getThresholds().unstableTotalNormal;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalNormal(final int unstableTotalNormal) {
+        getThresholds().unstableTotalNormal = unstableTotalNormal;
+    }
+
+    @Deprecated
+    public int getUnstableTotalLow() {
+        return getThresholds().unstableTotalLow;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalLow(final int unstableTotalLow) {
+        getThresholds().unstableTotalLow = unstableTotalLow;
+    }
+
+    @Deprecated
+    public int getUnstableNewAll() {
+        return getThresholds().unstableNewAll;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewAll(final int unstableNewAll) {
+        getThresholds().unstableNewAll = unstableNewAll;
+    }
+
+    @Deprecated
+    public int getUnstableNewHigh() {
+        return getThresholds().unstableNewHigh;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewHigh(final int unstableNewHigh) {
+        getThresholds().unstableNewHigh = unstableNewHigh;
+    }
+
+    @Deprecated
+    public int getUnstableNewNormal() {
+        return getThresholds().unstableNewNormal;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewNormal(final int unstableNewNormal) {
+        getThresholds().unstableNewNormal = unstableNewNormal;
+    }
+
+    @Deprecated
+    public int getUnstableNewLow() {
+        return getThresholds().unstableNewLow;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewLow(final int unstableNewLow) {
+        getThresholds().unstableNewLow = unstableNewLow;
+    }
+
+    @Deprecated
+    public int getFailedTotalAll() {
+        return getThresholds().failedTotalAll;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalAll(final int failedTotalAll) {
+        getThresholds().failedTotalAll = failedTotalAll;
+    }
+
+    @Deprecated
+    public int getFailedTotalHigh() {
+        return getThresholds().failedTotalHigh;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalHigh(final int failedTotalHigh) {
+        getThresholds().failedTotalHigh = failedTotalHigh;
+    }
+
+    @Deprecated
+    public int getFailedTotalNormal() {
+        return getThresholds().failedTotalNormal;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalNormal(final int failedTotalNormal) {
+        getThresholds().failedTotalNormal = failedTotalNormal;
+    }
+
+    @Deprecated
+    public int getFailedTotalLow() {
+        return getThresholds().failedTotalLow;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalLow(final int failedTotalLow) {
+        getThresholds().failedTotalLow = failedTotalLow;
+    }
+
+    @Deprecated
+    public int getFailedNewAll() {
+        return getThresholds().failedNewAll;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewAll(final int failedNewAll) {
+        getThresholds().failedNewAll = failedNewAll;
+    }
+
+    @Deprecated
+    public int getFailedNewHigh() {
+        return getThresholds().failedNewHigh;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewHigh(final int failedNewHigh) {
+        getThresholds().failedNewHigh = failedNewHigh;
+    }
+
+    @Deprecated
+    public int getFailedNewNormal() {
+        return getThresholds().failedNewNormal;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewNormal(final int failedNewNormal) {
+        getThresholds().failedNewNormal = failedNewNormal;
+    }
+
+    @Deprecated
+    public int getFailedNewLow() {
+        return getThresholds().failedNewLow;
+    }
+
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewLow(final int failedNewLow) {
+        getThresholds().failedNewLow = failedNewLow;
+    }
+    // CHECKSTYLE:ON
 
     /**
      * Descriptor for this step: defines the context and the UI elements.

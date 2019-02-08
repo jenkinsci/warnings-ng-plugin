@@ -1,115 +1,111 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
-import com.google.errorprone.annotations.FormatMethod;
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
+import org.jvnet.localizer.Localizable;
+import hudson.Extension;
+import hudson.model.AbstractDescribableImpl;
+import hudson.model.Descriptor;
+import hudson.util.FormValidation;
+import hudson.util.ListBoxModel;
 
-import edu.hm.hafner.analysis.Severity;
-
-import io.jenkins.plugins.analysis.core.util.ThresholdSet.ThresholdSetBuilder;
+import static io.jenkins.plugins.analysis.core.util.QualityGate.GateStrength.*;
 
 /**
- * Defines quality gates for a static analysis report.
+ * Defines a quality gate based on a specific size of issues (total, new, delta) in the current build. After a build has
+ * been finished, a set of {@link QualityGate quality gates} will be evaluated and the overall quality gate status will
+ * be reported in Jenkins UI.
  *
- * @author Michael Schmid
+ * @author Ullrich Hafner
  */
-public class QualityGate implements Serializable {
-    private static final long serialVersionUID = 7408382033276007723L;
+public class QualityGate extends AbstractDescribableImpl<QualityGate> implements Serializable {
+    private static final long serialVersionUID = -397278599489416668L;
 
-    private static final String TOTAL_NUMBER_OF_ISSUES = "Total number of issues";
-    private static final String NUMBER_OF_NEW_ISSUES = "Number of new issues";
-
-    private final ThresholdSet totalUnstableThreshold;
-    private final ThresholdSet totalFailedThreshold;
-    private final ThresholdSet newUnstableThreshold;
-    private final ThresholdSet newFailedThreshold;
+    private final int size;
+    private final QualityGateType type;
+    private final QualityGateStatus status;
 
     /**
      * Creates a new instance of {@link QualityGate}.
      *
-     * @param thresholds
-     *         the thresholds to apply
+     * @param size
+     *         the minimum number of issues that fails the quality gate
+     * @param type
+     *         the type of the quality gate
+     * @param warning
+     *         determines whether the quality gate is a warning or failure
      */
-    public QualityGate(final Thresholds thresholds) {
-        ThresholdSetBuilder builder = new ThresholdSetBuilder();
-
-        builder.setTotalThreshold(thresholds.failedTotalAll);
-        builder.setHighThreshold(thresholds.failedTotalHigh);
-        builder.setNormalThreshold(thresholds.failedTotalNormal);
-        builder.setLowThreshold(thresholds.failedTotalLow);
-        totalFailedThreshold = builder.build();
-
-        builder.setTotalThreshold(thresholds.unstableTotalAll);
-        builder.setHighThreshold(thresholds.unstableTotalHigh);
-        builder.setNormalThreshold(thresholds.unstableTotalNormal);
-        builder.setLowThreshold(thresholds.unstableTotalLow);
-        totalUnstableThreshold = builder.build();
-
-        builder.setTotalThreshold(thresholds.failedNewAll);
-        builder.setHighThreshold(thresholds.failedNewHigh);
-        builder.setNormalThreshold(thresholds.failedNewNormal);
-        builder.setLowThreshold(thresholds.failedNewLow);
-        newFailedThreshold = builder.build();
-
-        builder.setTotalThreshold(thresholds.unstableNewAll);
-        builder.setHighThreshold(thresholds.unstableNewHigh);
-        builder.setNormalThreshold(thresholds.unstableNewNormal);
-        builder.setLowThreshold(thresholds.unstableNewLow);
-        newUnstableThreshold = builder.build();
+    @DataBoundConstructor
+    public QualityGate(final int size, final QualityGateType type, final boolean warning) {
+        this.size = size;
+        this.type = type;
+        status = warning ? QualityGateStatus.WARNING : QualityGateStatus.FAILED;
     }
 
-    private QualityGate(final ThresholdSet totalFailedThreshold, final ThresholdSet totalUnstableThreshold,
-            final ThresholdSet newFailedThreshold, final ThresholdSet newUnstableThreshold) {
-        this.totalFailedThreshold = totalFailedThreshold;
-        this.totalUnstableThreshold = totalUnstableThreshold;
-        this.newFailedThreshold = newFailedThreshold;
-        this.newUnstableThreshold = newUnstableThreshold;
+    public QualityGateType getType() {
+        return type;
+    }
+
+    public boolean getWarning() {
+        return status == QualityGateStatus.WARNING;
     }
 
     /**
-     * Enforces this quality gate for the specified run.
+     * Creates a new instance of {@link QualityGate}.
      *
-     * @param report
-     *         the report to evaluate
-     * @param logger
-     *         the logger that reports the passed and failed quality gate thresholds
-     *
-     * @return result of the evaluation, expressed by a build state
+     * @param size
+     *         the minimum number of issues that fails the quality gate
+     * @param type
+     *         the type of the quality gate
+     * @param strength
+     *         determines whether the quality gate is a warning or failure
      */
-    public QualityGateStatus evaluate(final StaticAnalysisSummary report, final FormattedLogger logger) {
-        QualityGateStatus totalFailedStatus = totalFailedThreshold.evaluate(
-                report.getTotalSize(),
-                report.getTotalSizeOf(Severity.WARNING_HIGH),
-                report.getTotalSizeOf(Severity.WARNING_NORMAL),
-                report.getTotalSizeOf(Severity.WARNING_LOW),
-                TOTAL_NUMBER_OF_ISSUES, QualityGateStatus.FAILED, logger);
-        QualityGateStatus newFailedStatus = newFailedThreshold.evaluate(
-                report.getNewSize(),
-                report.getNewSizeOf(Severity.WARNING_HIGH),
-                report.getNewSizeOf(Severity.WARNING_NORMAL),
-                report.getNewSizeOf(Severity.WARNING_LOW),
-                NUMBER_OF_NEW_ISSUES, QualityGateStatus.FAILED, logger);
-        if (!totalFailedStatus.isSuccessful() || !newFailedStatus.isSuccessful()) {
-            return QualityGateStatus.FAILED;
-        }
+    public QualityGate(final int size, final QualityGateType type, final GateStrength strength) {
+        this.size = size;
+        this.type = type;
+        status = strength.status;
+    }
 
-        QualityGateStatus totalUnstableStatus = totalUnstableThreshold.evaluate(
-                report.getTotalSize(),
-                report.getTotalSizeOf(Severity.WARNING_HIGH),
-                report.getTotalSizeOf(Severity.WARNING_NORMAL),
-                report.getTotalSizeOf(Severity.WARNING_LOW),
-                TOTAL_NUMBER_OF_ISSUES, QualityGateStatus.WARNING, logger);
-        QualityGateStatus newUnstableStatus = newUnstableThreshold.evaluate(
-                report.getNewSize(),
-                report.getNewSizeOf(Severity.WARNING_HIGH),
-                report.getNewSizeOf(Severity.WARNING_NORMAL),
-                report.getNewSizeOf(Severity.WARNING_LOW),
-                NUMBER_OF_NEW_ISSUES, QualityGateStatus.WARNING, logger);
-        if (!totalUnstableStatus.isSuccessful() || !newUnstableStatus.isSuccessful()) {
-            return QualityGateStatus.WARNING;
-        }
+    /**
+     * Returns the minimum number of issues that will fail the quality gate.
+     *
+     * @return minimum number of issues
+     */
+    public int getSize() {
+        return size;
+    }
 
-        return QualityGateStatus.PASSED;
+    /**
+     * Returns the method that should be used to determine the actual number of issues in the build.
+     *
+     * @return size getter
+     */
+    public Function<IssuesStatistics, Integer> getActualSizeMethodReference() {
+        return type.getSizeGetter();
+    }
+
+    /**
+     * Returns the human readable name of the quality gate.
+     *
+     * @return the human readable name
+     */
+    public String getName() {
+        return type.getDisplayName();
+    }
+
+    /**
+     * Returns the quality gate status if the gate has not been passed.
+     *
+     * @return the status
+     */
+    public QualityGateStatus getStatus() {
+        return status;
     }
 
     @Override
@@ -120,118 +116,203 @@ public class QualityGate implements Serializable {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         QualityGate that = (QualityGate) o;
-
-        return totalUnstableThreshold.equals(that.totalUnstableThreshold) && totalFailedThreshold.equals(
-                that.totalFailedThreshold) && newUnstableThreshold.equals(that.newUnstableThreshold)
-                && newFailedThreshold.equals(that.newFailedThreshold);
+        return size == that.size && type == that.type && status == that.status;
     }
 
     @Override
     public int hashCode() {
-        int result = totalUnstableThreshold.hashCode();
-        result = 31 * result + totalFailedThreshold.hashCode();
-        result = 31 * result + newUnstableThreshold.hashCode();
-        result = 31 * result + newFailedThreshold.hashCode();
-        return result;
-    }
-
-    public boolean isEnabled() {
-        return totalFailedThreshold.isEnabled()
-                || totalUnstableThreshold.isEnabled()
-                || newFailedThreshold.isEnabled()
-                || newUnstableThreshold.isEnabled();
+        return Objects.hash(size, type, status);
     }
 
     /**
-     * Logs results of the quality gate evaluation.
+     * Determines whether the the quality gate evaluation creates a warning or failure if the gate has not been passed.
      */
-    @FunctionalInterface
-    public interface FormattedLogger {
+    public enum GateStrength {
+        /** The build will be marked as unstable. */
+        WARNING(QualityGateStatus.WARNING),
+
+        /** The build will be marked as failed. */
+        FAILURE(QualityGateStatus.FAILED);
+
+        private QualityGateStatus status;
+
+        GateStrength(final QualityGateStatus status) {
+            this.status = status;
+        }
+
         /**
-         * Logs the specified message.
+         * Returns the status.
          *
-         * @param format
-         *         A <a href="../util/Formatter.html#syntax">format string</a>
-         * @param args
-         *         Arguments referenced by the format specifiers in the format string.  If there are more arguments than
-         *         format specifiers, the extra arguments are ignored.  The number of arguments is variable and may be
-         *         zero.
+         * @return the status
          */
-        @FormatMethod
-        void print(String format, Object... args);
+        public QualityGateStatus getStatus() {
+            return status;
+        }
     }
 
     /**
-     * Creates {@link QualityGate} instances using the builder pattern.
+     * Maps the old style {@link Thresholds} to the new style list of {@link QualityGate} instances.
+     *
+     * @param thresholds
+     *         the thresholds
+     *
+     * @return the list of quality gates
      */
-    static class QualityGateBuilder {
-        private ThresholdSet totalUnstableThreshold = new ThresholdSet(0, 0, 0, 0);
-        private ThresholdSet totalFailedThreshold = new ThresholdSet(0, 0, 0, 0);
-        private ThresholdSet newUnstableThreshold = new ThresholdSet(0, 0, 0, 0);
-        private ThresholdSet newFailedThreshold = new ThresholdSet(0, 0, 0, 0);
+    public static List<QualityGate> map(final Thresholds thresholds) {
+        List<QualityGate> gates = new ArrayList<>();
+        if (thresholds.failedTotalAll > 0) {
+            gates.add(new QualityGate(thresholds.failedTotalAll, QualityGateType.TOTAL, FAILURE));
+        }
+        if (thresholds.failedTotalHigh > 0) {
+            gates.add(new QualityGate(thresholds.failedTotalHigh, QualityGateType.TOTAL_HIGH, FAILURE));
+        }
+        if (thresholds.failedTotalNormal > 0) {
+            gates.add(new QualityGate(thresholds.failedTotalNormal, QualityGateType.TOTAL_NORMAL, FAILURE));
+        }
+        if (thresholds.failedTotalLow > 0) {
+            gates.add(new QualityGate(thresholds.failedTotalLow, QualityGateType.TOTAL_LOW, FAILURE));
+        }
 
-        /**
-         * Creates a new {@link QualityGate} instance using the defined parameters.
-         *
-         * @return the created quality gate
-         */
-        QualityGate build() {
-            return new QualityGate(totalFailedThreshold, totalUnstableThreshold, newFailedThreshold,
-                    newUnstableThreshold);
+        if (thresholds.unstableTotalAll > 0) {
+            gates.add(new QualityGate(thresholds.unstableTotalAll, QualityGateType.TOTAL, WARNING));
+        }
+        if (thresholds.unstableTotalHigh > 0) {
+            gates.add(new QualityGate(thresholds.unstableTotalHigh, QualityGateType.TOTAL_HIGH, WARNING));
+        }
+        if (thresholds.unstableTotalNormal > 0) {
+            gates.add(new QualityGate(thresholds.unstableTotalNormal, QualityGateType.TOTAL_NORMAL, WARNING));
+        }
+        if (thresholds.unstableTotalLow > 0) {
+            gates.add(new QualityGate(thresholds.unstableTotalLow, QualityGateType.TOTAL_LOW, WARNING));
+        }
+
+        if (thresholds.failedNewAll > 0) {
+            gates.add(new QualityGate(thresholds.failedNewAll, QualityGateType.NEW, FAILURE));
+        }
+        if (thresholds.failedNewHigh > 0) {
+            gates.add(new QualityGate(thresholds.failedNewHigh, QualityGateType.NEW_HIGH, FAILURE));
+        }
+        if (thresholds.failedNewNormal > 0) {
+            gates.add(new QualityGate(thresholds.failedNewNormal, QualityGateType.NEW_NORMAL, FAILURE));
+        }
+        if (thresholds.failedNewLow > 0) {
+            gates.add(new QualityGate(thresholds.failedNewLow, QualityGateType.NEW_LOW, FAILURE));
+        }
+
+        if (thresholds.unstableNewAll > 0) {
+            gates.add(new QualityGate(thresholds.unstableNewAll, QualityGateType.NEW, WARNING));
+        }
+        if (thresholds.unstableNewHigh > 0) {
+            gates.add(new QualityGate(thresholds.unstableNewHigh, QualityGateType.NEW_HIGH, WARNING));
+        }
+        if (thresholds.unstableNewNormal > 0) {
+            gates.add(new QualityGate(thresholds.unstableNewNormal, QualityGateType.NEW_NORMAL, WARNING));
+        }
+        if (thresholds.unstableNewLow > 0) {
+            gates.add(new QualityGate(thresholds.unstableNewLow, QualityGateType.NEW_LOW, WARNING));
+        }
+
+        return gates;
+    }
+
+    /**
+     * Available quality gate types.
+     */
+    public enum QualityGateType {
+        /** Total number of issues. */
+        TOTAL(Messages._QualityGate_Type_Total(), IssuesStatistics::getTotalSize),
+        /** Total number of issues (severity Error). */
+        TOTAL_ERROR(Messages._QualityGate_Type_Total_Error(), IssuesStatistics::getTotalErrorSize),
+        /** Total number of issues (severity Warning High). */
+        TOTAL_HIGH(Messages._QualityGate_Type_Total_High(), IssuesStatistics::getTotalHighSize),
+        /** Total number of issues (severity Warning Normal). */
+        TOTAL_NORMAL(Messages._QualityGate_Type_Total_Normal(), IssuesStatistics::getTotalNormalSize),
+        /** Total number of issues (severity Warning Low). */
+        TOTAL_LOW(Messages._QualityGate_Type_Total_Low(), IssuesStatistics::getTotalLowSize),
+
+        /** Number of new issues. */
+        NEW(Messages._QualityGate_Type_New(), IssuesStatistics::getNewSize),
+        /** Number of new issues (severity Error). */
+        NEW_ERROR(Messages._QualityGate_Type_New_Error(), IssuesStatistics::getNewErrorSize),
+        /** Number of new issues (severity Warning High). */
+        NEW_HIGH(Messages._QualityGate_Type_New_High(), IssuesStatistics::getNewHighSize),
+        /** Number of new issues (severity Warning Normal). */
+        NEW_NORMAL(Messages._QualityGate_Type_New_Normal(), IssuesStatistics::getNewNormalSize),
+        /** Number of new issues (severity Warning Low). */
+        NEW_LOW(Messages._QualityGate_Type_New_Low(), IssuesStatistics::getNewLowSize),
+
+        /** Delta current build - reference build. */
+        DELTA(Messages._QualityGate_Type_Delta(), IssuesStatistics::getDeltaSize),
+        /** Delta current build - reference build (severity Error). */
+        DELTA_ERROR(Messages._QualityGate_Type_Delta_Error(), IssuesStatistics::getDeltaErrorSize),
+        /** Delta current build - reference build (severity Warning High). */
+        DELTA_HIGH(Messages._QualityGate_Type_Delta_High(), IssuesStatistics::getDeltaHighSize),
+        /** Delta current build - reference build (severity Warning Normal). */
+        DELTA_NORMAL(Messages._QualityGate_Type_Delta_Normal(), IssuesStatistics::getDeltaNormalSize),
+        /** Delta current build - reference build (severity Warning Low). */
+        DELTA_LOW(Messages._QualityGate_Type_Delta_Low(), IssuesStatistics::getDeltaLowSize);
+
+        private final Localizable displayName;
+        private final Function<IssuesStatistics, Integer> sizeGetter;
+
+        QualityGateType(final Localizable displayName, final Function<IssuesStatistics, Integer> sizeGetter) {
+            this.displayName = displayName;
+            this.sizeGetter = sizeGetter;
         }
 
         /**
-         * Set the total unstable threshold.
+         * Returns the localized human readable name of this type.
          *
-         * @param totalUnstableThreshold
-         *         the threshold
-         *
-         * @return a quality gate builder with total unstable threshold
+         * @return human readable name
          */
-        QualityGateBuilder setTotalUnstableThreshold(final ThresholdSet totalUnstableThreshold) {
-            this.totalUnstableThreshold = totalUnstableThreshold;
-            return this;
+        public String getDisplayName() {
+            return displayName.toString();
         }
 
         /**
-         * Set the total failed threshold.
+         * Returns the method that should be used to determine the actual number of issues in the build.
          *
-         * @param totalFailedThreshold
-         *         the threshold
-         *
-         * @return a quality gate builder with total failed threshold
+         * @return the size getter
          */
-        QualityGateBuilder setTotalFailedThreshold(final ThresholdSet totalFailedThreshold) {
-            this.totalFailedThreshold = totalFailedThreshold;
-            return this;
+        public Function<IssuesStatistics, Integer> getSizeGetter() {
+            return sizeGetter;
+        }
+    }
+
+    /**
+     * Descriptor of the {@link QualityGate}.
+     */
+    @Extension
+    public static class QualityGateDescriptor extends Descriptor<QualityGate> {
+        /**
+         * Return the model for the select widget.
+         *
+         * @return the quality gate types
+         */
+        public ListBoxModel doFillTypeItems() {
+            ListBoxModel model = new ListBoxModel();
+
+            for (QualityGateType qualityGateType : QualityGateType.values()) {
+                model.add(qualityGateType.getDisplayName(), qualityGateType.name());
+            }
+
+            return model;
         }
 
         /**
-         * Set the new unstable threshold.
+         * Performs on-the-fly validation of the quality gate threshold.
          *
-         * @param newUnstableThreshold
+         * @param size
          *         the threshold
          *
-         * @return a quality gate builder with new unstable threshold
+         * @return the validation result
          */
-        QualityGateBuilder setNewUnstableThreshold(final ThresholdSet newUnstableThreshold) {
-            this.newUnstableThreshold = newUnstableThreshold;
-            return this;
-        }
-
-        /**
-         * Set the unstable threshold.
-         *
-         * @param newFailedThreshold
-         *         the threshold
-         *
-         * @return a quality gate builder with new failed threshold
-         */
-        QualityGateBuilder setNewFailedThreshold(final ThresholdSet newFailedThreshold) {
-            this.newFailedThreshold = newFailedThreshold;
-            return this;
+        public FormValidation doCheckSize(@QueryParameter final int size) {
+            if (size > 0) {
+                return FormValidation.ok();
+            }
+            return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
         }
     }
 }

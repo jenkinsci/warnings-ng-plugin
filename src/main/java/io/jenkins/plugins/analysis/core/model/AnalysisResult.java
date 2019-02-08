@@ -36,7 +36,7 @@ import hudson.util.XStream2;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
-import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
@@ -486,7 +486,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Returns whether the static analysis result is successful with respect to the defined {@link QualityGate}.
+     * Returns whether the static analysis result is successful with respect to the defined {@link QualityGateEvaluator}.
      *
      * @return {@code true} if the static analysis result is successful, {@code false} if the static analysis result is
      *         {@link QualityGateStatus#WARNING} or {@link QualityGateStatus#FAILED}

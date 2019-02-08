@@ -70,7 +70,8 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-@Tag("IntegrationTest") @SuppressWarnings({"PMD.SystemPrintln", "PMD.GodClass", "classdataabstractioncoupling", "classfanoutcomplexity"})
+@Tag("IntegrationTest")
+@SuppressWarnings({"PMD.SystemPrintln", "PMD.GodClass", "classdataabstractioncoupling", "classfanoutcomplexity"})
 public abstract class IntegrationTest extends ResourceTest {
     /** Issue log files will be renamed to mach this pattern. */
     private static final String FILE_NAME_PATTERN = "%s-issues.txt";
@@ -527,10 +528,25 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the successful build
      */
-    @SuppressWarnings("illegalcatch")
     protected WorkflowRun runSuccessfully(final WorkflowJob job) {
+        return run(job, Result.SUCCESS);
+    }
+
+    /**
+     * Schedules a build for the specified pipeline and waits for the job to finish. The expected result of the build is
+     * {@link Result#SUCCESS}.
+     *
+     * @param job
+     *         the job to run
+     * @param expectedResult
+     *         the expected result
+     *
+     * @return the successful build
+     */
+    @SuppressWarnings("illegalcatch")
+    protected WorkflowRun run(final WorkflowJob job, final Result expectedResult) {
         try {
-            return getJenkins().assertBuildStatus(Result.SUCCESS, Objects.requireNonNull(job.scheduleBuild2(0)));
+            return getJenkins().assertBuildStatus(expectedResult, Objects.requireNonNull(job.scheduleBuild2(0)));
         }
         catch (Exception e) {
             throw new AssertionError(e);

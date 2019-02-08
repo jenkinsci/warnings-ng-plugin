@@ -11,7 +11,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.model.Result;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
@@ -39,7 +39,7 @@ public class AnalysisHistory implements History {
     private final JobResultEvaluationMode jobResultEvaluationMode;
 
     /**
-     * Determines how the evaluation of the {@link QualityGate} is taken into account when the previous result is
+     * Determines how the evaluation of the {@link QualityGateEvaluator} is taken into account when the previous result is
      * searched for.
      */
     public enum QualityGateEvaluationMode {
