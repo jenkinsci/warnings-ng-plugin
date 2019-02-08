@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.google.errorprone.annotations.FormatMethod;
 
-import io.jenkins.plugins.analysis.core.util.QualityGate.GateStrength;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 
 /**
@@ -38,16 +38,16 @@ public class QualityGateEvaluator {
 
         for (QualityGate qualityGate : qualityGates) {
             int actualSize = qualityGate.getActualSizeMethodReference().apply(report);
-            if (actualSize >= qualityGate.getSize()) {
+            if (actualSize >= qualityGate.getThreshold()) {
                 logger.print("-> %s - %s: %d - Quality QualityGate: %d",
-                        qualityGate.getStatus(), qualityGate.getName(), actualSize, qualityGate.getSize());
+                        qualityGate.getStatus(), qualityGate.getName(), actualSize, qualityGate.getThreshold());
                 if (qualityGate.getStatus().isWorseThan(status)) {
                     status = qualityGate.getStatus();
                 }
             }
             else {
                 logger.print("-> PASSED - %s: %d - Quality QualityGate: %d",
-                        qualityGate.getName(), actualSize, qualityGate.getSize());
+                        qualityGate.getName(), actualSize, qualityGate.getThreshold());
             }
         }
 
@@ -64,7 +64,7 @@ public class QualityGateEvaluator {
      * @param strength
      *         determines whether the quality gate is a warning or failure
      */
-    public void add(final int size, final QualityGateType type, final GateStrength strength) {
+    public void add(final int size, final QualityGateType type, final QualityGateResult strength) {
         qualityGates.add(new QualityGate(size, type, strength));
     }
 

@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.util.QualityGate.GateStrength;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator.FormattedLogger;
 
@@ -39,7 +39,7 @@ class QualityGateEvaluatorTest {
 
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
 
-        qualityGate.add(1, QualityGateType.DELTA, GateStrength.WARNING);
+        qualityGate.add(1, QualityGateType.DELTA, QualityGateResult.UNSTABLE);
         assertThat(qualityGate.evaluate(builder.setDeltaSize(-1).build(), logger)).isEqualTo(QualityGateStatus.PASSED);
         assertThat(logger.getMessages()).containsExactly(
                 "-> PASSED - " + QualityGateType.DELTA.getDisplayName() + ": -1 - Quality QualityGate: 1");
@@ -53,13 +53,13 @@ class QualityGateEvaluatorTest {
 
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
 
-        qualityGate.add(1, QualityGateType.TOTAL, GateStrength.WARNING);
+        qualityGate.add(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
         assertThat(qualityGate.evaluate(builder.build(), logger)).isEqualTo(QualityGateStatus.PASSED);
         assertThat(logger.getMessages()).containsExactly(
                 "-> PASSED - " + QualityGateType.TOTAL.getDisplayName() + ": 0 - Quality QualityGate: 1");
 
         logger.clear();
-        qualityGate.add(1, QualityGateType.NEW, GateStrength.WARNING);
+        qualityGate.add(1, QualityGateType.NEW, QualityGateResult.UNSTABLE);
         assertThat(qualityGate.evaluate(builder.build(), logger)).isEqualTo(QualityGateStatus.PASSED);
         assertThat(logger.getMessages()).containsExactly(
                 "-> PASSED - " + QualityGateType.TOTAL.getDisplayName() + ": 0 - Quality QualityGate: 1",
@@ -98,7 +98,7 @@ class QualityGateEvaluatorTest {
 
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
 
-        qualityGate.add(1, type, GateStrength.WARNING);
+        qualityGate.add(1, type, QualityGateResult.UNSTABLE);
 
         assertThat(qualityGate.evaluate(builder.build(), logger)).isEqualTo(QualityGateStatus.PASSED);
         assertThat(logger.getMessages()).containsExactly(
@@ -119,13 +119,13 @@ class QualityGateEvaluatorTest {
 
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
 
-        qualityGate.add(1, QualityGateType.TOTAL, GateStrength.WARNING);
+        qualityGate.add(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
         assertThat(qualityGate.evaluate(builder.setTotalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
         assertThat(logger.getMessages()).containsExactly(
                 "-> WARNING - " + QualityGateType.TOTAL.getDisplayName() + ": 1 - Quality QualityGate: 1");
 
         logger.clear();
-        qualityGate.add(1, QualityGateType.NEW, GateStrength.WARNING);
+        qualityGate.add(1, QualityGateType.NEW, QualityGateResult.UNSTABLE);
         assertThat(qualityGate.evaluate(builder.setNewSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
         assertThat(logger.getMessages()).containsExactly(
                 "-> WARNING - " + QualityGateType.TOTAL.getDisplayName() + ": 1 - Quality QualityGate: 1",
@@ -140,8 +140,8 @@ class QualityGateEvaluatorTest {
 
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
 
-        qualityGate.add(1, QualityGateType.TOTAL, GateStrength.WARNING);
-        qualityGate.add(2, QualityGateType.TOTAL, GateStrength.FAILURE);
+        qualityGate.add(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
+        qualityGate.add(2, QualityGateType.TOTAL, QualityGateResult.FAILURE);
         assertThat(qualityGate.evaluate(builder.setTotalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
         assertThat(logger.getMessages()).containsExactly(
                 "-> WARNING - " + QualityGateType.TOTAL.getDisplayName() + ": 1 - Quality QualityGate: 1",
@@ -155,8 +155,8 @@ class QualityGateEvaluatorTest {
 
         QualityGateEvaluator other = new QualityGateEvaluator();
 
-        other.add(2, QualityGateType.TOTAL, GateStrength.FAILURE);
-        other.add(1, QualityGateType.TOTAL, GateStrength.WARNING);
+        other.add(2, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        other.add(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
         assertThat(other.evaluate(builder.setTotalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
         assertThat(other.evaluate(builder.setTotalSize(2).build(), logger)).isEqualTo(QualityGateStatus.FAILED);
     }

@@ -15,10 +15,10 @@ import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
-import static io.jenkins.plugins.analysis.core.util.QualityGate.GateStrength.*;
+import static io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult.*;
 
 /**
- * Defines a quality gate based on a specific size of issues (total, new, delta) in the current build. After a build has
+ * Defines a quality gate based on a specific threshold of issues (total, new, delta) in the current build. After a build has
  * been finished, a set of {@link QualityGate quality gates} will be evaluated and the overall quality gate status will
  * be reported in Jenkins UI.
  *
@@ -27,25 +27,25 @@ import static io.jenkins.plugins.analysis.core.util.QualityGate.GateStrength.*;
 public class QualityGate extends AbstractDescribableImpl<QualityGate> implements Serializable {
     private static final long serialVersionUID = -397278599489416668L;
 
-    private final int size;
+    private final int threshold;
     private final QualityGateType type;
     private final QualityGateStatus status;
 
     /**
      * Creates a new instance of {@link QualityGate}.
      *
-     * @param size
+     * @param threshold
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
-     * @param warning
-     *         determines whether the quality gate is a warning or failure
+     * @param unstable
+     *         determines whether the build result will be set to unstable or failed if the quality gate is failed
      */
     @DataBoundConstructor
-    public QualityGate(final int size, final QualityGateType type, final boolean warning) {
-        this.size = size;
+    public QualityGate(final int threshold, final QualityGateType type, final boolean unstable) {
+        this.threshold = threshold;
         this.type = type;
-        status = warning ? QualityGateStatus.WARNING : QualityGateStatus.FAILED;
+        status = unstable ? QualityGateStatus.WARNING : QualityGateStatus.FAILED;
     }
 
     public QualityGateType getType() {
@@ -59,17 +59,17 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
     /**
      * Creates a new instance of {@link QualityGate}.
      *
-     * @param size
+     * @param threshold
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
-     * @param strength
+     * @param result
      *         determines whether the quality gate is a warning or failure
      */
-    public QualityGate(final int size, final QualityGateType type, final GateStrength strength) {
-        this.size = size;
+    public QualityGate(final int threshold, final QualityGateType type, final QualityGateResult result) {
+        this.threshold = threshold;
         this.type = type;
-        status = strength.status;
+        status = result.status;
     }
 
     /**
@@ -77,14 +77,14 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      *
      * @return minimum number of issues
      */
-    public int getSize() {
-        return size;
+    public int getThreshold() {
+        return threshold;
     }
 
     /**
      * Returns the method that should be used to determine the actual number of issues in the build.
      *
-     * @return size getter
+     * @return threshold getter
      */
     public Function<IssuesStatistics, Integer> getActualSizeMethodReference() {
         return type.getSizeGetter();
@@ -100,13 +100,23 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
     }
 
     /**
-     * Returns the quality gate status if the gate has not been passed.
+     * Returns the quality gate status to set if the quality gate is failed.
      *
      * @return the status
      */
     public QualityGateStatus getStatus() {
         return status;
     }
+
+    /**
+     * Returns the quality gate status to set if the quality gate is failed.
+     *
+     * @return the status
+     */
+    public QualityGateResult getResult() {
+        return status == QualityGateStatus.WARNING ? UNSTABLE : FAILURE;
+    }
+
 
     @Override
     public boolean equals(final Object o) {
@@ -117,27 +127,27 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
             return false;
         }
         QualityGate that = (QualityGate) o;
-        return size == that.size && type == that.type && status == that.status;
+        return threshold == that.threshold && type == that.type && status == that.status;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(size, type, status);
+        return Objects.hash(threshold, type, status);
     }
 
     /**
-     * Determines whether the the quality gate evaluation creates a warning or failure if the gate has not been passed.
+     * Determines the Jenkins build result if the quality gate is failed.
      */
-    public enum GateStrength {
+    public enum QualityGateResult {
         /** The build will be marked as unstable. */
-        WARNING(QualityGateStatus.WARNING),
+        UNSTABLE(QualityGateStatus.WARNING),
 
         /** The build will be marked as failed. */
         FAILURE(QualityGateStatus.FAILED);
 
         private QualityGateStatus status;
 
-        GateStrength(final QualityGateStatus status) {
+        QualityGateResult(final QualityGateStatus status) {
             this.status = status;
         }
 
@@ -159,6 +169,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      *
      * @return the list of quality gates
      */
+    @SuppressWarnings({"deprecation", "npathcomplexity"})
     public static List<QualityGate> map(final Thresholds thresholds) {
         List<QualityGate> gates = new ArrayList<>();
         if (thresholds.failedTotalAll > 0) {
@@ -175,16 +186,16 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         }
 
         if (thresholds.unstableTotalAll > 0) {
-            gates.add(new QualityGate(thresholds.unstableTotalAll, QualityGateType.TOTAL, WARNING));
+            gates.add(new QualityGate(thresholds.unstableTotalAll, QualityGateType.TOTAL, UNSTABLE));
         }
         if (thresholds.unstableTotalHigh > 0) {
-            gates.add(new QualityGate(thresholds.unstableTotalHigh, QualityGateType.TOTAL_HIGH, WARNING));
+            gates.add(new QualityGate(thresholds.unstableTotalHigh, QualityGateType.TOTAL_HIGH, UNSTABLE));
         }
         if (thresholds.unstableTotalNormal > 0) {
-            gates.add(new QualityGate(thresholds.unstableTotalNormal, QualityGateType.TOTAL_NORMAL, WARNING));
+            gates.add(new QualityGate(thresholds.unstableTotalNormal, QualityGateType.TOTAL_NORMAL, UNSTABLE));
         }
         if (thresholds.unstableTotalLow > 0) {
-            gates.add(new QualityGate(thresholds.unstableTotalLow, QualityGateType.TOTAL_LOW, WARNING));
+            gates.add(new QualityGate(thresholds.unstableTotalLow, QualityGateType.TOTAL_LOW, UNSTABLE));
         }
 
         if (thresholds.failedNewAll > 0) {
@@ -201,16 +212,16 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         }
 
         if (thresholds.unstableNewAll > 0) {
-            gates.add(new QualityGate(thresholds.unstableNewAll, QualityGateType.NEW, WARNING));
+            gates.add(new QualityGate(thresholds.unstableNewAll, QualityGateType.NEW, UNSTABLE));
         }
         if (thresholds.unstableNewHigh > 0) {
-            gates.add(new QualityGate(thresholds.unstableNewHigh, QualityGateType.NEW_HIGH, WARNING));
+            gates.add(new QualityGate(thresholds.unstableNewHigh, QualityGateType.NEW_HIGH, UNSTABLE));
         }
         if (thresholds.unstableNewNormal > 0) {
-            gates.add(new QualityGate(thresholds.unstableNewNormal, QualityGateType.NEW_NORMAL, WARNING));
+            gates.add(new QualityGate(thresholds.unstableNewNormal, QualityGateType.NEW_NORMAL, UNSTABLE));
         }
         if (thresholds.unstableNewLow > 0) {
-            gates.add(new QualityGate(thresholds.unstableNewLow, QualityGateType.NEW_LOW, WARNING));
+            gates.add(new QualityGate(thresholds.unstableNewLow, QualityGateType.NEW_LOW, UNSTABLE));
         }
 
         return gates;
@@ -273,7 +284,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         /**
          * Returns the method that should be used to determine the actual number of issues in the build.
          *
-         * @return the size getter
+         * @return the threshold getter
          */
         public Function<IssuesStatistics, Integer> getSizeGetter() {
             return sizeGetter;
@@ -303,13 +314,13 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         /**
          * Performs on-the-fly validation of the quality gate threshold.
          *
-         * @param size
+         * @param threshold
          *         the threshold
          *
          * @return the validation result
          */
-        public FormValidation doCheckSize(@QueryParameter final int size) {
-            if (size > 0) {
+        public FormValidation doCheckThreshold(@QueryParameter final int threshold) {
+            if (threshold > 0) {
                 return FormValidation.ok();
             }
             return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());

@@ -138,22 +138,22 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
-                        + "qualityGates: [[size: 6, type: 'TOTAL', warning: true]]"));
+                        + "qualityGates: [[threshold: 6, type: 'TOTAL', unstable: true]]"));
         run(job, Result.UNSTABLE);
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
-                        + "qualityGates: [[size: 6, type: 'TOTAL', warning: false]]"));
+                        + "qualityGates: [[threshold: 6, type: 'TOTAL', unstable: false]]"));
         run(job, Result.FAILURE);
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
-                        + "qualityGates: [[size: 6, type: 'TOTAL_NORMAL', warning: true]]"));
+                        + "qualityGates: [[threshold: 6, type: 'TOTAL_NORMAL', unstable: true]]"));
         run(job, Result.UNSTABLE);
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
-                        + "qualityGates: [[size: 6, type: 'TOTAL_NORMAL', warning: false]]"));
+                        + "qualityGates: [[threshold: 6, type: 'TOTAL_NORMAL', unstable: false]]"));
         run(job, Result.FAILURE);
     }
 

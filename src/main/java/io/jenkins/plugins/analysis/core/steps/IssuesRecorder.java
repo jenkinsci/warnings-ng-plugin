@@ -49,7 +49,7 @@ import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
-import io.jenkins.plugins.analysis.core.util.QualityGate.GateStrength;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.Thresholds;
@@ -147,7 +147,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param strength
      *         determines whether the quality gate is a warning or failure
      */
-    public void addQualityGate(final int size, final QualityGateType type, final GateStrength strength) {
+    public void addQualityGate(final int size, final QualityGateType type, final QualityGateResult strength) {
         qualityGates.add(new QualityGate(size, type, strength));
     }
 

@@ -279,9 +279,13 @@ the number of issues that will fail a given quality gate.
 An example pipeline with these options is shown in the following snippet:
 
 ```
-recordIssues tool: java(pattern: '*.log'), unstableTotalHigh: 10, unstableNewAll: 1
+recordIssues tool: java(pattern: '*.log'), qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]]
 ```
 
+The type determines the property that will be picked to evaluate the quality gate. Refer to the enum 
+[QualityGateType](../src/main/java/io/jenkins/plugins/analysis/core/util/QualityGate.java) to see which different
+types are supported.
+ 
 ### Health report configuration
 
 The plugin can participate in the health report of your project. You can change the number of issues
@@ -494,7 +498,7 @@ issues from the server.
 - **Filtering, Searching**: you can filter the shown issues by entering some text in the search box.
 - **Content Aware**: columns are only shown if there is something useful to display. I.e., if a tool does not report an
 issues category, then the category will be automatically hidden.
-- **Responsive**: the layout should adapt to the actual screen size. 
+- **Responsive**: the layout should adapt to the actual screen threshold. 
 - **Details**: the details message for an issue (if provided by the corresponding static analysis tool) is shown as 
 child row within the table.
 
@@ -563,49 +567,49 @@ total number of issues for each tool.
       "id": "maven",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/maven",
       "name": "Maven Warnings",
-      "size": 9
+      "threshold": 9
     },
     {
       "id": "java",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/java",
       "name": "Java Warnings",
-      "size": 1
+      "threshold": 1
     },
     {
       "id": "javadoc",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/javadoc",
       "name": "JavaDoc Warnings",
-      "size": 0
+      "threshold": 0
     },
     {
       "id": "checkstyle",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/checkstyle",
       "name": "CheckStyle Warnings",
-      "size": 0
+      "threshold": 0
     },
     {
       "id": "pmd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/pmd",
       "name": "PMD Warnings",
-      "size": 671
+      "threshold": 671
     },
     {
       "id": "spotbugs",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/spotbugs",
       "name": "SpotBugs Warnings",
-      "size": 0
+      "threshold": 0
     },
     {
       "id": "cpd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/cpd",
       "name": "CPD Warnings",
-      "size": 123
+      "threshold": 123
     },
     {
       "id": "open-tasks",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/open-tasks",
       "name": "Open Tasks Scanner Warnings",
-      "size": 11
+      "threshold": 11
     }
   ]
 }
@@ -729,7 +733,7 @@ Here is an example JSON report:
       "type" : "RV_RETURN_VALUE_IGNORED_NO_SIDE_EFFECT"
     }
   ],
-  "size" : 3
+  "threshold" : 3
 }
 ```
 

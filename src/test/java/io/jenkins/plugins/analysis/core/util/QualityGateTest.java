@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.util.SerializableTest;
 
-import io.jenkins.plugins.analysis.core.util.QualityGate.GateStrength;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateDescriptor;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 
@@ -20,19 +20,19 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     void shouldValidateThreshold() {
         QualityGateDescriptor descriptor = new QualityGateDescriptor();
 
-        assertThat(descriptor.doCheckSize(0))
+        assertThat(descriptor.doCheckThreshold(0))
                 .isError()
                 .hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
-        assertThat(descriptor.doCheckSize(-1))
+        assertThat(descriptor.doCheckThreshold(-1))
                 .isError()
                 .hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
 
-        assertThat(descriptor.doCheckSize(1))
+        assertThat(descriptor.doCheckThreshold(1))
                 .isOk();
     }
 
     @Override
     protected QualityGate createSerializable() {
-        return new QualityGate(1, QualityGateType.TOTAL, GateStrength.WARNING);
+        return new QualityGate(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
     }
 }
