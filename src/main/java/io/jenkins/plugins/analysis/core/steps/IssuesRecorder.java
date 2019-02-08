@@ -530,7 +530,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         for (Tool tool : getTools()) {
             ensureThatToolIsValid(tool);
         }
-        if (isAggregatingResults) {
+        if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, "analysis"));
             for (Tool tool : analysisTools) {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
@@ -541,6 +541,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         else {
             for (Tool tool : analysisTools) {
                 AnnotatedReport report = new AnnotatedReport(tool.getActualId());
+                if (isAggregatingResults) {
+                    report.logInfo("Ignoring 'aggregatingResults' and ID '%s' since only a single tool is defined.",
+                            id);
+                }
                 report.add(scanWithTool(run, workspace, listener, tool));
                 if (StringUtils.isNotBlank(id) || StringUtils.isNotBlank(name)) {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
