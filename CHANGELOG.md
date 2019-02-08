@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.0...master)
 
+### Added
+- [JENKINS-54550](https://issues.jenkins-ci.org/browse/JENKINS-54550), 
+[JENKINS-52098](https://issues.jenkins-ci.org/browse/JENKINS-52098):
+Simplified and enhanced quality gates configuration: available properties are now the total number of warnings,
+the number of new warnings, or the delta between two builds. Additionally, thresholds can be provided for all issues
+or for a specific severity only.
+
 ## [2.2.1](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.0...warnings-ng-2.2.1) - 2019-2-07
 
 ### Fixed
