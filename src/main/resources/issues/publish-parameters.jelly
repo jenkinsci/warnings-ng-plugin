@@ -22,13 +22,15 @@
   <i:hr title="${%Quality Gates}"/>
 
   <f:entry title="${%Quality gates}" description="${%qualityGates.description}">
-    <f:repeatableProperty field="qualityGates" add="${%Add Quality Gate}">
-      <f:entry title="">
-        <div align="right">
-          <f:repeatableDeleteButton/>
-        </div>
-      </f:entry>
-    </f:repeatableProperty>
+^^    <div id="qualityGates">
+      <f:repeatableProperty field="qualityGates" add="${%Add Quality Gate}">
+        <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton/>
+          </div>
+        </f:entry>
+      </f:repeatableProperty>
+    </div>
   </f:entry>
 
   <i:health/>

@@ -4,7 +4,9 @@
   <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
   <f:entry title="${%title.tool}" >
-    <f:repeatableProperty minimum="1" field="toolProxies" add="${%Add Tool}" />
+    <div id="tools">
+      <f:repeatableProperty minimum="1" field="toolProxies" add="${%Add Tool}" />
+    </div>
   </f:entry>
 
   <f:entry title="${%title.aggregatingResults}" description="${%description.aggregatingResults}" field="aggregatingResults">

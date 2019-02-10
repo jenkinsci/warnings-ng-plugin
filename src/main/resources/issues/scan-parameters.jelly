@@ -18,7 +18,9 @@
   <i:hr title="${%Issue filters}"/>
 
   <f:entry title="${%Filters}" description="${%description.filter}">
-    <f:repeatableHeteroProperty field="filters" hasHeader="true" addCaption="${%Add Filter}" />
+    <div id="filters">
+      <f:repeatableHeteroProperty field="filters" hasHeader="true" addCaption="${%Add Filter}" />
+    </div>
   </f:entry>
 
 </j:jelly>
