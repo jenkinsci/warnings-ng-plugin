@@ -364,7 +364,7 @@ pipeline {
             recordIssues enabledForFailure: true, tool: checkStyle()
             recordIssues enabledForFailure: true, tool: spotBugs()
             recordIssues enabledForFailure: true, tool: cpd(pattern: '**/target/cpd.xml')
-            recordIssues enabledForFailure: true, tool: pmd(pattern: '**/target/pmd.xml')
+            recordIssues enabledForFailure: true, tool: pmdParser(pattern: '**/target/pmd.xml')
         }
     }
 }
@@ -412,7 +412,7 @@ node {
         def checkstyle = scanForIssues tool: checkStyle(pattern: '**/target/checkstyle-result.xml')
         publishIssues issues: [checkstyle]
    
-        def pmd = scanForIssues tool: pmd(pattern: '**/target/pmd.xml')
+        def pmd = scanForIssues tool: pmdParser(pattern: '**/target/pmd.xml')
         publishIssues issues: [pmd]
         
         def cpd = scanForIssues tool: cpd(pattern: '**/target/cpd.xml')
