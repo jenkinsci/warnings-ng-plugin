@@ -22,7 +22,7 @@
   <i:hr title="${%Quality Gates}"/>
 
   <f:entry title="${%Quality gates}" description="${%qualityGates.description}">
-^^    <div id="qualityGates">
+    <div id="qualityGates">
       <f:repeatableProperty field="qualityGates" add="${%Add Quality Gate}">
         <f:entry title="">
           <div align="right">
