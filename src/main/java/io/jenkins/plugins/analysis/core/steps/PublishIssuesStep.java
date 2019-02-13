@@ -456,10 +456,11 @@ public class PublishIssuesStep extends Step {
         private final boolean ignoreQualityGate;
         private final boolean ignoreFailedBuilds;
         private final String sourceCodeEncoding;
-        private final AnnotatedReport report;
         private final List<QualityGate> qualityGates;
+        private final String id;
         private final String name;
         private final String referenceJobName;
+        private final List<AnnotatedReport> reports;
 
         /**
          * Creates a new instance of the step execution object.
@@ -494,17 +495,8 @@ public class PublishIssuesStep extends Step {
             }
 
             name = StringUtils.defaultString(step.getName());
-            report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), step.reports.get(0).getId()));
-
-            if (step.reports.size() > 1) {
-                report.logInfo("Aggregating reports of:");
-                LabelProviderFactory factory = new LabelProviderFactory();
-                for (AnnotatedReport subReport : step.reports) {
-                    StaticAnalysisLabelProvider labelProvider = factory.create(subReport.getId());
-                    report.logInfo("-> %s", labelProvider.getToolTip(subReport.size()));
-                }
-            }
-            report.addAll(step.reports);
+            id = step.getId();
+            reports = step.reports;
         }
 
         @Override
@@ -512,13 +504,24 @@ public class PublishIssuesStep extends Step {
             QualityGateEvaluator qualityGate = new QualityGateEvaluator();
             qualityGate.addAll(qualityGates);
 
+            AnnotatedReport report = new AnnotatedReport(StringUtils.defaultIfEmpty(id, reports.get(0).getId()));
+            if (reports.size() > 1) {
+                report.logInfo("Aggregating reports of:");
+                LabelProviderFactory factory = new LabelProviderFactory();
+                for (AnnotatedReport subReport : reports) {
+                    StaticAnalysisLabelProvider labelProvider = factory.create(subReport.getId());
+                    report.logInfo("-> %s", labelProvider.getToolTip(subReport.size()));
+                }
+            }
+            report.addAll(reports);
+
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
-                    getCharset(sourceCodeEncoding), getLogger());
+                    getCharset(sourceCodeEncoding), getLogger(report));
             return publisher.attachAction();
         }
 
-        private LogHandler getLogger() throws InterruptedException {
+        private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {
             String toolName = new LabelProviderFactory().create(report.getId(), name).getName();
             return new LogHandler(getTaskListener(), toolName, report.getReport());
         }
