@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.0...master)
 
+## [3.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.1...warnings-ng-3.0.0) - 2019-2-13
+
 ### Added
 - [JENKINS-54550](https://issues.jenkins-ci.org/browse/JENKINS-54550), 
 [JENKINS-52098](https://issues.jenkins-ci.org/browse/JENKINS-52098):

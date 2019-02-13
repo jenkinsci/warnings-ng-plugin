@@ -28,8 +28,8 @@
     <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>2.1.1</analysis-model-api.version>
-    <analysis-model.version>2.1.1</analysis-model.version>
+    <analysis-model-api.version>2.1.2</analysis-model-api.version>
+    <analysis-model.version>2.1.2</analysis-model.version>
 
     <commons.lang.version>3.8.1</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
