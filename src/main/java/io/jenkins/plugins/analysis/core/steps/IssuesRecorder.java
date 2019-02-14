@@ -144,11 +144,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *         the minimum number of issues that fails the quality gate
      * @param type
      *         the type of the quality gate
-     * @param strength
+     * @param result
      *         determines whether the quality gate is a warning or failure
      */
-    public void addQualityGate(final int size, final QualityGateType type, final QualityGateResult strength) {
-        qualityGates.add(new QualityGate(size, type, strength));
+    public void addQualityGate(final int size, final QualityGateType type, final QualityGateResult result) {
+        qualityGates.add(new QualityGate(size, type, result));
     }
 
     public List<QualityGate> getQualityGates() {

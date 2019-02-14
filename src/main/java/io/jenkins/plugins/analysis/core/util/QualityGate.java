@@ -48,6 +48,10 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         status = unstable ? QualityGateStatus.WARNING : QualityGateStatus.FAILED;
     }
 
+    public boolean getUnstable() {
+        return status == QualityGateStatus.WARNING;
+    }
+
     public QualityGateType getType() {
         return type;
     }
