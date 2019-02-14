@@ -33,7 +33,7 @@ public class AndroidLint extends ReportScanningTool {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol({"androidLintParser", "androidLint"})
+    @Symbol("androidLintParser")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */

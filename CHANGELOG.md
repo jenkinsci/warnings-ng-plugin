@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Fixed broken quality gate UI configuration (snippet generator).
 - [JENKINS-50355](https://issues.jenkins-ci.org/browse/JENKINS-50355): 
 Fixed validation of DRY thresholds.
+- [JENKINS-56103](https://issues.jenkins-ci.org/browse/JENKINS-56103): 
+Changed ID/URL of Maven Console Parser to 'maven-warnings' since 'maven' is already used by another plugin. 
+- [JENKINS-55436](https://issues.jenkins-ci.org/browse/JENKINS-55436): 
+Changed step symbol of PMD to 'pmdParser' and AndroidLint to 'androidLintParser' since 'pmd' and 'androidLint' are 
+already used as step names of other plugins. 
 
 ## [3.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.1...warnings-ng-3.0.0) - 2019-2-13
 
