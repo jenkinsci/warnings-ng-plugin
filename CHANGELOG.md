@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.0...master)
+## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.0...master)
+
+### Fixed
+- [JENKINS-56142](https://issues.jenkins-ci.org/browse/JENKINS-56142): 
+Fixed broken quality gate UI configuration (snippet generator).
 
 ## [3.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.1...warnings-ng-3.0.0) - 2019-2-13
 
