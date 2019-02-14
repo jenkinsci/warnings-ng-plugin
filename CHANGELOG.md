@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - [JENKINS-56142](https://issues.jenkins-ci.org/browse/JENKINS-56142): 
 Fixed broken quality gate UI configuration (snippet generator).
+- [JENKINS-50355](https://issues.jenkins-ci.org/browse/JENKINS-50355): 
+Fixed validation of DRY thresholds.
 
 ## [3.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-2.2.1...warnings-ng-3.0.0) - 2019-2-13
 

@@ -141,7 +141,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          * @param id
          *         ID of the tool
          */
-        protected DryDescriptor(final String id) {
+        DryDescriptor(final String id) {
             super(id);
         }
 
@@ -155,11 +155,9 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          *
          * @return the validation result
          */
-        // TODO: see JENKINS-50355
-        public FormValidation doCheckHighThreshold(@QueryParameter final int highThreshold,
-                @QueryParameter final int normalThreshold) {
-//            return VALIDATION.validateHigh(highThreshold, normalThreshold);
-            return FormValidation.ok();
+        public FormValidation doCheckHighThreshold(@QueryParameter(value = "highThreshold") final int highThreshold,
+                @QueryParameter(value = "normalThreshold") final int normalThreshold) {
+            return VALIDATION.validateHigh(highThreshold, normalThreshold);
         }
 
         /**
@@ -172,11 +170,9 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          *
          * @return the validation result
          */
-        // TODO: see JENKINS-50355
-        public FormValidation doCheckNormalThreshold(@QueryParameter final int highThreshold,
-                @QueryParameter final int normalThreshold) {
-//            return VALIDATION.validateNormal(highThreshold, normalThreshold);
-            return FormValidation.ok();
+        public FormValidation doCheckNormalThreshold(@QueryParameter(value = "highThreshold") final int highThreshold,
+                @QueryParameter(value = "normalThreshold") final int normalThreshold) {
+            return VALIDATION.validateNormal(highThreshold, normalThreshold);
         }
     }
 
