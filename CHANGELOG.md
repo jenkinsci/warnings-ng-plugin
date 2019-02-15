@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.0...master)
+## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.1...master)
+
+## [3.0.1](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.0...warnings-ng-3.0.1) - 2019-2-15
 
 ### Fixed
 - [JENKINS-56142](https://issues.jenkins-ci.org/browse/JENKINS-56142): 
