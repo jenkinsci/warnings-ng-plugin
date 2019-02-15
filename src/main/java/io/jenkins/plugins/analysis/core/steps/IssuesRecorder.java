@@ -288,15 +288,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             if (instance.getPlugin("pmd") != null) {
                 throw new IllegalArgumentException("No valid tool defined! You probably used the symbol 'pmd' in "
                         + "your tool definition. This symbol is also used in the PMD plugin. In this case you must "
-                        + "use the symbol 'pmdParser' instead, see JENKINS-55328. The symbol 'pmd' can be used only "
-                        + "if the PMD plugin is not installed. "
+                        + "use the symbol 'pmdParser' instead, see JENKINS-55328. "
                         + checkstyleError);
             }
             if (instance.getPlugin("androidLint") != null) {
                 throw new IllegalArgumentException("No valid tool defined! You probably used the symbol 'androidLint' in "
                         + "your tool definition. This symbol is also used in the Android Lint plugin. In this case you must "
-                        + "use the symbol 'androidLintParser' instead, see JENKINS-55328. The symbol 'androidLint' can be used only "
-                        + "if the Android Lint plugin is not installed. "
+                        + "use the symbol 'androidLintParser' instead, see JENKINS-55328. "
                         + checkstyleError);
             }
             throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
