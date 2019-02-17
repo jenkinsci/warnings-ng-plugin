@@ -83,6 +83,10 @@ public class ResetQualityGateCommand {
             return false;
         }
 
+        if (selectedBuild.getNextBuild() != null) {
+            return false;
+        }
+
         List<ResetReferenceAction> actions = selectedBuild.getActions(ResetReferenceAction.class);
         if (actions.stream().map(ResetReferenceAction::getId).anyMatch(id::equals)) {
             return false;

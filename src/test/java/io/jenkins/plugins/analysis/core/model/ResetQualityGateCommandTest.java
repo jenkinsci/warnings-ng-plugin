@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Test;
 
+import hudson.model.FreeStyleBuild;
 import hudson.model.Item;
-import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
@@ -33,7 +33,7 @@ class ResetQualityGateCommandTest {
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
         ResultAction resultAction = createResultAction(status, ID);
-        Run<?, ?> selectedBuild = attachReferenceBuild(true, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, resultAction);
 
         assertThat(command.isEnabled(selectedBuild, ID)).isTrue();
     }
@@ -44,7 +44,7 @@ class ResetQualityGateCommandTest {
 
         command.setJenkinsFacade(configureCorrectUserRights(false));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, ID);
-        Run<?, ?> selectedBuild = attachReferenceBuild(true, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, resultAction);
 
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
     }
@@ -55,7 +55,7 @@ class ResetQualityGateCommandTest {
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, ID);
-        Run<?, ?> selectedBuild = attachReferenceBuild(false, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(false, resultAction);
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
 
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
@@ -67,7 +67,7 @@ class ResetQualityGateCommandTest {
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
         ResultAction resultAction = createResultAction(QualityGateStatus.PASSED, ID);
-        Run<?, ?> selectedBuild = attachReferenceBuild(true, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, resultAction);
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
 
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
@@ -78,7 +78,7 @@ class ResetQualityGateCommandTest {
         ResetQualityGateCommand command = new ResetQualityGateCommand();
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
-        Run<?, ?> selectedBuild = mock(Run.class);
+        FreeStyleBuild selectedBuild = mock(FreeStyleBuild.class);
         when(selectedBuild.getActions(ResetReferenceAction.class)).thenReturn(
                 Lists.list(new ResetReferenceAction("other")));
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.emptyList());
@@ -92,9 +92,22 @@ class ResetQualityGateCommandTest {
 
         command.setJenkinsFacade(configureCorrectUserRights(true));
         ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, "other");
-        Run<?, ?> selectedBuild = attachReferenceBuild(true, resultAction);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, resultAction);
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
 
+        assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
+    }
+
+    @Test
+    void shouldBeDisabledIfNotLastResultAction() {
+        ResetQualityGateCommand command = new ResetQualityGateCommand();
+
+        command.setJenkinsFacade(configureCorrectUserRights(true));
+        ResultAction resultAction = createResultAction(QualityGateStatus.WARNING, ID);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, resultAction);
+        FreeStyleBuild next = mock(FreeStyleBuild.class);
+        when(selectedBuild.getNextBuild()).thenReturn(next);
+        
         assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
     }
 
@@ -111,7 +124,7 @@ class ResetQualityGateCommandTest {
         when(result.getQualityGateStatus()).thenReturn(status);
 
         // Reference build is set
-        Run<?, ?> referenceBuild = mock(Run.class);
+        FreeStyleBuild referenceBuild = mock(FreeStyleBuild.class);
         when(result.getReferenceBuild()).thenReturn(Optional.of(referenceBuild));
 
         when(resultAction.getResult()).thenReturn(result);
@@ -119,9 +132,9 @@ class ResetQualityGateCommandTest {
         return resultAction;
     }
 
-    private Run<?, ?> attachReferenceBuild(final boolean hasNoReferenceBuild,
+    private FreeStyleBuild attachReferenceBuild(final boolean hasNoReferenceBuild,
             final ResultAction resultAction) {
-        Run<?, ?> selectedBuild = mock(Run.class);
+        FreeStyleBuild selectedBuild = mock(FreeStyleBuild.class);
         when(selectedBuild.getActions(ResetReferenceAction.class)).thenReturn(
                 Lists.list(new ResetReferenceAction(hasNoReferenceBuild ? "other" : ID)));
         when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
