@@ -307,7 +307,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindAllSpotBugsIssues() {
         Report report = shouldFindIssuesOfTool(2, new SpotBugs(), "spotbugsXml.xml");
 
-        assertThatDescriptionOfIssueIsSet(new FindBugs(), report.get(0),
+        assertThatDescriptionOfIssueIsSet(new SpotBugs(), report.get(0),
                 "<p>This code calls a method and ignores the return value. However our analysis shows that\n"
                         + "the method (including its implementations in subclasses if any) does not produce any effect \n"
                         + "other than return value. Thus this call can be removed.\n"
@@ -320,6 +320,18 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                         + "<p>If you feel that our assumption is incorrect, you can use a @CheckReturnValue annotation\n"
                         + "to instruct FindBugs that ignoring the return value of this method is acceptable.\n"
                         + "</p>");
+    }
+
+    /** Runs the SpotBugs parser on an output file that contains 2 issues. */
+    @Test
+    public void shouldProvideMessagesAndDescriptionForSecurityIssuesWithSpotBugs() {
+        Report report = shouldFindIssuesOfTool(1, new SpotBugs(), "issue55707.xml");
+
+        Issue issue = report.get(0);
+        assertThatDescriptionOfIssueIsSet(new SpotBugs(), issue,
+                "<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter. \n"
+                        + "If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>\n");
+        assertThat(issue).hasMessage("java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
     }
 
     /** Runs the Clang-Tidy parser on an output file that contains 6 issues. */

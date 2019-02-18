@@ -8,8 +8,9 @@ import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.FindBugsMessages.Pattern;
+
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 
 /**
  * Tests the class {@link FindBugsMessages}.
@@ -23,6 +24,7 @@ class FindBugsMessagesTest {
     private static final int EXPECTED_CONTRIB_PATTERNS = 302;
     /** Expected number of patterns in find-sec-bugs. */
     private static final int EXPECTED_SECURITY_PATTERNS = 128;
+    private static final String PATH_TRAVERSAL_IN = "PATH_TRAVERSAL_IN";
 
     @Test
     void shouldReadAllMessageFiles() {
@@ -70,6 +72,15 @@ class FindBugsMessagesTest {
                 .contains("Stocke une valeur null dans");
         assertThat(messages.getMessage(NP_STORE_INTO_NONNULL_FIELD, Locale.FRANCE))
                 .contains("Une valeur qui pourrait");
+    }
+
+    @Test
+    void issue55707() {
+        FindBugsMessages messages = createMessages();
+        assertThat(messages.getShortMessage(PATH_TRAVERSAL_IN, Locale.ENGLISH))
+                .isEqualTo("Potential Path Traversal (file read)");
+        assertThat(messages.getMessage(PATH_TRAVERSAL_IN, Locale.ENGLISH))
+                .contains("A file is opened to read its content. The filename comes from an <b>input</b> parameter. ");
     }
 
     private List<Pattern> readMessages(final String fileName) {

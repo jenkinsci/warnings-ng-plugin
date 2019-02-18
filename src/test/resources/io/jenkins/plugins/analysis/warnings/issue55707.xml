@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BugCollection version="3.1.11" sequence="0" timestamp="1550507249630" analysisTimestamp="1550507249796" release="">
+  <Project projectName="">
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\CachedZooKeeperConfigurationReader.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\ConfigurationReader.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\ConfigurationReaderFactory.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\FileConfigurationReader.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\FileKeyPair.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\updater\DelayedPushUpdateStrategy.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\updater\NoUpdateStrategy.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\updater\UpdateStrategy.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\ValidateConfigurationDecorator.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\ZooKeeperConfigurationReader.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\ZooKeeperPathListener$1.class</Jar>
+    <Jar>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main\com\invidi\im\reader\ZooKeeperPathListener.class</Jar>
+    <AuxClasspathEntry>C:\Users\pgelinas\git\AximCommon\configReader\build\classes\java\main</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\git\AximCommon\util\build\libs\util-2.0.0-SNAPSHOT.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\git\AximCommon\properties\build\libs\properties-2.0.0-SNAPSHOT.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\git\AximCommon\api\build\libs\api-2.0.0-SNAPSHOT.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-slf4j-impl\2.11.2\4d44e4edc4a7fb39f09b95b09f560a15976fa1ba\log4j-slf4j-impl-2.11.2.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-core\2.11.2\6c2fb3f5b7cd27504726aef1b674b542a0c9cf53\log4j-core-2.11.2.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-jul\2.11.2\194e36a54b0c292aad6fab90340ab45002fd8ad\log4j-jul-2.11.2.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.apache.logging.log4j\log4j-api\2.11.2\f5e9a2ffca496057d6891a3de65128efc636e26e\log4j-api-2.11.2.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\com.google.inject\guice\4.2.2\6dacbe18e5eaa7f6c9c36db33b42e7985e94ce77\guice-4.2.2.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.grpc\grpc-protobuf\1.15.1\6386e5c36640f2f18563d7a855553c11a272b353\grpc-protobuf-1.15.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.apache.curator\curator-recipes\4.0.1\8d6f47e7c8ed3c9b1cd2301f05d7bf1341b47e9f\curator-recipes-4.0.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.apache.curator\curator-framework\4.0.1\3da85d2bda41cb43dc18c089820b67d12ba38826\curator-framework-4.0.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.apache.curator\curator-client\4.0.1\e2e76f0f6803a3f5d06bc19e2a250c478ea24900\curator-client-4.0.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.grpc\grpc-stub\1.15.1\b61730cd8701cdd3825e03839be63dd5df110c76\grpc-stub-1.15.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.grpc\grpc-netty\1.15.1\134ecd83a1d48dca5ac45993ae62edc00ccfbf7c\grpc-netty-1.15.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.grpc\grpc-protobuf-lite\1.15.1\4e5b6e20ed34d3fde8fadcbec333c26ea807da9b\grpc-protobuf-lite-1.15.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.grpc\grpc-core\1.15.1\e9d7022af21dd4bc934aae07c86d58cfbc6b5caf\grpc-core-1.15.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\com.google.guava\guava\25.1-android\bdaab946ca5ad20253502d873ba0c3313d141036\guava-25.1-android.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.apache.zookeeper\zookeeper\3.4.10\8eebdbb7a9df83e02eaa42d0e5da0b57bf2e4da\zookeeper-3.4.10.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\com.lmax\disruptor\3.3.11\2bad093e7a5e194aa872140fd97d9f075822dace\disruptor-3.3.11.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\javax.inject\javax.inject\1\6975da39a7040257bd51d21a231b76c915872d38\javax.inject-1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\aopalliance\aopalliance\1.0\235ba8b489512805ac13a8f9ea77a1ca5ebe3e8\aopalliance-1.0.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\commons-validator\commons-validator\1.6\e989d1e87cdd60575df0765ed5bac65c905d7908\commons-validator-1.6.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.slf4j\slf4j-api\1.7.25\da76ca59f6a57ee3102f8f9bd9cee742973efa8a\slf4j-api-1.7.25.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\com.google.code.findbugs\jsr305\3.0.2\25ea2e8b0c338a877313bd4672d3fe056ea78f0d\jsr305-3.0.2.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.checkerframework\checker-compat-qual\2.0.0\fc89b03860d11d6213d0154a62bcd1c2f69b9efa\checker-compat-qual-2.0.0.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.opencensus\opencensus-contrib-grpc-metrics\0.12.3\a4c7ff238a91b901c8b459889b6d0d7a9d889b4d\opencensus-contrib-grpc-metrics-0.12.3.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.opencensus\opencensus-api\0.12.3\743f074095f29aa985517299545e72cc99c87de0\opencensus-api-0.12.3.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\com.google.errorprone\error_prone_annotations\2.2.0\88e3c593e9b3586e1c6177f89267da6fc6986f0c\error_prone_annotations-2.2.0.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\com.google.j2objc\j2objc-annotations\1.1\976d8d30bebc251db406f2bdb3eb01962b5685b3\j2objc-annotations-1.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\org.codehaus.mojo\animal-sniffer-annotations\1.17\f97ce6decaea32b36101e37979f8b647f00681fb\animal-sniffer-annotations-1.17.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\commons-beanutils\commons-beanutils\1.9.2\7a87d845ad3a155297e8f67d9008f4c1e5656b71\commons-beanutils-1.9.2.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\commons-digester\commons-digester\1.8.1\3dec9b9c7ea9342d4dbe8c38560080d85b44a015\commons-digester-1.8.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\commons-logging\commons-logging\1.2\4bfc12adfe4842bf07b657f0369c4cb522955686\commons-logging-1.2.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\commons-collections\commons-collections\3.2.2\8ad72fe39fa8c91eaaf12aadb21e0c3661fe26d5\commons-collections-3.2.2.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\com.google.protobuf\protobuf-java\3.5.1\8c3492f7662fa1cbf8ca76a0f5eb1146f7725acd\protobuf-java-3.5.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\com.google.api.grpc\proto-google-common-protos\1.0.0\86f070507e28b930e50d218ee5b6788ef0dd05e6\proto-google-common-protos-1.0.0.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-codec-http2\4.1.27.Final\3769790a2033667d663f9a526d5b63cfecdbdf4e\netty-codec-http2-4.1.27.Final.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-handler-proxy\4.1.27.Final\1a822ce7760bc6eb4937b7e448c9e081fedcc807\netty-handler-proxy-4.1.27.Final.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.grpc\grpc-context\1.15.1\ee8bffdc0aeb7e306c5cfc3e49a433506cb70add\grpc-context-1.15.1.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\com.google.code.gson\gson\2.7\751f548c85fa49f330cecbb1875893f971b33c4e\gson-2.7.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-codec-http\4.1.27.Final\a1722d6bcbbef1c4c7877e8bf38b07a3db5ed07f\netty-codec-http-4.1.27.Final.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-handler\4.1.27.Final\21bd9cf565390a8d72579b8664303e3c175dfc6a\netty-handler-4.1.27.Final.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-codec-socks\4.1.27.Final\285b09af98764cf02e4b77b3d95af188469a7133\netty-codec-socks-4.1.27.Final.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-codec\4.1.27.Final\d2653d78ebaa650064768fb26b10051f5c8efb2c\netty-codec-4.1.27.Final.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-transport\4.1.27.Final\b5c2da3ea89dd67320925f1504c9eb3615241b7c\netty-transport-4.1.27.Final.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-buffer\4.1.27.Final\aafe2b9fb0d8f3b200cf10b9fd6486c6a722d7a1\netty-buffer-4.1.27.Final.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-resolver\4.1.27.Final\2536447ef9605ccb2b5203aa22392c6514484ea9\netty-resolver-4.1.27.Final.jar</AuxClasspathEntry>
+    <AuxClasspathEntry>C:\Users\pgelinas\.gradle\caches\modules-2\files-2.1\io.netty\netty-common\4.1.27.Final\6a12a969c27fb37b230c4bde5a67bd822fa6b7a4\netty-common-4.1.27.Final.jar</AuxClasspathEntry>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\CachedZooKeeperConfigurationReader.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\ConfigurationReader.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\ConfigurationReaderFactory.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\FileConfigurationReader.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\FileKeyPair.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\updater\DelayedPushUpdateStrategy.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\updater\NoUpdateStrategy.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\updater\UpdateStrategy.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\ValidateConfigurationDecorator.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\ZooKeeperConfigurationReader.java</SrcDir>
+    <SrcDir>C:\Users\pgelinas\git\AximCommon\configReader\src\main\java\com\invidi\im\reader\ZooKeeperPathListener.java</SrcDir>
+    <Plugin id="com.h3xstream.findsecbugs" enabled="true"/>
+  </Project>
+  <BugInstance type="PATH_TRAVERSAL_IN" priority="2" rank="12" abbrev="SECPTI" category="SECURITY" instanceHash="8dd6301b4af78aa754ccec2d50a38664" instanceOccurrenceNum="0" instanceOccurrenceMax="0" cweid="22">
+    <ShortMessage>Potential Path Traversal (file read)</ShortMessage>
+    <LongMessage>java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input</LongMessage>
+    <Class classname="com.invidi.im.reader.ConfigurationReaderFactory" primary="true">
+      <SourceLine classname="com.invidi.im.reader.ConfigurationReaderFactory" start="31" end="105" sourcefile="ConfigurationReaderFactory.java" sourcepath="com/invidi/im/reader/ConfigurationReaderFactory.java" relSourcepath="com\invidi\im\reader\ConfigurationReaderFactory.java">
+        <Message>At ConfigurationReaderFactory.java:[lines 31-105]</Message>
+      </SourceLine>
+      <Message>In class com.invidi.im.reader.ConfigurationReaderFactory</Message>
+    </Class>
+    <Method classname="com.invidi.im.reader.ConfigurationReaderFactory" name="lambda$constructTestModeProperties$1" signature="(Ljava/lang/String;)Ljava/nio/file/Path;" isStatic="true" primary="true">
+      <SourceLine classname="com.invidi.im.reader.ConfigurationReaderFactory" start="84" end="84" startBytecode="0" endBytecode="50" sourcefile="ConfigurationReaderFactory.java" sourcepath="com/invidi/im/reader/ConfigurationReaderFactory.java" relSourcepath="com\invidi\im\reader\ConfigurationReaderFactory.java"/>
+      <Message>In method com.invidi.im.reader.ConfigurationReaderFactory.lambda$constructTestModeProperties$1(String)</Message>
+    </Method>
+    <SourceLine classname="com.invidi.im.reader.ConfigurationReaderFactory" primary="true" start="84" end="84" startBytecode="5" endBytecode="5" sourcefile="ConfigurationReaderFactory.java" sourcepath="com/invidi/im/reader/ConfigurationReaderFactory.java" relSourcepath="com\invidi\im\reader\ConfigurationReaderFactory.java">
+      <Message>At ConfigurationReaderFactory.java:[line 84]</Message>
+    </SourceLine>
+    <String value="java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;" role="Sink method">
+      <Message>Sink method java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;</Message>
+    </String>
+    <String value="java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;" role="Sink method">
+      <Message>Sink method java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path;</Message>
+    </String>
+    <String value="not detected" role="Method usage">
+      <Message>Method usage not detected</Message>
+    </String>
+  </BugInstance>
+  <BugCategory category="SECURITY">
+    <Description>Security</Description>
+  </BugCategory>
+  <BugPattern type="PATH_TRAVERSAL_IN" abbrev="SECPTI" category="SECURITY" cweid="22">
+    <ShortDescription>Potential Path Traversal (file read)</ShortDescription>
+    <Details><![CDATA[
+            
+<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter. 
+If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>
+<p>This rule identifies <b>potential</b> path traversal vulnerabilities. In many cases, the constructed file path cannot be controlled
+by the user. If that is the case, the reported instance is a false positive.</p>
+<br/>
+
+<p>
+    <b>Vulnerable Code:</b><br/>
+<pre>@GET
+@Path("/images/{image}")
+@Produces("images/*")
+public Response getImage(@javax.ws.rs.PathParam("image") String image) {
+    File file = new File("resources/images/", image); //Weak point
+
+    if (!file.exists()) {
+        return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok().entity(new FileInputStream(file)).build();
+}</pre>
+</p>
+<br/>
+
+<p>
+    <b>Solution:</b><br/>
+<pre>import org.apache.commons.io.FilenameUtils;
+
+@GET
+@Path("/images/{image}")
+@Produces("images/*")
+public Response getImage(@javax.ws.rs.PathParam("image") String image) {
+    File file = new File("resources/images/", FilenameUtils.getName(image)); //Fix
+
+    if (!file.exists()) {
+        return Response.status(Status.NOT_FOUND).build();
+    }
+
+    return Response.ok().entity(new FileInputStream(file)).build();
+}</pre>
+</p>
+<br/>
+<p>
+<b>References</b><br/>
+<a href="http://projects.webappsec.org/w/page/13246952/Path%20Traversal">WASC: Path Traversal</a><br/>
+<a href="https://www.owasp.org/index.php/Path_Traversal">OWASP: Path Traversal</a><br/>
+<a href="http://capec.mitre.org/data/definitions/126.html">CAPEC-126: Path Traversal</a><br/>
+<a href="http://cwe.mitre.org/data/definitions/22.html">CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')</a>
+</p>
+
+        ]]></Details>
+  </BugPattern>
+  <BugCode abbrev="SECPTI">
+    <Description>Potential Path Traversal (file read)</Description>
+  </BugCode>
+  <Errors errors="0" missingClasses="1">
+    <MissingClass>apply</MissingClass>
+  </Errors>
+  <FindBugsSummary timestamp="Mon, 18 Feb 2019 11:27:29 -0500" total_classes="12" referenced_classes="86" total_bugs="1" total_size="259" num_packages="2" java_version="11.0.1" vm_version="11.0.1+13-LTS" cpu_seconds="25.91" clock_seconds="8.27" peak_mbytes="213.13" alloc_mbytes="512.00" gc_seconds="0.06" priority_2="1">
+    <FileStats path="com/invidi/im/reader/CachedZooKeeperConfigurationReader.java" bugCount="0" size="55"/>
+    <FileStats path="com/invidi/im/reader/ConfigurationReader.java" bugCount="0" size="4"/>
+    <FileStats path="com/invidi/im/reader/ConfigurationReaderFactory.java" bugCount="1" size="51" bugHash="64a129efab094290691f3981e1dd7328"/>
+    <FileStats path="com/invidi/im/reader/FileConfigurationReader.java" bugCount="0" size="20"/>
+    <FileStats path="com/invidi/im/reader/FileKeyPair.java" bugCount="0" size="14"/>
+    <FileStats path="com/invidi/im/reader/ValidateConfigurationDecorator.java" bugCount="0" size="21"/>
+    <FileStats path="com/invidi/im/reader/ZooKeeperConfigurationReader.java" bugCount="0" size="42"/>
+    <FileStats path="com/invidi/im/reader/ZooKeeperPathListener.java" bugCount="0" size="22"/>
+    <FileStats path="com/invidi/im/reader/updater/DelayedPushUpdateStrategy.java" bugCount="0" size="23"/>
+    <FileStats path="com/invidi/im/reader/updater/NoUpdateStrategy.java" bugCount="0" size="5"/>
+    <FileStats path="com/invidi/im/reader/updater/UpdateStrategy.java" bugCount="0" size="2"/>
+    <PackageStats package="com.invidi.im.reader" total_bugs="1" total_types="9" total_size="229" priority_2="1">
+      <ClassStats class="com.invidi.im.reader.CachedZooKeeperConfigurationReader" sourceFile="CachedZooKeeperConfigurationReader.java" interface="false" size="55" bugs="0"/>
+      <ClassStats class="com.invidi.im.reader.ConfigurationReader" sourceFile="ConfigurationReader.java" interface="true" size="4" bugs="0"/>
+      <ClassStats class="com.invidi.im.reader.ConfigurationReaderFactory" sourceFile="ConfigurationReaderFactory.java" interface="false" size="51" bugs="1" priority_2="1"/>
+      <ClassStats class="com.invidi.im.reader.FileConfigurationReader" sourceFile="FileConfigurationReader.java" interface="false" size="20" bugs="0"/>
+      <ClassStats class="com.invidi.im.reader.FileKeyPair" sourceFile="FileKeyPair.java" interface="false" size="14" bugs="0"/>
+      <ClassStats class="com.invidi.im.reader.ValidateConfigurationDecorator" sourceFile="ValidateConfigurationDecorator.java" interface="false" size="21" bugs="0"/>
+      <ClassStats class="com.invidi.im.reader.ZooKeeperConfigurationReader" sourceFile="ZooKeeperConfigurationReader.java" interface="false" size="42" bugs="0"/>
+      <ClassStats class="com.invidi.im.reader.ZooKeeperPathListener" sourceFile="ZooKeeperPathListener.java" interface="false" size="18" bugs="0"/>
+      <ClassStats class="com.invidi.im.reader.ZooKeeperPathListener$1" sourceFile="ZooKeeperPathListener.java" interface="false" size="4" bugs="0"/>
+    </PackageStats>
+    <PackageStats package="com.invidi.im.reader.updater" total_bugs="0" total_types="3" total_size="30">
+      <ClassStats class="com.invidi.im.reader.updater.DelayedPushUpdateStrategy" sourceFile="DelayedPushUpdateStrategy.java" interface="false" size="23" bugs="0"/>
+      <ClassStats class="com.invidi.im.reader.updater.NoUpdateStrategy" sourceFile="NoUpdateStrategy.java" interface="false" size="5" bugs="0"/>
+      <ClassStats class="com.invidi.im.reader.updater.UpdateStrategy" sourceFile="UpdateStrategy.java" interface="true" size="2" bugs="0"/>
+    </PackageStats>
+    <FindBugsProfile>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassInfoAnalysisEngine" totalMilliseconds="1197" invocations="847" avgMicrosecondsPerInvocation="1413" maxMicrosecondsPerInvocation="48992" standardDeviationMicrosecondsPerInvocation="3643"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.ClassDataAnalysisEngine" totalMilliseconds="502" invocations="852" avgMicrosecondsPerInvocation="589" maxMicrosecondsPerInvocation="10792" standardDeviationMicrosecondsPerInvocation="604"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FieldItemSummary" totalMilliseconds="397" invocations="86" avgMicrosecondsPerInvocation="4622" maxMicrosecondsPerInvocation="127313" standardDeviationMicrosecondsPerInvocation="14590"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindNoSideEffectMethods" totalMilliseconds="254" invocations="86" avgMicrosecondsPerInvocation="2954" maxMicrosecondsPerInvocation="33874" standardDeviationMicrosecondsPerInvocation="5318"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.impl.ZipCodeBaseFactory" totalMilliseconds="249" invocations="48" avgMicrosecondsPerInvocation="5205" maxMicrosecondsPerInvocation="190788" standardDeviationMicrosecondsPerInvocation="27137"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.MethodGenFactory" totalMilliseconds="228" invocations="48" avgMicrosecondsPerInvocation="4763" maxMicrosecondsPerInvocation="197010" standardDeviationMicrosecondsPerInvocation="28058"/>
+      <ClassProfile name="com.h3xstream.findsecbugs.taintanalysis.TaintDataflowEngine" totalMilliseconds="190" invocations="46" avgMicrosecondsPerInvocation="4137" maxMicrosecondsPerInvocation="37107" standardDeviationMicrosecondsPerInvocation="8357"/>
+      <ClassProfile name="edu.umd.cs.findbugs.OpcodeStack$JumpInfoFactory" totalMilliseconds="181" invocations="286" avgMicrosecondsPerInvocation="635" maxMicrosecondsPerInvocation="5781" standardDeviationMicrosecondsPerInvocation="874"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.TypeDataflowFactory" totalMilliseconds="167" invocations="47" avgMicrosecondsPerInvocation="3569" maxMicrosecondsPerInvocation="52858" standardDeviationMicrosecondsPerInvocation="8895"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.BuildObligationPolicyDatabase" totalMilliseconds="132" invocations="86" avgMicrosecondsPerInvocation="1539" maxMicrosecondsPerInvocation="33090" standardDeviationMicrosecondsPerInvocation="4446"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.IsNullValueDataflowFactory" totalMilliseconds="119" invocations="46" avgMicrosecondsPerInvocation="2598" maxMicrosecondsPerInvocation="16355" standardDeviationMicrosecondsPerInvocation="3121"/>
+      <ClassProfile name="edu.umd.cs.findbugs.util.TopologicalSort" totalMilliseconds="119" invocations="807" avgMicrosecondsPerInvocation="147" maxMicrosecondsPerInvocation="4928" standardDeviationMicrosecondsPerInvocation="345"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.JavaClassAnalysisEngine" totalMilliseconds="118" invocations="165" avgMicrosecondsPerInvocation="718" maxMicrosecondsPerInvocation="40555" standardDeviationMicrosecondsPerInvocation="3474"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.NoteDirectlyRelevantTypeQualifiers" totalMilliseconds="117" invocations="86" avgMicrosecondsPerInvocation="1370" maxMicrosecondsPerInvocation="22673" standardDeviationMicrosecondsPerInvocation="3504"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindRefComparison$SpecialTypeAnalysis" totalMilliseconds="115" invocations="41" avgMicrosecondsPerInvocation="2810" maxMicrosecondsPerInvocation="36711" standardDeviationMicrosecondsPerInvocation="6124"/>
+      <ClassProfile name="edu.umd.cs.findbugs.ba.npe.NullDerefAndRedundantComparisonFinder" totalMilliseconds="102" invocations="46" avgMicrosecondsPerInvocation="2227" maxMicrosecondsPerInvocation="11539" standardDeviationMicrosecondsPerInvocation="2576"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.ValueNumberDataflowFactory" totalMilliseconds="101" invocations="48" avgMicrosecondsPerInvocation="2114" maxMicrosecondsPerInvocation="34245" standardDeviationMicrosecondsPerInvocation="5056"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.CFGFactory" totalMilliseconds="96" invocations="48" avgMicrosecondsPerInvocation="2015" maxMicrosecondsPerInvocation="41420" standardDeviationMicrosecondsPerInvocation="5840"/>
+      <ClassProfile name="edu.umd.cs.findbugs.classfile.engine.bcel.UnconditionalValueDerefDataflowFactory" totalMilliseconds="90" invocations="46" avgMicrosecondsPerInvocation="1958" maxMicrosecondsPerInvocation="8393" standardDeviationMicrosecondsPerInvocation="2111"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FunctionsThatMightBeMistakenForProcedures" totalMilliseconds="82" invocations="86" avgMicrosecondsPerInvocation="962" maxMicrosecondsPerInvocation="13900" standardDeviationMicrosecondsPerInvocation="2158"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.ExplicitSerialization" totalMilliseconds="75" invocations="86" avgMicrosecondsPerInvocation="881" maxMicrosecondsPerInvocation="30969" standardDeviationMicrosecondsPerInvocation="3920"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.FindOpenStream" totalMilliseconds="72" invocations="12" avgMicrosecondsPerInvocation="6001" maxMicrosecondsPerInvocation="40174" standardDeviationMicrosecondsPerInvocation="12331"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.CalledMethods" totalMilliseconds="69" invocations="86" avgMicrosecondsPerInvocation="808" maxMicrosecondsPerInvocation="11581" standardDeviationMicrosecondsPerInvocation="1834"/>
+      <ClassProfile name="edu.umd.cs.findbugs.detect.OverridingEqualsNotSymmetrical" totalMilliseconds="69" invocations="86" avgMicrosecondsPerInvocation="805" maxMicrosecondsPerInvocation="19929" standardDeviationMicrosecondsPerInvocation="2546"/>
+      <ClassProfile name="com.h3xstream.findsecbugs.injection.beans.BeanInjectionDetector" totalMilliseconds="65" invocations="12" avgMicrosecondsPerInvocation="5437" maxMicrosecondsPerInvocation="60153" standardDeviationMicrosecondsPerInvocation="16505"/>
+    </FindBugsProfile>
+  </FindBugsSummary>
+  <ClassFeatures></ClassFeatures>
+  <History></History>
+</BugCollection>
