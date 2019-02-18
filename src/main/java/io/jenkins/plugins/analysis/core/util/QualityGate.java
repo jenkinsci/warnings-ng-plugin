@@ -2,9 +2,12 @@ package io.jenkins.plugins.analysis.core.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -174,7 +177,11 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      * @return the list of quality gates
      */
     @SuppressWarnings({"deprecation", "npathcomplexity"})
-    public static List<QualityGate> map(final Thresholds thresholds) {
+    public static List<QualityGate> map(@Nullable final Thresholds thresholds) {
+        if (thresholds == null) {
+            return Collections.emptyList();
+        }
+
         List<QualityGate> gates = new ArrayList<>();
         if (thresholds.failedTotalAll > 0) {
             gates.add(new QualityGate(thresholds.failedTotalAll, QualityGateType.TOTAL, FAILURE));
