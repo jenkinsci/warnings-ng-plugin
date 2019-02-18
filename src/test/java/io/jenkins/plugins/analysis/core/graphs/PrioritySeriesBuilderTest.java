@@ -4,8 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import edu.hm.hafner.analysis.Severity;
+
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -39,7 +41,7 @@ class PrioritySeriesBuilderTest {
     void shouldHaveThreeValuesForSingleBuild() {
         PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
 
-        AnalysisResult singleResult = createBuildResult(1,
+        StaticAnalysisRun singleResult = createBuildResult(1,
                 1, 2, 3);
 
         LinesChartModel dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList(singleResult));
@@ -54,13 +56,13 @@ class PrioritySeriesBuilderTest {
         assertThat(dataSet.getValue("Low", 0)).isEqualTo(3);
     }
 
-    private AnalysisResult createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
+    private StaticAnalysisRun createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
             final int numberOfNormalPriorityIssues, final int numberOfLowPriorityIssues) {
-        AnalysisResult buildResult = mock(AnalysisResult.class);
+        StaticAnalysisRun buildResult = mock(StaticAnalysisRun.class);
 
-        when(buildResult.getTotalHighPrioritySize()).thenReturn(numberOfHighPriorityIssues);
-        when(buildResult.getTotalNormalPrioritySize()).thenReturn(numberOfNormalPriorityIssues);
-        when(buildResult.getTotalLowPrioritySize()).thenReturn(numberOfLowPriorityIssues);
+        when(buildResult.getTotalSizeOf(Severity.WARNING_HIGH)).thenReturn(numberOfHighPriorityIssues);
+        when(buildResult.getTotalSizeOf(Severity.WARNING_NORMAL)).thenReturn(numberOfNormalPriorityIssues);
+        when(buildResult.getTotalSizeOf(Severity.WARNING_LOW)).thenReturn(numberOfLowPriorityIssues);
 
         AnalysisBuild build = createRun(buildNumber);
         when(buildResult.getBuild()).thenReturn(build);

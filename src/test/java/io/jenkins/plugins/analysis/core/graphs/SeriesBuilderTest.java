@@ -15,6 +15,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static java.util.Arrays.*;
@@ -214,7 +215,7 @@ class SeriesBuilderTest {
         }
 
         @Override
-        protected List<Integer> computeSeries(final AnalysisResult current) {
+        protected List<Integer> computeSeries(final StaticAnalysisRun current) {
             return asList(count++, count++, count++);
 
         }

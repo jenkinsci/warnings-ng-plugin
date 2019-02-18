@@ -7,7 +7,7 @@ import java.time.temporal.ChronoUnit;
 
 import com.google.common.annotations.VisibleForTesting;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
  * Determines whether a build result is too old in order to be considered for a trend graph.
@@ -46,11 +46,11 @@ public class ResultTime {
      *
      * @return {@code true} if the build is too old
      */
-    public boolean isResultTooOld(final ChartModelConfiguration configuration, final AnalysisResult analysisRun) {
+    public boolean isResultTooOld(final ChartModelConfiguration configuration, final StaticAnalysisRun analysisRun) {
         return configuration.isDayCountDefined() && computeDayDelta(analysisRun) > configuration.getDayCount();
     }
 
-    private long computeDayDelta(final AnalysisResult result) {
+    private long computeDayDelta(final StaticAnalysisRun result) {
         return Math.abs(ChronoUnit.DAYS.between(toLocalDate(result.getBuild().getTimeInMillis()), today));
     }
 

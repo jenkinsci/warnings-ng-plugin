@@ -20,8 +20,8 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
+import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
  * Provides the base algorithms to create a data set for a static analysis graph. The actual series for each result
@@ -58,7 +58,7 @@ public abstract class SeriesBuilder {
      * @return the created data set
      */
     public LinesChartModel createDataSet(final ChartModelConfiguration configuration,
-            final Iterable<? extends AnalysisResult> results) {
+            final Iterable<? extends StaticAnalysisRun> results) {
         LinesChartModel dataSet;
         if (configuration.useBuildDateAsDomain()) {
             Map<LocalDate, List<Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, results));
@@ -72,10 +72,10 @@ public abstract class SeriesBuilder {
 
     @SuppressWarnings("rawtypes")
     private Map<AnalysisBuild, List<Integer>> createSeriesPerBuild(
-            final ChartModelConfiguration configuration, final Iterable<? extends AnalysisResult> results) {
+            final ChartModelConfiguration configuration, final Iterable<? extends StaticAnalysisRun> results) {
         int buildCount = 0;
         Map<AnalysisBuild, List<Integer>> valuesPerBuildNumber = Maps.newHashMap();
-        for (AnalysisResult current : results) {
+        for (StaticAnalysisRun current : results) {
             if (resultTime.isResultTooOld(configuration, current)) {
                 break;
             }
@@ -99,7 +99,7 @@ public abstract class SeriesBuilder {
      *
      * @return the series to plot
      */
-    protected abstract List<Integer> computeSeries(AnalysisResult current);
+    protected abstract List<Integer> computeSeries(StaticAnalysisRun current);
 
     /**
      * Creates a data set that contains a series per build number.
