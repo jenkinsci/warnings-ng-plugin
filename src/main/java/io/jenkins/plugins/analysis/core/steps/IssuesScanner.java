@@ -83,7 +83,7 @@ class IssuesScanner {
             }
         }
         else {
-            report.logInfo("Post processing issues on '%s' with encoding '%s'", getAgentName(workspace),
+            report.logInfo("Post processing issues on '%s' with source code encoding '%s'", getAgentName(workspace),
                     sourceCodeEncoding);
 
             result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
