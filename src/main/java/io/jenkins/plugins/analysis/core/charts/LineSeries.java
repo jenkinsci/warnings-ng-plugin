@@ -67,4 +67,14 @@ public class LineSeries {
     public void add(final int value) {
         data.add(0, value);
     }
+
+    /**
+     * Adds a new build result to this series.
+     *
+     * @param values
+     *         the new build result
+     */
+    public void addAll(final List<Integer> values) {
+        data.addAll(values);
+    }
 }

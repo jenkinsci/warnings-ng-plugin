@@ -2,6 +2,9 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
 
+import io.jenkins.plugins.analysis.core.graphs.ChartModelConfiguration;
+import io.jenkins.plugins.analysis.core.graphs.LinesChartModel;
+import io.jenkins.plugins.analysis.core.graphs.PrioritySeriesBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
@@ -11,8 +14,6 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  * @author Ullrich Hafner
  */
 public class SeverityChart {
-    private static final int MAX_BUILDS = 50;
-
     /**
      * Creates the chart for the specified results.
      *
@@ -21,27 +22,26 @@ public class SeverityChart {
      *
      * @return the chart model
      */
-    // TODO: make chart configurable
     public LineModel create(final Iterable<? extends StaticAnalysisRun> results) {
+        PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
+        LinesChartModel lineModel = builder.createDataSet(createConfiguration(), results);
+
         LineSeries high = createSeries(Severity.WARNING_HIGH);
+        high.addAll(lineModel.getValues("High"));
         LineSeries normal = createSeries(Severity.WARNING_NORMAL);
+        normal.addAll(lineModel.getValues("Normal"));
         LineSeries low = createSeries(Severity.WARNING_LOW);
+        low.addAll(lineModel.getValues("Low"));
 
         LineModel model = new LineModel();
         model.addSeries(low, normal, high);
-
-        for (StaticAnalysisRun result : results) {
-            high.add(result.getTotalSizeOf(Severity.WARNING_HIGH));
-            normal.add(result.getTotalSizeOf(Severity.WARNING_NORMAL));
-            low.add(result.getTotalSizeOf(Severity.WARNING_LOW));
-
-            model.addXAxisLabel(result.getBuild().getDisplayName()); // TODO: de-normalize
-            if (model.size() > MAX_BUILDS) {
-                break;
-            }
-        }
+        model.addXAxisLabels(lineModel.getXLabels());
 
         return model;
+    }
+
+    private ChartModelConfiguration createConfiguration() {
+        return new ChartModelConfiguration();
     }
 
     private LineSeries createSeries(final Severity severity) {

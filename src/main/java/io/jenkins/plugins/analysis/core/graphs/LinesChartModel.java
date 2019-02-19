@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import edu.hm.hafner.util.Ensure;
+
 /**
  * FIXME: comment class.
  *
@@ -49,5 +51,15 @@ public class LinesChartModel {
             dataSets.add(values.get(dataSetId));
         }
         return dataSets;
+    }
+
+    public List<Integer> getValues(final String dataSetId) {
+        Ensure.that(values.containsKey(dataSetId)).isTrue();
+
+        return values.get(dataSetId);
+    }
+
+    public List<String> getXLabels() {
+        return xAxis;
     }
 }

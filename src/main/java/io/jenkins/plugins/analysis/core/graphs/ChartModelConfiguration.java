@@ -6,9 +6,9 @@ package io.jenkins.plugins.analysis.core.graphs;
  * @author Ullrich Hafner
  */
 public class ChartModelConfiguration {
-    private boolean useBuildDate;
-    private int buildCount;
-    private int dayCount;
+    private boolean useBuildDate = false;
+    private int buildCount = 50;
+    private int dayCount = 0;
 
     /**
      * Returns whether the build date or the build number should be used as domain.

@@ -30,17 +30,17 @@ class SeverityChartTest {
         
         LineModel model = chart.create(results);
 
+        verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 3, 6);
+        verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 2, 4);
+        verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 1, 2);
+
         assertThatJson(model).node("xAxisLabels")
                 .isArray().hasSize(2)
                 .contains("#1")
                 .contains("#2");
-        
+
         assertThatJson(model).node("series")
                 .isArray().hasSize(3);
-
-        verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 3, 6);
-        verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 2, 4);
-        verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 1, 2);
     }
 
     private void verifySeries(final LineSeries high, final Severity severity, 
