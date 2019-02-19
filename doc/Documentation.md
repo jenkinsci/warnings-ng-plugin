@@ -751,5 +751,5 @@ Examples:
 ## Not Yet Supported Features
 
 Some of the existing features of the Warnings plugin are not yet ported to the API. These will be added one by one. Feel
-free to create an issue or vote for an issue in our [issue tracker](https://issues.jenkins-ci.org/issues/?jql=project%20%3D%20JENKINS%20AND%20resolution%20%3D%20Unresolved%20AND%20component%20in%20(analysis-model%2C%20analysis-model-api-plugin%2C%20warnings-ng-plugin\)). 
+free to create an issue or vote for an issue in our [issue tracker](https://issues.jenkins-ci.org/issues/?jql=project%20%3D%20JENKINS%20AND%20resolution%20%3D%20Unresolved%20AND%20component%20in%20%28analysis-model%2C%20analysis-model-api-plugin%2C%20warnings-ng-plugin%29). 
 
