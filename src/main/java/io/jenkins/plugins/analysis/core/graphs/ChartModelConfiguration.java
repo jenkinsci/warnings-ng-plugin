@@ -31,8 +31,8 @@ public class ChartModelConfiguration {
     /**
      * Returns whether a valid build count is defined.
      *
-     * @return <code>true</code> if there is a valid build count is defined,
-     *         <code>false</code> otherwise
+     * @return {@code true} if there is a valid build count is defined,
+     *         {@code false} otherwise
      */
     public boolean isBuildCountDefined() {
         return buildCount > 1;
@@ -50,8 +50,8 @@ public class ChartModelConfiguration {
     /**
      * Returns whether a valid day count is defined.
      *
-     * @return <code>true</code> if there is a valid day count is defined,
-     *         <code>false</code> otherwise
+     * @return {@code true} if there is a valid day count is defined,
+     *         {@code false} otherwise
      */
     public boolean isDayCountDefined() {
         return dayCount > 0;

@@ -5,11 +5,17 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.multimap.list.FastListMultimap;
 
 import com.google.common.collect.Lists;
@@ -22,6 +28,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+
+import static java.util.stream.Collectors.*;
 
 /**
  * Provides the base algorithms to create a data set for a static analysis graph. The actual series for each result
@@ -61,7 +69,7 @@ public abstract class SeriesBuilder {
             final Iterable<? extends StaticAnalysisRun> results) {
         LinesChartModel dataSet;
         if (configuration.useBuildDateAsDomain()) {
-            Map<LocalDate, List<Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, results));
+            SortedMap<LocalDate, Map<String, Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, results));
             dataSet = createDataSetPerDay(averagePerDay);
         }
         else {
@@ -71,15 +79,16 @@ public abstract class SeriesBuilder {
     }
 
     @SuppressWarnings("rawtypes")
-    private Map<AnalysisBuild, List<Integer>> createSeriesPerBuild(
+    private SortedMap<AnalysisBuild, Map<String, Integer>> createSeriesPerBuild(
             final ChartModelConfiguration configuration, final Iterable<? extends StaticAnalysisRun> results) {
         int buildCount = 0;
-        Map<AnalysisBuild, List<Integer>> valuesPerBuildNumber = Maps.newHashMap();
+        SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuildNumber = new TreeMap<>();
         for (StaticAnalysisRun current : results) {
             if (resultTime.isResultTooOld(configuration, current)) {
                 break;
             }
-            valuesPerBuildNumber.put(current.getBuild(), computeSeries(current));
+            Map<String, Integer> series = computeSeries(current);
+            valuesPerBuildNumber.put(current.getBuild(), series);
 
             if (configuration.isBuildCountDefined()) {
                 buildCount++;
@@ -99,7 +108,7 @@ public abstract class SeriesBuilder {
      *
      * @return the series to plot
      */
-    protected abstract List<Integer> computeSeries(StaticAnalysisRun current);
+    protected abstract Map<String, Integer> computeSeries(StaticAnalysisRun current);
 
     /**
      * Creates a data set that contains a series per build number.
@@ -109,18 +118,12 @@ public abstract class SeriesBuilder {
      *
      * @return a data set
      */
-    private LinesChartModel createDataSetPerBuildNumber(final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
+    private LinesChartModel createDataSetPerBuildNumber(final SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
         LinesChartModel model = new LinesChartModel();
-        List<AnalysisBuild> builds = Lists.newArrayList(valuesPerBuild.keySet());
-        Collections.sort(builds);
-        for (AnalysisBuild build : builds) {
-            System.out.format("#%d%n", build.getNumber());
-            List<Integer> series = valuesPerBuild.get(build);
-            int level = 0;
-            for (Integer integer : series) {
-                model.add(integer, getRowId(level), build.getDisplayName());
-                level++;
-            }
+        for (Entry<AnalysisBuild, Map<String, Integer>> series : valuesPerBuild.entrySet()) {
+            String label = series.getKey().getDisplayName();
+            System.out.println(label);
+            model.add(label, series.getValue());
         }
         return model;
     }
@@ -134,19 +137,15 @@ public abstract class SeriesBuilder {
      * @return a data set
      */
     @SuppressWarnings("unchecked")
-    private LinesChartModel createDataSetPerDay(final Map<LocalDate, List<Integer>> averagePerDay) {
-        List<LocalDate> buildDates = Lists.newArrayList(averagePerDay.keySet());
-        Collections.sort(buildDates);
-
+    private LinesChartModel createDataSetPerDay(final SortedMap<LocalDate, Map<String, Integer>> averagePerDay) {
         LinesChartModel model = new LinesChartModel();
-        for (LocalDate date : buildDates) {
-            int level = 0;
-            for (Integer average : averagePerDay.get(date)) {
-                model.add(average, getRowId(level), new LocalDateLabel(date).toString());
-                level++;
-            }
+        for (Entry<LocalDate, Map<String, Integer>> series : averagePerDay.entrySet()) {
+            String label = new LocalDateLabel(series.getKey()).toString();
+            System.out.println(label);
+            model.add(label, series.getValue());
         }
         return model;
+
     }
 
     /**
@@ -157,30 +156,21 @@ public abstract class SeriesBuilder {
      *
      * @return the values as one series per day (average)
      */
-    private Map<LocalDate, List<Integer>> createSeriesPerDay(
-            final FastListMultimap<LocalDate, List<Integer>> multiSeriesPerDate) {
-        Map<LocalDate, List<Integer>> seriesPerDate = Maps.newHashMap();
+    private SortedMap<LocalDate, Map<String, Integer>> createSeriesPerDay(
+            final FastListMultimap<LocalDate, Map<String, Integer>> multiSeriesPerDate) {
+        SortedMap<LocalDate, Map<String, Integer>> seriesPerDate = new TreeMap<>();
 
         for (LocalDate date : multiSeriesPerDate.keySet()) {
-            Iterator<List<Integer>> perDayIterator = multiSeriesPerDate.get(date).iterator();
-            List<Integer> total = perDayIterator.next();
-            int seriesCount = 1;
-            while (perDayIterator.hasNext()) {
-                List<Integer> additional = perDayIterator.next();
-                seriesCount++;
+            MutableList<Map<String, Integer>> seriesPerDay = multiSeriesPerDate.get(date);
 
-                List<Integer> sum = Lists.newArrayList();
-                for (int i = 0; i < total.size(); i++) {
-                    sum.add(total.get(i) + additional.get(i));
-                }
-
-                total = sum;
-            }
-            List<Integer> series = Lists.newArrayList();
-            for (Integer totalValue : total) {
-                series.add(totalValue / seriesCount);
-            }
-            seriesPerDate.put(date, series);
+            Map<String, Integer> mapOfDay =
+                    seriesPerDay.stream()
+                            .flatMap(m -> m.entrySet().stream())
+                            .collect(groupingBy(Map.Entry::getKey, summingInt(Map.Entry::getValue)));
+            Map<String, Integer> averagePerDay =
+                    mapOfDay.entrySet().stream()
+                            .collect(Collectors.toMap(Entry::getKey, e-> e.getValue() / seriesPerDay.size()));
+            seriesPerDate.put(date, averagePerDay);
         }
         return seriesPerDate;
     }
@@ -193,8 +183,8 @@ public abstract class SeriesBuilder {
      *
      * @return the series per date
      */
-    private Map<LocalDate, List<Integer>> averageByDate(
-            final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
+    private SortedMap<LocalDate, Map<String, Integer>> averageByDate(
+            final SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
         return createSeriesPerDay(createMultiSeriesPerDay(valuesPerBuild));
     }
 
@@ -208,9 +198,9 @@ public abstract class SeriesBuilder {
      */
     @SuppressWarnings("rawtypes")
     @SuppressFBWarnings("WMI")
-    private FastListMultimap<LocalDate, List<Integer>> createMultiSeriesPerDay(
-            final Map<AnalysisBuild, List<Integer>> valuesPerBuild) {
-        FastListMultimap<LocalDate, List<Integer>> valuesPerDate = FastListMultimap.newMultimap();
+    private FastListMultimap<LocalDate, Map<String, Integer>> createMultiSeriesPerDay(
+            final Map<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
+        FastListMultimap<LocalDate, Map<String, Integer>> valuesPerDate = FastListMultimap.newMultimap();
         for (AnalysisBuild build : valuesPerBuild.keySet()) {
             LocalDate buildDate = Instant.ofEpochMilli(build.getTimeInMillis())
                     .atZone(ZoneId.systemDefault())
@@ -218,18 +208,6 @@ public abstract class SeriesBuilder {
             valuesPerDate.put(buildDate, valuesPerBuild.get(build));
         }
         return valuesPerDate;
-    }
-
-    /**
-     * Returns the row identifier for the specified level. This identifier will be used in the legend.
-     *
-     * @param level
-     *         the level
-     *
-     * @return the row identifier
-     */
-    protected String getRowId(final int level) {
-        return String.valueOf(level);
     }
 
     /**
@@ -244,15 +222,14 @@ public abstract class SeriesBuilder {
     public LinesChartModel createAggregation(final ChartModelConfiguration configuration,
             final Collection<AnalysisHistory> histories) {
         Set<LocalDate> availableDates = Sets.newHashSet();
-        Map<AnalysisHistory, Map<LocalDate, List<Integer>>> averagesPerJob = Maps.newHashMap();
+        Map<AnalysisHistory, Map<LocalDate, Map<String, Integer>>> averagesPerJob = Maps.newHashMap();
         for (AnalysisHistory history : histories) {
-            Map<LocalDate, List<Integer>> averageByDate = averageByDate(
+            Map<LocalDate, Map<String, Integer>> averageByDate = averageByDate(
                     createSeriesPerBuild(configuration, history));
             averagesPerJob.put(history, averageByDate);
             availableDates.addAll(averageByDate.keySet());
         }
-        return createDataSetPerDay(
-                createTotalsForAllAvailableDates(histories, availableDates, averagesPerJob));
+        return createDataSetPerDay(createTotalsForAllAvailableDates(histories, availableDates, averagesPerJob));
     }
 
     /**
@@ -268,43 +245,39 @@ public abstract class SeriesBuilder {
      *
      * @return the aggregated values
      */
-    private Map<LocalDate, List<Integer>> createTotalsForAllAvailableDates(
+    private SortedMap<LocalDate, Map<String, Integer>> createTotalsForAllAvailableDates(
             final Collection<AnalysisHistory> jobs,
             final Set<LocalDate> availableDates,
-            final Map<AnalysisHistory, Map<LocalDate, List<Integer>>> averagesPerJob) {
+            final Map<AnalysisHistory, Map<LocalDate, Map<String, Integer>>> averagesPerJob) {
         List<LocalDate> sortedDates = Lists.newArrayList(availableDates);
         Collections.sort(sortedDates);
 
-        Map<LocalDate, List<Integer>> totals = Maps.newHashMap();
+        SortedMap<LocalDate, Map<String, Integer>> totals = new TreeMap<>();
         for (AnalysisHistory jobResult : jobs) {
-            Map<LocalDate, List<Integer>> availableResults = averagesPerJob.get(jobResult);
-            List<Integer> lastResult = Collections.emptyList();
+            Map<LocalDate, Map<String, Integer>> availableResults = averagesPerJob.get(jobResult);
+            Map<String, Integer> previousResult = new HashMap<>();
             for (LocalDate buildDate : sortedDates) {
+                totals.putIfAbsent(buildDate, new HashMap<>());
+
+                Map<String, Integer> additionalResult;
                 if (availableResults.containsKey(buildDate)) {
-                    List<Integer> additionalResult = availableResults.get(buildDate);
-                    addValues(buildDate, totals, additionalResult);
-                    lastResult = additionalResult;
+                    additionalResult = availableResults.get(buildDate);
+                    previousResult = additionalResult;
                 }
-                else if (!lastResult.isEmpty()) {
-                    addValues(buildDate, totals, lastResult);
+                else {
+                    // reuse previous result if there is no result on the given day
+                    additionalResult = previousResult;
                 }
+
+                Map<String, Integer> existing = totals.get(buildDate);
+
+                Map<String, Integer> summed = Stream.concat(existing.entrySet().stream(),
+                        additionalResult.entrySet().stream())
+                        .collect(toMap(Entry::getKey, Entry::getValue, Integer::sum));
+
+                totals.put(buildDate, summed);
             }
         }
         return totals;
-    }
-
-    private void addValues(final LocalDate buildDate, final Map<LocalDate, List<Integer>> totals,
-            final List<Integer> additionalResult) {
-        if (totals.containsKey(buildDate)) {
-            List<Integer> existingResult = totals.get(buildDate);
-            List<Integer> sum = Lists.newArrayList();
-            for (int i = 0; i < existingResult.size(); i++) {
-                sum.add(existingResult.get(i) + additionalResult.get(i));
-            }
-            totals.put(buildDate, sum);
-        }
-        else {
-            totals.put(buildDate, additionalResult);
-        }
     }
 }

@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import edu.hm.hafner.util.VisibleForTesting;
 
@@ -14,6 +14,10 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  * @author Ullrich Hafner
  */
 public class HealthSeriesBuilder extends SeriesBuilder {
+    static final String HEALTHY = "healthy";
+    static final String BETWEEN = "between";
+    static final String UNHEALTHY = "unhealthy";
+
     private final HealthDescriptor healthDescriptor;
 
     /**
@@ -35,32 +39,32 @@ public class HealthSeriesBuilder extends SeriesBuilder {
     }
 
     @Override
-    protected List<Integer> computeSeries(final StaticAnalysisRun current) {
-        List<Integer> series = new ArrayList<>();
+    protected Map<String, Integer> computeSeries(final StaticAnalysisRun current) {
+        Map<String, Integer> series = new HashMap<>();
         int remainder = current.getTotalSize();
 
         if (healthDescriptor.isEnabled()) {
-            series.add(Math.min(remainder, healthDescriptor.getHealthy()));
+            series.put(HEALTHY, Math.min(remainder, healthDescriptor.getHealthy()));
 
             int range = healthDescriptor.getUnhealthy() - healthDescriptor.getHealthy();
             remainder -= healthDescriptor.getHealthy();
             if (remainder > 0) {
-                series.add(Math.min(remainder, range));
+                series.put(BETWEEN, Math.min(remainder, range));
                 remainder -= range;
                 if (remainder > 0) {
-                    series.add(remainder);
+                    series.put(UNHEALTHY, remainder);
                 }
                 else {
-                    series.add(0);
+                    series.put(UNHEALTHY, 0);
                 }
             }
             else {
-                series.add(0);
-                series.add(0);
+                series.put(BETWEEN, 0);
+                series.put(UNHEALTHY, 0);
             }
         }
         else { // at least a graph should be shown if the health reporting has been disabled in the meantime
-            series.add(remainder);
+            series.put("total", current.getTotalSize());
         }
 
         return series;

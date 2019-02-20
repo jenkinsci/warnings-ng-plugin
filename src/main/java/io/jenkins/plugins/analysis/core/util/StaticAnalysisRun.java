@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import java.util.Map;
 import java.util.Optional;
 
 import org.eclipse.collections.api.list.ImmutableList;
@@ -53,6 +54,14 @@ public interface StaticAnalysisRun {
      * @return the reference build
      */
     Optional<Run<?, ?>> getReferenceBuild();
+
+    /**
+     * Returns the number of issues in this analysis run, mapped by their origin. The origin is the tool that created
+     * the report.
+     *
+     * @return number of issues per origin
+     */
+    Map<String, Integer> getSizePerOrigin();
 
     /**
      * Returns the associated build that this run was part of.

@@ -2,9 +2,9 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
 
+import io.jenkins.plugins.analysis.core.graphs.ToolSeriesBuilder;
 import io.jenkins.plugins.analysis.core.graphs.ChartModelConfiguration;
 import io.jenkins.plugins.analysis.core.graphs.LinesChartModel;
-import io.jenkins.plugins.analysis.core.graphs.SeveritySeriesBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
@@ -13,7 +13,7 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  *
  * @author Ullrich Hafner
  */
-public class SeverityChart {
+public class CategoryChart {
     /**
      * Creates the chart for the specified results.
      *
@@ -23,18 +23,22 @@ public class SeverityChart {
      * @return the chart model
      */
     public LineModel create(final Iterable<? extends StaticAnalysisRun> results) {
-        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
+        ToolSeriesBuilder builder = new ToolSeriesBuilder();
         LinesChartModel lineModel = builder.createDataSet(createConfiguration(), results);
 
-        LineSeries high = createSeries(Severity.WARNING_HIGH);
-        high.addAll(lineModel.getValues(Severity.WARNING_HIGH.getName()));
-        LineSeries normal = createSeries(Severity.WARNING_NORMAL);
-        normal.addAll(lineModel.getValues(Severity.WARNING_NORMAL.getName()));
-        LineSeries low = createSeries(Severity.WARNING_LOW);
-        low.addAll(lineModel.getValues(Severity.WARNING_LOW.getName()));
-
         LineModel model = new LineModel();
-        model.addSeries(low, normal, high);
+
+        Palette[] colors = Palette.values();
+        int index = 0;
+        for (String name : lineModel.getDataSetNames()) {
+            LineSeries lineSeries = new LineSeries(name, colors[index++].getNormal());
+            if (index == colors.length) {
+                index = 0;
+            }
+            lineSeries.addAll(lineModel.getValues(name));
+            model.addSeries(lineSeries);
+        }
+
         model.addXAxisLabels(lineModel.getXLabels());
 
         return model;

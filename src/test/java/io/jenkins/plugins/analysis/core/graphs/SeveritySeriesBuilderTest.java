@@ -13,15 +13,15 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link PrioritySeriesBuilder}.
+ * Tests the class {@link SeveritySeriesBuilder}.
  *
  * @author Ullrich Hafner
  */
-class PrioritySeriesBuilderTest {
+class SeveritySeriesBuilderTest {
     /** Verifies that an empty list of builds produces no data. */
     @Test
     void shouldHaveEmptyDataSetForEmptyIterator() {
-        PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
+        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
 
         LinesChartModel dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList());
 
@@ -39,7 +39,7 @@ class PrioritySeriesBuilderTest {
      */
     @Test
     void shouldHaveThreeValuesForSingleBuild() {
-        PrioritySeriesBuilder builder = new PrioritySeriesBuilder();
+        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
 
         StaticAnalysisRun singleResult = createBuildResult(1,
                 1, 2, 3);
@@ -51,9 +51,9 @@ class PrioritySeriesBuilderTest {
 
         assertThat(dataSet.getDataSetSize()).isEqualTo(3);
 
-        assertThat(dataSet.getValue("High", 0)).isEqualTo(1);
-        assertThat(dataSet.getValue("Normal", 0)).isEqualTo(2);
-        assertThat(dataSet.getValue("Low", 0)).isEqualTo(3);
+        assertThat(dataSet.getValue(Severity.WARNING_HIGH.getName(), 0)).isEqualTo(1);
+        assertThat(dataSet.getValue(Severity.WARNING_NORMAL.getName(), 0)).isEqualTo(2);
+        assertThat(dataSet.getValue(Severity.WARNING_LOW.getName(), 0)).isEqualTo(3);
     }
 
     private StaticAnalysisRun createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,

@@ -1,7 +1,9 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -50,6 +52,9 @@ class SeriesBuilderTest {
     private static final List<Integer> SECOND_SERIES = series(3, 4, 5);
     private static final List<Integer> FORTH_SERIES = series(9, 10, 11);
     private static final List<Integer> AVERAGE_SECOND_AND_THIRD_SERIES = series(4, 5, 6);
+    private static final String FIRST_KEY = "high";
+    private static final String SECOND_KEY = "normal";
+    private static final String THIRD_KEY = "low";
 
     @SuppressWarnings("PMD.UnusedPrivateMethod")
     @SuppressFBWarnings("UPM")
@@ -154,7 +159,14 @@ class SeriesBuilderTest {
 
         LinesChartModel result = seriesBuilder.createDataSet(config, runs);
 
-        assertThat(result.getValues()).isEqualTo(expected);
+        if (expected.size() == 0) {
+            assertThat(result.getDataSetSize()).isZero();
+        }
+        else {
+            assertThat(result.getValues(FIRST_KEY)).isEqualTo(expected.get(0));
+            assertThat(result.getValues(SECOND_KEY)).isEqualTo(expected.get(1));
+            assertThat(result.getValues(THIRD_KEY)).isEqualTo(expected.get(2));
+        }
     }
 
     private static ChartModelConfiguration createWithBuildCount(final int count) {
@@ -215,9 +227,12 @@ class SeriesBuilderTest {
         }
 
         @Override
-        protected List<Integer> computeSeries(final StaticAnalysisRun current) {
-            return asList(count++, count++, count++);
-
+        protected Map<String, Integer> computeSeries(final StaticAnalysisRun current) {
+            Map<String, Integer> values = new HashMap<>();
+            values.put(FIRST_KEY, count++);
+            values.put(SECOND_KEY, count++);
+            values.put(THIRD_KEY, count++);
+            return values;
         }
     }
 

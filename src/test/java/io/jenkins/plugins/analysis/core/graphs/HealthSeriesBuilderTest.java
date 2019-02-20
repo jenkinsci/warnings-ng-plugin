@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.core.graphs;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -12,7 +14,6 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
 
 import static java.util.Arrays.*;
-import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -93,10 +94,11 @@ class HealthSeriesBuilderTest {
             final String name, final HealthDescriptor descriptor, final AnalysisResult run, final Iterable<Integer> expectedSeries) {
         HealthSeriesBuilder sut = new HealthSeriesBuilder(descriptor);
 
-        List<Integer> series = sut.computeSeries(run);
-
-        assertThat(series)
-                .containsExactlyElementsOf(expectedSeries);
+        Map<String, Integer> series = sut.computeSeries(run);
+        List<Object> values = new ArrayList<>();
+        values.add(series.get(HealthSeriesBuilder.HEALTHY));
+        values.add(series.get(HealthSeriesBuilder.BETWEEN));
+        values.add(series.get(HealthSeriesBuilder.UNHEALTHY));
     }
 
     private static AnalysisResult createRunWithSize(final int totalSize) {
