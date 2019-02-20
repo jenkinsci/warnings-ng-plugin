@@ -53,5 +53,10 @@ public class RuboCop extends ReportScanningTool {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(ID, Messages.Warnings_RuboCop_ParserName());
         }
+
+        @Override
+        public String getHelp() {
+            return "Use commandline <code>rubocop --format progress</code>.";
+        }
     }
 }
