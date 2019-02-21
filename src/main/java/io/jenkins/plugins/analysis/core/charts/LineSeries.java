@@ -3,21 +3,25 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * UI model for a ECharts line chart series property. Simple data bean that will be converted to JSON.
+ * <p>
+ * This class will be automatically converted to a JSON object.
+ * </p>
  *
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"FieldCanBeLocal", "PMD.DataClass"})
 public class LineSeries {
     private final String name;
-    @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
-    private final String stack = "stacked";
+    private String stack = "stacked";
     @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
     private final String type = "line";
-    private final AreaStyle areaStyle = new AreaStyle();
+    private AreaStyle areaStyle;
     private final List<Integer> data = new ArrayList<>();
     private final ItemStyle itemStyle;
 
@@ -38,12 +42,20 @@ public class LineSeries {
         return name;
     }
 
+    public void clearStacked() {
+        stack = StringUtils.EMPTY;
+    }
+
     public String getStack() {
         return stack;
     }
 
     public String getType() {
         return type;
+    }
+
+    public void activateFilled() {
+        areaStyle = new AreaStyle();
     }
 
     public AreaStyle getAreaStyle() {

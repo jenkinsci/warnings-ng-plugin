@@ -7,7 +7,7 @@ import edu.hm.hafner.analysis.Severity;
  *
  * @author Ullrich Hafner
  */
-public final class SeverityPalette {
+final class SeverityPalette {
     /**
      * Returns the color of UI elements for the specified severity.
      *
@@ -16,7 +16,7 @@ public final class SeverityPalette {
      *
      * @return color of the specified severity
      */
-    public static Palette getColor(final Severity severity) {
+    static Palette getColor(final Severity severity) {
         if (severity == Severity.ERROR) {
             return Palette.RED;
         }

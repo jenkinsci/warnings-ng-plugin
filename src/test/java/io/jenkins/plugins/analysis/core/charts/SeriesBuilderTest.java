@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.graphs;
+package io.jenkins.plugins.analysis.core.charts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -160,12 +160,12 @@ class SeriesBuilderTest {
         LinesChartModel result = seriesBuilder.createDataSet(config, runs);
 
         if (expected.size() == 0) {
-            assertThat(result.getDataSetSize()).isZero();
+            assertThat(result.getDataSetIds()).isEmpty();
         }
         else {
-            assertThat(result.getValues(FIRST_KEY)).isEqualTo(expected.get(0));
-            assertThat(result.getValues(SECOND_KEY)).isEqualTo(expected.get(1));
-            assertThat(result.getValues(THIRD_KEY)).isEqualTo(expected.get(2));
+            assertThat(result.getSeries(FIRST_KEY)).isEqualTo(expected.get(0));
+            assertThat(result.getSeries(SECOND_KEY)).isEqualTo(expected.get(1));
+            assertThat(result.getSeries(THIRD_KEY)).isEqualTo(expected.get(2));
         }
     }
 

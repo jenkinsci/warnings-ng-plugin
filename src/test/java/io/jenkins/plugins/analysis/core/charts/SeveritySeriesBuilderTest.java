@@ -1,14 +1,13 @@
-package io.jenkins.plugins.analysis.core.graphs;
+package io.jenkins.plugins.analysis.core.charts;
 
 import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import edu.hm.hafner.analysis.Severity;
-
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
+import static edu.hm.hafner.analysis.Severity.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -23,10 +22,10 @@ class SeveritySeriesBuilderTest {
     void shouldHaveEmptyDataSetForEmptyIterator() {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
 
-        LinesChartModel dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList());
+        LinesChartModel model = builder.createDataSet(createConfiguration(), Lists.newArrayList());
 
-        assertThat(dataSet.getXSize()).isEqualTo(0);
-        assertThat(dataSet.getDataSetSize()).isEqualTo(0);
+        assertThat(model.getXAxisSize()).isEqualTo(0);
+        assertThat(model.getDataSetIds()).isEmpty();
     }
 
     private ChartModelConfiguration createConfiguration() {
@@ -46,23 +45,23 @@ class SeveritySeriesBuilderTest {
 
         LinesChartModel dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList(singleResult));
 
-        assertThat(dataSet.getXSize()).isEqualTo(1);
-        assertThat(dataSet.getXLabel(0)).isEqualTo("#1");
+        assertThat(dataSet.getXAxisSize()).isEqualTo(1);
+        assertThat(dataSet.getXAxisLabels()).containsExactly("#1");
 
-        assertThat(dataSet.getDataSetSize()).isEqualTo(3);
+        assertThat(dataSet.getDataSetIds()).containsExactlyInAnyOrder(WARNING_HIGH.getName(), WARNING_NORMAL.getName(), WARNING_LOW.getName());
 
-        assertThat(dataSet.getValue(Severity.WARNING_HIGH.getName(), 0)).isEqualTo(1);
-        assertThat(dataSet.getValue(Severity.WARNING_NORMAL.getName(), 0)).isEqualTo(2);
-        assertThat(dataSet.getValue(Severity.WARNING_LOW.getName(), 0)).isEqualTo(3);
+        assertThat(dataSet.getSeries(WARNING_HIGH.getName())).containsExactly(1);
+        assertThat(dataSet.getSeries(WARNING_NORMAL.getName())).containsExactly(2);
+        assertThat(dataSet.getSeries(WARNING_LOW.getName())).containsExactly(3);
     }
 
     private StaticAnalysisRun createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
             final int numberOfNormalPriorityIssues, final int numberOfLowPriorityIssues) {
         StaticAnalysisRun buildResult = mock(StaticAnalysisRun.class);
 
-        when(buildResult.getTotalSizeOf(Severity.WARNING_HIGH)).thenReturn(numberOfHighPriorityIssues);
-        when(buildResult.getTotalSizeOf(Severity.WARNING_NORMAL)).thenReturn(numberOfNormalPriorityIssues);
-        when(buildResult.getTotalSizeOf(Severity.WARNING_LOW)).thenReturn(numberOfLowPriorityIssues);
+        when(buildResult.getTotalSizeOf(WARNING_HIGH)).thenReturn(numberOfHighPriorityIssues);
+        when(buildResult.getTotalSizeOf(WARNING_NORMAL)).thenReturn(numberOfNormalPriorityIssues);
+        when(buildResult.getTotalSizeOf(WARNING_LOW)).thenReturn(numberOfLowPriorityIssues);
 
         AnalysisBuild build = createRun(buildNumber);
         when(buildResult.getBuild()).thenReturn(build);

@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import org.junit.jupiter.api.Test;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
@@ -20,11 +19,13 @@ class LineSeriesTest {
     void shouldCreateLineSeries() {
         LineSeries lineSeries = new LineSeries(SEVERITY, COLOR);
 
-        assertThatJson(lineSeries).node("areaStyle").isEqualTo(new AreaStyle());
+        assertThatJson(lineSeries).node("areaStyle").isAbsent();
         assertThatJson(lineSeries).node("name").isEqualTo(SEVERITY);
         assertThatJson(lineSeries).node("stack").isEqualTo(STACKED);
         assertThatJson(lineSeries).node("type").isEqualTo(LINE);
         assertThatJson(lineSeries).node("data").isArray().hasSize(0);
+
+        assertAreaStyleAndStacking(lineSeries);
     }
 
     @Test
@@ -32,10 +33,20 @@ class LineSeriesTest {
         LineSeries lineSeries = new LineSeries("High", COLOR);
         lineSeries.add(22);
         
-        assertThatJson(lineSeries).node("areaStyle").isEqualTo(new AreaStyle());
+        assertThatJson(lineSeries).node("areaStyle").isAbsent();
         assertThatJson(lineSeries).node("name").isEqualTo(SEVERITY);
         assertThatJson(lineSeries).node("stack").isEqualTo(STACKED);
         assertThatJson(lineSeries).node("type").isEqualTo(LINE);
         assertThatJson(lineSeries).node("data").isArray().hasSize(1).contains(22);
+
+        assertAreaStyleAndStacking(lineSeries);
+    }
+
+    private void assertAreaStyleAndStacking(final LineSeries lineSeries) {
+        lineSeries.activateFilled();
+        lineSeries.clearStacked();
+
+        assertThatJson(lineSeries).node("areaStyle").isEqualTo(new AreaStyle());
+        assertThatJson(lineSeries).node("stack").isEqualTo("");
     }
 }

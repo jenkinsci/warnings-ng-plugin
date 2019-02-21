@@ -11,18 +11,22 @@ import net.sf.json.JSONObject;
 /**
  * UI model for an ECharts line chart. Simple data bean that will be converted to JSON. On the client side the three
  * properties need to be placed into the correct place in the options structure.
+ * <p>
+ * This class will be automatically converted to a JSON object.
+ * </p>
  *
  * @author Ullrich Hafner
  */
 public class LineModel {
     private final List<String> xAxisLabels = new ArrayList<>();
     private final List<LineSeries> series = new ArrayList<>();
-    private String id = StringUtils.EMPTY;
+    private String id;
 
     /**
      * Creates a new {@link LineModel} with no id.
      */
     public LineModel() {
+        this(StringUtils.EMPTY);
     }
 
     /**

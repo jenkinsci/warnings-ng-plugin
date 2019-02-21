@@ -1,7 +1,7 @@
-package io.jenkins.plugins.analysis.core.graphs;
+package io.jenkins.plugins.analysis.core.charts;
 
 /**
- * FIXME: comment class.
+ * Configures the model of a trend chart.
  *
  * @author Ullrich Hafner
  */

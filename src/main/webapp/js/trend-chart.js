@@ -50,15 +50,13 @@ function renderTrendChart(chartDivId, chartModel, urlName) {
             top: '10',
             containLabel: true
         },
-        xAxis: [
-            {
+        xAxis: [ {
                 type: 'category',
                 boundaryGap: false,
                 data: chartModel.XAxisLabels
             }
         ],
-        yAxis: [
-            {
+        yAxis: [ {
                 type: 'value'
             }
         ],

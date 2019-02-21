@@ -133,7 +133,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new JobAction(owner.getParent(), getLabelProvider()));
+        return Collections.singleton(new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size()));
     }
 
     public AnalysisResult getResult() {

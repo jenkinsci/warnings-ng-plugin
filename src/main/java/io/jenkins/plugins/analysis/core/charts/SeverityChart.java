@@ -2,9 +2,6 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
 
-import io.jenkins.plugins.analysis.core.graphs.ChartModelConfiguration;
-import io.jenkins.plugins.analysis.core.graphs.LinesChartModel;
-import io.jenkins.plugins.analysis.core.graphs.SeveritySeriesBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
@@ -26,16 +23,19 @@ public class SeverityChart {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
         LinesChartModel lineModel = builder.createDataSet(createConfiguration(), results);
 
-        LineSeries high = createSeries(Severity.WARNING_HIGH);
-        high.addAll(lineModel.getValues(Severity.WARNING_HIGH.getName()));
-        LineSeries normal = createSeries(Severity.WARNING_NORMAL);
-        normal.addAll(lineModel.getValues(Severity.WARNING_NORMAL.getName()));
-        LineSeries low = createSeries(Severity.WARNING_LOW);
-        low.addAll(lineModel.getValues(Severity.WARNING_LOW.getName()));
-
         LineModel model = new LineModel();
-        model.addSeries(low, normal, high);
-        model.addXAxisLabels(lineModel.getXLabels());
+        model.addXAxisLabels(lineModel.getXAxisLabels());
+
+        Severity[] visibleSeverities = {Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR};
+        for (Severity severity : visibleSeverities) {
+            String dataSet = severity.getName();
+            if (lineModel.hasSeries(dataSet)) {
+                LineSeries series = createSeries(severity);
+                series.activateFilled();
+                series.addAll(lineModel.getSeries(dataSet));
+                model.addSeries(series);
+            }
+        }
 
         return model;
     }

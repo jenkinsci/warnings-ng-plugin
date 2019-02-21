@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.graphs;
+package io.jenkins.plugins.analysis.core.charts;
 
 import java.time.LocalDate;
 import java.time.ZoneId;

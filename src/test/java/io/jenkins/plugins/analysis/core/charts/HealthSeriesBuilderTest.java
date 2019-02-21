@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.graphs;
+package io.jenkins.plugins.analysis.core.charts;
 
 import java.util.ArrayList;
 import java.util.List;

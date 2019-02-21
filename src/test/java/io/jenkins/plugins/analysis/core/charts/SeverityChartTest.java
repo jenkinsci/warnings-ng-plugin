@@ -31,9 +31,6 @@ class SeverityChartTest {
         
         LineModel model = chart.create(results);
 
-        //assertThatJson(model).isEqualTo("bla");
-
-        System.out.println(model);
         verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 3, 6);
         verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 2, 4);
         verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 1, 2);

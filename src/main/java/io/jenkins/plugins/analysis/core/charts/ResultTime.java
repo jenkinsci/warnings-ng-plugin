@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.graphs;
+package io.jenkins.plugins.analysis.core.charts;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -14,14 +14,14 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  *
  * @author Ullrich Hafner
  */
-public class ResultTime {
+class ResultTime {
     private final LocalDate today;
 
     /**
      * Creates a new instance of {@link ResultTime}. The current date from the system clock in the default time-zone is
      * used to initialize this instance.
      */
-    public ResultTime() {
+    ResultTime() {
         this(LocalDate.now());
     }
 
@@ -46,7 +46,7 @@ public class ResultTime {
      *
      * @return {@code true} if the build is too old
      */
-    public boolean isResultTooOld(final ChartModelConfiguration configuration, final StaticAnalysisRun analysisRun) {
+    boolean isResultTooOld(final ChartModelConfiguration configuration, final StaticAnalysisRun analysisRun) {
         return configuration.isDayCountDefined() && computeDayDelta(analysisRun) > configuration.getDayCount();
     }
 

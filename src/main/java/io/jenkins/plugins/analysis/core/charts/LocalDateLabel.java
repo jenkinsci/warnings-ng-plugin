@@ -1,14 +1,14 @@
-package io.jenkins.plugins.analysis.core.graphs;
+package io.jenkins.plugins.analysis.core.charts;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 /**
- * Graph label showing the build date.
+ * Chart label showing the build date.
  *
  * @author Ullrich Hafner
  */
-public class LocalDateLabel implements Comparable<LocalDateLabel> {
+class LocalDateLabel implements Comparable<LocalDateLabel> {
     private final LocalDate date;
     private final DateTimeFormatter formatter;
 
@@ -18,7 +18,7 @@ public class LocalDateLabel implements Comparable<LocalDateLabel> {
      * @param date
      *            the date of the build
      */
-    public LocalDateLabel(final LocalDate date) {
+    LocalDateLabel(final LocalDate date) {
         this.date = date;
         formatter = DateTimeFormatter.ofPattern("MM-dd");
     }

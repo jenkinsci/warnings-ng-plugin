@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.graphs;
+package io.jenkins.plugins.analysis.core.charts;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -88,7 +88,9 @@ public abstract class SeriesBuilder {
                 break;
             }
             Map<String, Integer> series = computeSeries(current);
-            valuesPerBuildNumber.put(current.getBuild(), series);
+            if (!series.isEmpty()) {
+                valuesPerBuildNumber.put(current.getBuild(), series);
+            }
 
             if (configuration.isBuildCountDefined()) {
                 buildCount++;
@@ -97,7 +99,21 @@ public abstract class SeriesBuilder {
                 }
             }
         }
+        fillMissingValues(valuesPerBuildNumber);
+
         return valuesPerBuildNumber;
+    }
+
+    private void fillMissingValues(final SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuildNumber) {
+        Set<String> dataSets = valuesPerBuildNumber.values()
+                .stream()
+                .flatMap(values -> Stream.of(values.keySet()))
+                .flatMap(Set::stream)
+                .collect(toSet());
+
+        for (Map<String, Integer> series : valuesPerBuildNumber.values()) {
+            dataSets.forEach(dataSet -> series.putIfAbsent(dataSet, 0));
+        }
     }
 
     /**
@@ -121,9 +137,7 @@ public abstract class SeriesBuilder {
     private LinesChartModel createDataSetPerBuildNumber(final SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
         LinesChartModel model = new LinesChartModel();
         for (Entry<AnalysisBuild, Map<String, Integer>> series : valuesPerBuild.entrySet()) {
-            String label = series.getKey().getDisplayName();
-            System.out.println(label);
-            model.add(label, series.getValue());
+            model.add(series.getKey().getDisplayName(), series.getValue());
         }
         return model;
     }
@@ -136,7 +150,6 @@ public abstract class SeriesBuilder {
      *
      * @return a data set
      */
-    @SuppressWarnings("unchecked")
     private LinesChartModel createDataSetPerDay(final SortedMap<LocalDate, Map<String, Integer>> averagePerDay) {
         LinesChartModel model = new LinesChartModel();
         for (Entry<LocalDate, Map<String, Integer>> series : averagePerDay.entrySet()) {
@@ -196,7 +209,6 @@ public abstract class SeriesBuilder {
      *
      * @return the multi map with the values per day
      */
-    @SuppressWarnings("rawtypes")
     @SuppressFBWarnings("WMI")
     private FastListMultimap<LocalDate, Map<String, Integer>> createMultiSeriesPerDay(
             final Map<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {

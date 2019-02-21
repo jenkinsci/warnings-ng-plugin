@@ -1,19 +1,13 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import edu.hm.hafner.analysis.Severity;
-
-import io.jenkins.plugins.analysis.core.graphs.ToolSeriesBuilder;
-import io.jenkins.plugins.analysis.core.graphs.ChartModelConfiguration;
-import io.jenkins.plugins.analysis.core.graphs.LinesChartModel;
-import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
- * Builds the model for a graph showing all issues by severity.
+ * Builds the line model for a graph showing the total number of issues per tool.
  *
  * @author Ullrich Hafner
  */
-public class CategoryChart {
+public class ToolsChart {
     /**
      * Creates the chart for the specified results.
      *
@@ -30,26 +24,22 @@ public class CategoryChart {
 
         Palette[] colors = Palette.values();
         int index = 0;
-        for (String name : lineModel.getDataSetNames()) {
+        for (String name : lineModel.getDataSetIds()) {
             LineSeries lineSeries = new LineSeries(name, colors[index++].getNormal());
+            lineSeries.clearStacked();
             if (index == colors.length) {
                 index = 0;
             }
-            lineSeries.addAll(lineModel.getValues(name));
+            lineSeries.addAll(lineModel.getSeries(name));
             model.addSeries(lineSeries);
         }
 
-        model.addXAxisLabels(lineModel.getXLabels());
+        model.addXAxisLabels(lineModel.getXAxisLabels());
 
         return model;
     }
 
     private ChartModelConfiguration createConfiguration() {
         return new ChartModelConfiguration();
-    }
-
-    private LineSeries createSeries(final Severity severity) {
-        return new LineSeries(LocalizedSeverity.getLocalizedString(severity),
-                SeverityPalette.getColor(severity).getNormal());
     }
 }
