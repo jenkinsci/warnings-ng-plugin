@@ -16,14 +16,14 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link SeverityChart}.
+ * Tests the class {@link SeverityTrendChart}.
  *
  * @author Ullrich Hafner
  */
-class SeverityChartTest {
+class SeverityTrendChartTest {
     @Test
     void shouldCreatePriorityChart() {
-        SeverityChart chart = new SeverityChart();
+        SeverityTrendChart chart = new SeverityTrendChart();
 
         List<StaticAnalysisRun> results = new ArrayList<>();
         results.add(createResult(1, 2, 3, 1));

@@ -17,8 +17,8 @@ import hudson.model.Run;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.charts.LineModel;
-import io.jenkins.plugins.analysis.core.charts.SeverityChart;
-import io.jenkins.plugins.analysis.core.charts.ToolsChart;
+import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
+import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -166,10 +166,10 @@ public class JobAction implements Action {
 
     private LineModel createChartModel() {
         if (numberOfTools > 1) {
-            return new ToolsChart().create(createBuildHistory());
+            return new ToolsTrendChart().create(createBuildHistory());
         }
         else {
-            return new SeverityChart().create(createBuildHistory());
+            return new SeverityTrendChart().create(createBuildHistory());
         }
     }
 

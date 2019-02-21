@@ -6,7 +6,8 @@ import java.util.Map;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
- * Builds the series for a new versus fixed issues chart.
+ * Builds the model for a trend chart showing the relationship between new and fixed issues for a given number of
+ * builds.
  *
  * @author Ullrich Hafner
  */

@@ -3,11 +3,11 @@ package io.jenkins.plugins.analysis.core.charts;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
- * Builds the line model for a graph showing the total number of issues per tool.
+ * Builds the line model for a trend chart showing the total number of issues per tool for a given number of builds.
  *
  * @author Ullrich Hafner
  */
-public class ToolsChart {
+public class ToolsTrendChart {
     /**
      * Creates the chart for the specified results.
      *

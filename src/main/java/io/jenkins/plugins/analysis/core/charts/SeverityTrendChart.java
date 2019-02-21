@@ -6,11 +6,11 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
- * Builds the model for a graph showing all issues by severity.
+ * Builds the model for a trend chart showing all issues by severity for a given number of builds.
  *
  * @author Ullrich Hafner
  */
-public class SeverityChart {
+public class SeverityTrendChart {
     /**
      * Creates the chart for the specified results.
      *
@@ -26,7 +26,8 @@ public class SeverityChart {
         LineModel model = new LineModel();
         model.addXAxisLabels(lineModel.getXAxisLabels());
 
-        Severity[] visibleSeverities = {Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR};
+        Severity[] visibleSeverities
+                = {Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR};
         for (Severity severity : visibleSeverities) {
             String dataSet = severity.getName();
             if (lineModel.hasSeries(dataSet)) {
