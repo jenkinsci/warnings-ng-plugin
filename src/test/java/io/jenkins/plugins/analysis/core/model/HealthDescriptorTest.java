@@ -4,8 +4,9 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
 
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
+
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests the class {@link HealthDescriptor}.

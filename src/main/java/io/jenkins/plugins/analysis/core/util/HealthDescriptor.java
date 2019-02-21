@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.core.model;
+package io.jenkins.plugins.analysis.core.util;
 
 import java.io.Serializable;
 

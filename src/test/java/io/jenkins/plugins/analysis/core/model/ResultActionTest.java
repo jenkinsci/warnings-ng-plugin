@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.SerializableTest;
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
+
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;

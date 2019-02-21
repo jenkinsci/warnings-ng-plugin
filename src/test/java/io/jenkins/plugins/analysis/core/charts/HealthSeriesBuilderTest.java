@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 
 import static java.util.Arrays.*;
 import static org.mockito.Mockito.*;

@@ -5,7 +5,7 @@ import java.util.Map;
 
 import edu.hm.hafner.util.VisibleForTesting;
 
-import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**

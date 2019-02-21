@@ -8,6 +8,8 @@ import edu.hm.hafner.analysis.Severity;
 
 import hudson.model.HealthReport;
 
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
+
 /**
  * Creates a health report for integer values based on healthy and unhealthy thresholds.
  *

@@ -10,6 +10,8 @@ import edu.hm.hafner.analysis.Severity;
 import org.jvnet.localizer.Localizable;
 import hudson.model.HealthReport;
 
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
+
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 

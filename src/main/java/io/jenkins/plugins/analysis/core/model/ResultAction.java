@@ -19,6 +19,7 @@ import hudson.model.Run;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 
 /**

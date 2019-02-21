@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluat
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
-import io.jenkins.plugins.analysis.core.model.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.History;
 import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
