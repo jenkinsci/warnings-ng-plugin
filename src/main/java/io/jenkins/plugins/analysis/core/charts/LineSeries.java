@@ -22,6 +22,8 @@ public class LineSeries {
     @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
     private final String type = "line";
     private AreaStyle areaStyle;
+    @SuppressFBWarnings("SS_SHOULD_BE_STATIC")
+    private final String symbol = "circle";
     private final List<Integer> data = new ArrayList<>();
     private final ItemStyle itemStyle;
 
@@ -40,6 +42,10 @@ public class LineSeries {
 
     public String getName() {
         return name;
+    }
+
+    public String getSymbol() {
+        return symbol;
     }
 
     public void clearStacked() {

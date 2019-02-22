@@ -5,7 +5,7 @@ package io.jenkins.plugins.analysis.core.charts;
  *
  * @author Ullrich Hafner
  */
-public class ChartModelConfiguration {
+class ChartModelConfiguration {
     private boolean useBuildDate = false;
     private int buildCount = 50;
     private int dayCount = 0;
@@ -15,7 +15,7 @@ public class ChartModelConfiguration {
      *
      * @return the build date or the build number should be used as domain
      */
-    public boolean useBuildDateAsDomain() {
+    boolean useBuildDateAsDomain() {
         return useBuildDate;
     }
 
@@ -24,17 +24,16 @@ public class ChartModelConfiguration {
      *
      * @return the number of builds to consider
      */
-    public int getBuildCount() {
+    int getBuildCount() {
         return buildCount;
     }
 
     /**
      * Returns whether a valid build count is defined.
      *
-     * @return {@code true} if there is a valid build count is defined,
-     *         {@code false} otherwise
+     * @return {@code true} if there is a valid build count is defined, {@code false} otherwise
      */
-    public boolean isBuildCountDefined() {
+    boolean isBuildCountDefined() {
         return buildCount > 1;
     }
 
@@ -43,17 +42,16 @@ public class ChartModelConfiguration {
      *
      * @return the number of days to consider
      */
-    public int getDayCount() {
+    int getDayCount() {
         return dayCount;
     }
 
     /**
      * Returns whether a valid day count is defined.
      *
-     * @return {@code true} if there is a valid day count is defined,
-     *         {@code false} otherwise
+     * @return {@code true} if there is a valid day count is defined, {@code false} otherwise
      */
-    public boolean isDayCountDefined() {
+    boolean isDayCountDefined() {
         return dayCount > 0;
     }
 }

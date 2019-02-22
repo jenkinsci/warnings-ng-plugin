@@ -156,7 +156,7 @@
      * Requires that a DOM <div> element exists with the ID '#history-chart'.
      */
     view.getBuildTrend(function (lineModel) {
-        renderTrendChart('history-chart', lineModel.responseJSON);
+        renderTrendChart('history-chart', lineModel.responseJSON, true, null);
     });
     
     /**

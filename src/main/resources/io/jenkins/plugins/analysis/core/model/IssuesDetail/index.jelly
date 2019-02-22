@@ -75,7 +75,7 @@
             <script>
               var view = <st:bind value="${it}"/>
               view.getBuildTrend(function (lineModel) {
-                renderTrendChart('history-chart', lineModel.responseJSON);
+                renderTrendChart('history-chart', lineModel.responseJSON, true, null);
               });
             </script>
 
