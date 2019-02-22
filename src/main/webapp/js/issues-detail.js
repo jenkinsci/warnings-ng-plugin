@@ -39,10 +39,6 @@
                     },
                     left: 'center'
                 },
-                textStyle: {
-                    fontWeight: 'normal',
-                    fontSize: '16'
-                },
                 tooltip: {
                     trigger: 'item',
                     formatter: "{b}: {c} ({d}%)"
@@ -50,7 +46,8 @@
                 legend: {
                     orient: 'horizontal',
                     x: 'center',
-                    y: 'bottom'
+                    y: 'bottom',
+                    type: 'scroll'
                 },
                 series: [{
                     type: 'pie',
@@ -112,7 +109,8 @@
                 legend: {
                     orient: 'horizontal',
                     x: 'center',
-                    y: 'bottom'
+                    y: 'bottom',
+                    type: 'scroll'
                 },
                 series: [{
                     type: 'pie',
