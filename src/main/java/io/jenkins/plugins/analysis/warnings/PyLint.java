@@ -10,7 +10,7 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 /**
- * Provides a parser and customized messages for PyLint.
+ * Provides a parser and customized messages for Pylint.
  *
  * @author Ullrich Hafner
  */
@@ -48,7 +48,7 @@ public class PyLint extends ReportScanningTool {
         @Override
         public String getHelp() {
             return "<p>Create a ./pylintrc that contains:" 
-                    + "<p><code>msg-template={path}:{line}: [{msg_id}, {obj}] {msg} ({symbol})</code></p>" 
+                    + "<p><code>msg-template={path}:{line}: [{msg_id}({symbol}), {obj}] {msg}</code></p>"
                     + "</p>" 
                     + "<p>Start pylint using the command:" 
                     + "<p><code>pylint --rcfile=./pylintrc CODE > pylint.log</code></p>" 
