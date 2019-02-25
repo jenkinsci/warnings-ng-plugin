@@ -17,6 +17,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import org.kohsuke.stapler.HttpResponse;
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import hudson.model.Result;
@@ -33,7 +34,7 @@ import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Integration tests of the warnings plug-in in pipelines.
@@ -43,6 +44,34 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
  * @see PublishIssuesStep
  */
 public class StepsITest extends IntegrationTestWithJenkinsPerTest {
+    /**
+     * Creates a declarative Pipeline and scans for a Gcc warning.
+     */
+    @Test
+    public void shouldRunInDeclarativePipeline() {
+        WorkflowJob job = createJob();
+
+        job.setDefinition(new CpsFlowDefinition("pipeline {\n"
+                + "    agent 'any'\n"
+                + "    stages {\n"
+                + "        stage ('Create a fake warning') {\n"
+                + "            steps {\n"
+                + "                sh 'echo \"foo.cc:4:39: error: foo.h: No such file or directory\" >warnings.log' "
+                + "            }\n"
+                + "        }\n"
+                + "    }\n"
+                + "    post {\n"
+                + "        always {\n"
+                + "            recordIssues tool: gcc4(pattern: 'warnings.log')\n"
+                + "        }\n"
+                + "    }\n"
+                + "}", true));
+
+        AnalysisResult result = scheduleBuild(job, new Gcc4().getActualId());
+
+        assertThat(result).hasTotalSize(1);
+    }
+
     /**
      * Creates a JenkinsFile with parallel steps and aggregates the warnings.
      */
