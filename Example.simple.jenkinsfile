@@ -1,0 +1,16 @@
+node {
+    stage ('Checkout') {
+        git branch:'master', url: 'https://github.com/jenkinsci/analysis-model'
+    }
+
+    stage ('Build') {
+        def mvnHome = tool 'mvn-default'
+
+        sh "${mvnHome}/bin/mvn --batch-mode -V -U -e clean verify -DskipTests"
+        sh "${mvnHome}/bin/mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs"
+
+        recordIssues tools: [java(), javaDoc(), 
+            checkStyle(), spotBugs(pattern: 'target/spotbugsXml.xml'), pmdParser(pattern: 'target/pmd.xml'), cpd(pattern: 'target/cpd.xml'),
+            taskScanner(highTags:'FIXME', normalTags:'TODO', includePattern: '**/*.java', excludePattern: 'target/**/*'), ]
+    }
+}
