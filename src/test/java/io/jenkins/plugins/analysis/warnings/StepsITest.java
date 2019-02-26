@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 
 import org.eclipse.collections.impl.factory.Lists;
 import org.junit.Assume;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
 import org.jvnet.hudson.test.TestExtension;
 
 import edu.hm.hafner.analysis.Issue;
@@ -48,7 +48,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Creates a declarative Pipeline and scans for a Gcc warning.
      */
-    @Test @Disabled("See https://github.com/jenkinsci/pipeline-model-definition-plugin/pull/314")
+    @Test @Ignore("See https://github.com/jenkinsci/pipeline-model-definition-plugin/pull/314")
     public void shouldRunInDeclarativePipeline() {
         WorkflowJob job = createJob();
 
