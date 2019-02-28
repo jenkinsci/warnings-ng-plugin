@@ -573,10 +573,15 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(8 + 6, new Eclipse(), "eclipse-withinfo.xml", "eclipse.txt");
     }
 
-    /** Runs the PyLint parser on an output file that contains 6 issues. */
+    /** Runs the PyLint parser on output files that contains 6 + 19 issues. */
     @Test
     public void shouldFindAllPyLintParserIssues() {
-        shouldFindIssuesOfTool(6, new PyLint(), "pyLint.txt");
+        Report report = shouldFindIssuesOfTool(6 + 19, new PyLint(), "pyLint.txt", "pylint_parseable.txt");
+
+        assertThatDescriptionOfIssueIsSet(new PyLint(), report.get(1),
+                "Used when the name doesn't match the regular expression associated to its type(constant, variable, class...).");
+        assertThatDescriptionOfIssueIsSet(new PyLint(), report.get(7),
+                "Used when a wrong number of spaces is used around an operator, bracket orblock opener.");
     }
 
     /**

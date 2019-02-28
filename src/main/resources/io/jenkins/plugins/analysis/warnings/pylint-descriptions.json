@@ -1,0 +1,1646 @@
+[
+   {
+      "message" : "*Black listed name \"%s\"*",
+      "name" : "blacklisted-name",
+      "code" : "C0102",
+      "description" : "Used when the name is listed in the black list (unauthorized names)."
+   },
+   {
+      "name" : "invalid-name",
+      "message" : "*Invalid %s name \"%s\"%s*",
+      "description" : "Used when the name doesn't match the regular expression associated to its type(constant, variable, class...).",
+      "code" : "C0103"
+   },
+   {
+      "name" : "missing-docstring",
+      "message" : "*Missing %s docstring*",
+      "code" : "C0111",
+      "description" : "Used when a module, function, class or method has no docstring.Some specialmethods like __init__ doesn't necessary require a docstring."
+   },
+   {
+      "description" : "Used when a module, function, class or method has an empty docstring (it wouldbe too easy ;).",
+      "code" : "C0112",
+      "name" : "empty-docstring",
+      "message" : "*Empty %s docstring*"
+   },
+   {
+      "code" : "C0113",
+      "description" : "Used when a boolean expression contains an unneeded negation.",
+      "message" : "*Consider changing \"%s\" to \"%s\"*",
+      "name" : "unneeded-not"
+   },
+   {
+      "message" : "*Comparison to %s should be %s*",
+      "name" : "singleton-comparison",
+      "description" : "Used when an expression is compared to singleton values like True, False orNone.",
+      "code" : "C0121"
+   },
+   {
+      "description" : "Used when the constant is placed on the left side of a comparison. It isusually clearer in intent to place it in the right hand side of thecomparison.",
+      "code" : "C0122",
+      "name" : "misplaced-comparison-constant",
+      "message" : "*Comparison should be %s*"
+   },
+   {
+      "description" : "The idiomatic way to perform an explicit typecheck in Python is to useisinstance(x, Y) rather than type(x) == Y, type(x) is Y. Though there areunusual situations where these give different results.",
+      "code" : "C0123",
+      "name" : "unidiomatic-typecheck",
+      "message" : "*Using type() instead of isinstance() for a typecheck.*"
+   },
+   {
+      "code" : "C0200",
+      "description" : "Emitted when code that iterates with range and len is encountered. Such codecan be simplified by using the enumerate builtin.",
+      "message" : "*Consider using enumerate instead of iterating with range and len*",
+      "name" : "consider-using-enumerate"
+   },
+   {
+      "message" : "*Consider iterating the dictionary directly instead of calling .keys()*",
+      "name" : "consider-iterating-dictionary",
+      "description" : "Emitted when the keys of a dictionary are iterated through the .keys() method.It is enough to just iterate through the dictionary itself, as in \"for key indictionary\".",
+      "code" : "C0201"
+   },
+   {
+      "description" : "Used when a class method has a first argument named differently than the valuespecified in valid-classmethod-first-arg option (default to \"cls\"),recommended to easily differentiate them from regular instance methods.",
+      "code" : "C0202",
+      "message" : "*Class method %s should have %s as first argument*",
+      "name" : "bad-classmethod-argument"
+   },
+   {
+      "description" : "Used when a metaclass method has a first argument named differently than thevalue specified in valid-classmethod-first-arg option (default to \"cls\"),recommended to easily differentiate them from regular instance methods.",
+      "code" : "C0203",
+      "message" : "*Metaclass method %s should have %s as first argument*",
+      "name" : "bad-mcs-method-argument"
+   },
+   {
+      "description" : "Used when a metaclass class method has a first argument named differently thanthe value specified in valid-metaclass-classmethod-first-arg option (defaultto \"mcs\"), recommended to easily differentiate them from regular instancemethods.",
+      "code" : "C0204",
+      "name" : "bad-mcs-classmethod-argument",
+      "message" : "*Metaclass class method %s should have %s as first argument*"
+   },
+   {
+      "code" : "C0205",
+      "description" : "Used when a class __slots__ is a simple string, rather than an iterable.",
+      "message" : "*Class __slots__ should be a non-string iterable*",
+      "name" : "single-string-used-for-slots"
+   },
+   {
+      "code" : "C0301",
+      "description" : "Used when a line is longer than a given number of characters.",
+      "name" : "line-too-long",
+      "message" : "*Line too long (%s/%s)*"
+   },
+   {
+      "message" : "*Too many lines in module (%s/%s)*",
+      "name" : "too-many-lines",
+      "description" : "Used when a module has too much lines, reducing its readability.",
+      "code" : "C0302"
+   },
+   {
+      "code" : "C0303",
+      "description" : "Used when there is whitespace between the end of a line and the newline.",
+      "name" : "trailing-whitespace",
+      "message" : "*Trailing whitespace*"
+   },
+   {
+      "description" : "Used when the last line in a file is missing a newline.",
+      "code" : "C0304",
+      "message" : "*Final newline missing*",
+      "name" : "missing-final-newline"
+   },
+   {
+      "name" : "trailing-newlines",
+      "message" : "*Trailing newlines*",
+      "code" : "C0305",
+      "description" : "Used when there are trailing blank lines in a file."
+   },
+   {
+      "description" : "Used when more than on statement are found on the same line.",
+      "code" : "C0321",
+      "name" : "multiple-statements",
+      "message" : "*More than one statement on a single line*"
+   },
+   {
+      "name" : "superfluous-parens",
+      "message" : "*Unnecessary parens after %r keyword*",
+      "description" : "Used when a single item in parentheses follows an if, for, or other keyword.",
+      "code" : "C0325"
+   },
+   {
+      "message" : "*%s space %s %s %s*",
+      "name" : "bad-whitespace",
+      "code" : "C0326",
+      "description" : "Used when a wrong number of spaces is used around an operator, bracket orblock opener."
+   },
+   {
+      "name" : "mixed-line-endings",
+      "message" : "*Mixed line endings LF and CRLF*",
+      "description" : "Used when there are mixed (LF and CRLF) newline signs in a file.",
+      "code" : "C0327"
+   },
+   {
+      "code" : "C0328",
+      "description" : "Used when there is different newline than expected.",
+      "message" : "*Unexpected line ending format. There is '%s' while it should be '%s'.*",
+      "name" : "unexpected-line-ending-format"
+   },
+   {
+      "description" : "TODO",
+      "code" : "C0330",
+      "message" : "*Wrong %s indentation%s%s.*",
+      "name" : "bad-continuation"
+   },
+   {
+      "message" : "*Wrong spelling of a word '%s' in a comment:*",
+      "name" : "wrong-spelling-in-comment",
+      "description" : "Used when a word in comment is not spelled correctly.",
+      "code" : "C0401"
+   },
+   {
+      "code" : "C0402",
+      "description" : "Used when a word in docstring is not spelled correctly.",
+      "name" : "wrong-spelling-in-docstring",
+      "message" : "*Wrong spelling of a word '%s' in a docstring:*"
+   },
+   {
+      "name" : "invalid-characters-in-docstring",
+      "message" : "*Invalid characters %r in a docstring*",
+      "code" : "C0403",
+      "description" : "Used when a word in docstring cannot be checked by enchant."
+   },
+   {
+      "description" : "Used when import statement importing multiple modules is detected.",
+      "code" : "C0410",
+      "message" : "*Multiple imports on one line (%s)*",
+      "name" : "multiple-imports"
+   },
+   {
+      "message" : "*%s should be placed before %s*",
+      "name" : "wrong-import-order",
+      "description" : "Used when PEP8 import order is not respected (standard imports first, thenthird-party libraries, then local imports)",
+      "code" : "C0411"
+   },
+   {
+      "name" : "ungrouped-imports",
+      "message" : "*Imports from package %s are not grouped*",
+      "code" : "C0412",
+      "description" : "Used when imports are not grouped by packages"
+   },
+   {
+      "code" : "C0413",
+      "description" : "Used when code and imports are mixed",
+      "message" : "*Import \"%s\" should be placed at the top of the module*",
+      "name" : "wrong-import-position"
+   },
+   {
+      "code" : "C1001",
+      "description" : "Used when a class is defined that does not inherit from another class and doesnot inherit explicitly from \"object\". This message can't be emitted when usingPython >= 3.0.",
+      "message" : "*Old-style class defined.*",
+      "name" : "old-style-class"
+   },
+   {
+      "description" : "Used when Pylint detects incorrect use of len(sequence) inside conditions.:syntax-error (E0001):Used when a syntax error is raised for a module.",
+      "code" : "C1801",
+      "name" : "len-as-condition",
+      "message" : "*Do not use `len(SEQUENCE)` as condition value*"
+   },
+   {
+      "name" : "unrecognized-inline-option",
+      "message" : "*Unrecognized file option %r*",
+      "code" : "E0011",
+      "description" : "Used when an unknown inline option is encountered."
+   },
+   {
+      "description" : "Used when a bad value for an inline option is encountered.",
+      "code" : "E0012",
+      "name" : "bad-option-value",
+      "message" : "*Bad option value %r*"
+   },
+   {
+      "message" : "*__init__ method is a generator*",
+      "name" : "init-is-generator",
+      "code" : "E0100",
+      "description" : "Used when the special class method __init__ is turned into a generator by ayield in its body."
+   },
+   {
+      "description" : "Used when the special class method __init__ has an explicit return value.",
+      "code" : "E0101",
+      "message" : "*Explicit return in __init__*",
+      "name" : "return-in-init"
+   },
+   {
+      "description" : "Used when a function / class / method is redefined.",
+      "code" : "E0102",
+      "name" : "function-redefined",
+      "message" : "*%s already defined line %s*"
+   },
+   {
+      "name" : "not-in-loop",
+      "message" : "*%r not properly in loop*",
+      "description" : "Used when break or continue keywords are used outside a loop.",
+      "code" : "E0103"
+   },
+   {
+      "message" : "*Return outside function*",
+      "name" : "return-outside-function",
+      "code" : "E0104",
+      "description" : "Used when a \"return\" statement is found outside a function or method."
+   },
+   {
+      "message" : "*Yield outside function*",
+      "name" : "yield-outside-function",
+      "description" : "Used when a \"yield\" statement is found outside a function or method.",
+      "code" : "E0105"
+   },
+   {
+      "message" : "*Return with argument inside generator*",
+      "name" : "return-arg-in-generator",
+      "description" : "Used when a \"return\" statement with an argument is found outside in agenerator function or method (e.g. with some \"yield\" statements). This messagecan't be emitted when using Python >= 3.3.",
+      "code" : "E0106"
+   },
+   {
+      "message" : "*Use of the non-existent %s operator*",
+      "name" : "nonexistent-operator",
+      "description" : "Used when you attempt to use the C-style pre-increment orpre-decrementoperator -- and ++, which doesn't exist in Python.",
+      "code" : "E0107"
+   },
+   {
+      "description" : "Duplicate argument names in function definitions are syntax errors.",
+      "code" : "E0108",
+      "name" : "duplicate-argument-name",
+      "message" : "*Duplicate argument name %s in function definition*"
+   },
+   {
+      "code" : "E0110",
+      "description" : "Used when an abstract class with `abc.ABCMeta` as metaclass has abstractmethods and is instantiated.",
+      "message" : "*Abstract class %r with abstract methods instantiated*",
+      "name" : "abstract-class-instantiated"
+   },
+   {
+      "code" : "E0111",
+      "description" : "Used when the first argument to reversed() builtin isn't a sequence (does notimplement __reversed__, nor __getitem__ and __len__",
+      "name" : "bad-reversed-sequence",
+      "message" : "*The first reversed() argument is not a sequence*"
+   },
+   {
+      "description" : "Emitted when the `continue` keyword is found inside a finally clause, which isa SyntaxError.",
+      "code" : "E0116",
+      "message" : "*'continue' not supported inside 'finally' clause*",
+      "name" : "continue-in-finally"
+   },
+   {
+      "code" : "E0202",
+      "description" : "Used when a class defines a method which is hidden by an instance attributefrom an ancestor class or set by some client code.",
+      "name" : "method-hidden",
+      "message" : "*An attribute defined in %s line %s hides this method*"
+   },
+   {
+      "message" : "*Access to member %r before its definition line %s*",
+      "name" : "access-member-before-definition",
+      "description" : "Used when an instance member is accessed before it's actually assigned.",
+      "code" : "E0203"
+   },
+   {
+      "name" : "no-method-argument",
+      "message" : "*Method has no argument*",
+      "code" : "E0211",
+      "description" : "Used when a method which should have the bound instance as first argument hasno argument defined."
+   },
+   {
+      "name" : "no-self-argument",
+      "message" : "*Method should have \"self\" as first argument*",
+      "description" : "Used when a method has an attribute different the \"self\" as first argument.This is considered as an error since this is a so common convention that youshouldn't break it!",
+      "code" : "E0213"
+   },
+   {
+      "name" : "invalid-slots-object",
+      "message" : "*Invalid object %r in __slots__, must contain only non empty strings*",
+      "description" : "Used when an invalid (non-string) object occurs in __slots__.",
+      "code" : "E0236"
+   },
+   {
+      "code" : "E0237",
+      "description" : "Used when assigning to an attribute not defined in the class slots.",
+      "message" : "*Assigning to attribute %r not defined in class slots*",
+      "name" : "assigning-non-slot"
+   },
+   {
+      "description" : "Used when an invalid __slots__ is found in class. Only a string, an iterableor a sequence is permitted.",
+      "code" : "E0238",
+      "name" : "invalid-slots",
+      "message" : "*Invalid __slots__ object*"
+   },
+   {
+      "message" : "*Inheriting %r, which is not a class.*",
+      "name" : "inherit-non-class",
+      "code" : "E0239",
+      "description" : "Used when a class inherits from something which is not a class."
+   },
+   {
+      "description" : "Used when a class has an inconsistent method resolution order.",
+      "code" : "E0240",
+      "message" : "*Inconsistent method resolution order for class %r*",
+      "name" : "inconsistent-mro"
+   },
+   {
+      "message" : "*Duplicate bases for class %r*",
+      "name" : "duplicate-bases",
+      "description" : "Used when a class has duplicate bases.",
+      "code" : "E0241"
+   },
+   {
+      "code" : "E0301",
+      "description" : "Used when an __iter__ method returns something which is not an iterable (i.e.has no `next` method)",
+      "name" : "non-iterator-returned",
+      "message" : "*__iter__ returns non-iterator*"
+   },
+   {
+      "code" : "E0302",
+      "description" : "Emitted when a special method was defined with an invalid number ofparameters. If it has too few or too many, it might not work at all.",
+      "name" : "unexpected-special-method-signature",
+      "message" : "*The special method %r expects %s param(s), %d %s given*"
+   },
+   {
+      "message" : "*__len__ does not return non-negative integer*",
+      "name" : "invalid-length-returned",
+      "description" : "Used when an __len__ method returns something which is not a non-negativeinteger",
+      "code" : "E0303"
+   },
+   {
+      "description" : "Used when pylint has been unable to import a module.",
+      "code" : "E0401",
+      "message" : "*Unable to import %s*",
+      "name" : "import-error"
+   },
+   {
+      "code" : "E0402",
+      "description" : "Used when a relative import tries to access too many levels in the currentpackage.",
+      "name" : "relative-beyond-top-level",
+      "message" : "*Attempted relative import beyond top-level package*"
+   },
+   {
+      "code" : "E0601",
+      "description" : "Used when a local variable is accessed before it's assignment.",
+      "message" : "*Using variable %r before assignment*",
+      "name" : "used-before-assignment"
+   },
+   {
+      "code" : "E0602",
+      "description" : "Used when an undefined variable is accessed.",
+      "message" : "*Undefined variable %r*",
+      "name" : "undefined-variable"
+   },
+   {
+      "name" : "undefined-all-variable",
+      "message" : "*Undefined variable name %r in __all__*",
+      "description" : "Used when an undefined variable name is referenced in __all__.",
+      "code" : "E0603"
+   },
+   {
+      "code" : "E0604",
+      "description" : "Used when an invalid (non-string) object occurs in __all__.",
+      "name" : "invalid-all-object",
+      "message" : "*Invalid object %r in __all__, must contain only strings*"
+   },
+   {
+      "description" : "Used when a name cannot be found in a module.",
+      "code" : "E0611",
+      "name" : "no-name-in-module",
+      "message" : "*No name %r in module %r*"
+   },
+   {
+      "code" : "E0632",
+      "description" : "Used when there is an unbalanced tuple unpacking in assignment",
+      "message" : "*Possible unbalanced tuple unpacking with sequence%s: left side has %d label(s), right side has %d value(s)*",
+      "name" : "unbalanced-tuple-unpacking"
+   },
+   {
+      "message" : "*Attempting to unpack a non-sequence%s*",
+      "name" : "unpacking-non-sequence",
+      "description" : "Used when something which is not a sequence is used in an unpack assignment",
+      "code" : "E0633"
+   },
+   {
+      "description" : "Used when except clauses are not in the correct order (from the more specificto the more generic). If you don't fix the order, some exceptions may not becaught by the most specific handler.",
+      "code" : "E0701",
+      "name" : "bad-except-order",
+      "message" : "*Bad except clauses order (%s)*"
+   },
+   {
+      "description" : "Used when something which is neither a class, an instance or a string israised (i.e. a `TypeError` will be raised).",
+      "code" : "E0702",
+      "name" : "raising-bad-type",
+      "message" : "*Raising %s while only classes or instances are allowed*"
+   },
+   {
+      "message" : "*The raise statement is not inside an except clause*",
+      "name" : "misplaced-bare-raise",
+      "code" : "E0704",
+      "description" : "Used when a bare raise is not used inside an except clause. This generates anerror, since there are no active exceptions to be reraised. An exception tothis rule is represented by a bare raise inside a finally clause, which mightwork, as long as an exception is raised inside the try block, but it isnevertheless a code smell that must not be relied upon."
+   },
+   {
+      "message" : "*Raising a new style class which doesn't inherit from BaseException*",
+      "name" : "raising-non-exception",
+      "description" : "Used when a new style class which doesn't inherit from BaseException israised.",
+      "code" : "E0710"
+   },
+   {
+      "description" : "Used when NotImplemented is raised instead of NotImplementedError",
+      "code" : "E0711",
+      "message" : "*NotImplemented raised - should raise NotImplementedError*",
+      "name" : "notimplemented-raised"
+   },
+   {
+      "message" : "*Catching an exception which doesn't inherit from Exception: %s*",
+      "name" : "catching-non-exception",
+      "description" : "Used when a class which doesn't inherit from Exception is used as an exceptionin an except clause.",
+      "code" : "E0712"
+   },
+   {
+      "name" : "slots-on-old-class",
+      "message" : "*Use of __slots__ on an old style class*",
+      "description" : "Used when an old style class uses the __slots__ attribute. This message can'tbe emitted when using Python >= 3.0.",
+      "code" : "E1001"
+   },
+   {
+      "message" : "*Use of super on an old style class*",
+      "name" : "super-on-old-class",
+      "code" : "E1002",
+      "description" : "Used when an old style class uses the super builtin. This message can't beemitted when using Python >= 3.0."
+   },
+   {
+      "name" : "bad-super-call",
+      "message" : "*Bad first argument %r given to super()*",
+      "code" : "E1003",
+      "description" : "Used when another argument than the current class is given as first argumentof the super builtin."
+   },
+   {
+      "description" : "Used when the super builtin didn't receive an argument. This message can't beemitted when using Python >= 3.0.",
+      "code" : "E1004",
+      "message" : "*Missing argument to super()*",
+      "name" : "missing-super-argument"
+   },
+   {
+      "code" : "E1101",
+      "description" : "Used when a variable is accessed for an unexistent member.",
+      "name" : "no-member",
+      "message" : "*%s %r has no %r member%s*"
+   },
+   {
+      "description" : "Used when an object being called has been inferred to a non callable object",
+      "code" : "E1102",
+      "message" : "*%s is not callable*",
+      "name" : "not-callable"
+   },
+   {
+      "code" : "E1111",
+      "description" : "Used when an assignment is done on a function call but the inferred functiondoesn't return anything.",
+      "name" : "assignment-from-no-return",
+      "message" : "*Assigning to function call which doesn't return*"
+   },
+   {
+      "name" : "no-value-for-parameter",
+      "message" : "*No value for argument %s in %s call*",
+      "description" : "Used when a function call passes too few arguments.",
+      "code" : "E1120"
+   },
+   {
+      "description" : "Used when a function call passes too many positional arguments.",
+      "code" : "E1121",
+      "name" : "too-many-function-args",
+      "message" : "*Too many positional arguments for %s call*"
+   },
+   {
+      "code" : "E1123",
+      "description" : "Used when a function call passes a keyword argument that doesn't correspond toone of the function's parameter names.",
+      "message" : "*Unexpected keyword argument %r in %s call*",
+      "name" : "unexpected-keyword-arg"
+   },
+   {
+      "name" : "redundant-keyword-arg",
+      "message" : "*Argument %r passed by position and keyword in %s call*",
+      "description" : "Used when a function call would result in assigning multiple values to afunction parameter, one value from a positional argument and one from akeyword argument.",
+      "code" : "E1124"
+   },
+   {
+      "code" : "E1126",
+      "description" : "Used when a sequence type is indexed with an invalid type. Valid types areints, slices, and objects with an __index__ method.",
+      "message" : "*Sequence index is not an int, slice, or instance with __index__*",
+      "name" : "invalid-sequence-index"
+   },
+   {
+      "description" : "Used when a slice index is not an integer, None, or an object with an__index__ method.",
+      "code" : "E1127",
+      "message" : "*Slice index is not an int, None, or instance with __index__*",
+      "name" : "invalid-slice-index"
+   },
+   {
+      "message" : "*Assigning to function call which only returns None*",
+      "name" : "assignment-from-none",
+      "description" : "Used when an assignment is done on a function call but the inferred functionreturns nothing but None.",
+      "code" : "E1128"
+   },
+   {
+      "code" : "E1129",
+      "description" : "Used when an instance in a with statement doesn't implement the contextmanager protocol(__enter__/__exit__).:invalid-unary-operand-type (E1130):Emitted when a unary operand is used on an object which does not support thistype of operation:unsupported-binary-operation (E1131):Emitted when a binary arithmetic operation between two operands is notsupported.",
+      "name" : "not-context-manager",
+      "message" : "*Context manager '%s' doesn't implement __enter__ and __exit__.*"
+   },
+   {
+      "name" : "repeated-keyword",
+      "message" : "*Got multiple values for keyword argument %r in function call*",
+      "code" : "E1132",
+      "description" : "Emitted when a function call got multiple values for a keyword."
+   },
+   {
+      "description" : "Used when a non-iterable value is used in place where iterable is expected",
+      "code" : "E1133",
+      "message" : "*Non-iterable value %s is used in an iterating context*",
+      "name" : "not-an-iterable"
+   },
+   {
+      "message" : "*Non-mapping value %s is used in a mapping context*",
+      "name" : "not-a-mapping",
+      "description" : "Used when a non-mapping value is used in place where mapping is expected",
+      "code" : "E1134"
+   },
+   {
+      "code" : "E1135",
+      "description" : "Emitted when an instance in membership test expression doesn't implementmembership protocol (__contains__/__iter__/__getitem__)",
+      "name" : "unsupported-membership-test",
+      "message" : "*Value '%s' doesn't support membership test*"
+   },
+   {
+      "message" : "*Value '%s' is unsubscriptable*",
+      "name" : "unsubscriptable-object",
+      "code" : "E1136",
+      "description" : "Emitted when a subscripted value doesn't support subscription(i.e. doesn'tdefine __getitem__ method)"
+   },
+   {
+      "message" : "*%r does not support item assignment*",
+      "name" : "unsupported-assignment-operation",
+      "code" : "E1137",
+      "description" : "Emitted when an object does not support item assignment (i.e. doesn't define__setitem__ method)"
+   },
+   {
+      "name" : "unsupported-delete-operation",
+      "message" : "*%r does not support item deletion*",
+      "description" : "Emitted when an object does not support item deletion (i.e. doesn't define__delitem__ method)",
+      "code" : "E1138"
+   },
+   {
+      "name" : "invalid-metaclass",
+      "message" : "*Invalid metaclass %r used*",
+      "code" : "E1139",
+      "description" : "Emitted whenever we can detect that a class is using, as a metaclass,something which might be invalid for using as a metaclass."
+   },
+   {
+      "name" : "logging-unsupported-format",
+      "message" : "*Unsupported logging format character %r (%#02x) at index %d*",
+      "description" : "Used when an unsupported format character is used in a logging statementformat string.",
+      "code" : "E1200"
+   },
+   {
+      "code" : "E1201",
+      "description" : "Used when a logging statement format string terminates before the end of aconversion specifier.",
+      "message" : "*Logging format string ends in middle of conversion specifier*",
+      "name" : "logging-format-truncated"
+   },
+   {
+      "description" : "Used when a logging format string is given too many arguments.",
+      "code" : "E1205",
+      "message" : "*Too many arguments for logging format string*",
+      "name" : "logging-too-many-args"
+   },
+   {
+      "description" : "Used when a logging format string is given too few arguments.",
+      "code" : "E1206",
+      "name" : "logging-too-few-args",
+      "message" : "*Not enough arguments for logging format string*"
+   },
+   {
+      "description" : "Used when a unsupported format character is used in a format string.",
+      "code" : "E1300",
+      "name" : "bad-format-character",
+      "message" : "*Unsupported format character %r (%#02x) at index %d*"
+   },
+   {
+      "code" : "E1301",
+      "description" : "Used when a format string terminates before the end of a conversion specifier.",
+      "message" : "*Format string ends in middle of conversion specifier*",
+      "name" : "truncated-format-string"
+   },
+   {
+      "message" : "*Mixing named and unnamed conversion specifiers in format string*",
+      "name" : "mixed-format-string",
+      "description" : "Used when a format string contains both named (e.g. '%(foo)d') and unnamed(e.g. '%d') conversion specifiers. This is also used when a named conversionspecifier contains * for the minimum field width and/or precision.",
+      "code" : "E1302"
+   },
+   {
+      "message" : "*Expected mapping for format string, not %s*",
+      "name" : "format-needs-mapping",
+      "description" : "Used when a format string that uses named conversion specifiers is used withan argument that is not a mapping.",
+      "code" : "E1303"
+   },
+   {
+      "message" : "*Missing key %r in format string dictionary*",
+      "name" : "missing-format-string-key",
+      "description" : "Used when a format string that uses named conversion specifiers is used with adictionary that doesn't contain all the keys required by the format string.",
+      "code" : "E1304"
+   },
+   {
+      "description" : "Used when a format string that uses unnamed conversion specifiers is given toomany arguments.",
+      "code" : "E1305",
+      "name" : "too-many-format-args",
+      "message" : "*Too many arguments for format string*"
+   },
+   {
+      "message" : "*Not enough arguments for format string*",
+      "name" : "too-few-format-args",
+      "code" : "E1306",
+      "description" : "Used when a format string that uses unnamed conversion specifiers is given toofew arguments"
+   },
+   {
+      "name" : "bad-str-strip-call",
+      "message" : "*Suspicious argument in %s.%s call*",
+      "code" : "E1310",
+      "description" : "The argument to a str.{l,r,}strip call contains a duplicate character,"
+   },
+   {
+      "description" : "Used when a print statement is used (`print` is a function in Python 3) Thismessage can't be emitted when using Python >= 3.0.",
+      "code" : "E1601",
+      "message" : "*print statement used*",
+      "name" : "print-statement"
+   },
+   {
+      "code" : "E1602",
+      "description" : "Used when parameter unpacking is specified for a function(Python 3 doesn'tallow it) This message can't be emitted when using Python >= 3.0.",
+      "name" : "parameter-unpacking",
+      "message" : "*Parameter unpacking specified*"
+   },
+   {
+      "message" : "*Implicit unpacking of exceptions is not supported in Python 3*",
+      "name" : "unpacking-in-except",
+      "description" : "Python3 will not allow implicit unpacking of exceptions in except clauses. Seehttp://www.python.org/dev/peps/pep-3110/ This message can't be emitted whenusing Python >= 3.0.",
+      "code" : "E1603"
+   },
+   {
+      "name" : "old-raise-syntax",
+      "message" : "*Use raise ErrorClass(args) instead of raise ErrorClass, args.*",
+      "code" : "E1604",
+      "description" : "Used when the alternate raise syntax 'raise foo, bar' is used instead of'raise foo(bar)'. This message can't be emitted when using Python >= 3.0."
+   },
+   {
+      "description" : "Used when the deprecated \"``\" (backtick) operator is used instead of the str()function. This message can't be emitted when using Python >= 3.0.",
+      "code" : "E1605",
+      "name" : "backtick",
+      "message" : "*Use of the `` operator*"
+   },
+   {
+      "name" : "long-suffix",
+      "message" : "*Use of long suffix*",
+      "description" : "Used when \"l\" or \"L\" is used to mark a long integer. This will not work inPython 3, since `int` and `long` types have merged. This message can't beemitted when using Python >= 3.0.",
+      "code" : "E1606"
+   },
+   {
+      "code" : "E1607",
+      "description" : "Used when the deprecated \"<>\" operator is used instead of \"!=\". This isremoved in Python 3. This message can't be emitted when using Python >= 3.0.",
+      "message" : "*Use of the <> operator*",
+      "name" : "old-ne-operator"
+   },
+   {
+      "description" : "Used when encountering the old octal syntax, removed in Python 3. To use thenew syntax, prepend 0o on the number. This message can't be emitted when usingPython >= 3.0.",
+      "code" : "E1608",
+      "name" : "old-octal-literal",
+      "message" : "*Use of old octal literal*"
+   },
+   {
+      "code" : "E1609",
+      "description" : "Used when the import star syntax is used somewhere else than the module level.This message can't be emitted when using Python >= 3.0.:fatal (F0001):Used when an error occurred preventing the analysis of a module (unable tofind it for instance).",
+      "message" : "*Import * only allowed at module level*",
+      "name" : "import-star-module-level"
+   },
+   {
+      "description" : "Used when an unexpected error occurred while building the Astroidrepresentation. This is usually accompanied by a traceback. Please report sucherrors !",
+      "code" : "F0002",
+      "message" : "*%s: %s*",
+      "name" : "astroid-error"
+   },
+   {
+      "description" : "Used when an exception occurred while building the Astroid representationwhich could be handled by astroid.",
+      "code" : "F0010",
+      "message" : "*error while code parsing: %s*",
+      "name" : "parse-error"
+   },
+   {
+      "code" : "F0202",
+      "description" : "Used when Pylint has been unable to check methods signature compatibility foran unexpected reason. Please report this kind if you don't make sense of it.",
+      "name" : "method-check-failed",
+      "message" : "*Unable to check methods signature (%s / %s)*"
+   },
+   {
+      "name" : "raw-checker-failed",
+      "message" : "*Unable to run raw checkers on built-in module %s*",
+      "code" : "I0001",
+      "description" : "Used to inform that a built-in module has not been checked using the rawcheckers."
+   },
+   {
+      "message" : "*Unable to consider inline option %r*",
+      "name" : "bad-inline-option",
+      "description" : "Used when an inline option is either badly formatted or can't be used insidemodules.",
+      "code" : "I0010"
+   },
+   {
+      "message" : "*Locally disabling %s (%s)*",
+      "name" : "locally-disabled",
+      "description" : "Used when an inline option disables a message or a messages category.",
+      "code" : "I0011"
+   },
+   {
+      "name" : "locally-enabled",
+      "message" : "*Locally enabling %s (%s)*",
+      "code" : "I0012",
+      "description" : "Used when an inline option enables a message or a messages category."
+   },
+   {
+      "code" : "I0013",
+      "description" : "Used to inform that the file will not be checked",
+      "message" : "*Ignoring entire file*",
+      "name" : "file-ignored"
+   },
+   {
+      "code" : "I0020",
+      "description" : "A message was triggered on a line, but suppressed explicitly by a disable=comment in the file. This message is not generated for messages that areignored due to configuration settings.",
+      "message" : "*Suppressed %s (from line %d)*",
+      "name" : "suppressed-message"
+   },
+   {
+      "name" : "useless-suppression",
+      "message" : "*Useless suppression of %s*",
+      "description" : "Reported when a message is explicitly disabled for a line or a block of code,but never triggered.",
+      "code" : "I0021"
+   },
+   {
+      "name" : "deprecated-pragma",
+      "message" : "*Pragma \"%s\" is deprecated, use \"%s\" instead*",
+      "code" : "I0022",
+      "description" : "Some inline pylint options have been renamed or reworked, only the most recentform should be used. NOTE:skip-all is only available with pylint >= 0.26"
+   },
+   {
+      "description" : "Used when comparing an object to a literal, which is usually what you do notwant to do, since you can compare to a different literal than what wasexpected altogether.",
+      "code" : "R0123",
+      "name" : "literal-comparison",
+      "message" : "*Comparison to literal*"
+   },
+   {
+      "message" : "*Method could be a function*",
+      "name" : "no-self-use",
+      "code" : "R0201",
+      "description" : "Used when a method doesn't use its bound instance, and so could be written asa function."
+   },
+   {
+      "message" : "*Consider using a decorator instead of calling classmethod*",
+      "name" : "no-classmethod-decorator",
+      "description" : "Used when a class method is defined without using the decorator syntax.",
+      "code" : "R0202"
+   },
+   {
+      "name" : "no-staticmethod-decorator",
+      "message" : "*Consider using a decorator instead of calling staticmethod*",
+      "description" : "Used when a static method is defined without using the decorator syntax.",
+      "code" : "R0203"
+   },
+   {
+      "description" : "Used when a cyclic import between two or more modules is detected.",
+      "code" : "R0401",
+      "name" : "cyclic-import",
+      "message" : "*Cyclic import (%s)*"
+   },
+   {
+      "code" : "R0801",
+      "description" : "Indicates that a set of similar lines has been detected among multiple file.This usually means that the code should be refactored to avoid thisduplication.",
+      "message" : "*Similar lines in %s files*",
+      "name" : "duplicate-code"
+   },
+   {
+      "message" : "*Too many ancestors (%s/%s)*",
+      "name" : "too-many-ancestors",
+      "description" : "Used when class has too many parent classes, try to reduce this to get asimpler (and so easier to use) class.",
+      "code" : "R0901"
+   },
+   {
+      "description" : "Used when class has too many instance attributes, try to reduce this to get asimpler (and so easier to use) class.",
+      "code" : "R0902",
+      "message" : "*Too many instance attributes (%s/%s)*",
+      "name" : "too-many-instance-attributes"
+   },
+   {
+      "description" : "Used when class has too few public methods, so be sure it's really worth it.",
+      "code" : "R0903",
+      "message" : "*Too few public methods (%s/%s)*",
+      "name" : "too-few-public-methods"
+   },
+   {
+      "description" : "Used when class has too many public methods, try to reduce this to get asimpler (and so easier to use) class.",
+      "code" : "R0904",
+      "name" : "too-many-public-methods",
+      "message" : "*Too many public methods (%s/%s)*"
+   },
+   {
+      "message" : "*Too many return statements (%s/%s)*",
+      "name" : "too-many-return-statements",
+      "code" : "R0911",
+      "description" : "Used when a function or method has too many return statement, making it hardto follow."
+   },
+   {
+      "code" : "R0912",
+      "description" : "Used when a function or method has too many branches, making it hard tofollow.",
+      "name" : "too-many-branches",
+      "message" : "*Too many branches (%s/%s)*"
+   },
+   {
+      "description" : "Used when a function or method takes too many arguments.",
+      "code" : "R0913",
+      "message" : "*Too many arguments (%s/%s)*",
+      "name" : "too-many-arguments"
+   },
+   {
+      "name" : "too-many-locals",
+      "message" : "*Too many local variables (%s/%s)*",
+      "code" : "R0914",
+      "description" : "Used when a function or method has too many local variables."
+   },
+   {
+      "message" : "*Too many statements (%s/%s)*",
+      "name" : "too-many-statements",
+      "description" : "Used when a function or method has too many statements. You should then splitit in smaller functions / methods.",
+      "code" : "R0915"
+   },
+   {
+      "code" : "R0916",
+      "description" : "Used when a if statement contains too many boolean expressions",
+      "name" : "too-many-boolean-expressions",
+      "message" : "*Too many boolean expressions in if statement (%s/%s)*"
+   },
+   {
+      "description" : "Used when multiple consecutive isinstance calls can be merged into one.",
+      "code" : "R1701",
+      "name" : "consider-merging-isinstance",
+      "message" : "*Consider merging these isinstance calls to isinstance(%s, (%s))*"
+   },
+   {
+      "description" : "Used when a function or a method has too many nested blocks. This makes thecode less understandable and maintainable.",
+      "code" : "R1702",
+      "name" : "too-many-nested-blocks",
+      "message" : "*Too many nested blocks (%s/%s)*"
+   },
+   {
+      "message" : "*The if statement can be replaced with %s*",
+      "name" : "simplifiable-if-statement",
+      "code" : "R1703",
+      "description" : "Used when an if statement can be replaced with 'bool(test)'."
+   },
+   {
+      "description" : "Used when a local name is redefining an argument, which might suggest apotential error. This is taken in account only for a handful of name bindingoperations, such as for iteration, with statement assignment and exceptionhandler assignment.",
+      "code" : "R1704",
+      "name" : "redefined-argument-from-local",
+      "message" : "*Redefining argument with the local name %r*"
+   },
+   {
+      "code" : "R1705",
+      "description" : "Used in order to highlight an unnecessary block of code following an ifcontaining a return statement. As such, it will warn when it encounters anelse following a chain of ifs, all of them containing a return statement.",
+      "message" : "*Unnecessary \"else\" after \"return\"*",
+      "name" : "no-else-return"
+   },
+   {
+      "description" : "Used when one of known pre-python 2.5 ternary syntax is used.",
+      "code" : "R1706",
+      "message" : "*Consider using ternary (%s if %s else %s)*",
+      "name" : "consider-using-ternary"
+   },
+   {
+      "message" : "*Unreachable code*",
+      "name" : "unreachable",
+      "description" : "Used when there is some code behind a \"return\" or \"raise\" statement, whichwill never be accessed.",
+      "code" : "W0101"
+   },
+   {
+      "name" : "dangerous-default-value",
+      "message" : "*Dangerous default value %s as argument*",
+      "code" : "W0102",
+      "description" : "Used when a mutable value as list or dictionary is detected in a default valuefor an argument."
+   },
+   {
+      "name" : "pointless-statement",
+      "message" : "*Statement seems to have no effect*",
+      "code" : "W0104",
+      "description" : "Used when a statement doesn't have (or at least seems to) any effect."
+   },
+   {
+      "message" : "*String statement has no effect*",
+      "name" : "pointless-string-statement",
+      "description" : "Used when a string is used as a statement (which of course has no effect).This is a particular case of W0104 with its own message so you can easilydisable it if you're using those strings as documentation, instead ofcomments.",
+      "code" : "W0105"
+   },
+   {
+      "message" : "*Expression \"%s\" is assigned to nothing*",
+      "name" : "expression-not-assigned",
+      "description" : "Used when an expression that is not a function call is assigned to nothing.Probably something else was intended.",
+      "code" : "W0106"
+   },
+   {
+      "name" : "unnecessary-pass",
+      "message" : "*Unnecessary pass statement*",
+      "code" : "W0107",
+      "description" : "Used when a \"pass\" statement that can be avoided is encountered."
+   },
+   {
+      "code" : "W0108",
+      "description" : "Used when the body of a lambda expression is a function call on the sameargument list as the lambda itself; such lambda expressions are in all but afew cases replaceable with the function being called in the body of thelambda.",
+      "message" : "*Lambda may not be necessary*",
+      "name" : "unnecessary-lambda"
+   },
+   {
+      "code" : "W0109",
+      "description" : "Used when a dictionary expression binds the same key multiple times.",
+      "message" : "*Duplicate key %r in dictionary*",
+      "name" : "duplicate-key"
+   },
+   {
+      "description" : "Used when a lambda is the first argument to \"map\" or \"filter\". It could beclearer as a list comprehension or generator expression. This message can't beemitted when using Python >= 3.0.",
+      "code" : "W0110",
+      "name" : "deprecated-lambda",
+      "message" : "*map/filter on lambda could be replaced by comprehension*"
+   },
+   {
+      "code" : "W0111",
+      "description" : "Used when assignment will become invalid in future Python release due tointroducing new keyword",
+      "name" : "assign-to-new-keyword",
+      "message" : "*Name %s will become a keyword in Python %s*"
+   },
+   {
+      "description" : "Loops should only have an else clause if they can exit early with a breakstatement, otherwise the statements under else should be on the same scope asthe loop itself.",
+      "code" : "W0120",
+      "name" : "useless-else-on-loop",
+      "message" : "*Else clause on loop without a break statement*"
+   },
+   {
+      "code" : "W0122",
+      "description" : "Used when you use the \"exec\" statement (function for Python 3), to discourageits usage. That doesn't mean you cannot use it !",
+      "message" : "*Use of exec*",
+      "name" : "exec-used"
+   },
+   {
+      "description" : "Used when you use the \"eval\" function, to discourage its usage. Consider using`ast.literal_eval` for safely evaluating strings containing Python expressionsfrom untrusted sources.",
+      "code" : "W0123",
+      "message" : "*Use of eval*",
+      "name" : "eval-used"
+   },
+   {
+      "description" : "Emitted when a `with` statement component returns multiple values and usesname binding with `as` only for a part of those values, as in with ctx() as a,b. This can be misleading, since it's not clear if the context manager returnsa tuple or if the node without a name binding is another context manager.",
+      "code" : "W0124",
+      "name" : "confusing-with-statement",
+      "message" : "*Following \"as\" with another context manager looks like a tuple.*"
+   },
+   {
+      "name" : "using-constant-test",
+      "message" : "*Using a conditional statement with a constant value*",
+      "description" : "Emitted when a conditional statement (If or ternary if) uses a constant valuefor its test. This might not be what the user intended to do.",
+      "code" : "W0125"
+   },
+   {
+      "message" : "*%s statement in finally block may swallow exception*",
+      "name" : "lost-exception",
+      "code" : "W0150",
+      "description" : "Used when a break or a return statement is found inside the finally clause ofa try...finally block: the exceptions raised in the try clause will besilently swallowed instead of being re-raised."
+   },
+   {
+      "message" : "*Assert called on a 2-uple. Did you mean 'assert x,y'?*",
+      "name" : "assert-on-tuple",
+      "description" : "A call of assert on a tuple will always evaluate to true if the tuple is notempty, and will always evaluate to false if it is.",
+      "code" : "W0199"
+   },
+   {
+      "message" : "*Attribute %r defined outside __init__*",
+      "name" : "attribute-defined-outside-init",
+      "description" : "Used when an instance attribute is defined outside the __init__ method.",
+      "code" : "W0201"
+   },
+   {
+      "message" : "*Static method with %r as first argument*",
+      "name" : "bad-staticmethod-argument",
+      "description" : "Used when a static method has \"self\" or a value specified in valid-classmethod-first-arg option or valid-metaclass-classmethod-first-arg optionas first argument.",
+      "code" : "W0211"
+   },
+   {
+      "name" : "protected-access",
+      "message" : "*Access to a protected member %s of a client class*",
+      "description" : "Used when a protected member (i.e. class member with a name beginning with anunderscore) is access outside the class or a descendant of the class whereit's defined.",
+      "code" : "W0212"
+   },
+   {
+      "message" : "*Parameters differ from %s %r method*",
+      "name" : "arguments-differ",
+      "code" : "W0221",
+      "description" : "Used when a method has a different number of arguments than in the implementedinterface or in an overridden method."
+   },
+   {
+      "code" : "W0222",
+      "description" : "Used when a method signature is different than in the implemented interface orin an overridden method.",
+      "name" : "signature-differs",
+      "message" : "*Signature differs from %s %r method*"
+   },
+   {
+      "description" : "Used when an abstract method (i.e. raise NotImplementedError) is notoverridden in concrete class.",
+      "code" : "W0223",
+      "message" : "*Method %r is abstract in class %r but is not overridden*",
+      "name" : "abstract-method"
+   },
+   {
+      "code" : "W0231",
+      "description" : "Used when an ancestor class method has an __init__ method which is not calledby a derived class.",
+      "name" : "super-init-not-called",
+      "message" : "*__init__ method from base class %r is not called*"
+   },
+   {
+      "message" : "*Class has no __init__ method*",
+      "name" : "no-init",
+      "description" : "Used when a class has no __init__ method, neither its parent classes.",
+      "code" : "W0232"
+   },
+   {
+      "name" : "non-parent-init-called",
+      "message" : "*__init__ method from a non direct base class %r is called*",
+      "code" : "W0233",
+      "description" : "Used when an __init__ method is called on a class which is not in the directancestors for the analysed class."
+   },
+   {
+      "description" : "Used whenever we can detect that an overridden method is useless, relying onsuper() delegation to do the same thing as another method from the MRO.",
+      "code" : "W0235",
+      "name" : "useless-super-delegation",
+      "message" : "*Useless super delegation in method %r*"
+   },
+   {
+      "name" : "unnecessary-semicolon",
+      "message" : "*Unnecessary semicolon*",
+      "description" : "Used when a statement is ended by a semi-colon (\";\"), which isn't necessary(that's python, not C ;).",
+      "code" : "W0301"
+   },
+   {
+      "message" : "*Bad indentation. Found %s %s, expected %s*",
+      "name" : "bad-indentation",
+      "code" : "W0311",
+      "description" : "Used when an unexpected number of indentation's tabulations or spaces has beenfound."
+   },
+   {
+      "name" : "mixed-indentation",
+      "message" : "*Found indentation with %ss instead of %ss*",
+      "description" : "Used when there are some mixed tabs and spaces in a module.",
+      "code" : "W0312"
+   },
+   {
+      "message" : "*Use of \"l\" as long integer identifier*",
+      "name" : "lowercase-l-suffix",
+      "code" : "W0332",
+      "description" : "Used when a lower case \"l\" is used to mark a long integer. You should use aupper case \"L\" since the letter \"l\" looks too much like the digit \"1\" Thismessage can't be emitted when using Python >= 3.0."
+   },
+   {
+      "description" : "Used when `from module import *` is detected.",
+      "code" : "W0401",
+      "message" : "*Wildcard import %s*",
+      "name" : "wildcard-import"
+   },
+   {
+      "description" : "Used a module marked as deprecated is imported.",
+      "code" : "W0402",
+      "message" : "*Uses of a deprecated module %r*",
+      "name" : "deprecated-module"
+   },
+   {
+      "code" : "W0403",
+      "description" : "Used when an import relative to the package directory is detected. Thismessage can't be emitted when using Python >= 3.0.",
+      "name" : "relative-import",
+      "message" : "*Relative import %r, should be %r*"
+   },
+   {
+      "code" : "W0404",
+      "description" : "Used when a module is reimported multiple times.",
+      "name" : "reimported",
+      "message" : "*Reimport %r (imported line %s)*"
+   },
+   {
+      "description" : "Used when a module is importing itself.",
+      "code" : "W0406",
+      "message" : "*Module import itself*",
+      "name" : "import-self"
+   },
+   {
+      "message" : "*__future__ import is not the first non docstring statement*",
+      "name" : "misplaced-future",
+      "description" : "Python 2.5 and greater require __future__ import to be the first non docstringstatement in the module.:fixme (W0511):Used when a warning note as FIXME or XXX is detected.",
+      "code" : "W0410"
+   },
+   {
+      "name" : "invalid-encoded-data",
+      "message" : "*Cannot decode using encoding \"%s\", unexpected byte at position %d*",
+      "code" : "W0512",
+      "description" : "Used when a source line cannot be decoded using the specified source fileencoding. This message can't be emitted when using Python >= 3.0."
+   },
+   {
+      "message" : "*Global variable %r undefined at the module level*",
+      "name" : "global-variable-undefined",
+      "code" : "W0601",
+      "description" : "Used when a variable is defined through the \"global\" statement but thevariable is not defined in the module scope."
+   },
+   {
+      "message" : "*Using global for %r but no assignment is done*",
+      "name" : "global-variable-not-assigned",
+      "code" : "W0602",
+      "description" : "Used when a variable is defined through the \"global\" statement but noassignment to this variable is done."
+   },
+   {
+      "name" : "global-statement",
+      "message" : "*Using the global statement*",
+      "description" : "Used when you use the \"global\" statement to update a global variable. Pylintjust try to discourage this usage. That doesn't mean you cannot use it !",
+      "code" : "W0603"
+   },
+   {
+      "name" : "global-at-module-level",
+      "message" : "*Using the global statement at the module level*",
+      "code" : "W0604",
+      "description" : "Used when you use the \"global\" statement at the module level since it has noeffect"
+   },
+   {
+      "name" : "unused-import",
+      "message" : "*Unused %s*",
+      "description" : "Used when an imported module or variable is not used.",
+      "code" : "W0611"
+   },
+   {
+      "code" : "W0612",
+      "description" : "Used when a variable is defined but not used.",
+      "message" : "*Unused variable %r*",
+      "name" : "unused-variable"
+   },
+   {
+      "description" : "Used when a function or method argument is not used.",
+      "code" : "W0613",
+      "message" : "*Unused argument %r*",
+      "name" : "unused-argument"
+   },
+   {
+      "name" : "unused-wildcard-import",
+      "message" : "*Unused import %s from wildcard import*",
+      "description" : "Used when an imported module or variable is not used from a `'from X import*'` style import.",
+      "code" : "W0614"
+   },
+   {
+      "name" : "redefined-outer-name",
+      "message" : "*Redefining name %r from outer scope (line %s)*",
+      "description" : "Used when a variable's name hide a name defined in the outer scope.",
+      "code" : "W0621"
+   },
+   {
+      "code" : "W0622",
+      "description" : "Used when a variable or function override a built-in.",
+      "message" : "*Redefining built-in %r*",
+      "name" : "redefined-builtin"
+   },
+   {
+      "message" : "*Redefining name %r from %s in exception handler*",
+      "name" : "redefine-in-handler",
+      "description" : "Used when an exception handler assigns the exception to an existing name",
+      "code" : "W0623"
+   },
+   {
+      "description" : "Used when an loop variable (i.e. defined by a for loop or a list comprehensionor a generator expression) is used outside the loop.",
+      "code" : "W0631",
+      "message" : "*Using possibly undefined loop variable %r*",
+      "name" : "undefined-loop-variable"
+   },
+   {
+      "description" : "A variable used in a closure is defined in a loop. This will result in allclosures using the same value for the closed-over variable.",
+      "code" : "W0640",
+      "message" : "*Cell variable %s defined in loop*",
+      "name" : "cell-var-from-loop"
+   },
+   {
+      "name" : "bare-except",
+      "message" : "*No exception type(s) specified*",
+      "description" : "Used when an except clause doesn't specify exceptions type to catch.",
+      "code" : "W0702"
+   },
+   {
+      "message" : "*Catching too general exception %s*",
+      "name" : "broad-except",
+      "code" : "W0703",
+      "description" : "Used when an except catches a too general exception, possibly buryingunrelated errors."
+   },
+   {
+      "name" : "duplicate-except",
+      "message" : "*Catching previously caught exception type %s*",
+      "code" : "W0705",
+      "description" : "Used when an except catches a type that was already caught by a previoushandler."
+   },
+   {
+      "description" : "Used when a custom exception class is raised but doesn't inherit from thebuiltin \"Exception\" class. This message can't be emitted when using Python >=3.0.",
+      "code" : "W0710",
+      "message" : "*Exception doesn't inherit from standard \"Exception\" class*",
+      "name" : "nonstandard-exception"
+   },
+   {
+      "code" : "W0711",
+      "description" : "Used when the exception to catch is of the form \"except A or B:\". If intendingto catch multiple, rewrite as \"except (A, B):\"",
+      "name" : "binary-op-exception",
+      "message" : "*Exception to catch is the result of a binary \"%s\" operation*"
+   },
+   {
+      "message" : "*Use of \"property\" on an old style class*",
+      "name" : "property-on-old-class",
+      "description" : "Used when Pylint detect the use of the builtin \"property\" on an old styleclass while this is relying on new style classes features. This message can'tbe emitted when using Python >= 3.0.",
+      "code" : "W1001"
+   },
+   {
+      "code" : "W1201",
+      "description" : "Used when a logging statement has a call form of \"logging.<loggingmethod>(format_string % (format_args...))\". Such calls should leave stringinterpolation to the logging method itself and be written \"logging.<loggingmethod>(format_string, format_args...)\" so that the program may avoidincurring the cost of the interpolation in those cases in which no messagewill be logged. For more, see http://www.python.org/dev/peps/pep-0282/.",
+      "name" : "logging-not-lazy",
+      "message" : "*Specify string format arguments as logging function parameters*"
+   },
+   {
+      "name" : "logging-format-interpolation",
+      "message" : "*Use % formatting in logging functions and pass the % parameters as arguments*",
+      "description" : "Used when a logging statement has a call form of \"logging.<loggingmethod>(format_string.format(format_args...))\". Such calls should use %formatting instead, but leave interpolation to the logging function by passingthe parameters as arguments.",
+      "code" : "W1202"
+   },
+   {
+      "description" : "Used when a format string that uses named conversion specifiers is used with adictionary whose keys are not all strings.",
+      "code" : "W1300",
+      "name" : "bad-format-string-key",
+      "message" : "*Format string dictionary key should be a string, not %s*"
+   },
+   {
+      "code" : "W1301",
+      "description" : "Used when a format string that uses named conversion specifiers is used with adictionary that contains keys not required by the format string.",
+      "message" : "*Unused key %r in format string dictionary*",
+      "name" : "unused-format-string-key"
+   },
+   {
+      "description" : "Used when a PEP 3101 format string is invalid. This message can't be emittedwhen using Python < 2.7.",
+      "code" : "W1302",
+      "name" : "bad-format-string",
+      "message" : "*Invalid format string*"
+   },
+   {
+      "message" : "*Missing keyword argument %r for format string*",
+      "name" : "missing-format-argument-key",
+      "code" : "W1303",
+      "description" : "Used when a PEP 3101 format string that uses named fields doesn't receive oneor more required keywords. This message can't be emitted when using Python <2.7."
+   },
+   {
+      "message" : "*Unused format argument %r*",
+      "name" : "unused-format-string-argument",
+      "description" : "Used when a PEP 3101 format string that uses named fields is used with anargument that is not required by the format string. This message can't beemitted when using Python < 2.7.",
+      "code" : "W1304"
+   },
+   {
+      "message" : "*Format string contains both automatic field numbering and manual field specification*",
+      "name" : "format-combined-specification",
+      "description" : "Used when a PEP 3101 format string contains both automatic field numbering(e.g. '{}') and manual field specification (e.g. '{0}'). This message can't beemitted when using Python < 2.7.",
+      "code" : "W1305"
+   },
+   {
+      "name" : "missing-format-attribute",
+      "message" : "*Missing format attribute %r in format specifier %r*",
+      "code" : "W1306",
+      "description" : "Used when a PEP 3101 format string uses an attribute specifier ({0.length}),but the argument passed for formatting doesn't have that attribute. Thismessage can't be emitted when using Python < 2.7."
+   },
+   {
+      "code" : "W1307",
+      "description" : "Used when a PEP 3101 format string uses a lookup specifier ({a[1]}), but theargument passed for formatting doesn't contain or doesn't have that key as anattribute. This message can't be emitted when using Python < 2.7.",
+      "name" : "invalid-format-index",
+      "message" : "*Using invalid lookup key %r in format specifier %r*"
+   },
+   {
+      "description" : "Used when a backslash is in a literal string but not as an escape.",
+      "code" : "W1401",
+      "message" : "*Anomalous backslash in string: '%s'. String constant might be missing an r prefix.*",
+      "name" : "anomalous-backslash-in-string"
+   },
+   {
+      "description" : "Used when an escape like \\u is encountered in a byte string where it has noeffect.",
+      "code" : "W1402",
+      "message" : "*Anomalous Unicode escape in byte string: '%s'. String constant might be missing an r or u prefix.*",
+      "name" : "anomalous-unicode-escape-in-string"
+   },
+   {
+      "code" : "W1501",
+      "description" : "Python supports: r, w, a[, x] modes with b, +, and U (only with r) options.See http://docs.python.org/2/library/functions.html#open",
+      "name" : "bad-open-mode",
+      "message" : "*\"%s\" is not a valid mode for open.*"
+   },
+   {
+      "code" : "W1502",
+      "description" : "Using datetime.time in a boolean context can hide subtle bugs when the timethey represent matches midnight UTC. This behaviour was fixed in Python 3.5.See http://bugs.python.org/issue13936 for reference. This message can't beemitted when using Python >= 3.5.",
+      "message" : "*Using datetime.time in a boolean context.*",
+      "name" : "boolean-datetime"
+   },
+   {
+      "message" : "*Redundant use of %s with constant value %r*",
+      "name" : "redundant-unittest-assert",
+      "code" : "W1503",
+      "description" : "The first argument of assertTrue and assertFalse is a condition. If a constantis passed as parameter, that condition will be always true. In this case awarning should be emitted."
+   },
+   {
+      "name" : "deprecated-method",
+      "message" : "*Using deprecated method %s()*",
+      "description" : "The method is marked as deprecated and will be removed in a future version ofPython. Consider looking for an alternative in the documentation.",
+      "code" : "W1505"
+   },
+   {
+      "code" : "W1601",
+      "description" : "Used when the apply built-in function is referenced (missing from Python 3)This message can't be emitted when using Python >= 3.0.",
+      "name" : "apply-builtin",
+      "message" : "*apply built-in referenced*"
+   },
+   {
+      "description" : "Used when the basestring built-in function is referenced (missing from Python3) This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1602",
+      "name" : "basestring-builtin",
+      "message" : "*basestring built-in referenced*"
+   },
+   {
+      "code" : "W1603",
+      "description" : "Used when the buffer built-in function is referenced (missing from Python 3)This message can't be emitted when using Python >= 3.0.",
+      "message" : "*buffer built-in referenced*",
+      "name" : "buffer-builtin"
+   },
+   {
+      "description" : "Used when the cmp built-in function is referenced (missing from Python 3) Thismessage can't be emitted when using Python >= 3.0.",
+      "code" : "W1604",
+      "message" : "*cmp built-in referenced*",
+      "name" : "cmp-builtin"
+   },
+   {
+      "name" : "coerce-builtin",
+      "message" : "*coerce built-in referenced*",
+      "description" : "Used when the coerce built-in function is referenced (missing from Python 3)This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1605"
+   },
+   {
+      "description" : "Used when the execfile built-in function is referenced (missing from Python 3)This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1606",
+      "name" : "execfile-builtin",
+      "message" : "*execfile built-in referenced*"
+   },
+   {
+      "message" : "*file built-in referenced*",
+      "name" : "file-builtin",
+      "code" : "W1607",
+      "description" : "Used when the file built-in function is referenced (missing from Python 3)This message can't be emitted when using Python >= 3.0."
+   },
+   {
+      "message" : "*long built-in referenced*",
+      "name" : "long-builtin",
+      "description" : "Used when the long built-in function is referenced (missing from Python 3)This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1608"
+   },
+   {
+      "message" : "*raw_input built-in referenced*",
+      "name" : "raw_input-builtin",
+      "description" : "Used when the raw_input built-in function is referenced (missing from Python3) This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1609"
+   },
+   {
+      "description" : "Used when the reduce built-in function is referenced (missing from Python 3)This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1610",
+      "message" : "*reduce built-in referenced*",
+      "name" : "reduce-builtin"
+   },
+   {
+      "description" : "Used when the StandardError built-in function is referenced (missing fromPython 3) This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1611",
+      "name" : "standarderror-builtin",
+      "message" : "*StandardError built-in referenced*"
+   },
+   {
+      "message" : "*unicode built-in referenced*",
+      "name" : "unicode-builtin",
+      "code" : "W1612",
+      "description" : "Used when the unicode built-in function is referenced (missing from Python 3)This message can't be emitted when using Python >= 3.0."
+   },
+   {
+      "name" : "xrange-builtin",
+      "message" : "*xrange built-in referenced*",
+      "code" : "W1613",
+      "description" : "Used when the xrange built-in function is referenced (missing from Python 3)This message can't be emitted when using Python >= 3.0."
+   },
+   {
+      "message" : "*__coerce__ method defined*",
+      "name" : "coerce-method",
+      "description" : "Used when a __coerce__ method is defined (method is not used by Python 3) Thismessage can't be emitted when using Python >= 3.0.",
+      "code" : "W1614"
+   },
+   {
+      "code" : "W1615",
+      "description" : "Used when a __delslice__ method is defined (method is not used by Python 3)This message can't be emitted when using Python >= 3.0.",
+      "name" : "delslice-method",
+      "message" : "*__delslice__ method defined*"
+   },
+   {
+      "message" : "*__getslice__ method defined*",
+      "name" : "getslice-method",
+      "description" : "Used when a __getslice__ method is defined (method is not used by Python 3)This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1616"
+   },
+   {
+      "name" : "setslice-method",
+      "message" : "*__setslice__ method defined*",
+      "code" : "W1617",
+      "description" : "Used when a __setslice__ method is defined (method is not used by Python 3)This message can't be emitted when using Python >= 3.0."
+   },
+   {
+      "description" : "Used when an import is not accompanied by ``from __future__ importabsolute_import`` (default behaviour in Python 3) This message can't beemitted when using Python >= 3.0.",
+      "code" : "W1618",
+      "name" : "no-absolute-import",
+      "message" : "*import missing `from __future__ import absolute_import`*"
+   },
+   {
+      "name" : "old-division",
+      "message" : "*division w/o __future__ statement*",
+      "description" : "Used for non-floor division w/o a float literal or ``from __future__ importdivision`` (Python 3 returns a float for int division unconditionally) Thismessage can't be emitted when using Python >= 3.0.",
+      "code" : "W1619"
+   },
+   {
+      "message" : "*Calling a dict.iter*() method*",
+      "name" : "dict-iter-method",
+      "code" : "W1620",
+      "description" : "Used for calls to dict.iterkeys(), itervalues() or iteritems() (Python 3 lacksthese methods) This message can't be emitted when using Python >= 3.0."
+   },
+   {
+      "description" : "Used for calls to dict.viewkeys(), viewvalues() or viewitems() (Python 3 lacksthese methods) This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1621",
+      "name" : "dict-view-method",
+      "message" : "*Calling a dict.view*() method*"
+   },
+   {
+      "code" : "W1622",
+      "description" : "Used when an object's next() method is called (Python 3 uses the next() built-in function) This message can't be emitted when using Python >= 3.0.",
+      "message" : "*Called a next() method on an object*",
+      "name" : "next-method-called"
+   },
+   {
+      "description" : "Used when a metaclass is specified by assigning to __metaclass__ (Python 3specifies the metaclass as a class statement argument) This message can't beemitted when using Python >= 3.0.",
+      "code" : "W1623",
+      "message" : "*Assigning to a class's __metaclass__ attribute*",
+      "name" : "metaclass-assignment"
+   },
+   {
+      "description" : "Indexing exceptions will not work on Python 3. Use `exception.args[index]`instead. This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1624",
+      "message" : "*Indexing exceptions will not work on Python 3*",
+      "name" : "indexing-exception"
+   },
+   {
+      "code" : "W1625",
+      "description" : "Used when a string exception is raised. This will not work on Python 3. Thismessage can't be emitted when using Python >= 3.0.",
+      "name" : "raising-string",
+      "message" : "*Raising a string exception*"
+   },
+   {
+      "code" : "W1626",
+      "description" : "Used when the reload built-in function is referenced (missing from Python 3).You can use instead imp.reload or importlib.reload. This message can't beemitted when using Python >= 3.0.",
+      "name" : "reload-builtin",
+      "message" : "*reload built-in referenced*"
+   },
+   {
+      "description" : "Used when a __oct__ method is defined (method is not used by Python 3) Thismessage can't be emitted when using Python >= 3.0.",
+      "code" : "W1627",
+      "message" : "*__oct__ method defined*",
+      "name" : "oct-method"
+   },
+   {
+      "description" : "Used when a __hex__ method is defined (method is not used by Python 3) Thismessage can't be emitted when using Python >= 3.0.",
+      "code" : "W1628",
+      "message" : "*__hex__ method defined*",
+      "name" : "hex-method"
+   },
+   {
+      "code" : "W1629",
+      "description" : "Used when a __nonzero__ method is defined (method is not used by Python 3)This message can't be emitted when using Python >= 3.0.",
+      "name" : "nonzero-method",
+      "message" : "*__nonzero__ method defined*"
+   },
+   {
+      "message" : "*__cmp__ method defined*",
+      "name" : "cmp-method",
+      "code" : "W1630",
+      "description" : "Used when a __cmp__ method is defined (method is not used by Python 3) Thismessage can't be emitted when using Python >= 3.0."
+   },
+   {
+      "message" : "*input built-in referenced*",
+      "name" : "input-builtin",
+      "code" : "W1632",
+      "description" : "Used when the input built-in is referenced (backwards-incompatible semanticsin Python 3) This message can't be emitted when using Python >= 3.0."
+   },
+   {
+      "description" : "Used when the round built-in is referenced (backwards-incompatible semanticsin Python 3) This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1633",
+      "name" : "round-builtin",
+      "message" : "*round built-in referenced*"
+   },
+   {
+      "code" : "W1634",
+      "description" : "Used when the intern built-in is referenced (Moved to sys.intern in Python 3)This message can't be emitted when using Python >= 3.0.",
+      "name" : "intern-builtin",
+      "message" : "*intern built-in referenced*"
+   },
+   {
+      "name" : "unichr-builtin",
+      "message" : "*unichr built-in referenced*",
+      "description" : "Used when the unichr built-in is referenced (Use chr in Python 3) This messagecan't be emitted when using Python >= 3.0.",
+      "code" : "W1635"
+   },
+   {
+      "code" : "W1636",
+      "description" : "Used when the map built-in is referenced in a non-iterating context (returnsan iterator in Python 3) This message can't be emitted when using Python >=3.0.",
+      "message" : "*map built-in referenced when not iterating*",
+      "name" : "map-builtin-not-iterating"
+   },
+   {
+      "message" : "*zip built-in referenced when not iterating*",
+      "name" : "zip-builtin-not-iterating",
+      "description" : "Used when the zip built-in is referenced in a non-iterating context (returnsan iterator in Python 3) This message can't be emitted when using Python >=3.0.",
+      "code" : "W1637"
+   },
+   {
+      "description" : "Used when the range built-in is referenced in a non-iterating context (returnsan iterator in Python 3) This message can't be emitted when using Python >=3.0.",
+      "code" : "W1638",
+      "name" : "range-builtin-not-iterating",
+      "message" : "*range built-in referenced when not iterating*"
+   },
+   {
+      "name" : "filter-builtin-not-iterating",
+      "message" : "*filter built-in referenced when not iterating*",
+      "description" : "Used when the filter built-in is referenced in a non-iterating context(returns an iterator in Python 3) This message can't be emitted when usingPython >= 3.0.",
+      "code" : "W1639"
+   },
+   {
+      "code" : "W1640",
+      "description" : "Using the cmp argument for list.sort or the sorted builtin should be avoided,since it was removed in Python 3. Using either `key` or `functools.cmp_to_key`should be preferred. This message can't be emitted when using Python >= 3.0.",
+      "message" : "*Using the cmp argument for list.sort / sorted*",
+      "name" : "using-cmp-argument"
+   },
+   {
+      "message" : "*Implementing __eq__ without also implementing __hash__*",
+      "name" : "eq-without-hash",
+      "description" : "Used when a class implements __eq__ but not __hash__. In Python 2, objects getobject.__hash__ as the default implementation, in Python 3 objects get None astheir default __hash__ implementation if they also implement __eq__. Thismessage can't be emitted when using Python >= 3.0.",
+      "code" : "W1641"
+   },
+   {
+      "message" : "*__div__ method defined*",
+      "name" : "div-method",
+      "description" : "Used when a __div__ method is defined. Using `__truediv__` and setting__div__= __truediv__ should be preferred.(method is not used by Python 3) Thismessage can't be emitted when using Python >= 3.0.",
+      "code" : "W1642"
+   },
+   {
+      "description" : "Used when a __idiv__ method is defined. Using `__itruediv__` andsetting__idiv__ = __itruediv__ should be preferred.(method is not used byPython 3) This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1643",
+      "message" : "*__idiv__ method defined*",
+      "name" : "idiv-method"
+   },
+   {
+      "description" : "Used when a __rdiv__ method is defined. Using `__rtruediv__` andsetting__rdiv__ = __rtruediv__ should be preferred.(method is not used byPython 3) This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1644",
+      "name" : "rdiv-method",
+      "message" : "*__rdiv__ method defined*"
+   },
+   {
+      "message" : "*Exception.message removed in Python 3*",
+      "name" : "exception-message-attribute",
+      "code" : "W1645",
+      "description" : "Used when the message attribute is accessed on an Exception. Usestr(exception) instead. This message can't be emitted when using Python >=3.0."
+   },
+   {
+      "code" : "W1646",
+      "description" : "Used when using str.encode or str.decode with a non-text encoding. Use codecsmodule to handle arbitrary codecs. This message can't be emitted when usingPython >= 3.0.",
+      "name" : "invalid-str-codec",
+      "message" : "*non-text encoding used in str.decode*"
+   },
+   {
+      "description" : "Used when accessing sys.maxint. Use sys.maxsize instead. This message can't beemitted when using Python >= 3.0.",
+      "code" : "W1647",
+      "message" : "*sys.maxint removed in Python 3*",
+      "name" : "sys-max-int"
+   },
+   {
+      "code" : "W1648",
+      "description" : "Used when importing a module that no longer exists in Python 3. This messagecan't be emitted when using Python >= 3.0.",
+      "name" : "bad-python3-import",
+      "message" : "*Module moved in Python 3*"
+   },
+   {
+      "message" : "*Accessing a function method on the string module*",
+      "name" : "deprecated-string-function",
+      "description" : "Used when accessing a string function that has been deprecated in Python 3.This message can't be emitted when using Python >= 3.0.",
+      "code" : "W1649"
+   }
+]

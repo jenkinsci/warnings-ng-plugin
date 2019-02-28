@@ -1,0 +1,27 @@
+************* Module src/test/resources/non_existant.py
+src/test/resources/non_existant.py:1: [F0001(fatal), ] No module named src/test/resources/non_existant.py
+************* Module pypackage.pymodule
+src/test/resources/python_src/pypackage/pymodule.py:16: [C0326(bad-whitespace), ] Exactly one space required around assignment
+            encoded=encoded + letters[x]
+                   ^
+src/test/resources/python_src/pypackage/pymodule.py:24: [C0325(superfluous-parens), ] Unnecessary parens after 'print' keyword
+src/test/resources/python_src/pypackage/pymodule.py:1: [C0111(missing-docstring), ] Missing module docstring
+src/test/resources/python_src/pypackage/pymodule.py:5: [C0103(invalid-name), ] Constant name "shift" doesn't conform to UPPER_CASE naming style
+src/test/resources/python_src/pypackage/pymodule.py:6: [C0103(invalid-name), ] Constant name "choice" doesn't conform to UPPER_CASE naming style
+src/test/resources/python_src/pypackage/pymodule.py:7: [C0103(invalid-name), ] Constant name "word" doesn't conform to UPPER_CASE naming style
+src/test/resources/python_src/pypackage/pymodule.py:8: [C0103(invalid-name), ] Constant name "letters" doesn't conform to UPPER_CASE naming style
+src/test/resources/python_src/pypackage/pymodule.py:9: [C0103(invalid-name), ] Constant name "encoded" doesn't conform to UPPER_CASE naming style
+src/test/resources/python_src/pypackage/pymodule.py:26: [C0103(invalid-name), test] Class name "test" doesn't conform to PascalCase naming style
+src/test/resources/python_src/pypackage/pymodule.py:26: [C0111(missing-docstring), test] Missing class docstring
+src/test/resources/python_src/pypackage/pymodule.py:27: [C0111(missing-docstring), test.noself] Missing method docstring
+src/test/resources/python_src/pypackage/pymodule.py:27: [E0213(no-self-argument), test.noself] Method should have "self" as first argument
+src/test/resources/python_src/pypackage/pymodule.py:30: [W0102(dangerous-default-value), test.defs] Dangerous default value [] as argument
+src/test/resources/python_src/pypackage/pymodule.py:30: [C0111(missing-docstring), test.defs] Missing method docstring
+src/test/resources/python_src/pypackage/pymodule.py:30: [R0201(no-self-use), test.defs] Method could be a function
+src/test/resources/python_src/pypackage/pymodule.py:33: [E0401(import-error), ] Unable to import 'deadbeef'
+src/test/resources/python_src/pypackage/pymodule.py:33: [C0413(wrong-import-position), ] Import "import deadbeef" should be placed at the top of the module
+src/test/resources/python_src/pypackage/pymodule.py:33: [W0611(unused-import), ] Unused import deadbeef
+
+--------------------------------------------------------------------
+Your code has been rated at -0.40/10 (previous run: -0.40/10, +0.00)
+

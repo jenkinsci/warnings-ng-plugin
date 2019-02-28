@@ -113,7 +113,7 @@ public class CheckStyleRules {
      * @param name
      *         the name of the rule
      *
-     * @return the description for the specified rule .
+     * @return the description for the specified rule
      */
     public String getDescription(final String name) {
         return getRule(name).getDescription();
