@@ -39,6 +39,7 @@ public abstract class ReportScanningTool extends Tool {
 
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
+    private boolean followSymlinks = true;
 
     /**
      * Returns a new parser to scan a log file and return the issues reported in such a file.
@@ -62,6 +63,21 @@ public abstract class ReportScanningTool extends Tool {
     @Nullable
     public String getPattern() {
         return pattern;
+    }
+
+    /**
+     * Specify if file scanning should follow symbolic links.
+     *
+     * @param followSymlinks
+     *         the pattern to use
+     */
+    @DataBoundSetter
+    public void setFollowSymlinks(final boolean followSymlinks) {
+        this.followSymlinks = followSymlinks;
+    }
+
+    public boolean isFollowSymlinks() {
+        return followSymlinks;
     }
 
     /**
@@ -105,7 +121,7 @@ public abstract class ReportScanningTool extends Tool {
                         getDescriptor().getPattern());
             }
 
-            return scanInWorkspace(workspace, expandPattern(run, actualPattern), logger);
+            return scanInWorkspace(workspace, expandPattern(run, actualPattern), isFollowSymlinks(), logger);
         }
     }
 
@@ -121,9 +137,10 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
+    private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final boolean followSymlinks,
+            final LogHandler logger) {
         try {
-            Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding));
+            Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding, followSymlinks));
 
             logger.log(report);
 
@@ -249,8 +266,8 @@ public abstract class ReportScanningTool extends Tool {
 
         /**
          * Returns whether the issues reported by this tool reference a location in the report itself (and not in an
-         * external file). Then all these issues will get a synthetic file name so that the console log will be shown
-         * in the UI.
+         * external file). Then all these issues will get a synthetic file name so that the console log will be shown in
+         * the UI.
          *
          * @return {@code true} if the issues reference the console log, {@code false} otherwise
          */

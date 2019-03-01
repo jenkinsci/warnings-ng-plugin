@@ -18,6 +18,10 @@
     </j:otherwise>
   </j:choose>
 
+  <f:entry title="${%title.followSymlinks}" field="followSymlinks" description="${%description.followSymlinks}">
+    <f:checkbox default="true"/>
+  </f:entry>
+
   <f:entry title="${%title.reportEncoding}" field="reportEncoding"
            description="${%description.reportEncoding}">
     <f:combobox/>

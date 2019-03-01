@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.FileReaderFactory;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
@@ -31,23 +33,25 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private final String filePattern;
     private final IssueParser parser;
     private final String encoding;
+    private final boolean followSymlinks;
 
     /**
      * Creates a new instance of {@link FilesScanner}.
-     *
-     * @param filePattern
+     *  @param filePattern
      *         ant file-set pattern to scan for files to parse
      * @param tool
      *         the static code analysis tool that reports the issues
      * @param encoding
-     *         encoding of the files to parse
+     * @param followSymlinks if the scanner should traverse symbolic links
      */
-    public FilesScanner(final String filePattern, final ReportScanningTool tool, final String encoding) {
+    public FilesScanner(final String filePattern, final ReportScanningTool tool, final String encoding,
+            final boolean followSymlinks) {
         super();
 
         this.filePattern = filePattern;
         this.parser = tool.createParser();
         this.encoding = encoding;
+        this.followSymlinks = followSymlinks;
     }
 
     @Override
@@ -56,7 +60,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         report.logInfo("Searching for all files in '%s' that match the pattern '%s'",
                 workspace.getAbsolutePath(), filePattern);
 
-        String[] fileNames = new FileFinder(filePattern).find(workspace);
+        String[] fileNames = new FileFinder(filePattern, StringUtils.EMPTY, followSymlinks).find(workspace);
         if (fileNames.length == 0) {
             report.logError("No files found for pattern '%s'. Configuration error?", filePattern);
         }
