@@ -225,10 +225,10 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONArray getSeverityModel() {
+    public JSONObject getSeverityModel() {
         SeverityPieChart pieChart = new SeverityPieChart();
 
-        return JSONArray.fromObject(pieChart.create(report));
+        return JSONObject.fromObject(pieChart.create(report));
     }
 
     /**
@@ -238,10 +238,10 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONArray getTrendModel() {
+    public JSONObject getTrendModel() {
         NewVersusFixedPieChart pieChart = new NewVersusFixedPieChart();
 
-        return JSONArray.fromObject(pieChart.create(newIssues, outstandingIssues, fixedIssues));
+        return JSONObject.fromObject(pieChart.create(newIssues, outstandingIssues, fixedIssues));
     }
 
     /**

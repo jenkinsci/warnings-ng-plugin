@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.collections.api.set.ImmutableSet;
 
 import edu.hm.hafner.analysis.Report;
@@ -24,12 +21,15 @@ public class SeverityPieChart {
      *
      * @return the chart model
      */
-    public List<PieModel> create(final Report report) {
-        List<PieModel> model = new ArrayList<>();
+    public PieChartModel create(final Report report) {
+        PieChartModel model = new PieChartModel("Severities Distribution");
+
         ImmutableSet<Severity> predefinedSeverities = Severity.getPredefinedValues();
         for (Severity severity : predefinedSeverities) {
-            model.add(new PieModel(LocalizedSeverity.getLocalizedString(severity), report.getSizeOf(severity)));
+            model.add(new PieModel(LocalizedSeverity.getLocalizedString(severity), report.getSizeOf(severity)),
+                    SeverityPalette.getColor(severity));
         }
+
         return model;
     }
 }
