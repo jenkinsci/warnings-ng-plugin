@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import org.junit.Test;
 
@@ -95,7 +96,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void fileLengthIsZero() {
         FreeStyleProject project = createCheckStyleJob(ZERO_LENGTH_WORKSPACE);
-        
+
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
@@ -108,7 +109,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void filePatternDoesNotMatchAnyFile() {
         FreeStyleProject project = createCheckStyleJob(NO_FILE_PATTERN_MATCH_WORKSPACE);
-        
+
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
@@ -117,10 +118,10 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criteria.
-     * 
+     *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-51588">Issue 51588</a>
      */
-    @Test 
+    @Test
     public void findIssuesWithMultipleFiles() {
         FreeStyleProject project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
@@ -190,6 +191,9 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void findNoIssuesWithMultipleFilesReachableWithSymlinksWithFollowSymlinksDisabled() throws IOException {
+
+        assumeTrue(!System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows"));
+
         FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
 
         FilePath workspace = getWorkspace(project);
@@ -228,7 +232,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createCheckStyleJob(CHECKSTYLE_WORKSPACE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        
+
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasInfoMessages(
                 "Successfully parsed file " + getCheckStyleFile(project),
