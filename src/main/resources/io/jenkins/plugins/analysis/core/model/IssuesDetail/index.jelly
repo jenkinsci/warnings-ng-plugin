@@ -88,9 +88,7 @@
 
             </div>
 
-            <script>var view =
-              <st:bind value="${it}"/>
-            </script>
+            <script>var view = <st:bind value="${it}"/></script>
 
             <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
             <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/pie-chart.js"/>
@@ -117,10 +115,9 @@
             <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
             <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/pie-chart.js"/>
             <script>
-              var view =
-              <st:bind value="${it}"/>
+              var view = <st:bind value="${it}"/>
               view.getBuildTrend(function (lineModel) {
-              renderTrendChart('history-chart', lineModel.responseJSON, true, null);
+                renderTrendChart('history-chart', lineModel.responseJSON, true, null);
               });
             </script>
 
