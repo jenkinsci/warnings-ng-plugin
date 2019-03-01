@@ -103,6 +103,8 @@ function renderTrendChart(chartDivId, chartModel, showZoom, urlName) {
     window.onresize = function () {
         chart.resize();
     };
+
+    return chart;
 }
 
 

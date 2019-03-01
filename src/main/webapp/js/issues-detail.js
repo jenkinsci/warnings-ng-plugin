@@ -57,7 +57,23 @@
      * Requires that a DOM <div> element exists with the ID '#history-chart'.
      */
     view.getBuildTrend(function (lineModel) {
-        renderTrendChart('history-chart', lineModel.responseJSON, true, null);
+        var historyChart = renderTrendChart('history-chart', lineModel.responseJSON, true, null);
+
+        $('#trend-carousel').on('slid.bs.carousel', function () {
+            historyChart.resize();
+        });
+    });
+
+    /**
+     * Creates a build trend chart that shows the number of issues per tool.
+     * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
+     */
+    view.getToolsTrend(function (lineModel) {
+        var toolsChart = renderTrendChart('tools-trend-chart', lineModel.responseJSON, true, null);
+
+        $('#trend-carousel').on('slid.bs.carousel', function () {
+            toolsChart.resize();
+        });
     });
 
     /**

@@ -7,15 +7,8 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  *
  * @author Ullrich Hafner
  */
-public class ToolsTrendChart {
-    /**
-     * Creates the chart for the specified results.
-     *
-     * @param results
-     *         the analysis results to render
-     *
-     * @return the chart model
-     */
+public class ToolsTrendChart implements TrendChart {
+    @Override
     public LineModel create(final Iterable<? extends StaticAnalysisRun> results) {
         ToolSeriesBuilder builder = new ToolSeriesBuilder();
         LinesChartModel lineModel = builder.createDataSet(createConfiguration(), results);

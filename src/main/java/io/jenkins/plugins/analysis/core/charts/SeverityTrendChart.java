@@ -10,15 +10,8 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  *
  * @author Ullrich Hafner
  */
-public class SeverityTrendChart {
-    /**
-     * Creates the chart for the specified results.
-     *
-     * @param results
-     *         the analysis results to render
-     *
-     * @return the chart model
-     */
+public class SeverityTrendChart implements TrendChart {
+    @Override
     public LineModel create(final Iterable<? extends StaticAnalysisRun> results) {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
         LinesChartModel lineModel = builder.createDataSet(createConfiguration(), results);

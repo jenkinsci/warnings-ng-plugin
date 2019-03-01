@@ -30,6 +30,8 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityPieChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
+import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
+import io.jenkins.plugins.analysis.core.charts.TrendChart;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
@@ -252,10 +254,23 @@ public class IssuesDetail implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getBuildTrend() {
-        SeverityTrendChart severityTrendChart = new SeverityTrendChart();
+        return createTrendAsJson(new SeverityTrendChart());
+    }
 
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getToolsTrend() {
+        return createTrendAsJson(new ToolsTrendChart());
+    }
+
+    private JSONObject createTrendAsJson(final TrendChart trendChart) {
         History history = new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
-        return JSONObject.fromObject(severityTrendChart.create(history));
+        return JSONObject.fromObject(trendChart.create(history));
     }
 
     /**
