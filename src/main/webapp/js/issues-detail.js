@@ -52,6 +52,8 @@
         $('#single-trend-chart').renderPieChart(pieModel.responseJSON, false);
     });
 
+    storeAndRestoreCarousel('overview-carousel');
+
     /**
      * Creates a build trend chart that shows the number of issues for a couple of builds.
      * Requires that a DOM <div> element exists with the ID '#history-chart'.
@@ -75,6 +77,8 @@
             toolsChart.resize();
         });
     });
+
+    storeAndRestoreCarousel('trend-carousel');
 
     /**
      * Create a data table instance for all tables that are marked with class "display".
@@ -110,19 +114,6 @@
         if (activeTab) {
             detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
         }
-    }
-
-    /**
-     * Store and restore the selected carousel image in browser's local storage.
-     */
-    var carousel = $('#overview-carousel');
-    carousel.on('slid.bs.carousel', function (e) {
-        localStorage.setItem('activeCarousel', e.to);
-        console.log()
-    });
-    var activeCarousel = localStorage.getItem('activeCarousel');
-    if (activeCarousel) {
-        carousel.carousel(parseInt(activeCarousel));
     }
 
     /**
@@ -182,6 +173,22 @@
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     });
+
+    /**
+     * Store and restore the selected carousel image in browser's local storage.
+     *
+     * @param {String} carouselId - ID of the carousel
+     */
+    function storeAndRestoreCarousel(carouselId) {
+        var carousel = $('#' + carouselId);
+        carousel.on('slid.bs.carousel', function (e) {
+            localStorage.setItem(carouselId, e.to);
+        });
+        var activeCarousel = localStorage.getItem(carouselId);
+        if (activeCarousel) {
+            carousel.carousel(parseInt(activeCarousel));
+        }
+    }
 
     /**
      * Initializes the specified table.
