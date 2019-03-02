@@ -22,7 +22,7 @@ class SeveritySeriesBuilderTest {
     void shouldHaveEmptyDataSetForEmptyIterator() {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
 
-        LinesChartModel model = builder.createDataSet(createConfiguration(), Lists.newArrayList());
+        LinesDataSet model = builder.createDataSet(createConfiguration(), Lists.newArrayList());
 
         assertThat(model.getXAxisSize()).isEqualTo(0);
         assertThat(model.getDataSetIds()).isEmpty();
@@ -43,7 +43,7 @@ class SeveritySeriesBuilderTest {
         StaticAnalysisRun singleResult = createBuildResult(1,
                 1, 2, 3);
 
-        LinesChartModel dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList(singleResult));
+        LinesDataSet dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList(singleResult));
 
         assertThat(dataSet.getXAxisSize()).isEqualTo(1);
         assertThat(dataSet.getXAxisLabels()).containsExactly("#1");

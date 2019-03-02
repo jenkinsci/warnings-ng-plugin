@@ -14,5 +14,5 @@ public interface TrendChart {
      *
      * @return the chart model
      */
-    LineModel create(Iterable<? extends StaticAnalysisRun> results);
+    LinesChartModel create(Iterable<? extends StaticAnalysisRun> results);
 }

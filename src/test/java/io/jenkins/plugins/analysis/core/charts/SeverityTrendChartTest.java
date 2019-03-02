@@ -29,7 +29,7 @@ class SeverityTrendChartTest {
         results.add(createResult(1, 2, 3, 1));
         results.add(createResult(2, 4, 6, 2));
         
-        LineModel model = chart.create(results);
+        LinesChartModel model = chart.create(results);
 
         verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 3, 6);
         verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 2, 4);

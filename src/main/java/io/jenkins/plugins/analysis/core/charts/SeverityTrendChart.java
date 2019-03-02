@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
 
+import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
+import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
@@ -12,11 +14,11 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  */
 public class SeverityTrendChart implements TrendChart {
     @Override
-    public LineModel create(final Iterable<? extends StaticAnalysisRun> results) {
+    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results) {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
-        LinesChartModel lineModel = builder.createDataSet(createConfiguration(), results);
+        LinesDataSet lineModel = builder.createDataSet(createConfiguration(), results);
 
-        LineModel model = new LineModel();
+        LinesChartModel model = new LinesChartModel();
         model.addXAxisLabels(lineModel.getXAxisLabels());
 
         Severity[] visibleSeverities
@@ -25,7 +27,6 @@ public class SeverityTrendChart implements TrendChart {
             String dataSet = severity.getName();
             if (lineModel.hasSeries(dataSet)) {
                 LineSeries series = createSeries(severity);
-                series.activateFilled();
                 series.addAll(lineModel.getSeries(dataSet));
                 model.addSeries(series);
             }
@@ -40,6 +41,6 @@ public class SeverityTrendChart implements TrendChart {
 
     private LineSeries createSeries(final Severity severity) {
         return new LineSeries(LocalizedSeverity.getLocalizedString(severity),
-                SeverityPalette.getColor(severity).getNormal());
+                SeverityPalette.getColor(severity).getNormal(), StackedMode.STACKED, FilledMode.FILLED);
     }
 }

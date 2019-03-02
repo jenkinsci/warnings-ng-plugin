@@ -157,7 +157,7 @@ class SeriesBuilderTest {
             final List<AnalysisResult> runs, final List<List<Integer>> expected) {
         SeriesBuilder seriesBuilder = new TestSeriesBuilder(time);
 
-        LinesChartModel result = seriesBuilder.createDataSet(config, runs);
+        LinesDataSet result = seriesBuilder.createDataSet(config, runs);
 
         if (expected.size() == 0) {
             assertThat(result.getDataSetIds()).isEmpty();

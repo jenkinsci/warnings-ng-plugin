@@ -65,9 +65,9 @@ public abstract class SeriesBuilder {
      *
      * @return the created data set
      */
-    public LinesChartModel createDataSet(final ChartModelConfiguration configuration,
+    public LinesDataSet createDataSet(final ChartModelConfiguration configuration,
             final Iterable<? extends StaticAnalysisRun> results) {
-        LinesChartModel dataSet;
+        LinesDataSet dataSet;
         if (configuration.useBuildDateAsDomain()) {
             SortedMap<LocalDate, Map<String, Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, results));
             dataSet = createDataSetPerDay(averagePerDay);
@@ -134,8 +134,8 @@ public abstract class SeriesBuilder {
      *
      * @return a data set
      */
-    private LinesChartModel createDataSetPerBuildNumber(final SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
-        LinesChartModel model = new LinesChartModel();
+    private LinesDataSet createDataSetPerBuildNumber(final SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
+        LinesDataSet model = new LinesDataSet();
         for (Entry<AnalysisBuild, Map<String, Integer>> series : valuesPerBuild.entrySet()) {
             model.add(series.getKey().getDisplayName(), series.getValue());
         }
@@ -150,8 +150,8 @@ public abstract class SeriesBuilder {
      *
      * @return a data set
      */
-    private LinesChartModel createDataSetPerDay(final SortedMap<LocalDate, Map<String, Integer>> averagePerDay) {
-        LinesChartModel model = new LinesChartModel();
+    private LinesDataSet createDataSetPerDay(final SortedMap<LocalDate, Map<String, Integer>> averagePerDay) {
+        LinesDataSet model = new LinesDataSet();
         for (Entry<LocalDate, Map<String, Integer>> series : averagePerDay.entrySet()) {
             String label = new LocalDateLabel(series.getKey()).toString();
             System.out.println(label);
@@ -231,7 +231,7 @@ public abstract class SeriesBuilder {
      *         the static analysis results
      * @return the aggregated data set
      */
-    public LinesChartModel createAggregation(final ChartModelConfiguration configuration,
+    public LinesDataSet createAggregation(final ChartModelConfiguration configuration,
             final Collection<AnalysisHistory> histories) {
         Set<LocalDate> availableDates = Sets.newHashSet();
         Map<AnalysisHistory, Map<LocalDate, Map<String, Integer>>> averagesPerJob = Maps.newHashMap();

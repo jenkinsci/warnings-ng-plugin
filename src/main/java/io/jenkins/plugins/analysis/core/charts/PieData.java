@@ -8,7 +8,7 @@ package io.jenkins.plugins.analysis.core.charts;
  *
  * @author Ullrich Hafner
  */
-public class PieModel {
+public class PieData {
     private final int value;
     private final String name;
 
@@ -20,7 +20,7 @@ public class PieModel {
      * @param value
      *         value of the data point
      */
-    PieModel(final String name, final int value) {
+    PieData(final String name, final int value) {
         this.value = value;
         this.name = name;
     }

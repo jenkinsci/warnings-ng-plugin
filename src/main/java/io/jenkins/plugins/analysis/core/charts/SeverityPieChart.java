@@ -22,11 +22,11 @@ public class SeverityPieChart {
      * @return the chart model
      */
     public PieChartModel create(final Report report) {
-        PieChartModel model = new PieChartModel("Severities Distribution");
+        PieChartModel model = new PieChartModel(Messages.Severities_Name());
 
         ImmutableSet<Severity> predefinedSeverities = Severity.getPredefinedValues();
         for (Severity severity : predefinedSeverities) {
-            model.add(new PieModel(LocalizedSeverity.getLocalizedString(severity), report.getSizeOf(severity)),
+            model.add(new PieData(LocalizedSeverity.getLocalizedString(severity), report.getSizeOf(severity)),
                     SeverityPalette.getColor(severity));
         }
 

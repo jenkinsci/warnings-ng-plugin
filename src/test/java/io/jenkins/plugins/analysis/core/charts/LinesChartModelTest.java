@@ -5,28 +5,30 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
+import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
+
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
- * Tests the class {@link LineModel}.
+ * Tests the class {@link LinesChartModel}.
  *
  * @author Ullrich Hafner
  */
-class LineModelTest {
+class LinesChartModelTest {
     private static final String COLOR = "#fff";
 
     @Test
     void shouldCreateLineModel() {
-        LineModel model = new LineModel("spotbugs");
+        LinesChartModel model = new LinesChartModel("spotbugs");
         List<String> builds = new ArrayList<>();
         List<LineSeries> series = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             builds.add("#" + (i + 1));
         }
-        series.add(new LineSeries("High", COLOR));
-        series.add(new LineSeries("Normal", COLOR));
-        series.add(new LineSeries("Low", COLOR));
+        series.add(new LineSeries("High", COLOR, StackedMode.STACKED, FilledMode.FILLED));
+        series.add(new LineSeries("Normal", COLOR, StackedMode.STACKED, FilledMode.FILLED));
+        series.add(new LineSeries("Low", COLOR, StackedMode.STACKED, FilledMode.FILLED));
 
         for (LineSeries severity : series) {
             for (int i = 0; i < 5; i++) {

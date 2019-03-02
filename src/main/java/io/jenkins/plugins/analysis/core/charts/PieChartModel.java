@@ -12,16 +12,21 @@ import java.util.List;
  * @author Ullrich Hafner
  */
 public class PieChartModel {
-    private final List<PieModel> data = new ArrayList<>();
+    private final List<PieData> data = new ArrayList<>();
     private final List<String> colors = new ArrayList<>();
     private final String name;
 
-    public PieChartModel(final String name) {
+    /**
+     * Creates a new {@link PieChartModel} with the specified humand readable name.
+     *
+     * @param name the name of the chart
+     */
+    PieChartModel(final String name) {
         this.name = name;
     }
 
-    public void add(final PieModel pieModel, final Palette color) {
-        data.add(pieModel);
+    void add(final PieData pieData, final Palette color) {
+        data.add(pieData);
         colors.add(color.getNormal());
     }
 
@@ -29,7 +34,7 @@ public class PieChartModel {
         return name;
     }
 
-    public List<PieModel> getData() {
+    public List<PieData> getData() {
         return data;
     }
 

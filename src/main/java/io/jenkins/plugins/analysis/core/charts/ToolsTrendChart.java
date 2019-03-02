@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.charts;
 
+import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
+import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
@@ -9,17 +11,17 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  */
 public class ToolsTrendChart implements TrendChart {
     @Override
-    public LineModel create(final Iterable<? extends StaticAnalysisRun> results) {
+    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results) {
         ToolSeriesBuilder builder = new ToolSeriesBuilder();
-        LinesChartModel lineModel = builder.createDataSet(createConfiguration(), results);
+        LinesDataSet lineModel = builder.createDataSet(createConfiguration(), results);
 
-        LineModel model = new LineModel();
+        LinesChartModel model = new LinesChartModel();
 
         Palette[] colors = Palette.values();
         int index = 0;
         for (String name : lineModel.getDataSetIds()) {
-            LineSeries lineSeries = new LineSeries(name, colors[index++].getNormal());
-            lineSeries.clearStacked();
+            LineSeries lineSeries = new LineSeries(name, colors[index++].getNormal(),
+                    StackedMode.SEPARATE_LINES, FilledMode.LINES);
             if (index == colors.length) {
                 index = 0;
             }

@@ -16,7 +16,7 @@ import hudson.model.Job;
 import hudson.model.Run;
 import jenkins.model.Jenkins;
 
-import io.jenkins.plugins.analysis.core.charts.LineModel;
+import io.jenkins.plugins.analysis.core.charts.LinesChartModel;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 
@@ -164,7 +164,7 @@ public class JobAction implements Action {
         return JSONObject.fromObject(createChartModel());
     }
 
-    private LineModel createChartModel() {
+    private LinesChartModel createChartModel() {
         if (numberOfTools > 1) {
             return new ToolsTrendChart().create(createBuildHistory());
         }

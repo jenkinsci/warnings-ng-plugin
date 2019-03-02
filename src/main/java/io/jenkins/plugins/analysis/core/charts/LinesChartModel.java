@@ -1,74 +1,111 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
-import edu.hm.hafner.util.Ensure;
+import org.apache.commons.lang3.StringUtils;
+
+import net.sf.json.JSONObject;
 
 /**
- * Model of a line chart with multiple data sets. Each data set is represented by a unique ID. The actual data of each
- * data set is stored in a list of integer values which represent a value for an X-axis tick. In order to get multiple
- * data sets correctly aligned, the data points for each data set must contain exactly the same number of values.
+ * UI model for an ECharts line chart. Simple data bean that will be converted to JSON. On the client side the three
+ * properties need to be placed into the correct place in the options structure.
+ * <p>
+ * This class will be automatically converted to a JSON object.
+ * </p>
  *
  * @author Ullrich Hafner
  */
-class LinesChartModel {
-    private Map<String, List<Integer>> dataSetSeries = new HashMap<>();
-    private List<String> xAxisLabels = new ArrayList<>();
+public class LinesChartModel {
+    private final List<String> xAxisLabels = new ArrayList<>();
+    private final List<LineSeries> series = new ArrayList<>();
+    private String id;
 
-    int getXAxisSize() {
-        return xAxisLabels.size();
+    /**
+     * Creates a new {@link LinesChartModel} with no id.
+     */
+    LinesChartModel() {
+        this(StringUtils.EMPTY);
     }
 
-    List<String> getXAxisLabels() {
+    /**
+     * Creates a new {@link LinesChartModel} with the specified id.
+     *
+     * @param id
+     *         the ID to use
+     */
+    LinesChartModel(final String id) {
+        this.id = id;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Adds the specified X axis labels to this model.
+     *
+     * @param builds
+     *         the X-axis labels of the model
+     */
+    void addXAxisLabels(final List<String> builds) {
+        xAxisLabels.addAll(builds);
+    }
+
+    /**
+     * Adds the specified X axis label to this model.
+     *
+     * @param build
+     *         the X-axis label of the model
+     */
+    void addXAxisLabel(final String build) {
+        xAxisLabels.add(0, build);
+    }
+
+    /**
+     * Adds the series to this model.
+     *
+     * @param lineSeries
+     *         the series of the model
+     */
+    void addSeries(final List<LineSeries> lineSeries) {
+        series.addAll(lineSeries);
+    }
+
+    /**
+     * Adds the series to this model.
+     *
+     * @param lineSeries
+     *         the series of the model
+     */
+    void addSeries(final LineSeries... lineSeries) {
+        Collections.addAll(series, lineSeries);
+    }
+
+    public List<String> getXAxisLabels() {
         return xAxisLabels;
     }
 
-    Set<String> getDataSetIds() {
-        return dataSetSeries.keySet();
-    }
-
-    boolean hasSeries(final String dataSetId) {
-        return dataSetSeries.containsKey(dataSetId);
+    public List<LineSeries> getSeries() {
+        return series;
     }
 
     /**
-     * Returns the data series of the specified dataSetId.
+     * Returns the number of points in the series.
      *
-     * @param dataSetId
-     *         the ID of the series
-     *
-     * @return the series (list of integer values for each X-Axis label)
+     * @return number of points
      */
-    List<Integer> getSeries(final String dataSetId) {
-        Ensure.that(hasSeries(dataSetId)).isTrue("No dataset '%s' registered", dataSetId);
-
-        return dataSetSeries.get(dataSetId);
+    public int size() {
+        return xAxisLabels.size();
     }
 
-    /**
-     * Adds data points for a new xAxisLabel. The data points for the X-axis tick are given by a map. Each dataSetId
-     * provides one value for the specified X-axis label.
-     *
-     * @param xAxisLabel
-     *         the label of the X-axis
-     * @param dataSetValues
-     *         the values for each of the series at the given X-axis tick
-     */
-    public void add(final String xAxisLabel, final Map<String, Integer> dataSetValues) {
-        if (xAxisLabels.contains(xAxisLabel)) {
-            throw new IllegalStateException("Label already registered: " + xAxisLabel);
-        }
-
-        xAxisLabels.add(xAxisLabel);
-
-        for (Entry<String, Integer> dataPoints : dataSetValues.entrySet()) {
-            dataSetSeries.putIfAbsent(dataPoints.getKey(), new ArrayList<>());
-            dataSetSeries.get(dataPoints.getKey()).add(dataPoints.getValue());
-        }
+    @Override
+    public String toString() {
+        return JSONObject.fromObject(this).toString(2);
     }
 }
