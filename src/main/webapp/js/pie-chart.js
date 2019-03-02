@@ -60,9 +60,8 @@
              * @param {boolean} isTitleVisible - determines whether a title should be shown
              */
             function getTitle(isTitleVisible) {
-                var title;
                 if (isTitleVisible) {
-                    title = {
+                    return {
                         text: pieModel.name,
                         textStyle: {
                             fontWeight: 'normal',
@@ -71,7 +70,7 @@
                         left: 'center'
                     }
                 } else {
-                    title = null;
+                    return null;
                 }
             }
         }
