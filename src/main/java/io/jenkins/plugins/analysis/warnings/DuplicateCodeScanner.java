@@ -129,6 +129,16 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
             }
             return "-";
         }
+
+        @Override
+        public String getTrendName() {
+            return Messages.DRY_Trend_Name(getName());
+        }
+
+        @Override
+        public String getLinkName() {
+            return Messages.DRY_Link_Name(getName());
+        }
     }
 
     /** Descriptor for this static analysis tool. */
