@@ -660,11 +660,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
         /**
          * Creates a new instance of {@link BuildProperties}.
-         *  @param number
+         *
+         * @param number
          *         build number
          * @param displayName
          *         human readable name of the build
          * @param timeInMillis
+         *         the build time (in milli seconds)
          */
         public BuildProperties(final int number, final String displayName, final long timeInMillis) {
             this.timeInMillis = timeInMillis;

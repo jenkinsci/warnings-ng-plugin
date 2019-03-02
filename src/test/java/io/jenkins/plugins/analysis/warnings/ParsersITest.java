@@ -232,23 +232,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindAllPmdIssues() {
         Report report = shouldFindIssuesOfTool(262, new Pmd(), "pmd-6.xml");
 
-        assertThatDescriptionOfIssueIsSet(new Pmd(), report.get(0), "\n"
-                + "A high number of imports can indicate a high degree of coupling within an object. This rule \n"
-                + "counts the number of unique imports and reports a violation if the count is above the \n"
-                + "user-specified threshold.\n"
-                + "        <pre><code>\n"
-                + "\n"
-                + "import blah.blah.Baz;\n"
-                + "import blah.blah.Bif;\n"
-                + "// 18 others from the same package elided\n"
-                + "public class Foo {\n"
-                + "    public void doWork() {}\n"
-                + "}\n"
-                + "\n"
-                + "        </code></pre>\n"
-                + "<a href=\"https://pmd.github.io/pmd-6.10.0/pmd_rules_java_design.html#excessiveimports\">\n"
-                + "    See PMD documentation.\n"
-                + "</a>\n");
+        assertThatDescriptionOfIssueIsSet(new Pmd(), report.get(0),
+                "A high number of imports can indicate a high degree of coupling within an object.");
     }
 
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
@@ -267,7 +252,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             final String expectedDescription) {
         StaticAnalysisLabelProvider labelProvider = tool.getLabelProvider();
         assertThat(issue).hasDescription("");
-        assertThat(labelProvider.getDescription(issue)).startsWith(expectedDescription);
+        assertThat(labelProvider.getDescription(issue)).contains(expectedDescription);
     }
 
     /** Runs the FindBugs parser on an output file that contains 2 issues. */

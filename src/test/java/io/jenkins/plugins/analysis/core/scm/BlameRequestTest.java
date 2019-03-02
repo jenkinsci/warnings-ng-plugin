@@ -63,7 +63,7 @@ class BlameRequestTest {
         setDetails(otherLine, 2);
 
         request.merge(otherLine);
-        assertThat(request.iterator()).containsExactly(1, 2);
+        assertThat(request.iterator()).toIterable().containsExactly(1, 2);
         verifyDetails(request, 1);
         verifyDetails(request, 2);
 

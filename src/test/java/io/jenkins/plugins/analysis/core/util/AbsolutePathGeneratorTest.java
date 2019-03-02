@@ -46,7 +46,7 @@ class AbsolutePathGeneratorTest {
 
         new AbsolutePathGenerator().run(report, WORKSPACE);
 
-        assertThat(report.iterator()).containsExactly(report.get(0));
+        assertThat(report.iterator()).toIterable().containsExactly(report.get(0));
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 unresolved");
         assertThat(report.getErrorMessages()).hasSize(2).contains("- " + fileName);
@@ -76,7 +76,7 @@ class AbsolutePathGeneratorTest {
         AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
         generator.run(report, WORKSPACE);
 
-        assertThat(report.iterator()).containsExactly(builder.setFileName(absolutePath).build());
+        assertThat(report.iterator()).toIterable().containsExactly(builder.setFileName(absolutePath).build());
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
     }
@@ -108,16 +108,17 @@ class AbsolutePathGeneratorTest {
         URI resourceFolder = getResourceFolder();
         String workspace = getUriPath(resourceFolder);
 
-        IssueBuilder builder1 = new IssueBuilder();
+        IssueBuilder builder = new IssueBuilder();
 
-        report.add(builder1.setFileName("").build());
-        report.add(builder1.setFileName("relative.txt").build());
-        report.add(builder1.setDirectory(workspace).setFileName("relative.txt").build());
-        report.add(builder1.setDirectory(workspace).setFileName(normalize("../../core/util/relative.txt")).build());
+        report.add(builder.setFileName("").build());
+        report.add(builder.setFileName("relative.txt").build());
+        report.add(builder.setDirectory(workspace).setFileName("relative.txt").build());
+        report.add(builder.setDirectory(workspace).setFileName(normalize("../../core/util/normalized.txt")).build());
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator(new FileSystem());
         generator.run(report, Paths.get(resourceFolder));
 
+        assertThat(report).hasSize(4);
         assertThat(report.get(0))
                 .as("Issue with no file name").hasFileName("-");
         assertThat(report.get(1))
@@ -125,11 +126,11 @@ class AbsolutePathGeneratorTest {
         assertThat(report.get(2))
                 .as("Issue with absolute file name (normalized)").hasFileName(workspace + RELATIVE_FILE);
         assertThat(report.get(3))
-                .as("Issue with absolute file name (not normalized)").hasFileName(workspace + RELATIVE_FILE);
+                .as("Issue with absolute file name (not normalized)").hasFileName(workspace + "normalized.txt");
 
         assertThat(report.getInfoMessages()).hasSize(1);
-        assertThat(report.getInfoMessages().get(0)).contains("2 resolved");
-        assertThat(report.getInfoMessages().get(0)).contains("1 already resolved");
+        assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
+        assertThat(report.getInfoMessages().get(0)).contains("2 already resolved");
         assertThat(report.getErrorMessages()).isEmpty();
     }
 

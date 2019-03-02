@@ -68,7 +68,7 @@ class AnalysisHistoryTest {
 
         AnalysisHistory history = new AnalysisHistory(last, resultSelector);
 
-        assertThat(history.iterator()).containsExactly(lastResult, middleResult, firstResult);
+        assertThat(history.iterator()).toIterable().containsExactly(lastResult, middleResult, firstResult);
     }
 
     private Run createFailingBuild() {
