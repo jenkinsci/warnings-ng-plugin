@@ -16,7 +16,9 @@ import hudson.model.Job;
 import hudson.model.Run;
 import jenkins.model.Jenkins;
 
-import io.jenkins.plugins.analysis.core.charts.SeverityChart;
+import io.jenkins.plugins.analysis.core.charts.LinesChartModel;
+import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
+import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -29,6 +31,7 @@ public class JobAction implements Action {
 
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
+    private final int numberOfTools;
 
     /**
      * Creates a new instance of {@link JobAction}.
@@ -37,10 +40,27 @@ public class JobAction implements Action {
      *         the job that owns this action
      * @param labelProvider
      *         the label provider
+     * @deprecated use {@link #JobAction(Job, StaticAnalysisLabelProvider, int)}
      */
+    @Deprecated
     public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider) {
+        this(owner, labelProvider, 1);
+    }
+
+    /**
+     * Creates a new instance of {@link JobAction}.
+     *
+     * @param owner
+     *         the job that owns this action
+     * @param labelProvider
+     *         the label provider
+     * @param numberOfTools
+     *         the number of tools that have results to show
+     */
+    public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider, final int numberOfTools) {
         this.owner = owner;
         this.labelProvider = labelProvider;
+        this.numberOfTools = numberOfTools;
     }
 
     /**
@@ -91,7 +111,8 @@ public class JobAction implements Action {
      *
      * @return the icon URL for the side-panel in the job screen
      */
-    @Override @Nullable
+    @Override
+    @Nullable
     public String getIconFileName() {
         return createBuildHistory().getBaselineResult()
                 .map(result -> Jenkins.RESOURCE_PATH + labelProvider.getSmallIconUrl())
@@ -118,7 +139,7 @@ public class JobAction implements Action {
     public void doIndex(final StaplerRequest request, final StaplerResponse response) throws IOException {
         Optional<ResultAction> action = getLatestAction();
         if (action.isPresent()) {
-            response.sendRedirect2(String.format("../%d/%s", action.get().getOwner().getNumber(), 
+            response.sendRedirect2(String.format("../%d/%s", action.get().getOwner().getNumber(),
                     labelProvider.getId()));
         }
     }
@@ -133,21 +154,28 @@ public class JobAction implements Action {
     }
 
     /**
-     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity. 
+     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
      *
      * @return the UI model as JSON
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getBuildTrend() {
-        SeverityChart severityChart = new SeverityChart();
+        return JSONObject.fromObject(createChartModel());
+    }
 
-        return JSONObject.fromObject(severityChart.create(createBuildHistory()));
+    private LinesChartModel createChartModel() {
+        if (numberOfTools > 1) {
+            return new ToolsTrendChart().create(createBuildHistory());
+        }
+        else {
+            return new SeverityTrendChart().create(createBuildHistory());
+        }
     }
 
     /**
-     * Returns whether the trend chart is visible or not. 
-     * 
+     * Returns whether the trend chart is visible or not.
+     *
      * @return {@code true} if the trend is visible, false otherwise
      */
     @SuppressWarnings("unused") // Called by jelly view
@@ -163,7 +191,7 @@ public class JobAction implements Action {
         }
         return false;
     }
-    
+
     @Override
     public String toString() {
         return String.format("%s (%s)", getClass().getName(), labelProvider.getName());

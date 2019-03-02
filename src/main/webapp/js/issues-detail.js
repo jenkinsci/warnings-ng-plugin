@@ -28,65 +28,13 @@
      * Requires that a DOM <div> element exists with the ID '#severities-chart'.
      */
     view.getSeverityModel(function (pieModel) {
-        (function ($) {
-            var severitiesChart = echarts.init(document.getElementById('severities-chart'));
-            var severitiesOptions = {
-                title: {
-                    text: 'Severities Distribution',
-                    textStyle: {
-                        fontWeight: 'normal',
-                        fontSize: '16'
-                    },
-                    left: 'center'
-                },
-                textStyle: {
-                    fontWeight: 'normal',
-                    fontSize: '16'
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{b}: {c} ({d}%)"
-                },
-                legend: {
-                    orient: 'horizontal',
-                    x: 'center',
-                    y: 'bottom'
-                },
-                series: [{
-                    type: 'pie',
-                    radius: ['30%', '70%'],
-                    avoidLabelOverlap: false,
-                    color: ['#EF9A9A', '#FFCC80', '#FFF59D', '#E6EE9C'],
-                    label: {
-                        normal: {
-                            show: false,
-                            position: 'center'
-                        },
-                        emphasis: {
-                            show: false
-                        }
-                    },
-                    labelLine: {
-                        normal: {
-                            show: true
-                        }
-                    },
-                    data: pieModel.responseObject(),
-                }
-                ]
-            };
-            severitiesChart.setOption(severitiesOptions);
+        var severitiesChart = $('#severities-chart').renderPieChart(pieModel.responseJSON, true);
+        $('#overview-carousel').on('slid.bs.carousel', function () {
             severitiesChart.resize();
-            $(window).on('resize', function () {
-                severitiesChart.resize();
-            });
-            severitiesChart.on('click', function (params) {
-                window.location.assign(params.name);
-            });
-            $('#overview-carousel').on('slid.bs.carousel', function () {
-                severitiesChart.resize();
-            });
-        })(jQuery);
+        });
+    });
+    view.getSeverityModel(function (pieModel) {
+        $('#single-severities-chart').renderPieChart(pieModel.responseJSON, false);
     });
 
     /**
@@ -94,71 +42,44 @@
      * Requires that a DOM <div> element exists with the ID '#trend-chart'.
      */
     view.getTrendModel(function (pieModel) {
-        (function ($) {
-            var trendChart = echarts.init(document.getElementById('trend-chart'));
-            var trendOptions = {
-                title: {
-                    text: 'Reference Comparison',
-                    textStyle: {
-                        fontWeight: 'normal',
-                        fontSize: '16'
-                    },
-                    left: 'center',
-                },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: "{b}: {c} ({d}%)"
-                },
-                legend: {
-                    orient: 'horizontal',
-                    x: 'center',
-                    y: 'bottom'
-                },
-                series: [{
-                    type: 'pie',
-                    radius: ['30%', '70%'],
-                    avoidLabelOverlap: false,
-                    color: ['#EF9A9A', '#FFF59D', '#A5D6A7'],
-                    label: {
-                        normal: {
-                            show: false,
-                            position: 'center'
-                        },
-                        emphasis: {
-                            show: false
-                        }
-                    },
-                    labelLine: {
-                        normal: {
-                            show: true
-                        }
-                    },
-                    data: pieModel.responseObject(),
-                }
-                ]
-            };
-            trendChart.setOption(trendOptions);
+        var trendChart = $('#trend-chart').renderPieChart(pieModel.responseJSON, true);
+
+        $('#overview-carousel').on('slid.bs.carousel', function () {
             trendChart.resize();
-            $(window).on('resize', function () {
-                trendChart.resize();
-            });
-            trendChart.on('click', function (params) {
-                window.location.assign(params.name);
-            });
-            $('#overview-carousel').on('slid.bs.carousel', function () {
-                trendChart.resize();
-            });
-        })(jQuery);
+        });
+    })
+    view.getTrendModel(function (pieModel) {
+        $('#single-trend-chart').renderPieChart(pieModel.responseJSON, false);
     });
+
+    storeAndRestoreCarousel('overview-carousel');
 
     /**
      * Creates a build trend chart that shows the number of issues for a couple of builds.
      * Requires that a DOM <div> element exists with the ID '#history-chart'.
      */
     view.getBuildTrend(function (lineModel) {
-        renderTrendChart('history-chart', lineModel.responseJSON);
+        var historyChart = renderTrendChart('history-chart', lineModel.responseJSON, true, null);
+
+        $('#trend-carousel').on('slid.bs.carousel', function () {
+            historyChart.resize();
+        });
     });
-    
+
+    /**
+     * Creates a build trend chart that shows the number of issues per tool.
+     * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
+     */
+    view.getToolsTrend(function (lineModel) {
+        var toolsChart = renderTrendChart('tools-trend-chart', lineModel.responseJSON, true, null);
+
+        $('#trend-carousel').on('slid.bs.carousel', function () {
+            toolsChart.resize();
+        });
+    });
+
+    storeAndRestoreCarousel('trend-carousel');
+
     /**
      * Create a data table instance for all tables that are marked with class "display".
      */
@@ -169,13 +90,13 @@
             orderable: false
         }]
     });
-    
+
     /**
      * Create data table instances for the detail tables.
      */
     showTable('#issues');
     showTable('#scm');
-    
+
     /**
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
      * If the user selects the tab using an #anchor prefer this tab.
@@ -188,27 +109,13 @@
         var tabName = url.split('#')[1];
 
         detailsTabs.find('a[href="#' + tabName + '"]').tab('show');
-    }
-    else {
+    } else {
         var activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
             detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
         }
     }
 
-    /**
-     * Store and restore the selected carousel image in browser's local storage.
-     */
-    var carousel = $('#overview-carousel');
-    carousel.on('slid.bs.carousel', function (e) {
-        localStorage.setItem('activeCarousel', e.to);   
-        console.log()
-    });
-    var activeCarousel = localStorage.getItem('activeCarousel');
-    if (activeCarousel) {
-        carousel.carousel(parseInt(activeCarousel));
-    }
-    
     /**
      * Store the selected tab in browser's local storage.
      */
@@ -246,13 +153,12 @@
             var order = [orderBy, orderDirection];
             try {
                 dataTable.order(order).draw();
-            }
-            catch (ignore) { // TODO: find a way to determine the number of columns here
+            } catch (ignore) { // TODO: find a way to determine the number of columns here
                 dataTable.order([[1, 'asc']]).draw();
             }
         }
         // Store paging size
-        $(this).on('length.dt', function ( e, settings, len ) {
+        $(this).on('length.dt', function (e, settings, len) {
             localStorage.setItem(id + '#table-length', len);
         });
         var storedLength = localStorage.getItem(id + '#table-length');
@@ -267,6 +173,22 @@
     $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     });
+
+    /**
+     * Store and restore the selected carousel image in browser's local storage.
+     *
+     * @param {String} carouselId - ID of the carousel
+     */
+    function storeAndRestoreCarousel(carouselId) {
+        var carousel = $('#' + carouselId);
+        carousel.on('slid.bs.carousel', function (e) {
+            localStorage.setItem(carouselId, e.to);
+        });
+        var activeCarousel = localStorage.getItem(carouselId);
+        if (activeCarousel) {
+            carousel.carousel(parseInt(activeCarousel));
+        }
+    }
 
     /**
      * Initializes the specified table.

@@ -1,11 +1,14 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 /**
- * UI model for an ECharts pie chart. Simple data bean that will be converted to JSON.
+ * UI model for an ECharts pie chart.
+ * <p>
+ * This class will be automatically converted to a JSON object.
+ * </p>
  *
  * @author Ullrich Hafner
  */
-public class PieModel {
+public class PieData {
     private final int value;
     private final String name;
 
@@ -17,7 +20,7 @@ public class PieModel {
      * @param value
      *         value of the data point
      */
-    public PieModel(final String name, final int value) {
+    PieData(final String name, final int value) {
         this.value = value;
         this.name = name;
     }

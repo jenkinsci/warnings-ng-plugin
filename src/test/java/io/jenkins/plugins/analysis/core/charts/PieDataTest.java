@@ -9,16 +9,16 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import net.sf.json.JSONArray;
 
 /**
- * Tests the class {@link PieModel}.
+ * Tests the class {@link PieData}.
  *
  * @author Ullrich Hafner
  */
-class PieModelTest {
+class PieDataTest {
     @Test
     void shouldConvertListOfPointsToJson() {
-        List<PieModel> models = new ArrayList<>();
-        PieModel first = new PieModel("ONE", 1);
-        PieModel second = new PieModel("TWO", 2);
+        List<PieData> models = new ArrayList<>();
+        PieData first = new PieData("ONE", 1);
+        PieData second = new PieData("TWO", 2);
         models.add(first);
         models.add(second);
 

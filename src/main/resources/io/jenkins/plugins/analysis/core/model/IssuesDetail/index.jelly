@@ -24,17 +24,57 @@
 
         <h3>${it.displayName}</h3>
 
+        <!-- FIXME: remove markers -->
+        <span id="mq-detector">
+          <span class="d-block d-sm-none">.XS.</span>
+          <span class="d-none d-sm-block d-md-none">.SM.</span>
+          <span class="d-none d-md-block d-lg-none">.MD.</span>
+          <span class="d-none d-lg-block d-xl-none">.LG.</span>
+          <span class="d-none d-xl-block">.XL.</span>
+        </span>
+
         <j:set var="i" value="${it.issues}"/>
         <j:choose>
           <j:when test="${i.isNotEmpty()}">
 
             <div class="row py-3">
 
-              <div class="col-sm-6">
+              <!-- FIXME: md should have 4 : 8 -->
+              <div class="col-xs-12 col-sm-6 col-md-5 d-none d-block d-md-block d-lg-none d-xl-none">
                 <issues:carousel/>
               </div>
 
-              <div class="col-sm-6">
+              <div class="col-lg-3 col-xl-2 d-none d-lg-block">
+                <div class="card card-marg-bot">
+                  <div data-role="page" class="card-body">
+
+                    <h5 class="card-title">
+                      ${%Severities Distribution}
+                      <i class="fa fa-chart-pie icon-right fa-2x" aria-hidden="true"/>
+                    </h5>
+
+                    <div id="single-severities-chart" class="graph-cursor-pointer card-chart"/>
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-lg-3 col-xl-2 d-none d-lg-block">
+                <div class="card card-marg-bot">
+                  <div data-role="page" class="card-body">
+
+                    <h5 class="card-title">
+                      ${%Reference Comparison}
+                      <i class="fa fa-bell icon-right fa-2x" aria-hidden="true"/>
+                    </h5>
+
+                    <div id="single-trend-chart" class="graph-cursor-pointer card-chart"/>
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-xs-12 col-sm-6 col-md-7 col-lg-6 col-xl-8">
                 <issues:history/>
               </div>
 
@@ -49,8 +89,9 @@
             </div>
 
             <script>var view = <st:bind value="${it}"/></script>
-            
+
             <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
+            <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/pie-chart.js"/>
             <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
 
           </j:when>
@@ -69,13 +110,14 @@
 
             <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
 
-            
+
             <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
             <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
+            <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/pie-chart.js"/>
             <script>
               var view = <st:bind value="${it}"/>
               view.getBuildTrend(function (lineModel) {
-                renderTrendChart('history-chart', lineModel.responseJSON);
+                renderTrendChart('history-chart', lineModel.responseJSON, true, null);
               });
             </script>
 

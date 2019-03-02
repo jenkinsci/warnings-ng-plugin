@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
@@ -486,7 +487,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Returns whether the static analysis result is successful with respect to the defined {@link QualityGateEvaluator}.
+     * Returns whether the static analysis result is successful with respect to the defined {@link
+     * QualityGateEvaluator}.
      *
      * @return {@code true} if the static analysis result is successful, {@code false} if the static analysis result is
      *         {@link QualityGateStatus#WARNING} or {@link QualityGateStatus#FAILED}
@@ -513,12 +515,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return new JenkinsFacade().getBuild(referenceBuildId);
     }
 
-    /**
-     * Returns the number of issues in this analysis run, mapped by their origin. The origin is the tool that created
-     * the report.
-     *
-     * @return number of issues per origin
-     */
+    @Override
     public Map<String, Integer> getSizePerOrigin() {
         return Maps.immutable.ofAll(sizePerOrigin).toMap();
     }
@@ -543,7 +540,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
     @Override
     public AnalysisBuild getBuild() {
-        return new RunAdapter(owner);
+        return new BuildProperties(owner);
     }
 
     @Override
@@ -644,35 +641,50 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
-     * Wraps a Jenkins {@link Run} instance into an {@link AnalysisBuild}.
+     * Properties of a Jenkins {@link Run} that contains an {@link AnalysisResult}.
      */
-    // TODO: if the trend charts are refactored then this adapter might be obsolete 
-    public static class RunAdapter implements AnalysisBuild {
-        private final Run<?, ?> run;
+    public static class BuildProperties implements AnalysisBuild {
+        private long timeInMillis;
+        private int number;
+        private String displayName;
 
         /**
-         * Creates a new instance of {@link RunAdapter}.
+         * Creates a new instance of {@link BuildProperties}.
          *
          * @param run
-         *         the run to wrap
+         *         the properties of the run
          */
-        public RunAdapter(final Run<?, ?> run) {
-            this.run = run;
+        BuildProperties(final Run<?, ?> run) {
+            this(run.getNumber(), run.getDisplayName(), run.getTimeInMillis());
+        }
+
+        /**
+         * Creates a new instance of {@link BuildProperties}.
+         *  @param number
+         *         build number
+         * @param displayName
+         *         human readable name of the build
+         * @param timeInMillis
+         */
+        public BuildProperties(final int number, final String displayName, final long timeInMillis) {
+            this.timeInMillis = timeInMillis;
+            this.number = number;
+            this.displayName = displayName;
         }
 
         @Override
         public long getTimeInMillis() {
-            return run.getTimeInMillis();
+            return timeInMillis;
         }
 
         @Override
         public int getNumber() {
-            return run.getNumber();
+            return number;
         }
 
         @Override
         public String getDisplayName() {
-            return run.getDisplayName();
+            return displayName;
         }
 
         @Override
@@ -688,15 +700,18 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
             if (o == null || getClass() != o.getClass()) {
                 return false;
             }
-
-            RunAdapter that = (RunAdapter) o;
-
-            return run.equals(that.run);
+            BuildProperties that = (BuildProperties) o;
+            return number == that.number;
         }
 
         @Override
         public int hashCode() {
-            return run.hashCode();
+            return Objects.hash(number);
+        }
+
+        @Override
+        public String toString() {
+            return getDisplayName();
         }
     }
 }

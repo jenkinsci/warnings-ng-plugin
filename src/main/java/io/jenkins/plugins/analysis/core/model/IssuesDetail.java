@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
-import org.eclipse.collections.api.set.ImmutableSet;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
@@ -29,8 +27,11 @@ import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.charts.PieModel;
-import io.jenkins.plugins.analysis.core.charts.SeverityChart;
+import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
+import io.jenkins.plugins.analysis.core.charts.SeverityPieChart;
+import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
+import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
+import io.jenkins.plugins.analysis.core.charts.TrendChart;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
@@ -72,10 +73,10 @@ public class IssuesDetail implements ModelObject {
      *         the analysis result
      * @param report
      *         all issues that should be shown in this details view
-     * @param outstandingIssues
-     *         all outstanding issues
      * @param newIssues
      *         all new issues
+     * @param outstandingIssues
+     *         all outstanding issues
      * @param fixedIssues
      *         all fixed issues
      * @param url
@@ -226,14 +227,10 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONArray getSeverityModel() {
-        List<PieModel> model = new ArrayList<>();
-        ImmutableSet<Severity> predefinedSeverities = Severity.getPredefinedValues();
-        for (Severity severity : predefinedSeverities) {
-            model.add(new PieModel(LocalizedSeverity.getLocalizedString(severity), report.getSizeOf(severity)));
-        }
+    public JSONObject getSeverityModel() {
+        SeverityPieChart pieChart = new SeverityPieChart();
 
-        return JSONArray.fromObject(model);
+        return JSONObject.fromObject(pieChart.create(report));
     }
 
     /**
@@ -243,13 +240,10 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONArray getTrendModel() {
-        List<PieModel> model = new ArrayList<>();
-        model.add(new PieModel(Messages.New_Warnings_Short(), newIssues.size()));
-        model.add(new PieModel(Messages.Outstanding_Warnings_Short(), outstandingIssues.size()));
-        model.add(new PieModel(Messages.Fixed_Warnings_Short(), fixedIssues.size()));
+    public JSONObject getTrendModel() {
+        NewVersusFixedPieChart pieChart = new NewVersusFixedPieChart();
 
-        return JSONArray.fromObject(model);
+        return JSONObject.fromObject(pieChart.create(newIssues, outstandingIssues, fixedIssues));
     }
 
     /**
@@ -260,10 +254,23 @@ public class IssuesDetail implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getBuildTrend() {
-        SeverityChart severityChart = new SeverityChart();
+        return createTrendAsJson(new SeverityTrendChart());
+    }
 
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getToolsTrend() {
+        return createTrendAsJson(new ToolsTrendChart());
+    }
+
+    private JSONObject createTrendAsJson(final TrendChart trendChart) {
         History history = new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
-        return JSONObject.fromObject(severityChart.create(history));
+        return JSONObject.fromObject(trendChart.create(history));
     }
 
     /**

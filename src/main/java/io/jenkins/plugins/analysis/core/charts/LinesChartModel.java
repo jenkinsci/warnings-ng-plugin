@@ -11,27 +11,31 @@ import net.sf.json.JSONObject;
 /**
  * UI model for an ECharts line chart. Simple data bean that will be converted to JSON. On the client side the three
  * properties need to be placed into the correct place in the options structure.
+ * <p>
+ * This class will be automatically converted to a JSON object.
+ * </p>
  *
  * @author Ullrich Hafner
  */
-public class LineModel {
+public class LinesChartModel {
     private final List<String> xAxisLabels = new ArrayList<>();
     private final List<LineSeries> series = new ArrayList<>();
-    private String id = StringUtils.EMPTY;
+    private String id;
 
     /**
-     * Creates a new {@link LineModel} with no id.
+     * Creates a new {@link LinesChartModel} with no id.
      */
-    public LineModel() {
+    LinesChartModel() {
+        this(StringUtils.EMPTY);
     }
 
     /**
-     * Creates a new {@link LineModel} with the specified id.
+     * Creates a new {@link LinesChartModel} with the specified id.
      *
      * @param id
      *         the ID to use
      */
-    public LineModel(final String id) {
+    LinesChartModel(final String id) {
         this.id = id;
     }
 
@@ -49,7 +53,7 @@ public class LineModel {
      * @param builds
      *         the X-axis labels of the model
      */
-    public void addXAxisLabels(final List<String> builds) {
+    void addXAxisLabels(final List<String> builds) {
         xAxisLabels.addAll(builds);
     }
 
@@ -59,7 +63,7 @@ public class LineModel {
      * @param build
      *         the X-axis label of the model
      */
-    public void addXAxisLabel(final String build) {
+    void addXAxisLabel(final String build) {
         xAxisLabels.add(0, build);
     }
 
@@ -69,7 +73,7 @@ public class LineModel {
      * @param lineSeries
      *         the series of the model
      */
-    public void addSeries(final List<LineSeries> lineSeries) {
+    void addSeries(final List<LineSeries> lineSeries) {
         series.addAll(lineSeries);
     }
 
@@ -79,7 +83,7 @@ public class LineModel {
      * @param lineSeries
      *         the series of the model
      */
-    public void addSeries(final LineSeries... lineSeries) {
+    void addSeries(final LineSeries... lineSeries) {
         Collections.addAll(series, lineSeries);
     }
 

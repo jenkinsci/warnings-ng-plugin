@@ -19,6 +19,7 @@ import hudson.model.Run;
 import jenkins.model.RunAction2;
 import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 
 /**
@@ -133,7 +134,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new JobAction(owner.getParent(), getLabelProvider()));
+        return Collections.singleton(new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size()));
     }
 
     public AnalysisResult getResult() {

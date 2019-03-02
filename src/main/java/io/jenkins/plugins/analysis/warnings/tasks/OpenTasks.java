@@ -178,6 +178,23 @@ public class OpenTasks extends Tool {
         // empty constructor required for stapler
     }
 
+    /** Label provider with customized messages. */
+    private static class LabelProvider extends IconLabelProvider {
+        LabelProvider() {
+            super(ID, Messages.Warnings_OpenTasks_Name());
+        }
+
+        @Override
+        public String getLinkName() {
+            return Messages.Warnings_OpenTasks_LinkName();
+        }
+
+        @Override
+        public String getTrendName() {
+            return Messages.Warnings_OpenTasks_TrendName();
+        }
+    }
+
     /** Descriptor for this static analysis tool. */
     @Symbol("taskScanner")
     @Extension
@@ -197,7 +214,7 @@ public class OpenTasks extends Tool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
+            return new LabelProvider();
         }
 
         /**
