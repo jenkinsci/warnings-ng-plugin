@@ -39,7 +39,8 @@ public abstract class ReportScanningTool extends Tool {
 
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
-    private boolean followSymlinks = true;
+    // Use negative case to allow defaulting to false and defaulting to existing behaviour.
+    private boolean skipSymbolicLinks = false;
 
     /**
      * Returns a new parser to scan a log file and return the issues reported in such a file.
@@ -66,18 +67,22 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     /**
-     * Specify if file scanning should follow symbolic links.
+     * Specify if file scanning skip traversal of symbolic links.
      *
-     * @param followSymlinks
-     *         the pattern to use
+     * @param skipSymbolicLinks
+     *         if symbolic links should be skipped during directory scanning.
      */
     @DataBoundSetter
-    public void setFollowSymlinks(final boolean followSymlinks) {
-        this.followSymlinks = followSymlinks;
+    public void setSkipSymbolicLinks(final boolean skipSymbolicLinks) {
+        this.skipSymbolicLinks = skipSymbolicLinks;
     }
 
-    public boolean isFollowSymlinks() {
-        return followSymlinks;
+    public boolean getSkipSymbolicLinks() {
+        return skipSymbolicLinks;
+    }
+
+    private boolean followSymlinks() {
+        return !getSkipSymbolicLinks();
     }
 
     /**
@@ -121,7 +126,7 @@ public abstract class ReportScanningTool extends Tool {
                         getDescriptor().getPattern());
             }
 
-            return scanInWorkspace(workspace, expandPattern(run, actualPattern), isFollowSymlinks(), logger);
+            return scanInWorkspace(workspace, expandPattern(run, actualPattern), logger);
         }
     }
 
@@ -137,10 +142,9 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final boolean followSymlinks,
-            final LogHandler logger) {
+    private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
-            Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding, followSymlinks));
+            Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding, followSymlinks()));
 
             logger.log(report);
 

@@ -140,12 +140,12 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criteria.
+     * Runs the {@link FilesScanner} on a directory contain symbolic links and expects to traverse them.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-51588">Issue 51588</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
      */
     @Test
-    public void findIssuesWithMultipleFilesReachableWithSymlinks() throws IOException {
+    public void findIssuesWithMultipleFilesReachableWithSymbolicLinks() {
         FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
 
         FilePath workspace = getWorkspace(project);
@@ -154,20 +154,12 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(realPath.toFile().exists()).isTrue();
 
-//        Path symlinkPath = path.resolve(Paths.get("subdir", "link_to_actual_files"));
         Path subdirPath = path.resolve("subdir");
         assertThat(subdirPath.toFile().mkdirs()).isTrue();
 
-        Path symlinkPath = subdirPath.resolve("link_to_actual_files");
+        createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
-        try {
-            Files.createSymbolicLink(symlinkPath, realPath);
-        }
-        catch (UnsupportedOperationException e) {
-            assumeTrue(false);
-        }
-
-        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", true));
+        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", false));
         recorder.setFailedTotalAll(6);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
@@ -185,14 +177,14 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criteria.
+     * Runs the {@link FilesScanner} on a directory contain symbolic links and expects to skip them.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-51588">Issue 51588</a>
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
      */
     @Test
-    public void findNoIssuesWithMultipleFilesReachableWithSymlinksWithFollowSymlinksDisabled() throws IOException {
+    public void findNoIssuesWithMultipleFilesReachableWithSymlinksWithSkipSymbolicLinks() {
 
-        assumeTrue(!System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows"));
+        assumeTrue(!isWindows());
 
         FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
 
@@ -205,16 +197,9 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         Path subdirPath = path.resolve("subdir");
         assertThat(subdirPath.toFile().mkdirs()).isTrue();
 
-        Path symlinkPath = subdirPath.resolve("link_to_actual_files");
+        createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
-        try {
-            Files.createSymbolicLink(symlinkPath, realPath);
-        }
-        catch (UnsupportedOperationException e) {
-            assumeTrue(false);
-        }
-
-        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", false));
+        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", true));
         recorder.setFailedTotalAll(6);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -222,6 +207,18 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasInfoMessages(
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 6");
+    }
+
+    private void createSymbolicLinkAssumingSupported(final Path realPath, final Path linkPath) {
+        try {
+            Files.createSymbolicLink(linkPath, realPath);
+        }
+        catch (UnsupportedOperationException e) {
+            assumeTrue(false);
+        }
+        catch (IOException e) {
+            fail("Unable to create symbolic link", e);
+        }
     }
 
     /**

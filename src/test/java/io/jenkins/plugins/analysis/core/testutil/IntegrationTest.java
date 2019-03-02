@@ -695,9 +695,10 @@ public abstract class IntegrationTest extends ResourceTest {
         return tool;
     }
 
-    protected ReportScanningTool createTool(final ReportScanningTool tool, final String pattern, boolean followSymlinks) {
+    protected ReportScanningTool createTool(final ReportScanningTool tool, final String pattern,
+            boolean skipSymbolicLinks) {
         tool.setPattern(pattern);
-        tool.setFollowSymlinks(followSymlinks);
+        tool.setSkipSymbolicLinks(skipSymbolicLinks);
         return tool;
     }
 

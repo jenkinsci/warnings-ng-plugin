@@ -33,25 +33,28 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private final String filePattern;
     private final IssueParser parser;
     private final String encoding;
-    private final boolean followSymlinks;
+    private final boolean followSymbolicLinks;
 
     /**
      * Creates a new instance of {@link FilesScanner}.
-     *  @param filePattern
+     *
+     * @param filePattern
      *         ant file-set pattern to scan for files to parse
      * @param tool
      *         the static code analysis tool that reports the issues
      * @param encoding
-     * @param followSymlinks if the scanner should traverse symbolic links
+     *         encoding of the files to parse
+     * @param followSymbolicLinks
+     *         if the scanner should traverse symbolic links
      */
     public FilesScanner(final String filePattern, final ReportScanningTool tool, final String encoding,
-            final boolean followSymlinks) {
+            final boolean followSymbolicLinks) {
         super();
 
         this.filePattern = filePattern;
         this.parser = tool.createParser();
         this.encoding = encoding;
-        this.followSymlinks = followSymlinks;
+        this.followSymbolicLinks = followSymbolicLinks;
     }
 
     @Override
@@ -60,7 +63,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         report.logInfo("Searching for all files in '%s' that match the pattern '%s'",
                 workspace.getAbsolutePath(), filePattern);
 
-        String[] fileNames = new FileFinder(filePattern, StringUtils.EMPTY, followSymlinks).find(workspace);
+        String[] fileNames = new FileFinder(filePattern, StringUtils.EMPTY, followSymbolicLinks).find(workspace);
         if (fileNames.length == 0) {
             report.logError("No files found for pattern '%s'. Configuration error?", filePattern);
         }
@@ -102,7 +105,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
             Report result = parser.parse(new FileReaderFactory(file, new ModelValidation().getCharset(encoding)));
             report.addAll(result);
             report.logInfo("Successfully parsed file %s", file);
-            report.logInfo("-> found %s (skipped %s)", 
+            report.logInfo("-> found %s (skipped %s)",
                     plural(report.getSize(), "issue"),
                     plural(report.getDuplicatesSize(), "duplicate"));
         }
