@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.3...master)
 
+### Added
+- Tools trend chart
+- Responsive design of details page
+- Enabled zoom in trend charts
+
+### Fixed
+- [JENKINS-55840](https://issues.jenkins-ci.org/browse/JENKINS-55840), 
+[JENKINS-27973](https://issues.jenkins-ci.org/browse/JENKINS-27973),
+[JENKINS-7178](https://issues.jenkins-ci.org/browse/JENKINS-7178): 
+Refactored Gcc4 parser so that it is also capable of parsing Doxygen warnings.
+
+### Changed
+- [API]: Refactored charts API.
+
 ## [3.0.3](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.1...warnings-ng-3.0.3) - 2019-2-18
 
 - [JENKINS-56182](https://issues.jenkins-ci.org/browse/JENKINS-56182): 

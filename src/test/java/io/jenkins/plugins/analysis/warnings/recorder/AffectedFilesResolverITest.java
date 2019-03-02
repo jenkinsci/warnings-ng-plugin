@@ -214,10 +214,10 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         HtmlPage details = getWebPage(result);
         IssuesTable issues = new IssuesTable(details);
         assertThat(issues.getColumnNames()).containsExactly(
-                IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.PRIORITY, IssueRow.AGE);
+                IssueRow.DETAILS, IssueRow.FILE, IssueRow.PRIORITY, IssueRow.AGE);
         assertThat(issues.getRows()).containsExactly(
                 new IssueRow("config.xml:451", "-",
-                        "Warning", "-", "Normal", 1));
+                        "-", "-", "Normal", 1));
         IssueRow row = issues.getRow(0);
         assertThat(row.hasLink(IssueRow.FILE)).isFalse();
     }
