@@ -17,6 +17,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
@@ -42,7 +43,7 @@ public class PyLint extends ReportScanningTool {
     }
 
     /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends StaticAnalysisLabelProvider {
+    private static class LabelProvider extends IconLabelProvider {
         private final PyLintDescriptions descriptions;
 
         LabelProvider(final PyLintDescriptions descriptions) {
