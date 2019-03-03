@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [JENKINS-27973](https://issues.jenkins-ci.org/browse/JENKINS-27973),
 [JENKINS-7178](https://issues.jenkins-ci.org/browse/JENKINS-7178): 
 Refactored Gcc4 parser so that it is also capable of parsing Doxygen warnings.
+- [PR#16](https://github.com/jenkinsci/warnings-ng-plugin/pull/16), [JENKINS-49965](https://issues.jenkins-ci.org/browse/JENKINS-49965): Improved performance of issues table.
 
 ### Changed
 - [API]: Completely rewritten charts API.
