@@ -27,6 +27,7 @@ import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityPieChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
@@ -36,6 +37,7 @@ import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
 /**
@@ -63,6 +65,8 @@ public class IssuesDetail implements ModelObject {
     private final List<String> infoMessages = new ArrayList<>();
 
     private final AnalysisResult result;
+
+    private HealthDescriptor healthDescriptor;
 
     /**
      * Creates a new detail model with the corresponding view {@code IssuesDetail/index.jelly}.
@@ -106,6 +110,7 @@ public class IssuesDetail implements ModelObject {
         this.displayName = displayName;
         this.labelProvider = labelProvider;
         this.url = url;
+        this.healthDescriptor = new HealthDescriptor(0, 0, Severity.ERROR);
     }
 
     /**
@@ -117,14 +122,19 @@ public class IssuesDetail implements ModelObject {
      *         the analysis result
      * @param labelProvider
      *         the label provider for the static analysis tool
+     * @param healthDescriptor
+     *         the health descriptor
      * @param sourceEncoding
      *         the charset to visualize source files with
      */
     public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
-            final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
+            final StaticAnalysisLabelProvider labelProvider,
+            final HealthDescriptor healthDescriptor, final Charset sourceEncoding) {
         this(owner, result, result.getIssues(), result.getNewIssues(), result.getOutstandingIssues(),
                 result.getFixedIssues(), labelProvider.getLinkName(), labelProvider.getId(),
                 labelProvider, sourceEncoding);
+
+        this.healthDescriptor = healthDescriptor;
         infoMessages.addAll(result.getInfoMessages().castToList());
         errorMessages.addAll(result.getErrorMessages().castToList());
     }
@@ -266,6 +276,27 @@ public class IssuesDetail implements ModelObject {
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getToolsTrend() {
         return createTrendAsJson(new ToolsTrendChart());
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getHealthTrend() {
+        return createTrendAsJson(new HealthTrendChart(healthDescriptor));
+    }
+
+    /**
+     * Returns whether a health report has been enabled.
+     *
+     * @return {@code true} if health reporting is enabled, {@code false} otherwise
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public boolean isHealthReportEnabled() {
+        return healthDescriptor.isEnabled();
     }
 
     private JSONObject createTrendAsJson(final TrendChart trendChart) {

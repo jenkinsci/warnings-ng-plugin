@@ -246,6 +246,6 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @Override
     public Object getTarget() {
-        return new IssuesDetail(owner, result, getLabelProvider(), Charset.forName(charset));
+        return new IssuesDetail(owner, result, getLabelProvider(), healthDescriptor, Charset.forName(charset));
     }
 }

@@ -13,7 +13,7 @@
         <i class="fa fa-chart-line icon-right fa-2x" aria-hidden="true"/>
       </h5>
 
-      <div id="trend-carousel" class="carousel slide" data-interval="false" >
+      <div id="trend-carousel" class="carousel slide" data-interval="false">
         <div class="carousel-inner">
           <div class="carousel-item active">
             <div id="history-chart" class="graph-cursor-pointer card-chart"/>
@@ -21,6 +21,11 @@
           <div class="carousel-item">
             <div id="tools-trend-chart" class="graph-cursor-pointer card-chart"/>
           </div>
+          <j:if test="${it.healthReportEnabled}">
+            <div class="carousel-item">
+              <div id="health-trend-chart" class="graph-cursor-pointer card-chart"/>
+            </div>
+          </j:if>
         </div>
         <a class="carousel-control-prev" data-target="#trend-carousel" role="button" data-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"/>

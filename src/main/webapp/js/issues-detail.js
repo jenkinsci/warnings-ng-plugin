@@ -78,7 +78,21 @@
         });
     });
 
-    storeAndRestoreCarousel('trend-carousel');
+    /**
+     * Creates a build trend chart that shows the number of issues colored by the health report ranges.
+     * Requires that a DOM <div> element exists with the ID '#health-trend-chart'.
+     */
+    if ($('#health-trend-chart').length) {
+        view.getHealthTrend(function (lineModel) {
+            var healthChart = renderTrendChart('health-trend-chart', lineModel.responseJSON, true, null);
+
+            $('#trend-carousel').on('slid.bs.carousel', function () {
+                healthChart.resize();
+            });
+        });
+        storeAndRestoreCarousel('trend-carousel');
+    }
+
 
     /**
      * Create a data table instance for all tables that are marked with class "display".

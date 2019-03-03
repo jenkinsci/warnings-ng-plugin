@@ -17,6 +17,7 @@ public class HealthSeriesBuilder extends SeriesBuilder {
     static final String HEALTHY = "healthy";
     static final String BETWEEN = "between";
     static final String UNHEALTHY = "unhealthy";
+    static final String TOTAL = "total";
 
     private final HealthDescriptor healthDescriptor;
 
@@ -64,7 +65,7 @@ public class HealthSeriesBuilder extends SeriesBuilder {
             }
         }
         else { // at least a graph should be shown if the health reporting has been disabled in the meantime
-            series.put("total", current.getTotalSize());
+            series.put(TOTAL, current.getTotalSize());
         }
 
         return series;
