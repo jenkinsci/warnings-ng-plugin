@@ -203,6 +203,7 @@
                 language: {
                     emptyTable: "Loading - please wait ..."
                 },
+                deferRender: true,
                 pagingType: 'numbers',  // Page number button only
                 order: [[1, 'asc']],
                 columnDefs: [{
