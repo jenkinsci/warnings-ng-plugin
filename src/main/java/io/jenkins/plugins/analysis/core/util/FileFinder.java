@@ -23,6 +23,7 @@ public class FileFinder extends MasterToSlaveFileCallable<String[]> {
 
     private final String includesPattern;
     private final String excludesPattern;
+    private final boolean followSymlinks;
 
     /**
      * Creates a new instance of {@link FileFinder}.
@@ -43,10 +44,24 @@ public class FileFinder extends MasterToSlaveFileCallable<String[]> {
      *         the ant file excludes pattern to scan for
      */
     public FileFinder(final String includesPattern, final String excludesPattern) {
+        this(includesPattern, excludesPattern, true);
+    }
+
+    /**
+     * Creates a new instance of {@link FileFinder}.
+     *
+     * @param includesPattern
+     *         the ant file includes pattern to scan for
+     * @param excludesPattern
+     *         the ant file excludes pattern to scan for
+     * @param followSymlinks if the scanner should traverse symbolic links
+     */
+    public FileFinder(final String includesPattern, final String excludesPattern, boolean followSymlinks) {
         super();
 
         this.includesPattern = includesPattern;
         this.excludesPattern = excludesPattern;
+        this.followSymlinks = followSymlinks;
     }
 
     /**
@@ -89,6 +104,7 @@ public class FileFinder extends MasterToSlaveFileCallable<String[]> {
             if (StringUtils.isNotBlank(excludesPattern)) {
                 fileSet.setExcludes(excludesPattern);
             }
+            fileSet.setFollowSymlinks(followSymlinks);
 
             return fileSet.getDirectoryScanner(antProject).getIncludedFiles();
         }

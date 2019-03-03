@@ -39,6 +39,8 @@ public abstract class ReportScanningTool extends Tool {
 
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
+    // Use negative case to allow defaulting to false and defaulting to existing behaviour.
+    private boolean skipSymbolicLinks = false;
 
     /**
      * Returns a new parser to scan a log file and return the issues reported in such a file.
@@ -62,6 +64,25 @@ public abstract class ReportScanningTool extends Tool {
     @Nullable
     public String getPattern() {
         return pattern;
+    }
+
+    /**
+     * Specify if file scanning skip traversal of symbolic links.
+     *
+     * @param skipSymbolicLinks
+     *         if symbolic links should be skipped during directory scanning.
+     */
+    @DataBoundSetter
+    public void setSkipSymbolicLinks(final boolean skipSymbolicLinks) {
+        this.skipSymbolicLinks = skipSymbolicLinks;
+    }
+
+    public boolean getSkipSymbolicLinks() {
+        return skipSymbolicLinks;
+    }
+
+    private boolean followSymlinks() {
+        return !getSkipSymbolicLinks();
     }
 
     /**
@@ -123,7 +144,7 @@ public abstract class ReportScanningTool extends Tool {
 
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
-            Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding));
+            Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding, followSymlinks()));
 
             logger.log(report);
 
@@ -249,8 +270,8 @@ public abstract class ReportScanningTool extends Tool {
 
         /**
          * Returns whether the issues reported by this tool reference a location in the report itself (and not in an
-         * external file). Then all these issues will get a synthetic file name so that the console log will be shown
-         * in the UI.
+         * external file). Then all these issues will get a synthetic file name so that the console log will be shown in
+         * the UI.
          *
          * @return {@code true} if the issues reference the console log, {@code false} otherwise
          */

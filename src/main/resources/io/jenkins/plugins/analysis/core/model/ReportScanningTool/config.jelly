@@ -18,6 +18,10 @@
     </j:otherwise>
   </j:choose>
 
+  <f:entry title="${%title.skipSymbolicLinks}" field="skipSymbolicLinks" description="${%description.skipSymbolicLinks}">
+    <f:checkbox/>
+  </f:entry>
+
   <f:entry title="${%title.reportEncoding}" field="reportEncoding"
            description="${%description.reportEncoding}">
     <f:combobox/>

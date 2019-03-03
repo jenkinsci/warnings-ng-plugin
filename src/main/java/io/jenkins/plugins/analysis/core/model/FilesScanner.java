@@ -6,6 +6,8 @@ import java.io.Serializable;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.FileReaderFactory;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
@@ -31,6 +33,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private final String filePattern;
     private final IssueParser parser;
     private final String encoding;
+    private final boolean followSymbolicLinks;
 
     /**
      * Creates a new instance of {@link FilesScanner}.
@@ -41,13 +44,17 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
      *         the static code analysis tool that reports the issues
      * @param encoding
      *         encoding of the files to parse
+     * @param followSymbolicLinks
+     *         if the scanner should traverse symbolic links
      */
-    public FilesScanner(final String filePattern, final ReportScanningTool tool, final String encoding) {
+    public FilesScanner(final String filePattern, final ReportScanningTool tool, final String encoding,
+            final boolean followSymbolicLinks) {
         super();
 
         this.filePattern = filePattern;
         this.parser = tool.createParser();
         this.encoding = encoding;
+        this.followSymbolicLinks = followSymbolicLinks;
     }
 
     @Override
@@ -56,7 +63,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         report.logInfo("Searching for all files in '%s' that match the pattern '%s'",
                 workspace.getAbsolutePath(), filePattern);
 
-        String[] fileNames = new FileFinder(filePattern).find(workspace);
+        String[] fileNames = new FileFinder(filePattern, StringUtils.EMPTY, followSymbolicLinks).find(workspace);
         if (fileNames.length == 0) {
             report.logError("No files found for pattern '%s'. Configuration error?", filePattern);
         }
@@ -98,7 +105,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
             Report result = parser.parse(new FileReaderFactory(file, new ModelValidation().getCharset(encoding)));
             report.addAll(result);
             report.logInfo("Successfully parsed file %s", file);
-            report.logInfo("-> found %s (skipped %s)", 
+            report.logInfo("-> found %s (skipped %s)",
                     plural(report.getSize(), "issue"),
                     plural(report.getDuplicatesSize(), "duplicate"));
         }

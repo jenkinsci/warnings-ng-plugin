@@ -695,6 +695,13 @@ public abstract class IntegrationTest extends ResourceTest {
         return tool;
     }
 
+    protected ReportScanningTool createTool(final ReportScanningTool tool, final String pattern,
+            boolean skipSymbolicLinks) {
+        tool.setPattern(pattern);
+        tool.setSkipSymbolicLinks(skipSymbolicLinks);
+        return tool;
+    }
+
     /**
      * Enables the warnings plugin for the specified job. I.e., it registers a new {@link IssuesRecorder } recorder for
      * the job.
