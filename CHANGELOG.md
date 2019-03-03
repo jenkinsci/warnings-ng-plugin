@@ -7,9 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.3...master)
 
 ### Added
-- Tools trend chart
-- Responsive design of details page
-- Enabled zoom in trend charts
+- Added new trend charts that show the trend of issues by severity, tools, and project health. See 
+[documentation](https://github.com/jenkinsci/warnings-ng-plugin/blob/master/doc/Documentation.md#build-trend)
+for more details.
+- Enabled zooming (by number of visible build) in trend charts 
+- Responsive design of details page: depending on the resolution of your display, different UI representations
+will be used. 
 - [PR#103](https://github.com/jenkinsci/analysis-model/pull/103),
 [PR#13](https://github.com/jenkinsci/warnings-ng-plugin/pull/13): New parser for IAR CSTAT warnings.
 - [PR#14](https://github.com/jenkinsci/warnings-ng-plugin/pull/14): Added Pylint icons.

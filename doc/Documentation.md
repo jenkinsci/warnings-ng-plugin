@@ -465,12 +465,38 @@ use the same severity for all issues.
 
 ### Build trend
 
-In order to see the trend of the analysis results, a chart showing the number of issues per build is also
-shown. This chart is used in the details page as well as in the job overview. Currently, type and configuration
-of the chart is fixed. This will be enhanced in future versions of the plugin.
+In order to see the trend of the analysis results, several charts show the number of issues per build. These charts are
+used in the details page as well as in the job overview. The following different trend chart types are currently available:
 
-![trend chart](images/history.png) 
+#### Distribution of issues by severity
 
+The default trend chart shows the total number of issues, stacked by severity. Using this chart you see which severity
+contributes the most to the total number of issues. 
+
+![trend chart](images/trend-severities.png)
+ 
+#### Issues per static analysis type
+
+If your are aggregating the results of several static analysis results, the type chart shows the number of issues for
+each of the tools using an individual line. You can temporarily hide tools by clicking on the corresponding 
+legend symbol.   
+
+![trend chart](images/trend-tools.png) 
+
+#### Health of the project
+
+The health chart is only available if health reporting has been enabled. In this case, the trend chart shows how many 
+warnings are in the healthy and unhealthy regions. Your project goal should be to let the number of warnings not 
+escape the green part of the chart.  
+
+![trend chart](images/trend-health.png) 
+
+#### Zooming
+
+All trend charts support zooming of the build axis using the range sliders at the bottom of the chart. 
+
+![zoom](images/zoom.png) 
+ 
 ### Issues overview
 
 You can get a fast and efficient overview of the reported set of issues in several aggregation views. 
@@ -747,9 +773,3 @@ Examples:
 
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
 - `${ANALYSIS_ISSUES_COUNT, tool='checkstyle'}`: expands to the total number of **CheckStyle** issues
-
-## Not Yet Supported Features
-
-Some of the existing features of the Warnings plugin are not yet ported to the API. These will be added one by one. Feel
-free to create an issue or vote for an issue in our [issue tracker](https://issues.jenkins-ci.org/issues/?jql=project%20%3D%20JENKINS%20AND%20resolution%20%3D%20Unresolved%20AND%20component%20in%20%28analysis-model%2C%20analysis-model-api-plugin%2C%20warnings-ng-plugin%29). 
-

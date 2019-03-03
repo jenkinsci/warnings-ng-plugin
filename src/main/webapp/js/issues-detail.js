@@ -54,6 +54,7 @@
 
     storeAndRestoreCarousel('overview-carousel');
 
+    // FIXME: methods should be called only on demand
     /**
      * Creates a build trend chart that shows the number of issues for a couple of builds.
      * Requires that a DOM <div> element exists with the ID '#history-chart'.
@@ -90,8 +91,9 @@
                 healthChart.resize();
             });
         });
-        storeAndRestoreCarousel('trend-carousel');
     }
+
+    storeAndRestoreCarousel('trend-carousel');
 
 
     /**

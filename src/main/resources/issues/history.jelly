@@ -8,7 +8,7 @@
   <div class="card card-marg-bot">
     <div data-role="page" class="card-body">
 
-      <h5 class="card-title">
+      <h5 class="card-title" id="trend-title">
         ${%History}
         <i class="fa fa-chart-line icon-right fa-2x" aria-hidden="true"/>
       </h5>
