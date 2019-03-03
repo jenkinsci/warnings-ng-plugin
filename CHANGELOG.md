@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Enabled zoom in trend charts
 - [PR#103](https://github.com/jenkinsci/analysis-model/pull/103),
 [PR#13](https://github.com/jenkinsci/warnings-ng-plugin/pull/13): New parser for IAR CSTAT warnings.
+- [PR#14](https://github.com/jenkinsci/warnings-ng-plugin/pull/14): Added Pylint icons.
 
 ### Fixed
 - [JENKINS-55840](https://issues.jenkins-ci.org/browse/JENKINS-55840), 
