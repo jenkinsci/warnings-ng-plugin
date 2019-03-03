@@ -105,7 +105,7 @@ public class TabLabelProvider {
             if (fileTypes.contains("cs")) {
                 return nameSpaceText;
             }
-            else if (fileTypes.contains("java")) {
+            else if (fileTypes.contains("java") || fileTypes.contains("py")) {
                 return packageText;
             }
         }
