@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tools trend chart
 - Responsive design of details page
 - Enabled zoom in trend charts
+- [PR#103](https://github.com/jenkinsci/analysis-model/pull/103),
+[PR#13](https://github.com/jenkinsci/warnings-ng-plugin/pull/13): New parser for IAR CSTAT warnings.
 
 ### Fixed
 - [JENKINS-55840](https://issues.jenkins-ci.org/browse/JENKINS-55840), 
@@ -18,7 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Refactored Gcc4 parser so that it is also capable of parsing Doxygen warnings.
 
 ### Changed
-- [API]: Refactored charts API.
+- [API]: Completely rewritten charts API.
 
 ## [3.0.3](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.1...warnings-ng-3.0.3) - 2019-2-18
 

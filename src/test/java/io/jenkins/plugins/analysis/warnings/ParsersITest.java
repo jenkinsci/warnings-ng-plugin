@@ -67,6 +67,18 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    /** Runs the Iar parser on an output file that contains 6 issues. */
+    @Test
+    public void shouldFindAllIarIssues() {
+        shouldFindIssuesOfTool(6, new Iar(), "iar.txt");
+    }
+
+    /** Runs the IarCStat parser on an output file that contains 6 issues. */
+    @Test
+    public void shouldFindAllIarCStatIssues() {
+        shouldFindIssuesOfTool(6, new IarCstat(), "iar-cstat.txt");
+    }
+
     /** Runs the TagList parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllOpenTasks() {
