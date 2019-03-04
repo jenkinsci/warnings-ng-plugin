@@ -51,8 +51,7 @@
             $(window).on('resize', function () {
                 chart.resize();
             });
-
-            return chart;
+            $(this).data("chart", chart);
 
             /**
              * Returns the title properties of the chart.

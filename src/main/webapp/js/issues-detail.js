@@ -25,31 +25,26 @@
 
     /**
      * Creates a doughnut chart that shows the number of issues per severity.
-     * Requires that a DOM <div> element exists with the ID '#severities-chart'.
+     * Requires that DOM <div> elements exist with the IDs '#severities-chart', '#single-severities-chart'.
      */
-    view.getSeverityModel(function (pieModel) {
-        var severitiesChart = $('#severities-chart').renderPieChart(pieModel.responseJSON, true);
-        $('#overview-carousel').on('slid.bs.carousel', function () {
-            severitiesChart.resize();
-        });
-    });
-    view.getSeverityModel(function (pieModel) {
-        $('#single-severities-chart').renderPieChart(pieModel.responseJSON, false);
+    view.getSeverityModel(function (severityModel) {
+        $('#severities-chart').renderPieChart(severityModel.responseJSON, true); // small screens
+        $('#single-severities-chart').renderPieChart(severityModel.responseJSON, false); // large screens
+
     });
 
     /**
      * Creates a doughnut chart that shows the number of new, fixed and outstanding issues.
-     * Requires that a DOM <div> element exists with the ID '#trend-chart'.
+     * Requires that DOM <div> elements exist with the IDs '#trend-chart', '#single-trend-chart'.
      */
     view.getTrendModel(function (pieModel) {
-        var trendChart = $('#trend-chart').renderPieChart(pieModel.responseJSON, true);
-
-        $('#overview-carousel').on('slid.bs.carousel', function () {
-            trendChart.resize();
-        });
-    })
-    view.getTrendModel(function (pieModel) {
+        $('#trend-chart').renderPieChart(pieModel.responseJSON, true);
         $('#single-trend-chart').renderPieChart(pieModel.responseJSON, false);
+    });
+
+    $('#overview-carousel').on('slid.bs.carousel', function (e) {
+        var chart = $(e.relatedTarget).find(">:first-child").data('chart');
+        chart.resize();
     });
 
     storeAndRestoreCarousel('overview-carousel');
