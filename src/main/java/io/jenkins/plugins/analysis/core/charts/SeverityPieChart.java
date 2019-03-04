@@ -26,8 +26,11 @@ public class SeverityPieChart {
 
         ImmutableSet<Severity> predefinedSeverities = Severity.getPredefinedValues();
         for (Severity severity : predefinedSeverities) {
-            model.add(new PieData(LocalizedSeverity.getLocalizedString(severity), report.getSizeOf(severity)),
-                    SeverityPalette.getColor(severity));
+            int total = report.getSizeOf(severity);
+            if (total > 0 || !severity.equals(Severity.ERROR)) {
+                model.add(new PieData(LocalizedSeverity.getLocalizedString(severity), total),
+                        SeverityPalette.getColor(severity));
+            }
         }
 
         return model;
