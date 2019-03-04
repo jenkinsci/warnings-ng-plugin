@@ -16,18 +16,18 @@ public class SeverityTrendChart implements TrendChart {
     @Override
     public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results) {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
-        LinesDataSet lineModel = builder.createDataSet(createConfiguration(), results);
+        LinesDataSet dataSet = builder.createDataSet(createConfiguration(), results);
 
         LinesChartModel model = new LinesChartModel();
-        model.addXAxisLabels(lineModel.getXAxisLabels());
+        model.addXAxisLabels(dataSet.getXAxisLabels());
 
         Severity[] visibleSeverities
                 = {Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR};
         for (Severity severity : visibleSeverities) {
-            String dataSet = severity.getName();
-            if (lineModel.hasSeries(dataSet)) {
+            String id = severity.getName();
+            if (dataSet.hasSeries(id)) {
                 LineSeries series = createSeries(severity);
-                series.addAll(lineModel.getSeries(dataSet));
+                series.addAll(dataSet.getSeries(id));
                 model.addSeries(series);
             }
         }

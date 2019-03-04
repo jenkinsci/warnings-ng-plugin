@@ -61,6 +61,14 @@
     });
 
     /**
+     * Creates a build trend chart that shows the number of issues per tool.
+     * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
+     */
+    view.getNewVersusFixedTrend(function (lineModel) {
+        $('#new-versus-fixed-trend-chart').renderTrendChart(lineModel.responseJSON);
+    });
+
+    /**
      * Creates a build trend chart that shows the number of issues colored by the health report ranges.
      * Requires that a DOM <div> element exists with the ID '#health-trend-chart'.
      */

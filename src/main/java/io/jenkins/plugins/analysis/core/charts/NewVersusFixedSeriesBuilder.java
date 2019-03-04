@@ -12,8 +12,8 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  * @author Ullrich Hafner
  */
 public class NewVersusFixedSeriesBuilder extends SeriesBuilder {
-    private static final String NEW = "new";
-    private static final String FIXED = "fixed";
+    static final String NEW = "new";
+    static final String FIXED = "fixed";
 
     @Override
     protected Map<String, Integer> computeSeries(final StaticAnalysisRun current) {

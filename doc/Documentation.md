@@ -473,7 +473,7 @@ used in the details page as well as in the job overview. The following different
 The default trend chart shows the total number of issues, stacked by severity. Using this chart you see which severity
 contributes the most to the total number of issues. 
 
-![trend chart](images/trend-severities.png)
+![severities trend chart](images/trend-severities.png)
  
 #### Issues per static analysis type
 
@@ -481,7 +481,15 @@ If your are aggregating the results of several static analysis results, the type
 each of the tools using an individual line. You can temporarily hide tools by clicking on the corresponding 
 legend symbol.   
 
-![trend chart](images/trend-tools.png) 
+![tools trend chart](images/trend-tools.png) 
+
+#### New vs. Fixed issues
+
+If you are interested in your backlog on issues you can open the new-versus-fixed chart. It maps issues 
+introduced versus issues fixed over a sequence of builds. This helps you understand whether your overall backlog 
+is growing or shrinking.
+
+![new-versus-fixed trend chart](images/trend-new-vs-fixed.png) 
 
 #### Health of the project
 

@@ -21,6 +21,9 @@
           <div class="carousel-item">
             <div id="tools-trend-chart" class="graph-cursor-pointer card-chart"/>
           </div>
+          <div class="carousel-item">
+            <div id="new-versus-fixed-trend-chart" class="graph-cursor-pointer card-chart"/>
+          </div>
           <j:if test="${it.healthReportEnabled}">
             <div class="carousel-item">
               <div id="health-trend-chart" class="graph-cursor-pointer card-chart"/>

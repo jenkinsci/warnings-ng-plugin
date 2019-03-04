@@ -29,6 +29,7 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
+import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityPieChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
@@ -276,6 +277,17 @@ public class IssuesDetail implements ModelObject {
     @SuppressWarnings("unused") // Called by jelly view
     public JSONObject getToolsTrend() {
         return createTrendAsJson(new ToolsTrendChart());
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the new and fixed issues.
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getNewVersusFixedTrend() {
+        return createTrendAsJson(new NewVersusFixedTrendChart());
     }
 
     /**
