@@ -182,7 +182,7 @@ public class DetailsTableModel {
             details = new UnescapedText(description);
         }
         else {
-            details = join(p(strong(issue.getMessage())), description);
+            details = join(p(strong().with(new UnescapedText(issue.getMessage()))), description);
         }
         return div().withClass("details-control").attr("data-description", render(details)).render();
     }
