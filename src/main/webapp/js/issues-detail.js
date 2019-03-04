@@ -42,24 +42,14 @@
         $('#single-trend-chart').renderPieChart(pieModel.responseJSON, false);
     });
 
-    $('#overview-carousel').on('slid.bs.carousel', function (e) {
-        var chart = $(e.relatedTarget).find(">:first-child").data('chart');
-        chart.resize();
-    });
-
     storeAndRestoreCarousel('overview-carousel');
 
-    // FIXME: methods should be called only on demand
     /**
      * Creates a build trend chart that shows the number of issues for a couple of builds.
-     * Requires that a DOM <div> element exists with the ID '#history-chart'.
+     * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
      */
     view.getBuildTrend(function (lineModel) {
-        var historyChart = renderTrendChart('history-chart', lineModel.responseJSON, true, null);
-
-        $('#trend-carousel').on('slid.bs.carousel', function () {
-            historyChart.resize();
-        });
+        $('#severities-trend-chart').renderTrendChart(lineModel.responseJSON);
     });
 
     /**
@@ -67,11 +57,7 @@
      * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
      */
     view.getToolsTrend(function (lineModel) {
-        var toolsChart = renderTrendChart('tools-trend-chart', lineModel.responseJSON, true, null);
-
-        $('#trend-carousel').on('slid.bs.carousel', function () {
-            toolsChart.resize();
-        });
+        $('#tools-trend-chart').renderTrendChart(lineModel.responseJSON);
     });
 
     /**
@@ -80,16 +66,11 @@
      */
     if ($('#health-trend-chart').length) {
         view.getHealthTrend(function (lineModel) {
-            var healthChart = renderTrendChart('health-trend-chart', lineModel.responseJSON, true, null);
-
-            $('#trend-carousel').on('slid.bs.carousel', function () {
-                healthChart.resize();
-            });
+            $('#health-trend-chart').renderTrendChart(lineModel.responseJSON);
         });
     }
 
     storeAndRestoreCarousel('trend-carousel');
-
 
     /**
      * Create a data table instance for all tables that are marked with class "display".
@@ -187,6 +168,7 @@
 
     /**
      * Store and restore the selected carousel image in browser's local storage.
+     * Additionally, the trend chart is redrawn.
      *
      * @param {String} carouselId - ID of the carousel
      */
@@ -194,6 +176,8 @@
         var carousel = $('#' + carouselId);
         carousel.on('slid.bs.carousel', function (e) {
             localStorage.setItem(carouselId, e.to);
+            var chart = $(e.relatedTarget).find(">:first-child").data('chart');
+            chart.resize();
         });
         var activeCarousel = localStorage.getItem(carouselId);
         if (activeCarousel) {

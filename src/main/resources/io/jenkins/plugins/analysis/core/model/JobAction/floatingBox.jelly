@@ -11,7 +11,7 @@
            style="width: 500px; min-height: 200px; min-width: 500px; height: 200px;"/>
     </div>
     <script src="${resURL}/plugin/warnings-ng/js/libs/echarts.common.min.js"/>
-    <script src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
+    <script src="${resURL}/plugin/warnings-ng/js/simple-trend-chart.js"/>
     <script>
       var proxy = <st:bind value="${from}"/>;
       proxy.getBuildTrend(function (trendModel) {
