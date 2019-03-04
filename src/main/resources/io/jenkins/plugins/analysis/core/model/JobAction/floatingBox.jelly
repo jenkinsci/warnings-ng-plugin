@@ -15,7 +15,7 @@
     <script>
       var proxy = <st:bind value="${from}"/>;
       proxy.getBuildTrend(function (trendModel) {
-          renderTrendChart('${from.urlName}-history-chart', trendModel.responseJSON, false, '${from.urlName}');
+          renderTrendChart('${from.urlName}-history-chart', trendModel.responseJSON, '${from.urlName}');
       });
     </script>
 
