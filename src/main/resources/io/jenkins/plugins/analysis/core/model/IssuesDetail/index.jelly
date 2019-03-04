@@ -24,15 +24,6 @@
 
         <h3>${it.displayName}</h3>
 
-        <!-- FIXME: remove markers -->
-        <span id="mq-detector">
-          <span class="d-block d-sm-none">.XS.</span>
-          <span class="d-none d-sm-block d-md-none">.SM.</span>
-          <span class="d-none d-md-block d-lg-none">.MD.</span>
-          <span class="d-none d-lg-block d-xl-none">.LG.</span>
-          <span class="d-none d-xl-block">.XL.</span>
-        </span>
-
         <j:set var="i" value="${it.issues}"/>
         <j:choose>
           <j:when test="${i.isNotEmpty()}">
