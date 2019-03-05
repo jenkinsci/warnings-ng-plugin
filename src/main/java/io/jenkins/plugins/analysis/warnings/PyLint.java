@@ -54,7 +54,7 @@ public class PyLint extends ReportScanningTool {
 
         @Override
         public String getDescription(final Issue issue) {
-            return descriptions.getDescription(issue.getCategory());
+            return descriptions.getDescription(issue.getType());
         }
     }
 
