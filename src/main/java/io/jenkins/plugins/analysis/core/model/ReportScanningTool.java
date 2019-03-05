@@ -163,8 +163,6 @@ public abstract class ReportScanningTool extends Tool {
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
 
-        waitForConsoleToFlush(logger);
-
         Report consoleReport = new Report();
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
         logger.log(consoleReport);
