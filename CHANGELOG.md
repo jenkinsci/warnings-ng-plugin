@@ -16,6 +16,9 @@ will be used.
 - [PR#103](https://github.com/jenkinsci/analysis-model/pull/103),
 [PR#13](https://github.com/jenkinsci/warnings-ng-plugin/pull/13): New parser for IAR CSTAT warnings.
 - [PR#14](https://github.com/jenkinsci/warnings-ng-plugin/pull/14): Added Pylint icons.
+- [PR#15](https://github.com/jenkinsci/warnings-ng-plugin/pull/15): Add package and module support for Pylint and updated the
+documentation for the format to use.
+
 
 ### Fixed
 - [JENKINS-55840](https://issues.jenkins-ci.org/browse/JENKINS-55840), 
@@ -23,6 +26,7 @@ will be used.
 [JENKINS-7178](https://issues.jenkins-ci.org/browse/JENKINS-7178): 
 Refactored Gcc4 parser so that it is also capable of parsing Doxygen warnings.
 - [PR#16](https://github.com/jenkinsci/warnings-ng-plugin/pull/16), [JENKINS-49965](https://issues.jenkins-ci.org/browse/JENKINS-49965): Improved performance of issues table.
+- [JENKINS-44915] Show description of Pylint rules in details.
 
 ### Changed
 - [API]: Completely rewritten charts API.
