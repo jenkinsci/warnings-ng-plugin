@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [documentation](https://github.com/jenkinsci/warnings-ng-plugin/blob/master/doc/Documentation.md#build-trend)
 for more details.
 - Enabled zooming (by number of visible build) in trend charts 
+- Enabled switching of X-axis type: charts can show the results either by build number or date 
 - Responsive design of details page: depending on the resolution of your display, different UI representations
 will be used. 
 - [PR#103](https://github.com/jenkinsci/analysis-model/pull/103),
