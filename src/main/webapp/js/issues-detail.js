@@ -44,39 +44,7 @@
 
     storeAndRestoreCarousel('overview-carousel');
 
-    /**
-     * Creates a build trend chart that shows the number of issues for a couple of builds.
-     * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
-     */
-    view.getBuildTrend(function (lineModel) {
-        $('#severities-trend-chart').renderTrendChart(lineModel.responseJSON);
-    });
-
-    /**
-     * Creates a build trend chart that shows the number of issues per tool.
-     * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
-     */
-    view.getToolsTrend(function (lineModel) {
-        $('#tools-trend-chart').renderTrendChart(lineModel.responseJSON);
-    });
-
-    /**
-     * Creates a build trend chart that shows the number of issues per tool.
-     * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
-     */
-    view.getNewVersusFixedTrend(function (lineModel) {
-        $('#new-versus-fixed-trend-chart').renderTrendChart(lineModel.responseJSON);
-    });
-
-    /**
-     * Creates a build trend chart that shows the number of issues colored by the health report ranges.
-     * Requires that a DOM <div> element exists with the ID '#health-trend-chart'.
-     */
-    if ($('#health-trend-chart').length) {
-        view.getHealthTrend(function (lineModel) {
-            $('#health-trend-chart').renderTrendChart(lineModel.responseJSON);
-        });
-    }
+    redrawTrendCharts($);
 
     storeAndRestoreCarousel('trend-carousel');
 
@@ -248,5 +216,48 @@
     }
 })(jQuery);
 
+/**
+ * Redraws the trend charts. Reads the last selected X-Axis type from the browser local storage and
+ * redraws the trend charts.
+ *
+ * @param {Object} $ - jQuery instance
+ */
+function redrawTrendCharts($) {
+    var isBuildOnXAxis = !(localStorage.getItem('#trendBuildAxis') === 'date');
+
+    /**
+     * Creates a build trend chart that shows the number of issues for a couple of builds.
+     * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
+     */
+    view.getBuildTrend(isBuildOnXAxis, function (lineModel) {
+        $('#severities-trend-chart').renderTrendChart(lineModel.responseJSON);
+    });
+
+    /**
+     * Creates a build trend chart that shows the number of issues per tool.
+     * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
+     */
+    view.getToolsTrend(isBuildOnXAxis, function (lineModel) {
+        $('#tools-trend-chart').renderTrendChart(lineModel.responseJSON);
+    });
+
+    /**
+     * Creates a build trend chart that shows the number of issues per tool.
+     * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
+     */
+    view.getNewVersusFixedTrend(isBuildOnXAxis, function (lineModel) {
+        $('#new-versus-fixed-trend-chart').renderTrendChart(lineModel.responseJSON);
+    });
+
+    /**
+     * Creates a build trend chart that shows the number of issues colored by the health report ranges.
+     * Requires that a DOM <div> element exists with the ID '#health-trend-chart'.
+     */
+    if ($('#health-trend-chart').length) {
+        view.getHealthTrend(isBuildOnXAxis, function (lineModel) {
+            $('#health-trend-chart').renderTrendChart(lineModel.responseJSON);
+        });
+    }
+}
 
 

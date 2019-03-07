@@ -25,9 +25,10 @@ public class HealthTrendChart implements TrendChart {
     }
 
     @Override
-    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results) {
+    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results,
+            final ChartModelConfiguration configuration) {
         HealthSeriesBuilder builder = new HealthSeriesBuilder(healthDescriptor);
-        LinesDataSet dataSet = builder.createDataSet(createConfiguration(), results);
+        LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
         LinesChartModel model = new LinesChartModel();
         model.addXAxisLabels(dataSet.getXAxisLabels());
@@ -49,10 +50,6 @@ public class HealthTrendChart implements TrendChart {
         }
 
         return model;
-    }
-
-    private ChartModelConfiguration createConfiguration() {
-        return new ChartModelConfiguration();
     }
 
     private LineSeries createSeries(final String name, final Palette color) {
