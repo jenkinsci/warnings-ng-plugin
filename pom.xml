@@ -85,8 +85,8 @@
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     <pitest-maven.plugin>1.4.6</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.8</pitest-maven.junit5.plugin>
-    <revapi-maven-plugin.version>0.10.5</revapi-maven-plugin.version>
-    <revapi-java.version>0.18.2</revapi-java.version>
+    <revapi-maven-plugin.version>0.11.0</revapi-maven-plugin.version>
+    <revapi-java.version>0.19.0</revapi-java.version>
 
     <!-- Enabled while there are fatal Findbugs issues -->
     <findbugs.failOnError>false</findbugs.failOnError>
