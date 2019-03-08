@@ -16,9 +16,11 @@ for more details.
 will be used. 
 - [PR#103](https://github.com/jenkinsci/analysis-model/pull/103),
 [PR#13](https://github.com/jenkinsci/warnings-ng-plugin/pull/13): New parser for IAR CSTAT warnings.
+- [JENKINS-56418](https://issues.jenkins-ci.org/browse/JENKINS-56418), 
+[PR#18](https://github.com/jenkinsci/warnings-ng-plugin/pull/18): Added Robot Framework icons.
 - [PR#14](https://github.com/jenkinsci/warnings-ng-plugin/pull/14): Added Pylint icons.
-- [PR#15](https://github.com/jenkinsci/warnings-ng-plugin/pull/15): Add package and module support for Pylint and updated the
-documentation for the format to use.
+- [PR#15](https://github.com/jenkinsci/warnings-ng-plugin/pull/15): Add package and module support for Pylint 
+and updated the documentation for the format to use.
 
 
 ### Fixed
@@ -26,7 +28,8 @@ documentation for the format to use.
 [JENKINS-27973](https://issues.jenkins-ci.org/browse/JENKINS-27973),
 [JENKINS-7178](https://issues.jenkins-ci.org/browse/JENKINS-7178): 
 Refactored Gcc4 parser so that it is also capable of parsing Doxygen warnings.
-- [PR#16](https://github.com/jenkinsci/warnings-ng-plugin/pull/16), [JENKINS-49965](https://issues.jenkins-ci.org/browse/JENKINS-49965): Improved performance of issues table.
+- [PR#16](https://github.com/jenkinsci/warnings-ng-plugin/pull/16), 
+[JENKINS-49965](https://issues.jenkins-ci.org/browse/JENKINS-49965): Improved performance of issues table.
 - [JENKINS-44915] Show description of Pylint rules in details.
 
 ### Changed
