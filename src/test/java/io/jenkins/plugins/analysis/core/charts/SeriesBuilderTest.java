@@ -15,6 +15,7 @@ import org.mockito.stubbing.Answer;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
@@ -178,7 +179,7 @@ class SeriesBuilderTest {
 
     private static ChartModelConfiguration createWithBuildDate() {
         ChartModelConfiguration config = createConfig();
-        when(config.useBuildDateAsDomain()).thenReturn(true);
+        when(config.getAxisType()).thenReturn(AxisType.DATE);
         return config;
     }
 

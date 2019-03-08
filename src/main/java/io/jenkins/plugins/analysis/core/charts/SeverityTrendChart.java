@@ -14,9 +14,10 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  */
 public class SeverityTrendChart implements TrendChart {
     @Override
-    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results) {
+    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results,
+            final ChartModelConfiguration configuration) {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
-        LinesDataSet dataSet = builder.createDataSet(createConfiguration(), results);
+        LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
         LinesChartModel model = new LinesChartModel();
         model.addXAxisLabels(dataSet.getXAxisLabels());
@@ -33,10 +34,6 @@ public class SeverityTrendChart implements TrendChart {
         }
 
         return model;
-    }
-
-    private ChartModelConfiguration createConfiguration() {
-        return new ChartModelConfiguration();
     }
 
     private LineSeries createSeries(final Severity severity) {

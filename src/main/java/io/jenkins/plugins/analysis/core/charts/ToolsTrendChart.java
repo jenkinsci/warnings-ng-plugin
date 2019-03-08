@@ -11,9 +11,10 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  */
 public class ToolsTrendChart implements TrendChart {
     @Override
-    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results) {
+    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results,
+            final ChartModelConfiguration configuration) {
         ToolSeriesBuilder builder = new ToolSeriesBuilder();
-        LinesDataSet lineModel = builder.createDataSet(createConfiguration(), results);
+        LinesDataSet lineModel = builder.createDataSet(configuration, results);
 
         LinesChartModel model = new LinesChartModel();
 
@@ -32,9 +33,5 @@ public class ToolsTrendChart implements TrendChart {
         model.addXAxisLabels(lineModel.getXAxisLabels());
 
         return model;
-    }
-
-    private ChartModelConfiguration createConfiguration() {
-        return new ChartModelConfiguration();
     }
 }

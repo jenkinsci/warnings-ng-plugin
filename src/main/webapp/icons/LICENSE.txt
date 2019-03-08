@@ -90,6 +90,18 @@ https://fontawesome.com/license
 
 ------------------------------------------------------------------------------
 
+License for Pylint icons
+
+https://creativecommons.org/licenses/by-sa/4.0/
+
+David Douard is the creator of the Pylint icon. It is now owned by Pylint.
+Original file: https://github.com/PyCQA/pylint/blob/master/doc/logo.svg
+
+The 24x24 and 48x48 icons were created from this file. No modifications were made, except
+the scale that was changed.
+
+------------------------------------------------------------------------------
+
 License for RootFramework Icons
 
 https://github.com/robotframework/visual-identity

@@ -44,7 +44,7 @@
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.4.0</junit.version>
     <junit-platform-launcher.version>1.4.0</junit-platform-launcher.version>
-    <mockito.version>2.24.5</mockito.version>
+    <mockito.version>2.25.0</mockito.version>
     <assertj.version>3.12.1</assertj.version>
     <archunit.version>0.9.3</archunit.version>
     <json-unit-fluent.version>2.4.0</json-unit-fluent.version>
@@ -83,7 +83,7 @@
     <maven-hpi-plugin.version>2.5</maven-hpi-plugin.version>
     <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-    <pitest-maven.plugin>1.4.5</pitest-maven.plugin>
+    <pitest-maven.plugin>1.4.6</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.8</pitest-maven.junit5.plugin>
     <revapi-maven-plugin.version>0.10.5</revapi-maven-plugin.version>
     <revapi-java.version>0.18.2</revapi-java.version>

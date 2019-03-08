@@ -25,6 +25,7 @@ import com.google.common.collect.Sets;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
@@ -67,15 +68,14 @@ public abstract class SeriesBuilder {
      */
     public LinesDataSet createDataSet(final ChartModelConfiguration configuration,
             final Iterable<? extends StaticAnalysisRun> results) {
-        LinesDataSet dataSet;
-        if (configuration.useBuildDateAsDomain()) {
-            SortedMap<LocalDate, Map<String, Integer>> averagePerDay = averageByDate(createSeriesPerBuild(configuration, results));
-            dataSet = createDataSetPerDay(averagePerDay);
+        SortedMap<AnalysisBuild, Map<String, Integer>> seriesPerBuild = createSeriesPerBuild(configuration, results);
+
+        if (configuration.getAxisType() == AxisType.BUILD) {
+            return createDataSetPerBuildNumber(seriesPerBuild);
         }
         else {
-            dataSet = createDataSetPerBuildNumber(createSeriesPerBuild(configuration, results));
+            return createDataSetPerDay(averageByDate(seriesPerBuild));
         }
-        return dataSet;
     }
 
     @SuppressWarnings("rawtypes")
@@ -154,7 +154,6 @@ public abstract class SeriesBuilder {
         LinesDataSet model = new LinesDataSet();
         for (Entry<LocalDate, Map<String, Integer>> series : averagePerDay.entrySet()) {
             String label = new LocalDateLabel(series.getKey()).toString();
-            System.out.println(label);
             model.add(label, series.getValue());
         }
         return model;

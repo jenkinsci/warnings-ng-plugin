@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
+import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
@@ -29,7 +30,9 @@ class SeveritySeriesBuilderTest {
     }
 
     private ChartModelConfiguration createConfiguration() {
-        return mock(ChartModelConfiguration.class);
+        ChartModelConfiguration configuration = mock(ChartModelConfiguration.class);
+        when(configuration.getAxisType()).thenReturn(AxisType.BUILD);
+        return configuration;
     }
 
     /**
