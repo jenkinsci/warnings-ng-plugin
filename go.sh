@@ -1,17 +1,19 @@
 #!/bin/bash
 
 if [[ -z "$JENKINS_HOME" ]]; then
-    echo "JENKINS_HOME is not defined" 1>&2
-    exit 1
+    JENKINS_HOME=../jenkins-home
+    echo "JENKINS_HOME is not defined, using $JENKINS_HOME"
 fi
 
 mvn install -DskipITs || { echo "Build failed"; exit 1; }
 
+echo "Installing plugin in JENKINS_HOME"
 rm -rf $JENKINS_HOME/plugins/warnings-ng*
+cp -fv target/warnings-ng.hpi $JENKINS_HOME/plugins/warnings-ng.jpi
 
-cp -fv target/*.hpi $JENKINS_HOME/plugins
-
-cd $JENKINS_HOME
-./go.sh
-
+IS_RUNNING=`docker-compose ps -q jenkins`
+if [[ "$IS_RUNNING" != "" ]]; then
+    echo "Restarting Jenkins..."
+    docker-compose restart
+fi
 
