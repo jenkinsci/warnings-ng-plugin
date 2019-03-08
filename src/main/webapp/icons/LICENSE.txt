@@ -87,3 +87,11 @@ Go mascot and logo were designed by Renée French and are covered by the Creativ
 License for FontAwesome icons
 
 https://fontawesome.com/license
+
+------------------------------------------------------------------------------
+
+License for RootFramework Icons
+
+https://github.com/robotframework/visual-identity
+The icons were downloaded from the official robot framework visual identity github page, was were resized.  No other
+modifications were made.

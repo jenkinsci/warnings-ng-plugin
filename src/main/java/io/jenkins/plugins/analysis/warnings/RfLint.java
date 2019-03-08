@@ -19,6 +19,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 public class RfLint extends ReportScanningTool {
     private static final long serialVersionUID = -8395238803254856424L;
     static final String ID = "rflint";
+    static final String ICON_NAME = "robot-framework";
 
     /** Creates a new instance of {@link RfLint}. */
     @DataBoundConstructor
@@ -48,7 +49,7 @@ public class RfLint extends ReportScanningTool {
         }
 
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
+            return new IconLabelProvider(getId(), getDisplayName(), ICON_NAME);
         }
 
     }
