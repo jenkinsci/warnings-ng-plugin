@@ -179,7 +179,7 @@ class SeriesBuilderTest {
 
     private static ChartModelConfiguration createWithBuildDate() {
         ChartModelConfiguration config = createConfig();
-        when(config.getAxisType()).thenReturn(AxisType.BUILD);
+        when(config.getAxisType()).thenReturn(AxisType.DATE);
         return config;
     }
 
