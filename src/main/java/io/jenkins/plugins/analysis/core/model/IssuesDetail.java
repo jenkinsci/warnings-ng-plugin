@@ -262,6 +262,9 @@ public class IssuesDetail implements ModelObject {
     /**
      * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
      *
+     * @param isBuildOnXAxis
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     *
      * @return the UI model as JSON
      */
     @JavaScriptMethod
@@ -277,6 +280,9 @@ public class IssuesDetail implements ModelObject {
     /**
      * Returns the UI model for an ECharts line chart that shows the issues by tool.
      *
+     * @param isBuildOnXAxis
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     *
      * @return the UI model as JSON
      */
     @JavaScriptMethod
@@ -288,6 +294,9 @@ public class IssuesDetail implements ModelObject {
     /**
      * Returns the UI model for an ECharts line chart that shows the new and fixed issues.
      *
+     * @param isBuildOnXAxis
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     *
      * @return the UI model as JSON
      */
     @JavaScriptMethod
@@ -298,6 +307,9 @@ public class IssuesDetail implements ModelObject {
 
     /**
      * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     *
+     * @param isBuildOnXAxis
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
      * @return the UI model as JSON
      */
