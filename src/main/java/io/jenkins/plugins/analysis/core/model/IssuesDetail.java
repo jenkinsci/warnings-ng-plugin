@@ -27,6 +27,8 @@ import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration;
+import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
@@ -260,45 +262,61 @@ public class IssuesDetail implements ModelObject {
     /**
      * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
      *
-     * @return the UI model as JSON
-     */
-    @JavaScriptMethod
-    @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getBuildTrend() {
-        return createTrendAsJson(new SeverityTrendChart());
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     * @param isBuildOnXAxis
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
      * @return the UI model as JSON
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getToolsTrend() {
-        return createTrendAsJson(new ToolsTrendChart());
+    public JSONObject getBuildTrend(final boolean isBuildOnXAxis) {
+        return createTrendAsJson(new SeverityTrendChart(), isBuildOnXAxis);
+    }
+
+    private ChartModelConfiguration createChartConfiguration(final boolean isBuildOnXAxis) {
+        return new ChartModelConfiguration(isBuildOnXAxis ? AxisType.BUILD : AxisType.DATE);
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     *
+     * @param isBuildOnXAxis
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getToolsTrend(final boolean isBuildOnXAxis) {
+        return createTrendAsJson(new ToolsTrendChart(), isBuildOnXAxis);
     }
 
     /**
      * Returns the UI model for an ECharts line chart that shows the new and fixed issues.
      *
-     * @return the UI model as JSON
-     */
-    @JavaScriptMethod
-    @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getNewVersusFixedTrend() {
-        return createTrendAsJson(new NewVersusFixedTrendChart());
-    }
-
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     * @param isBuildOnXAxis
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
      * @return the UI model as JSON
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getHealthTrend() {
-        return createTrendAsJson(new HealthTrendChart(healthDescriptor));
+    public JSONObject getNewVersusFixedTrend(final boolean isBuildOnXAxis) {
+        return createTrendAsJson(new NewVersusFixedTrendChart(), isBuildOnXAxis);
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     *
+     * @param isBuildOnXAxis
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     *
+     * @return the UI model as JSON
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public JSONObject getHealthTrend(final boolean isBuildOnXAxis) {
+        return createTrendAsJson(new HealthTrendChart(healthDescriptor), isBuildOnXAxis);
     }
 
     /**
@@ -311,9 +329,10 @@ public class IssuesDetail implements ModelObject {
         return healthDescriptor.isEnabled();
     }
 
-    private JSONObject createTrendAsJson(final TrendChart trendChart) {
+    private JSONObject createTrendAsJson(final TrendChart trendChart, final boolean isBuildOnXAxis) {
         History history = new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
-        return JSONObject.fromObject(trendChart.create(history));
+
+        return JSONObject.fromObject(trendChart.create(history, createChartConfiguration(isBuildOnXAxis)));
     }
 
     /**

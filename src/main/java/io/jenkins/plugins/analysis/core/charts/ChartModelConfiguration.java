@@ -5,18 +5,35 @@ package io.jenkins.plugins.analysis.core.charts;
  *
  * @author Ullrich Hafner
  */
-class ChartModelConfiguration {
-    private boolean useBuildDate = false;
+public class ChartModelConfiguration {
+    private final AxisType axisType;
+
     private int buildCount = 50;
     private int dayCount = 0;
 
     /**
-     * Returns whether the build date or the build number should be used as domain.
-     *
-     * @return the build date or the build number should be used as domain
+     * Creates a new chart configuration with the Jenkins build number as X-Axis.
      */
-    boolean useBuildDateAsDomain() {
-        return useBuildDate;
+    public ChartModelConfiguration() {
+        this(AxisType.BUILD);
+    }
+
+    /**
+     * Creates a new chart configuration with the specified X-Axis type.
+     *
+     * @param axisType the type of the X-Axis
+     */
+    public ChartModelConfiguration(final AxisType axisType) {
+        this.axisType = axisType;
+    }
+
+    /**
+     * Returns the type of the X-axis.
+     *
+     * @return the X-axis type
+     */
+    AxisType getAxisType() {
+        return axisType;
     }
 
     /**
@@ -54,4 +71,12 @@ class ChartModelConfiguration {
     boolean isDayCountDefined() {
         return dayCount > 0;
     }
+
+    /** Type of the X-Axis. */
+    public enum AxisType {
+        /** Jenkins build numbers. */
+        BUILD,
+        /** Dates with build results. */
+        DATE
+    };
 }

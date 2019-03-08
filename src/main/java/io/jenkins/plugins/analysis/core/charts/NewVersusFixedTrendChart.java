@@ -11,9 +11,10 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  */
 public class NewVersusFixedTrendChart implements TrendChart {
     @Override
-    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results) {
+    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results,
+            final ChartModelConfiguration configuration) {
         NewVersusFixedSeriesBuilder builder = new NewVersusFixedSeriesBuilder();
-        LinesDataSet dataSet = builder.createDataSet(createConfiguration(), results);
+        LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
         LinesChartModel model = new LinesChartModel();
         model.addXAxisLabels(dataSet.getXAxisLabels());
@@ -34,9 +35,4 @@ public class NewVersusFixedTrendChart implements TrendChart {
         newSeries.addAll(dataSet.getSeries(dataSetId));
         return newSeries;
     }
-
-    private ChartModelConfiguration createConfiguration() {
-        return new ChartModelConfiguration();
-    }
-
 }
