@@ -89,7 +89,7 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 73 | dupfinder | dupFinder() | ![Resharper dupFinder](src/main/webapp/icons/dry-24x24.png) ![Resharper dupFinder](src/main/webapp/icons/dry-48x48.png) | Resharper dupFinder |  |
 | 74 | resharper | resharperInspectCode() | ![Resharper InspectCode](src/main/webapp/icons/resharper-24x24.png) ![Resharper InspectCode](src/main/webapp/icons/resharper-48x48.png) | Resharper InspectCode |  |
 | 75 | robocopy | robocopy() | - - | Robocopy |  |
-| 76 | rflint | rfLint() | - - | Robot Framework Lint |  |
+| 76 | rflint | rfLint() | ![rflint](src/main/webapp/icons/rflint-24x24.png) ![rflint](src/main/webapp/icons/rflint-48x48.png) | [Robot Framework Lint](https://github.com/boakley/robotframework-lint) |  |
 | 77 | rubocop | ruboCop() | ![RuboCop](src/main/webapp/icons/rubocop-24x24.png) ![RuboCop](src/main/webapp/icons/rubocop-48x48.png) | RuboCop |  |
 | 78 | scala | scala() | ![Scala Compiler](src/main/webapp/icons/scala-24x24.png) ![Scala Compiler](src/main/webapp/icons/scala-48x48.png) | Scala Compiler |  |
 | 79 | simian | simian() | ![Simian](src/main/webapp/icons/dry-24x24.png) ![Simian](src/main/webapp/icons/dry-48x48.png) | Simian |  |

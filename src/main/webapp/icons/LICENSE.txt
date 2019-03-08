@@ -99,3 +99,16 @@ Original file: https://github.com/PyCQA/pylint/blob/master/doc/logo.svg
 
 The 24x24 and 48x48 icons were created from this file. No modifications were made, except
 the scale that was changed.
+
+------------------------------------------------------------------------------
+
+License for RobotFramework Icons
+
+The official licens for the image can be found here. https://github.com/robotframework/visual-identity
+
+At the time of writing:
+ - copyright holder for all the Robot Framework logo is Robot Framework Foundation (http://robotframework.org/foundation/)
+ - Robot Framework logo is licensed under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0).
+
+The icons were downloaded from the official robot framework visual identity github page and were resized.  No other
+modifications were made.
