@@ -22,7 +22,6 @@ will be used.
 - [PR#15](https://github.com/jenkinsci/warnings-ng-plugin/pull/15): Add package and module support for Pylint 
 and updated the documentation for the format to use.
 
-
 ### Fixed
 - [JENKINS-55840](https://issues.jenkins-ci.org/browse/JENKINS-55840), 
 [JENKINS-27973](https://issues.jenkins-ci.org/browse/JENKINS-27973),
