@@ -49,21 +49,20 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     @Test
     public void shouldCreateIndividualAxisResults() throws Exception {
-        Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
-
         MatrixProject project = createProject(MatrixProject.class);
-
+        copySingleFileToWorkspace(project, "matrix-warnings-one.txt", "user_axis/one/warnings.txt");
+        copySingleFileToWorkspace(project, "matrix-warnings-two.txt", "user_axis/two/warnings.txt");
+        copySingleFileToWorkspace(project, "matrix-warnings-three.txt", "user_axis/three/warnings.txt");
         IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTool(new Gcc4());
+        Gcc4 tool = new Gcc4();
+        tool.setPattern("**/*.txt");
+        publisher.setTool(tool);
         project.getPublishersList().add(publisher);
 
         AxisList axis = new AxisList();
         TextAxis userAxis = new TextAxis("user_axis", "one two three");
         axis.add(userAxis);
         project.setAxes(axis);
-
-        project.getBuildersList().add(new Shell(copyResource(WARNINGS_FILE)));
-        project.getBuildersList().add(new Shell("cat " + WARNINGS_FILE + "| grep $user_axis"));
 
         Map<String, Integer> warningsPerAxis = new HashMap<>();
         warningsPerAxis.put("one", 4);
@@ -77,7 +76,7 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
             AnalysisResult result = getAnalysisResult(run);
 
             String currentAxis = run.getBuildVariables().values().iterator().next();
-            assertThat(result.getTotalSize()).isEqualTo(warningsPerAxis.get(currentAxis));
+            assertThat(result.getTotalSize()).as("Result of axis " + currentAxis).isEqualTo(warningsPerAxis.get(currentAxis));
         }
         AnalysisResult aggregation = getAnalysisResult(build);
         assertThat(aggregation.getTotalSize()).isEqualTo(12);
