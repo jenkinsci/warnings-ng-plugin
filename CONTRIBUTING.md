@@ -23,14 +23,8 @@ represented in the UI.
 
 ## Getting started
 
-1. Fork the repository on GitHub.
-2. Clone the forked repository to your machine.
-3. Install the development tools. In order to contribute to Jenkins' Static Analysis Suite, you need the following tools:
-   * Java Development Kit (JDK) 8.
-   * Maven 3.3.9 or above. You can download it [here](https://maven.apache.org/download.cgi).
-   * Any IDE which supports importing Maven projects.
-4. Setup your development environment as described in 
-[Preparing for Plugin Development](https://jenkins.io/doc/developer/tutorial/prepare/).
+Setup your development environment as described in 
+[Development environment for Jenkins' Warnings Next Generation Plugin](https://github.com/uhafner/warnings-ng-plugin-devenv).
 
 ## Coding Guidelines
 
