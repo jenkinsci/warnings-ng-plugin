@@ -69,7 +69,7 @@ public class IssuesDetail implements ModelObject {
 
     private final AnalysisResult result;
 
-    private HealthDescriptor healthDescriptor;
+    private final HealthDescriptor healthDescriptor;
 
     /**
      * Creates a new detail model with the corresponding view {@code IssuesDetail/index.jelly}.
@@ -101,6 +101,40 @@ public class IssuesDetail implements ModelObject {
             final Report outstandingIssues, final Report fixedIssues,
             final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
             final Charset sourceEncoding) {
+        this(owner, result, report, newIssues, outstandingIssues, fixedIssues, displayName, url, labelProvider,
+                sourceEncoding, new HealthDescriptor(0, 0, Severity.ERROR));
+    }
+
+    /**
+     * Creates a new detail model with the corresponding view {@code IssuesDetail/index.jelly}.
+     *
+     * @param owner
+     *         the associated build/run of this view
+     * @param result
+     *         the analysis result
+     * @param report
+     *         all issues that should be shown in this details view
+     * @param newIssues
+     *         all new issues
+     * @param outstandingIssues
+     *         all outstanding issues
+     * @param fixedIssues
+     *         all fixed issues
+     * @param url
+     *         the relative URL of this view
+     * @param displayName
+     *         the human readable name of this view (shown in breadcrumb)
+     * @param labelProvider
+     *         the label provider for the static analysis tool
+     * @param sourceEncoding
+     *         the encoding to use when displaying source files
+     */
+    @SuppressWarnings("ParameterNumber")
+    public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
+            final Report report, final Report newIssues,
+            final Report outstandingIssues, final Report fixedIssues,
+            final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
+            final Charset sourceEncoding, final HealthDescriptor healthDescriptor) {
         this.owner = owner;
         this.result = result;
 
@@ -113,7 +147,7 @@ public class IssuesDetail implements ModelObject {
         this.displayName = displayName;
         this.labelProvider = labelProvider;
         this.url = url;
-        this.healthDescriptor = new HealthDescriptor(0, 0, Severity.ERROR);
+        this.healthDescriptor = healthDescriptor;
     }
 
     /**
@@ -135,9 +169,8 @@ public class IssuesDetail implements ModelObject {
             final HealthDescriptor healthDescriptor, final Charset sourceEncoding) {
         this(owner, result, result.getIssues(), result.getNewIssues(), result.getOutstandingIssues(),
                 result.getFixedIssues(), labelProvider.getLinkName(), labelProvider.getId(),
-                labelProvider, sourceEncoding);
+                labelProvider, sourceEncoding, healthDescriptor);
 
-        this.healthDescriptor = healthDescriptor;
         infoMessages.addAll(result.getInfoMessages().castToList());
         errorMessages.addAll(result.getErrorMessages().castToList());
     }

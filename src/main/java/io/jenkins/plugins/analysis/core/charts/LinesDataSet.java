@@ -17,8 +17,8 @@ import edu.hm.hafner.util.Ensure;
  * @author Ullrich Hafner
  */
 class LinesDataSet {
-    private Map<String, List<Integer>> dataSetSeries = new HashMap<>();
-    private List<String> xAxisLabels = new ArrayList<>();
+    private final Map<String, List<Integer>> dataSetSeries = new HashMap<>();
+    private final List<String> xAxisLabels = new ArrayList<>();
 
     int getXAxisSize() {
         return xAxisLabels.size();

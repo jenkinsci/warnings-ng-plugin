@@ -14,7 +14,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
  * @author Ullrich Hafner
  */
 public class ResetReferenceAction implements Action {
-    private String id;
+    private final String id;
 
     /**
      * Creates a new action for the specified tool ID.
