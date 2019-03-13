@@ -96,8 +96,8 @@ class IssuesTotalColumnTest {
     private IssuesTotalColumn createColumn() {
         IssuesTotalColumn column = new IssuesTotalColumn();
         LabelProviderFactory labelProviderFactory = mock(LabelProviderFactory.class);
-        JobStubs.registerTool(labelProviderFactory, CHECK_STYLE_ID, CHECK_STYLE_NAME);
-        JobStubs.registerTool(labelProviderFactory, SPOT_BUGS_ID, SPOT_BUGS_NAME);
+        registerTool(labelProviderFactory, CHECK_STYLE_ID, CHECK_STYLE_NAME);
+        registerTool(labelProviderFactory, SPOT_BUGS_ID, SPOT_BUGS_NAME);
         column.setLabelProviderFactory(labelProviderFactory);
         return column;
     }

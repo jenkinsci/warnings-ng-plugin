@@ -38,7 +38,7 @@ class ModelValidationTest {
             softly.assertThat(model.validateCharset("UTF-8")).isOk();
             softly.assertThat(model.validateCharset("Some wrong text"))
                     .isError()
-                    .hasMessage(ModelValidation.createWrongEncodingErrorMessage());
+                    .hasMessage(createWrongEncodingErrorMessage());
         });
     }
 

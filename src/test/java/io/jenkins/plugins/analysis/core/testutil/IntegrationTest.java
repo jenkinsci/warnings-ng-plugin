@@ -696,7 +696,7 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     protected ReportScanningTool createTool(final ReportScanningTool tool, final String pattern,
-            boolean skipSymbolicLinks) {
+            final boolean skipSymbolicLinks) {
         tool.setPattern(pattern);
         tool.setSkipSymbolicLinks(skipSymbolicLinks);
         return tool;
@@ -708,6 +708,8 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @param job
      *         the job to register the recorder for
+     * @param configuration
+     *         configuration of the recorder
      * @param tool
      *         the tool to scan the warnings
      *

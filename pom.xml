@@ -565,7 +565,7 @@
           <failOnViolation>false</failOnViolation>
           <configLocation>etc/checkstyle-configuration.xml</configLocation>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <excludes>**/*Assert.java</excludes>
+          <excludes>**/*Assert*.java,**/InjectedTest.java</excludes>
         </configuration>
         <dependencies>
           <dependency>
