@@ -47,6 +47,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Martin Weibel
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).

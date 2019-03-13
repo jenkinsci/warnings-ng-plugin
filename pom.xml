@@ -565,7 +565,7 @@
           <failOnViolation>false</failOnViolation>
           <configLocation>etc/checkstyle-configuration.xml</configLocation>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <excludes>**/*Assert\.java</excludes>
+          <excludes>**/*Assert.java</excludes>
         </configuration>
         <dependencies>
           <dependency>
@@ -597,6 +597,9 @@
             <excludeRoot>target/generated-sources/localizer</excludeRoot>
             <excludeRoot>target/generated-test-sources/assertj-assertions</excludeRoot>
           </excludeRoots>
+          <excludes>
+            <exclude>**/InjectedTest.java</exclude>
+          </excludes>
           <includeTests>true</includeTests>
           <minimumTokens>50</minimumTokens>
         </configuration>

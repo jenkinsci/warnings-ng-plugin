@@ -46,6 +46,8 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      */
     @DataBoundConstructor
     public QualityGate(final int threshold, final QualityGateType type, final boolean unstable) {
+        super();
+
         this.threshold = threshold;
         this.type = type;
         status = unstable ? QualityGateStatus.WARNING : QualityGateStatus.FAILED;
@@ -74,6 +76,8 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      *         determines whether the quality gate is a warning or failure
      */
     public QualityGate(final int threshold, final QualityGateType type, final QualityGateResult result) {
+        super();
+
         this.threshold = threshold;
         this.type = type;
         status = result.status;

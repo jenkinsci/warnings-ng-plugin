@@ -117,7 +117,7 @@ class IssuesScanner {
         return StringUtils.EMPTY;
     }
 
-    static Report filter(final Report report, final List<RegexpFilter> filters, final String id) {
+    private static Report filter(final Report report, final List<RegexpFilter> filters, final String id) {
         int actualFilterSize = 0;
         IssueFilterBuilder builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
