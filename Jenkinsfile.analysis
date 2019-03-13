@@ -11,7 +11,7 @@ node {
         recordIssues tools: [java(), javaDoc()], aggregatingResults: 'true', id: 'java', name: 'Java'
         junit testResults: '**/target/*-reports/TEST-*.xml'
         recordIssues tools: [mavenConsole(),
-            checkStyle(),
+            checkStyle(pattern: 'target/checkstyle-result.xml'),
             spotBugs(pattern: 'target/spotbugsXml.xml'),
             pmdParser(pattern: 'target/pmd.xml'),
             cpd(pattern: 'target/cpd.xml'),
