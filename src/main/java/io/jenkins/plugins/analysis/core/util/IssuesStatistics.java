@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.core.util;
 
 /**
- * FIXME: comment class.
+ * Simple data class that determines the number of issues (by severity, new and total and delta).
  *
  * @author Ullrich Hafner
  */
@@ -26,6 +26,7 @@ public class IssuesStatistics {
     private final int newLowSize;
     private final int deltaLowSize;
 
+    @SuppressWarnings("")
     public IssuesStatistics(final int totalSize, final int newSize, final int deltaSize, final int totalErrorSize,
             final int newErrorSize,
             final int deltaErrorSize, final int totalHighSize, final int newHighSize, final int deltaHighSize,
