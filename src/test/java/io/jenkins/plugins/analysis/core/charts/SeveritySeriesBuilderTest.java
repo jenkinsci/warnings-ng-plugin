@@ -51,11 +51,13 @@ class SeveritySeriesBuilderTest {
         assertThat(dataSet.getXAxisSize()).isEqualTo(1);
         assertThat(dataSet.getXAxisLabels()).containsExactly("#1");
 
-        assertThat(dataSet.getDataSetIds()).containsExactlyInAnyOrder(WARNING_HIGH.getName(), WARNING_NORMAL.getName(), WARNING_LOW.getName());
+        assertThat(dataSet.getDataSetIds()).containsExactlyInAnyOrder(
+                ERROR.getName(), WARNING_HIGH.getName(), WARNING_NORMAL.getName(), WARNING_LOW.getName());
 
         assertThat(dataSet.getSeries(WARNING_HIGH.getName())).containsExactly(1);
         assertThat(dataSet.getSeries(WARNING_NORMAL.getName())).containsExactly(2);
         assertThat(dataSet.getSeries(WARNING_LOW.getName())).containsExactly(3);
+        assertThat(dataSet.getSeries(ERROR.getName())).containsExactly(0);
     }
 
     private StaticAnalysisRun createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
