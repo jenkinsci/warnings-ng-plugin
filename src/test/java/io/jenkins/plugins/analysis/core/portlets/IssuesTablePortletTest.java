@@ -274,7 +274,7 @@ class IssuesTablePortletTest {
         List<Result> firstRowResults = firstRow.getResults();
         assertThat(firstRowResults).hasSize(2);
 
-        verifyEmptyResult(firstRowResults.get(0), CHECK_STYLE_ID);
+        assertThat(firstRowResults.get(0).getTotal()).isEmpty();
         verifyResult(firstRowResults.get(1), SPOT_BUGS_ID, 1);
 
         TableRow secondRow = rows.get(1);
@@ -284,7 +284,7 @@ class IssuesTablePortletTest {
         assertThat(secondRowResults).hasSize(2);
 
         verifyResult(secondRowResults.get(0), CHECK_STYLE_ID, 2);
-        verifyEmptyResult(secondRowResults.get(1), SPOT_BUGS_ID);
+        assertThat(secondRowResults.get(1).getTotal()).isEmpty();
     }
 
     private PortletTableModel createModel(final List<Job<?, ?>> jobs) {
@@ -301,10 +301,6 @@ class IssuesTablePortletTest {
         assertThat(results).hasSize(1);
 
         verifyResult(results.get(0), expectedId, expectedSize);
-    }
-
-    private void verifyEmptyResult(final Result result, final String expectedId) {
-        assertThat(result.getTotal()).isEmpty();
     }
 
     private void verifyResult(final Result result, final String expectedId, final int expectedSize) {

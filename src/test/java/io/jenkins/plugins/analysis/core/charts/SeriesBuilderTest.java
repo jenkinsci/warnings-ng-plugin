@@ -160,7 +160,7 @@ class SeriesBuilderTest {
 
         LinesDataSet result = seriesBuilder.createDataSet(config, runs);
 
-        if (expected.size() == 0) {
+        if (expected.isEmpty()) {
             assertThat(result.getDataSetIds()).isEmpty();
         }
         else {

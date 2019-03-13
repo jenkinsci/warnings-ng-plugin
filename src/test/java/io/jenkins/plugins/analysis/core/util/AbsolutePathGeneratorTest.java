@@ -137,7 +137,7 @@ class AbsolutePathGeneratorTest {
     private String getUriPath(final URI resourceFolder) {
         String workspace = resourceFolder.getPath();
         if (isWindows()) {
-            if (workspace.startsWith("/")) {
+            if (workspace.charAt(0) == '/') {
                 workspace = workspace.substring(1);
             }
         }

@@ -134,7 +134,8 @@ public abstract class SeriesBuilder {
      *
      * @return a data set
      */
-    private LinesDataSet createDataSetPerBuildNumber(final SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
+    private LinesDataSet createDataSetPerBuildNumber(
+            final SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
         LinesDataSet model = new LinesDataSet();
         for (Entry<AnalysisBuild, Map<String, Integer>> series : valuesPerBuild.entrySet()) {
             model.add(series.getKey().getDisplayName(), series.getValue());
@@ -181,7 +182,7 @@ public abstract class SeriesBuilder {
                             .collect(groupingBy(Map.Entry::getKey, summingInt(Map.Entry::getValue)));
             Map<String, Integer> averagePerDay =
                     mapOfDay.entrySet().stream()
-                            .collect(Collectors.toMap(Entry::getKey, e-> e.getValue() / seriesPerDay.size()));
+                            .collect(Collectors.toMap(Entry::getKey, e -> e.getValue() / seriesPerDay.size()));
             seriesPerDate.put(date, averagePerDay);
         }
         return seriesPerDate;
@@ -228,6 +229,7 @@ public abstract class SeriesBuilder {
      *         configures the data set (how many results should be process, etc.)
      * @param histories
      *         the static analysis results
+     *
      * @return the aggregated data set
      */
     public LinesDataSet createAggregation(final ChartModelConfiguration configuration,

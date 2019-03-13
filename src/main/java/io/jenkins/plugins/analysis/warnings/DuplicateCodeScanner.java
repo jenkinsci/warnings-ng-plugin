@@ -165,8 +165,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          *
          * @return the validation result
          */
-        public FormValidation doCheckHighThreshold(@QueryParameter(value = "highThreshold") final int highThreshold,
-                @QueryParameter(value = "normalThreshold") final int normalThreshold) {
+        public FormValidation doCheckHighThreshold(@QueryParameter("highThreshold") final int highThreshold,
+                @QueryParameter("normalThreshold") final int normalThreshold) {
             return VALIDATION.validateHigh(highThreshold, normalThreshold);
         }
 
@@ -180,8 +180,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          *
          * @return the validation result
          */
-        public FormValidation doCheckNormalThreshold(@QueryParameter(value = "highThreshold") final int highThreshold,
-                @QueryParameter(value = "normalThreshold") final int normalThreshold) {
+        public FormValidation doCheckNormalThreshold(@QueryParameter("highThreshold") final int highThreshold,
+                @QueryParameter("normalThreshold") final int normalThreshold) {
             return VALIDATION.validateNormal(highThreshold, normalThreshold);
         }
     }

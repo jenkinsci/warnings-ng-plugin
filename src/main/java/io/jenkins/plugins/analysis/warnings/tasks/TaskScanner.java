@@ -36,7 +36,7 @@ class TaskScanner {
     private static final Pattern INVALID = Pattern.compile("");
 
     /** The regular expression patterns to be used to scan the files. One pattern per priority. */
-    private final Map<Severity, Pattern> patterns = new HashMap<Severity, Pattern>();
+    private final Map<Severity, Pattern> patterns = new HashMap<>();
     private final boolean isUppercase;
 
     private boolean isPatternInvalid;
@@ -142,7 +142,7 @@ class TaskScanner {
                 return Pattern.compile(tagIdentifiers); // use the tag as such
             }
 
-            List<String> regexps = new ArrayList<String>();
+            List<String> regexps = new ArrayList<>();
             for (String tag : splitTags(tagIdentifiers)) {
                 String trimmed = tag.trim();
                 if (StringUtils.isNotBlank(trimmed)) {
