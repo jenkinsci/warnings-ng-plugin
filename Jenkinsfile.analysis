@@ -1,0 +1,20 @@
+node {
+    stage ('Checkout') {
+        checkout scm
+    }
+
+    stage ('Build and Analysis') {
+        withMaven(maven: 'mvn-default', mavenLocalRepo: '/var/data/m2repository', mavenOpts: '-Xmx768m -Xms512m') {
+            sh 'mvn -V -e clean verify -Dmaven.test.failure.ignore -DskipITs'
+        }
+
+        recordIssues tools: [java(), javaDoc()], aggregatingResults: 'true', id: 'java', name: 'Java'
+        junit testResults: '**/target/*-reports/TEST-*.xml'
+        recordIssues tools: [mavenConsole(),
+            checkStyle(),
+            spotBugs(pattern: 'target/spotbugsXml.xml'),
+            pmdParser(pattern: 'target/pmd.xml'),
+            cpd(pattern: 'target/cpd.xml'),
+            taskScanner(highTags:'FIXME', normalTags:'TODO', includePattern: '**/*.java', excludePattern: 'target/**/*')]
+    }
+}
