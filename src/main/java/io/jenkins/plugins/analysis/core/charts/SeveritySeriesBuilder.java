@@ -17,10 +17,7 @@ public class SeveritySeriesBuilder extends SeriesBuilder {
     protected Map<String, Integer> computeSeries(final StaticAnalysisRun current) {
         Map<String, Integer> series = new HashMap<>();
         for (Severity severity : Severity.getPredefinedValues()) {
-            int size = current.getTotalSizeOf(severity);
-            if (size > 0) {
-                series.put(severity.getName(), size);
-            }
+            series.put(severity.getName(), current.getTotalSizeOf(severity));
         }
         return series;
     }

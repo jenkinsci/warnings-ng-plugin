@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.charts;
 
+import java.util.List;
+
 import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
@@ -25,10 +27,10 @@ public class SeverityTrendChart implements TrendChart {
         Severity[] visibleSeverities
                 = {Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR};
         for (Severity severity : visibleSeverities) {
-            String id = severity.getName();
-            if (dataSet.hasSeries(id)) {
+            List<Integer> values = dataSet.getSeries(severity.getName());
+            if (values.stream().anyMatch(integer -> integer > 0)) {
                 LineSeries series = createSeries(severity);
-                series.addAll(dataSet.getSeries(id));
+                series.addAll(values);
                 model.addSeries(series);
             }
         }
