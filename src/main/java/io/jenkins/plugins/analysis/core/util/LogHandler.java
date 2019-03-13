@@ -55,7 +55,7 @@ public class LogHandler {
     }
 
     private ToolLogger createErrorLogger(final TaskListener listener, final String name) {
-        return createLogger(listener, String.format("[%s] [ERROR]", name));
+        return createLogger(listener, String.format("[%s] [-ERROR-]", name));
     }
 
     private ToolLogger createLogger(final TaskListener listener, final String name) {
