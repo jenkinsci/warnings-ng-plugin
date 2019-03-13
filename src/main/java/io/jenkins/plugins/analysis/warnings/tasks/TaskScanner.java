@@ -40,6 +40,7 @@ class TaskScanner {
     private final boolean isUppercase;
 
     private boolean isPatternInvalid;
+    @SuppressWarnings("PMD.AvoidStringBufferField")
     private final StringBuilder errors = new StringBuilder();
 
     /** Determines whether the tags are case sensitive or not. */

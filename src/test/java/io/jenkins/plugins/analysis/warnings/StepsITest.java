@@ -44,6 +44,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Creates a declarative Pipeline and scans for a Gcc warning.

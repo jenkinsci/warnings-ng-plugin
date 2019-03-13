@@ -35,6 +35,7 @@ class AbsolutePathGeneratorTest {
     private static final String ID = "ID";
     private static final String RELATIVE_FILE = "relative.txt";
     private static final String PATH_TO_RESOURCE = "io/jenkins/plugins/analysis/core/util/relative.txt";
+    private static final char SLASH = '/';
 
     /**
      * Ensures that illegal file names are processed without problems. Afterwards, the path name should be unchanged.
@@ -136,10 +137,8 @@ class AbsolutePathGeneratorTest {
 
     private String getUriPath(final URI resourceFolder) {
         String workspace = resourceFolder.getPath();
-        if (isWindows()) {
-            if (workspace.charAt(0) == '/') {
-                workspace = workspace.substring(1);
-            }
+        if (isWindows() && workspace.charAt(0) == SLASH) {
+            workspace = workspace.substring(1);
         }
         return workspace;
     }

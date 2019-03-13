@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -209,7 +210,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
         PortletTableModel(final List<Job<?, ?>> visibleJobs, final Function<ResultAction, String> namePrinter,
                 final Predicate<JobAction> filter) {
-            TreeMap<String, String> toolNamesById = mapToolIdsToNames(visibleJobs, namePrinter, filter);
+            SortedMap<String, String> toolNamesById = mapToolIdsToNames(visibleJobs, namePrinter, filter);
 
             toolNames = toolNamesById.values();
             rows = new ArrayList<>();
@@ -217,7 +218,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
             populateRows(visibleJobs, toolNamesById);
         }
 
-        private TreeMap<String, String> mapToolIdsToNames(final List<Job<?, ?>> visibleJobs,
+        private SortedMap<String, String> mapToolIdsToNames(final List<Job<?, ?>> visibleJobs,
                 final Function<ResultAction, String> namePrinter,
                 final Predicate<JobAction> filter) {
             return visibleJobs.stream()
@@ -228,7 +229,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
                     .collect(Collectors.toMap(ResultAction::getId, namePrinter, (r1, r2) -> r1, TreeMap::new));
         }
 
-        private void populateRows(final List<Job<?, ?>> visibleJobs, final TreeMap<String, String> toolNamesById) {
+        private void populateRows(final List<Job<?, ?>> visibleJobs, final SortedMap<String, String> toolNamesById) {
             for (Job<?, ?> job : visibleJobs) {
                 TableRow row = new TableRow(job);
                 for (String id : toolNamesById.keySet()) {

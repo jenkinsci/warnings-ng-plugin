@@ -48,6 +48,7 @@ public class RfLint extends ReportScanningTool {
             return Messages.Warnings_RFLint_ParserName();
         }
 
+        @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName(), ICON_NAME);
         }

@@ -182,7 +182,7 @@ public abstract class SeriesBuilder {
                             .collect(groupingBy(Map.Entry::getKey, summingInt(Map.Entry::getValue)));
             Map<String, Integer> averagePerDay =
                     mapOfDay.entrySet().stream()
-                            .collect(Collectors.toMap(Entry::getKey, e -> e.getValue() / seriesPerDay.size()));
+                            .collect(toMap(Entry::getKey, e -> e.getValue() / seriesPerDay.size()));
             seriesPerDate.put(date, averagePerDay);
         }
         return seriesPerDate;

@@ -45,6 +45,7 @@ import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 class IssuesScanner {
     private final FilePath jenkinsRootDir;
     private final Charset sourceCodeEncoding;

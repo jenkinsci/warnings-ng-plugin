@@ -40,7 +40,7 @@ import io.jenkins.plugins.analysis.core.util.ModelValidation;
 /**
  * Scan files or the console log for issues.
  */
-@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessivePublicCount"})
+@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessivePublicCount", "PMD.ExcessiveImports"})
 public class ScanForIssuesStep extends Step {
     private Tool tool;
 
