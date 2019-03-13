@@ -2,6 +2,9 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 /**
  * Chart label showing the build date.
@@ -24,7 +27,7 @@ class LocalDateLabel implements Comparable<LocalDateLabel> {
     }
 
     @Override
-    public int compareTo(final LocalDateLabel o) {
+    public int compareTo(@NonNull final LocalDateLabel o) {
         return date.compareTo(o.date);
     }
 
@@ -34,31 +37,20 @@ class LocalDateLabel implements Comparable<LocalDateLabel> {
     }
 
     @Override
-    public int hashCode() {
-        int prime = 31;
-        int result = 1;
-        result = prime * result + ((date == null) ? 0 : date.hashCode());
-        return result;
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        LocalDateLabel that = (LocalDateLabel) o;
+        return date.equals(that.date) && formatter.equals(that.formatter);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        LocalDateLabel other = (LocalDateLabel)obj;
-        if (date == null) {
-            return other.date == null;
-        }
-        else {
-            return date.equals(other.date);
-        }
+    public int hashCode() {
+        return Objects.hash(date, formatter);
     }
 }
 
