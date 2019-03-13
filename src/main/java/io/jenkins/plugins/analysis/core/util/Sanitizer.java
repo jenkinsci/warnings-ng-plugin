@@ -16,7 +16,7 @@ import hudson.markup.RawHtmlMarkupFormatter;
  */
 public class Sanitizer {
     /** Sanitizes HTML elements in warning messages and tooltips. Use this formatter if raw HTML should be shown. */
-    private final MarkupFormatter sanitizer = new RawHtmlMarkupFormatter(true);
+    private final MarkupFormatter formatter = new RawHtmlMarkupFormatter(true);
 
     /**
      * Renders the specified HTML code. Removes unsafe HTML constructs.
@@ -28,7 +28,7 @@ public class Sanitizer {
      */
     public String render(final String html) {
         try {
-            return sanitizer.translate(html);
+            return formatter.translate(html);
         }
         catch (IOException e) {
             return ExceptionUtils.getRootCauseMessage(e);

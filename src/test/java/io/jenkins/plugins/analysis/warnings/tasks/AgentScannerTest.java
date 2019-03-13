@@ -33,16 +33,15 @@ class AgentScannerTest extends SerializableTest<AgentScanner> {
 
     @Test
     @Issue("JENKINS-55350")
-    void shouldReadDifferentUtf8Files() throws IOException, InterruptedException {
+    void shouldReadDifferentUtf8Files() {
         readUtf8File("RAC.CharacterConsts-UTF8-BOM.pas");
         readUtf8File("RAC.CharacterConsts-UTF-8-NO-BOM.pas");
     }
 
-    private void readUtf8File(final String fileName) throws IOException, InterruptedException {
+    private void readUtf8File(final String fileName) {
         Path path = getResourceAsFile(fileName);
         Report report = createScanner(fileName).invoke(path.getParent().toFile(), null);
 
-        System.out.println(report.getInfoMessages());
         assertThat(report).hasSize(2);
     }
 }

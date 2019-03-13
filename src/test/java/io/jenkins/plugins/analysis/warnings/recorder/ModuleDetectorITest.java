@@ -344,7 +344,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(propertyTable.getColumnName()).isEqualTo("Module");
         assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(modules);
 
-        verifyConsoleLog(result, Stream.of(modules).mapToInt(PropertyRow::size).sum());
+        verifyConsoleLog(result, Stream.of(modules).mapToInt(PropertyRow::getSize).sum());
 
         // TODO: Click module links
     }

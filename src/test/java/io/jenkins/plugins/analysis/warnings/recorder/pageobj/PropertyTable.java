@@ -180,7 +180,7 @@ public class PropertyTable {
             this(name, size, 0, true);
         }
 
-        public int size() {
+        public int getSize() {
             return size;
         }
 

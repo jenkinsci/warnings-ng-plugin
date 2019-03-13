@@ -14,7 +14,6 @@
   </rule>
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor"/>
-    <exclude name="UnnecessaryConstructor"/>
     <exclude name="FieldDeclarationsShouldBeAtStartOfClass"/>
     <exclude name="CommentDefaultAccessModifier"/>
     <exclude name="LocalVariableCouldBeFinal"/>
@@ -26,11 +25,6 @@
     <exclude name="EmptyMethodInAbstractClassShouldBeAbstract"/>
     <exclude name="ConfusingTernary"/>
     <exclude name="ClassNamingConventions"/>
-  </rule>
-  <rule ref="category/java/codestyle.xml/UnnecessaryConstructor">
-    <properties>
-      <property name="ignoredAnnotations" value="org.kohsuke.stapler.DataBoundConstructor"/>
-    </properties>
   </rule>
   <rule ref="category/java/codestyle.xml/ClassNamingConventions">
     <properties>
@@ -55,7 +49,6 @@
     <exclude name="ExcessiveMethodLength"/>
     <exclude name="UseObjectForClearerAPI"/>
     <exclude name="AvoidCatchingGenericException"/>
-    <exclude name="FinalFieldCouldBeStatic"/>
   </rule>
   <rule ref="category/java/errorprone.xml">
     <exclude name="DataflowAnomalyAnalysis"/>
@@ -63,6 +56,13 @@
     <exclude name="AvoidDuplicateLiterals"/>
     <exclude name="TestClassWithoutTestCases"/>
     <exclude name="EmptyCatchBlock"/>
+    <exclude name="AvoidLiteralsInIfCondition"/>
+    <exclude name="UseProperClassLoader"/>
+  </rule>
+  <rule ref="category/java/errorprone.xml/AvoidLiteralsInIfCondition">
+    <properties>
+      <property name="ignoreMagicNumbers" value="-1,0,1"/>
+    </properties>
   </rule>
   <rule ref="category/java/errorprone.xml/EmptyCatchBlock">
     <properties>
@@ -73,7 +73,6 @@
     <exclude name="UseConcurrentHashMap"/>
   </rule>
   <rule ref="category/java/performance.xml">
-    <exclude name="AppendCharacterWithChar"/>
     <exclude name="AvoidInstantiatingObjectsInLoops"/>
     <exclude name="RedundantFieldInitializer"/>
     <exclude name="ConsecutiveAppendsShouldReuse"/>

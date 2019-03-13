@@ -54,9 +54,10 @@ public class FileFinder extends MasterToSlaveFileCallable<String[]> {
      *         the ant file includes pattern to scan for
      * @param excludesPattern
      *         the ant file excludes pattern to scan for
-     * @param followSymlinks if the scanner should traverse symbolic links
+     * @param followSymlinks
+     *         if the scanner should traverse symbolic links
      */
-    public FileFinder(final String includesPattern, final String excludesPattern, boolean followSymlinks) {
+    public FileFinder(final String includesPattern, final String excludesPattern, final boolean followSymlinks) {
         super();
 
         this.includesPattern = includesPattern;

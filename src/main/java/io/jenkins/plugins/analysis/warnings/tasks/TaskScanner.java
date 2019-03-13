@@ -39,7 +39,7 @@ class TaskScanner {
     private final Map<Severity, Pattern> patterns = new HashMap<Severity, Pattern>();
     private final boolean isUppercase;
 
-    private boolean isInvalidPattern;
+    private boolean isPatternInvalid;
     private final StringBuilder errors = new StringBuilder();
 
     /** Determines whether the tags are case sensitive or not. */
@@ -88,7 +88,7 @@ class TaskScanner {
     }
 
     String getTaskTags() {
-        if (isInvalidPattern) {
+        if (isPatternInvalid) {
             return "Invalid patterns detected:\n" + getErrors();
         }
         else if (patterns.isEmpty()) {
@@ -112,7 +112,7 @@ class TaskScanner {
      * @return {@code true} if one of the tag patterns is invalid, {@code false} if everything is fine
      */
     boolean isInvalidPattern() {
-        return isInvalidPattern;
+        return isPatternInvalid;
     }
 
     /**
@@ -167,7 +167,7 @@ class TaskScanner {
             }
         }
         catch (PatternSyntaxException exception) {
-            isInvalidPattern = true;
+            isPatternInvalid = true;
             errors.append(String.format("Specified pattern is an invalid regular expression: '%s': '%s'",
                     tagIdentifiers, exception.getMessage()));
 
@@ -226,7 +226,7 @@ class TaskScanner {
     Report scanTasks(final Iterator<String> lines, final IssueBuilder builder) {
         Report report = new Report();
 
-        if (isInvalidPattern) {
+        if (isPatternInvalid) {
             report.logError("%s", errors.toString());
             return report;
         }
