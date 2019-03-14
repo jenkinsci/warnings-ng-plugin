@@ -95,17 +95,19 @@
             <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
 
           </j:otherwise>
+
         </j:choose>
       </div>
+
+      <script>var view = <st:bind value="${it}"/></script>
+
+      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
+      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/pie-chart.js"/>
+      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
+      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
 
     </l:main-panel>
 
   </issues:layout>
-
-  <script>var view = <st:bind value="${it}"/></script>
-
-  <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/pie-chart.js"/>
-  <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
-  <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
 
 </j:jelly>
