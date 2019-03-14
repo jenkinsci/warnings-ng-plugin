@@ -37,6 +37,7 @@ import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class IssuesTotalColumn extends ListViewColumn {
     private boolean selectTools = false;
     private List<ToolSelection> tools = new ArrayList<>();

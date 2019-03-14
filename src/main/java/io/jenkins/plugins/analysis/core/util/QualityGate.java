@@ -180,7 +180,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      *
      * @return the list of quality gates
      */
-    @SuppressWarnings({"deprecation", "npathcomplexity"})
+    @SuppressWarnings({"deprecation", "npathcomplexity", "PMD.CyclomaticComplexity"})
     public static List<QualityGate> map(@Nullable final Thresholds thresholds) {
         if (thresholds == null) {
             return Collections.emptyList();

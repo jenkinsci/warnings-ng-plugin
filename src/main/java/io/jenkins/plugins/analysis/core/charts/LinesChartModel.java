@@ -17,6 +17,7 @@ import net.sf.json.JSONObject;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class LinesChartModel {
     private final List<String> xAxisLabels = new ArrayList<>();
     private final List<LineSeries> series = new ArrayList<>();

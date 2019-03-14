@@ -101,7 +101,7 @@ public class SourcePrinter {
         return new UnescapedText(SANITIZER.render(message));
     }
 
-    @SuppressWarnings("javancss")
+    @SuppressWarnings({"javancss", "PMD.CyclomaticComplexity"})
     private String selectLanguageClass(final Issue issue) {
         switch (StringUtils.defaultIfEmpty(StringUtils.substringAfterLast(issue.getBaseName(), "."),
                 issue.getBaseName())) {

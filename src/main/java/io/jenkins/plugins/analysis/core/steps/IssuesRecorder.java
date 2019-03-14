@@ -71,7 +71,7 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "classdataabstractioncoupling", "classfanoutcomplexity"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "classdataabstractioncoupling", "classfanoutcomplexity"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final String NO_REFERENCE_JOB = "-";
 

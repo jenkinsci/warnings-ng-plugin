@@ -16,6 +16,7 @@ import static edu.hm.hafner.analysis.Severity.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class DeltaReport {
     private static final Report EMPTY_REPORT = new Report();
 
