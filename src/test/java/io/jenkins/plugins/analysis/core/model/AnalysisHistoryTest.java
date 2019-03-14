@@ -58,8 +58,8 @@ class AnalysisHistoryTest {
         when(firstAction.getResult()).thenReturn(firstResult);
         when(firstAction.getOwner()).thenReturn(first);
 
-        when(last.getPreviousBuild()).thenReturn(middle);
-        when(middle.getPreviousBuild()).thenReturn(first);
+        when(last.getPreviousCompletedBuild()).thenReturn(middle);
+        when(middle.getPreviousCompletedBuild()).thenReturn(first);
 
         ResultSelector resultSelector = mock(ResultSelector.class);
         when(resultSelector.get(last)).thenReturn(Optional.of(lastAction));

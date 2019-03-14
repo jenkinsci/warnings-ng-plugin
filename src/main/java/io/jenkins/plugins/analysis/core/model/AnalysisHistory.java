@@ -150,7 +150,7 @@ public class AnalysisHistory implements History {
             final ResultSelector selector,
             final QualityGateEvaluationMode qualityGateEvaluationMode,
             final JobResultEvaluationMode jobResultEvaluationMode) {
-        for (Run<?, ?> run = start; run != null; run = run.getPreviousBuild()) {
+        for (Run<?, ?> run = start; run != null; run = run.getPreviousCompletedBuild()) {
             Optional<ResultAction> action = selector.get(run);
             if (action.isPresent()) {
                 ResultAction resultAction = action.get();
@@ -221,7 +221,7 @@ public class AnalysisHistory implements History {
                 Run<?, ?> run = cursor.get();
                 Optional<ResultAction> resultAction = selector.get(run);
 
-                cursor = getRunWithResult(run.getPreviousBuild(), selector, IGNORE_QUALITY_GATE, IGNORE_JOB_RESULT);
+                cursor = getRunWithResult(run.getPreviousCompletedBuild(), selector, IGNORE_QUALITY_GATE, IGNORE_JOB_RESULT);
 
                 //noinspection OptionalGetWithoutIsPresent (result action is guaranteed to have a result, see getRunWithResult)
                 return resultAction.get().getResult();
