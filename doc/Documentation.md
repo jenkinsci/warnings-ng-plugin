@@ -501,9 +501,17 @@ escape the green part of the chart.
 
 #### Zooming
 
-All trend charts support zooming of the build axis using the range sliders at the bottom of the chart. 
+All trend charts in the detail views support zooming of the build axis using the range sliders at the bottom of the chart. 
 
 ![zoom](images/zoom.png) 
+ 
+#### Build vs. Date Axis
+
+All trend charts in the detail views can show the number of warnings per build or per day. You can switch between this 
+X-axis variants by selecting the corresponding icon in the top right corner. Each day shows the average number of 
+warnings. 
+
+![zoom](images/build-vs-date.png) 
  
 ### Issues overview
 
@@ -561,8 +569,11 @@ This library provides syntax highlighting for the most popular languages and ren
 ### Dashboard view support
 
 Support for Jenkins [dashboard view](https://wiki.jenkins.io/display/JENKINS/Dashboard+View) is quite limited up to now.
-Currently, only one portlet is available, that shows the number of issues for a job (separated by each tool). The 
-remaining portlets from the old static analysis collector plugin will be added step by step.
+Currently, only one portlet is available, that shows the number of issues for a job (separated by each tool). Moreover,
+the visualization is quite ugly, since it is more complex to use modern JS libraries on pages that are not under control
+of the warnings plugin.
+ 
+The remaining portlets from the old static analysis collector plugin will be added step by step.
 
 ![issues portlet](images/issues-portlet.png)
 
