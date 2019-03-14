@@ -139,7 +139,7 @@
          * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
          */
         view.getBuildTrend(isBuildOnXAxis, function (lineModel) {
-            $('#severities-trend-chart').renderTrendChart(lineModel.responseJSON);
+            $('#severities-trend-chart').renderTrendChart(lineModel.responseJSON, redrawTrendCharts);
         });
 
         /**
@@ -147,7 +147,7 @@
          * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
          */
         view.getToolsTrend(isBuildOnXAxis, function (lineModel) {
-            $('#tools-trend-chart').renderTrendChart(lineModel.responseJSON);
+            $('#tools-trend-chart').renderTrendChart(lineModel.responseJSON, redrawTrendCharts);
         });
 
         /**
@@ -155,7 +155,7 @@
          * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
          */
         view.getNewVersusFixedTrend(isBuildOnXAxis, function (lineModel) {
-            $('#new-versus-fixed-trend-chart').renderTrendChart(lineModel.responseJSON);
+            $('#new-versus-fixed-trend-chart').renderTrendChart(lineModel.responseJSON, redrawTrendCharts);
         });
 
         /**
@@ -164,7 +164,7 @@
          */
         if ($('#health-trend-chart').length) {
             view.getHealthTrend(isBuildOnXAxis, function (lineModel) {
-                $('#health-trend-chart').renderTrendChart(lineModel.responseJSON);
+                $('#health-trend-chart').renderTrendChart(lineModel.responseJSON, redrawTrendCharts);
             });
         }
     }
