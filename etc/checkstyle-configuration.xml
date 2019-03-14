@@ -136,7 +136,6 @@
       <property name="max" value="25"/>
     </module>
     <module name="JavaNCSS"/>
-    <module name="NPathComplexity"/>
     <module name="ArrayTypeStyle"/>
     <module name="UpperEll"/>
     <module name="IllegalCatch"/>
