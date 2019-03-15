@@ -38,7 +38,6 @@ import jenkins.tasks.SimpleBuildStep;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -46,6 +45,7 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.NullBlamer;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
@@ -61,7 +61,8 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  * <p>
  * Additional features:
  * <ul>
- * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed, then the
+ * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed,
+ * then the
  * build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
  * properties.</li>
  * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
@@ -71,7 +72,7 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "classdataabstractioncoupling", "classfanoutcomplexity"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "classdataabstractioncoupling", "classfanoutcomplexity", "MissingDeprecated"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final String NO_REFERENCE_JOB = "-";
 
@@ -130,7 +131,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /**
      * Defines the optional list of quality gates.
      *
-     * @param qualityGates the quality gates
+     * @param qualityGates
+     *         the quality gates
      */
     @DataBoundSetter
     public void setQualityGates(final List<QualityGate> qualityGates) {
@@ -292,10 +294,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                         + checkstyleError);
             }
             if (instance.getPlugin("androidLint") != null) {
-                throw new IllegalArgumentException("No valid tool defined! You probably used the symbol 'androidLint' in "
-                        + "your tool definition. This symbol is also used in the Android Lint plugin. In this case you must "
-                        + "use the symbol 'androidLintParser' instead, see JENKINS-55328. "
-                        + checkstyleError);
+                throw new IllegalArgumentException(
+                        "No valid tool defined! You probably used the symbol 'androidLint' in "
+                                + "your tool definition. This symbol is also used in the Android Lint plugin. In this case you must "
+                                + "use the symbol 'androidLintParser' instead, see JENKINS-55328. "
+                                + checkstyleError);
             }
             throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
                     + "definition that is also a symbol in another plugin. "
@@ -630,10 +633,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @Deprecated
     private final transient Thresholds thresholds = new Thresholds(); // replaced by qualityGates
 
-    // CHECKSTYLE:OFF
     /**
+     * Returns the thresholds instance.
+     *
+     * @return thresholds
      * @deprecated replaced by {@link #getQualityGates()}
      */
+    @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     Thresholds getThresholds() {
         return thresholds;
@@ -826,7 +832,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         /** Retain backward compatibility. */
         @Initializer(before = InitMilestone.PLUGINS_STARTED)
         public static void addAliases() {
-            Run.XSTREAM2.addCompatibilityAlias("io.jenkins.plugins.analysis.core.views.ResultAction", ResultAction.class);
+            Run.XSTREAM2.addCompatibilityAlias("io.jenkins.plugins.analysis.core.views.ResultAction",
+                    ResultAction.class);
         }
 
         private final ModelValidation model = new ModelValidation();
