@@ -8,7 +8,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
  *
  * @author Ullrich Hafner
  */
-class IssuesStatistics {
+public class IssuesStatistics {
     private final int totalSize;
     private final int newSize;
     private final int deltaSize;
