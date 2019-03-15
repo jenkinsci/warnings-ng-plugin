@@ -71,7 +71,7 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
  * @author Ullrich Hafner
  */
 @Tag("IntegrationTest")
-@SuppressWarnings({"classdataabstractioncoupling", "classfanoutcomplexity", "PMD.SystemPrintln", "PMD.GodClass", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity", "SameParameterValue"})
+@SuppressWarnings({"classdataabstractioncoupling", "classfanoutcomplexity", "PMD.SystemPrintln", "PMD.GodClass", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity", "PMD.\tExcessiveClassLength", "SameParameterValue"})
 public abstract class IntegrationTest extends ResourceTest {
     /** Issue log files will be renamed to mach this pattern. */
     private static final String FILE_NAME_PATTERN = "%s-issues.txt";
@@ -1110,8 +1110,12 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the concatenated string
      */
     protected String join(final String... arguments) {
-        String prefix = ", ";
-        return prefix + String.join(prefix, arguments);
+        StringBuilder builder = new StringBuilder();
+        for (String argument : arguments) {
+            builder.append(", ");
+            builder.append(argument);
+        }
+        return builder.toString();
     }
 
     /**

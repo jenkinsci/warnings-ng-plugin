@@ -17,10 +17,7 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser.DescriptorImpl;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.any;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -162,15 +159,17 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
                 + "import hudson.model.FreeStyleProject\n"
                 + "@ASTTest(value={ assert Jenkins.getInstance().createProject(FreeStyleProject.class, \"should-not-exist\") })\n"
                 + "@Field int x\n"
-                + "echo 'hello'\n").toString(),
-                containsString("Annotation ASTTest cannot be used in the sandbox"));
+                + "echo 'hello'\n"))
+                .isError()
+                .hasMessageContaining("Annotation ASTTest cannot be used in the sandbox");
     }
 
     @Test @Issue("SECURITY-1295")
     void blockGrab() {
         DescriptorImpl descriptor = createDescriptor();
-        assertThat(descriptor.doCheckScript("@Grab(group='foo', module='bar', version='1.0')\ndef foo\n").toString(),
-                containsString("Annotation Grab cannot be used in the sandbox"));
+        assertThat(descriptor.doCheckScript("@Grab(group='foo', module='bar', version='1.0')\ndef foo\n"))
+                .isError()
+                .hasMessageContaining("Annotation Grab cannot be used in the sandbox");
     }
 
     private DescriptorImpl createDescriptor() {
