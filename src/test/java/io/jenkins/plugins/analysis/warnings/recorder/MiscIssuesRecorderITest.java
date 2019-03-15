@@ -134,7 +134,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldCreateResultWithDifferentNameAndId() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        ReportScanningTool configuration = createGenericToolConfiguration(new Eclipse());
+        ReportScanningTool configuration = configurePattern(new Eclipse());
         String id = "new-id";
         configuration.setId(id);
         String name = "new-name";

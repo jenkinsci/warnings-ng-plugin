@@ -142,7 +142,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
                     publisher.setHealthy(health);
                     publisher.setUnhealthy(unhealthy);
                 },
-                createGenericToolConfiguration(new Eclipse())
+                configurePattern(new Eclipse())
         );
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }

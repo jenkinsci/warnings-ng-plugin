@@ -51,7 +51,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test @Ignore("See https://github.com/jenkinsci/pipeline-model-definition-plugin/pull/314")
     public void shouldRunInDeclarativePipeline() {
-        WorkflowJob job = createJob();
+        WorkflowJob job = createPipeline();
 
         job.setDefinition(new CpsFlowDefinition("pipeline {\n"
                 + "    agent 'any'\n"
@@ -79,10 +79,10 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldRecordOutputOfParallelSteps() {
-        WorkflowJob job = createJob();
+        WorkflowJob job = createPipeline();
 
-        copySingleFileToWorkspace(createAgent("node1"), job, "eclipse.txt", "issues.txt");
-        copySingleFileToWorkspace(createAgent("node2"), job, "eclipse.txt", "issues.txt");
+        copySingleFileToAgentWorkspace(createAgent("node1"), job, "eclipse.txt", "issues.txt");
+        copySingleFileToAgentWorkspace(createAgent("node2"), job, "eclipse.txt", "issues.txt");
 
         job.setDefinition(readDefinition("parallel.jenkinsfile"));
 
@@ -490,7 +490,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldUseOtherJobAsReference() {
-        WorkflowJob reference = createJob("reference");
+        WorkflowJob reference = createPipeline("reference");
         copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
         reference.setDefinition(parseAndPublish(new Java()));
 
@@ -532,7 +532,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         write(oobFileContent.replace("$TARGET_URL$", triggerLink));
 
-        WorkflowJob job = createJob();
+        WorkflowJob job = createPipeline();
         String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
         createFileInWorkspace(job, "xxe.xml", adaptedXxeFileContent);
 

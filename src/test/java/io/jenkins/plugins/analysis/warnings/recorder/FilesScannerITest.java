@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Locale;
 
 import org.junit.Test;
 
@@ -13,6 +12,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.junit.Assume.*;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -26,7 +26,6 @@ import hudson.model.Result;
 /**
  * Integration tests for {@link FilesScanner}. This test is using a ZIP file with all the necessary files. The structure
  * of the ZIP file is:
- * <p>
  * <pre>
  * filesscanner_workspace.zip
  *      |-checkstyle
@@ -42,7 +41,6 @@ import hudson.model.Result;
  *      |-zero_length_file
  *          |-zero_length_file.xml
  * </pre>
- * </p>
  *
  * @author Alexander Praegla
  */
@@ -87,7 +85,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void makeFileUnreadable(final FreeStyleProject project) {
-        makeFileUnreadable(getWorkspaceFor(project) + File.separator + NON_READABLE_FILE);
+        makeFileUnreadable(getWorkspace(project) + File.separator + NON_READABLE_FILE);
     }
 
     /**
@@ -207,6 +205,13 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasInfoMessages(
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 6");
+    }
+
+    private ReportScanningTool createTool(final ReportScanningTool tool, final String pattern,
+            final boolean skipSymbolicLinks) {
+        tool.setPattern(pattern);
+        tool.setSkipSymbolicLinks(skipSymbolicLinks);
+        return tool;
     }
 
     private void createSymbolicLinkAssumingSupported(final Path realPath, final Path linkPath) {

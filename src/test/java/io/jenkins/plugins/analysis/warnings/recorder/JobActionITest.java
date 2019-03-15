@@ -80,7 +80,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
         enableWarnings(project,
                 createTool(new CheckStyle(), "nothing.found"),
-                createGenericToolConfiguration(new Eclipse()));
+                configurePattern(new Eclipse()));
 
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
 

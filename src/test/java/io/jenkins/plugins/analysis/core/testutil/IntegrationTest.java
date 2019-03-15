@@ -71,7 +71,7 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
  * @author Ullrich Hafner
  */
 @Tag("IntegrationTest")
-@SuppressWarnings({"classdataabstractioncoupling", "classfanoutcomplexity", "PMD.SystemPrintln", "PMD.GodClass", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity"})
+@SuppressWarnings({"classdataabstractioncoupling", "classfanoutcomplexity", "PMD.SystemPrintln", "PMD.GodClass", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity", "SameParameterValue"})
 public abstract class IntegrationTest extends ResourceTest {
     /** Issue log files will be renamed to mach this pattern. */
     private static final String FILE_NAME_PATTERN = "%s-issues.txt";
@@ -138,7 +138,7 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Copies the specified files to the workspace. The same file name will be used in the workspace.
+     * Copies the specified files to the workspace. The copied files will have the same file name in the workspace.
      *
      * @param job
      *         the job to get the workspace for
@@ -150,7 +150,7 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Copies the specified files to the workspace.
+     * Copies the specified file to the workspace.
      *
      * @param job
      *         the job to get the workspace for
@@ -200,6 +200,14 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
+    /**
+     * Returns the workspace for the specified job.
+     *
+     * @param job
+     *         the job to get the workspace for
+     *
+     * @return the workspace
+     */
     protected FilePath getWorkspace(final TopLevelItem job) {
         FilePath workspace = getJenkins().jenkins.getWorkspaceFor(job);
         assertThat(workspace).isNotNull();
@@ -207,7 +215,8 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Copies the specified files to the workspace. Uses the specified new file name in the workspace.
+     * Copies the specified files to the workspace of the specified agent. Uses the specified new file name in the
+     * workspace.
      *
      * @param agent
      *         the agent to get the workspace for
@@ -218,7 +227,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @param to
      *         the file name in the workspace
      */
-    protected void copySingleFileToWorkspace(final Slave agent, final TopLevelItem job,
+    protected void copySingleFileToAgentWorkspace(final Slave agent, final TopLevelItem job,
             final String from, final String to) {
         FilePath workspace = agent.getWorkspaceFor(job);
         assertThat(workspace).isNotNull();
@@ -236,6 +245,17 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
+    /**
+     * Copies the specified files to the workspace. The file names of the copied files will be determined by the
+     * specified mapper.
+     *
+     * @param job
+     *         the job to get the workspace for
+     * @param fileNames
+     *         the files to copy
+     * @param fileNameMapper
+     *         maps input file names to outout file names
+     */
     protected void copyWorkspaceFiles(final TopLevelItem job, final String[] fileNames,
             final Function<String, String> fileNameMapper) {
         Arrays.stream(fileNames)
@@ -255,27 +275,27 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Returns the ID of a static analysis tool that is given by its class file. Uses the associated descriptor to
-     * obtain the ID.
-     *
-     * @param tool
-     *         the class of the tool to get the ID from
-     *
-     * @return the ID of the analysis tool
-     */
-    protected String getIdOf(final Class<? extends ReportScanningTool> tool) {
-        Descriptor<?> descriptor = getJenkins().jenkins.getDescriptor(tool);
-        assertThat(descriptor).as("Descriptor for '%s' not found").isNotNull();
-        return descriptor.getId();
-    }
-
-    /**
      * Creates a new {@link FreeStyleProject freestyle job}. The job will get a generated name.
      *
      * @return the created job
      */
     protected FreeStyleProject createFreeStyleProject() {
         return createProject(FreeStyleProject.class);
+    }
+
+    /**
+     * Creates a new {@link FreeStyleProject freestyle job} and copies the specified resources to the workspace folder.
+     * The job will get a generated name.
+     *
+     * @param fileNames
+     *         the files to copy to the workspace
+     *
+     * @return the created job
+     */
+    protected FreeStyleProject createFreeStyleProjectWithWorkspaceFiles(final String... fileNames) {
+        FreeStyleProject job = createFreeStyleProject();
+        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
+        return job;
     }
 
     /**
@@ -325,7 +345,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @param job
      *         the job to build
      * @param status
-     *         the expected job status
+     *         the expected build status
      *
      * @return the build
      */
@@ -339,22 +359,30 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
-    protected void assertThatLogContains(final Run<?, ?> build, final String message) {
+    /**
+     * Asserts that the console log of a build contains the specified message.
+     *
+     * @param build
+     *         the build to get the console log for
+     * @param expectdMessage
+     *         the expected message
+     */
+    protected void assertThatLogContains(final Run<?, ?> build, final String expectdMessage) {
         try {
-            getJenkins().assertLogContains(message, build);
+            getJenkins().assertLogContains(expectdMessage, build);
         }
         catch (IOException e) {
             throw new AssertionError(e);
         }
     }
 
+    /**
+     * Creates a new {@link MavenModuleSet maven job}. The job will get a generated name.
+     *
+     * @return the created job
+     */
     protected MavenModuleSet createMavenJob() {
-        try {
-            return getJenkins().createProject(MavenModuleSet.class);
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
+        return createProject(MavenModuleSet.class);
     }
 
     /**
@@ -411,7 +439,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the pipeline job
      */
     protected WorkflowJob createJobWithWorkspaceFiles(final String... fileNames) {
-        WorkflowJob job = createJob();
+        WorkflowJob job = createPipeline();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;
     }
@@ -421,13 +449,8 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline job
      */
-    protected WorkflowJob createJob() {
-        try {
-            return getJenkins().createProject(WorkflowJob.class);
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
+    protected WorkflowJob createPipeline() {
+        return createProject(WorkflowJob.class);
     }
 
     /**
@@ -438,13 +461,8 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline job
      */
-    protected WorkflowJob createJob(final String name) {
-        try {
-            return getJenkins().createProject(WorkflowJob.class, name);
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
+    protected WorkflowJob createPipeline(final String name) {
+        return createProject(WorkflowJob.class, name);
     }
 
     /**
@@ -589,11 +607,43 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected abstract JenkinsRule getJenkins();
 
+    /**
+     * Enables an {@link Eclipse} recorder for the specified project.
+     *
+     * @param project
+     *         the project to add the recorder to
+     *
+     * @return the created recorder
+     */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableEclipseWarnings(final AbstractProject<?, ?> project) {
         return enableGenericWarnings(project, new Eclipse());
     }
 
+    /**
+     * Enables an {@link Eclipse} recorder for the specified project.
+     *
+     * @param project
+     *         the project to add the recorder to
+     * @param configuration
+     *         configures the new recorder
+     *
+     * @return the created recorder
+     */
+    @CanIgnoreReturnValue
+    protected IssuesRecorder enableEclipseWarnings(final FreeStyleProject project,
+            final Consumer<IssuesRecorder> configuration) {
+        return enableGenericWarnings(project, configuration, configurePattern(new Eclipse()));
+    }
+
+    /**
+     * Enables a {@link CheckStyle} recorder for the specified project.
+     *
+     * @param project
+     *         the project to add the recorder to
+     *
+     * @return the created recorder
+     */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableCheckStyleWarnings(final AbstractProject<?, ?> project) {
         CheckStyle tool = new CheckStyle();
@@ -601,26 +651,13 @@ public abstract class IntegrationTest extends ResourceTest {
         return enableGenericWarnings(project, tool);
     }
 
-    @CanIgnoreReturnValue
-    protected IssuesRecorder enableEclipseWarnings(final FreeStyleProject project,
-            final Consumer<IssuesRecorder> configuration) {
-        return enableGenericWarnings(project, configuration, createGenericToolConfiguration(new Eclipse()));
-    }
-
-    protected HtmlPage getWebPage(final AbstractProject<?, ?> job, final String page) {
-        try {
-            return createWebClient().getPage(job, page);
-        }
-        catch (SAXException | IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-
     /**
-     * Clicks a link.
+     * Clicks the specified DOM element and returns the HTML page content of the page that is the target of the link.
      *
      * @param element
-     *         a {@link DomElement} which will trigger the redirection to a new page.
+     *         the element that receives the click event
+     *
+     * @return the HTML page
      */
     protected HtmlPage clickOnLink(final DomElement element) {
         try {
@@ -631,27 +668,90 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
-    protected HtmlPage getWebPage(final Run<?, ?> build) {
-        return getWebPage(build, StringUtils.EMPTY);
-    }
-
-    protected HtmlPage getWebPage(final AbstractProject<?, ?> job) {
-        return getWebPage(job, StringUtils.EMPTY);
-    }
-
-    protected HtmlPage getWebPage(final Run<?, ?> build, final String page) {
+    /**
+     * Returns the HTML page content of the specified URL for a given job.
+     *
+     * @param job
+     *         the job that owns the URL
+     * @param relativeUrl
+     *         the relative URL within the job
+     *
+     * @return the HTML page
+     */
+    protected HtmlPage getWebPage(final AbstractProject<?, ?> job, final String relativeUrl) {
         try {
-            return createWebClient().getPage(build, page);
+            return createWebClient().getPage(job, relativeUrl);
         }
         catch (SAXException | IOException e) {
             throw new AssertionError(e);
         }
     }
 
-    protected HtmlPage getWebPage(final AnalysisResult result, final String child) {
-        return getWebPage(result.getOwner(), result.getId() + "/" + child);
+    /**
+     * Returns the HTML page content of the specified job.
+     *
+     * @param job
+     *         the job to show the page for
+     *
+     * @return the HTML page
+     */
+    protected HtmlPage getWebPage(final AbstractProject<?, ?> job) {
+        return getWebPage(job, StringUtils.EMPTY);
     }
 
+    /**
+     * Returns the HTML page content of the specified build.
+     *
+     * @param build
+     *         the build to show the page for
+     *
+     * @return the HTML page
+     */
+    protected HtmlPage getWebPage(final Run<?, ?> build) {
+        return getWebPage(build, StringUtils.EMPTY);
+    }
+
+    /**
+     * Returns the HTML page content of the specified URL for a given build.
+     *
+     * @param build
+     *         the build to show the page for
+     * @param relativeUrl
+     *         the relative URL within the job
+     *
+     * @return the HTML page
+     */
+    protected HtmlPage getWebPage(final Run<?, ?> build, final String relativeUrl) {
+        try {
+            return createWebClient().getPage(build, relativeUrl);
+        }
+        catch (SAXException | IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Returns the HTML page content of the specified URL for a given analysis result.
+     *
+     * @param result
+     *         the analysis result to show the sub page for
+     * @param relativeUrl
+     *         the relative URL within the job
+     *
+     * @return the HTML page
+     */
+    protected HtmlPage getWebPage(final AnalysisResult result, final String relativeUrl) {
+        return getWebPage(result.getOwner(), result.getId() + "/" + relativeUrl);
+    }
+
+    /**
+     * Returns the HTML page content of the specified analysis result.
+     *
+     * @param result
+     *         the analysis result to show
+     *
+     * @return the HTML page
+     */
     protected HtmlPage getWebPage(final AnalysisResult result) {
         return getWebPage(result.getOwner(), result.getId());
     }
@@ -662,6 +762,12 @@ public abstract class IntegrationTest extends ResourceTest {
         return webClient;
     }
 
+    /**
+     * Submit the supplied {@link HtmlForm}. Locates the submit element/button on the form.
+     *
+     * @param form
+     *         the {@link HtmlForm}
+     */
     protected void submit(final HtmlForm form) {
         try {
             HtmlFormUtil.submit(form);
@@ -672,33 +778,29 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Creates a new {@link FreeStyleProject freestyle job} and copies the specified resources to the workspace folder.
-     * The job will get a generated name.
+     * Registers a default pattern for the specified tool.
      *
-     * @param fileNames
-     *         the files to copy to the workspace
+     * @param tool
+     *         the tool to add a default pattern
      *
-     * @return the created job
+     * @return the changed tool
      */
-    protected FreeStyleProject createFreeStyleProjectWithWorkspaceFiles(final String... fileNames) {
-        FreeStyleProject job = createFreeStyleProject();
-        copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
-        return job;
-    }
-
-    protected ReportScanningTool createGenericToolConfiguration(final ReportScanningTool tool) {
+    protected ReportScanningTool configurePattern(final ReportScanningTool tool) {
         return createTool(tool, "**/*issues.txt");
     }
 
+    /**
+     * Creates a new tool that uses the specified pattern.
+     *
+     * @param tool
+     *         the tool to add a default pattern
+     * @param pattern
+     *         the pattern to search for
+     *
+     * @return the created tool
+     */
     protected ReportScanningTool createTool(final ReportScanningTool tool, final String pattern) {
         tool.setPattern(pattern);
-        return tool;
-    }
-
-    protected ReportScanningTool createTool(final ReportScanningTool tool, final String pattern,
-            final boolean skipSymbolicLinks) {
-        tool.setPattern(pattern);
-        tool.setSkipSymbolicLinks(skipSymbolicLinks);
         return tool;
     }
 
@@ -717,9 +819,8 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableGenericWarnings(final AbstractProject<?, ?> job,
-            final Consumer<IssuesRecorder> configuration,
-            final ReportScanningTool tool) {
-        createGenericToolConfiguration(tool);
+            final Consumer<IssuesRecorder> configuration, final ReportScanningTool tool) {
+        configurePattern(tool);
 
         return enableWarnings(job, configuration, tool);
     }
@@ -761,7 +862,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableGenericWarnings(final AbstractProject<?, ?> job, final ReportScanningTool tool) {
-        createGenericToolConfiguration(tool);
+        configurePattern(tool);
         return enableWarnings(job, tool);
     }
 
@@ -787,6 +888,14 @@ public abstract class IntegrationTest extends ResourceTest {
         return publisher;
     }
 
+    /**
+     * Returns the issue recorder instance for the specified job.
+     *
+     * @param job
+     *         the job to get the recorder for
+     *
+     * @return the issue recorder
+     */
     protected IssuesRecorder getRecorder(final AbstractProject<?, ?> job) {
         DescribableList<Publisher, Descriptor<Publisher>> publishers = job.getPublishersList();
         for (Publisher publisher : publishers) {
@@ -888,14 +997,26 @@ public abstract class IntegrationTest extends ResourceTest {
         return actions.stream().map(ResultAction::getResult).collect(Collectors.toList());
     }
 
+    /**
+     * Makes the specified file unreadable.
+     *
+     * @param file
+     *         the specified file
+     */
     protected void makeFileUnreadable(final Path file) {
         makeFileUnreadable(file.toString());
     }
 
+    /**
+     * Makes the specified file unreadable.
+     *
+     * @param absolutePath
+     *         the specified file
+     */
     protected void makeFileUnreadable(final String absolutePath) {
         File nonReadableFile = new File(absolutePath);
         if (Functions.isWindows()) {
-            setAccessMode(absolutePath, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
+            setAccessModeOnWindows(absolutePath, WINDOWS_FILE_DENY, WINDOWS_FILE_ACCESS_READ_ONLY);
         }
         else {
             assertThat(nonReadableFile.setReadable(false, false)).isTrue();
@@ -903,17 +1024,7 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
-    /**
-     * Executed the 'icals' command on the windows command line to remove the read permission of a file.
-     *
-     * @param path
-     *         File to remove from the read permission
-     * @param command
-     *         part of the icacls command
-     * @param accessMode
-     *         param for the icacls command
-     */
-    void setAccessMode(final String path, final String command, final String accessMode) {
+    private void setAccessModeOnWindows(final String path, final String command, final String accessMode) {
         try {
             Process process = Runtime.getRuntime().exec("icacls " + path + " " + command + " *S-1-1-0:" + accessMode);
             process.waitFor();
@@ -923,12 +1034,8 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
-    protected FilePath getWorkspaceFor(final TopLevelItem project) {
-        return getJenkins().jenkins.getWorkspaceFor(project);
-    }
-
     /**
-     * Adds a script as a {@link Shell} or {@link BatchFile}.
+     * Adds a script as a {@link Shell} or {@link BatchFile} depending on the current OS.
      *
      * @param project
      *         the project
@@ -937,7 +1044,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the created script step
      */
-    protected Builder addScriptStep(final FreeStyleProject project, final String script) {
+    private Builder addScriptStep(final FreeStyleProject project, final String script) {
         Builder item;
         if (Functions.isWindows()) {
             item = new BatchFile(script);
@@ -949,32 +1056,72 @@ public abstract class IntegrationTest extends ResourceTest {
         return item;
     }
 
-    protected void cleanWorkspace(final FreeStyleProject job) {
+    /**
+     * Cleans the workspace of the specified job. Deletes all files in the workspace.
+     *
+     * @param job
+     *         the workspace to clean
+     */
+    protected void cleanWorkspace(final TopLevelItem job) {
         try {
-            getWorkspaceFor(job).deleteContents();
+            getWorkspace(job).deleteContents();
         }
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
         }
     }
 
+    /**
+     * Add a build step that simply fails the build.
+     *
+     * @param project
+     *         the job to add the step
+     *
+     * @return the created build step
+     */
     protected Builder addFailureStep(final FreeStyleProject project) {
         return addScriptStep(project, "exit 1");
     }
 
+    /**
+     * Removes the specified builder from the list of registered builders.
+     *
+     * @param project
+     *         the job to add the step
+     * @param builder
+     *         the builder to remove
+     */
     protected void removeBuilder(final FreeStyleProject project, final Builder builder) {
         project.getBuildersList().remove(builder);
     }
 
+    /**
+     * Joins the specified arguments as list of comma separated values. Note that the first element is separated with a
+     * comma as well.
+     * <blockquote>For example,
+     * <pre>{@code
+     *     String message = join("Java", "is", "cool");
+     *     // message returned is: ",Java,is,cool"
+     * }</pre></blockquote>
+     *
+     * @param arguments
+     *         th arguments to join
+     *
+     * @return the concatenated string
+     */
     protected String join(final String... arguments) {
-        StringBuilder builder = new StringBuilder();
-        for (String argument : arguments) {
-            builder.append(", ");
-            builder.append(argument);
-        }
-        return builder.toString();
+        String prefix = ", ";
+        return prefix + String.join(prefix, arguments);
     }
 
+    /**
+     * Calls Jenkins remote API with the specified URL. Calls the JSON format.
+     *
+     * @param url
+     *         the URL to call
+     *
+     * @return the JSON response
+     */
     protected JSONWebResponse callJsonRemoteApi(final String url) {
         try {
             return getJenkins().getJSON(url);
@@ -984,6 +1131,14 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
+    /**
+     * Calls Jenkins remote API with the specified URL. Calls the XML format.
+     *
+     * @param url
+     *         the URL to call
+     *
+     * @return the XML response
+     */
     protected Document callXmlRemoteApi(final String url) {
         try {
             return getJenkins().createWebClient().goToXml(url).getXmlDocument();
@@ -993,6 +1148,14 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
+    /**
+     * Returns the plain text of the source code from the specified HTML page.
+     *
+     * @param contentPage
+     *         the page containing the colorized HTML visualization of the source code
+     *
+     * @return the source code
+     */
     protected String extractSourceCodeFromDetailsPage(final HtmlPage contentPage) {
         DomElement domElement = contentPage.getElementById("main-panel");
 

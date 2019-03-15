@@ -18,8 +18,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.xml.XmlPage;
-
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
@@ -147,7 +145,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldReturnAggregation() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
         enableWarnings(project, createCheckstyle("**/checkstyle1*"),
-                createGenericToolConfiguration(new Pmd()), createGenericToolConfiguration(new SpotBugs()));
+                configurePattern(new Pmd()), configurePattern(new SpotBugs()));
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
 
         JSONWebResponse json = callJsonRemoteApi(build.getUrl() + "warnings-ng/api/json");

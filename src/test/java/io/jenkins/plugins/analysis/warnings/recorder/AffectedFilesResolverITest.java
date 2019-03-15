@@ -155,7 +155,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     private String getSourceAbsolutePath(final FreeStyleProject project) {
-        return getWorkspaceFor(project) + "/" + getBaseName();
+        return getWorkspace(project) + "/" + getBaseName();
     }
 
     private String getBaseName() {
