@@ -28,6 +28,7 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.ComboBoxModel;
@@ -498,6 +499,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setFilters(final List<RegexpFilter> filters) {
         this.filters = new ArrayList<>(filters);
+    }
+
+    @Override
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
     }
 
     @Override
