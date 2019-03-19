@@ -42,12 +42,12 @@
     <json.version>20180813</json.version>
 
     <!-- Test Library Dependencies Versions -->
-    <junit.version>5.4.0</junit.version>
-    <junit-platform-launcher.version>1.4.0</junit-platform-launcher.version>
-    <mockito.version>2.25.0</mockito.version>
-    <assertj.version>3.12.1</assertj.version>
-    <archunit.version>0.9.3</archunit.version>
-    <json-unit-fluent.version>2.4.0</json-unit-fluent.version>
+    <junit.version>5.4.1</junit.version>
+    <junit-platform-launcher.version>1.4.1</junit-platform-launcher.version>
+    <mockito.version>2.25.1</mockito.version>
+    <assertj.version>3.12.2</assertj.version>
+    <archunit.version>0.10.1</archunit.version>
+    <json-unit-fluent.version>2.5.0</json-unit-fluent.version>
     <xmlunit.version>1.6</xmlunit.version>
     <jsoup.version>1.11.3</jsoup.version>
 
@@ -81,7 +81,7 @@
     <depgraph-maven-plugin.version>3.3.0</depgraph-maven-plugin.version>
     <animal-sniffer-maven-plugin.version>1.17</animal-sniffer-maven-plugin.version>
     <maven-hpi-plugin.version>2.5</maven-hpi-plugin.version>
-    <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     <pitest-maven.plugin>1.4.6</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.8</pitest-maven.junit5.plugin>
