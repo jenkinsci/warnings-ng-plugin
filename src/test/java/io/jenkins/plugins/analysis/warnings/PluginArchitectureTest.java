@@ -32,7 +32,7 @@ class PluginArchitectureTest {
     @ArchTest
     static final ArchRule NO_DIGESTER_CONSTRUCTOR_CALLED =
             noClasses()
-                    .that().dontHaveSimpleName("SecureDigester")
+                    .that().doNotHaveSimpleName("SecureDigester")
                     .should().callConstructor(Digester.class)
                     .orShould().callConstructor(Digester.class, SAXParser.class)
                     .orShould().callConstructor(Digester.class, XMLReader.class)
@@ -42,9 +42,9 @@ class PluginArchitectureTest {
     @ArchTest
     static final ArchRule NO_PUBLIC_TEST_CLASSES =
             noClasses()
-                    .that().dontHaveModifier(JavaModifier.ABSTRACT)
+                    .that().doNotHaveModifier(JavaModifier.ABSTRACT)
                     .and().haveSimpleNameEndingWith("Test")
-                    .and(dont(have(simpleNameEndingWith("ITest"))))
+                    .and(doNot(have(simpleNameEndingWith("ITest"))))
                     .should().bePublic();
 
     /**
