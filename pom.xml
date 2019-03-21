@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>3.28</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -650,12 +651,64 @@
             <artifactId>revapi-java</artifactId>
             <version>${revapi-java.version}</version>
           </dependency>
+<!--          FIXME: enable before going live with 5.0.0 -->
+<!--          <dependency>-->
+<!--            <groupId>io.jenkins.tools</groupId>-->
+<!--            <artifactId>revapi-hpi-extractor</artifactId>-->
+<!--            <version>1.0.1</version>-->
+<!--          </dependency>-->
         </dependencies>
         <configuration>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
             </revapi.semver.ignore>
+            <revapi.ignore>
+              <item>
+                <regex>true</regex>
+                <code>java.method.removed</code>
+                <classQualifiedName>edu.hm.hafner.analysis..*</classQualifiedName>
+                <justification>Optional dependency</justification>
+              </item>
+            </revapi.ignore>
+            <revapi.ignore>
+              <item>
+                <regex>true</regex>
+                <code>java.missing.*</code>
+                <classQualifiedName>hudson.matrix.*</classQualifiedName>
+                <justification>Optional dependency</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>org.jvnet.hudson.reactor.Reactor.Node</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>hudson.remoting.Command</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>hudson.remoting.CommandTransport.CommandReceiver</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>hudson.model.FingerprintMap.FingerprintParams</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>org.kohsuke.stapler.AncestorImpl</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>net.sf.json.AbstractJSON.WritingVisitor</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+            </revapi.ignore>
           </analysisConfiguration>
         </configuration>
         <executions>
