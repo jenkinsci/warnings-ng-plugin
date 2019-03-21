@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-4.0.0...master)
 
+- [PR#19](https://github.com/jenkinsci/warnings-ng-plugin/pull/13): Use `BuildStepMonitor.NONE` in step 
+to allow for higher concurrency.
+
 ## [4.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.3...warnings-ng-4.0.0) - 2019-3-15
 
 ### Added
