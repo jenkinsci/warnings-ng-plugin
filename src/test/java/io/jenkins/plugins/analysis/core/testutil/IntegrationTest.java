@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -1169,5 +1170,22 @@ public abstract class IntegrationTest extends ResourceTest {
         }
 
         return builder.toString();
+    }
+
+    /**
+     * Returns the console log as a String.
+     *
+     * @param result
+     *         the result to get the log for
+     *
+     * @return the console log
+     */
+    protected String getConsoleLog(final AnalysisResult result) {
+        try {
+            return FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
     }
 }

@@ -128,6 +128,8 @@ public class IssuesDetail implements ModelObject {
      *         the label provider for the static analysis tool
      * @param sourceEncoding
      *         the encoding to use when displaying source files
+     * @param healthDescriptor
+     *         health descriptor
      */
     @SuppressWarnings("ParameterNumber")
     public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,

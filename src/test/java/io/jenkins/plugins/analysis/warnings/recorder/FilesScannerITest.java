@@ -8,20 +8,20 @@ import java.nio.file.Paths;
 
 import org.junit.Test;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.junit.Assume.*;
-
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.model.FilesScanner;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
-
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.FilesScanner;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.junit.Assume.*;
 
 /**
  * Integration tests for {@link FilesScanner}. This test is using a ZIP file with all the necessary files. The structure
@@ -165,8 +165,8 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
 
-        String checkstyleXml = project.getSomeWorkspace().getRemote() + File.separator +
-                Paths.get("subdir", "link_to_actual_files", "checkstyle.xml");
+        String checkstyleXml = project.getSomeWorkspace().getRemote() + File.separator
+                + Paths.get("subdir", "link_to_actual_files", "checkstyle.xml");
 
         assertThat(result).hasInfoMessages(
                 "Successfully parsed file " + checkstyleXml,
