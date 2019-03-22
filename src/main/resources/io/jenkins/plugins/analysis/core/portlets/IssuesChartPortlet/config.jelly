@@ -7,6 +7,9 @@
   <f:entry title="${%hide.title}" description="${%hide.description}" field="hideCleanJobs">
     <f:checkbox />
   </f:entry>
+  <f:entry title="${%Height of the chart}" field="height">
+    <f:number default="400"/>
+  </f:entry>
   <i:select-tools/>
 
 </j:jelly>

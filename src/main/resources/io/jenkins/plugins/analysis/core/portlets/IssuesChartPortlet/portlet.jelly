@@ -8,7 +8,7 @@
       <td>
 
         <div id="issues-chart" class="graph-cursor-pointer"
-             style="width: 500px; min-height: 200px; min-width: 500px; height: 200px;"/>
+             style="width: 100%; min-height: ${it.height}px; min-width: 500px; height: ${it.height}px;"/>
 
       </td>
     </tr>

@@ -43,6 +43,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
 
     private JenkinsFacade jenkinsFacade = new JenkinsFacade();
     private List<Job<?, ?>> jobs;
+    private int height;
 
     /**
      * Creates a new instance of {@link IssuesChartPortlet}.
@@ -114,6 +115,21 @@ public class IssuesChartPortlet extends DashboardPortlet {
     @DataBoundSetter
     public void setTools(final List<ToolSelection> tools) {
         this.tools = tools;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    /**
+     * Sets the height of the chart (in number of pixels).
+     *
+     * @param height
+     *         height of the chart
+     */
+    @DataBoundSetter
+    public void setHeight(final int height) {
+        this.height = height;
     }
 
     /**
