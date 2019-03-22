@@ -93,13 +93,18 @@ public class JobAction implements Action {
         return owner;
     }
 
-    private History createBuildHistory() {
-        Run<?, ?> lastFinishedRun = owner.getLastCompletedBuild();
-        if (lastFinishedRun == null) {
+    /**
+     * Returns the build history for this job.
+     *
+     * @return the history
+     */
+    public History createBuildHistory() {
+        Run<?, ?> lastCompletedBuild = owner.getLastCompletedBuild();
+        if (lastCompletedBuild == null) {
             return new NullAnalysisHistory();
         }
         else {
-            return new AnalysisHistory(lastFinishedRun, new ByIdResultSelector(labelProvider.getId()));
+            return new AnalysisHistory(lastCompletedBuild, new ByIdResultSelector(labelProvider.getId()));
         }
     }
 

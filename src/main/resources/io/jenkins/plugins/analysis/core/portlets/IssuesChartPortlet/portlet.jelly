@@ -1,0 +1,28 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:st="jelly:stapler">
+
+  <j:set var="model" value="${it.register(jobs)}"/>
+
+  <dp:decorate portlet="${it}" width="1">
+    <tr>
+      <td>
+
+        <div id="issues-chart" class="graph-cursor-pointer"
+             style="width: 500px; min-height: 200px; min-width: 500px; height: 200px;"/>
+
+      </td>
+    </tr>
+  </dp:decorate>
+
+  <script src="${resURL}/plugin/warnings-ng/js/libs/echarts.common.min.js"/>
+  <script src="${resURL}/plugin/warnings-ng/js/simple-trend-chart.js"/>
+
+  <script>
+    var view = <st:bind value="${it}"/>
+
+    view.getTrend(function (lineModel) {
+        renderTrendChart('issues-chart', lineModel.responseJSON);
+    });
+  </script>
+
+</j:jelly>

@@ -29,8 +29,11 @@ skinparam component {
 [Steps] ---> [Filter]
 
 [Tokens] --> [Model]
+
 [Portlets] --> [Model]
 [Portlets] --> [Utilities]
+[Portlets] --> [Charts]
+
 [Columns] --> [Model]
 [Columns] --> [Utilities]
 
@@ -42,7 +45,5 @@ skinparam component {
 [Charts] --> [Utilities]
 [Rest API] --> [Utilities]
 [Filter] --> [Utilities]
-
-
 
 @enduml

@@ -311,11 +311,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return new HashMap<>(report.getPropertyCount(Issue::getSeverity));
     }
 
-    /**
-     * Returns the ID of the static analysis result.
-     *
-     * @return the ID
-     */
+    @Override
     public String getId() {
         return id;
     }

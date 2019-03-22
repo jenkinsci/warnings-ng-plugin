@@ -3,10 +3,6 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -18,15 +14,10 @@ import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.api.multimap.list.MutableListMultimap;
 import org.eclipse.collections.impl.multimap.list.FastListMultimap;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
-import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
@@ -220,77 +211,5 @@ public abstract class SeriesBuilder {
             valuesPerDate.put(buildDate, valuesPerBuild.get(build));
         }
         return valuesPerDate;
-    }
-
-    /**
-     * Creates an aggregated data set.
-     *
-     * @param configuration
-     *         configures the data set (how many results should be process, etc.)
-     * @param histories
-     *         the static analysis results
-     *
-     * @return the aggregated data set
-     */
-    public LinesDataSet createAggregation(final ChartModelConfiguration configuration,
-            final Collection<AnalysisHistory> histories) {
-        Set<LocalDate> availableDates = Sets.newHashSet();
-        Map<AnalysisHistory, Map<LocalDate, Map<String, Integer>>> averagesPerJob = Maps.newHashMap();
-        for (AnalysisHistory history : histories) {
-            Map<LocalDate, Map<String, Integer>> averageByDate = averageByDate(
-                    createSeriesPerBuild(configuration, history));
-            averagesPerJob.put(history, averageByDate);
-            availableDates.addAll(averageByDate.keySet());
-        }
-        return createDataSetPerDay(createTotalsForAllAvailableDates(histories, availableDates, averagesPerJob));
-    }
-
-    /**
-     * Creates the totals for all available dates. If a job has no results for a given day then the previous value is
-     * used.
-     *
-     * @param jobs
-     *         the result actions belonging to the jobs
-     * @param availableDates
-     *         the available dates in all jobs
-     * @param averagesPerJob
-     *         the averages per day, mapped by job
-     *
-     * @return the aggregated values
-     */
-    private SortedMap<LocalDate, Map<String, Integer>> createTotalsForAllAvailableDates(
-            final Collection<AnalysisHistory> jobs,
-            final Set<LocalDate> availableDates,
-            final Map<AnalysisHistory, Map<LocalDate, Map<String, Integer>>> averagesPerJob) {
-        List<LocalDate> sortedDates = Lists.newArrayList(availableDates);
-        Collections.sort(sortedDates);
-
-        SortedMap<LocalDate, Map<String, Integer>> totals = new TreeMap<>();
-        for (AnalysisHistory jobResult : jobs) {
-            Map<LocalDate, Map<String, Integer>> availableResults = averagesPerJob.get(jobResult);
-            Map<String, Integer> previousResult = new HashMap<>();
-            for (LocalDate buildDate : sortedDates) {
-                totals.putIfAbsent(buildDate, new HashMap<>());
-
-                Map<String, Integer> additionalResult;
-                if (availableResults.containsKey(buildDate)) {
-                    additionalResult = availableResults.get(buildDate);
-                    previousResult = additionalResult;
-                }
-                else {
-                    // reuse previous result if there is no result on the given day
-                    additionalResult = previousResult;
-                }
-
-                Map<String, Integer> existing = totals.get(buildDate);
-
-                Map<String, Integer> summed = Stream.concat(existing.entrySet().stream(),
-                        additionalResult.entrySet().stream())
-                        .collect(toMap(Entry::getKey, Entry::getValue, Integer::sum));
-
-                totals.put(buildDate, summed);
-            }
-        }
-        return totals;
     }
 }
