@@ -72,7 +72,7 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
  * @author Ullrich Hafner
  */
 @Tag("IntegrationTest")
-@SuppressWarnings({"ClassDataAbstractionCoupling", "ClassFanOutComplexity", "ExcessiveClassLength", "SameParameterValue", "PMD.SystemPrintln", "PMD.GodClass", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity"})
+@SuppressWarnings({"ClassDataAbstractionCoupling", "ClassFanOutComplexity", "SameParameterValue", "PMD.SystemPrintln", "PMD.GodClass", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity"})
 public abstract class IntegrationTest extends ResourceTest {
     /** Issue log files will be renamed to mach this pattern. */
     private static final String FILE_NAME_PATTERN = "%s-issues.txt";
