@@ -4,7 +4,7 @@
   <j:if test="${from.trendVisible}">
 
     <div class="test-trend-caption">
-      Aggregated Analysis Results
+      ${%Aggregated Analysis Results}
     </div>
 
     <div align="right">
