@@ -65,11 +65,6 @@ class PluginArchitectureTest {
                     "org.apache.commons.lang..", "javax.xml.bind..");
     // TODO: .orShould().accessClassesThat().haveFullyQualifiedName(File.class.getName());
 
-    @ArchTest
-    static final ArchRule CONFORMS_TO_PACKAGE_DESIGN =
-            classes().that().resideInAPackage("..charts").should().onlyBeAccessed()
-                    .byAnyPackage("..charts", "..core.model");
-
     /**
      * Matches if a call from outside the defining class uses a method or constructor annotated with {@link
      * VisibleForTesting}. There are two exceptions:
