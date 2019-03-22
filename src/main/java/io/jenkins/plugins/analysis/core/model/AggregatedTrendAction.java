@@ -36,6 +36,8 @@ public class AggregatedTrendAction extends InvisibleAction {
      *         job of this action
      */
     AggregatedTrendAction(final Job<?, ?> owner) {
+        super();
+
         this.owner = owner;
     }
 

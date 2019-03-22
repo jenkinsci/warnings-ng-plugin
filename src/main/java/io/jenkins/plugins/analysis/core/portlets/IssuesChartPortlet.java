@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -41,7 +39,6 @@ public class IssuesChartPortlet extends DashboardPortlet {
     private boolean selectTools = false;
     private List<ToolSelection> tools = new ArrayList<>();
 
-    private JenkinsFacade jenkinsFacade = new JenkinsFacade();
     private List<Job<?, ?>> jobs;
     private int height;
 
@@ -58,11 +55,6 @@ public class IssuesChartPortlet extends DashboardPortlet {
 
     @VisibleForTesting
     void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
-        this.jenkinsFacade = jenkinsFacade;
-    }
-
-    private JenkinsFacade getJenkinsFacade() {
-        return ObjectUtils.defaultIfNull(jenkinsFacade, new JenkinsFacade());
     }
 
     @SuppressWarnings("unused") // called by Stapler
@@ -148,12 +140,8 @@ public class IssuesChartPortlet extends DashboardPortlet {
                 .filter(createToolFilter(selectTools, tools))
                 .map(JobAction::createBuildHistory).collect(Collectors.toList());
 
-        return JSONObject.fromObject(severityChart.create(new CompositeResult(histories),
-                createChartConfiguration(false)));
-    }
-
-    private ChartModelConfiguration createChartConfiguration(final boolean isBuildOnXAxis) {
-        return new ChartModelConfiguration(isBuildOnXAxis ? AxisType.BUILD : AxisType.DATE);
+        return JSONObject.fromObject(
+                severityChart.create(new CompositeResult(histories), new ChartModelConfiguration(AxisType.DATE)));
     }
 
     /**

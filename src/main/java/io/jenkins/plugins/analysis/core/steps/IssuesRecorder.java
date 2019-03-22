@@ -73,7 +73,7 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "classdataabstractioncoupling", "classfanoutcomplexity"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final String NO_REFERENCE_JOB = "-";
 
@@ -227,7 +227,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     @Deprecated
     public void setToolProxies(final List<ToolProxy> toolProxies) {
-        this.analysisTools = toolProxies.stream().map(ToolProxy::getTool).collect(Collectors.toList());
+        analysisTools = toolProxies.stream().map(ToolProxy::getTool).collect(Collectors.toList());
     }
 
     /**
@@ -240,7 +240,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @DataBoundSetter
     public void setTools(final List<Tool> tools) {
-        this.analysisTools = new ArrayList<>(tools);
+        analysisTools = new ArrayList<>(tools);
     }
 
     /**
@@ -283,7 +283,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     public void setTool(final Tool tool) {
         ensureThatToolIsValid(tool);
 
-        this.analysisTools = Collections.singletonList(tool);
+        analysisTools = Collections.singletonList(tool);
     }
 
     private void ensureThatToolIsValid(final Tool tool) {
@@ -353,7 +353,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setAggregatingResults(final boolean aggregatingResults) {
-        this.isAggregatingResults = aggregatingResults;
+        isAggregatingResults = aggregatingResults;
     }
 
     /**
@@ -368,7 +368,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
-        this.isBlameDisabled = blameDisabled;
+        isBlameDisabled = blameDisabled;
     }
 
     /**
@@ -384,7 +384,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setEnabledForFailure(final boolean enabledForFailure) {
-        this.isEnabledForFailure = enabledForFailure;
+        isEnabledForFailure = enabledForFailure;
     }
 
     /**
