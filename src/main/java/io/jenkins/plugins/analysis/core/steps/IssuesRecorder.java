@@ -678,6 +678,20 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @Deprecated
     @DataBoundSetter
+    public void setUnstableNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
     public void setUnstableTotalNormal(final int size) {
         addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.UNSTABLE);
     }
