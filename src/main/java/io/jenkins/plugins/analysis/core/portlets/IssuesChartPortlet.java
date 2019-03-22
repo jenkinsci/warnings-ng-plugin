@@ -157,16 +157,18 @@ public class IssuesChartPortlet extends DashboardPortlet {
     }
 
     /**
-     * Registers the specified jobs in this portlet. These jobs will be used to render the trend chart.
-     * Note that rendering of the trend chart is done using an Ajax call later on.
+     * Registers the specified jobs in this portlet. These jobs will be used to render the trend chart. Note that
+     * rendering of the trend chart is done using an Ajax call later on.
      *
-     * @param jobs the jobs to render
+     * @param visibleJobs
+     *         the jobs to render
+     *
      * @return the number of jobs
      */
-    public int register(final List<Job<?, ?>> jobs) {
-        this.jobs = jobs;
+    public int register(final List<Job<?, ?>> visibleJobs) {
+        jobs = visibleJobs;
 
-        return jobs.size();
+        return visibleJobs.size();
     }
 
     /**

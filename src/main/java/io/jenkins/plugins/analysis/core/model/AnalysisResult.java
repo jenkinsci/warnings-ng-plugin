@@ -48,7 +48,7 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass"})
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "ClassFanOutComplexity"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final long serialVersionUID = 1110545450292087475L;
 
@@ -230,12 +230,12 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
         List<String> aggregatedMessages = new ArrayList<>(allIssues.getInfoMessages().castToList());
 
-        this.messages = new ArrayList<>(aggregatedMessages);
+        messages = new ArrayList<>(aggregatedMessages);
         errors = new ArrayList<>(allIssues.getErrorMessages().castToList());
 
         this.qualityGateStatus = qualityGateStatus;
 
-        this.blamesReference = new WeakReference<>(blames);
+        blamesReference = new WeakReference<>(blames);
         if (canSerialize) {
             serializeIssues(outstandingIssues, newIssues, fixedIssues);
             serializeBlames(blames);

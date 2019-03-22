@@ -25,8 +25,6 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
@@ -49,7 +47,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Martin Weibel
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
@@ -148,25 +146,6 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         ResultAction action = getResultAction(build);
         assertThat(action.getId()).isEqualTo(id);
         assertThat(action.getDisplayName()).startsWith(name);
-    }
-
-    /**
-     * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be
-     * unstable.
-     */
-    @Test
-    public void shouldCreateUnstableResult() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        enableEclipseWarnings(project,
-                publisher -> publisher.addQualityGate(7, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
-
-        assertThat(result).hasTotalSize(8);
-        assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
-
-        HtmlPage page = getWebPage(project, "eclipse");
-        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
     }
 
     /**
