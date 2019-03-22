@@ -25,6 +25,8 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
@@ -155,7 +157,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldCreateUnstableResult() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        enableEclipseWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
+        enableEclipseWarnings(project,
+                publisher -> publisher.addQualityGate(7, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
 

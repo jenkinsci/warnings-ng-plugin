@@ -73,7 +73,7 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "classdataabstractioncoupling", "classfanoutcomplexity", "MissingDeprecated"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "classdataabstractioncoupling", "classfanoutcomplexity"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final String NO_REFERENCE_JOB = "-";
 
@@ -617,11 +617,12 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param reportName
      *         the name of the report (might be empty)
      */
+    @SuppressWarnings("deprecation")
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
             final AnnotatedReport report, final String reportName) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         if (qualityGates.isEmpty()) {
-            qualityGates.addAll(QualityGate.map(getThresholds()));
+            qualityGates.addAll(QualityGate.map(thresholds));
         }
         qualityGate.addAll(qualityGates);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
@@ -640,193 +641,214 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private final transient Thresholds thresholds = new Thresholds(); // replaced by qualityGates
 
     /**
-     * Returns the thresholds instance.
+     * Sets the quality gate.
      *
-     * @return thresholds
-     * @deprecated replaced by {@link #getQualityGates()}
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
      */
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated
-    Thresholds getThresholds() {
-        return thresholds;
-    }
-
-    @Deprecated
-    public int getUnstableTotalAll() {
-        return getThresholds().unstableTotalAll;
-    }
-
     @Deprecated
     @DataBoundSetter
-    public void setUnstableTotalAll(final int unstableTotalAll) {
-        getThresholds().unstableTotalAll = unstableTotalAll;
+    public void setUnstableTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableTotalHigh() {
-        return getThresholds().unstableTotalHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableTotalHigh(final int unstableTotalHigh) {
-        getThresholds().unstableTotalHigh = unstableTotalHigh;
-    }
-
-    @Deprecated
-    public int getUnstableTotalNormal() {
-        return getThresholds().unstableTotalNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableTotalNormal(final int unstableTotalNormal) {
-        getThresholds().unstableTotalNormal = unstableTotalNormal;
+    public void setUnstableTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableTotalLow() {
-        return getThresholds().unstableTotalLow;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableTotalLow(final int unstableTotalLow) {
-        getThresholds().unstableTotalLow = unstableTotalLow;
-    }
-
-    @Deprecated
-    public int getUnstableNewAll() {
-        return getThresholds().unstableNewAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableNewAll(final int unstableNewAll) {
-        getThresholds().unstableNewAll = unstableNewAll;
+    public void setUnstableTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableNewHigh() {
-        return getThresholds().unstableNewHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableNewHigh(final int unstableNewHigh) {
-        getThresholds().unstableNewHigh = unstableNewHigh;
-    }
-
-    @Deprecated
-    public int getUnstableNewNormal() {
-        return getThresholds().unstableNewNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableNewNormal(final int unstableNewNormal) {
-        getThresholds().unstableNewNormal = unstableNewNormal;
+    public void setUnstableTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableNewLow() {
-        return getThresholds().unstableNewLow;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableNewLow(final int unstableNewLow) {
-        getThresholds().unstableNewLow = unstableNewLow;
-    }
-
-    @Deprecated
-    public int getFailedTotalAll() {
-        return getThresholds().failedTotalAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedTotalAll(final int failedTotalAll) {
-        getThresholds().failedTotalAll = failedTotalAll;
+    public void setUnstableNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedTotalHigh() {
-        return getThresholds().failedTotalHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setFailedTotalHigh(final int failedTotalHigh) {
-        getThresholds().failedTotalHigh = failedTotalHigh;
-    }
-
-    @Deprecated
-    public int getFailedTotalNormal() {
-        return getThresholds().failedTotalNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedTotalNormal(final int failedTotalNormal) {
-        getThresholds().failedTotalNormal = failedTotalNormal;
+    public void setUnstableNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedTotalLow() {
-        return getThresholds().failedTotalLow;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setFailedTotalLow(final int failedTotalLow) {
-        getThresholds().failedTotalLow = failedTotalLow;
-    }
-
-    @Deprecated
-    public int getFailedNewAll() {
-        return getThresholds().failedNewAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedNewAll(final int failedNewAll) {
-        getThresholds().failedNewAll = failedNewAll;
+    public void setUnstableNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedNewHigh() {
-        return getThresholds().failedNewHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setFailedNewHigh(final int failedNewHigh) {
-        getThresholds().failedNewHigh = failedNewHigh;
-    }
-
-    @Deprecated
-    public int getFailedNewNormal() {
-        return getThresholds().failedNewNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedNewNormal(final int failedNewNormal) {
-        getThresholds().failedNewNormal = failedNewNormal;
+    public void setFailedTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.FAILURE);
     }
 
-    @Deprecated
-    public int getFailedNewLow() {
-        return getThresholds().failedNewLow;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedNewLow(final int failedNewLow) {
-        getThresholds().failedNewLow = failedNewLow;
+    public void setFailedTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.FAILURE);
     }
-    // CHECKSTYLE:ON
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.FAILURE);
+    }
 
     /**
      * Descriptor for this step: defines the context and the UI elements.

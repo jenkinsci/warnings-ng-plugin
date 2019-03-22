@@ -17,6 +17,8 @@ import io.jenkins.plugins.analysis.core.model.FilesScanner;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
@@ -123,7 +125,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     public void findIssuesWithMultipleFiles() {
         FreeStyleProject project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
-        recorder.setFailedTotalAll(6);
+        recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
@@ -158,7 +160,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", false));
-        recorder.setFailedTotalAll(6);
+        recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
@@ -198,7 +200,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", true));
-        recorder.setFailedTotalAll(6);
+        recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
