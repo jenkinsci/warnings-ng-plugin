@@ -13,9 +13,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import hudson.model.Result;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
@@ -69,6 +69,7 @@ class AnalysisHistoryTest {
         AnalysisHistory history = new AnalysisHistory(last, resultSelector);
 
         assertThat(history.iterator()).toIterable().containsExactly(lastResult, middleResult, firstResult);
+        assertThat(history.hasMultipleResults()).isTrue();
     }
 
     private Run createFailingBuild() {
@@ -86,6 +87,7 @@ class AnalysisHistoryTest {
         assertThat(history.getBaselineResult()).isEmpty();
         assertThat(history.getResult()).isEmpty();
         assertThat(history.getBuild()).isEmpty();
+        assertThat(history.hasMultipleResults()).isFalse();
     }
 
     /**
@@ -107,6 +109,7 @@ class AnalysisHistoryTest {
         assertThat(history.getBaselineResult()).contains(baselineResult);
         assertThat(history.getResult()).contains(baselineResult);
         assertThat(history.getBuild()).contains(baseline);
+        assertThat(history.hasMultipleResults()).isFalse();
     }
 
     @ParameterizedTest(name = "{0}")

@@ -51,4 +51,11 @@ public interface History extends Iterable<AnalysisResult> {
     @Override
     @NonNull
     Iterator<AnalysisResult> iterator();
+
+    /**
+     * Returns whether this history has more than one result.
+     *
+     * @return {@code true} if there are multiple results, {@code false} otherwise
+     */
+    boolean hasMultipleResults();
 }

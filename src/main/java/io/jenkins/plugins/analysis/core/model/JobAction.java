@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Optional;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -28,8 +27,6 @@ import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
  * @author Ullrich Hafner
  */
 public class JobAction implements Action {
-    private static final int MIN_BUILDS = 2;
-
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
     private final int numberOfTools;
@@ -181,16 +178,7 @@ public class JobAction implements Action {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public boolean isTrendVisible() {
-        History history = createBuildHistory();
-
-        Iterator<AnalysisResult> iterator = history.iterator();
-        for (int count = 1; iterator.hasNext(); count++) {
-            if (count >= MIN_BUILDS) {
-                return true;
-            }
-            iterator.next();
-        }
-        return false;
+        return createBuildHistory().hasMultipleResults();
     }
 
     @Override

@@ -12,10 +12,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.collections.api.list.MutableList;
+import org.eclipse.collections.api.multimap.list.MutableListMultimap;
 import org.eclipse.collections.impl.multimap.list.FastListMultimap;
 
 import com.google.common.collect.Lists;
@@ -28,7 +28,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 import static java.util.stream.Collectors.*;
 
@@ -67,7 +67,7 @@ public abstract class SeriesBuilder {
      * @return the created data set
      */
     public LinesDataSet createDataSet(final ChartModelConfiguration configuration,
-            final Iterable<? extends StaticAnalysisRun> results) {
+            final Iterable<? extends AnalysisBuildResult> results) {
         SortedMap<AnalysisBuild, Map<String, Integer>> seriesPerBuild = createSeriesPerBuild(configuration, results);
 
         if (configuration.getAxisType() == AxisType.BUILD) {
@@ -80,10 +80,10 @@ public abstract class SeriesBuilder {
 
     @SuppressWarnings("rawtypes")
     private SortedMap<AnalysisBuild, Map<String, Integer>> createSeriesPerBuild(
-            final ChartModelConfiguration configuration, final Iterable<? extends StaticAnalysisRun> results) {
+            final ChartModelConfiguration configuration, final Iterable<? extends AnalysisBuildResult> results) {
         int buildCount = 0;
         SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuildNumber = new TreeMap<>();
-        for (StaticAnalysisRun current : results) {
+        for (AnalysisBuildResult current : results) {
             if (resultTime.isResultTooOld(configuration, current)) {
                 break;
             }
@@ -124,7 +124,7 @@ public abstract class SeriesBuilder {
      *
      * @return the series to plot
      */
-    protected abstract Map<String, Integer> computeSeries(StaticAnalysisRun current);
+    protected abstract Map<String, Integer> computeSeries(AnalysisBuildResult current);
 
     /**
      * Creates a data set that contains a series per build number.
@@ -170,7 +170,7 @@ public abstract class SeriesBuilder {
      * @return the values as one series per day (average)
      */
     private SortedMap<LocalDate, Map<String, Integer>> createSeriesPerDay(
-            final FastListMultimap<LocalDate, Map<String, Integer>> multiSeriesPerDate) {
+            final MutableListMultimap<LocalDate, Map<String, Integer>> multiSeriesPerDate) {
         SortedMap<LocalDate, Map<String, Integer>> seriesPerDate = new TreeMap<>();
 
         for (LocalDate date : multiSeriesPerDate.keySet()) {
@@ -210,9 +210,9 @@ public abstract class SeriesBuilder {
      * @return the multi map with the values per day
      */
     @SuppressFBWarnings("WMI")
-    private FastListMultimap<LocalDate, Map<String, Integer>> createMultiSeriesPerDay(
+    private MutableListMultimap<LocalDate, Map<String, Integer>> createMultiSeriesPerDay(
             final Map<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
-        FastListMultimap<LocalDate, Map<String, Integer>> valuesPerDate = FastListMultimap.newMultimap();
+        MutableListMultimap<LocalDate, Map<String, Integer>> valuesPerDate = FastListMultimap.newMultimap();
         for (AnalysisBuild build : valuesPerBuild.keySet()) {
             LocalDate buildDate = Instant.ofEpochMilli(build.getTimeInMillis())
                     .atZone(ZoneId.systemDefault())

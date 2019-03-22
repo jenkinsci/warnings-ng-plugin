@@ -5,8 +5,8 @@ import java.util.Map;
 
 import edu.hm.hafner.util.VisibleForTesting;
 
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
  * Builds the series for a graph showing all warnings by health descriptor.
@@ -40,7 +40,7 @@ public class HealthSeriesBuilder extends SeriesBuilder {
     }
 
     @Override
-    protected Map<String, Integer> computeSeries(final StaticAnalysisRun current) {
+    protected Map<String, Integer> computeSeries(final AnalysisBuildResult current) {
         Map<String, Integer> series = new HashMap<>();
         int remainder = current.getTotalSize();
 

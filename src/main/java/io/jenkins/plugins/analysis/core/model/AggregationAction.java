@@ -1,14 +1,18 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import hudson.model.Action;
 import hudson.model.Api;
 import hudson.model.Run;
 import jenkins.model.RunAction2;
+import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
 import io.jenkins.plugins.analysis.core.restapi.AggregationApi;
 import io.jenkins.plugins.analysis.core.restapi.ToolApi;
@@ -19,7 +23,7 @@ import io.jenkins.plugins.analysis.core.restapi.ToolApi;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "UWF", justification = "transient field owner ist restored using a Jenkins callback")
-public class AggregationAction implements RunAction2 {
+public class AggregationAction implements RunAction2, LastBuildAction {
     private transient Run<?, ?> owner;
 
     @Nullable
@@ -57,6 +61,11 @@ public class AggregationAction implements RunAction2 {
         return owner.getActions(ResultAction.class).stream().map(this::createToolApi).collect(Collectors.toList());
     }
 
+    @Override
+    public Collection<? extends Action> getProjectActions() {
+        return Collections.singleton(new AggregatedTrendAction(owner.getParent()));
+    }
+
     @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     private ToolApi createToolApi(final ResultAction result) {
         return new ToolApi(result.getId(), result.getDisplayName(),
@@ -72,4 +81,5 @@ public class AggregationAction implements RunAction2 {
     public void onLoad(final Run<?, ?> r) {
         owner = r;
     }
+
 }

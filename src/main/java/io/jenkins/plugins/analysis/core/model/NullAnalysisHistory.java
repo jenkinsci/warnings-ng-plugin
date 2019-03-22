@@ -45,5 +45,10 @@ public class NullAnalysisHistory implements History {
     public Iterator<AnalysisResult> iterator() {
         return Collections.emptyIterator();
     }
+
+    @Override
+    public boolean hasMultipleResults() {
+        return false;
+    }
 }
 

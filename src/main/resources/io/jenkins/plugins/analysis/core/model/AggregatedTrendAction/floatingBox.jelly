@@ -1,0 +1,25 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+  <j:if test="${from.trendVisible}">
+
+    <div class="test-trend-caption">
+      Aggregated Analysis Results
+    </div>
+
+    <div align="right">
+      <div id="aggregation-history-chart" class="graph-cursor-pointer"
+           style="width: 500px; min-height: 200px; min-width: 500px; height: 200px;"/>
+    </div>
+    <script src="${resURL}/plugin/warnings-ng/js/libs/echarts.common.min.js"/>
+    <script src="${resURL}/plugin/warnings-ng/js/simple-trend-chart.js"/>
+    <script>
+      var proxy = <st:bind value="${from}"/>;
+      proxy.getBuildTrend(function (trendModel) {
+      renderTrendChart('aggregation-history-chart', trendModel.responseJSON, null);
+      });
+    </script>
+
+  </j:if>
+
+</j:jelly>
