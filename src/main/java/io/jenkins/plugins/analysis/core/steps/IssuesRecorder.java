@@ -116,6 +116,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *
      * @return this
      */
+    @SuppressWarnings("deprecation")
     protected Object readResolve() {
         if (analysisTools == null) {
             analysisTools = new ArrayList<>();
@@ -135,6 +136,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param qualityGates
      *         the quality gates
      */
+    @SuppressWarnings("unused") // used by Stapler view data binding
     @DataBoundSetter
     public void setQualityGates(final List<QualityGate> qualityGates) {
         this.qualityGates = qualityGates;
@@ -154,6 +156,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         qualityGates.add(new QualityGate(size, type, result));
     }
 
+    @SuppressWarnings({"unused", "WeakerAccess"}) // used by Stapler view data binding
     public List<QualityGate> getQualityGates() {
         return qualityGates;
     }
@@ -646,7 +649,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -660,7 +663,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -674,7 +677,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -688,7 +691,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -702,7 +705,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -716,7 +719,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -730,7 +733,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -744,7 +747,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -758,7 +761,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -772,7 +775,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -786,7 +789,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -800,7 +803,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -814,7 +817,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -828,7 +831,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -842,7 +845,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -856,7 +859,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link #addQualityGate(int, QualityGateType, QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
