@@ -53,7 +53,6 @@ import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.Thresholds;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -641,7 +640,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @deprecated replaced by {@link #getQualityGates()}
      */
     @Deprecated
-    private final transient Thresholds thresholds = new Thresholds(); // replaced by qualityGates
+    private final transient io.jenkins.plugins.analysis.core.util.Thresholds thresholds = new io.jenkins.plugins.analysis.core.util.Thresholds(); // replaced by qualityGates
 
     /**
      * Sets the quality gate.

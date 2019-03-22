@@ -513,6 +513,7 @@
           <excludes>
             <exclude>.*ITest</exclude>
             <exclude>.*Action</exclude>
+            <exclude>.*Thresholds</exclude>
           </excludes>
           <cleanTargetDir>true</cleanTargetDir>
           <hierarchical>false</hierarchical>

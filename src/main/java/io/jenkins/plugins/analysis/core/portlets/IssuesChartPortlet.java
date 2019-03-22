@@ -39,7 +39,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
     private boolean selectTools = false;
     private List<ToolSelection> tools = new ArrayList<>();
 
-    private List<Job<?, ?>> jobs;
+    private List<Job<?, ?>> jobs = new ArrayList<>();
     private int height;
 
     /**

@@ -17,6 +17,7 @@ import edu.hm.hafner.analysis.Report;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("deprecation")
 class DynamicDocumentParser extends RegexpDocumentParser {
     private static final long serialVersionUID = -690643673847390322L;
     private static final int NO_LINE_NUMBER_AVAILABLE = 0;
