@@ -13,7 +13,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <url>https://wiki.jenkins.io/x/1YTeCQ</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -51,6 +51,7 @@
     <json-unit-fluent.version>2.5.0</json-unit-fluent.version>
     <xmlunit.version>1.6</xmlunit.version>
     <jsoup.version>1.11.3</jsoup.version>
+    <json-smart.version>2.3</json-smart.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <token-macro.version>2.5</token-macro.version>
@@ -185,6 +186,11 @@
       <groupId>com.j2html</groupId>
       <artifactId>j2html</artifactId>
       <version>${j2html.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.minidev</groupId>
+      <artifactId>json-smart</artifactId>
+      <version>${json-smart.version}</version>
     </dependency>
 
     <!-- PMD Messages -->

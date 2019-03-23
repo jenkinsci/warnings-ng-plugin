@@ -46,7 +46,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
 public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     /** Verifies that a {@link Tool} defines a {@link Symbol}. */
     @Test
