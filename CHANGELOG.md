@@ -124,8 +124,8 @@ Group issues by folder if no package is available.
 
 ### Added
 - [JENKINS-55500](https://issues.jenkins-ci.org/browse/JENKINS-55500): dashboard view portlet
-    - make tool selection configurable
-    - provide direct links to the analysis results
+  - make tool selection configurable
+  - provide direct links to the analysis results
 - [JENKINS-52755](https://issues.jenkins-ci.org/browse/JENKINS-52755), [JENKINS-54239](https://issues.jenkins-ci.org/browse/JENKINS-54239):
 View column that shows the number of issues.
 - Click on trend chart to navigate to selected analysis results. 
@@ -146,7 +146,7 @@ Parser now reports description with link to external documentation.
 table of issues per type and job
 
 ### Changed
-- [API]: Replaced `CheckForNull` annotations with `Nullable` in order to enable 
+- \[API\]: Replaced `CheckForNull` annotations with `Nullable` in order to enable 
 [NullAway](https://github.com/uber/NullAway) checker in build
 
 ### Fixed
