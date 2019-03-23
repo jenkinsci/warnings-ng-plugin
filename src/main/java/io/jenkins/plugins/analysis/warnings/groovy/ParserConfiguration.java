@@ -17,6 +17,7 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 /**
  * Global configuration of Groovy based parsers. These parsers are dynamically registered.
@@ -43,7 +44,7 @@ public class ParserConfiguration extends GlobalConfiguration {
      * @return the singleton instance
      */
     public static ParserConfiguration getInstance() {
-        return GlobalConfiguration.all().get(ParserConfiguration.class);
+        return GlobalConfiguration.all().get(ParserConfiguration.class); // FIXME: indirectly calls Jenkins.getInstance
     }
 
     /**
@@ -74,7 +75,7 @@ public class ParserConfiguration extends GlobalConfiguration {
      */
     @SuppressWarnings("unused") // Called from config.jelly
     public boolean canEditParsers() {
-        return Jenkins.getInstance().getACL().hasPermission(Jenkins.RUN_SCRIPTS);
+        return new JenkinsFacade().hasPermission(Jenkins.RUN_SCRIPTS);
     }
 
     /**

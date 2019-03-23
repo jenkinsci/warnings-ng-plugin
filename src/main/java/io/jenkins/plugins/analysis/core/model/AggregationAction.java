@@ -18,9 +18,11 @@ import io.jenkins.plugins.analysis.core.restapi.AggregationApi;
 import io.jenkins.plugins.analysis.core.restapi.ToolApi;
 
 /**
- * Aggregates the results of all analysis results.
+ * Aggregates the results of all analysis results. Provides an entry point for the remote API. Currently, the aggregated
+ * results are only visualized in the associated trend chart but not in a detail view.
  *
  * @author Ullrich Hafner
+ * @see AggregatedTrendAction
  */
 @SuppressFBWarnings(value = "UWF", justification = "transient field owner ist restored using a Jenkins callback")
 public class AggregationAction implements RunAction2, LastBuildAction {

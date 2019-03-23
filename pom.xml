@@ -553,6 +553,7 @@
           </targetTests>
           <excludedTestClasses>
             <param>*ITest</param>
+            <param>*ToolsLister</param>
           </excludedTestClasses>
         </configuration>
       </plugin>
@@ -658,12 +659,11 @@
             <artifactId>revapi-java</artifactId>
             <version>${revapi-java.version}</version>
           </dependency>
-<!--          FIXME: enable before going live with 5.0.0 -->
-<!--          <dependency>-->
-<!--            <groupId>io.jenkins.tools</groupId>-->
-<!--            <artifactId>revapi-hpi-extractor</artifactId>-->
-<!--            <version>1.0.1</version>-->
-<!--          </dependency>-->
+          <dependency>
+            <groupId>io.jenkins.tools</groupId>
+            <artifactId>revapi-hpi-extractor</artifactId>
+            <version>1.0.1</version>
+          </dependency>
         </dependencies>
         <configuration>
           <analysisConfiguration>
@@ -798,6 +798,11 @@
             <includes>
               <include>io/jenkins/plugins/analysis/**/*</include>
             </includes>
+            <excludes>
+              <exclude>**/JenkinsFacade.*</exclude>
+              <exclude>**/*BlameRunner.*</exclude>
+              <exclude>**/NullAnalysisHistory.*</exclude>
+            </excludes>
           </configuration>
           <executions>
             <execution>

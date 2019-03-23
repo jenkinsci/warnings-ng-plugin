@@ -3,8 +3,6 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.hm.hafner.util.VisibleForTesting;
-
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 
@@ -28,13 +26,6 @@ public class HealthSeriesBuilder extends SeriesBuilder {
      */
     public HealthSeriesBuilder(final HealthDescriptor healthDescriptor) {
         super();
-
-        this.healthDescriptor = healthDescriptor;
-    }
-
-    @VisibleForTesting
-    HealthSeriesBuilder(final HealthDescriptor healthDescriptor, final ResultTime resultTime) {
-        super(resultTime);
 
         this.healthDescriptor = healthDescriptor;
     }

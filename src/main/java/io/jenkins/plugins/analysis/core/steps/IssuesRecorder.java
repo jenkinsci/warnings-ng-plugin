@@ -34,7 +34,6 @@ import hudson.tasks.Recorder;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
@@ -287,25 +286,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private void ensureThatToolIsValid(final Tool tool) {
         if (tool == null) {
-            Jenkins instance = Jenkins.getInstance();
-            String checkstyleError = "Additionally check if your step is called 'checkStyle' and not 'checkstyle', "
-                    + "since 'checkstyle' is a reserved keyword in the CheckStyle plugin!";
-            if (instance.getPlugin("pmd") != null) {
-                throw new IllegalArgumentException("No valid tool defined! You probably used the symbol 'pmd' in "
-                        + "your tool definition. This symbol is also used in the PMD plugin. In this case you must "
-                        + "use the symbol 'pmdParser' instead, see JENKINS-55328. "
-                        + checkstyleError);
-            }
-            if (instance.getPlugin("androidLint") != null) {
-                throw new IllegalArgumentException(
-                        "No valid tool defined! You probably used the symbol 'androidLint' in "
-                                + "your tool definition. This symbol is also used in the Android Lint plugin. In this case you must "
-                                + "use the symbol 'androidLintParser' instead, see JENKINS-55328. "
-                                + checkstyleError);
-            }
             throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
                     + "definition that is also a symbol in another plugin. "
-                    + checkstyleError
+                    + ("Additionally check if your step is called 'checkStyle' and not 'checkstyle', "
+                    + "since 'checkstyle' is a reserved keyword in the CheckStyle plugin!")
                     + "If not please create a new bug report in Jenkins issue tracker.");
         }
     }
