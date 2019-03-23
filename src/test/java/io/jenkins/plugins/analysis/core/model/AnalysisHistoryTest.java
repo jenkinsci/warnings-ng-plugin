@@ -410,22 +410,22 @@ class AnalysisHistoryTest {
         private QualityGateStatus qualityGateStatus;
         private Result jobResult;
 
-        public BuildHistoryBuilder setTestName(final String testName) {
+        BuildHistoryBuilder setTestName(final String testName) {
             this.testName = testName;
             return this;
         }
 
-        public BuildHistoryBuilder setExpectedResult(final ExpectedResult expectedResult) {
+        BuildHistoryBuilder setExpectedResult(final ExpectedResult expectedResult) {
             this.expectedResult = expectedResult;
             return this;
         }
 
-        public BuildHistoryBuilder setQualityGateStatus(final QualityGateStatus qualityGateStatus) {
+        BuildHistoryBuilder setQualityGateStatus(final QualityGateStatus qualityGateStatus) {
             this.qualityGateStatus = qualityGateStatus;
             return this;
         }
 
-        public BuildHistoryBuilder setJobResult(final Result jobResult) {
+        BuildHistoryBuilder setJobResult(final Result jobResult) {
             this.jobResult = jobResult;
             return this;
         }
@@ -435,7 +435,7 @@ class AnalysisHistoryTest {
          *
          * @return test arg
          */
-        public Object build() {
+        Object build() {
             return Arguments.of(testName, expectedResult, qualityGateStatus, jobResult);
         }
     }

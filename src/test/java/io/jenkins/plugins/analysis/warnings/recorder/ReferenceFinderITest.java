@@ -15,6 +15,7 @@ import hudson.tasks.Builder;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.ResetQualityGateCommand;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
@@ -26,7 +27,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Arne Schöntag
  */
-public class ReferenceFinderITest extends AbstractIssuesRecorderITest {
+public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JOB_NAME = "Job";
     private static final String REFERENCE_JOB_NAME = "Reference";
 
