@@ -161,6 +161,7 @@ class GitBlamer implements Blamer {
             FilteredLog log = new FilteredLog(report, "Git blame errors:");
             String fileName = request.getFileName();
             try {
+                //externes objekt
                 BlameResult blame = blameRunner.run(fileName);
                 if (blame == null) {
                     log.logError("- no blame results for request <%s>.%n", request);
@@ -175,6 +176,7 @@ class GitBlamer implements Blamer {
                                         fileName);
                             }
                             else {
+                                //internes result
                                 request.setName(line, who.getName());
                                 request.setEmail(line, who.getEmailAddress());
                             }
