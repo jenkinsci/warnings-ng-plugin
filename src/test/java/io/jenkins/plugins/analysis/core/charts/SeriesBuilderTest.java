@@ -18,7 +18,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static java.util.Arrays.*;
@@ -228,7 +228,7 @@ class SeriesBuilderTest {
         }
 
         @Override
-        protected Map<String, Integer> computeSeries(final StaticAnalysisRun current) {
+        protected Map<String, Integer> computeSeries(final AnalysisBuildResult current) {
             Map<String, Integer> values = new HashMap<>();
             values.put(FIRST_KEY, count++);
             values.put(SECOND_KEY, count++);

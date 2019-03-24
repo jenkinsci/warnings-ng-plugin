@@ -346,6 +346,14 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
                 color.getDescription());
     }
 
+    /**
+     * Returns a short description describing the total number of issues.
+     *
+     * @param numberOfItems
+     *         the number of issues to report
+     *
+     * @return the description
+     */
     public String getToolTip(final int numberOfItems) {
         return getToolTipLocalizable(numberOfItems).toString();
     }
@@ -358,7 +366,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *
      * @return the description
      */
-    public Localizable getToolTipLocalizable(final int numberOfItems) {
+    Localizable getToolTipLocalizable(final int numberOfItems) {
         return new CompositeLocalizable(getName(), createToolTipSuffix(numberOfItems));
     }
 

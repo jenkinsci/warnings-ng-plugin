@@ -9,7 +9,6 @@ import hudson.model.Job;
 
 import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn.AnalysisResultDescription;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
-import io.jenkins.plugins.analysis.core.testutil.JobStubs;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;

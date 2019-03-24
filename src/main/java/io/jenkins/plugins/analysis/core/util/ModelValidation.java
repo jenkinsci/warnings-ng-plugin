@@ -115,7 +115,7 @@ public class ModelValidation {
      * @return the model with the possible reference jobs
      */
     public ComboBoxModel getAllJobs() {
-        ComboBoxModel model = new ComboBoxModel(jenkins.getAllJobs());
+        ComboBoxModel model = new ComboBoxModel(jenkins.getAllJobNames());
         model.add(0, NO_REFERENCE_JOB); // make sure that no input is valid
         return model;
     }

@@ -18,7 +18,6 @@ import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
-import hudson.DescriptorExtensionList;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
@@ -26,11 +25,9 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
-import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.NullBlamer;
@@ -190,20 +187,6 @@ public class ScanForIssuesStep extends Step {
         @Override
         public String getDisplayName() {
             return Messages.ScanForIssues_DisplayName();
-        }
-
-        public DescriptorExtensionList<Tool, ToolDescriptor> getToolDescriptors() {
-            DescriptorExtensionList<Tool, ToolDescriptor> list = Jenkins.getInstance().getDescriptorList(Tool.class);
-
-            List<ToolDescriptor> retained = new ArrayList<>();
-            for (ToolDescriptor toolDescriptor : list) {
-                if (StringUtils.equalsAny(toolDescriptor.getId(), "findbugs", "checkstyle", "pmd", "cpd", "eclipse")) {
-                    retained.add(toolDescriptor);
-                }
-            }
-            list.clear();
-            list.addAll(retained);
-            return list;
         }
 
         /**

@@ -84,7 +84,7 @@ class ModelValidationTest {
     @Test
     void doFillReferenceJobItemsShouldBeNotEmpty() {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.getAllJobs()).thenReturn(new HashSet<>());
+        when(jenkins.getAllJobNames()).thenReturn(new HashSet<>());
 
         ModelValidation model = new ModelValidation(jenkins);
 
@@ -176,7 +176,7 @@ class ModelValidationTest {
         Job job = mock(Job.class);
         String name = "Job Name";
         when(jenkins.getFullNameOf(job)).thenReturn(name);
-        when(jenkins.getAllJobs()).thenReturn(Collections.singleton(name));
+        when(jenkins.getAllJobNames()).thenReturn(Collections.singleton(name));
 
         ModelValidation model = new ModelValidation(jenkins);
 

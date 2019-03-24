@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.stream.Stream;
 
 import org.junit.Test;
-import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
@@ -156,7 +155,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output is correct if there are only Ant modules in the expected HTML output.
      */
     @Test
-    public void shouldShowModulesForVariousAntModulesInTheHtmlOutput() throws IOException, SAXException {
+    public void shouldShowModulesForVariousAntModulesInTheHtmlOutput() {
         String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"};
@@ -173,7 +172,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output is correct if there are only OSGI modules in the expected HTML output.
      */
     @Test
-    public void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() throws IOException, SAXException {
+    public void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() {
         String[] workspaceFiles = new String[] {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",

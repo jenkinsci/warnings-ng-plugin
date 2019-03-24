@@ -47,7 +47,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Martin Weibel
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
@@ -134,7 +134,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldCreateResultWithDifferentNameAndId() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        ReportScanningTool configuration = createGenericToolConfiguration(new Eclipse());
+        ReportScanningTool configuration = configurePattern(new Eclipse());
         String id = "new-id";
         configuration.setId(id);
         String name = "new-name";
@@ -146,24 +146,6 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         ResultAction action = getResultAction(build);
         assertThat(action.getId()).isEqualTo(id);
         assertThat(action.getDisplayName()).startsWith(name);
-    }
-
-    /**
-     * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be
-     * unstable.
-     */
-    @Test
-    public void shouldCreateUnstableResult() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        enableEclipseWarnings(project, publisher -> publisher.setUnstableTotalAll(7));
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
-
-        assertThat(result).hasTotalSize(8);
-        assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
-
-        HtmlPage page = getWebPage(project, "eclipse");
-        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
     }
 
     /**

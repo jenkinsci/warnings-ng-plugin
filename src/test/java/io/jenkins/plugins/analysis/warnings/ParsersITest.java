@@ -22,7 +22,7 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount"})
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CODE_FRAGMENT = "<pre><code>#\n"
             + "\n"

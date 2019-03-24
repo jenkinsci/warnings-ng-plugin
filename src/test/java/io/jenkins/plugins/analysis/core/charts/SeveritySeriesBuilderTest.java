@@ -6,7 +6,7 @@ import com.google.common.collect.Lists;
 
 import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 import static edu.hm.hafner.analysis.Severity.*;
 import static org.assertj.core.api.Assertions.*;
@@ -43,7 +43,7 @@ class SeveritySeriesBuilderTest {
     void shouldHaveThreeValuesForSingleBuild() {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
 
-        StaticAnalysisRun singleResult = createBuildResult(1,
+        AnalysisBuildResult singleResult = createBuildResult(1,
                 1, 2, 3);
 
         LinesDataSet dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList(singleResult));
@@ -60,9 +60,9 @@ class SeveritySeriesBuilderTest {
         assertThat(dataSet.getSeries(ERROR.getName())).containsExactly(0);
     }
 
-    private StaticAnalysisRun createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
+    private AnalysisBuildResult createBuildResult(final int buildNumber, final int numberOfHighPriorityIssues,
             final int numberOfNormalPriorityIssues, final int numberOfLowPriorityIssues) {
-        StaticAnalysisRun buildResult = mock(StaticAnalysisRun.class);
+        AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
 
         when(buildResult.getTotalSizeOf(WARNING_HIGH)).thenReturn(numberOfHighPriorityIssues);
         when(buildResult.getTotalSizeOf(WARNING_NORMAL)).thenReturn(numberOfNormalPriorityIssues);

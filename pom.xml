@@ -1,18 +1,19 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
     <version>3.28</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>4.0.1-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <url>https://wiki.jenkins.io/x/1YTeCQ</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -28,8 +29,8 @@
     <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>3.0.0</analysis-model-api.version>
-    <analysis-model.version>3.0.0</analysis-model.version>
+    <analysis-model-api.version>4.0.0</analysis-model-api.version>
+    <analysis-model.version>4.0.0</analysis-model.version>
 
     <commons.lang.version>3.8.1</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -42,14 +43,15 @@
     <json.version>20180813</json.version>
 
     <!-- Test Library Dependencies Versions -->
-    <junit.version>5.4.0</junit.version>
-    <junit-platform-launcher.version>1.4.0</junit-platform-launcher.version>
-    <mockito.version>2.25.0</mockito.version>
-    <assertj.version>3.12.1</assertj.version>
-    <archunit.version>0.9.3</archunit.version>
-    <json-unit-fluent.version>2.4.0</json-unit-fluent.version>
+    <junit.version>5.4.1</junit.version>
+    <junit-platform-launcher.version>1.4.1</junit-platform-launcher.version>
+    <mockito.version>2.25.1</mockito.version>
+    <assertj.version>3.12.2</assertj.version>
+    <archunit.version>0.10.1</archunit.version>
+    <json-unit-fluent.version>2.5.0</json-unit-fluent.version>
     <xmlunit.version>1.6</xmlunit.version>
     <jsoup.version>1.11.3</jsoup.version>
+    <json-smart.version>2.3</json-smart.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <token-macro.version>2.5</token-macro.version>
@@ -81,7 +83,7 @@
     <depgraph-maven-plugin.version>3.3.0</depgraph-maven-plugin.version>
     <animal-sniffer-maven-plugin.version>1.17</animal-sniffer-maven-plugin.version>
     <maven-hpi-plugin.version>2.5</maven-hpi-plugin.version>
-    <maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
+    <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
     <pitest-maven.plugin>1.4.6</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.8</pitest-maven.junit5.plugin>
@@ -184,6 +186,11 @@
       <groupId>com.j2html</groupId>
       <artifactId>j2html</artifactId>
       <version>${j2html.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>net.minidev</groupId>
+      <artifactId>json-smart</artifactId>
+      <version>${json-smart.version}</version>
     </dependency>
 
     <!-- PMD Messages -->
@@ -512,6 +519,7 @@
           <excludes>
             <exclude>.*ITest</exclude>
             <exclude>.*Action</exclude>
+            <exclude>.*Thresholds</exclude>
           </excludes>
           <cleanTargetDir>true</cleanTargetDir>
           <hierarchical>false</hierarchical>
@@ -545,6 +553,7 @@
           </targetTests>
           <excludedTestClasses>
             <param>*ITest</param>
+            <param>*ToolsLister</param>
           </excludedTestClasses>
         </configuration>
       </plugin>
@@ -565,7 +574,7 @@
           <failOnViolation>false</failOnViolation>
           <configLocation>etc/checkstyle-configuration.xml</configLocation>
           <includeTestSourceDirectory>true</includeTestSourceDirectory>
-          <excludes>**/*Assert*.java,**/InjectedTest.java</excludes>
+          <excludes>**/*Assert*.java,**/InjectedTest.java,**/Messages.java</excludes>
         </configuration>
         <dependencies>
           <dependency>
@@ -650,12 +659,63 @@
             <artifactId>revapi-java</artifactId>
             <version>${revapi-java.version}</version>
           </dependency>
+          <dependency>
+            <groupId>io.jenkins.tools</groupId>
+            <artifactId>revapi-hpi-extractor</artifactId>
+            <version>1.0.1</version>
+          </dependency>
         </dependencies>
         <configuration>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
             </revapi.semver.ignore>
+            <revapi.ignore>
+              <item>
+                <regex>true</regex>
+                <code>java.method.removed</code>
+                <classQualifiedName>edu.hm.hafner.analysis..*</classQualifiedName>
+                <justification>Optional dependency</justification>
+              </item>
+            </revapi.ignore>
+            <revapi.ignore>
+              <item>
+                <regex>true</regex>
+                <code>java.missing.*</code>
+                <classQualifiedName>hudson.matrix.*</classQualifiedName>
+                <justification>Optional dependency</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>org.jvnet.hudson.reactor.Reactor.Node</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>hudson.remoting.Command</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>hudson.remoting.CommandTransport.CommandReceiver</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>hudson.model.FingerprintMap.FingerprintParams</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>org.kohsuke.stapler.AncestorImpl</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <classQualifiedName>net.sf.json.AbstractJSON.WritingVisitor</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
+            </revapi.ignore>
           </analysisConfiguration>
         </configuration>
         <executions>
@@ -738,6 +798,11 @@
             <includes>
               <include>io/jenkins/plugins/analysis/**/*</include>
             </includes>
+            <excludes>
+              <exclude>**/JenkinsFacade.*</exclude>
+              <exclude>**/*BlameRunner.*</exclude>
+              <exclude>**/NullAnalysisHistory.*</exclude>
+            </excludes>
           </configuration>
           <executions>
             <execution>

@@ -5,28 +5,29 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Locale;
 
 import org.junit.Test;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.junit.Assume.*;
-
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.model.FilesScanner;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.FilesScanner;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.junit.Assume.*;
+
 /**
  * Integration tests for {@link FilesScanner}. This test is using a ZIP file with all the necessary files. The structure
  * of the ZIP file is:
- * <p>
  * <pre>
  * filesscanner_workspace.zip
  *      |-checkstyle
@@ -42,7 +43,6 @@ import hudson.model.Result;
  *      |-zero_length_file
  *          |-zero_length_file.xml
  * </pre>
- * </p>
  *
  * @author Alexander Praegla
  */
@@ -87,7 +87,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void makeFileUnreadable(final FreeStyleProject project) {
-        makeFileUnreadable(getWorkspaceFor(project) + File.separator + NON_READABLE_FILE);
+        makeFileUnreadable(getWorkspace(project) + File.separator + NON_READABLE_FILE);
     }
 
     /**
@@ -125,7 +125,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     public void findIssuesWithMultipleFiles() {
         FreeStyleProject project = createJobWithWorkspaceFile(MULTIPLE_FILES_WORKSPACE);
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "*.xml"));
-        recorder.setFailedTotalAll(6);
+        recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
@@ -160,15 +160,15 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", false));
-        recorder.setFailedTotalAll(6);
+        recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
 
         assertThat(result).hasTotalSize(6);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
 
-        String checkstyleXml = project.getSomeWorkspace().getRemote() + File.separator +
-                Paths.get("subdir", "link_to_actual_files", "checkstyle.xml");
+        String checkstyleXml = project.getSomeWorkspace().getRemote() + File.separator
+                + Paths.get("subdir", "link_to_actual_files", "checkstyle.xml");
 
         assertThat(result).hasInfoMessages(
                 "Successfully parsed file " + checkstyleXml,
@@ -200,13 +200,20 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
         createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
 
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", true));
-        recorder.setFailedTotalAll(6);
+        recorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasInfoMessages(
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 6");
+    }
+
+    private ReportScanningTool createTool(final ReportScanningTool tool, final String pattern,
+            final boolean skipSymbolicLinks) {
+        tool.setPattern(pattern);
+        tool.setSkipSymbolicLinks(skipSymbolicLinks);
+        return tool;
     }
 
     private void createSymbolicLinkAssumingSupported(final Path realPath, final Path linkPath) {

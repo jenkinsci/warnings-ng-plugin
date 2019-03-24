@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.net.URL;
 
-import com.tngtech.archunit.core.importer.ImportOption.DontIncludeTests;
+import com.tngtech.archunit.core.importer.ImportOption.DoNotIncludeTests;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -17,7 +17,7 @@ import static com.tngtech.archunit.library.plantuml.PlantUmlArchCondition.*;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("hideutilityclassconstructor")
-@AnalyzeClasses(packages = "io.jenkins.plugins.analysis..", importOptions = {DontIncludeTests.class})
+@AnalyzeClasses(packages = "io.jenkins.plugins.analysis..", importOptions = {DoNotIncludeTests.class})
 class PackageArchitectureTest {
     private static final URL PACKAGE_DESIGN = PackageArchitectureTest.class.getResource("/design.puml");
 

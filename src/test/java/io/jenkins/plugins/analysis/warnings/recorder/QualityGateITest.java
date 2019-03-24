@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import hudson.model.AbstractProject;
@@ -13,6 +14,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -35,6 +37,25 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Map<Result, QualityGateStatus> RESULT_TO_STATUS_MAPPING 
             = Maps.fixedSize.of(Result.UNSTABLE, QualityGateStatus.WARNING, Result.FAILURE, QualityGateStatus.FAILED);
     private static final String REPORT_FILE = "checkstyle-quality-gate.xml";
+
+    /**
+     * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be
+     * unstable.
+     */
+    @Test
+    public void shouldCreateUnstableResult() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
+        enableEclipseWarnings(project,
+                publisher -> publisher.addQualityGate(7, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
+
+        HtmlPage page = getWebPage(project, "eclipse");
+        assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
+    }
 
     /**
      * Tests if the build is considered unstable when its defined threshold for delta (overall) is reached.

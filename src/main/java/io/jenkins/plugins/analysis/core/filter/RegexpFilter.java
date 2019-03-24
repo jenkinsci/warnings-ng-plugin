@@ -54,6 +54,7 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
      */
     public abstract void apply(IssueFilterBuilder builder);
 
+    /** Descriptor for a filter. */
     public abstract static class RegexpFilterDescriptor extends Descriptor<RegexpFilter> {
         /**
          * Performs on-the-fly validation on threshold for high warnings.

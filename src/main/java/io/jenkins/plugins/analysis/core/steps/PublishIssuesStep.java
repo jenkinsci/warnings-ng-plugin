@@ -28,15 +28,16 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
-import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.Thresholds;
 
 /**
  * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
@@ -44,7 +45,7 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  * Otherwise a default ID is used to publish the results. In any case, the computed ID can be overwritten by specifying
  * an ID as step parameter.
  */
-@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass", "missingdeprecated"})
+@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass"})
 public class PublishIssuesStep extends Step {
     private final List<AnnotatedReport> reports;
 
@@ -58,14 +59,10 @@ public class PublishIssuesStep extends Step {
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
 
-    @Deprecated
-    private final Thresholds thresholds = new Thresholds();
-
     private List<QualityGate> qualityGates = new ArrayList<>();
 
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
-
 
     /**
      * Creates a new instance of {@link PublishIssuesStep}.
@@ -81,10 +78,10 @@ public class PublishIssuesStep extends Step {
         super();
 
         if (issues == null) {
-            this.reports = new ArrayList<>();
+            reports = new ArrayList<>();
         }
         else {
-            this.reports = new ArrayList<>(issues);
+            reports = new ArrayList<>(issues);
         }
     }
 
@@ -134,11 +131,12 @@ public class PublishIssuesStep extends Step {
      *         quality gate are selected
      */
     @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
     public void setIgnoreQualityGate(final boolean ignoreQualityGate) {
         this.ignoreQualityGate = ignoreQualityGate;
     }
 
-    @SuppressWarnings("PMD.BooleanGetMethodName")
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
     public boolean getIgnoreQualityGate() {
         return ignoreQualityGate;
     }
@@ -152,11 +150,12 @@ public class PublishIssuesStep extends Step {
      *         if {@code true} then a stable build is used as reference
      */
     @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
     public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
         this.ignoreFailedBuilds = ignoreFailedBuilds;
     }
 
-    @SuppressWarnings("PMD.BooleanGetMethodName")
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
     public boolean getIgnoreFailedBuilds() {
         return ignoreFailedBuilds;
     }
@@ -168,10 +167,12 @@ public class PublishIssuesStep extends Step {
      *         the name of reference job
      */
     @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
     public void setReferenceJobName(final String referenceJobName) {
         this.referenceJobName = referenceJobName;
     }
 
+    @SuppressWarnings("WeakerAccess") // Required by Stapler
     public String getReferenceJobName() {
         return referenceJobName;
     }
@@ -192,7 +193,6 @@ public class PublishIssuesStep extends Step {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
-    @Nullable
     public int getHealthy() {
         return healthy;
     }
@@ -208,7 +208,6 @@ public class PublishIssuesStep extends Step {
         this.healthy = healthy;
     }
 
-    @Nullable
     public int getUnhealthy() {
         return unhealthy;
     }
@@ -225,11 +224,13 @@ public class PublishIssuesStep extends Step {
     }
 
     @Nullable
+    @SuppressWarnings("unused") // Used by Stapler
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
 
     @Nullable
+    @SuppressWarnings("WeakerAccess") // Required by Stapler
     public Severity getMinimumSeverityAsSeverity() {
         return minimumSeverity;
     }
@@ -242,6 +243,7 @@ public class PublishIssuesStep extends Step {
      *         the severity to consider
      */
     @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
     public void setMinimumSeverity(final String minimumSeverity) {
         this.minimumSeverity = Severity.valueOf(minimumSeverity, Severity.WARNING_LOW);
     }
@@ -252,195 +254,254 @@ public class PublishIssuesStep extends Step {
      * @param qualityGates the quality gates
      */
     @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
     public void setQualityGates(final List<QualityGate> qualityGates) {
         this.qualityGates = qualityGates;
     }
 
+    @SuppressWarnings("WeakerAccess") // Required by Stapler
     public List<QualityGate> getQualityGates() {
         return qualityGates;
     }
 
-
-    Thresholds getThresholds() {
-        return thresholds;
+    /**
+     * Appends the specified quality gates to the end of the list of quality gates.
+     *
+     * @param size
+     *         the minimum number of issues that fails the quality gate
+     * @param type
+     *         the type of the quality gate
+     * @param result
+     *         determines whether the quality gate is a warning or failure
+     */
+    private void addQualityGate(final int size, final QualityGateType type, final QualityGateResult result) {
+        qualityGates.add(new QualityGate(size, type, result));
     }
 
-    @Deprecated
-    public int getUnstableTotalAll() {
-        return getThresholds().unstableTotalAll;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableTotalAll(final int unstableTotalAll) {
-        getThresholds().unstableTotalAll = unstableTotalAll;
-    }
-
-    @Deprecated
-    public int getUnstableTotalHigh() {
-        return getThresholds().unstableTotalHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableTotalHigh(final int unstableTotalHigh) {
-        getThresholds().unstableTotalHigh = unstableTotalHigh;
-    }
-
-    @Deprecated
-    public int getUnstableTotalNormal() {
-        return getThresholds().unstableTotalNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableTotalNormal(final int unstableTotalNormal) {
-        getThresholds().unstableTotalNormal = unstableTotalNormal;
+    public void setUnstableTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableTotalLow() {
-        return getThresholds().unstableTotalLow;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableTotalLow(final int unstableTotalLow) {
-        getThresholds().unstableTotalLow = unstableTotalLow;
-    }
-
-    @Deprecated
-    public int getUnstableNewAll() {
-        return getThresholds().unstableNewAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableNewAll(final int unstableNewAll) {
-        getThresholds().unstableNewAll = unstableNewAll;
+    public void setUnstableTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableNewHigh() {
-        return getThresholds().unstableNewHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableNewHigh(final int unstableNewHigh) {
-        getThresholds().unstableNewHigh = unstableNewHigh;
-    }
-
-    @Deprecated
-    public int getUnstableNewNormal() {
-        return getThresholds().unstableNewNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableNewNormal(final int unstableNewNormal) {
-        getThresholds().unstableNewNormal = unstableNewNormal;
+    public void setUnstableNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableNewLow() {
-        return getThresholds().unstableNewLow;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableNewLow(final int unstableNewLow) {
-        getThresholds().unstableNewLow = unstableNewLow;
-    }
-
-    @Deprecated
-    public int getFailedTotalAll() {
-        return getThresholds().failedTotalAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedTotalAll(final int failedTotalAll) {
-        getThresholds().failedTotalAll = failedTotalAll;
+    public void setUnstableTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedTotalHigh() {
-        return getThresholds().failedTotalHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setFailedTotalHigh(final int failedTotalHigh) {
-        getThresholds().failedTotalHigh = failedTotalHigh;
-    }
-
-    @Deprecated
-    public int getFailedTotalNormal() {
-        return getThresholds().failedTotalNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedTotalNormal(final int failedTotalNormal) {
-        getThresholds().failedTotalNormal = failedTotalNormal;
+    public void setUnstableTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedTotalLow() {
-        return getThresholds().failedTotalLow;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setFailedTotalLow(final int failedTotalLow) {
-        getThresholds().failedTotalLow = failedTotalLow;
-    }
-
-    @Deprecated
-    public int getFailedNewAll() {
-        return getThresholds().failedNewAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedNewAll(final int failedNewAll) {
-        getThresholds().failedNewAll = failedNewAll;
+    public void setUnstableNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedNewHigh() {
-        return getThresholds().failedNewHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setFailedNewHigh(final int failedNewHigh) {
-        getThresholds().failedNewHigh = failedNewHigh;
-    }
-
-    @Deprecated
-    public int getFailedNewNormal() {
-        return getThresholds().failedNewNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedNewNormal(final int failedNewNormal) {
-        getThresholds().failedNewNormal = failedNewNormal;
+    public void setUnstableNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedNewLow() {
-        return getThresholds().failedNewLow;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedNewLow(final int failedNewLow) {
-        getThresholds().failedNewLow = failedNewLow;
+    public void setUnstableNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.UNSTABLE);
     }
-    // CHECKSTYLE-ON
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.FAILURE);
+    }
 
     @Override
     public StepExecution start(final StepContext stepContext) {
@@ -486,15 +547,7 @@ public class PublishIssuesStep extends Step {
             sourceCodeEncoding = step.getSourceCodeEncoding();
             healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                     step.getMinimumSeverityAsSeverity());
-
-            qualityGates = new ArrayList<>();
-            if (step.getQualityGates().isEmpty()) {
-                qualityGates.addAll(QualityGate.map(step.getThresholds()));
-            }
-            else {
-                qualityGates.addAll(step.getQualityGates());
-            }
-
+            qualityGates = new ArrayList<>(step.getQualityGates());
             name = StringUtils.defaultString(step.getName());
             id = step.getId();
             reports = step.reports;
@@ -556,6 +609,7 @@ public class PublishIssuesStep extends Step {
          *
          * @return a model with all available charsets
          */
+        @SuppressWarnings("unused") // Used by view
         public ComboBoxModel doFillSourceCodeEncodingItems() {
             return model.getAllCharsets();
         }
@@ -565,6 +619,7 @@ public class PublishIssuesStep extends Step {
          *
          * @return a model with all available severity filters
          */
+        @SuppressWarnings("unused") // Used by view
         public ListBoxModel doFillMinimumSeverityItems() {
             return model.getAllSeverityFilters();
         }
@@ -574,6 +629,7 @@ public class PublishIssuesStep extends Step {
          *
          * @return the model with the possible reference jobs
          */
+        @SuppressWarnings("unused") // Used by view
         public ComboBoxModel doFillReferenceJobNameItems() {
             return model.getAllJobs();
         }
@@ -586,6 +642,7 @@ public class PublishIssuesStep extends Step {
          *
          * @return the validation result
          */
+        @SuppressWarnings("unused") // Used by view
         public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
             return model.validateJob(referenceJobName);
         }
@@ -598,6 +655,7 @@ public class PublishIssuesStep extends Step {
          *
          * @return the validation result
          */
+        @SuppressWarnings("unused") // Used by view
         public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
             return model.validateCharset(sourceCodeEncoding);
         }
@@ -612,6 +670,7 @@ public class PublishIssuesStep extends Step {
          *
          * @return the validation result
          */
+        @SuppressWarnings("unused") // Used by view
         public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
             return model.validateHealthy(healthy, unhealthy);
         }
@@ -626,6 +685,7 @@ public class PublishIssuesStep extends Step {
          *
          * @return the validation result
          */
+        @SuppressWarnings("unused") // Used by view
         public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
             return model.validateUnhealthy(healthy, unhealthy);
         }

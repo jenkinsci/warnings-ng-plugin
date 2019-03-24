@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.testutil;
 
 import java.util.Objects;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.assertj.core.api.AbstractAssert;
 
@@ -94,5 +95,28 @@ public class FormValidationAssert extends AbstractAssert<FormValidationAssert, F
         }
 
         return this;
+    }
+
+    /**
+     * Verifies that the message of the {@link FormValidation} contains the expected message text.
+     *
+     * @param expectedMessagePart
+     *         a part of the expected message of the validation result
+     *
+     * @return this assertion object.
+     * @throws AssertionError
+     *         if the message of the {@link FormValidation} contains not the expected message part
+     */
+    public FormValidationAssert hasMessageContaining(final String expectedMessagePart) {
+        isNotNull();
+
+        String actualMessage = StringEscapeUtils.unescapeHtml4(actual.getMessage());
+        if (!StringUtils.contains(actualMessage, expectedMessagePart)) {
+            failWithMessage("%nExpecting %s of:%n <%s>%nto contain:%n <%s>%nbut was:%n <%s>.", "message", StringEscapeUtils.unescapeHtml4(actual.toString()), expectedMessagePart,
+                    actualMessage);
+        }
+
+        return this;
+
     }
 }

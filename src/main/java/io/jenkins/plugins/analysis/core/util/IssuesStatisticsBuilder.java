@@ -1,5 +1,12 @@
 package io.jenkins.plugins.analysis.core.util;
 
+/**
+ * Builder to create instances of the data class {@link IssuesStatistics}. This builder provides methods to configure
+ * new and total and delta
+ *
+ * @author Ullrich Hafner
+ */
+@SuppressWarnings("JavaDocMethod")
 public class IssuesStatisticsBuilder {
     private int totalSize;
     private int newSize;

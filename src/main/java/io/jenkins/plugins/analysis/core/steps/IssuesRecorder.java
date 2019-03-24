@@ -28,17 +28,16 @@ import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepDescriptor;
+import hudson.tasks.BuildStepMonitor;
 import hudson.tasks.Publisher;
 import hudson.tasks.Recorder;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -46,13 +45,13 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.NullBlamer;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.Thresholds;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -61,7 +60,8 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  * <p>
  * Additional features:
  * <ul>
- * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed, then the
+ * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed,
+ * then the
  * build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
  * properties.</li>
  * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
@@ -71,7 +71,7 @@ import io.jenkins.plugins.analysis.core.util.Thresholds;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "classdataabstractioncoupling", "classfanoutcomplexity"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final String NO_REFERENCE_JOB = "-";
 
@@ -114,6 +114,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      *
      * @return this
      */
+    @SuppressWarnings("deprecation")
     protected Object readResolve() {
         if (analysisTools == null) {
             analysisTools = new ArrayList<>();
@@ -130,8 +131,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /**
      * Defines the optional list of quality gates.
      *
-     * @param qualityGates the quality gates
+     * @param qualityGates
+     *         the quality gates
      */
+    @SuppressWarnings("unused") // used by Stapler view data binding
     @DataBoundSetter
     public void setQualityGates(final List<QualityGate> qualityGates) {
         this.qualityGates = qualityGates;
@@ -151,6 +154,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         qualityGates.add(new QualityGate(size, type, result));
     }
 
+    @SuppressWarnings({"unused", "WeakerAccess"}) // used by Stapler view data binding
     public List<QualityGate> getQualityGates() {
         return qualityGates;
     }
@@ -221,7 +225,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     @Deprecated
     public void setToolProxies(final List<ToolProxy> toolProxies) {
-        this.analysisTools = toolProxies.stream().map(ToolProxy::getTool).collect(Collectors.toList());
+        analysisTools = toolProxies.stream().map(ToolProxy::getTool).collect(Collectors.toList());
     }
 
     /**
@@ -234,7 +238,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @DataBoundSetter
     public void setTools(final List<Tool> tools) {
-        this.analysisTools = new ArrayList<>(tools);
+        analysisTools = new ArrayList<>(tools);
     }
 
     /**
@@ -277,29 +281,15 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     public void setTool(final Tool tool) {
         ensureThatToolIsValid(tool);
 
-        this.analysisTools = Collections.singletonList(tool);
+        analysisTools = Collections.singletonList(tool);
     }
 
     private void ensureThatToolIsValid(final Tool tool) {
         if (tool == null) {
-            Jenkins instance = Jenkins.getInstance();
-            String checkstyleError = "Additionally check if your step is called 'checkStyle' and not 'checkstyle', "
-                    + "since 'checkstyle' is a reserved keyword in the CheckStyle plugin!";
-            if (instance.getPlugin("pmd") != null) {
-                throw new IllegalArgumentException("No valid tool defined! You probably used the symbol 'pmd' in "
-                        + "your tool definition. This symbol is also used in the PMD plugin. In this case you must "
-                        + "use the symbol 'pmdParser' instead, see JENKINS-55328. "
-                        + checkstyleError);
-            }
-            if (instance.getPlugin("androidLint") != null) {
-                throw new IllegalArgumentException("No valid tool defined! You probably used the symbol 'androidLint' in "
-                        + "your tool definition. This symbol is also used in the Android Lint plugin. In this case you must "
-                        + "use the symbol 'androidLintParser' instead, see JENKINS-55328. "
-                        + checkstyleError);
-            }
             throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
                     + "definition that is also a symbol in another plugin. "
-                    + checkstyleError
+                    + ("Additionally check if your step is called 'checkStyle' and not 'checkstyle', "
+                    + "since 'checkstyle' is a reserved keyword in the CheckStyle plugin!")
                     + "If not please create a new bug report in Jenkins issue tracker.");
         }
     }
@@ -346,7 +336,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setAggregatingResults(final boolean aggregatingResults) {
-        this.isAggregatingResults = aggregatingResults;
+        isAggregatingResults = aggregatingResults;
     }
 
     /**
@@ -361,7 +351,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
-        this.isBlameDisabled = blameDisabled;
+        isBlameDisabled = blameDisabled;
     }
 
     /**
@@ -377,7 +367,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     @DataBoundSetter
     public void setEnabledForFailure(final boolean enabledForFailure) {
-        this.isEnabledForFailure = enabledForFailure;
+        isEnabledForFailure = enabledForFailure;
     }
 
     /**
@@ -501,6 +491,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     @Override
+    public BuildStepMonitor getRequiredMonitorService() {
+        return BuildStepMonitor.NONE;
+    }
+
+    @Override
     public Descriptor getDescriptor() {
         return (Descriptor) super.getDescriptor();
     }
@@ -608,11 +603,12 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param reportName
      *         the name of the report (might be empty)
      */
+    @SuppressWarnings("deprecation")
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
             final AnnotatedReport report, final String reportName) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         if (qualityGates.isEmpty()) {
-            qualityGates.addAll(QualityGate.map(getThresholds()));
+            qualityGates.addAll(QualityGate.map(thresholds));
         }
         qualityGate.addAll(qualityGates);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
@@ -628,193 +624,231 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @deprecated replaced by {@link #getQualityGates()}
      */
     @Deprecated
-    private final transient Thresholds thresholds = new Thresholds(); // replaced by qualityGates
+    private final transient io.jenkins.plugins.analysis.core.util.Thresholds thresholds = new io.jenkins.plugins.analysis.core.util.Thresholds(); // replaced by qualityGates
 
-    // CHECKSTYLE:OFF
     /**
-     * @deprecated replaced by {@link #getQualityGates()}
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
      */
     @Deprecated
-    Thresholds getThresholds() {
-        return thresholds;
+    @DataBoundSetter
+    public void setUnstableTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableTotalAll() {
-        return getThresholds().unstableTotalAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableTotalAll(final int unstableTotalAll) {
-        getThresholds().unstableTotalAll = unstableTotalAll;
+    public void setUnstableTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableTotalHigh() {
-        return getThresholds().unstableTotalHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableTotalHigh(final int unstableTotalHigh) {
-        getThresholds().unstableTotalHigh = unstableTotalHigh;
-    }
-
-    @Deprecated
-    public int getUnstableTotalNormal() {
-        return getThresholds().unstableTotalNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableTotalNormal(final int unstableTotalNormal) {
-        getThresholds().unstableTotalNormal = unstableTotalNormal;
+    public void setUnstableNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableTotalLow() {
-        return getThresholds().unstableTotalLow;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableTotalLow(final int unstableTotalLow) {
-        getThresholds().unstableTotalLow = unstableTotalLow;
-    }
-
-    @Deprecated
-    public int getUnstableNewAll() {
-        return getThresholds().unstableNewAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableNewAll(final int unstableNewAll) {
-        getThresholds().unstableNewAll = unstableNewAll;
+    public void setUnstableTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableNewHigh() {
-        return getThresholds().unstableNewHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableNewHigh(final int unstableNewHigh) {
-        getThresholds().unstableNewHigh = unstableNewHigh;
-    }
-
-    @Deprecated
-    public int getUnstableNewNormal() {
-        return getThresholds().unstableNewNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setUnstableNewNormal(final int unstableNewNormal) {
-        getThresholds().unstableNewNormal = unstableNewNormal;
+    public void setUnstableTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getUnstableNewLow() {
-        return getThresholds().unstableNewLow;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setUnstableNewLow(final int unstableNewLow) {
-        getThresholds().unstableNewLow = unstableNewLow;
-    }
-
-    @Deprecated
-    public int getFailedTotalAll() {
-        return getThresholds().failedTotalAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedTotalAll(final int failedTotalAll) {
-        getThresholds().failedTotalAll = failedTotalAll;
+    public void setUnstableNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedTotalHigh() {
-        return getThresholds().failedTotalHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setFailedTotalHigh(final int failedTotalHigh) {
-        getThresholds().failedTotalHigh = failedTotalHigh;
-    }
-
-    @Deprecated
-    public int getFailedTotalNormal() {
-        return getThresholds().failedTotalNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedTotalNormal(final int failedTotalNormal) {
-        getThresholds().failedTotalNormal = failedTotalNormal;
+    public void setUnstableNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedTotalLow() {
-        return getThresholds().failedTotalLow;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setFailedTotalLow(final int failedTotalLow) {
-        getThresholds().failedTotalLow = failedTotalLow;
-    }
-
-    @Deprecated
-    public int getFailedNewAll() {
-        return getThresholds().failedNewAll;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedNewAll(final int failedNewAll) {
-        getThresholds().failedNewAll = failedNewAll;
+    public void setUnstableNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.UNSTABLE);
     }
 
-    @Deprecated
-    public int getFailedNewHigh() {
-        return getThresholds().failedNewHigh;
-    }
-
-    @Deprecated
-    @DataBoundSetter
-    public void setFailedNewHigh(final int failedNewHigh) {
-        getThresholds().failedNewHigh = failedNewHigh;
-    }
-
-    @Deprecated
-    public int getFailedNewNormal() {
-        return getThresholds().failedNewNormal;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedNewNormal(final int failedNewNormal) {
-        getThresholds().failedNewNormal = failedNewNormal;
+    public void setFailedTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.FAILURE);
     }
 
-    @Deprecated
-    public int getFailedNewLow() {
-        return getThresholds().failedNewLow;
-    }
-
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
     @Deprecated
     @DataBoundSetter
-    public void setFailedNewLow(final int failedNewLow) {
-        getThresholds().failedNewLow = failedNewLow;
+    public void setFailedTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.FAILURE);
     }
-    // CHECKSTYLE:ON
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.FAILURE);
+    }
 
     /**
      * Descriptor for this step: defines the context and the UI elements.
@@ -826,7 +860,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         /** Retain backward compatibility. */
         @Initializer(before = InitMilestone.PLUGINS_STARTED)
         public static void addAliases() {
-            Run.XSTREAM2.addCompatibilityAlias("io.jenkins.plugins.analysis.core.views.ResultAction", ResultAction.class);
+            Run.XSTREAM2.addCompatibilityAlias("io.jenkins.plugins.analysis.core.views.ResultAction",
+                    ResultAction.class);
         }
 
         private final ModelValidation model = new ModelValidation();

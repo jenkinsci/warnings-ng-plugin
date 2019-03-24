@@ -64,7 +64,8 @@ public class JenkinsFacade implements Serializable {
      *         the encoding to use when reading the file
      *
      * @return the affected file
-     * @throws IOException if the file could not be read
+     * @throws IOException
+     *         if the file could not be read
      */
     @MustBeClosed
     public Reader readBuildFile(final Run<?, ?> build, final String fileName, final Charset sourceEncoding)
@@ -211,9 +212,17 @@ public class JenkinsFacade implements Serializable {
      *
      * @return the full names of all jobs
      */
-    public Set<String> getAllJobs() {
-        return getJenkins().getAllItems(Job.class).stream()
-                .map(this::getFullNameOf).collect(Collectors.toSet());
+    public Set<String> getAllJobNames() {
+        return getAllJobs().stream().map(this::getFullNameOf).collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns all available jobs.
+     *
+     * @return all jobs
+     */
+    public List<Job> getAllJobs() {
+        return getJenkins().getAllItems(Job.class);
     }
 
     /**
@@ -226,6 +235,18 @@ public class JenkinsFacade implements Serializable {
      */
     public String getFullNameOf(final Job<?, ?> job) {
         return job.getFullName(); // getFullName is final
+    }
+
+    /**
+     * Returns whether the plugin with the specified ID (short name, artifact ID) is installed.
+     *
+     * @param pluginId
+     *         the ID of the plugin
+     *
+     * @return {@code true} if the plugin is installed, {@code false} if not
+     */
+    public boolean isPluginInstalled(final String pluginId) {
+        return getJenkins().getPlugin(pluginId) != null;
     }
 
     private Jenkins getJenkins() {

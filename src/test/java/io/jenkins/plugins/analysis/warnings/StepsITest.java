@@ -18,6 +18,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import org.kohsuke.stapler.HttpResponse;
+import org.jenkinsci.Symbol;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
@@ -28,6 +29,7 @@ import hudson.util.HttpResponses;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
@@ -44,14 +46,22 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
 public class StepsITest extends IntegrationTestWithJenkinsPerTest {
+    /** Verifies that a {@link Tool} defines a {@link Symbol}. */
+    @Test
+    public void shouldProvideSymbol() {
+        FindBugs findBugs = new FindBugs();
+
+        assertThat(findBugs.getSymbolName()).isEqualTo("findBugs");
+    }
+
     /**
      * Creates a declarative Pipeline and scans for a Gcc warning.
      */
     @Test @Ignore("See https://github.com/jenkinsci/pipeline-model-definition-plugin/pull/314")
     public void shouldRunInDeclarativePipeline() {
-        WorkflowJob job = createJob();
+        WorkflowJob job = createPipeline();
 
         job.setDefinition(new CpsFlowDefinition("pipeline {\n"
                 + "    agent 'any'\n"
@@ -79,10 +89,10 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldRecordOutputOfParallelSteps() {
-        WorkflowJob job = createJob();
+        WorkflowJob job = createPipeline();
 
-        copySingleFileToWorkspace(createAgent("node1"), job, "eclipse.txt", "issues.txt");
-        copySingleFileToWorkspace(createAgent("node2"), job, "eclipse.txt", "issues.txt");
+        copySingleFileToAgentWorkspace(createAgent("node1"), job, "eclipse.txt", "issues.txt");
+        copySingleFileToAgentWorkspace(createAgent("node2"), job, "eclipse.txt", "issues.txt");
 
         job.setDefinition(readDefinition("parallel.jenkinsfile"));
 
@@ -490,7 +500,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldUseOtherJobAsReference() {
-        WorkflowJob reference = createJob("reference");
+        WorkflowJob reference = createPipeline("reference");
         copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
         reference.setDefinition(parseAndPublish(new Java()));
 
@@ -532,7 +542,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         write(oobFileContent.replace("$TARGET_URL$", triggerLink));
 
-        WorkflowJob job = createJob();
+        WorkflowJob job = createPipeline();
         String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
         createFileInWorkspace(job, "xxe.xml", adaptedXxeFileContent);
 

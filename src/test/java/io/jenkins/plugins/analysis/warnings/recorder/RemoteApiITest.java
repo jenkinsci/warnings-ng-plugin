@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
+import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -7,7 +8,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
 
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -18,24 +18,24 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.xml.XmlPage;
-
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
-import io.jenkins.plugins.analysis.core.restapi.ReportApi;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.Pmd;
-import io.jenkins.plugins.analysis.warnings.SpotBugs;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
+import io.jenkins.plugins.analysis.core.restapi.ReportApi;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.Pmd;
+import io.jenkins.plugins.analysis.warnings.SpotBugs;
+import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Integration tests of the remote API.
@@ -147,7 +147,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldReturnAggregation() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
         enableWarnings(project, createCheckstyle("**/checkstyle1*"),
-                createGenericToolConfiguration(new Pmd()), createGenericToolConfiguration(new SpotBugs()));
+                configurePattern(new Pmd()), configurePattern(new SpotBugs()));
         Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
 
         JSONWebResponse json = callJsonRemoteApi(build.getUrl() + "warnings-ng/api/json");

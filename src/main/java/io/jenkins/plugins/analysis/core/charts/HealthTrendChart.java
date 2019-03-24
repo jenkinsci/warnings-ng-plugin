@@ -2,8 +2,8 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
 import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
  * Builds the model for a trend chart showing all issues for a given number of builds. The issues are colored according
@@ -25,7 +25,7 @@ public class HealthTrendChart implements TrendChart {
     }
 
     @Override
-    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results,
+    public LinesChartModel create(final Iterable<? extends AnalysisBuildResult> results,
             final ChartModelConfiguration configuration) {
         HealthSeriesBuilder builder = new HealthSeriesBuilder(healthDescriptor);
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
