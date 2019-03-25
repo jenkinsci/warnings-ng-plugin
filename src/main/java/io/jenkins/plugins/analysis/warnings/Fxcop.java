@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Fxcop extends ReportScanningTool {
     private static final long serialVersionUID = -2406459916117372776L;
-    static final String ID = "fxcop";
+    private static final String ID = "fxcop";
 
     /** Creates a new instance of {@link Fxcop}. */
     @DataBoundConstructor

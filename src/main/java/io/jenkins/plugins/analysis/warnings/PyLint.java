@@ -28,7 +28,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class PyLint extends ReportScanningTool {
     private static final long serialVersionUID = 4578376477574960381L;
-    static final String ID = "pylint";
+    private static final String ID = "pylint";
 
     /** Creates a new instance of {@link PyLint}. */
     @DataBoundConstructor

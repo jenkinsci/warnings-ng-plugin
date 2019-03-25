@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class Simian extends DuplicateCodeScanner {
     private static final long serialVersionUID = 5817021796077055763L;
-    static final String ID = "simian";
+    private static final String ID = "simian";
 
     /** Creates a new instance of {@link Simian}. */
     @DataBoundConstructor

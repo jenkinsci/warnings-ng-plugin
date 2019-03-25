@@ -18,8 +18,8 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class RfLint extends ReportScanningTool {
     private static final long serialVersionUID = -8395238803254856424L;
-    static final String ID = "rflint";
-    static final String ICON_NAME = "robot-framework";
+    private static final String ID = "rflint";
+    private static final String ICON_NAME = "robot-framework";
 
     /** Creates a new instance of {@link RfLint}. */
     @DataBoundConstructor

@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Cadence extends ReportScanningTool {
     private static final long serialVersionUID = 8284958840616127492L;
-    static final String ID = "cadence";
+    private static final String ID = "cadence";
 
     /** Creates a new instance of {@link Cadence}. */
     @DataBoundConstructor

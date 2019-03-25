@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class MavenConsole extends ReportScanningTool {
     private static final long serialVersionUID = 4642573591598798109L;
-    static final String ID = "maven-warnings";
+    private static final String ID = "maven-warnings";
 
     /** Creates a new instance of {@link MavenConsole}. */
     @DataBoundConstructor

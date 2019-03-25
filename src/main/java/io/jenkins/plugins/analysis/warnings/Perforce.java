@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Perforce extends ReportScanningTool {
     private static final long serialVersionUID = 4203426682751724907L;
-    static final String ID = "perforce";
+    private static final String ID = "perforce";
 
     /** Creates a new instance of {@link Perforce}. */
     @DataBoundConstructor

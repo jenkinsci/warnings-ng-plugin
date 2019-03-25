@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class YuiCompressor extends ReportScanningTool {
     private static final long serialVersionUID = 4211786637477278304L;
-    static final String ID = "yui";
+    private static final String ID = "yui";
 
     /** Creates a new instance of {@link YuiCompressor}. */
     @DataBoundConstructor

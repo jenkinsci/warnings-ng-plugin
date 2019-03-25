@@ -19,7 +19,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class Pmd extends ReportScanningTool {
     private static final long serialVersionUID = -7600332469176914690L;
-    static final String ID = "pmd";
+    private static final String ID = "pmd";
 
     /** Creates a new instance of {@link Pmd}. */
     @DataBoundConstructor

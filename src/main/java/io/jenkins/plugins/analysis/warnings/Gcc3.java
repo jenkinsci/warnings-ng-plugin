@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Gcc3 extends ReportScanningTool {
     private static final long serialVersionUID = -8985462824184450486L;
-    static final String ID = "gcc3";
+    private static final String ID = "gcc3";
 
     /** Creates a new instance of {@link Gcc3}. */
     @DataBoundConstructor

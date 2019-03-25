@@ -18,7 +18,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class Pit extends ReportScanningTool {
     private static final long serialVersionUID = -3769283356498049888L;
-    static final String ID = "pit";
+    private static final String ID = "pit";
 
     /** Creates a new instance of {@link Pit}. */
     @DataBoundConstructor

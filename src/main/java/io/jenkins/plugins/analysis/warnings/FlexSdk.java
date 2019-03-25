@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class FlexSdk extends ReportScanningTool {
     private static final long serialVersionUID = 8786339674737448596L;
-    static final String ID = "flex";
+    private static final String ID = "flex";
 
     /** Creates a new instance of {@link FlexSdk}. */
     @DataBoundConstructor

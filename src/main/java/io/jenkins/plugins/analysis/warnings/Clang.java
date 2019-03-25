@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Clang extends ReportScanningTool {
     private static final long serialVersionUID = 4179684176599641118L;
-    static final String ID = "clang";
+    private static final String ID = "clang";
 
     /** Creates a new instance of {@link Clang}. */
     @DataBoundConstructor

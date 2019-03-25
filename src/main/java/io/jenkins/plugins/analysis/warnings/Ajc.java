@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Ajc extends ReportScanningTool {
     private static final long serialVersionUID = 207829559393914788L;
-    static final String ID = "aspectj";
+    private static final String ID = "aspectj";
 
     /** Creates a new instance of {@link Ajc}. */
     @DataBoundConstructor

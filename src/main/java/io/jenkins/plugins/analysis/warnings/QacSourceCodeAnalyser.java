@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class QacSourceCodeAnalyser extends ReportScanningTool {
     private static final long serialVersionUID = 3092674431567484628L;
-    static final String ID = "qac";
+    private static final String ID = "qac";
 
     /** Creates a new instance of {@link QacSourceCodeAnalyser}. */
     @DataBoundConstructor

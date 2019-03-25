@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class XmlLint extends ReportScanningTool {
     private static final long serialVersionUID = -8253765174954652451L;
-    static final String ID = "xmllint";
+    private static final String ID = "xmllint";
 
     /** Creates a new instance of {@link XmlLint}. */
     @DataBoundConstructor

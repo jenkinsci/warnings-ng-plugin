@@ -22,8 +22,8 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class SonarQube extends ReportScanningToolSuite {
     private static final long serialVersionUID = 2677209865301252855L;
-    
-    static final String ID = "sonar";
+
+    private static final String ID = "sonar";
 
     /** Creates a new instance of {@link SonarQube}. */
     @DataBoundConstructor

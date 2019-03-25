@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Ccm extends ReportScanningTool {
     private static final long serialVersionUID = 7286546914256953672L;
-    static final String ID = "ccm";
+    private static final String ID = "ccm";
 
     /** Creates a new instance of {@link Ccm}. */
     @DataBoundConstructor

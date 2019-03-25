@@ -18,7 +18,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class GoLint extends ReportScanningTool {
     private static final long serialVersionUID = -8739396276813816897L;
-    static final String ID = "golint";
+    private static final String ID = "golint";
 
     /** Creates a new instance of {@link GoLint}. */
     @DataBoundConstructor

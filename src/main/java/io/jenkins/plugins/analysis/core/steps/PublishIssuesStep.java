@@ -511,7 +511,7 @@ public class PublishIssuesStep extends Step {
     /**
      * Actually performs the execution of the associated step.
      */
-    public static class Execution extends AnalysisExecution<ResultAction> {
+    static class Execution extends AnalysisExecution<ResultAction> {
         private static final long serialVersionUID = 6438321240776419897L;
 
         private final HealthDescriptor healthDescriptor;
@@ -533,7 +533,7 @@ public class PublishIssuesStep extends Step {
          *         the actual step to execute
          */
         @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
-        protected Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
+        Execution(@NonNull final StepContext context, final PublishIssuesStep step) {
             super(context);
 
             if (step.reports.isEmpty()) {

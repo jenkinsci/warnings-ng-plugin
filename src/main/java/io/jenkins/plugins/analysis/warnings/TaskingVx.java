@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class TaskingVx extends ReportScanningTool {
     private static final long serialVersionUID = -76451755325472057L;
-    static final String ID = "tasking-vx";
+    private static final String ID = "tasking-vx";
 
     /** Creates a new instance of {@link TaskingVx}. */
     @DataBoundConstructor

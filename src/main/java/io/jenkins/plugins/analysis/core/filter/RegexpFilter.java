@@ -31,7 +31,7 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
      * @param pattern
      *         the regular expression of the filter
      */
-    public RegexpFilter(final String pattern) {
+    RegexpFilter(final String pattern) {
         super();
 
         this.pattern = pattern;

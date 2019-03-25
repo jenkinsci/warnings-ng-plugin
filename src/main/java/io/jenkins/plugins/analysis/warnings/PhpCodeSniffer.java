@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class PhpCodeSniffer extends ReportScanningTool {
     private static final long serialVersionUID = -7944828406964963020L;
-    static final String ID = "php-code-sniffer";
+    private static final String ID = "php-code-sniffer";
 
     /** Creates a new instance of {@link PhpCodeSniffer}. */
     @DataBoundConstructor

@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class PyDocStyle extends ReportScanningTool {
     private static final long serialVersionUID = 6413186216055796807L;
-    static final String ID = "pydocstyle";
+    private static final String ID = "pydocstyle";
 
     /** Creates a new instance of {@link PyDocStyle}. */
     @DataBoundConstructor

@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.*;
  *
  * @author Ullrich Hafner
  */
-public abstract class SeriesBuilder {
+abstract class SeriesBuilder {
     private final ResultTime resultTime;
 
     /**

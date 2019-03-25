@@ -20,7 +20,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
  */
 public class Xlc extends ReportScanningToolSuite {
     private static final long serialVersionUID = -3811101878455857601L;
-    static final String ID = "xlc";
+    private static final String ID = "xlc";
 
     /** Creates a new instance of {@link Xlc}. */
     @DataBoundConstructor

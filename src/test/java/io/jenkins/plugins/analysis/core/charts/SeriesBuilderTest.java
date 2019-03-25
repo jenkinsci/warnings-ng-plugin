@@ -313,7 +313,7 @@ class SeriesBuilderTest {
          * @return this
          */
         @SafeVarargs
-        public final TestArgumentsBuilder setExpected(final List<Integer>... expectedSeries) {
+        final TestArgumentsBuilder setExpected(final List<Integer>... expectedSeries) {
             series = new ArrayList<>();
 
             if (expectedSeries.length == 0) {
@@ -343,7 +343,7 @@ class SeriesBuilderTest {
          *
          * @return test arg
          */
-        public Object build() {
+        Object build() {
             return Arguments.of(
                     testName,
                     time,

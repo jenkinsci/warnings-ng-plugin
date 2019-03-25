@@ -93,7 +93,7 @@ public class ScanForIssuesStep extends Step {
 
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
-        this.isBlameDisabled = blameDisabled;
+        isBlameDisabled = blameDisabled;
     }
 
     @Nullable
@@ -120,7 +120,7 @@ public class ScanForIssuesStep extends Step {
     /**
      * Actually performs the execution of the associated step.
      */
-    public static class Execution extends AnalysisExecution<AnnotatedReport> {
+    static class Execution extends AnalysisExecution<AnnotatedReport> {
         private static final long serialVersionUID = -4627988939459725361L;
 
         private final Tool tool;
