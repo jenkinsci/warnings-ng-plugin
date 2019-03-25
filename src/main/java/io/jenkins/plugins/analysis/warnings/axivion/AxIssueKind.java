@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
 public enum AxIssueKind {
-    AV("architecture violations", AxIssueTransformation::createAVIssue),
-    CL("clones", AxIssueTransformation::createCLIssue),
-    CY("cycles", AxIssueTransformation::createCYIssue),
-    DE("dead entities", AxIssueTransformation::createDEIssue),
-    MV("metric violations", AxIssueTransformation::createMVIssue),
-    SV("style violations", AxIssueTransformation::createSVIssue);
+    AV("architecture violations", DefaultTransformations::createAVIssue),
+    CL("clones", DefaultTransformations::createCLIssue),
+    CY("cycles", DefaultTransformations::createCYIssue),
+    DE("dead entities", DefaultTransformations::createDEIssue),
+    MV("metric violations", DefaultTransformations::createMVIssue),
+    SV("style violations", DefaultTransformations::createSVIssue);
 
     private final String plural;
     private final AxIssueTransformation transformation;
