@@ -24,6 +24,8 @@ import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 
+import net.sf.json.JSONObject;
+
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -101,10 +103,18 @@ public class AxivionSuite extends Tool {
             throws ParsingException, ParsingCanceledException {
 
         AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials());
-        return new AxivionParser(
-                projectUrl,
-                expandBaseDir(run, this.basedir)
-        ).parse(dashboard);
+        AxivionParser parser = new AxivionParser(projectUrl, expandBaseDir(run, this.basedir));
+
+        Report report = new Report();
+        report.logInfo("Axivion webservice: " + this.projectUrl);
+        report.logInfo("Local basedir: " + this.basedir);
+
+        for (AxIssueKind kind : AxIssueKind.values()) {
+            JSONObject payload = dashboard.getIssues(kind);
+            parser.parse(report, kind, payload);
+        }
+
+        return report;
     }
 
     private UsernamePasswordCredentials withValidCredentials() {

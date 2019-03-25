@@ -17,13 +17,6 @@ import net.sf.json.JSONObject;
 @FunctionalInterface
 public interface AxIssueTransformation {
 
-    AxIssueTransformation AV = AxIssueTransformation::createAVIssue;
-    AxIssueTransformation CL = AxIssueTransformation::createCLIssue;
-    AxIssueTransformation CY = AxIssueTransformation::createCYIssue;
-    AxIssueTransformation DE = AxIssueTransformation::createDEIssue;
-    AxIssueTransformation MV = AxIssueTransformation::createMVIssue;
-    AxIssueTransformation SV = AxIssueTransformation::createSVIssue;
-
     /**
      * Transforms raw json-based Axivion-Dashboard violations to {@link Issue}'s.
      *

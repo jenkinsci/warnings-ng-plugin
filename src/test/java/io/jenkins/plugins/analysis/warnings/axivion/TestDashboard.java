@@ -12,17 +12,14 @@ public class TestDashboard implements AxivionDashboard {
 
     @Override
     public JSONObject getIssues(final AxIssueKind kind) {
-        if (kind.equals(AxIssueKind.SV)) {
-            URL svJson = this.getClass()
-                    .getResource("/io/jenkins/plugins/analysis/warnings/axivion/sv.json");
-            try {
-                final String payload = new String(new Resource(svJson).asByteArray());
-                return JSONObject.fromObject(payload);
-            }
-            catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+        URL svJson = this.getClass()
+                .getResource("/io/jenkins/plugins/analysis/warnings/axivion/sv.json");
+        try {
+            final String payload = new String(new Resource(svJson).asByteArray());
+            return JSONObject.fromObject(payload);
         }
-        return null;
+        catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }
