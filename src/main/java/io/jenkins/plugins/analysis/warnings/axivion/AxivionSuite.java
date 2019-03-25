@@ -22,6 +22,7 @@ import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredenti
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -47,15 +48,15 @@ import io.jenkins.plugins.analysis.core.util.LogHandler;
 public class AxivionSuite extends Tool {
 
     private static final long serialVersionUID = 8670135727302169818L;
-    static final String ID = "AxivionStoppingSoftwareErosion";
+    static final String ID = "AxivionSuite";
 
     private String projectUrl = StringUtils.EMPTY;
     private String credentialsId = StringUtils.EMPTY;
     private String basedir = "$";
 
-    public AxivionSuite(final String projectUrl, final String credentialsId, final String basedir) {
+    @VisibleForTesting
+    AxivionSuite(final String projectUrl, final String credentialsId, final String basedir) {
         super();
-        // empty constructor required for stapler
         setBasedir(basedir);
         setCredentialsId(credentialsId);
         setProjectUrl(projectUrl);
@@ -100,12 +101,12 @@ public class AxivionSuite extends Tool {
             throws ParsingException, ParsingCanceledException {
 
         return new AxivionParser(projectUrl,
-                withValidateCredentials(),
+                withValidCredentials(),
                 expandBaseDir(run, this.basedir)
         ).parse();
     }
 
-    private UsernamePasswordCredentials withValidateCredentials() {
+    private UsernamePasswordCredentials withValidCredentials() {
         final List<StandardUsernamePasswordCredentials> all =
                 CredentialsProvider.lookupCredentials(
                         StandardUsernamePasswordCredentials.class,
