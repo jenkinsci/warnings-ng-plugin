@@ -18,7 +18,10 @@ import edu.hm.hafner.analysis.ParsingException;
 import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
-public class RemoteAxivionDashboard implements AxivionDashboard {
+/**
+ * Represents an actual dashboard connection to retrieve violations via http.
+ */
+class RemoteAxivionDashboard implements AxivionDashboard {
 
     private static final String X_AXIVION_USER_AGENT = "x-axivion-user-agent";
     private static final String API_USER_AGENT = "ApiClient/6.9.3";
@@ -27,7 +30,7 @@ public class RemoteAxivionDashboard implements AxivionDashboard {
     private final String projectUrl;
     private final UsernamePasswordCredentials credentials;
 
-    public RemoteAxivionDashboard(
+    RemoteAxivionDashboard(
             final String projectUrl,
             final UsernamePasswordCredentials credentials) {
         this.projectUrl = projectUrl;
@@ -76,5 +79,4 @@ public class RemoteAxivionDashboard implements AxivionDashboard {
         final String result = EntityUtils.toString(response.getEntity());
         return JSONObject.fromObject(result);
     }
-
 }

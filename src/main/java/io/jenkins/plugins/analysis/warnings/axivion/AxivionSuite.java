@@ -9,7 +9,6 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -23,6 +22,7 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import net.sf.json.JSONObject;
 
@@ -64,6 +64,7 @@ public class AxivionSuite extends Tool {
         setProjectUrl(projectUrl);
     }
 
+    /** Creates a new instance of {@link AxivionSuite}. */
     @DataBoundConstructor
     public AxivionSuite() {
         super();
@@ -163,7 +164,7 @@ public class AxivionSuite extends Tool {
             super(ID);
         }
 
-        @Nonnull
+        @NonNull
         @Override
         public String getDisplayName() {
             return "Axivion Suite";
@@ -174,6 +175,14 @@ public class AxivionSuite extends Tool {
             return "For using Axivion Suite, set up your analysis project and the web service. Provide the URL and credentials.";
         }
 
+        /**
+         * Dashboard project url must be a valid url.
+         *
+         * @param projectUrl
+         *         url to a project inside an Axivion dashboard
+         *
+         * @return {@link FormValidation#ok()} is a valid url
+         */
         public FormValidation doCheckProjectUrl(@QueryParameter final String projectUrl) {
             try {
                 new URL(projectUrl).toURI();
@@ -184,6 +193,14 @@ public class AxivionSuite extends Tool {
             return FormValidation.ok();
         }
 
+        /**
+         * Checks whether the given path is a correct os path.
+         *
+         * @param basedir
+         *         path to check
+         *
+         * @return {@link FormValidation#ok()} is a valid url
+         */
         public FormValidation doCheckBasedir(@QueryParameter final String basedir) {
             try {
                 if (!basedir.contains("$")) {
@@ -197,6 +214,16 @@ public class AxivionSuite extends Tool {
             return FormValidation.ok();
         }
 
+        /**
+         * Checks whether valid credentials are given.
+         *
+         * @param item
+         *         jenkins configuration
+         * @param credentialsId
+         *         id of the stored credentials pair
+         *
+         * @return {@link FormValidation#ok()} if credentials exist and are valid
+         */
         public FormValidation doCheckCredentialsId(
                 @AncestorInPath Item item, @QueryParameter String credentialsId) {
             if (StringUtils.isBlank(credentialsId)) {
@@ -227,6 +254,16 @@ public class AxivionSuite extends Tool {
             return FormValidation.ok();
         }
 
+        /**
+         * Shows the user all available credential id items.
+         *
+         * @param item
+         *         jenkins configuration
+         * @param credentialsId
+         *         current used credentials
+         *
+         * @return a list view of all credential ids
+         */
         public ListBoxModel doFillCredentialsIdItems(
                 @AncestorInPath Item item, @QueryParameter String credentialsId) {
             StandardListBoxModel result = new StandardListBoxModel();

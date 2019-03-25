@@ -1,6 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-public enum AxIssueKind {
+/**
+ * Supported issue kinds by Axivion Suite.
+ */
+enum AxIssueKind {
     AV("architecture violations", DefaultTransformations::createAVIssue),
     CL("clones", DefaultTransformations::createCLIssue),
     CY("cycles", DefaultTransformations::createCYIssue),

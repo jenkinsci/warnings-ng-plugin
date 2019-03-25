@@ -6,7 +6,7 @@ import edu.hm.hafner.analysis.Issue;
  * Transformation function which converts Axivion-Dashboard violations to warnings-ng {@link Issue} ones.
  */
 @FunctionalInterface
-public interface AxIssueTransformation {
+interface AxIssueTransformation {
 
     /**
      * Transforms raw json-based Axivion-Dashboard violations to {@link Issue}'s.
