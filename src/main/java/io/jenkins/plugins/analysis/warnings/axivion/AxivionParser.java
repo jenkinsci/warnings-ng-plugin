@@ -4,16 +4,12 @@ import java.io.Serializable;
 
 import org.apache.http.auth.UsernamePasswordCredentials;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.ParsingCanceledException;
-import edu.hm.hafner.analysis.ParsingException;
-import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-public class AxivionParser extends IssueParser implements Serializable {
+public class AxivionParser implements Serializable {
 
     private static final long serialVersionUID = -1055658369957572701L;
 
@@ -30,8 +26,7 @@ public class AxivionParser extends IssueParser implements Serializable {
         this.projectUrl = projectUrl;
     }
 
-    @Override
-    public Report parse(final ReaderFactory readerFactory) throws ParsingException, ParsingCanceledException {
+    public Report parse() {
         Report report = new Report();
         report.logInfo("Axivion webservice: " + this.projectUrl);
         report.logInfo("Local basedir: " + this.baseDir);

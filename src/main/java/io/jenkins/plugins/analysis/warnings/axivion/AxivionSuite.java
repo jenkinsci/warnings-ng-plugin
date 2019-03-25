@@ -102,7 +102,7 @@ public class AxivionSuite extends Tool {
         return new AxivionParser(projectUrl,
                 withValidateCredentials(),
                 expandBaseDir(run, this.basedir)
-        ).parse(null);
+        ).parse();
     }
 
     private UsernamePasswordCredentials withValidateCredentials() {
