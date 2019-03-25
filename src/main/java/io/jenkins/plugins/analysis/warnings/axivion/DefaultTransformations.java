@@ -86,7 +86,7 @@ final class DefaultTransformations {
      * Converts clones from json to {@link Issue}.
      */
     static Issue createCLIssue(final AxRawIssue raw) {
-        Validate.isTrue(raw.getKind().equals(AxIssueKind.AV));
+        Validate.isTrue(raw.getKind().equals(AxIssueKind.CL));
 
         final JSONObject issue = raw.getPayload();
         final String cloneType = "type " + issue.getInt("cloneType");

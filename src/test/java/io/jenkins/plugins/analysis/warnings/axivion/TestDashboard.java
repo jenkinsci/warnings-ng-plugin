@@ -12,8 +12,11 @@ public class TestDashboard implements AxivionDashboard {
 
     @Override
     public JSONObject getIssues(final AxIssueKind kind) {
-        URL svJson = this.getClass()
-                .getResource("/io/jenkins/plugins/analysis/warnings/axivion/sv.json");
+        return getIssuesFrom(resolveResourcePath(kind));
+    }
+
+    JSONObject getIssuesFrom(final String resourcePath) {
+        URL svJson = this.getClass().getResource(resourcePath);
         try {
             final String payload = new String(new Resource(svJson).asByteArray());
             return JSONObject.fromObject(payload);
@@ -21,5 +24,30 @@ public class TestDashboard implements AxivionDashboard {
         catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    private String resolveResourcePath(final AxIssueKind kind) {
+        String resource = "/io/jenkins/plugins/analysis/warnings/axivion/";
+        switch (kind) {
+            case AV:
+                resource += "av.json";
+                break;
+            case CL:
+                resource += "cl.json";
+                break;
+            case CY:
+                resource += "cy.json";
+                break;
+            case DE:
+                resource += "de.json";
+                break;
+            case MV:
+                resource += "mv.json";
+                break;
+            case SV:
+                resource += "sv.json";
+                break;
+        }
+        return resource;
     }
 }
