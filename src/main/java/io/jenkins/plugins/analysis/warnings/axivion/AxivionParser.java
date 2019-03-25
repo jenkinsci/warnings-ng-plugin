@@ -2,8 +2,6 @@ package io.jenkins.plugins.analysis.warnings.axivion;
 
 import java.io.Serializable;
 
-import org.apache.http.auth.UsernamePasswordCredentials;
-
 import edu.hm.hafner.analysis.Report;
 
 import net.sf.json.JSONArray;
@@ -15,23 +13,18 @@ public class AxivionParser implements Serializable {
 
     private final String projectUrl;
     private final String baseDir;
-    private final UsernamePasswordCredentials credentials;
 
     public AxivionParser(
             final String projectUrl,
-            final UsernamePasswordCredentials credentials,
             final String baseDir) {
-        this.credentials = credentials;
         this.baseDir = baseDir;
         this.projectUrl = projectUrl;
     }
 
-    public Report parse() {
+    public Report parse(AxivionDashboard dashboard) {
         Report report = new Report();
         report.logInfo("Axivion webservice: " + this.projectUrl);
         report.logInfo("Local basedir: " + this.baseDir);
-
-        AxivionDashboard dashboard = new AxivionDashboard(projectUrl, credentials);
 
         processIssues(report,
                 AxIssueKind.AV,
@@ -71,7 +64,9 @@ public class AxivionParser implements Serializable {
             final AxIssueKind kind,
             final JSONObject issues,
             final AxIssueTransformation transformationCallback) {
-
+        if (issues == null) {
+            return;
+        }
         JSONArray jsonArray = issues.optJSONArray("rows");
         if (jsonArray != null) {
             report.logInfo("Importing %s %s", jsonArray.size(), kind.plural());

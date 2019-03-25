@@ -100,10 +100,11 @@ public class AxivionSuite extends Tool {
             final LogHandler logger)
             throws ParsingException, ParsingCanceledException {
 
-        return new AxivionParser(projectUrl,
-                withValidCredentials(),
+        AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials());
+        return new AxivionParser(
+                projectUrl,
                 expandBaseDir(run, this.basedir)
-        ).parse();
+        ).parse(dashboard);
     }
 
     private UsernamePasswordCredentials withValidCredentials() {
