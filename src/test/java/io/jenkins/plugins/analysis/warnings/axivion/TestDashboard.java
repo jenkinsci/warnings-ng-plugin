@@ -8,7 +8,11 @@ import net.sf.json.JSONObject;
 
 import io.jenkins.plugins.analysis.warnings.Resource;
 
-public class TestDashboard implements AxivionDashboard {
+/**
+ * Stub for an {@link AxivionDashboard} to retrieve actual violations from the resources folder instead of actually
+ * opening a connection to a real dashboard.
+ */
+class TestDashboard implements AxivionDashboard {
 
     @Override
     public JSONObject getIssues(final AxIssueKind kind) {

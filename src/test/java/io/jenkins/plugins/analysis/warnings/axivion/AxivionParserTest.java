@@ -7,6 +7,10 @@ import edu.hm.hafner.analysis.Report;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Checks whether the {@link AxivionParser} can parse all six supported issue kinds and transform them to Jenkins {@link
+ * Issue}'s.
+ */
 class AxivionParserTest {
 
     private AxivionParser parser = new AxivionParser("testUrl", "");
