@@ -49,8 +49,8 @@ import io.jenkins.plugins.analysis.core.util.LogHandler;
 /** Provides a parser and customized messages for the Axivion Suite. */
 public class AxivionSuite extends Tool {
 
-    private static final long serialVersionUID = 8670135727302169818L;
-    static final String ID = "AxivionSuite";
+    private static final long serialVersionUID = 967222727302169818L;
+    static final String ID = "axivion-suite";
 
     private String projectUrl = StringUtils.EMPTY;
     private String credentialsId = StringUtils.EMPTY;
