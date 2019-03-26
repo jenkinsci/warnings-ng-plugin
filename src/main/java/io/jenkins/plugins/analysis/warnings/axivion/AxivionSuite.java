@@ -44,6 +44,7 @@ import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 
 /** Provides a parser and customized messages for the Axivion Suite. */
@@ -230,7 +231,7 @@ public class AxivionSuite extends Tool {
                 return FormValidation.error("You have to provide credentials.");
             }
             if (item == null) {
-                if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
+                if (!new JenkinsFacade().hasPermission(Jenkins.ADMINISTER)) {
                     return FormValidation.ok();
                 }
             }
@@ -268,7 +269,7 @@ public class AxivionSuite extends Tool {
                 @AncestorInPath Item item, @QueryParameter String credentialsId) {
             StandardListBoxModel result = new StandardListBoxModel();
             if (item == null) {
-                if (!Jenkins.getInstance().hasPermission(Jenkins.ADMINISTER)) {
+                if (!new JenkinsFacade().hasPermission(Jenkins.ADMINISTER)) {
                     return result.includeCurrentValue(credentialsId);
                 }
             }
