@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import java.nio.file.InvalidPathException;
-import java.nio.file.Paths;
-
 import org.apache.commons.lang3.Validate;
 
 import edu.hm.hafner.analysis.Issue;
@@ -23,10 +20,10 @@ final class DefaultTransformations {
     /**
      * Converts architecture violations from json to {@link Issue}.
      */
-    static Issue createAVIssue(final AxRawIssue raw) {
-        Validate.isTrue(raw.getKind().equals(AxIssueKind.AV));
+    static Issue createAVIssue(final AxRawIssue rawIssue) {
+        Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.AV));
 
-        JSONObject issue = raw.getPayload();
+        JSONObject issue = rawIssue.getPayload();
         final String description;
         if (issue.getString("violationType").equals("Divergence")) {
             description =
@@ -53,7 +50,7 @@ final class DefaultTransformations {
                             + " &lt;"
                             + issue.getString("sourceEntity")
                             + "&gt;</i>"
-                            + createLink(raw, issue.getInt("id"));
+                            + createLink(rawIssue, issue.getInt("id"));
         }
         else {
             description =
@@ -67,17 +64,18 @@ final class DefaultTransformations {
                             + " &lt;"
                             + issue.getString("architectureTarget")
                             + "&gt;</i>"
-                            + createLink(raw, issue.getInt("id"));
+                            + createLink(rawIssue, issue.getInt("id"));
         }
 
         return new IssueBuilder()
-                .setFileName(toFilename(raw.getProjectDir(), issue.optString("sourcePath", "")))
+                .setDirectory(rawIssue.getProjectDir())
+                .setFileName(issue.optString("sourcePath", ""))
                 .setLineStart(issue.getInt("sourceLine"))
                 .setType(issue.getString("violationType"))
-                .setCategory(raw.getKind().name())
+                .setCategory(rawIssue.getKind().name())
                 .setMessage("Architecture Violation")
                 .setDescription(description)
-                .setFingerprint(raw.getKind().name() + issue.getInt("id"))
+                .setFingerprint(rawIssue.getKind().name() + issue.getInt("id"))
                 .setSeverity(Severity.WARNING_HIGH)
                 .build();
     }
@@ -85,10 +83,10 @@ final class DefaultTransformations {
     /**
      * Converts clones from json to {@link Issue}.
      */
-    static Issue createCLIssue(final AxRawIssue raw) {
-        Validate.isTrue(raw.getKind().equals(AxIssueKind.CL));
+    static Issue createCLIssue(final AxRawIssue rawIssue) {
+        Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.CL));
 
-        final JSONObject issue = raw.getPayload();
+        final JSONObject issue = rawIssue.getPayload();
         final String cloneType = "type " + issue.getInt("cloneType");
         final String description =
                 "Left part of clone pair"
@@ -97,16 +95,17 @@ final class DefaultTransformations {
                         + " of length "
                         + issue.getInt("leftLength")
                         + "LOC"
-                        + createLink(raw, issue.getInt("id"));
+                        + createLink(rawIssue, issue.getInt("id"));
         return new IssueBuilder()
-                .setFileName(toFilename(raw.getProjectDir(), issue.optString("leftPath", "")))
+                .setDirectory(rawIssue.getProjectDir())
+                .setFileName(issue.optString("leftPath", ""))
                 .setLineStart(issue.getInt("leftLine"))
                 .setLineEnd(issue.getInt("leftEndLine"))
                 .setType(cloneType)
-                .setCategory(raw.getKind().name())
+                .setCategory(rawIssue.getKind().name())
                 .setMessage(cloneType + " clone")
                 .setDescription(description)
-                .setFingerprint(raw.getKindName() + issue.getInt("id"))
+                .setFingerprint(rawIssue.getKindName() + issue.getInt("id"))
                 .setSeverity(Severity.WARNING_NORMAL)
                 .build();
     }
@@ -120,7 +119,8 @@ final class DefaultTransformations {
                         + payload.getString("targetEntity")
                         + createLink(rawIssue, payload.getInt("id"));
         return new IssueBuilder()
-                .setFileName(toFilename(rawIssue.getProjectDir(), payload.optString("sourcePath", "")))
+                .setDirectory(rawIssue.getProjectDir())
+                .setFileName(payload.optString("sourcePath", ""))
                 .setLineStart(payload.getInt("sourceLine"))
                 .setType("Cycle")
                 .setCategory(rawIssue.getKindName())
@@ -145,7 +145,8 @@ final class DefaultTransformations {
                         + "</i>"
                         + createLink(rawIssue, payload.getInt("id"));
         return new IssueBuilder()
-                .setFileName(toFilename(rawIssue.getProjectDir(), payload.optString("path", "")))
+                .setDirectory(rawIssue.getProjectDir())
+                .setFileName(payload.optString("path", ""))
                 .setLineStart(payload.getInt("line"))
                 .setType("Dead Entity")
                 .setCategory(rawIssue.getKindName())
@@ -177,7 +178,8 @@ final class DefaultTransformations {
                         + payload.optInt("min")
                         + createLink(rawIssue, payload.getInt("id"));
         return new IssueBuilder()
-                .setFileName(toFilename(rawIssue.getProjectDir(), payload.optString("path", "")))
+                .setDirectory(rawIssue.getProjectDir())
+                .setFileName(payload.optString("path", ""))
                 .setLineStart(payload.getInt("line"))
                 .setType(payload.getString("description"))
                 .setCategory(rawIssue.getKindName())
@@ -202,7 +204,8 @@ final class DefaultTransformations {
                         + "</i>"
                         + createLink(rawIssue, payload.getInt("id"));
         return new IssueBuilder()
-                .setFileName(toFilename(rawIssue.getProjectDir(), payload.optString("path", "")))
+                .setDirectory(rawIssue.getProjectDir())
+                .setFileName(payload.optString("path", ""))
                 .setLineStart(payload.getInt("line"))
                 .setType(payload.getString("errorNumber"))
                 .setCategory(rawIssue.getKindName())
@@ -240,17 +243,5 @@ final class DefaultTransformations {
                 + issue.getKind().name()
                 + id
                 + "\">More details</a>";
-    }
-
-    /**
-     * Converts to an absolute path.
-     */
-    static String toFilename(final String baseDir, final String relativeSourcePath) {
-        try {
-            return Paths.get(baseDir + "/" + relativeSourcePath).normalize().toString();
-        }
-        catch (InvalidPathException e) {
-            return baseDir + "/" + relativeSourcePath;
-        }
     }
 }
