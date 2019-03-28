@@ -49,5 +49,10 @@ public class YamlLint extends ReportScanningTool {
         public String getUrl() {
             return "https://yamllint.readthedocs.io/";
         }
+
+        @Override
+        public String getHelp() {
+            return "Use option -f parsable.";
+        }
     }
 }
