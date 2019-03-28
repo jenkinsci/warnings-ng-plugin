@@ -171,9 +171,10 @@ This option is disabled by default, since analysis results might be inaccurate i
 An example pipeline with these options is shown in the following snippet:
 
 ```
-recordIssues 
+recordIssues(
     enabledForFailure: true, aggregatingResults: true, 
     tools: [java(), checkStyle(pattern: 'checkstyle-result.xml', reportEncoding: 'UTF-8')]
+)
 ```
 
 If you are using a single tool you can use the property `tool` instead of `tools`: 
@@ -318,10 +319,11 @@ snippet generator to create a working snippet that calls this step. A typical ex
 is shown in the following example:
 
 ```
-recordIssues 
+recordIssues(
     enabledForFailure: true, 
     tool: java(pattern: '*.log'), 
     filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
+)
 ```
 
 In this example, the files '*.log' are scanned for **Java** issues. Only issues with a file name matching the 
