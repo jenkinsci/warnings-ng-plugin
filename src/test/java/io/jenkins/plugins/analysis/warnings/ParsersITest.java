@@ -548,6 +548,14 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(5, new Php(), "php.txt");
     }
 
+    /**
+     * Runs the PHPStan scanner on an output file that contains 14 issues.
+     */
+    @Test
+    public void shouldFindAllPhpStanIssues() {
+        shouldFindIssuesOfTool(11, new PhpStan(), "phpstan.xml");
+    }
+
     /** Runs the Microsoft PreFast parser on an output file that contains 11 issues. */
     @Test
     public void shouldFindAllPREfastIssues() {
