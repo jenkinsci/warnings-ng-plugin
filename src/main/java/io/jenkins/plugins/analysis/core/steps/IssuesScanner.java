@@ -33,8 +33,8 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.Blames;
-import io.jenkins.plugins.analysis.core.scm.GitResults;
-import io.jenkins.plugins.analysis.core.scm.GitWorker;
+import io.jenkins.plugins.analysis.core.scm.GsResults;
+import io.jenkins.plugins.analysis.core.scm.GsWorker;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
@@ -54,7 +54,7 @@ class IssuesScanner {
     private final Tool tool;
     private final List<RegexpFilter> filters;
     private final Blamer blamer;
-    private final GitWorker gitWorker;
+    private final GsWorker gsWorker;
 
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters,
             final Charset sourceCodeEncoding, final FilePath jenkinsRootDir, final Blamer blamer) {
@@ -63,7 +63,7 @@ class IssuesScanner {
         this.tool = tool;
         this.jenkinsRootDir = jenkinsRootDir;
         this.blamer = blamer;
-        this.gitWorker = new GitWorker();
+        this.gsWorker = new GsWorker();
     }
 
     public AnnotatedReport scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger)
@@ -92,7 +92,7 @@ class IssuesScanner {
                     sourceCodeEncoding);
 
             result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                    createAffectedFilesFolder(report), blamer, filters, gitWorker));
+                    createAffectedFilesFolder(report), blamer, filters, gsWorker));
         }
         logger.log(result.getReport());
         return result;
@@ -158,11 +158,11 @@ class IssuesScanner {
         private final FilePath affectedFilesFolder;
         private final Blamer blamer;
         private final List<RegexpFilter> filters;
-        private final GitWorker gitWorker;
+        private final GsWorker gitWorker;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
                 final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters,
-                final GitWorker gitWorker) {
+                final GsWorker gitWorker) {
             super();
 
             this.id = id;
@@ -185,7 +185,7 @@ class IssuesScanner {
 
             createFingerprints(filtered);
             Blames blames = blamer.blame(filtered);
-            GitResults gitResults = gitWorker.process(filtered);
+            GsResults gsResults = gitWorker.process(filtered);
             return new AnnotatedReport(id, filtered, blames);
         }
 

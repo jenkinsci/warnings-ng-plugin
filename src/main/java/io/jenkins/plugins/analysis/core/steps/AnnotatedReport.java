@@ -12,7 +12,7 @@ import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import io.jenkins.plugins.analysis.core.scm.Blames;
-import io.jenkins.plugins.analysis.core.scm.GitResults;
+import io.jenkins.plugins.analysis.core.scm.GsResults;
 
 /**
  * A report of issues and the associated blame information, i.e. author and commit information of the SCM.
@@ -25,7 +25,7 @@ public final class AnnotatedReport implements Serializable {
     private final String id;
     private final Report aggregatedReport = new Report();
     private final Blames aggregatedBlames = new Blames();
-    private final GitResults gitResults = new GitResults();
+    private final GsResults gitResults = new GsResults();
     private final Map<String, Integer> sizeOfOrigin = new HashMap<>();
 
     /**

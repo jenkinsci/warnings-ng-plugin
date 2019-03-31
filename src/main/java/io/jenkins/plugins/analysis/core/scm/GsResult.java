@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * represent a single result
  */
-public class GitResult implements Serializable {
+public class GsResult implements Serializable {
     private Integer age;
     private Integer size;
 
