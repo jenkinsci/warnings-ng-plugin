@@ -25,7 +25,7 @@ public final class AnnotatedReport implements Serializable {
     private final String id;
     private final Report aggregatedReport = new Report();
     private final Blames aggregatedBlames = new Blames();
-    private final GsResults gitResults = new GsResults();
+    private GsResults gsResults = new GsResults();
     private final Map<String, Integer> sizeOfOrigin = new HashMap<>();
 
     /**
@@ -48,6 +48,24 @@ public final class AnnotatedReport implements Serializable {
      */
     public AnnotatedReport(@Nullable final String id, final Report report) {
         this(id, report, new Blames());
+    }
+
+    /**
+     * Creates a new instance of {@link AnnotatedReport}.
+     *
+     * @param id
+     *         ID of the report
+     * @param report
+     *         report with issues
+     * @param blames
+     *         author and commit information
+     */
+    public AnnotatedReport(@Nullable final String id, final Report report, final Blames blames, final GsResults gsResults) {
+        this(id);
+
+        addReport(id, report, blames);
+        this.gsResults = gsResults;
+
     }
 
     /**

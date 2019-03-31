@@ -569,7 +569,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(),
-                getSourceCodeCharset(), new FilePath(run.getRootDir()), blame(run, workspace, listener));
+                getSourceCodeCharset(), new FilePath(run.getRootDir()), blame(run, workspace, listener), run);
         return issuesScanner.scan(run, workspace, new LogHandler(listener, tool.getActualName()));
     }
 

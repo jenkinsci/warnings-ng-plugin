@@ -152,7 +152,7 @@ public class ScanForIssuesStep extends Step {
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()),
-                    createBlamer(workspace, listener));
+                    createBlamer(workspace, listener), getRun());
 
             return issuesScanner.scan(getRun(), workspace, new LogHandler(listener, tool.getActualName()));
         }

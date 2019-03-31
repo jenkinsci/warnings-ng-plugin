@@ -23,16 +23,19 @@ import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
+import org.jenkinsci.plugins.gitclient.GitClient;
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.remoting.VirtualChannel;
+import hudson.scm.SCM;
 import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.scm.GitHelper;
 import io.jenkins.plugins.analysis.core.scm.GsResults;
 import io.jenkins.plugins.analysis.core.scm.GsWorker;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
@@ -40,6 +43,7 @@ import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 
+import static io.jenkins.plugins.analysis.core.scm.GitHelper.getScm;
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
 /**
@@ -57,13 +61,15 @@ class IssuesScanner {
     private final GsWorker gsWorker;
 
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters,
-            final Charset sourceCodeEncoding, final FilePath jenkinsRootDir, final Blamer blamer) {
+            final Charset sourceCodeEncoding, final FilePath jenkinsRootDir, final Blamer blamer, final Run<?, ?> run) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
         this.jenkinsRootDir = jenkinsRootDir;
         this.blamer = blamer;
-        this.gsWorker = new GsWorker();
+
+        SCM scm = getScm(run);
+        this.gsWorker = new GsWorker(scm);
     }
 
     public AnnotatedReport scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger)
@@ -158,11 +164,11 @@ class IssuesScanner {
         private final FilePath affectedFilesFolder;
         private final Blamer blamer;
         private final List<RegexpFilter> filters;
-        private final GsWorker gitWorker;
+        private final GsWorker gsWorker;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
                 final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters,
-                final GsWorker gitWorker) {
+                final GsWorker gsWorker) {
             super();
 
             this.id = id;
@@ -171,7 +177,7 @@ class IssuesScanner {
             this.affectedFilesFolder = affectedFilesFolder;
             this.blamer = blamer;
             this.filters = filters;
-            this.gitWorker = gitWorker;
+            this.gsWorker = gsWorker;
         }
 
         @Override
@@ -185,8 +191,8 @@ class IssuesScanner {
 
             createFingerprints(filtered);
             Blames blames = blamer.blame(filtered);
-            GsResults gsResults = gitWorker.process(filtered);
-            return new AnnotatedReport(id, filtered, blames);
+            GsResults gsResults = gsWorker.process(filtered);
+            return new AnnotatedReport(id, filtered, blames, gsResults);
         }
 
         private void resolveAbsolutePaths(final Report report, final File workspace) {
