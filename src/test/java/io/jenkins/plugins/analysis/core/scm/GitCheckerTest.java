@@ -27,10 +27,10 @@ import static org.mockito.Mockito.*;
  *
  * @author Andreas Pabst
  */
-public class GitCheckerTest {
+class GitCheckerTest {
 
     @Test
-    public void shouldDetermineIfSCMIsGit() {
+    void shouldDetermineIfSCMIsGit() {
         GitChecker gitChecker = new GitChecker();
 
         assertThat(gitChecker.isGit(new GitSCM(null))).isTrue();
@@ -38,7 +38,7 @@ public class GitCheckerTest {
     }
 
     @Test
-    public void shouldCreateBlamer() throws Exception {
+    void shouldCreateBlamer() throws Exception {
         GitChecker gitChecker = new GitChecker();
         PrintStream logger = mock(PrintStream.class);
         TaskListener taskListener = mock(TaskListener.class);
@@ -62,15 +62,15 @@ public class GitCheckerTest {
     }
 
     @Test
-    public void shouldCreateNullBlamerOnShallowGit() throws Exception {
-        final boolean SHALLOW = true;
+    void shouldCreateNullBlamerOnShallowGit() throws Exception {
         GitChecker gitChecker = new GitChecker();
         PrintStream logger = mock(PrintStream.class);
         TaskListener taskListener = mock(TaskListener.class);
         when(taskListener.getLogger()).thenReturn(logger);
 
         List<GitSCMExtension> extensions = new ArrayList<>();
-        extensions.add(new CloneOption(SHALLOW, null, null));
+        CloneOption shallowCloneOption = new CloneOption(true, null, null);
+        extensions.add(shallowCloneOption);
         GitSCM gitSCM = new GitSCM(null, null, false, null, null, null, extensions);
 
         Run run = mock(Run.class);
@@ -78,7 +78,7 @@ public class GitCheckerTest {
     }
 
     @Test
-    public void shouldCreateNullBlamerOnError() throws Exception {
+    void shouldCreateNullBlamerOnError() throws Exception {
         GitChecker gitChecker = new GitChecker();
         TaskListener taskListener = mock(TaskListener.class);
         Run run = mock(Run.class);
