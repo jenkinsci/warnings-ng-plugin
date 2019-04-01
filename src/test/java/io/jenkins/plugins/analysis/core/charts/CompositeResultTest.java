@@ -89,11 +89,39 @@ class CompositeResultTest {
     }
 
     private AnalysisBuildResult createResult(final int high, final int normal, final int low, final int number) {
-        AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
+        AnalysisBuildResult buildResult = createBuildResultMock(number);
 
         when(buildResult.getTotalSizeOf(Severity.WARNING_HIGH)).thenReturn(high);
         when(buildResult.getTotalSizeOf(Severity.WARNING_NORMAL)).thenReturn(normal);
         when(buildResult.getTotalSizeOf(Severity.WARNING_LOW)).thenReturn(low);
+        when(buildResult.getTotalSize()).thenReturn(low+normal+high);
+
+        return buildResult;
+    }
+
+    private AnalysisBuildResult createResultWithNewIssues(final int high, final int normal, final int low, final int number) {
+        AnalysisBuildResult buildResult = createBuildResultMock(number);
+
+        when(buildResult.getNewSizeOf(Severity.WARNING_HIGH)).thenReturn(high);
+        when(buildResult.getNewSizeOf(Severity.WARNING_NORMAL)).thenReturn(normal);
+        when(buildResult.getNewSizeOf(Severity.WARNING_LOW)).thenReturn(low);
+        when(buildResult.getNewSize()).thenReturn(low+normal+high);
+
+        return buildResult;
+    }
+
+    private AnalysisBuildResult createResultWithFixedIssues(final int fixedIssues, final int number) {
+        AnalysisBuildResult buildResult = createBuildResultMock(number);
+
+        when(buildResult.getFixedSize()).thenReturn(fixedIssues);
+
+        AnalysisBuild build = createBuild(number);
+        when(buildResult.getBuild()).thenReturn(build);
+        return buildResult;
+    }
+
+    private AnalysisBuildResult createBuildResultMock(final int number) {
+        AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
 
         AnalysisBuild build = createBuild(number);
         when(buildResult.getBuild()).thenReturn(build);
@@ -120,7 +148,40 @@ class CompositeResultTest {
     @Nested
     class CompositeAnalysisBuildResultTest {
         @Test
-        void shouldTestMerge() {
+        void shouldTestMergeNumberOfTotalIssues(){
+            AnalysisBuildResult first = createResult(3, 1, 6, 1);
+            AnalysisBuildResult second = createResult(1, 3, 9, 1);
+
+            CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
+
+            assertThat(run).hasBuild(createBuild(1));
+            assertThat(run).hasTotalSize(23);
+        }
+
+        @Test
+        void shouldTestMergeNumberOfFixedIssues(){
+            AnalysisBuildResult first = createResultWithFixedIssues(2, 1);
+            AnalysisBuildResult second = createResultWithFixedIssues(3, 1);
+
+            CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
+
+            assertThat(run).hasBuild(createBuild(1));
+            assertThat(run.getFixedSize()).isEqualTo(5);
+        }
+
+        @Test
+        void shouldTestMergeNumberOfNewIssues(){
+            AnalysisBuildResult first = createResultWithNewIssues(5, 2, 6, 1);
+            AnalysisBuildResult second = createResultWithNewIssues(4, 2, 7, 1);
+
+            CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
+
+            assertThat(run).hasBuild(createBuild(1));
+            assertThat(run).hasNewSize(26);
+        }
+
+        @Test
+        void shouldTestMergeTotalNumberOfIssuesBySeverity() {
             AnalysisBuildResult first = createResult(1, 2, 3, 1);
             AnalysisBuildResult second = createResult(4, 5, 6, 1);
 
@@ -130,6 +191,19 @@ class CompositeResultTest {
             assertThat(run.getTotalSizeOf(Severity.WARNING_HIGH)).isEqualTo(5);
             assertThat(run.getTotalSizeOf(Severity.WARNING_NORMAL)).isEqualTo(7);
             assertThat(run.getTotalSizeOf(Severity.WARNING_LOW)).isEqualTo(9);
+        }
+
+        @Test
+        void shouldTestMergeOfNewIssuesBySeverity(){
+            AnalysisBuildResult first = createResult(2, 6, 2, 1);
+            AnalysisBuildResult second = createResult(5, 2, 2, 1);
+
+            CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
+
+            assertThat(run).hasBuild(createBuild(1));
+            assertThat(run.getTotalSizeOf(Severity.WARNING_HIGH)).isEqualTo(7);
+            assertThat(run.getTotalSizeOf(Severity.WARNING_NORMAL)).isEqualTo(8);
+            assertThat(run.getTotalSizeOf(Severity.WARNING_LOW)).isEqualTo(4);
         }
     }
 }
