@@ -19,7 +19,7 @@ public class IBLinter extends ReportScanningTool {
 
     private static final String ID = "iblinter";
 
-    /** Creates a new instance of {@link SwiftLint}. */
+    /** Creates a new instance of {@link IBLinter}. */
     @DataBoundConstructor
     public IBLinter() {
         super();
