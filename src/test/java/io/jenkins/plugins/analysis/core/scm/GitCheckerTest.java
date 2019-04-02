@@ -5,7 +5,8 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
+import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.gitclient.GitClient;
 import hudson.EnvVars;
@@ -39,14 +40,13 @@ class GitCheckerTest {
 
     @Test
     void shouldCreateBlamer() throws Exception {
-        GitChecker gitChecker = new GitChecker();
         PrintStream logger = mock(PrintStream.class);
         TaskListener taskListener = mock(TaskListener.class);
         when(taskListener.getLogger()).thenReturn(logger);
 
-        List<GitSCMExtension> extensions = new ArrayList<>();
+        DescribableList describableList = mock(DescribableList.class);
         GitSCM gitSCM = mock(GitSCM.class);
-        when(gitSCM.getExtensions()).thenReturn(new DescribableList(Saveable.NOOP, Util.fixNull(extensions)));
+        when(gitSCM.getExtensions()).thenReturn(describableList);
 
         Run run = mock(Run.class);
         EnvVars envVars = new EnvVars();
@@ -57,23 +57,25 @@ class GitCheckerTest {
 
         when(gitSCM.createClient(taskListener, envVars, run, null)).thenReturn(gitClient);
 
+        GitChecker gitChecker = new GitChecker();
         Blamer blamer = gitChecker.createBlamer(run, gitSCM, null, taskListener);
         assertThat(blamer).isInstanceOf(GitBlamer.class);
     }
 
     @Test
-    void shouldCreateNullBlamerOnShallowGit() throws Exception {
-        GitChecker gitChecker = new GitChecker();
+    void shouldCreateNullBlamerOnShallowGit() {
         PrintStream logger = mock(PrintStream.class);
         TaskListener taskListener = mock(TaskListener.class);
         when(taskListener.getLogger()).thenReturn(logger);
 
-        List<GitSCMExtension> extensions = new ArrayList<>();
-        CloneOption shallowCloneOption = new CloneOption(true, null, null);
-        extensions.add(shallowCloneOption);
-        GitSCM gitSCM = new GitSCM(null, null, false, null, null, null, extensions);
+        CloneOption shallowCloneOption = mock(CloneOption.class);
+        when(shallowCloneOption.isShallow()).thenReturn(true);
+
+        GitSCM gitSCM = mock(GitSCM.class);
+        when(gitSCM.getExtensions()).thenReturn(new DescribableList(Saveable.NOOP, Lists.list(shallowCloneOption)));
 
         Run run = mock(Run.class);
+        GitChecker gitChecker = new GitChecker();
         assertThat(gitChecker.createBlamer(run, gitSCM, null, taskListener)).isInstanceOf(NullBlamer.class);
     }
 
