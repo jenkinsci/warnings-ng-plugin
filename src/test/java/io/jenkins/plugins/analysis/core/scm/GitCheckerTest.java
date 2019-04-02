@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.gitclient.GitClient;
 import hudson.EnvVars;
-import hudson.Util;
 import hudson.model.Run;
 import hudson.model.Saveable;
 import hudson.model.TaskListener;
