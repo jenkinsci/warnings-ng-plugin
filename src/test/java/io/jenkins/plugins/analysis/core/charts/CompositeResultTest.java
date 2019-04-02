@@ -195,15 +195,15 @@ class CompositeResultTest {
 
         @Test
         void shouldTestMergeOfNewIssuesBySeverity(){
-            AnalysisBuildResult first = createResult(2, 6, 2, 1);
-            AnalysisBuildResult second = createResult(5, 2, 2, 1);
+            AnalysisBuildResult first = createResultWithNewIssues(2, 6, 2, 1);
+            AnalysisBuildResult second = createResultWithNewIssues(5, 2, 2, 1);
 
             CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
 
             assertThat(run).hasBuild(createBuild(1));
-            assertThat(run.getTotalSizeOf(Severity.WARNING_HIGH)).isEqualTo(7);
-            assertThat(run.getTotalSizeOf(Severity.WARNING_NORMAL)).isEqualTo(8);
-            assertThat(run.getTotalSizeOf(Severity.WARNING_LOW)).isEqualTo(4);
+            assertThat(run.getNewSizeOf(Severity.WARNING_HIGH)).isEqualTo(7);
+            assertThat(run.getNewSizeOf(Severity.WARNING_NORMAL)).isEqualTo(8);
+            assertThat(run.getNewSizeOf(Severity.WARNING_LOW)).isEqualTo(4);
         }
     }
 }
