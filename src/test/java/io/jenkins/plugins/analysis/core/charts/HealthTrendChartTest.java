@@ -11,12 +11,11 @@ import org.junit.jupiter.api.Test;
 public class HealthTrendChartTest {
 
     /**
-     * Issue JENKINS-56708
+     * Issue JENKINS-56708.
      */
 
-    @Test
-    public void creatorTestWithNull()
-    {
+    @Test //(expected = NullPointerException.class)
+    public void creatorTestWithNull() {
         HealthTrendChart hTC = new HealthTrendChart(null);
         hTC.create(null, null);
         Assert.assertTrue(true);
