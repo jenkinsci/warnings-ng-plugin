@@ -10,11 +10,15 @@ import org.junit.jupiter.api.Test;
 
 public class HealthTrendChartTest {
 
-    @Test
-    public void creatorTestWithNull(){
-        HealthTrendChart hTC = new HealthTrendChart(null);
-        hTC.create(null,null);
-        Assert.assertTrue(true);
+    /**
+     * Issue JENKINS-56708
+     */
 
+    @Test
+    public void creatorTestWithNull()
+    {
+        HealthTrendChart hTC = new HealthTrendChart(null);
+        hTC.create(null, null);
+        Assert.assertTrue(true);
     }
 }

@@ -10,9 +10,12 @@ import org.junit.jupiter.api.Test;
 
 public class SeverityPieChartTest {
 
-
+    /**
+     * Issue JENKINS-56710
+     */
     @Test
-    public void creatorTestWithNull(){
+    public void creatorTestWithNull()
+    {
         SeverityPieChart sPC = new SeverityPieChart();
         sPC.create(null);
         Assert.assertTrue(true);
