@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-4.0.0...master)
 
+### Added 
+
+I finally managed it to port the charting functionality of the former analysis-collector plugin:
+- Trend chart (job page): shows the warnings of all static analysis results in a single chart. 
+- Portlet (dashboard view): shows the number of warnings from all jobs in the view in a chart. 
+
+### Fixed
+
+- Added missing dependency to JSON-Smart library.
+- [PR#19](https://github.com/jenkinsci/warnings-ng-plugin/pull/13): Use `BuildStepMonitor.NONE` in step 
+to allow for higher concurrency.
+
+### Changed
+
+- Decreased visibility of several internal elements
+- \[API\]: Refactored trend chart API
+
+### Removed
+
+- \[API\]: Removed deprecated getters for `Thresholds`.
+- \[API\]: Removed trend chart aggregation methods.
+
 ## [4.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.3...warnings-ng-4.0.0) - 2019-3-15
 
 ### Added
@@ -31,10 +53,10 @@ and updated the documentation for the format to use.
 Refactored Gcc4 parser so that it is also capable of parsing Doxygen warnings.
 - [PR#16](https://github.com/jenkinsci/warnings-ng-plugin/pull/16), 
 [JENKINS-49965](https://issues.jenkins-ci.org/browse/JENKINS-49965): Improved performance of issues table.
-- [JENKINS-44915] Show description of Pylint rules in details.
+- [JENKINS-44915](https://issues.jenkins-ci.org/browse/JENKINS-44915): Show description of Pylint rules in details.
 
 ### Changed
-- [API]: Completely rewritten charts API.
+- \[API\]: Completely rewritten charts API.
 
 ## [3.0.3](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.1...warnings-ng-3.0.3) - 2019-2-18
 
@@ -102,8 +124,8 @@ Group issues by folder if no package is available.
 
 ### Added
 - [JENKINS-55500](https://issues.jenkins-ci.org/browse/JENKINS-55500): dashboard view portlet
-    - make tool selection configurable
-    - provide direct links to the analysis results
+  - make tool selection configurable
+  - provide direct links to the analysis results
 - [JENKINS-52755](https://issues.jenkins-ci.org/browse/JENKINS-52755), [JENKINS-54239](https://issues.jenkins-ci.org/browse/JENKINS-54239):
 View column that shows the number of issues.
 - Click on trend chart to navigate to selected analysis results. 
@@ -124,7 +146,7 @@ Parser now reports description with link to external documentation.
 table of issues per type and job
 
 ### Changed
-- [API]: Replaced `CheckForNull` annotations with `Nullable` in order to enable 
+- \[API\]: Replaced `CheckForNull` annotations with `Nullable` in order to enable 
 [NullAway](https://github.com/uber/NullAway) checker in build
 
 ### Fixed

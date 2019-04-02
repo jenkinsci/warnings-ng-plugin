@@ -17,6 +17,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -116,6 +117,9 @@ public class DuplicationTable {
     /**
      * Returns the selected table row.
      *
+     * @param row
+     *         the row to return
+     *
      * @return the selected row
      */
     public DuplicationRow getRow(final int row) {
@@ -131,7 +135,7 @@ public class DuplicationTable {
         private final String priority;
         private final int age;
         private final int lineCount;
-        
+
         @Nullable
         private DomElement fileNameLink;
         @Nullable
@@ -199,24 +203,30 @@ public class DuplicationTable {
             this.age = age;
         }
 
+        /**
+         * Clicks the link to the affected file and returns the new HTML page.
+         *
+         * @return the HTML page with the source code of the affected file
+         */
         public HtmlPage clickSourceCode() {
             if (fileNameLink == null) {
                 throw new AssertionError("No source code column link found");
             }
-            else {
-                return clickOnLink(fileNameLink);
-            }
+            return clickOnLink(fileNameLink);
         }
-        
+
+        /**
+         * Clicks the severity link and returns the new HTML page that contains all warnings filtered by that severity.
+         *
+         * @return the HTML page with the filtered results
+         */
         public HtmlPage clickSeverity() {
             if (priorityLink == null) {
                 throw new AssertionError("No severity column link found");
             }
-            else {
-                return clickOnLink(priorityLink);
-            }
+            return clickOnLink(priorityLink);
         }
-        
+
         @Override
         public boolean equals(final Object o) {
             if (this == o) {

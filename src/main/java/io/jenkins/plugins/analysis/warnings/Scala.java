@@ -22,7 +22,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class Scala extends ReportScanningToolSuite {
     private static final long serialVersionUID = -3425343204163661812L;
-    static final String ID = "scala";
+    private static final String ID = "scala";
 
     /** Creates a new instance of {@link Scala}. */
     @DataBoundConstructor

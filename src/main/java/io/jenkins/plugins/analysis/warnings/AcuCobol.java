@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class AcuCobol extends ReportScanningTool {
     private static final long serialVersionUID = 2333849052758654239L;
-    static final String ID = "acu-cobol";
+    private static final String ID = "acu-cobol";
 
     /** Creates a new instance of {@link AcuCobol}. */
     @DataBoundConstructor

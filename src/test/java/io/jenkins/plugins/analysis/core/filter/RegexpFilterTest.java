@@ -6,9 +6,11 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+
 import io.jenkins.plugins.analysis.core.filter.IncludeType.DescriptorImpl;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter.RegexpFilterDescriptor;
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
+
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -16,6 +18,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("ClassDataAbstractionCoupling")
 class RegexpFilterTest {
     private static final String PATTERN = "pattern";
     private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();

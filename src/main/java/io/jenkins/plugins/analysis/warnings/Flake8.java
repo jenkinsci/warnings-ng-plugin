@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Flake8 extends ReportScanningTool {
     private static final long serialVersionUID = 2133173655608279071L;
-    static final String ID = "flake8";
+    private static final String ID = "flake8";
 
     /** Creates a new instance of {@link Flake8}. */
     @DataBoundConstructor

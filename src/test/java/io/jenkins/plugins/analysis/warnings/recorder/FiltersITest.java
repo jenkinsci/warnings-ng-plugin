@@ -10,6 +10,10 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
+
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+
 import io.jenkins.plugins.analysis.core.filter.ExcludeCategory;
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.filter.ExcludeModule;
@@ -23,19 +27,17 @@ import io.jenkins.plugins.analysis.core.filter.IncludeType;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
-import static org.assertj.core.api.Assertions.*;
+import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Integration tests of the regex property filters.
  *
  * @author Manuel Hampp
  */
-@SuppressWarnings("classdataabstractioncoupling")
+@SuppressWarnings("ClassDataAbstractionCoupling")
 public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String MODULE_FILTER = "module-filter/";
 

@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
 import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 /**
  * Builds the line model for a trend chart showing the total number of issues per tool for a given number of builds.
@@ -11,7 +11,7 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  */
 public class ToolsTrendChart implements TrendChart {
     @Override
-    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results,
+    public LinesChartModel create(final Iterable<? extends AnalysisBuildResult> results,
             final ChartModelConfiguration configuration) {
         ToolSeriesBuilder builder = new ToolSeriesBuilder();
         LinesDataSet lineModel = builder.createDataSet(configuration, results);

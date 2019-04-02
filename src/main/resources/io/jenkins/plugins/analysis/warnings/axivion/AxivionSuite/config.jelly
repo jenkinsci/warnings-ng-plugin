@@ -1,0 +1,18 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:i="/issues" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
+
+  <f:entry title="${%title.projectUrl}" field="projectUrl" description="${%description.projectUrl}">
+    <f:textbox/>
+  </f:entry>
+
+  <f:entry title="${%title.credentialsId}" field="credentialsId" description="${%description.credentialsId}">
+    <c:select/>
+  </f:entry>
+
+  <f:entry title="${%title.basedir}" field="basedir" description="${%description.basedir}">
+    <f:textbox/>
+  </f:entry>
+
+  <i:tool-defaults/>
+
+</j:jelly>

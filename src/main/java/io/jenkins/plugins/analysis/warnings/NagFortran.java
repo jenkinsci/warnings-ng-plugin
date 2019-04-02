@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class NagFortran extends ReportScanningTool {
     private static final long serialVersionUID = 6623024344311048456L;
-    static final String ID = "nag-fortran";
+    private static final String ID = "nag-fortran";
 
     /** Creates a new instance of {@link NagFortran}. */
     @DataBoundConstructor

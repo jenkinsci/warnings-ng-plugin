@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-
 /**
  * Builder to create instances of the data class {@link IssuesStatistics}. This builder provides methods to configure
  * new and total and delta

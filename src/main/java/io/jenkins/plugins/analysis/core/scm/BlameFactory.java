@@ -11,7 +11,8 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.scm.NullSCM;
 import hudson.scm.SCM;
-import jenkins.model.Jenkins;
+
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 /**
  * Selects a matching SCM blamer for the specified job. Currently, only Git is supported.
@@ -32,8 +33,7 @@ public final class BlameFactory {
      * @return the blamer
      */
     public static Blamer createBlamer(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
-        Jenkins instance = Jenkins.getInstance();
-        if (instance.getPlugin("git") != null) {
+        if (new JenkinsFacade().isPluginInstalled("git")) {
             SCM scm = getScm(run);
             GitChecker gitChecker = new GitChecker();
             if (gitChecker.isGit(scm)) {

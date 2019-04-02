@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class YamlLint extends ReportScanningTool {
     private static final long serialVersionUID = 207829559393914788L;
-    static final String ID = "yamllint";
+    private static final String ID = "yamllint";
 
     /** Creates a new instance of {@link YamlLint}. */
     @DataBoundConstructor
@@ -48,6 +48,11 @@ public class YamlLint extends ReportScanningTool {
         @Override
         public String getUrl() {
             return "https://yamllint.readthedocs.io/";
+        }
+
+        @Override
+        public String getHelp() {
+            return "Use option -f parsable.";
         }
     }
 }

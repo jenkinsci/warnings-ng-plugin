@@ -48,7 +48,7 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 @ExportedBean
 public class IssuesDetail implements ModelObject {
     private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
@@ -128,6 +128,8 @@ public class IssuesDetail implements ModelObject {
      *         the label provider for the static analysis tool
      * @param sourceEncoding
      *         the encoding to use when displaying source files
+     * @param healthDescriptor
+     *         health descriptor
      */
     @SuppressWarnings("ParameterNumber")
     public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,

@@ -15,6 +15,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -49,7 +50,7 @@ class GitBlamer implements Blamer {
      *         content of environment variable GIT_COMMIT
      */
     GitBlamer(final GitClient git, final String gitCommit) {
-        this.workspace = git.getWorkTree();
+        workspace = git.getWorkTree();
         this.git = git;
         this.gitCommit = gitCommit;
     }
@@ -129,7 +130,8 @@ class GitBlamer implements Blamer {
          *
          * @return a mapping of absolute to relative file names of the conflicting files
          */
-        private Blames extractAffectedFiles() {
+        @VisibleForTesting
+        Blames extractAffectedFiles() {
             Blames blames = new Blames(workspace);
 
             FilteredLog log = new FilteredLog(report, "Can't create blame requests for some affected files:");
@@ -157,6 +159,15 @@ class GitBlamer implements Blamer {
             return blames;
         }
 
+        /**
+         * Runs Git blame for one file.
+         *
+         * @param request
+         *         the request that identifies the file
+         * @param blameRunner
+         *         the runner to invoke Git
+         */
+        @VisibleForTesting
         void run(final BlameRequest request, final BlameRunner blameRunner) {
             FilteredLog log = new FilteredLog(report, "Git blame errors:");
             String fileName = request.getFileName();
@@ -190,7 +201,8 @@ class GitBlamer implements Blamer {
                 }
             }
             catch (GitAPIException | JGitInternalException exception) {
-                log.logException(exception, "- error running git blame on '%s' with revision '%s'", fileName, headCommit);
+                log.logException(exception, "- error running git blame on '%s' with revision '%s'", fileName,
+                        headCommit);
             }
             log.logSummary();
         }

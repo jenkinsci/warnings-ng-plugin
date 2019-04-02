@@ -18,7 +18,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class AndroidLint extends ReportScanningTool {
     private static final long serialVersionUID = -7264992947534927156L;
-    static final String ID = "android-lint";
+    private static final String ID = "android-lint";
 
     /** Creates a new instance of {@link AndroidLint}. */
     @DataBoundConstructor

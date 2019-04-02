@@ -27,18 +27,19 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class PropertyTable {
     /**
-     * Returns whether the specified property table is visible on the specified page. 
+     * Returns whether the specified property table is visible on the specified page.
      *
      * @param page
      *         the whole details HTML page
      * @param property
      *         the property table to extract
+     *
      * @return {@code true} if the table is visible, {@code false} otherwise
      */
     public static boolean isVisible(final HtmlPage page, final String property) {
         try {
             getTitleOfTable(page, property);
-            
+
             return true;
         }
         catch (ElementNotFoundException e) {
@@ -153,7 +154,7 @@ public class PropertyTable {
             this.width = width;
             this.ignoreWidth = ignoreWidth;
         }
-        
+
         /**
          * Creates a new {@link PropertyRow}.
          *
@@ -167,7 +168,7 @@ public class PropertyTable {
         public PropertyRow(final String name, final int size, final int width) {
             this(name, size, width, false);
         }
-        
+
         /**
          * Creates a new {@link PropertyRow}.
          *
@@ -221,7 +222,7 @@ public class PropertyTable {
                     .append("width", width)
                     .append("name", name)
                     .append("size", size)
-                    . toString();
+                    .toString();
         }
     }
 }

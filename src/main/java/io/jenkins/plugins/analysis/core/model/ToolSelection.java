@@ -14,9 +14,9 @@ import org.kohsuke.stapler.DataBoundSetter;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
-import hudson.model.Job;
 import hudson.util.ComboBoxModel;
-import jenkins.model.Jenkins;
+
+import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 /**
  * UI proxy to let users select a static analysis report based on the UI.
@@ -99,8 +99,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
          */
         public ComboBoxModel doFillIdItems() {
             ComboBoxModel model = new ComboBoxModel();
-            Set<String> ids = Jenkins.getInstance()
-                    .getAllItems(Job.class)
+            Set<String> ids = new JenkinsFacade().getAllJobs()
                     .stream()
                     .flatMap(job -> job.getActions(JobAction.class).stream())
                     .map(JobAction::getId).collect(Collectors.toSet());

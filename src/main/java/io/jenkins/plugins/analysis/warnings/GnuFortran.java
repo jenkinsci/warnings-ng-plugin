@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class GnuFortran extends ReportScanningTool {
     private static final long serialVersionUID = -578099209983706725L;
-    static final String ID = "fortran";
+    private static final String ID = "fortran";
 
     /** Creates a new instance of {@link GnuFortran}. */
     @DataBoundConstructor

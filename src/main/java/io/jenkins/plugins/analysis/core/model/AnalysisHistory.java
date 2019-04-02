@@ -30,6 +30,8 @@ import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGate
  * @author Ullrich Hafner
  */
 public class AnalysisHistory implements History {
+    private static final int MIN_BUILDS = 2;
+
     /** The build to start the history from. */
     private final Run<?, ?> baseline;
     /** Selects a result of the same type. */
@@ -176,6 +178,18 @@ public class AnalysisHistory implements History {
             return result != null && result.isBetterThan(Result.FAILURE);
         }
         return true;
+    }
+
+    @Override
+    public boolean hasMultipleResults() {
+        Iterator<AnalysisResult> iterator = iterator();
+        for (int count = 1; iterator.hasNext(); count++) {
+            if (count >= MIN_BUILDS) {
+                return true;
+            }
+            iterator.next();
+        }
+        return false;
     }
 
     @Override

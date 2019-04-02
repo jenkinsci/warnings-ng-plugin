@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class CppLint extends ReportScanningTool {
     private static final long serialVersionUID = 7156745296954706641L;
-    static final String ID = "cpplint";
+    private static final String ID = "cpplint";
 
     /** Creates a new instance of {@link CppLint}. */
     @DataBoundConstructor

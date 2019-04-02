@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class AnsibleLint extends ReportScanningTool {
     private static final long serialVersionUID = -838846658095256811L;
-    static final String ID = "ansiblelint";
+    private static final String ID = "ansiblelint";
 
     /** Creates a new instance of {@link AnsibleLint}. */
     @DataBoundConstructor

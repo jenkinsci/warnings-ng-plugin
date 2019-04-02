@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 public class Intel extends ReportScanningTool {
     private static final long serialVersionUID = 8514076930043335408L;
 
-    static final String ID = "intel";
+    private static final String ID = "intel";
 
     /** Creates a new instance of {@link Intel}. */
     @DataBoundConstructor

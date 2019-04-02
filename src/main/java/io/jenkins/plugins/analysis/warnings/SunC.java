@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class SunC extends ReportScanningTool {
     private static final long serialVersionUID = -2194739612322803223L;
-    static final String ID = "sunc";
+    private static final String ID = "sunc";
 
     /** Creates a new instance of {@link SunC}. */
     @DataBoundConstructor

@@ -18,7 +18,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class ResharperInspectCode extends ReportScanningTool {
     private static final long serialVersionUID = 7249388335877895890L;
-    static final String ID = "resharper";
+    private static final String ID = "resharper";
 
     /** Creates a new instance of {@link ResharperInspectCode}. */
     @DataBoundConstructor

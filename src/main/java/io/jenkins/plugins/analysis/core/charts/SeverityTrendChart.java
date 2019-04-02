@@ -6,8 +6,8 @@ import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
 import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
  * Builds the model for a trend chart showing all issues by severity for a given number of builds.
@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  */
 public class SeverityTrendChart implements TrendChart {
     @Override
-    public LinesChartModel create(final Iterable<? extends StaticAnalysisRun> results,
+    public LinesChartModel create(final Iterable<? extends AnalysisBuildResult> results,
             final ChartModelConfiguration configuration) {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
         LinesDataSet dataSet = builder.createDataSet(configuration, results);

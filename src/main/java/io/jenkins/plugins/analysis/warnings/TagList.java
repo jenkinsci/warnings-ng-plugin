@@ -17,8 +17,8 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class TagList extends ReportScanningTool {
     private static final long serialVersionUID = 2696608544063390368L;
-    
-    static final String ID = "taglist";
+
+    private static final String ID = "taglist";
 
     /** Creates a new instance of {@link TagList}. */
     @DataBoundConstructor

@@ -16,8 +16,8 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class SwiftLint extends ReportScanningTool {
     private static final long serialVersionUID = -1112001682237184947L;
-    
-    static final String ID = "swiftlint";
+
+    private static final String ID = "swiftlint";
 
     /** Creates a new instance of {@link SwiftLint}. */
     @DataBoundConstructor

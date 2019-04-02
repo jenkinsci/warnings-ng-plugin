@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class DocFx extends ReportScanningTool {
     private static final long serialVersionUID = 268538556620830869L;
-    static final String ID = "docfx";
+    private static final String ID = "docfx";
 
     /** Creates a new instance of {@link DocFx}. */
     @DataBoundConstructor

@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class KlocWork extends ReportScanningTool {
     private static final long serialVersionUID = -4352260844574399784L;
-    static final String ID = "klocwork";
+    private static final String ID = "klocwork";
 
     /** Creates a new instance of {@link KlocWork}. */
     @DataBoundConstructor

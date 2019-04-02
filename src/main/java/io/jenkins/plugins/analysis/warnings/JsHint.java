@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class JsHint extends ReportScanningTool {
     private static final long serialVersionUID = -871437328498798351L;
-    static final String ID = "js-hint";
+    private static final String ID = "js-hint";
 
     /** Creates a new instance of {@link JsHint}. */
     @DataBoundConstructor

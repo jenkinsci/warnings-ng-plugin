@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 
@@ -22,6 +21,7 @@ public class IssueRow {
     public static final String TYPE = "Type";
     public static final String PRIORITY = "Severity";
     public static final String AGE = "Age";
+
     private static final String NOT_SET = "-";
 
     private final Map<String, String> valueByName = new HashMap<>();
@@ -102,7 +102,15 @@ public class IssueRow {
                 .toString();
     }
 
-    public boolean hasLink(final String id) {
-        return cellsByName.get(id).getFirstElementChild() instanceof HtmlAnchor;
+    /**
+     * Returns whether the column with the specified ID contains a link.
+     *
+     * @param columnId
+     *         the ID of the column
+     *
+     * @return {@code true} if the column contains a link, {@code false} if the column contains plain text
+     */
+    public boolean hasLink(final String columnId) {
+        return cellsByName.get(columnId).getFirstElementChild() instanceof HtmlAnchor;
     }
 }
