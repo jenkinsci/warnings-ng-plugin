@@ -24,16 +24,10 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 public final class BlameFactory {
 
     private static JenkinsFacade jenkinsFacade = new JenkinsFacade();
-    private static GitChecker gitChecker = new GitChecker();
 
     @VisibleForTesting
-    static void setJenkinsFacade(JenkinsFacade facade) {
+    static void setJenkinsFacade(final JenkinsFacade facade) {
         jenkinsFacade = facade;
-    }
-
-    @VisibleForTesting
-    static void setGitChecker(GitChecker newGitChecker) {
-        gitChecker = newGitChecker;
     }
 
     /**
@@ -49,9 +43,9 @@ public final class BlameFactory {
      * @return the blamer
      */
     public static Blamer createBlamer(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
-        if (jenkinsFacade.isPluginInstalled("git")){
+        if (jenkinsFacade.isPluginInstalled("git")) {
             SCM scm = getScm(run);
-
+            GitChecker gitChecker = new GitChecker();
             if (gitChecker.isGit(scm)) {
                 return gitChecker.createBlamer(run, scm, workspace, listener);
             }
