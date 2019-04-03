@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
-import static io.jenkins.plugins.analysis.core.model.assertj.TabLabelProviderAssert.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
