@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Php extends ReportScanningTool {
     private static final long serialVersionUID = 7286546914256953672L;
-    static final String ID = "php";
+    private static final String ID = "php";
 
     /** Creates a new instance of {@link Php}. */
     @DataBoundConstructor

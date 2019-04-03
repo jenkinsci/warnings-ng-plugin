@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class Cpd extends DuplicateCodeScanner {
     private static final long serialVersionUID = -4121571018057432203L;
-    static final String ID = "cpd";
+    private static final String ID = "cpd";
 
     /** Creates a new instance of {@link Cpd}.
      */

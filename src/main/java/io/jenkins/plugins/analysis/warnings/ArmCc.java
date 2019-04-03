@@ -20,7 +20,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
  */
 public class ArmCc extends ReportScanningToolSuite {
     private static final long serialVersionUID = 5712079077224290879L;
-    static final String ID = "armcc";
+    private static final String ID = "armcc";
 
     /** Creates a new instance of {@link ArmCc}. */
     @DataBoundConstructor

@@ -23,7 +23,7 @@ import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
  */
 public class FindBugs extends ReportScanningTool {
     private static final long serialVersionUID = 4692318309214830824L;
-    static final String ID = "findbugs";
+    private static final String ID = "findbugs";
 
     private boolean useRankAsPriority;
 

@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class CppCheck extends ReportScanningTool {
     private static final long serialVersionUID = -5646367160520640291L;
-    static final String ID = "cppcheck";
+    private static final String ID = "cppcheck";
 
     /** Creates a new instance of {@link CppCheck}. */
     @DataBoundConstructor

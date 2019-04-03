@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class SphinxBuild extends ReportScanningTool {
     private static final long serialVersionUID = -7095926313386515100L;
-    static final String ID = "sphinx";
+    private static final String ID = "sphinx";
 
     /** Creates a new instance of {@link SphinxBuild}. */
     @DataBoundConstructor

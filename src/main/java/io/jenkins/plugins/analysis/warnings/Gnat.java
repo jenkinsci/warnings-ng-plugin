@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Gnat extends ReportScanningTool {
     private static final long serialVersionUID = 1249773597483641464L;
-    static final String ID = "gnat";
+    private static final String ID = "gnat";
 
     /** Creates a new instance of {@link Gnat}. */
     @DataBoundConstructor

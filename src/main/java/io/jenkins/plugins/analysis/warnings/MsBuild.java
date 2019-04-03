@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class MsBuild extends ReportScanningTool {
     private static final long serialVersionUID = -6022797743536264094L;
-    static final String ID = "msbuild";
+    private static final String ID = "msbuild";
 
     /** Creates a new instance of {@link MsBuild}. */
     @DataBoundConstructor

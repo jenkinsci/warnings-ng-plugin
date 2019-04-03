@@ -21,7 +21,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
  */
 public class Eclipse extends ReportScanningToolSuite {
     private static final long serialVersionUID = -2312612497121380654L;
-    static final String ID = "eclipse";
+    private static final String ID = "eclipse";
 
     /** Creates a new instance of {@link Eclipse}. */
     @DataBoundConstructor

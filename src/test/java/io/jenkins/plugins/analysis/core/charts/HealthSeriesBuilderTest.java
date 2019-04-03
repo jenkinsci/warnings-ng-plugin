@@ -197,7 +197,7 @@ class HealthSeriesBuilderTest {
          *
          * @return test arg
          */
-        public Object build() {
+        Object build() {
             return Arguments.of(
                     name,
                     descriptor,

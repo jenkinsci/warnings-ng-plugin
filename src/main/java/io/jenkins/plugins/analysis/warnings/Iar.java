@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Iar extends ReportScanningTool {
     private static final long serialVersionUID = 6672928932731913714L;
-    static final String ID = "iar";
+    private static final String ID = "iar";
 
     /** Creates a new instance of {@link Iar}. */
     @DataBoundConstructor

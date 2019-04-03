@@ -14,6 +14,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -112,6 +113,14 @@ public class IssuesTable {
         return rows;
     }
 
+    /**
+     * Returns the row with the specified index.
+     *
+     * @param index
+     *         index of the row
+     *
+     * @return the row
+     */
     public IssueRow getRow(final int index) {
         return rows.get(index);
     }

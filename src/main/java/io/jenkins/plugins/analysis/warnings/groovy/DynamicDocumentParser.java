@@ -9,7 +9,6 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.ReaderFactory;
-import edu.hm.hafner.analysis.RegexpDocumentParser;
 import edu.hm.hafner.analysis.Report;
 
 /**
@@ -17,7 +16,8 @@ import edu.hm.hafner.analysis.Report;
  *
  * @author Ullrich Hafner
  */
-class DynamicDocumentParser extends RegexpDocumentParser {
+@SuppressWarnings("deprecation")
+class DynamicDocumentParser extends edu.hm.hafner.analysis.RegexpDocumentParser {
     private static final long serialVersionUID = -690643673847390322L;
     private static final int NO_LINE_NUMBER_AVAILABLE = 0;
     

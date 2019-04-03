@@ -1,0 +1,32 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="HtmlTagCanBeJavadocTag" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="JavadocHtmlLint" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="LocalCanBeFinal" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="REPORT_VARIABLES" value="false" />
+      <option name="REPORT_PARAMETERS" value="true" />
+      <option name="REPORT_CATCH_PARAMETERS" value="false" />
+      <option name="REPORT_FOREACH_PARAMETERS" value="false" />
+      <option name="REPORT_IMPLICIT_FINALS" value="false" />
+    </inspection_tool>
+    <inspection_tool class="OptionalGetWithoutIsPresent" enabled="true" level="INFORMATION" enabled_by_default="true">
+      <scope name="Production" level="WARNING" enabled="true" />
+    </inspection_tool>
+    <inspection_tool class="ParameterHidingMemberVariable" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="m_ignoreInvisibleFields" value="true" />
+      <option name="m_ignoreStaticMethodParametersHidingInstanceFields" value="true" />
+      <option name="m_ignoreForConstructors" value="true" />
+      <option name="m_ignoreForPropertySetters" value="true" />
+      <option name="m_ignoreForAbstractMethods" value="false" />
+    </inspection_tool>
+    <inspection_tool class="SerializableHasSerialVersionUIDField" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoreAnonymousInnerClasses" value="false" />
+      <option name="superClassString" value="java.awt.Component" />
+    </inspection_tool>
+    <inspection_tool class="SwitchStatementsWithoutDefault" enabled="false" level="INFORMATION" enabled_by_default="false">
+      <option name="m_ignoreFullyCoveredEnums" value="true" />
+    </inspection_tool>
+    <inspection_tool class="UnnecessaryInheritDoc" enabled="true" level="WARNING" enabled_by_default="true" />
+  </profile>
+</component>

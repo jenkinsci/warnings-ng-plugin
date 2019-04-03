@@ -1,6 +1,8 @@
 *.xml
 !checkstyle-idea.xml
-!codeStyleSettings.xml
+!codeStyles/codeStyleConfig.xml
+!codeStyles/Project.xml
+!inspectionProfiles/Project_Default.xml
 
 libraries
 scopes

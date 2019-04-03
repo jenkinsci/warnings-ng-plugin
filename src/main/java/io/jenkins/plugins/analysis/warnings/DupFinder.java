@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class DupFinder extends DuplicateCodeScanner {
     private static final long serialVersionUID = -1073794044577239113L;
-    static final String ID = "dupfinder";
+    private static final String ID = "dupfinder";
 
     /** Creates a new instance of {@link DupFinder}. */
     @DataBoundConstructor

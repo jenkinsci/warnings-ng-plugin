@@ -3,13 +3,13 @@ package io.jenkins.plugins.analysis.warnings;
 import edu.hm.hafner.analysis.parser.RfLintParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides a parser and customized messages for RfLint.
@@ -18,8 +18,8 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class RfLint extends ReportScanningTool {
     private static final long serialVersionUID = -8395238803254856424L;
-    static final String ID = "rflint";
-    static final String ICON_NAME = "robot-framework";
+    private static final String ID = "rflint";
+    private static final String ICON_NAME = "robot-framework";
 
     /** Creates a new instance of {@link RfLint}. */
     @DataBoundConstructor

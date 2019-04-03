@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Pep8 extends ReportScanningTool {
     private static final long serialVersionUID = -2199589729419226931L;
-    static final String ID = "pep8";
+    private static final String ID = "pep8";
 
     /** Creates a new instance of {@link NagFortran}. */
     @DataBoundConstructor

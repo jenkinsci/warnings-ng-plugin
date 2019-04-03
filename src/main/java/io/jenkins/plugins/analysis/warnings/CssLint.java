@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class CssLint extends ReportScanningTool {
     private static final long serialVersionUID = -2790274869830094987L;
-    static final String ID = "csslint";
+    private static final String ID = "csslint";
 
     /** Creates a new instance of {@link CssLint}. */
     @DataBoundConstructor

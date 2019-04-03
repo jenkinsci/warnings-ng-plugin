@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class GhsMulti extends ReportScanningTool {
     private static final long serialVersionUID = -873750719433395569L;
-    static final String ID = "ghs-multi";
+    private static final String ID = "ghs-multi";
 
     /** Creates a new instance of {@link GhsMulti}. */
     @DataBoundConstructor

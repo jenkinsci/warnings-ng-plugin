@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Buckminster extends ReportScanningTool {
     private static final long serialVersionUID = 7067423260823622207L;
-    static final String ID = "buckminster";
+    private static final String ID = "buckminster";
 
     /** Creates a new instance of {@link Buckminster}. */
     @DataBoundConstructor

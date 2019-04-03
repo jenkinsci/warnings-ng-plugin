@@ -3,10 +3,8 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.util.HashMap;
 import java.util.Map;
 
-import edu.hm.hafner.util.VisibleForTesting;
-
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 
 /**
  * Builds the series for a graph showing all warnings by health descriptor.
@@ -32,15 +30,8 @@ public class HealthSeriesBuilder extends SeriesBuilder {
         this.healthDescriptor = healthDescriptor;
     }
 
-    @VisibleForTesting
-    HealthSeriesBuilder(final HealthDescriptor healthDescriptor, final ResultTime resultTime) {
-        super(resultTime);
-
-        this.healthDescriptor = healthDescriptor;
-    }
-
     @Override
-    protected Map<String, Integer> computeSeries(final StaticAnalysisRun current) {
+    protected Map<String, Integer> computeSeries(final AnalysisBuildResult current) {
         Map<String, Integer> series = new HashMap<>();
         int remainder = current.getTotalSize();
 

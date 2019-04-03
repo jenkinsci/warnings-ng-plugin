@@ -16,8 +16,8 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Detekt extends ReportScanningTool {
     private static final long serialVersionUID = 2441989609462884392L;
-    
-    static final String ID = "detekt";
+
+    private static final String ID = "detekt";
 
     /** Creates a new instance of {@link Detekt}. */
     @DataBoundConstructor

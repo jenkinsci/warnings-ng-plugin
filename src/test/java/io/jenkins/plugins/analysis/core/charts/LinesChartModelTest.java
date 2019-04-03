@@ -103,6 +103,8 @@ class LinesChartModelTest {
         model.addXAxisLabels(builds);
         model.addSeries(series);
 
+        // TODO: write assertions for the getters as well
+
         assertThatJson(model).node("xAxisLabels")
                 .isArray().hasSize(5)
                 .contains("#1")

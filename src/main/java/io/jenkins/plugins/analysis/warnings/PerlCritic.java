@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class PerlCritic extends ReportScanningTool {
     private static final long serialVersionUID = 7864698398295336082L;
-    static final String ID = "perl-critic";
+    private static final String ID = "perl-critic";
 
     /** Creates a new instance of {@link PerlCritic}. */
     @DataBoundConstructor

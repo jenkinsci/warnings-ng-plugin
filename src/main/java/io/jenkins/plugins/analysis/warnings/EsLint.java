@@ -18,8 +18,8 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class EsLint extends ReportScanningTool {
     private static final long serialVersionUID = -3634797822059504099L;
-    
-    static final String ID = "eslint";
+
+    private static final String ID = "eslint";
 
     /** Creates a new instance of {@link EsLint}. */
     @DataBoundConstructor

@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Infer extends ReportScanningTool {
     private static final long serialVersionUID = 1536446255698173148L;
-    static final String ID = "infer";
+    private static final String ID = "infer";
 
     /** Creates a new instance of {@link Infer}. */
     @DataBoundConstructor

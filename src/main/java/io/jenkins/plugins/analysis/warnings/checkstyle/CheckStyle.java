@@ -20,7 +20,7 @@ import io.jenkins.plugins.analysis.warnings.Messages;
  */
 public class CheckStyle extends ReportScanningTool {
     private static final long serialVersionUID = -7944828406964963020L;
-    static final String ID = "checkstyle";
+    private static final String ID = "checkstyle";
 
     /** Creates a new instance of {@link CheckStyle}. */
     @DataBoundConstructor

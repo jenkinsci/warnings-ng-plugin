@@ -5,19 +5,19 @@ import java.util.Map;
 
 import org.junit.Test;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
-
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.Gcc4;
-
 import hudson.matrix.AxisList;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
 import hudson.matrix.MatrixRun;
 import hudson.matrix.TextAxis;
 import hudson.model.Result;
+
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.Gcc4;
+
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 
 /**
  * Integration tests of the warnings plug-in in matrix jobs.

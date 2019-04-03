@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class PuppetLint extends ReportScanningTool {
     private static final long serialVersionUID = 6585663572231821338L;
-    static final String ID = "puppetlint";
+    private static final String ID = "puppetlint";
 
     /** Creates a new instance of {@link PuppetLint}. */
     @DataBoundConstructor
