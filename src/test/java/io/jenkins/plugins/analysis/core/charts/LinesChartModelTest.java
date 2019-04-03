@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -9,6 +11,7 @@ import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
 import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
 
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests the class {@link LinesChartModel}.
@@ -17,6 +20,67 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  */
 class LinesChartModelTest {
     private static final String COLOR = "#fff";
+
+    @Test
+    void testEmptyCtor() {
+        LinesChartModel model = new LinesChartModel();
+        assertThat(model.getId().compareTo(""));
+        assertThat(model.getSeries().size() == 0);
+        assertThat(model.getXAxisLabels().isEmpty());
+
+    }
+
+    @Test
+    void testToString() {
+        LinesChartModel model = new LinesChartModel("spotbugs");
+        model.addXAxisLabels(Arrays.asList("1", "2", "3"));
+        assertThat(model.toString().equals("{\n"
+                + "  \"XAxisLabels\":   [\n"
+                + "    \"1\",\n"
+                + "    \"2\",\n"
+                + "    \"3\"\n"
+                + "  ],\n"
+                + "  \"id\": \"spotbugs\",\n"
+                + "  \"series\": []\n"
+                + "}"));
+    }
+
+    @Test
+    void testSize() {
+        LinesChartModel model = new LinesChartModel("spotbugs");
+        model.addXAxisLabels(Arrays.asList("1", "2", "3"));
+        assertThat(model.size() == 3);
+
+    }
+
+    @Test
+    void testGetId() {
+        LinesChartModel model = new LinesChartModel("spotbugs");
+        assertThat(model.getId().equals("spotbugs"));
+
+        model.setId("anotherSpotbugs");
+        assertThat(model.getId().equals("anotherSpotbugs"));
+    }
+
+    @Test
+    void testGetSeries() {
+        LinesChartModel model = new LinesChartModel("spotbugs");
+        LineSeries series = new LineSeries("TestName", "TestColor", StackedMode.STACKED, FilledMode.FILLED);
+        model.addSeries(series);
+
+        assertThat(model.getSeries().get(0).equals(series));
+    }
+
+    @Test
+    void testGetXAxisLabels() {
+        LinesChartModel modelForSingleXAxisLabelTest = new LinesChartModel("spotbugs");
+        modelForSingleXAxisLabelTest.addXAxisLabel("a");
+        assertThat(modelForSingleXAxisLabelTest.getXAxisLabels().equals(Arrays.asList("a")));
+
+        LinesChartModel modelForXAxisListLabelTest = new LinesChartModel("spotbugs");
+        modelForXAxisListLabelTest.addXAxisLabels(Arrays.asList("a", "b", "c"));
+        assertThat(modelForXAxisListLabelTest.getXAxisLabels().equals(Arrays.asList("a", "b", "c")));
+    }
 
     @Test
     void shouldCreateLineModel() {
