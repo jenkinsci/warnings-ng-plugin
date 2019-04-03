@@ -27,7 +27,6 @@ import static org.mockito.Mockito.*;
 class CompositeResultTest {
     private static final String CHECK_STYLE = "checkStyle";
     private static final String SPOT_BUGS = "spotBugs";
-    //Matthias test Comment
 
     @Test
     void shouldCreateResultOfSequenceWithIdenticalBuilds() {
