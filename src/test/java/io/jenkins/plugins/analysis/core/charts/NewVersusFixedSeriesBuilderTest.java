@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 /**
  * Tests the class {@link NewVersusFixedSeriesBuilder}.
  *
- * @author Ullrich Hafner
+ * @author Veronika Zwickenpflug
  */
 class NewVersusFixedSeriesBuilderTest {
 
