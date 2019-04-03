@@ -148,7 +148,7 @@ class CompositeResultTest {
     @Nested
     class CompositeAnalysisBuildResultTest {
         @Test
-        void shouldTestMergeNumberOfTotalIssues(){
+        void shouldMergeNumberOfTotalIssues(){
             AnalysisBuildResult first = createResult(3, 1, 6, 1);
             AnalysisBuildResult second = createResult(1, 3, 9, 1);
 
@@ -159,7 +159,7 @@ class CompositeResultTest {
         }
 
         @Test
-        void shouldTestMergeNumberOfFixedIssues(){
+        void shouldMergeNumberOfFixedIssues(){
             AnalysisBuildResult first = createResultWithFixedIssues(2, 1);
             AnalysisBuildResult second = createResultWithFixedIssues(3, 1);
 
@@ -170,7 +170,7 @@ class CompositeResultTest {
         }
 
         @Test
-        void shouldTestMergeNumberOfNewIssues(){
+        void shouldMergeNumberOfNewIssues(){
             AnalysisBuildResult first = createResultWithNewIssues(5, 2, 6, 1);
             AnalysisBuildResult second = createResultWithNewIssues(4, 2, 7, 1);
 
@@ -181,7 +181,7 @@ class CompositeResultTest {
         }
 
         @Test
-        void shouldTestMergeTotalNumberOfIssuesBySeverity() {
+        void shouldMergeTotalNumberOfIssuesBySeverity() {
             AnalysisBuildResult first = createResult(1, 2, 3, 1);
             AnalysisBuildResult second = createResult(4, 5, 6, 1);
 
@@ -194,7 +194,7 @@ class CompositeResultTest {
         }
 
         @Test
-        void shouldTestMergeOfNewIssuesBySeverity(){
+        void shouldMergeNumberOfNewIssuesBySeverity(){
             AnalysisBuildResult first = createResultWithNewIssues(2, 6, 2, 1);
             AnalysisBuildResult second = createResultWithNewIssues(5, 2, 2, 1);
 
