@@ -12,6 +12,8 @@ I finally managed it to port the charting functionality of the former analysis-c
 - Trend chart (job page): shows the warnings of all static analysis results in a single chart. 
 - Portlet (dashboard view): shows the number of warnings from all jobs in the view in a chart. 
 
+- Add support for [IBLinter](https://github.com/IBDecodable/IBLinter) - Xcode Storyboard Linter
+
 ### Fixed
 
 - Added missing dependency to JSON-Smart library.

@@ -109,3 +109,4 @@ the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/).
 | 93 | yamllint | yamlLint() | - - | [YamlLint](https://yamllint.readthedocs.io/) |  |
 | 94 | yui | yuiCompressor() | - - | YUI Compressor |  |
 | 95 | zptlint | zptLint() | - - | ZPT Lint |  |
+| 96 | iblinter | IBLinter() | - - | [IBLinter](https://github.com/IBDecodable/IBLinter) |  |
