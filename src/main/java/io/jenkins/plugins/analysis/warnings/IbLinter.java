@@ -10,18 +10,18 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 /**
- * Provides a parser and customized messages for IBLinter. Delegates to {@link CheckStyleParser}.
+ * Provides a parser and customized messages for IbLinter. Delegates to {@link CheckStyleParser}.
  *
  * @author Paweł Madej
  */
-public class IBLinter extends ReportScanningTool {
+public class IbLinter extends ReportScanningTool {
     private static final long serialVersionUID = -1112001682237184947L;
-
     private static final String ID = "iblinter";
 
-    /** Creates a new instance of {@link IBLinter}. */
+    /** Creates a new instance of {@link IbLinter}. */
+    @SuppressWarnings("WeakerAccess")
     @DataBoundConstructor
-    public IBLinter() {
+    public IbLinter() {
         super();
         // empty constructor required for stapler
     }
@@ -32,7 +32,7 @@ public class IBLinter extends ReportScanningTool {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("IBLinter")
+    @Symbol("ibLinter")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
