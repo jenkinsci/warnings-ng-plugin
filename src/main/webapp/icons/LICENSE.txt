@@ -90,6 +90,16 @@ https://fontawesome.com/license
 
 ------------------------------------------------------------------------------
 
+License for PHPStan icons
+
+https://github.com/phpstan/phpstan/issues/2035#issuecomment-477313987
+
+Original file: https://pbs.twimg.com/profile_images/985882871700361216/7_CAOhlW_400x400.jpg
+The 24x24 and 48x48 icons were created from this file. No modifications were made, except
+the scale that was changed.
+
+------------------------------------------------------------------------------
+
 License for Pylint icons
 
 https://creativecommons.org/licenses/by-sa/4.0/
