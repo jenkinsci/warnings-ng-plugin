@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -13,7 +12,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Tobias Redl
  */
-class TabLabelProviderTest {
+public class TabLabelProviderTest {
 
     private TabLabelProvider createTabLabelProvider(final String fileName) {
         Issue issue = mock(Issue.class);
@@ -29,55 +28,56 @@ class TabLabelProviderTest {
     void shouldReturnPackageNameJava() {
         TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.java");
 
-        assertEquals(tabLabelProvider.getPackageName(), Messages.Tab_Package());
+        TabLabelProviderAssert.assertThat(tabLabelProvider).hasPackageName(Messages.Tab_Package());
     }
 
     @Test
     void shouldReturnPackageNamePython() {
         TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.py");
 
-        assertEquals(tabLabelProvider.getPackageName(), Messages.Tab_Package());
+        TabLabelProviderAssert.assertThat(tabLabelProvider).hasPackageName(Messages.Tab_Package());
     }
 
     @Test
     void shouldReturnPackageNameCS() {
         TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.cs");
 
-        assertEquals(tabLabelProvider.getPackageName(), Messages.Tab_Namespace());
+        TabLabelProviderAssert.assertThat(tabLabelProvider).hasPackageName(Messages.Tab_Namespace());
     }
 
     @Test
     void shouldReturnPackageNameFallback() {
         TabLabelProvider tabLabelProvider = createTabLabelProvider("Test.file");
 
-        assertEquals(tabLabelProvider.getPackageName(), Messages.Tab_Folder());
+        TabLabelProviderAssert.assertThat(tabLabelProvider).hasPackageName(Messages.Tab_Folder());
     }
 
     @Test
     void shouldReturnPackagesJava() {
         TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.java");
 
-        assertEquals(tabLabelProvider.getPackages(), Messages.Tab_Packages());
+        TabLabelProviderAssert.assertThat(tabLabelProvider).hasPackages(Messages.Tab_Packages());
+
     }
 
     @Test
     void shouldReturnPackagesPython() {
         TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.py");
 
-        assertEquals(tabLabelProvider.getPackages(), Messages.Tab_Packages());
+        TabLabelProviderAssert.assertThat(tabLabelProvider).hasPackages(Messages.Tab_Packages());
     }
 
     @Test
     void shouldReturnPackagesCS() {
         TabLabelProvider tabLabelProvider = createTabLabelProvider("Testfile.cs");
 
-        assertEquals(tabLabelProvider.getPackages(), Messages.Tab_Namespaces());
+        TabLabelProviderAssert.assertThat(tabLabelProvider).hasPackages(Messages.Tab_Namespaces());
     }
 
     @Test
     void shouldReturnPackagesFallback() {
         TabLabelProvider tabLabelProvider = createTabLabelProvider("Test.file");
 
-        assertEquals(tabLabelProvider.getPackages(), Messages.Tab_Folders());
+        TabLabelProviderAssert.assertThat(tabLabelProvider).hasPackages(Messages.Tab_Folders());
     }
 }
