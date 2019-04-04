@@ -45,7 +45,7 @@ class DeltaReportTest {
 
     @Test
     void shouldHaveCorrectReports() {
-        Run run = mock(Run.class);
+        Run<?, ?> run = mock(Run.class);
         when(run.getExternalizableId()).thenReturn(REFERENCE_BUILD_ID);
 
         History history = mock(History.class);
@@ -75,7 +75,7 @@ class DeltaReportTest {
 
     @Test
     void shouldCreateIssuesStatistics() {
-        Run run = mock(Run.class);
+        Run<?, ?> run = mock(Run.class);
         when(run.getExternalizableId()).thenReturn(REFERENCE_BUILD_ID);
 
         History history = mock(History.class);
