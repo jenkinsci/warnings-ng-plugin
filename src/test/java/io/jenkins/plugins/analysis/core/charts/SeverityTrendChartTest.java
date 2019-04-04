@@ -70,6 +70,10 @@ class SeverityTrendChartTest {
     }
 
     @Test
+    void shouldCreatePriorityChartWithZeroErrors() {
+    }
+
+    @Test
     void shouldCreatePriorityChart() {
         SeverityTrendChart chart = new SeverityTrendChart();
 
