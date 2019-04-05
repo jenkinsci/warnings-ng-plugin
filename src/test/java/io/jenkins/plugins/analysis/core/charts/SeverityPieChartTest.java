@@ -1,6 +1,11 @@
 package io.jenkins.plugins.analysis.core.charts;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
+
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -10,11 +15,19 @@ import static org.assertj.core.api.Assertions.*;
  * @author Matthias Herpers
  */
 class SeverityPieChartTest {
-    /** First Dummy useless test to test building. */
+
+    /** First Dummy test to test building. */
     @Test
     void buildTest() {
-        //
-        assertThat(1).isEqualTo(1);
 
+        SeverityPieChart severityPieChart = new SeverityPieChart();
+        int numberOfDefaultPieData = Severity.getPredefinedValues().size() - 1; // Without Severity.ERROR
+        //Create Report
+        Report report =new Report();
+        //pass Report to SeverityPieChart
+        PieChartModel pieChartModel = severityPieChart.create(report);
+        List<PieData> data = pieChartModel.getData();
+        //Assert
+        assertThat(data.size()).isEqualTo(numberOfDefaultPieData);
     }
 }
