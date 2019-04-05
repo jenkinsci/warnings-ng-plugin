@@ -26,12 +26,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Colin Kaschel
  */
-class ReferenceDetailsModelTest {
-
-    private static final String DESCRIPTION
-            = join("Hello description with", a().withHref("url").withText("link")).render();
-    private static final String MESSAGE
-            = join("Hello message with", a().withHref("url").withText("link")).render();
+class ReferenceDetailsModelTest extends DetailsModelTest{
 
     private static final String COMMIT = "commit";
     private static final String NAME = "name";
@@ -124,21 +119,4 @@ class ReferenceDetailsModelTest {
 
         return new ReferenceDetailsModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, blames);
     }
-
-    private IssueBuilder createBuilder() {
-        return new IssueBuilder().setMessage(MESSAGE);
-    }
-
-    private Issue createIssue(final int index) {
-        IssueBuilder builder = createBuilder();
-        builder.setFileName("/path/to/file-" + index)
-                .setPackageName("package-" + index)
-                .setCategory("category-" + index)
-                .setType("type-" + index)
-                .setLineStart(15)
-                .setSeverity(Severity.WARNING_HIGH)
-                .setReference("1");
-        return builder.build();
-    }
-
 }

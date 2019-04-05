@@ -25,11 +25,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
-class DetailsTableModelTest {
-    private static final String DESCRIPTION
-            = join("Hello description with", a().withHref("url").withText("link")).render();
-    private static final String MESSAGE
-            = join("Hello message with", a().withHref("url").withText("link")).render();
+class DetailsTableModelTest extends DetailsModelTest {
 
     @Test
     void shouldConvertIssuesToArrayWithAllColumns() {
@@ -97,20 +93,5 @@ class DetailsTableModelTest {
         assertThat(model.getWidths(report)).hasSize(7);
     }
 
-    private IssueBuilder createBuilder() {
-        return new IssueBuilder().setMessage(MESSAGE);
-    }
-
-    private Issue createIssue(final int index) {
-        IssueBuilder builder = createBuilder();
-        builder.setFileName("/path/to/file-" + index)
-                .setPackageName("package-" + index)
-                .setCategory("category-" + index)
-                .setType("type-" + index)
-                .setLineStart(15)
-                .setSeverity(Severity.WARNING_HIGH)
-                .setReference("1");
-        return builder.build();
-    }
 }
 
