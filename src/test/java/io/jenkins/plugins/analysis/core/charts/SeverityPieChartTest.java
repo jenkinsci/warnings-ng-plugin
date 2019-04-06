@@ -23,7 +23,7 @@ class SeverityPieChartTest {
         SeverityPieChart severityPieChart = new SeverityPieChart();
         int numberOfDefaultPieData = Severity.getPredefinedValues().size() - 1; // Without Severity.ERROR
         //Create Report
-        Report report =new Report();
+        Report report = new Report();
         //pass Report to SeverityPieChart
         PieChartModel pieChartModel = severityPieChart.create(report);
         List<PieData> data = pieChartModel.getData();

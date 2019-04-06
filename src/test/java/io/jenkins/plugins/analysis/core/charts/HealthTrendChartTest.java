@@ -34,12 +34,12 @@ class HealthTrendChartTest {
         HealthTrendChart chart = new HealthTrendChart(healthDescriptor);
 
         List<AnalysisBuildResult> resultsCheckStyle = new ArrayList<>();
-        resultsCheckStyle.add(createResult( 1));
-        resultsCheckStyle.add(createResult( 2));
+        resultsCheckStyle.add(createResult(1));
+        resultsCheckStyle.add(createResult(2));
 
         List<AnalysisBuildResult> resultsSpotBugs = new ArrayList<>();
-        resultsSpotBugs.add(createResult( 1));
-        resultsSpotBugs.add(createResult( 2));
+        resultsSpotBugs.add(createResult(1));
+        resultsSpotBugs.add(createResult(2));
 
         LinesChartModel model = chart.create(
                 new CompositeResult(asList(resultsCheckStyle, resultsSpotBugs)), new ChartModelConfiguration());
@@ -55,7 +55,7 @@ class HealthTrendChartTest {
      * @param number number of Build.
      * @return
      */
-    private AnalysisBuildResult createResult( final int number) {
+    private AnalysisBuildResult createResult(final int number) {
         AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
 
         AnalysisBuild build = new BuildProperties(number, "#" + number, 10);
