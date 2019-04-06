@@ -18,7 +18,7 @@ class NullBlamerTest {
     void shouldLogSkippedBlaming() {
         Report report = new Report();
 
-        final NullBlamer blamer = new NullBlamer();
+        NullBlamer blamer = new NullBlamer();
         blamer.blame(report);
 
         assertThat(report.getInfoMessages()).contains(NullBlamer.BLAMING_SKIPPED);
