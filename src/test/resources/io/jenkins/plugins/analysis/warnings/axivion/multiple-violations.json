@@ -1,0 +1,46 @@
+{
+  "rows": [
+    {
+      "id": 1,
+      "state": "added",
+      "errorNumber": "MisraC++-7.1.1",
+      "message": "A parameter which is not modified shall be const qualified.",
+      "entity": "parent",
+      "path": "src/mainwindow.h",
+      "line": 18,
+      "provider": "axivion",
+      "severity": "required",
+      "justification": "",
+      "tags": [],
+      "errorLink": null
+    },
+    {
+      "id": 5,
+      "state": "added",
+      "errorNumber": "Generic-NamingConvention",
+      "message": "Private or protected function member must be prefixed by underscore, use camel-case, starting with lower-case character",
+      "entity": "readSettings()",
+      "path": "src/mainwindow.h",
+      "line": 25,
+      "provider": "axivion",
+      "severity": "required",
+      "justification": "",
+      "tags": [],
+      "errorLink": null
+    },
+    {
+      "id": 249,
+      "state": "added",
+      "errorNumber": "Style.Indentation-AllmanBraces",
+      "message": "Use Allman bracing style. Opening brace for body of calculateIntermediateLines in wrong line (should be in line 147).",
+      "entity": "",
+      "path": "src/casteljaucanvas.cpp",
+      "line": 146,
+      "provider": "axivion",
+      "severity": "error",
+      "justification": "",
+      "tags": [],
+      "errorLink": null
+    }
+  ]
+}

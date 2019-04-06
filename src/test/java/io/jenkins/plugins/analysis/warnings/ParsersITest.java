@@ -73,6 +73,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(6, new Iar(), "iar.txt");
     }
 
+    /** Runs the IbLinter parser on an output file that contains 1 issue. */
+    @Test
+    public void shouldFindAllIbLinterIssues() {
+        shouldFindIssuesOfTool(1, new IbLinter(), "iblinter.xml");
+    }
+
     /** Runs the IarCStat parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllIarCStatIssues() {
@@ -546,6 +552,14 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFindAllPhpIssues() {
         shouldFindIssuesOfTool(5, new Php(), "php.txt");
+    }
+
+    /**
+     * Runs the PHPStan scanner on an output file that contains 14 issues.
+     */
+    @Test
+    public void shouldFindAllPhpStanIssues() {
+        shouldFindIssuesOfTool(11, new PhpStan(), "phpstan.xml");
     }
 
     /** Runs the Microsoft PreFast parser on an output file that contains 11 issues. */

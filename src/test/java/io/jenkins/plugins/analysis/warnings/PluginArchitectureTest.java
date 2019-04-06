@@ -35,8 +35,7 @@ class PluginArchitectureTest {
     /** Digester must not be used directly, rather use a SecureDigester instance. */
     @ArchTest
     static final ArchRule NO_DIGESTER_CONSTRUCTOR_CALLED =
-            noClasses()
-                    .that().doNotHaveSimpleName("SecureDigester")
+            noClasses().that().doNotHaveSimpleName("SecureDigester")
                     .should().callConstructor(Digester.class)
                     .orShould().callConstructor(Digester.class, SAXParser.class)
                     .orShould().callConstructor(Digester.class, XMLReader.class)
@@ -45,11 +44,17 @@ class PluginArchitectureTest {
     /** Test classes should not be public (Junit 5). */
     @ArchTest
     static final ArchRule NO_PUBLIC_TEST_CLASSES =
-            noClasses()
-                    .that().doNotHaveModifier(JavaModifier.ABSTRACT)
+            noClasses().that().doNotHaveModifier(JavaModifier.ABSTRACT)
                     .and().haveSimpleNameEndingWith("Test")
                     .and(doNot(have(simpleNameEndingWith("ITest"))))
                     .should().bePublic();
+
+    /** Test classes should not use Junit 4. */
+    // TODO: see https://github.com/TNG/ArchUnit/issues/136
+    @ArchTest
+    static final ArchRule NO_JUNIT_4 =
+            noClasses().that(doNot(have(simpleNameEndingWith("ITest"))))
+                    .should().dependOnClassesThat().resideInAnyPackage("org.junit");
 
     /**
      * Methods or constructors that are annotated with {@link VisibleForTesting} must not be called by other classes.
@@ -57,24 +62,21 @@ class PluginArchitectureTest {
      */
     @ArchTest
     static final ArchRule NO_TEST_API_CALLED =
-            noClasses()
-                    .that().haveSimpleNameNotEndingWith("Test")
+            noClasses().that().haveSimpleNameNotEndingWith("Test")
                     .should().callCodeUnitWhere(new AccessRestrictedToTests());
 
     /** Prevents that classes use visible but forbidden API. */
     @ArchTest
-    static final ArchRule NO_FORBIDDEN_PACKAGE_ACCESSED
-            = noClasses()
-            .should().accessClassesThat().resideInAnyPackage(
+    static final ArchRule NO_FORBIDDEN_PACKAGE_ACCESSED =
+            noClasses().should().accessClassesThat().resideInAnyPackage(
                     "org.apache.commons.lang..", "javax.xml.bind..",
                     "net.jcip.annotations..", "javax.annotation..", "junit..", "org.hamcrest..");
 
     /** Prevents that classes use visible but forbidden API. */
     @ArchTest
     static final ArchRule NO_FORBIDDEN_CLASSES_CALLED
-            = noClasses()
-            .should().callCodeUnitWhere(new TargetIsForbiddenClass(
-                    "org.junit.jupiter.api.Assertions", "org.junit.Assert"));
+            = noClasses().should().callCodeUnitWhere(new TargetIsForbiddenClass(
+            "org.junit.jupiter.api.Assertions", "org.junit.Assert"));
 
     /**
      * Direct calls to {@link Jenkins#getInstance()} are prohibited since this method requires a running Jenkins
