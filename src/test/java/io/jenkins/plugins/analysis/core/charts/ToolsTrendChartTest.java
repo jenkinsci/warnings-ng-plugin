@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.collections.impl.factory.Maps;
@@ -10,6 +12,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult.BuildProperties;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static java.util.Arrays.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
@@ -63,4 +66,41 @@ class ToolsTrendChartTest {
         when(buildResult.getBuild()).thenReturn(build);
         return buildResult;
     }
+
+    /**
+     * Creates a chart with more series than distinct colors are available
+     * Verifies that the same colors are used for multiple series.
+     *
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56704">Issue 56704</a>
+     */
+    @Test
+    void shouldCreateLineChartWithDuplicateColors() {
+        ToolsTrendChart chart = new ToolsTrendChart();
+        int availableColors = Palette.values().length;
+
+        List<AnalysisBuildResult> results = new ArrayList<>();
+        for (int i = 0; i < (availableColors + 1); i++) {
+            results.add(createResult(i, Integer.toString(i), 1));
+        }
+
+        LinesChartModel model = chart.create(results, new ChartModelConfiguration());
+
+        List<String> lineColors = new ArrayList();
+        for (LineSeries lineSerie : model.getSeries()) {
+            lineColors.add(lineSerie.getItemStyle().getColor());
+        }
+
+        boolean modelHasDuplicateColors = hasDuplicates(lineColors);
+        assertThat(modelHasDuplicateColors).isTrue();
+
+    }
+
+    private boolean hasDuplicates(List<String> list) {
+        int sizeWithoutDuplicate = new HashSet<String>(list).size();
+        if (list.size() > sizeWithoutDuplicate) {
+            return true;
+        }
+        return false;
+    }
+
 }
