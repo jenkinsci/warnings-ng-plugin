@@ -12,6 +12,11 @@ import edu.hm.hafner.analysis.Severity;
 import static java.util.Collections.*;
 import static org.assertj.core.api.Assertions.*;
 
+/**
+ * Tests the class {@link IssueDifference}.
+ *
+ * @author Artem Polovyi
+ */
 class IssueDifferenceTest {
 
     @Test
