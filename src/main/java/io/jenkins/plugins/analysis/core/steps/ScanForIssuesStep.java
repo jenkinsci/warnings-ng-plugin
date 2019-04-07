@@ -30,6 +30,8 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.GsFactory;
+import io.jenkins.plugins.analysis.core.scm.GsWorker;
 import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -152,7 +154,7 @@ public class ScanForIssuesStep extends Step {
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()),
-                    createBlamer(workspace, listener), getRun());
+                    createBlamer(workspace, listener), getRun(), createGs(workspace, listener));
 
             return issuesScanner.scan(getRun(), workspace, new LogHandler(listener, tool.getActualName()));
         }
@@ -163,6 +165,11 @@ public class ScanForIssuesStep extends Step {
                 return new NullBlamer();
             }
             return BlameFactory.createBlamer(getRun(), workspace, listener);
+        }
+
+        private GsWorker createGs(final FilePath workspace, final TaskListener listener)
+                throws IOException, InterruptedException {
+            return GsFactory.createGsWorker(getRun(), workspace, listener);
         }
     }
 

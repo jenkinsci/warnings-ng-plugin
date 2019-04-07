@@ -23,7 +23,6 @@ import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
-import org.jenkinsci.plugins.gitclient.GitClient;
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;
@@ -35,7 +34,6 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
 import io.jenkins.plugins.analysis.core.scm.Blames;
-import io.jenkins.plugins.analysis.core.scm.GitHelper;
 import io.jenkins.plugins.analysis.core.scm.GsResults;
 import io.jenkins.plugins.analysis.core.scm.GsWorker;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
@@ -43,7 +41,7 @@ import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 
-import static io.jenkins.plugins.analysis.core.scm.GitHelper.getScm;
+import static io.jenkins.plugins.analysis.core.scm.GitHelper.*;
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
 /**
@@ -61,15 +59,36 @@ class IssuesScanner {
     private final GsWorker gsWorker;
 
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters,
-            final Charset sourceCodeEncoding, final FilePath jenkinsRootDir, final Blamer blamer, final Run<?, ?> run) {
+            final Charset sourceCodeEncoding, final FilePath jenkinsRootDir, final Blamer blamer, final Run<?, ?> run, final GsWorker gsWorker) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
         this.jenkinsRootDir = jenkinsRootDir;
         this.blamer = blamer;
+        this.gsWorker = gsWorker;
+    }
 
-        SCM scm = getScm(run);
-        this.gsWorker = new GsWorker(scm);
+    private static Report filter(final Report report, final List<RegexpFilter> filters, final String id) {
+        int actualFilterSize = 0;
+        IssueFilterBuilder builder = new IssueFilterBuilder();
+        for (RegexpFilter filter : filters) {
+            if (StringUtils.isNotBlank(filter.getPattern())) {
+                filter.apply(builder);
+                actualFilterSize++;
+            }
+        }
+        Report filtered = report.filter(builder.build());
+        if (actualFilterSize > 0) {
+            filtered.logInfo(
+                    "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
+                    filters.size(), report.size(), report.size() - filtered.size(), filtered.size());
+        }
+        else {
+            filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
+        }
+
+        filtered.stream().forEach(issue -> issue.setOrigin(id));
+        return filtered;
     }
 
     public AnnotatedReport scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger)
@@ -98,7 +117,7 @@ class IssuesScanner {
                     sourceCodeEncoding);
 
             result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                    createAffectedFilesFolder(report), blamer, filters, gsWorker));
+                    createAffectedFilesFolder(report), blamer, filters));
         }
         logger.log(result.getReport());
         return result;
@@ -128,29 +147,6 @@ class IssuesScanner {
         return StringUtils.EMPTY;
     }
 
-    private static Report filter(final Report report, final List<RegexpFilter> filters, final String id) {
-        int actualFilterSize = 0;
-        IssueFilterBuilder builder = new IssueFilterBuilder();
-        for (RegexpFilter filter : filters) {
-            if (StringUtils.isNotBlank(filter.getPattern())) {
-                filter.apply(builder);
-                actualFilterSize++;
-            }
-        }
-        Report filtered = report.filter(builder.build());
-        if (actualFilterSize > 0) {
-            filtered.logInfo(
-                    "Applying %d filters on the set of %d issues (%d issues have been removed, %d issues will be published)",
-                    filters.size(), report.size(), report.size() - filtered.size(), filtered.size());
-        }
-        else {
-            filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
-        }
-
-        filtered.stream().forEach(issue -> issue.setOrigin(id));
-        return filtered;
-    }
-
     /**
      * Post processes the report on the build agent. Assigns absolute paths, package names, and module names and
      * computes fingerprints for each issue. Finally, for each file the SCM blames are computed.
@@ -167,8 +163,7 @@ class IssuesScanner {
         private final GsWorker gsWorker;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters,
-                final GsWorker gsWorker) {
+                final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters) {
             super();
 
             this.id = id;
@@ -177,7 +172,7 @@ class IssuesScanner {
             this.affectedFilesFolder = affectedFilesFolder;
             this.blamer = blamer;
             this.filters = filters;
-            this.gsWorker = gsWorker;
+            this.gsWorker = null;
         }
 
         @Override
@@ -191,8 +186,8 @@ class IssuesScanner {
 
             createFingerprints(filtered);
             Blames blames = blamer.blame(filtered);
-            GsResults gsResults = gsWorker.process(filtered);
-            return new AnnotatedReport(id, filtered, blames, gsResults);
+            //GsResults gsResults = gsWorker.process(filtered);
+            return new AnnotatedReport(id, filtered, blames, null);
         }
 
         private void resolveAbsolutePaths(final Report report, final File workspace) {

@@ -44,6 +44,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.scm.BlameFactory;
 import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.GsFactory;
 import io.jenkins.plugins.analysis.core.scm.NullBlamer;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
@@ -61,8 +62,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
  * Additional features:
  * <ul>
  * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed,
- * then the
- * build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
+ * then the build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
  * properties.</li>
  * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
  * These values are used by the {@link HealthReportBuilder} to compute the health and the health trend graph.
@@ -74,29 +74,27 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final String NO_REFERENCE_JOB = "-";
-
+    /**
+     * Not used anymore.
+     *
+     * @deprecated replaced by {@link #getQualityGates()}
+     */
+    @Deprecated
+    private final transient io.jenkins.plugins.analysis.core.util.Thresholds thresholds = new io.jenkins.plugins.analysis.core.util.Thresholds(); // replaced by qualityGates
     private List<Tool> analysisTools = new ArrayList<>();
-
     private String sourceCodeEncoding = StringUtils.EMPTY;
-
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
     private String referenceJobName;
-
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
-
     private List<RegexpFilter> filters = new ArrayList<>();
-
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
-
     private boolean isBlameDisabled;
-
     private String id;
     private String name;
-
     private List<QualityGate> qualityGates = new ArrayList<>();
 
     /**
@@ -129,18 +127,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
-     * Defines the optional list of quality gates.
-     *
-     * @param qualityGates
-     *         the quality gates
-     */
-    @SuppressWarnings("unused") // used by Stapler view data binding
-    @DataBoundSetter
-    public void setQualityGates(final List<QualityGate> qualityGates) {
-        this.qualityGates = qualityGates;
-    }
-
-    /**
      * Appends the specified quality gates to the end of the list of quality gates.
      *
      * @param size
@@ -160,6 +146,22 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Defines the optional list of quality gates.
+     *
+     * @param qualityGates
+     *         the quality gates
+     */
+    @SuppressWarnings("unused") // used by Stapler view data binding
+    @DataBoundSetter
+    public void setQualityGates(final List<QualityGate> qualityGates) {
+        this.qualityGates = qualityGates;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    /**
      * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
      * given, then the ID of the associated result object is used.
      * <p>
@@ -175,8 +177,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.id = id;
     }
 
-    public String getId() {
-        return id;
+    public String getName() {
+        return name;
     }
 
     /**
@@ -193,10 +195,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setName(final String name) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
     }
 
     /**
@@ -231,19 +229,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /**
      * Sets the static analysis tools that will scan files and create issues.
      *
-     * @param tools
-     *         the static analysis tools
-     *
-     * @see #setTool(Tool)
-     */
-    @DataBoundSetter
-    public void setTools(final List<Tool> tools) {
-        analysisTools = new ArrayList<>(tools);
-    }
-
-    /**
-     * Sets the static analysis tools that will scan files and create issues.
-     *
      * @param tool
      *         the static analysis tool
      * @param additionalTools
@@ -272,16 +257,16 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
-     * Sets the static analysis tool that will scan files and create issues.
+     * Sets the static analysis tools that will scan files and create issues.
      *
-     * @param tool
-     *         the static analysis tool
+     * @param tools
+     *         the static analysis tools
+     *
+     * @see #setTool(Tool)
      */
     @DataBoundSetter
-    public void setTool(final Tool tool) {
-        ensureThatToolIsValid(tool);
-
-        analysisTools = Collections.singletonList(tool);
+    public void setTools(final List<Tool> tools) {
+        analysisTools = new ArrayList<>(tools);
     }
 
     private void ensureThatToolIsValid(final Tool tool) {
@@ -304,10 +289,25 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return null;
     }
 
+    /**
+     * Sets the static analysis tool that will scan files and create issues.
+     *
+     * @param tool
+     *         the static analysis tool
+     */
+    @DataBoundSetter
+    public void setTool(final Tool tool) {
+        ensureThatToolIsValid(tool);
+
+        analysisTools = Collections.singletonList(tool);
+    }
+
     @Nullable
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
+
+    /* -------------------------------------------------------------------------------------------------------------- */
 
     /**
      * Sets the encoding to use to read source files.
@@ -319,8 +319,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     public void setSourceCodeEncoding(final String sourceCodeEncoding) {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
-
-    /* -------------------------------------------------------------------------------------------------------------- */
 
     /**
      * Returns whether the results for each configured static analysis result should be aggregated into a single result
@@ -370,6 +368,11 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         isEnabledForFailure = enabledForFailure;
     }
 
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getIgnoreQualityGate() {
+        return ignoreQualityGate;
+    }
+
     /**
      * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
      * disabled by default so a failing quality gate will be passed from build to build until the original reason for
@@ -385,8 +388,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getIgnoreQualityGate() {
-        return ignoreQualityGate;
+    public boolean getIgnoreFailedBuilds() {
+        return ignoreFailedBuilds;
     }
 
     /**
@@ -402,9 +405,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         this.ignoreFailedBuilds = ignoreFailedBuilds;
     }
 
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getIgnoreFailedBuilds() {
-        return ignoreFailedBuilds;
+    /**
+     * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
+     * then {@link #NO_REFERENCE_JOB} is returned.
+     *
+     * @return the name of reference job, or {@link #NO_REFERENCE_JOB} if undefined
+     */
+    public String getReferenceJobName() {
+        if (StringUtils.isBlank(referenceJobName)) {
+            return NO_REFERENCE_JOB;
+        }
+        return referenceJobName;
     }
 
     /**
@@ -419,19 +430,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             this.referenceJobName = StringUtils.EMPTY;
         }
         this.referenceJobName = referenceJobName;
-    }
-
-    /**
-     * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
-     * then {@link #NO_REFERENCE_JOB} is returned.
-     *
-     * @return the name of reference job, or {@link #NO_REFERENCE_JOB} if undefined
-     */
-    public String getReferenceJobName() {
-        if (StringUtils.isBlank(referenceJobName)) {
-            return NO_REFERENCE_JOB;
-        }
-        return referenceJobName;
     }
 
     public int getHealthy() {
@@ -569,7 +567,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(),
-                getSourceCodeCharset(), new FilePath(run.getRootDir()), blame(run, workspace, listener), run);
+                getSourceCodeCharset(), new FilePath(run.getRootDir()), blame(run, workspace, listener), run,
+                GsFactory.createGsWorker(run, workspace, listener));
         return issuesScanner.scan(run, workspace, new LogHandler(listener, tool.getActualName()));
     }
 
@@ -619,20 +618,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
-     * Not used anymore.
-     *
-     * @deprecated replaced by {@link #getQualityGates()}
-     */
-    @Deprecated
-    private final transient io.jenkins.plugins.analysis.core.util.Thresholds thresholds = new io.jenkins.plugins.analysis.core.util.Thresholds(); // replaced by qualityGates
-
-    /**
      * Sets the quality gate.
      *
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -646,7 +638,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -660,7 +653,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -674,7 +668,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -688,7 +683,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -702,7 +698,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -716,7 +713,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -730,7 +728,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -744,7 +743,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -758,7 +758,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -772,7 +773,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -786,7 +788,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -800,7 +803,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -814,7 +818,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -828,7 +833,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -842,7 +848,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -857,14 +864,14 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @Symbol("recordIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
+        private final ModelValidation model = new ModelValidation();
+
         /** Retain backward compatibility. */
         @Initializer(before = InitMilestone.PLUGINS_STARTED)
         public static void addAliases() {
             Run.XSTREAM2.addCompatibilityAlias("io.jenkins.plugins.analysis.core.views.ResultAction",
                     ResultAction.class);
         }
-
-        private final ModelValidation model = new ModelValidation();
 
         @NonNull
         @Override
