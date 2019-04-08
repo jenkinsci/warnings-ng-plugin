@@ -25,6 +25,9 @@ import static org.mockito.Mockito.*;
 
 class HealthTrendChartTest {
 
+    /**
+     * Verifies that a HealthTrendChart with two Results shows right x/Axis labels.
+     */
     @Test
     void shouldCreateHealthChartForJobAndMultipleActions() {
         int healty = 5;
@@ -57,7 +60,6 @@ class HealthTrendChartTest {
      */
     private AnalysisBuildResult createResult(final int number) {
         AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
-
         AnalysisBuild build = new BuildProperties(number, "#" + number, 10);
         when(buildResult.getBuild()).thenReturn(build);
         return buildResult;

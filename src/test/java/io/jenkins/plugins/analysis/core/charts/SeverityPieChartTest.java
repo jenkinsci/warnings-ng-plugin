@@ -16,7 +16,9 @@ import static org.assertj.core.api.Assertions.*;
  */
 class SeverityPieChartTest {
 
-    /** First Dummy test to test building. */
+    /**  Dummy test to test building.
+     *  Verifies that a SeverityPieChart with empty report shows only predefined Severities severities without Severity.ERROR.
+     */
     @Test
     void buildTest() {
 
@@ -28,6 +30,10 @@ class SeverityPieChartTest {
         PieChartModel pieChartModel = severityPieChart.create(report);
         List<PieData> data = pieChartModel.getData();
         //Assert
+        for (PieData severity : data) {
+            assertThat(Severity.getPredefinedValues().contains(severity));
+        }
+
         assertThat(data.size()).isEqualTo(numberOfDefaultPieData);
     }
 }
