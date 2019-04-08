@@ -33,7 +33,7 @@ class HealthTrendChartTest {
         int healty = 5;
         int unhelthy = 10;
         Severity minSeverity = new Severity("TestSeverity");
-        HealthDescriptor healthDescriptor = new HealthDescriptor(healty,unhelthy,minSeverity);
+        HealthDescriptor healthDescriptor = new HealthDescriptor(healty, unhelthy, minSeverity);
         HealthTrendChart chart = new HealthTrendChart(healthDescriptor);
 
         List<AnalysisBuildResult> resultsCheckStyle = new ArrayList<>();
