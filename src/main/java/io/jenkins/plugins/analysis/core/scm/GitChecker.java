@@ -74,6 +74,25 @@ class GitChecker {
         }
     }
 
+    GsWorker createGsWorker(final Run<?, ?> build, final SCM scm,
+            final FilePath workspace, final TaskListener listener) {
+        try {
+            GitSCM gitSCM = asGit(scm);
+            EnvVars environment = build.getEnvironment(listener);
+            GitClient gitClient = gitSCM.createClient(listener, environment, build, workspace);
+            String gitCommit = environment.getOrDefault("GIT_COMMIT", "HEAD");
+
+            return new GsWorker(gitCommit, gitClient);
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     private boolean isShallow(final GitSCM git) {
         CloneOption option = git.getExtensions().get(CloneOption.class);
         if (option != null) {
