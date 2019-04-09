@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Doxygen extends ReportScanningTool {
     private static final long serialVersionUID = -958188599615335136L;
-    static final String ID = "doxygen";
+    private static final String ID = "doxygen";
 
     /** Creates a new instance of {@link Doxygen}. */
     @DataBoundConstructor

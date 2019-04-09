@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class MyPy extends ReportScanningTool {
     private static final long serialVersionUID = -1864782743893780307L;
-    static final String ID = "mypy";
+    private static final String ID = "mypy";
 
     /** Creates a new instance of {@link MyPy}. */
     @DataBoundConstructor

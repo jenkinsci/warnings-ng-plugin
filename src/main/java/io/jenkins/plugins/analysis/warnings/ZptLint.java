@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class ZptLint extends ReportScanningTool {
     private static final long serialVersionUID = 5232724287545487246L;
-    static final String ID = "zptlint";
+    private static final String ID = "zptlint";
 
     /** Creates a new instance of {@link ZptLint}. */
     @DataBoundConstructor

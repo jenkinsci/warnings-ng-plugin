@@ -105,7 +105,6 @@
     </module>
     <module name="IllegalThrows"/>
     <module name="InnerAssignment"/>
-    <module name="MissingSwitchDefault"/>
     <module name="ModifiedControlVariable"/>
     <module name="MultipleVariableDeclarations"/>
     <module name="NestedTryDepth"/>
@@ -140,7 +139,7 @@
     <module name="UpperEll"/>
     <module name="IllegalCatch"/>
     <module name="IllegalImport">
-      <property name="illegalPkgs" value="junit, net.jcip.annotations, javax.annotation, org.hamcrest, org.junit.Assert"/>
+      <property name="illegalPkgs" value="net.jcip.annotations, javax.annotation"/>
       <property name="illegalClasses" value="edu.umd.cs.findbugs.annotations.CheckForNull"/>
       <property name="severity" value="error"/>
     </module>

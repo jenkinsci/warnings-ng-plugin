@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class GoVet extends ReportScanningTool {
     private static final long serialVersionUID = -4075523780782589302L;
-    static final String ID = "go-vet";
+    private static final String ID = "go-vet";
 
     /** Creates a new instance of {@link GoVet}. */
     @DataBoundConstructor

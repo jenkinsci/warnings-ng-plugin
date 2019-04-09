@@ -13,7 +13,7 @@ import hudson.Extension;
  */
 public class SpotBugs extends FindBugs {
     private static final long serialVersionUID = -8773197511353021180L;
-    static final String ID = "spotbugs";
+    private static final String ID = "spotbugs";
 
     /** Creates a new instance of {@link SpotBugs}. */
     @DataBoundConstructor

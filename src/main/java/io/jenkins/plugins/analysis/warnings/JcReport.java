@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class JcReport extends ReportScanningTool {
     private static final long serialVersionUID = -4501046255810592674L;
-    static final String ID = "jc-report";
+    private static final String ID = "jc-report";
 
     /** Creates a new instance of {@link JcReport}. */
     @DataBoundConstructor

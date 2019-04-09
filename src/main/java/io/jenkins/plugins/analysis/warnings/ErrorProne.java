@@ -22,7 +22,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class ErrorProne extends ReportScanningToolSuite {
     private static final long serialVersionUID = -511511623854186032L;
-    static final String ID = "error-prone";
+    private static final String ID = "error-prone";
 
     /** Creates a new instance of {@link ErrorProne}. */
     @DataBoundConstructor

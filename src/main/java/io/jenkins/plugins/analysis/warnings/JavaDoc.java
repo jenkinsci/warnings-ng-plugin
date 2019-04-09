@@ -18,7 +18,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class JavaDoc extends ReportScanningTool {
     private static final long serialVersionUID = -3987566418736570996L;
-    static final String ID = "javadoc-warnings";
+    private static final String ID = "javadoc-warnings";
 
     /** Creates a new instance of {@link JavaDoc}. */
     @DataBoundConstructor

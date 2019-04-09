@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class TiCss extends ReportScanningTool {
     private static final long serialVersionUID = -7982604310730169143L;
-    static final String ID = "code-composer";
+    private static final String ID = "code-composer";
 
     /** Creates a new instance of {@link TiCss}. */
     @DataBoundConstructor

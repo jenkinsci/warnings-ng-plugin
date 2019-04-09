@@ -19,7 +19,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 public class KtLint extends ReportScanningTool {
     private static final long serialVersionUID = 1897385505660427545L;
 
-    static final String ID = "ktlint";
+    private static final String ID = "ktlint";
 
     /** Creates a new instance of {@link KtLint}. */
     @DataBoundConstructor

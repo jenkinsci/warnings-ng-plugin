@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Erlc extends ReportScanningTool {
     private static final long serialVersionUID = 8254330761908676605L;
-    static final String ID = "erlc";
+    private static final String ID = "erlc";
 
     /** Creates a new instance of {@link Erlc}. */
     @DataBoundConstructor

@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class DiabC extends ReportScanningTool {
     private static final long serialVersionUID = 5776036181907740586L;
-    static final String ID = "diabc";
+    private static final String ID = "diabc";
 
     /** Creates a new instance of {@link DiabC}. */
     @DataBoundConstructor

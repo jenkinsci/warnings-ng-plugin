@@ -20,7 +20,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
  */
 public class MetrowerksCodeWarrior extends ReportScanningToolSuite {
     private static final long serialVersionUID = 4315389958099766339L;
-    static final String ID = "metrowerks";
+    private static final String ID = "metrowerks";
 
     /** Creates a new instance of {@link MetrowerksCodeWarrior}. */
     @DataBoundConstructor

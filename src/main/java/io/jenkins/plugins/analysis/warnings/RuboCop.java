@@ -19,8 +19,8 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class RuboCop extends ReportScanningTool {
     private static final long serialVersionUID = -6972204105563729273L;
-    
-    static final String ID = "rubocop";
+
+    private static final String ID = "rubocop";
 
     /** Creates a new instance of {@link RuboCop}. */
     @DataBoundConstructor

@@ -35,9 +35,10 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
      */
     public IconLabelProvider(final String id, final String name, final String iconName) {
         super(id, name);
-        
-        smallIconUrl = ICONS_URL + iconName + "-24x24.png";
-        largeIconUrl = ICONS_URL + iconName + "-48x48.png";
+
+        String prefix = ICONS_URL + iconName;
+        smallIconUrl = prefix + "-24x24.png";
+        largeIconUrl = prefix + "-48x48.png";
     }
     
     @Override

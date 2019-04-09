@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Tnsdl extends ReportScanningTool {
     private static final long serialVersionUID = 3738252418578966192L;
-    static final String ID = "tnsdl";
+    private static final String ID = "tnsdl";
 
     /** Creates a new instance of {@link Tnsdl}. */
     @DataBoundConstructor

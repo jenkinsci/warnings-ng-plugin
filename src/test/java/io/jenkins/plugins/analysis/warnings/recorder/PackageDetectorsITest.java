@@ -1,16 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.assertj.core.api.AutoCloseableSoftAssertions;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.xml.sax.SAXException;
@@ -23,22 +20,26 @@ import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.analysis.Issue;
+
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
+
+import static io.jenkins.plugins.analysis.core.testutil.SoftAssertions.*;
 import static org.assertj.core.api.Assertions.*;
 
-import hudson.model.FreeStyleProject;
-import hudson.model.Result;
-
 /**
- * This class is an integration test for the classes associated with {@link edu.hm.hafner.analysis.PackageDetectors}.
+ * This class is an integration test for the classes associated with {@code edu.hm.hafner.analysis.PackageDetectors}.
  *
  * @author Frank Christian Geyer
  * @author Deniz Mardin
+ * @author Ullrich Hafner
  */
 public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String PACKAGE_FILE_PATH = "detectors/";
@@ -54,12 +55,12 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowNamespacesAndPackagesAltogetherForJavaAndCSharpInTheHtmlOutput() {
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt", 
-                PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt", 
+        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
+                PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
-                PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java", 
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
@@ -81,7 +82,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowPackagesForJavaOnly() {
-        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt", 
+        AnalysisResult result = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
@@ -99,7 +100,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output is correct if there are only namespaces (C#) in the expected HTML output.
      */
     @Test
-    public void shouldShowNamespacesForCSharpOnlyInTheHtmlOutput() throws IOException, SAXException {
+    public void shouldShowNamespacesForCSharpOnlyInTheHtmlOutput() {
         AnalysisResult result = buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
@@ -120,7 +121,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(propertyTable.getTitle()).isEqualTo("Namespaces");
         assertThat(propertyTable.getColumnName()).isEqualTo("Namespace");
         assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(packages);
-        
+
         // TODO: Click package links
     }
 
@@ -129,7 +130,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(propertyTable.getTitle()).isEqualTo("Packages");
         assertThat(propertyTable.getColumnName()).isEqualTo("Package");
         assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(packages);
-        
+
         // TODO: Click package links
     }
 
@@ -145,9 +146,9 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if there is only one class without a package (Java).
      */
     @Test
-    public void shouldContainNoHtmlOutputForNoPackageDefinedJava() throws IOException, SAXException {
+    public void shouldContainNoHtmlOutputForNoPackageDefinedJava() {
         checkWebPageForExpectedEmptyResult(
-                buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithoutPackage.txt", 
+                buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithoutPackage.txt",
                         PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java"
                 ));
     }
@@ -156,9 +157,9 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if there is only one class with a package (Java).
      */
     @Test
-    public void shouldContainNoHtmlOutputForOnlyOnePackageDefinedJava() throws IOException, SAXException {
+    public void shouldContainNoHtmlOutputForOnlyOnePackageDefinedJava() {
         checkWebPageForExpectedEmptyResult(
-                buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithPackage.txt", 
+                buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaOneClassWithPackage.txt",
                         PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java"
                 ));
     }
@@ -167,9 +168,9 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if there is only one class without a namespace (C#).
      */
     @Test
-    public void shouldContainNoHtmlOutputForNoNamespaceDefinedCSharp() throws IOException, SAXException {
+    public void shouldContainNoHtmlOutputForNoNamespaceDefinedCSharp() {
         checkWebPageForExpectedEmptyResult(buildProject(
-                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpOneClassWithoutNamespace.txt", 
+                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpOneClassWithoutNamespace.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         ));
     }
@@ -178,7 +179,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output of the HTML page is empty if there is only one class with a namespace (C#).
      */
     @Test
-    public void shouldContainNoHtmlOutputForOnlyOneNamespaceDefinedCSharp() throws IOException, SAXException {
+    public void shouldContainNoHtmlOutputForOnlyOneNamespaceDefinedCSharp() {
         checkWebPageForExpectedEmptyResult(
                 buildProject(PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpOneClassWithNamespace.txt",
                         PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs"
@@ -190,38 +191,37 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * together in a build.
      */
     @Test
-    public void shouldDetectVariousNamespacesAndPackagesForCombinedJavaAndCSharpFiles() throws IOException {
-
+    public void shouldDetectVariousNamespacesAndPackagesForCombinedJavaAndCSharpFiles() {
         AnalysisResult result = buildProject(PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
-                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt", 
+                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
-                PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java", 
+                PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         );
 
-        String logOutput = FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
-        Map<String, Long> collect = collectPackageNames(result);
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+        assertSoftly(softly -> {
             softly.assertThat(result.getIssues()).hasSize(10);
             softly.assertThat(result.getIssues().getPackages())
                     .containsExactly("edu.hm.hafner.analysis._123.int.naming.structure", "SampleClassWithNamespace",
-                            "NestedNamespace",
-                            "SampleClassWithNestedAndNormalNamespace", "-");
-            softly.assertThat(collect).hasSize(5);
-            softly.assertThat(collect.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
-            softly.assertThat(collect.get("SampleClassWithNamespace")).isEqualTo(1L);
-            softly.assertThat(collect.get("NestedNamespace")).isEqualTo(1L);
-            softly.assertThat(collect.get("SampleClassWithNestedAndNormalNamespace")).isEqualTo(1L);
-            softly.assertThat(collect.get("-")).isEqualTo(6L);
+                            "NestedNamespace", "SampleClassWithNestedAndNormalNamespace", "-");
+
+            Map<String, Long> totalByPackageName = collectPackageNames(result);
+            softly.assertThat(totalByPackageName).hasSize(5);
+            softly.assertThat(totalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
+            softly.assertThat(totalByPackageName.get("SampleClassWithNamespace")).isEqualTo(1L);
+            softly.assertThat(totalByPackageName.get("NestedNamespace")).isEqualTo(1L);
+            softly.assertThat(totalByPackageName.get("SampleClassWithNestedAndNormalNamespace")).isEqualTo(1L);
+            softly.assertThat(totalByPackageName.get("-")).isEqualTo(6L);
+
+            String logOutput = getConsoleLog(result);
             softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
             softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(10));
-        }
+        });
     }
 
     /**
@@ -229,17 +229,12 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * handled correctly.
      */
     @Test
-    public void shouldRunTwoIndependentBuildsWithTwoDifferentParsersAndCheckForCorrectPackageHandling()
-            throws IOException {
-
+    public void shouldRunTwoIndependentBuildsWithTwoDifferentParsersAndCheckForCorrectPackageHandling() {
         FreeStyleProject jobWithFindBugsParser = createJobWithWorkspaceFile(
                 PACKAGE_FILE_PATH + "various/findbugs-packages.xml");
         enableGenericWarnings(jobWithFindBugsParser, new FindBugs());
         AnalysisResult resultWithFindBugsParser = scheduleBuildAndAssertStatus(jobWithFindBugsParser, Result.SUCCESS);
 
-        String logOutputForFindBugs = FileUtils.readFileToString(resultWithFindBugsParser.getOwner().getLogFile(),
-                StandardCharsets.UTF_8);
-        Map<String, Long> collectFindBugsPackages = collectPackageNames(resultWithFindBugsParser);
 
         AnalysisResult resultWithEclipseParser = buildProject(
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
@@ -249,52 +244,55 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java"
         );
 
-        String logOutputForEclipse = FileUtils.readFileToString(resultWithEclipseParser.getOwner().getLogFile(),
-                StandardCharsets.UTF_8);
-        Map<String, Long> collectEclipsePackages = collectPackageNames(resultWithEclipseParser);
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+        assertSoftly(softly -> {
             softly.assertThat(resultWithFindBugsParser.getIssues()).hasSize(3);
             softly.assertThat(resultWithFindBugsParser.getIssues().getPackages())
                     .containsExactly("edu.hm.hafner.analysis.123",
                             "edu.hm.hafner.analysis._test",
                             "edu.hm.hafner.analysis.int.naming.structure");
-            softly.assertThat(collectFindBugsPackages).hasSize(3);
-            softly.assertThat(collectFindBugsPackages.get("edu.hm.hafner.analysis.123")).isEqualTo(1L);
-            softly.assertThat(collectFindBugsPackages.get("edu.hm.hafner.analysis._test")).isEqualTo(1L);
-            softly.assertThat(collectFindBugsPackages.get("edu.hm.hafner.analysis.int.naming.structure")).isEqualTo(1L);
-            softly.assertThat(logOutputForFindBugs).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutputForFindBugs).contains("-> all affected files already have a valid package name");
+
+            Map<String, Long> findBugsTotalByPackageName = collectPackageNames(resultWithFindBugsParser);
+            softly.assertThat(findBugsTotalByPackageName).hasSize(3);
+            softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.123")).isEqualTo(1L);
+            softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis._test")).isEqualTo(1L);
+            softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.int.naming.structure")).isEqualTo(1L);
+
+            String findBugsConsoleLog = getConsoleLog(resultWithFindBugsParser);
+            softly.assertThat(findBugsConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
+            softly.assertThat(findBugsConsoleLog).contains("-> all affected files already have a valid package name");
 
             softly.assertThat(resultWithEclipseParser.getIssues()).hasSize(6);
             softly.assertThat(resultWithEclipseParser.getIssues().getPackages())
                     .containsExactly("edu.hm.hafner.analysis._123.int.naming.structure", "-");
-            softly.assertThat(collectEclipsePackages).hasSize(2);
-            softly.assertThat(collectEclipsePackages.get("edu.hm.hafner.analysis._123.int.naming.structure"))
+
+            Map<String, Long> eclipseTotalByPackageName = collectPackageNames(resultWithEclipseParser);
+            softly.assertThat(eclipseTotalByPackageName).hasSize(2);
+            softly.assertThat(eclipseTotalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure"))
                     .isEqualTo(1L);
-            softly.assertThat(collectEclipsePackages.get("-")).isEqualTo(5L);
-            softly.assertThat(logOutputForEclipse).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutputForEclipse).contains(returnExpectedNumberOfResolvedPackageNames(6));
-        }
+            softly.assertThat(eclipseTotalByPackageName.get("-")).isEqualTo(5L);
+
+            String eclipseConsoleLog = getConsoleLog(resultWithEclipseParser);
+            softly.assertThat(eclipseConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
+            softly.assertThat(eclipseConsoleLog).contains(returnExpectedNumberOfResolvedPackageNames(6));
+        });
     }
 
     /**
      * Verifies that various namespaces (C#) are handled correctly.
      */
     @Test
-    public void shouldDetectVariousNamespacesForCSharpFiles() throws IOException {
-
+    public void shouldDetectVariousNamespacesForCSharpFiles() {
         AnalysisResult result = buildProject(
-                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt", 
+                PACKAGE_WITH_FILES_CSHARP + "eclipseForCSharpVariousClasses.txt",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNamespaceBetweenCode.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs");
 
-        String logOutput = FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
+        String logOutput = getConsoleLog(result);
         Map<String, Long> collect = collectPackageNames(result);
 
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+        assertSoftly(softly -> {
             softly.assertThat(result.getIssues()).hasSize(6);
             softly.assertThat(result.getIssues().getPackages())
                     .containsExactly("SampleClassWithNamespace", "NestedNamespace",
@@ -306,17 +304,16 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
             softly.assertThat(collect.get("-")).isEqualTo(3L);
             softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
             softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(6));
-        }
+        });
     }
 
     /**
      * Verifies that various packages (Java) are handled correctly.
      */
     @Test
-    public void shouldDetectVariousPackagesForJavaFiles() throws IOException {
-
+    public void shouldDetectVariousPackagesForJavaFiles() {
         AnalysisResult result = buildProject(
-                PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt", 
+                PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
@@ -324,20 +321,20 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
         );
 
-        String logOutput = FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
-        Map<String, Long> collect = collectPackageNames(result);
-
-        try (AutoCloseableSoftAssertions softly = new AutoCloseableSoftAssertions()) {
+        assertSoftly(softly -> {
             softly.assertThat(result.getIssues()).hasSize(6);
             softly.assertThat(result.getIssues().getPackages()).containsExactly(
-                    "edu.hm.hafner.analysis._123.int.naming.structure",
-                    "-");
-            softly.assertThat(collect).hasSize(2);
-            softly.assertThat(collect.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
-            softly.assertThat(collect.get("-")).isEqualTo(5L);
-            softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(6));
-        }
+                    "edu.hm.hafner.analysis._123.int.naming.structure", "-");
+
+            Map<String, Long> totalByPacakgeName = collectPackageNames(result);
+            softly.assertThat(totalByPacakgeName).hasSize(2);
+            softly.assertThat(totalByPacakgeName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
+            softly.assertThat(totalByPacakgeName.get("-")).isEqualTo(5L);
+
+            String consoleLog = getConsoleLog(result);
+            softly.assertThat(consoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
+            softly.assertThat(consoleLog).contains(returnExpectedNumberOfResolvedPackageNames(6));
+        });
     }
 
     private String returnExpectedNumberOfResolvedPackageNames(final int expectedNumberOfResolvedPackageNames) {
@@ -352,11 +349,10 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
     private Map<String, Long> collectPackageNames(final AnalysisResult result) {
         return result.getIssues().stream()
-                .collect(Collectors.groupingBy(Issue::getPackageName,
-                        Collectors.counting()));
+                .collect(Collectors.groupingBy(Issue::getPackageName, Collectors.counting()));
     }
 
-    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result)  {
+    private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
         try {
             WebClient webClient = createWebClient(false);
             WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
@@ -402,22 +398,22 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Creates a pre-defined filename for a workspace file.
+     * Skips .c and .java file names while renaming.
      *
      * @param fileName
      *         the filename
      */
     @Override
     protected String createWorkspaceFileName(final String fileName) {
-        String modifiedFileName = String.format("%s-issues.txt", FilenameUtils.getBaseName(fileName));
-
-        String[] genericFileNamesToKeep = new String[]{
-                ".cs", ".java"
-        };
+        String[] genericFileNamesToKeep = new String[] {".cs", ".java"};
 
         List<Boolean> fileNamePrefixInList = Arrays.stream(genericFileNamesToKeep)
                 .map(fileName::endsWith)
                 .collect(Collectors.toList());
-        return fileNamePrefixInList.contains(true) ? FilenameUtils.getName(fileName) : modifiedFileName;
+        if (fileNamePrefixInList.contains(true)) {
+            return FilenameUtils.getName(fileName);
+        }
+
+        return super.createWorkspaceFileName(fileName);
     }
 }

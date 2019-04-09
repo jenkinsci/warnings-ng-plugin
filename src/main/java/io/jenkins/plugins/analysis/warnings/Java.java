@@ -22,7 +22,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class Java extends ReportScanningToolSuite {
     private static final long serialVersionUID = 2254154391638811877L;
-    static final String ID = "java";
+    private static final String ID = "java";
 
     /** Creates a new instance of {@link NagFortran}. */
     @DataBoundConstructor

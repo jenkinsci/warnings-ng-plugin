@@ -4,12 +4,13 @@ import java.util.List;
 
 import org.junit.Test;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
 import io.jenkins.plugins.casc.ConfiguratorException;
+
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 /**
  * Checks whether all parser can be imported using the configuration-as-code plug-in.
@@ -17,8 +18,11 @@ import io.jenkins.plugins.casc.ConfiguratorException;
  * @author Ullrich Hafner
  */
 public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest {
+    /**
+     * Reads the YAML file with a parser and verifies that the parser has been loaded.
+     */
     @Test
-    public void shouldImportParserSettingsFromYaml() throws ConfiguratorException {
+    public void shouldImportParserSettingsFromYaml() {
         configureJenkins("parsers.yaml");
 
         List<GroovyParser> parsers = ParserConfiguration.getInstance().getParsers();
@@ -33,7 +37,12 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
         assertThat(parser.getScript()).isEqualTo("script");
     }
 
-    private void configureJenkins(final String fileName) throws ConfiguratorException {
-        ConfigurationAsCode.get().configure(ConfigurationAsCodeITest.class.getResource(fileName).toString());
+    private void configureJenkins(final String fileName) {
+        try {
+            ConfigurationAsCode.get().configure(ConfigurationAsCodeITest.class.getResource(fileName).toString());
+        }
+        catch (ConfiguratorException e) {
+            throw new AssertionError(e);
+        }
     }
 }

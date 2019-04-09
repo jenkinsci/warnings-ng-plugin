@@ -3,16 +3,18 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Severity;
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
-import io.jenkins.plugins.analysis.warnings.Eclipse;
 
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Result;
+
+import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.Eclipse;
+import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Integration tests for the health report of the warnings plug-in in freestyle jobs.

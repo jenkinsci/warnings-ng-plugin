@@ -96,7 +96,7 @@ class AbsolutePathGeneratorTest {
      *
      * @return {@code true} if the OS is Windows, {@code false} otherwise
      */
-    protected boolean isWindows() {
+    private boolean isWindows() {
         return File.pathSeparatorChar == ';';
     }
 

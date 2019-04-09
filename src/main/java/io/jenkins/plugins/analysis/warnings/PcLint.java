@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class PcLint extends ReportScanningTool {
     private static final long serialVersionUID = -6022797743536264094L;
-    static final String ID = "pclint";
+    private static final String ID = "pclint";
 
     /** Creates a new instance of {@link PcLint}. */
     @DataBoundConstructor

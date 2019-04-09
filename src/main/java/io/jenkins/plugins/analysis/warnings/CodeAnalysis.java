@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class CodeAnalysis extends ReportScanningTool {
     private static final long serialVersionUID = -8955858553873691807L;
-    static final String ID = "code-analysis";
+    private static final String ID = "code-analysis";
 
     /** Creates a new instance of {@link CodeAnalysis}. */
     @DataBoundConstructor

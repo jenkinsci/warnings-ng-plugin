@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Invalids extends ReportScanningTool {
     private static final long serialVersionUID = 8400984149210830144L;
-    static final String ID = "invalids";
+    private static final String ID = "invalids";
 
     /** Creates a new instance of {@link Invalids}. */
     @DataBoundConstructor

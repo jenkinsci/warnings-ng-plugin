@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class CodeNarc extends ReportScanningTool {
     private static final long serialVersionUID = 8809406805732162793L;
-    static final String ID = "codenarc";
+    private static final String ID = "codenarc";
 
     /** Creates a new instance of {@link CodeNarc}. */
     @DataBoundConstructor

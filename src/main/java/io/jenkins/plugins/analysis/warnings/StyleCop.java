@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class StyleCop extends ReportScanningTool {
     private static final long serialVersionUID = 230834175319040103L;
-    static final String ID = "stylecop";
+    private static final String ID = "stylecop";
 
     /** Creates a new instance of {@link StyleCop}. */
     @DataBoundConstructor

@@ -11,6 +11,7 @@ import edu.hm.hafner.analysis.Report;
  *
  * @author Ullrich Hafner
  */
+// TODO: extract reference as parameter and move to analysis-model
 public class IssueDifference {
     private final Report newIssues;
     private final Report fixedIssues;
