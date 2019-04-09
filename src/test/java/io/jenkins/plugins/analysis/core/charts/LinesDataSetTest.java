@@ -87,7 +87,10 @@ class LinesDataSetTest {
         dataSetSeries.put("Vier", 4);
         linesDataSet.add("Testlabel", dataSetSeries);
 
-        Assertions.assertThrows(AssertionError.class, () -> linesDataSet.getSeries("Test"));
+        assertThatThrownBy(() -> linesDataSet.getSeries("Test"))
+                .isInstanceOf(AssertionError.class)
+                .hasMessageContaining("No dataset")
+                .hasMessageContaining("registered");
     }
 
     @Test
@@ -97,7 +100,9 @@ class LinesDataSetTest {
         Map<String, Integer>  dataSetSeries = new HashMap<>();
         linesDataSet.add("Testlabel", dataSetSeries);
 
-        Assertions.assertThrows(IllegalStateException.class, () -> linesDataSet.add("Testlabel", dataSetSeries));
+        assertThatThrownBy(() -> linesDataSet.add("Testlabel", dataSetSeries))
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessageContaining("Label already registered:");
     }
 
 }
