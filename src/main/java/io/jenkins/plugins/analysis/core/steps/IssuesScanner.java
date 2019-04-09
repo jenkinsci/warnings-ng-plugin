@@ -27,7 +27,6 @@ import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.remoting.VirtualChannel;
-import hudson.scm.SCM;
 import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
@@ -41,7 +40,6 @@ import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 
-import static io.jenkins.plugins.analysis.core.scm.GitHelper.*;
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
 /**
@@ -117,7 +115,7 @@ class IssuesScanner {
                     sourceCodeEncoding);
 
             result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                    createAffectedFilesFolder(report), blamer, filters));
+                    createAffectedFilesFolder(report), blamer, filters, gsWorker));
         }
         logger.log(result.getReport());
         return result;
@@ -163,7 +161,8 @@ class IssuesScanner {
         private final GsWorker gsWorker;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters) {
+                final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters,
+                final GsWorker gsWorker) {
             super();
 
             this.id = id;
@@ -172,7 +171,7 @@ class IssuesScanner {
             this.affectedFilesFolder = affectedFilesFolder;
             this.blamer = blamer;
             this.filters = filters;
-            this.gsWorker = null;
+            this.gsWorker = gsWorker;
         }
 
         @Override
@@ -186,8 +185,8 @@ class IssuesScanner {
 
             createFingerprints(filtered);
             Blames blames = blamer.blame(filtered);
-            //GsResults gsResults = gsWorker.process(filtered);
-            return new AnnotatedReport(id, filtered, blames, null);
+            GsResults gsResults = gsWorker.process(filtered);
+            return new AnnotatedReport(id, filtered, blames, gsResults);
         }
 
         private void resolveAbsolutePaths(final Report report, final File workspace) {

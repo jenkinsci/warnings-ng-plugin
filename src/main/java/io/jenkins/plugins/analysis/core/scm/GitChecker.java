@@ -2,6 +2,10 @@ package io.jenkins.plugins.analysis.core.scm;
 
 import java.io.IOException;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
+
+import edu.hm.hafner.analysis.Report;
+
 import org.jenkinsci.plugins.gitclient.GitClient;
 import hudson.EnvVars;
 import hudson.FilePath;
@@ -85,12 +89,12 @@ class GitChecker {
             return new GsWorker(gitCommit, gitClient);
         }
         catch (InterruptedException e) {
-            e.printStackTrace();
+            // ignore
         }
         catch (IOException e) {
-            e.printStackTrace();
+            listener.error("%s\n%s", e.getMessage(), ExceptionUtils.getRootCauseStackTrace(e));
         }
-        return null;
+        return new NullGsWorker();
     }
 
     private boolean isShallow(final GitSCM git) {
@@ -103,5 +107,18 @@ class GitChecker {
 
     private GitSCM asGit(final SCM scm) {
         return (GitSCM) scm;
+    }
+
+    static class NullGsWorker extends GsWorker {
+        private static final long serialVersionUID = -4915843781825785930L;
+
+        NullGsWorker() {
+            super(null, null, null);
+        }
+
+        @Override
+        public GsResults process(final Report filteredReport) {
+            return new GsResults();
+        }
     }
 }

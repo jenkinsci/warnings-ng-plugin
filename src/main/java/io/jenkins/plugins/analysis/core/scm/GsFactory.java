@@ -5,6 +5,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.scm.SCM;
 
+import io.jenkins.plugins.analysis.core.scm.GitChecker.NullGsWorker;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 public class GsFactory {
@@ -24,7 +25,7 @@ public class GsFactory {
 
         listener.getLogger().println("Skipping issues blame since Git is the only supported SCM up to now.");
 
-        return new GsWorker(null, null);
+        return new NullGsWorker();
     }
 
     private static SCM getScm(final Run<?, ?> run) {

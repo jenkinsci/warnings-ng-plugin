@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GsResults implements Serializable {
+    private static final long serialVersionUID = -3286184482030185494L;
     private Map<String, GsResult> results = new HashMap<>();
 
     public Map<String, GsResult> getResults() {
@@ -14,5 +15,4 @@ public class GsResults implements Serializable {
     public void setResults(final Map<String, GsResult> results) {
         this.results = results;
     }
-
 }

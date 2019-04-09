@@ -25,7 +25,7 @@ public final class AnnotatedReport implements Serializable {
     private final String id;
     private final Report aggregatedReport = new Report();
     private final Blames aggregatedBlames = new Blames();
-    private GsResults gsResults = new GsResults();
+    private GsResults gsResults;
     private final Map<String, Integer> sizeOfOrigin = new HashMap<>();
 
     /**

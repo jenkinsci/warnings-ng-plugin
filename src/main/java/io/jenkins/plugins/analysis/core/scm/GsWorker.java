@@ -19,14 +19,19 @@ import hudson.remoting.VirtualChannel;
 public class GsWorker implements Serializable {
 
     private static final Logger LOGGER = Logger.getLogger(GsWorker.class.getName());
+    private static final long serialVersionUID = -9163064033730592685L;
 
     private final String gitCommit;
     private GitClient git;
     private FilePath workspace;
 
     public GsWorker(final String gitCommit, final GitClient git) {
+        this(gitCommit, git, git.getWorkTree());
+    }
+
+    GsWorker(final String gitCommit, final GitClient git, final FilePath workspace) {
         this.gitCommit = gitCommit;
-        workspace = git.getWorkTree();
+        this.workspace = workspace;
         this.git = git;
     }
 
@@ -44,7 +49,7 @@ public class GsWorker implements Serializable {
             for (Issue issue : filteredReport) {
                 filteredReport.logInfo("issue: '%s'", issue.toString());
             }
-            return git.withRepository(new GsWorker.GsCallback(filteredReport, headCommit, this.getWorkspacePath()));
+            return git.withRepository(new GsWorker.GsCallback(filteredReport, headCommit, getWorkspacePath()));
         }
         catch (Exception e) {
             filteredReport.logException(e, "Computing gs information failed with an exception:");
