@@ -24,9 +24,9 @@ class LinesChartModelTest {
     @Test
     void testEmptyCtor() {
         LinesChartModel model = new LinesChartModel();
-        assertThat(model.getId().compareTo(""));
-        assertThat(model.getSeries().size() == 0);
-        assertThat(model.getXAxisLabels().isEmpty());
+        assertThat(model.getId()).isEqualTo("");
+        assertThat(model.getSeries().size()).isEqualTo(0);
+        assertThat(model.getXAxisLabels()).isEqualTo(Collections.EMPTY_LIST);
 
     }
 
@@ -34,7 +34,7 @@ class LinesChartModelTest {
     void testToString() {
         LinesChartModel model = new LinesChartModel("spotbugs");
         model.addXAxisLabels(Arrays.asList("1", "2", "3"));
-        assertThat(model.toString().equals("{\n"
+        assertThat(model.toString()).isEqualTo("{\n"
                 + "  \"XAxisLabels\":   [\n"
                 + "    \"1\",\n"
                 + "    \"2\",\n"
@@ -42,24 +42,24 @@ class LinesChartModelTest {
                 + "  ],\n"
                 + "  \"id\": \"spotbugs\",\n"
                 + "  \"series\": []\n"
-                + "}"));
+                + "}");
     }
 
     @Test
     void testSize() {
         LinesChartModel model = new LinesChartModel("spotbugs");
         model.addXAxisLabels(Arrays.asList("1", "2", "3"));
-        assertThat(model.size() == 3);
+        assertThat(model.size()).isEqualTo(3);
 
     }
 
     @Test
     void testGetId() {
         LinesChartModel model = new LinesChartModel("spotbugs");
-        assertThat(model.getId().equals("spotbugs"));
+        assertThat(model.getId()).isEqualTo(("spotbugs"));
 
         model.setId("anotherSpotbugs");
-        assertThat(model.getId().equals("anotherSpotbugs"));
+        assertThat(model.getId()).isEqualTo(("anotherSpotbugs"));
     }
 
     @Test
@@ -68,18 +68,18 @@ class LinesChartModelTest {
         LineSeries series = new LineSeries("TestName", "TestColor", StackedMode.STACKED, FilledMode.FILLED);
         model.addSeries(series);
 
-        assertThat(model.getSeries().get(0).equals(series));
+        assertThat(model.getSeries().get(0)).isEqualTo(series);
     }
 
     @Test
     void testGetXAxisLabels() {
         LinesChartModel modelForSingleXAxisLabelTest = new LinesChartModel("spotbugs");
         modelForSingleXAxisLabelTest.addXAxisLabel("a");
-        assertThat(modelForSingleXAxisLabelTest.getXAxisLabels().equals(Arrays.asList("a")));
+        assertThat(modelForSingleXAxisLabelTest.getXAxisLabels()).isEqualTo(Arrays.asList("a"));
 
         LinesChartModel modelForXAxisListLabelTest = new LinesChartModel("spotbugs");
         modelForXAxisListLabelTest.addXAxisLabels(Arrays.asList("a", "b", "c"));
-        assertThat(modelForXAxisListLabelTest.getXAxisLabels().equals(Arrays.asList("a", "b", "c")));
+        assertThat(modelForXAxisListLabelTest.getXAxisLabels()).isEqualTo(Arrays.asList("a", "b", "c"));
     }
 
     @Test
@@ -103,7 +103,7 @@ class LinesChartModelTest {
         model.addXAxisLabels(builds);
         model.addSeries(series);
 
-        // TODO: write assertions for the getters as well
+
 
         assertThatJson(model).node("xAxisLabels")
                 .isArray().hasSize(5)
