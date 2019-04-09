@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 
 
 /**
- * Tests the class {@link SeverityPieChart}.
+ * Tests the class {@link HealthTrendChart}.
  *
  * @author Matthias Herpers
  */
