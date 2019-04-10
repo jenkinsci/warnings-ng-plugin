@@ -16,11 +16,8 @@ import static org.mockito.Mockito.*;
  */
 class NewVersusFixedSeriesBuilderTest {
 
-
     @Test
     void testComputeSeries() {
-        NewVersusFixedSeriesBuilder builder = new NewVersusFixedSeriesBuilder();
-
         final int newSize = 3;
         final int fixedSize = 5;
 
@@ -28,6 +25,7 @@ class NewVersusFixedSeriesBuilderTest {
         when(run.getNewSize()).thenReturn(newSize);
         when(run.getFixedSize()).thenReturn(fixedSize);
 
+        NewVersusFixedSeriesBuilder builder = new NewVersusFixedSeriesBuilder();
         Map<String, Integer> series = builder.computeSeries(run);
 
         assertThat(series.size()).isEqualTo(2);
