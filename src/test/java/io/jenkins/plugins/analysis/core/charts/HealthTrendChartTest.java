@@ -56,7 +56,7 @@ class HealthTrendChartTest {
     /**
      * Creates Mock object.
      * @param number number of Build.
-     * @return
+     * @return AnalysisBuildresult with the number of Build.
      */
     private AnalysisBuildResult createResult(final int number) {
         AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
