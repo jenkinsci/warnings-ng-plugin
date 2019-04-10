@@ -21,7 +21,7 @@ class SeverityPieChartTest {
      *  Verifies that a SeverityPieChart with empty report shows only predefined severities without Severity.ERROR.
      */
     @Test
-    void ShouldCreateChartFromEmptyReport() {
+    void shouldCreateChartFromEmptyReport() {
 
         SeverityPieChart severityPieChart = new SeverityPieChart();
         int numberOfDefaultPieData = Severity.getPredefinedValues().size() - 1; // Without Severity.ERROR
@@ -40,7 +40,7 @@ class SeverityPieChartTest {
      *  Verifies that a SeverityPieChart with one Error shows all Severities.
      */
     @Test
-    void ShouldCreateChartFromReportWithOneError() {
+    void shouldCreateChartFromReportWithOneError() {
 
         SeverityPieChart severityPieChart = new SeverityPieChart();
         int numberOfDefaultPieData = Severity.getPredefinedValues().size(); // With Severity.ERROR
@@ -59,7 +59,7 @@ class SeverityPieChartTest {
      *  Verifies that a SeverityPieChart with one of each severity shows all Severities.
      */
     @Test
-    void ShouldCreateChartFromSimpleReport() {
+    void shouldCreateChartFromSimpleReport() {
 
         SeverityPieChart severityPieChart = new SeverityPieChart();
         int numberOfDefaultPieData = Severity.getPredefinedValues().size(); // With Severity.ERROR
