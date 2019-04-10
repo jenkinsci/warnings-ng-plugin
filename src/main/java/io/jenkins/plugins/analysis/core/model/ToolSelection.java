@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.StringContainsUtils;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -92,6 +93,13 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
     public static class ToolSelectionDescriptor extends Descriptor<ToolSelection> {
         // empty constructor required for stapler
 
+        private static JenkinsFacade jenkinsFacade = new JenkinsFacade();
+
+        @VisibleForTesting
+        static void setJenkinsFacade(final JenkinsFacade facade) {
+            jenkinsFacade = facade;
+        }
+
         /**
          * Returns a model with all available charsets.
          *
@@ -99,7 +107,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
          */
         public ComboBoxModel doFillIdItems() {
             ComboBoxModel model = new ComboBoxModel();
-            Set<String> ids = new JenkinsFacade().getAllJobs()
+            Set<String> ids = jenkinsFacade.getAllJobs()
                     .stream()
                     .flatMap(job -> job.getActions(JobAction.class).stream())
                     .map(JobAction::getId).collect(Collectors.toSet());
