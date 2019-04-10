@@ -24,7 +24,7 @@ class LogHandlerTest {
     private static final TaskListener TASK_LISTENER = mock(TaskListener.class);
 
     @Test
-    void shouldLogErrorMessage() throws UnsupportedEncodingException {
+    void shouldLogErrorMessage() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
 
@@ -35,12 +35,12 @@ class LogHandlerTest {
         report.logError(MESSAGE);
         logHandler.log(report);
 
-        String output = outputStream.toString("UTF8");
-        assertThat(output).isEqualTo("[" + LOG_HANDLER_NAME + "] [-ERROR-] " + MESSAGE + "\n");
+        String output = outputStream.toString().replace(System.getProperty("line.separator"), "");
+        assertThat(output).isEqualTo("[" + LOG_HANDLER_NAME + "] [-ERROR-] " + MESSAGE);
     }
 
     @Test
-    void shouldLogInfoMessage() throws UnsupportedEncodingException {
+    void shouldLogInfoMessage() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
 
@@ -51,7 +51,7 @@ class LogHandlerTest {
         report.logInfo(MESSAGE);
         logHandler.log(report);
 
-        String output = outputStream.toString("UTF8");
-        assertThat(output).isEqualTo("[" + LOG_HANDLER_NAME + "] " + MESSAGE + "\n");
+        String output = outputStream.toString().replace(System.getProperty("line.separator"), "");
+        assertThat(output).isEqualTo("[" + LOG_HANDLER_NAME + "] " + MESSAGE);
     }
 }
