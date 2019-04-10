@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link NewVersusFixedPieChartTest}.
+ * Tests the class {@link NewVersusFixedPieChart}.
  *
  * @author Veronika Zwickenpflug
  */
