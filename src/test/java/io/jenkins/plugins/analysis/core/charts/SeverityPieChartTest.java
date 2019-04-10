@@ -21,16 +21,13 @@ class SeverityPieChartTest {
      *  Verifies that a SeverityPieChart with empty report shows only predefined severities without Severity.ERROR.
      */
     @Test
-    void buildTestWithEmptyReport() {
+    void ShouldCreateChartFromEmptyReport() {
 
         SeverityPieChart severityPieChart = new SeverityPieChart();
         int numberOfDefaultPieData = Severity.getPredefinedValues().size() - 1; // Without Severity.ERROR
-        //Create Report
         Report report = createReport(0, 0, 0, 0);
-        //pass Report to SeverityPieChart
         PieChartModel pieChartModel = severityPieChart.create(report);
         List<PieData> data = pieChartModel.getData();
-        //Assert
         for (PieData severity : data) {
             assertThat(Severity.getPredefinedValues().contains(severity));
         }
@@ -43,16 +40,13 @@ class SeverityPieChartTest {
      *  Verifies that a SeverityPieChart with one Error shows all Severities.
      */
     @Test
-    void buildTestWithOneError() {
+    void ShouldCreateChartFromReportWithOneError() {
 
         SeverityPieChart severityPieChart = new SeverityPieChart();
         int numberOfDefaultPieData = Severity.getPredefinedValues().size(); // With Severity.ERROR
-        //Create Report
         Report report = createReport(0, 0, 0, 1);
-        //pass Report to SeverityPieChart
         PieChartModel pieChartModel = severityPieChart.create(report);
         List<PieData> data = pieChartModel.getData();
-        //Assert
         for (PieData severity : data) {
             assertThat(Severity.getPredefinedValues().contains(severity));
         }
@@ -65,16 +59,13 @@ class SeverityPieChartTest {
      *  Verifies that a SeverityPieChart with one of each severity shows all Severities.
      */
     @Test
-    void buildTestWithOneOfEach() {
+    void ShouldCreateChartFromSimpleReport() {
 
         SeverityPieChart severityPieChart = new SeverityPieChart();
         int numberOfDefaultPieData = Severity.getPredefinedValues().size(); // With Severity.ERROR
-        //Create Report
         Report report = createReport(1, 1, 1, 1);
-        //pass Report to SeverityPieChart
         PieChartModel pieChartModel = severityPieChart.create(report);
         List<PieData> data = pieChartModel.getData();
-        //Assert
         for (PieData severity : data) {
             assertThat(Severity.getPredefinedValues().contains(severity));
         }
