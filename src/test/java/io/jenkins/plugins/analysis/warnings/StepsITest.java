@@ -132,7 +132,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     private void assertThatConsoleNotesAreRemoved(final String fileName, final int expectedSize) {
         Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
 
-        WorkflowJob job = createJobWithWorkspaceFiles(fileName);
+        WorkflowJob job = createPipelineWithWorkspaceFiles(fileName);
         job.setDefinition(asStage(
                 "sh 'cat *.txt'",
                 "def issues = scanForIssues tool: eclipse()",
@@ -161,7 +161,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     /** Runs the JavaDoc parser and uses a message filter to change the number of recorded warnings. */
     @Test
     public void shouldFilterByMessage() {
-        WorkflowJob job = createJobWithWorkspaceFiles("javadoc.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt");
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
                         + "filters:[includeMessage('.*@link.*'), excludeMessage('.*removeSpecChangeListener.*')]")); // 4 @link and one with removeSpecChangeListener
@@ -175,7 +175,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test
     public void shouldEnforceQualityGate() {
-        WorkflowJob job = createJobWithWorkspaceFiles("javadoc.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt");
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
@@ -222,7 +222,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
     private void publishResultsWithIdAndName(final String publishStep, final String expectedId,
             final String expectedName) {
-        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("eclipse.txt", "javadoc.txt", "javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 createScanForIssuesStep(new Eclipse(), "eclipse"),
                 createScanForIssuesStep(new JavaDoc(), "javadoc"),
@@ -271,7 +271,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private void runEclipse(final String property) {
-        WorkflowJob job = createJobWithWorkspaceFiles("eclipse.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("eclipse.txt");
         job.setDefinition(asStage("recordIssues "
                 + property));
 
@@ -288,7 +288,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldHaveActionWithIdAndNameWithEmptyResults() {
-        WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 "publishIssues issues:[java]"));
 
@@ -308,7 +308,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldShowWarningsOfGroovyParser() {
-        WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
                 "def groovy = scanForIssues " 
                         + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'**/*issues.txt', reportEncoding:'UTF-8')",
@@ -400,7 +400,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private WorkflowRun runWith2GroovyParsers(final boolean isAggregating, final String... arguments) {
-        WorkflowJob job = createJobWithWorkspaceFiles("pep8Test.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
                 "recordIssues aggregatingResults: " + isAggregating + ", tools: [" 
                         + "groovyScript(parserId:'groovy-pep8', pattern: '**/*issues.txt', id: 'groovy-1'),"
@@ -422,7 +422,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldApplyFileFilters() {
-        WorkflowJob job = createJobWithWorkspaceFiles("pmd-filtering.xml");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File.*.java')");
         final Pmd tool = new Pmd();
@@ -455,7 +455,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldCombineFilter() {
-        WorkflowJob job = createJobWithWorkspaceFiles("pmd-filtering.xml");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File1.java'), includeCategory('Category1')");
         AnalysisResult result = scheduleBuild(job, new Pmd().getActualId());
@@ -502,7 +502,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldUseOtherJobAsReference() {
         WorkflowJob reference = createPipeline("reference");
         copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
-        reference.setDefinition(parseAndPublish(new Java()));
+        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
 
         final Java tool = new Java();
         AnalysisResult referenceResult = scheduleBuild(reference, tool.getActualId());
@@ -511,7 +511,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(referenceResult.getIssues()).hasSize(2);
         assertThat(referenceResult.getReferenceBuild()).isEmpty();
 
-        WorkflowJob job = createJobWithWorkspaceFiles("java-start.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("java-start.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java()),
                 "publishIssues issues:[issues], referenceJobName:'reference'"));
 

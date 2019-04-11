@@ -255,7 +255,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @param fileNames
      *         the files to copy
      * @param fileNameMapper
-     *         maps input file names to outout file names
+     *         maps input file names to output file names
      */
     protected void copyWorkspaceFiles(final TopLevelItem job, final String[] fileNames,
             final Function<String, String> fileNameMapper) {
@@ -394,7 +394,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline script
      */
-    protected CpsFlowDefinition parseAndPublish(final ReportScanningTool tool) {
+    protected CpsFlowDefinition createPipelineScriptWithScanAndPublishSteps(final ReportScanningTool tool) {
         return asStage(createScanForIssuesStep(tool), PUBLISH_ISSUES_STEP);
     }
 
@@ -439,7 +439,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline job
      */
-    protected WorkflowJob createJobWithWorkspaceFiles(final String... fileNames) {
+    protected WorkflowJob createPipelineWithWorkspaceFiles(final String... fileNames) {
         WorkflowJob job = createPipeline();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;

@@ -88,7 +88,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the TagList parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllOpenTasks() {
-        WorkflowJob job = createJobWithWorkspaceFiles("tasks/file-with-tasks.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("tasks/file-with-tasks.txt");
         job.setDefinition(asStage(
                 "def issues = scanForIssues tool: " 
                         + "taskScanner(includePattern:'**/*issues.txt', highTags:'FIXME', normalTags:'TODO')",
@@ -691,8 +691,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         try {
-            WorkflowJob job = createJobWithWorkspaceFiles(fileNames);
-            job.setDefinition(parseAndPublish(tool));
+            WorkflowJob job = createPipelineWithWorkspaceFiles(fileNames);
+            job.setDefinition(createPipelineScriptWithScanAndPublishSteps(tool));
 
             AnalysisResult result = scheduleBuild(job, tool.getActualId());
 
