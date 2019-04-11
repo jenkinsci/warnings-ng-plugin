@@ -96,7 +96,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         job.setDefinition(readJenkinsFile("parallel.jenkinsfile"));
 
-        WorkflowRun run = runSuccessfully(job);
+        WorkflowRun run = buildSuccessfully(job);
         List<ResultAction> actions = run.getActions(ResultAction.class);
 
         assertThat(actions).hasSize(2);
@@ -166,7 +166,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
                         + "filters:[includeMessage('.*@link.*'), excludeMessage('.*removeSpecChangeListener.*')]")); // 4 @link and one with removeSpecChangeListener
 
-        WorkflowRun run = runSuccessfully(job);
+        WorkflowRun run = buildSuccessfully(job);
 
         AnalysisResult result = getAnalysisResult(run);
         assertThat(result.getIssues()).hasSize(3);
@@ -180,22 +180,22 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
                         + "qualityGates: [[threshold: 6, type: 'TOTAL', unstable: true]]"));
-        run(job, Result.UNSTABLE);
+        buildWithResult(job, Result.UNSTABLE);
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
                         + "qualityGates: [[threshold: 6, type: 'TOTAL', unstable: false]]"));
-        run(job, Result.FAILURE);
+        buildWithResult(job, Result.FAILURE);
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
                         + "qualityGates: [[threshold: 6, type: 'TOTAL_NORMAL', unstable: true]]"));
-        run(job, Result.UNSTABLE);
+        buildWithResult(job, Result.UNSTABLE);
 
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
                         + "qualityGates: [[threshold: 6, type: 'TOTAL_NORMAL', unstable: false]]"));
-        run(job, Result.FAILURE);
+        buildWithResult(job, Result.FAILURE);
     }
 
     /**
@@ -228,7 +228,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 createScanForIssuesStep(new JavaDoc(), "javadoc"),
                 publishStep));
 
-        WorkflowRun run = runSuccessfully(job);
+        WorkflowRun run = buildSuccessfully(job);
 
         ResultAction action = getResultAction(run);
         assertThat(action.getId()).isEqualTo(expectedId);
@@ -275,7 +275,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         job.setDefinition(asStage("recordIssues "
                 + property));
 
-        WorkflowRun run = runSuccessfully(job);
+        WorkflowRun run = buildSuccessfully(job);
 
         ResultAction action = getResultAction(run);
         AnalysisResult result = action.getResult();
@@ -292,7 +292,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 "publishIssues issues:[java]"));
 
-        WorkflowRun run = runSuccessfully(job);
+        WorkflowRun run = buildSuccessfully(job);
 
         ResultAction action = getResultAction(run);
         assertThat(action.getId()).isEqualTo("java");
@@ -320,7 +320,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
-        WorkflowRun run = runSuccessfully(job);
+        WorkflowRun run = buildSuccessfully(job);
 
         ResultAction action = getResultAction(run);
         assertThat(action.getId()).isEqualTo(id);
@@ -413,7 +413,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
-        return runSuccessfully(job);
+        return buildSuccessfully(job);
     }
 
     /**

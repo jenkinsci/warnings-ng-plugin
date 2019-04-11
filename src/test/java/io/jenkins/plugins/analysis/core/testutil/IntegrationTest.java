@@ -670,6 +670,40 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
+     * Schedules a build for the specified pipeline and waits for the job to finish. The expected result of the build is
+     * {@link Result#SUCCESS}.
+     *
+     * @param job
+     *         the job to run
+     *
+     * @return the successful build
+     */
+    protected WorkflowRun buildSuccessfully(final WorkflowJob job) {
+        return buildWithResult(job, Result.SUCCESS);
+    }
+
+    /**
+     * Schedules a build for the specified pipeline and waits for the job to finish. The expected result of the build is
+     * {@link Result#SUCCESS}.
+     *
+     * @param job
+     *         the job to run
+     * @param expectedResult
+     *         the expected result
+     *
+     * @return the successful build
+     */
+    @SuppressWarnings("illegalcatch")
+    protected WorkflowRun buildWithResult(final WorkflowJob job, final Result expectedResult) {
+        try {
+            return getJenkins().assertBuildStatus(expectedResult, Objects.requireNonNull(job.scheduleBuild2(0)));
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
      * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
      * been finished.
      *
@@ -683,7 +717,7 @@ public abstract class IntegrationTest extends ResourceTest {
     @SuppressWarnings("illegalcatch")
     protected AnalysisResult scheduleBuild(final WorkflowJob job, final String toolId) {
         try {
-            WorkflowRun run = runSuccessfully(job);
+            WorkflowRun run = buildSuccessfully(job);
 
             ResultAction action = getResultAction(run);
 
@@ -703,33 +737,55 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Schedules a build for the specified pipeline and waits for the job to finish. The expected result of the build is
-     * {@link Result#SUCCESS}.
+     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
+     * been finished.
      *
      * @param job
-     *         the job to run
+     *         the job to schedule
+     * @param status
+     *         the expected result for the build
      *
-     * @return the successful build
+     * @return the created {@link ResultAction}
      */
-    protected WorkflowRun runSuccessfully(final WorkflowJob job) {
-        return run(job, Result.SUCCESS);
+    protected AnalysisResult scheduleBuildAndAssertStatus(final AbstractProject<?, ?> job, final Result status) {
+        return getAnalysisResult(buildWithStatus(job, status));
     }
 
     /**
-     * Schedules a build for the specified pipeline and waits for the job to finish. The expected result of the build is
-     * {@link Result#SUCCESS}.
+     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
+     * been finished.
      *
      * @param job
-     *         the job to run
-     * @param expectedResult
-     *         the expected result
+     *         the job to schedule
+     * @param status
+     *         the expected result for the build
+     * @param assertions
+     *         the assertions for the result
      *
-     * @return the successful build
+     * @return the build
      */
-    @SuppressWarnings("illegalcatch")
-    protected WorkflowRun run(final WorkflowJob job, final Result expectedResult) {
+    protected AnalysisResult scheduleBuildAndAssertStatus(final AbstractProject<?, ?> job, final Result status,
+            final Consumer<AnalysisResult> assertions) {
+        Run<?, ?> build = buildWithStatus(job, status);
+        AnalysisResult result = getAnalysisResult(build);
+        assertions.accept(result);
+        return result;
+    }
+
+    /**
+     * Schedules a new build for the specified job and returns the finished {@link Run}.
+     *
+     * @param job
+     *         the job to schedule
+     * @param status
+     *         the expected result for the build
+     *
+     * @return the finished {@link Run}.
+     */
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
+    protected Run<?, ?> buildWithStatus(final AbstractProject<?, ?> job, final Result status) {
         try {
-            return getJenkins().assertBuildStatus(expectedResult, Objects.requireNonNull(job.scheduleBuild2(0)));
+            return getJenkins().assertBuildStatus(status, job.scheduleBuild2(0));
         }
         catch (Exception e) {
             throw new AssertionError(e);
@@ -765,62 +821,6 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
-     * been finished.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     * @param assertions
-     *         the assertions for the result
-     *
-     * @return the build
-     */
-    protected Run<?, ?> scheduleBuildAndAssertStatus(final FreeStyleProject job, final Result status,
-            final Consumer<AnalysisResult> assertions) {
-        Run<?, ?> build = buildWithStatus(job, status);
-        AnalysisResult result = getAnalysisResult(build);
-        assertions.accept(result);
-        return build;
-    }
-
-    /**
-     * Schedules a new build for the specified job and returns the created {@link AnalysisResult} after the build has
-     * been finished.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     *
-     * @return the created {@link ResultAction}
-     */
-    protected AnalysisResult scheduleBuildAndAssertStatus(final AbstractProject<?, ?> job, final Result status) {
-        return getAnalysisResult(buildWithStatus(job, status));
-    }
-
-    /**
-     * Schedules a new build for the specified job and returns the finished {@link Run}.
-     *
-     * @param job
-     *         the job to schedule
-     * @param status
-     *         the expected result for the build
-     *
-     * @return the finished {@link Run}.
-     */
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
-    protected Run<?, ?> buildWithStatus(final AbstractProject<?, ?> job, final Result status) {
-        try {
-            return getJenkins().assertBuildStatus(status, job.scheduleBuild2(0));
-        }
-        catch (Exception e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
      * Returns the created {@link AnalysisResult analysis result} of a build.
      *
      * @param build
@@ -832,6 +832,7 @@ public abstract class IntegrationTest extends ResourceTest {
         List<AnalysisResult> analysisResults = getAnalysisResults(build);
 
         assertThat(analysisResults).hasSize(1);
+
         AnalysisResult result = analysisResults.get(0);
         System.out.println("----- Error Messages -----");
         result.getErrorMessages().forEach(System.out::println);
