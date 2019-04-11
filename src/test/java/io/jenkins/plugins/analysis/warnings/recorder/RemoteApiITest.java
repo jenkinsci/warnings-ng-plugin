@@ -132,9 +132,9 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
         IssuesRecorder recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
-        buildWithStatus(project, Result.SUCCESS);
+        buildWithResult(project, Result.SUCCESS);
         recorder.setTool(createCheckstyle("**/checkstyle2*"));
-        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
 
         assertThatRemoteApiEquals(build, "/checkstyle/all/api/xml", "all-issues.xml");
         assertThatRemoteApiEquals(build, "/checkstyle/new/api/xml", "new-issues.xml");
@@ -148,7 +148,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
         enableWarnings(project, createCheckstyle("**/checkstyle1*"),
                 configurePattern(new Pmd()), configurePattern(new SpotBugs()));
-        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
 
         JSONWebResponse json = callJsonRemoteApi(build.getUrl() + "warnings-ng/api/json");
         JSONObject result = json.getJSONObject();
@@ -186,7 +186,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     private Run<?, ?> buildCheckStyleJob() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CHECKSTYLE_FILE);
         enableCheckStyleWarnings(project);
-        return buildWithResult(project, Result.SUCCESS);
+        return scheduleBuildAndAssertStatus(project, Result.SUCCESS).getOwner();
     }
 
     private Document readExpectedXml(final String fileName) {

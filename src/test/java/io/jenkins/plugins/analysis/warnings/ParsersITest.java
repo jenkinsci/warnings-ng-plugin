@@ -90,11 +90,11 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindAllOpenTasks() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("tasks/file-with-tasks.txt");
         job.setDefinition(asStage(
-                "def issues = scanForIssues tool: " 
+                "def issues = scanForIssues tool: "
                         + "taskScanner(includePattern:'**/*issues.txt', highTags:'FIXME', normalTags:'TODO')",
                 PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleBuild(job, "open-tasks");
+        AnalysisResult result = scheduleSuccessfulBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(2);
         assertThat(result.getIssues()).hasSize(2).hasSeverities(0, 1, 1, 0);
@@ -334,7 +334,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), issue,
                 "<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter. \n"
                         + "If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>\n");
-        assertThat(issue).hasMessage("java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
+        assertThat(issue).hasMessage(
+                "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
     }
 
     /** Runs the Clang-Tidy parser on an output file that contains 6 issues. */
@@ -579,6 +580,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindAllEclipseIssues() {
         shouldFindIssuesOfTool(8, new Eclipse(), "eclipse.txt");
 
+        // FIXME: fails if offline
+        // Parsing of file '/var/folders/pg/qr8ry2kd4qjc151jhq9ksgx00000gn/T/jenkinsTests.tmp/jenkins6034409647481918217test/workspace/test18/eclipse-withinfo-issues.txt' failed due to an exception:, java.net.UnknownHostException: www.eclipse.org, 	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:184), 	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392), 	at java.net.Socket.connect(Socket.java:589), 	at java.net.Socket.connect(Socket.java:538), 	at sun.net.NetworkClient.doConnect(NetworkClient.java:180), 	at sun.net.www.http.HttpClient.openServer(HttpClient.java:463), 	at sun.net.www.http.HttpClient.openServer(HttpClient.java:558), 	at sun.net.www.http.HttpClient.<init>(HttpClient.java:242), 	at sun.net.www.http.HttpClient.New(HttpClient.java:339), 	at sun.net.www.http.HttpClient.New(HttpClient.java:357), 	at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1220), 	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1156), 	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1050), 	at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:984), 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1564), 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1492), 	at org.apache.xerces.impl.XMLEntityManager.setupCurrentEntity(Unknown Source), 	at org.apache.xerces.impl.XMLEntityManager.startEntity(Unknown Source), 	at org.apache.xerces.impl.XMLEntityManager.startDTDEntity(Unknown Source), 	at org.apache.xerces.impl.XMLDTDScannerImpl.setInputSource(Unknown Source), 	at org.apache.xerces.impl.XMLDocumentScannerImpl$DTDDispatcher.dispatch(Unknown Source), 	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source), 	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source), 	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source), 	at org.apache.xerces.parsers.XMLParser.parse(Unknown Source), 	at org.apache.xerces.parsers.DOMParser.parse(Unknown Source), 	at org.apache.xerces.jaxp.DocumentBuilderImpl.parse(Unknown Source),
         shouldFindIssuesOfTool(6, new Eclipse(), "eclipse-withinfo.xml");
 
         shouldFindIssuesOfTool(8 + 6, new Eclipse(), "eclipse-withinfo.xml", "eclipse.txt");
@@ -694,7 +697,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             WorkflowJob job = createPipelineWithWorkspaceFiles(fileNames);
             job.setDefinition(createPipelineScriptWithScanAndPublishSteps(tool));
 
-            AnalysisResult result = scheduleBuild(job, tool.getActualId());
+            AnalysisResult result = scheduleSuccessfulBuild(job);
 
             assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
