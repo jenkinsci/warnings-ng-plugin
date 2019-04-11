@@ -94,7 +94,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         copySingleFileToAgentWorkspace(createAgent("node1"), job, "eclipse.txt", "issues.txt");
         copySingleFileToAgentWorkspace(createAgent("node2"), job, "eclipse.txt", "issues.txt");
 
-        job.setDefinition(readDefinition("parallel.jenkinsfile"));
+        job.setDefinition(readJenkinsFile("parallel.jenkinsfile"));
 
         WorkflowRun run = runSuccessfully(job);
         List<ResultAction> actions = run.getActions(ResultAction.class);

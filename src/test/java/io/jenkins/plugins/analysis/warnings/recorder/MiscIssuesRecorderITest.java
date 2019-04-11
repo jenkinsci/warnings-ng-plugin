@@ -239,10 +239,10 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
         Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.FAILURE);
-        assertThatLogContains(build, "ID checkstyle is already used by another action: "
-                + "io.jenkins.plugins.analysis.core.model.ResultAction for CheckStyle");
 
         AnalysisResult result = getAnalysisResult(build);
+        assertThat(getConsoleLog(result)).contains("ID checkstyle is already used by another action: "
+                + "io.jenkins.plugins.analysis.core.model.ResultAction for CheckStyle");
         assertThat(result).hasId("checkstyle");
         assertThat(result).hasTotalSize(6);
     }
