@@ -4,7 +4,6 @@ import java.util.Collection;
 
 import edu.hm.hafner.util.VisibleForTesting;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -13,6 +12,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.scm.NullSCM;
 import hudson.scm.SCM;
+import jenkins.triggers.SCMTriggerItem;
 
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
@@ -22,7 +22,6 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
  * @author Lukas Krose
  */
 public final class BlameFactory {
-
     private static JenkinsFacade jenkinsFacade = new JenkinsFacade();
 
     @VisibleForTesting
@@ -58,13 +57,7 @@ public final class BlameFactory {
 
     private static SCM getScm(final Run<?, ?> run) {
         Job<?, ?> job = run.getParent();
-        if (job instanceof WorkflowJob) {
-            Collection<? extends SCM> scms = ((WorkflowJob) job).getSCMs();
-            if (!scms.isEmpty()) {
-                return scms.iterator().next(); // TODO: what should we do if more than one SCM has been used
-            }
-        }
-        else if (run instanceof AbstractBuild) {
+        if (run instanceof AbstractBuild) {
             AbstractProject<?, ?> project = ((AbstractBuild) run).getProject();
             if (project.getScm() != null) {
                 return project.getScm();
@@ -72,6 +65,12 @@ public final class BlameFactory {
             SCM scm = project.getRootProject().getScm();
             if (scm != null) {
                 return scm;
+            }
+        }
+        else if (job instanceof SCMTriggerItem) {
+            Collection<? extends SCM> scms = ((SCMTriggerItem) job).getSCMs();
+            if (!scms.isEmpty()) {
+                return scms.iterator().next(); // TODO: what should we do if more than one SCM has been used
             }
         }
         return new NullSCM();
