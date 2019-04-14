@@ -13,7 +13,6 @@ import static org.mockito.Mockito.*;
  * @author Florian Hageneder
  */
 class NullBlamerTest {
-
     @Test
     void shouldLogSkippedBlaming() {
         Report report = new Report();
@@ -33,5 +32,4 @@ class NullBlamerTest {
         assertThat(empty).isEmpty();
         assertThat(empty.size()).isEqualTo(0);
     }
-
 }
