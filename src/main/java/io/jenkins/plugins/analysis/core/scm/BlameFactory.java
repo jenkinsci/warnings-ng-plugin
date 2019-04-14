@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.core.scm;
 
 import java.util.Collection;
 
+import edu.hm.hafner.util.VisibleForTesting;
+
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
@@ -20,6 +22,14 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
  * @author Lukas Krose
  */
 public final class BlameFactory {
+
+    private static JenkinsFacade jenkinsFacade = new JenkinsFacade();
+
+    @VisibleForTesting
+    static void setJenkinsFacade(final JenkinsFacade facade) {
+        jenkinsFacade = facade;
+    }
+
     /**
      * Selects a matching SCM blamer for the specified job.
      *
@@ -33,7 +43,7 @@ public final class BlameFactory {
      * @return the blamer
      */
     public static Blamer createBlamer(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
-        if (new JenkinsFacade().isPluginInstalled("git")) {
+        if (jenkinsFacade.isPluginInstalled("git")) {
             SCM scm = getScm(run);
             GitChecker gitChecker = new GitChecker();
             if (gitChecker.isGit(scm)) {
