@@ -117,11 +117,12 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         // navigate to one deep level element that is not visible at depth 0
         XPath xpath = XPathFactory.newInstance().newXPath();
         Node deepLevelElement = (Node) xpath
-                .compile("//analysisResultApi//owner//action//cause//*")
+                .compile("//analysisResultApi//owner//result")
                 .evaluate(actualDocument, XPathConstants.NODE);
 
         assertThat(deepLevelElement).isNotNull();
-        assertThat(deepLevelElement.getNodeName()).isEqualTo("shortDescription");
+        assertThat(deepLevelElement.getNodeName()).isEqualTo("result");
+        assertThat(deepLevelElement.getTextContent()).isEqualTo("SUCCESS");
     }
 
     /**
