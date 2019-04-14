@@ -17,7 +17,7 @@ public class PieChartModel {
     private final String name;
 
     /**
-     * Creates a new {@link PieChartModel} with the specified humand readable name.
+     * Creates a new {@link PieChartModel} with the specified human readable name.
      *
      * @param name the name of the chart
      */
