@@ -15,11 +15,10 @@ import static org.mockito.Mockito.*;
  * @author Veronika Zwickenpflug
  */
 class NewVersusFixedSeriesBuilderTest {
-
     @Test
     void testComputeSeries() {
-        final int newSize = 3;
-        final int fixedSize = 5;
+        int newSize = 3;
+        int fixedSize = 5;
 
         StaticAnalysisRun run = mock(StaticAnalysisRun.class);
         when(run.getNewSize()).thenReturn(newSize);
