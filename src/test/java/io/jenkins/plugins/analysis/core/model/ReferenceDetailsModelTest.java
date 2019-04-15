@@ -7,16 +7,13 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.scm.BlameRequest;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 
-import static j2html.TagCreator.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -26,8 +23,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Colin Kaschel
  */
-class ReferenceDetailsModelTest extends DetailsModelTest{
-
+class ReferenceDetailsModelTest extends AbstractDetailsModelTest {
     private static final String COMMIT = "commit";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
@@ -50,7 +46,6 @@ class ReferenceDetailsModelTest extends DetailsModelTest{
 
     @Test
     void shouldShowIssueWithBlameInformation() {
-
         Report report = new Report();
         Issue issue = createIssue(1);
         report.add(issue);
@@ -103,13 +98,12 @@ class ReferenceDetailsModelTest extends DetailsModelTest{
         assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(MESSAGE));
         assertThat(columns.get(1)).contains("file-1:15");
         assertThat(columns.get(2)).contains("1");
-        assertThat(columns.get(3)).contains("-");
-        assertThat(columns.get(4)).contains("-");
-        assertThat(columns.get(5)).contains("-");
+        assertThat(columns.get(3)).contains(ReferenceDetailsModel.UNDEFINED);
+        assertThat(columns.get(4)).contains(ReferenceDetailsModel.UNDEFINED);
+        assertThat(columns.get(5)).contains(ReferenceDetailsModel.UNDEFINED);
     }
 
     private ReferenceDetailsModel createModel(final Blames blames) {
-
         DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
         when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
