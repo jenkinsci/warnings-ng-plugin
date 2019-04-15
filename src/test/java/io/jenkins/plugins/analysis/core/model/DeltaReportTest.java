@@ -84,7 +84,7 @@ class DeltaReportTest {
         Issue issue = getIssue("issue");
         Issue fixedIssue = getIssue("fixedIssue");
         Issue newIssue = getIssue("newIssue");
-        Issue newIssue2 = getIssueWithSeverity("newIssue2", Severity.ERROR);
+        Issue error = getIssueWithSeverity("error", Severity.ERROR);
 
         Report referenceIssues = new Report();
         referenceIssues.add(issue);
@@ -94,7 +94,7 @@ class DeltaReportTest {
         Report report = new Report();
         report.add(issue);
         report.add(newIssue);
-        report.add(newIssue2);
+        report.add(error);
 
         IssuesStatistics compareIssuesStatistics = new IssuesStatisticsBuilder()
                 .setTotalSize(3)
