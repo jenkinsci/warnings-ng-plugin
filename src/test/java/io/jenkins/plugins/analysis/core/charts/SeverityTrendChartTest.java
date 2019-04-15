@@ -20,6 +20,7 @@ import static org.mockito.Mockito.*;
  * Tests the class {@link SeverityTrendChart}.
  *
  * @author Ullrich Hafner
+ * @author Artem Polovyi
  */
 class SeverityTrendChartTest {
     @Test
