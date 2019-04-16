@@ -18,11 +18,10 @@ class NewVersusFixedPieChartTest {
 
     @Test
     void testCreate() {
-        final int[] sizes = new int[] {2, 3, 4};
-        final String[] names = new String[] {
+        int[] sizes = new int[] {2, 3, 4};
+        String[] names = new String[] {
                 Messages.New_Warnings_Short(), Messages.Outstanding_Warnings_Short(), Messages.Fixed_Warnings_Short()};
-        final Palette[] colors = new Palette[] {
-                Palette.RED, Palette.YELLOW, Palette.GREEN};
+        Palette[] colors = new Palette[] {Palette.RED, Palette.YELLOW, Palette.GREEN};
 
         NewVersusFixedPieChart chart = new NewVersusFixedPieChart();
 
