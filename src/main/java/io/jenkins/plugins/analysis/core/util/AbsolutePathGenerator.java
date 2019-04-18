@@ -21,6 +21,7 @@ import edu.hm.hafner.util.VisibleForTesting;
  *
  * @author Ullrich Hafner
  */
+// FIXME: move to analysis-model
 public class AbsolutePathGenerator {
     static final String NOTHING_TO_DO = "-> none of the issues requires resolving of absolute path";
     private final FileSystem fileSystem;
