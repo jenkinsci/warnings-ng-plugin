@@ -230,12 +230,21 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
+     * Returns the model for the details table that shows the SCM blames.
+     *
+     * @return the table model
+     */
+    public DetailsTableModel getScmBlamesModel() {
+        return labelProvider.getScmBlamesModel(owner, getUrl(), result.getBlames());
+    }
+
+    /**
      * Returns the model for the details table.
      *
      * @return the table model
      */
-    public DetailsTableModel getScmModel() {
-        return labelProvider.getScmModel(owner, getUrl(), result.getBlames());
+    public DetailsTableModel getScmPropertiesModel() {
+        return labelProvider.getScmPropertiesModel(owner, getUrl(), result.getBlames());
     }
 
     private JSONObject toJsonArray(final List<List<String>> rows) {
@@ -262,7 +271,7 @@ public class IssuesDetail implements ModelObject {
             rows = getIssuesModel().getContent(getIssues());
         }
         else {
-            rows = getScmModel().getContent(getIssues());
+            rows = getScmBlamesModel().getContent(getIssues());
         }
 
         return toJsonArray(rows);
