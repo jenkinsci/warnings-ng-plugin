@@ -83,8 +83,8 @@ class ToolsTrendChartTest {
         LinesChartModel model = chart.create(results, new ChartModelConfiguration());
 
         List<String> lineColors = new ArrayList<>();
-        for (LineSeries lineSerie : model.getSeries()) {
-            lineColors.add(lineSerie.getItemStyle().getColor());
+        for (LineSeries lineSeries : model.getSeries()) {
+            lineColors.add(lineSeries.getItemStyle().getColor());
         }
 
         boolean modelHasDuplicateColors = hasDuplicates(lineColors);
