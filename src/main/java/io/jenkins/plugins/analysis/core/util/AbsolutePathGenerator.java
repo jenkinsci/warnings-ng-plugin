@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.FilteredLog;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -52,16 +53,18 @@ public class AbsolutePathGenerator {
 
         if (filesToProcess.isEmpty()) {
             report.logInfo(NOTHING_TO_DO);
-            report.stream().forEach(issue -> issue.setFileName(new PathUtil().getAbsolutePath(issue.getFileName())));
+            // FIXME: why should we set the filename here?
+            // report.stream().forEach(issue -> issue.setFileName(new PathUtil().getAbsolutePath(issue.getFileName())));
             return;
         }
 
         FilteredLog log = new FilteredLog(report, "Can't resolve absolute paths for some files:");
 
+        IssueBuilder builder = new IssueBuilder();
         Map<String, String> pathMapping = resolveAbsoluteNames(filesToProcess, workspace, log);
         report.stream()
                 .filter(issue -> pathMapping.containsKey(issue.getFileName()))
-                .forEach(issue -> issue.setFileName(pathMapping.get(issue.getFileName())));
+                .forEach(issue -> issue.setFileName(builder.internFileName(pathMapping.get(issue.getFileName()))));
 
         log.logSummary();
     }

@@ -22,7 +22,6 @@ import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 
-import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
@@ -169,14 +168,7 @@ public abstract class ReportScanningTool extends Tool {
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
         logger.log(consoleReport);
 
-        Report report = createParser().parse(new ConsoleLogReaderFactory(run));
-
-        if (getDescriptor().isConsoleLog()) {
-            report.stream().filter(issue -> !issue.hasFileName())
-                    .forEach(issue -> issue.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID));
-        }
-
-        consoleReport.addAll(report);
+        consoleReport.addAll(createParser().parse(new ConsoleLogReaderFactory(run)));
 
         logger.log(consoleReport);
 
@@ -274,7 +266,10 @@ public abstract class ReportScanningTool extends Tool {
          * the UI.
          *
          * @return {@code true} if the issues reference the console log, {@code false} otherwise
+         * @deprecated not used anymore
          */
+        @SuppressWarnings("DeprecatedIsStillUsed")
+        @Deprecated
         protected boolean isConsoleLog() {
             return false;
         }
