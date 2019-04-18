@@ -68,10 +68,9 @@ public class AggregationAction implements RunAction2, LastBuildAction {
         return Collections.singleton(new AggregatedTrendAction(owner.getParent()));
     }
 
-    @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     private ToolApi createToolApi(final ResultAction result) {
         return new ToolApi(result.getId(), result.getDisplayName(),
-                result.getOwner().getAbsoluteUrl() + result.getUrlName(), result.getResult().getTotalSize());
+                result.getAbsoluteUrl() + result.getUrlName(), result.getResult().getTotalSize());
     }
 
     @Override

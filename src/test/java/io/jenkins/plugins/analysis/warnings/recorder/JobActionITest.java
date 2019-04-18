@@ -37,7 +37,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
         enableEclipseWarnings(project);
 
-        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
         HtmlPage jobPage = getWebPage(project);
@@ -45,7 +45,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
 
-        build = buildWithStatus(project, Result.SUCCESS);
+        build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
         jobPage = getWebPage(project);
@@ -83,7 +83,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
                 createTool(new CheckStyle(), "nothing.found"),
                 configurePattern(new Eclipse()));
 
-        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
 
         List<ResultAction> resultActions = build.getActions(ResultAction.class);
         assertThat(resultActions).hasSize(2);
@@ -94,7 +94,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         JobAction checkstyle;
         JobAction eclipse;
 
-        if (jobActions.get(0).getUrlName().equals("checkstyle")) {
+        if ("checkstyle".equals(jobActions.get(0).getUrlName())) {
             checkstyle = jobActions.get(0);
             eclipse = jobActions.get(1);
         }

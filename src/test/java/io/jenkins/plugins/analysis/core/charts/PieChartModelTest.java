@@ -11,8 +11,8 @@ import static org.assertj.core.api.Assertions.*;
  * @author Nils Engelbrecht
  */
 class PieChartModelTest {
-
     private static final String NAME = "piechartName";
+
     @Test
     void shouldCreatePieModel() {
         PieChartModel model = new PieChartModel(NAME);
