@@ -14,7 +14,6 @@ import jenkins.triggers.SCMTriggerItem;
 public class GitHelper {
 
     public static SCM getScm(final Run<?, ?> run) {
-        //TODO move to gitHelper
         Job<?, ?> job = run.getParent();
         if (run instanceof AbstractBuild) {
             AbstractProject<?, ?> project = ((AbstractBuild) run).getProject();
