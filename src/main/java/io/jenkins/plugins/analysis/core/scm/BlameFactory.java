@@ -56,25 +56,7 @@ public final class BlameFactory {
     }
 
     private static SCM getScm(final Run<?, ?> run) {
-        //TODO move to gitHelper
-        Job<?, ?> job = run.getParent();
-        if (run instanceof AbstractBuild) {
-            AbstractProject<?, ?> project = ((AbstractBuild) run).getProject();
-            if (project.getScm() != null) {
-                return project.getScm();
-            }
-            SCM scm = project.getRootProject().getScm();
-            if (scm != null) {
-                return scm;
-            }
-        }
-        else if (job instanceof SCMTriggerItem) {
-            Collection<? extends SCM> scms = ((SCMTriggerItem) job).getSCMs();
-            if (!scms.isEmpty()) {
-                return scms.iterator().next(); // TODO: what should we do if more than one SCM has been used
-            }
-        }
-        return new NullSCM();
+        return GitHelper.getScm(run);
     }
 
     private BlameFactory() {
