@@ -97,9 +97,9 @@ public class GsWorker implements Serializable {
                 report.logInfo("Error reading git for filechanges", e);
             }
             for (Map.Entry<String, Integer> entry : lastChangedPerFile.entrySet()) {
-
+                report.logInfo("found {} - {} ", entry.getKey(), entry.getValue());
             }
-                return new GsResults();
+            return new GsResults();
         }
 
     }
