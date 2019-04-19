@@ -3,8 +3,11 @@ package io.jenkins.plugins.analysis.core.scm;
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.Repository;
 
@@ -15,6 +18,8 @@ import org.jenkinsci.plugins.gitclient.GitClient;
 import org.jenkinsci.plugins.gitclient.RepositoryCallback;
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
+
+import io.jenkins.plugins.analysis.core.scm.analyzer.GitLastChangeOfFile;
 
 public class GsWorker implements Serializable {
 
@@ -82,7 +87,19 @@ public class GsWorker implements Serializable {
         @Override
         public GsResults invoke(final Repository repository, final VirtualChannel virtualChannel)
                 throws IOException, InterruptedException {
-            return new GsResults();
+            Map<String, Integer> lastChangedPerFile = new HashMap<>();
+            try {
+                Git git = new Git(repository);
+                GitLastChangeOfFile gitLastChangeOfFile = new GitLastChangeOfFile();
+                lastChangedPerFile = gitLastChangeOfFile.collectResults(git);
+            }
+            catch (Exception e) {
+                report.logInfo("Error reading git for filechanges", e);
+            }
+            for (Map.Entry<String, Integer> entry : lastChangedPerFile.entrySet()) {
+
+            }
+                return new GsResults();
         }
 
     }
