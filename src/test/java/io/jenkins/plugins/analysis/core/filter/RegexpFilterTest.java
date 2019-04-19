@@ -101,6 +101,16 @@ class RegexpFilterTest {
         
         verify(filterBuilder).setIncludeModuleNameFilter(PATTERN);
     }
+
+    @Test
+    void shouldCallIncludeMessageMethod() {
+        RegexpFilter filter = new IncludeMessage(PATTERN);
+
+        IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
+        filter.apply(filterBuilder);
+
+        verify(filterBuilder).setIncludeMessageFilter(PATTERN);
+    }
     
     @Test
     void shouldCallExcludeCategoryMethod() {
@@ -151,5 +161,14 @@ class RegexpFilterTest {
         
         verify(filterBuilder).setExcludeModuleNameFilter(PATTERN);
     }
-    
+
+    @Test
+    void shouldCallExcludeMessageMethod() {
+        RegexpFilter filter = new ExcludeMessage(PATTERN);
+
+        IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
+        filter.apply(filterBuilder);
+
+        verify(filterBuilder).setExcludeMessageFilter(PATTERN);
+    }
 }

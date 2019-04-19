@@ -23,6 +23,8 @@ import io.jenkins.plugins.analysis.core.scm.Blames;
  * @author Ullrich Hafner
  */
 class ReferenceDetailsModel extends DetailsTableModel {
+    static final String UNDEFINED = "-";
+
     private final Blames blames;
 
     ReferenceDetailsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
@@ -71,9 +73,9 @@ class ReferenceDetailsModel extends DetailsTableModel {
             columns.add(blameRequest.getCommit(line));
         }
         else {
-            columns.add("-");
-            columns.add("-");
-            columns.add("-");
+            columns.add(UNDEFINED);
+            columns.add(UNDEFINED);
+            columns.add(UNDEFINED);
         }
         return columns;
     }

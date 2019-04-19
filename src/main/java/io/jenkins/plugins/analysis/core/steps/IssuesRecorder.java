@@ -633,6 +633,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalAll() {
+        return 0;
+    }
+
+    /**
      * Sets the quality gate.
      *
      * @param size
@@ -645,6 +656,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setUnstableTotalHigh(final int size) {
         addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalHigh() {
+        return 0;
     }
 
     /**
@@ -663,6 +685,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewAll() {
+        return 0;
+    }
+
+    /**
      * Sets the quality gate.
      *
      * @param size
@@ -675,6 +708,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setUnstableTotalNormal(final int size) {
         addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalNormal() {
+        return 0;
     }
 
     /**
@@ -693,6 +737,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalLow() {
+        return 0;
+    }
+
+    /**
      * Sets the quality gate.
      *
      * @param size
@@ -705,6 +760,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setUnstableNewHigh(final int size) {
         addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewHigh() {
+        return 0;
     }
 
     /**
@@ -723,6 +789,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewNormal() {
+        return 0;
+    }
+
+    /**
      * Sets the quality gate.
      *
      * @param size
@@ -735,6 +812,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setUnstableNewLow(final int size) {
         addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewLow() {
+        return 0;
     }
 
     /**
@@ -753,6 +841,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalAll() {
+        return 0;
+    }
+
+    /**
      * Sets the quality gate.
      *
      * @param size
@@ -765,6 +864,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setFailedTotalHigh(final int size) {
         addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalHigh() {
+        return 0;
     }
 
     /**
@@ -783,6 +893,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalNormal() {
+        return 0;
+    }
+
+    /**
      * Sets the quality gate.
      *
      * @param size
@@ -795,6 +916,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setFailedTotalLow(final int size) {
         addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalLow() {
+        return 0;
     }
 
     /**
@@ -813,6 +945,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewAll() {
+        return 0;
+    }
+
+    /**
      * Sets the quality gate.
      *
      * @param size
@@ -825,6 +968,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setFailedNewHigh(final int size) {
         addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewHigh() {
+        return 0;
     }
 
     /**
@@ -843,6 +997,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     }
 
     /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewNormal() {
+        return 0;
+    }
+
+    /**
      * Sets the quality gate.
      *
      * @param size
@@ -855,6 +1020,17 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     @DataBoundSetter
     public void setFailedNewLow(final int size) {
         addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewLow() {
+        return 0;
     }
 
     /**
