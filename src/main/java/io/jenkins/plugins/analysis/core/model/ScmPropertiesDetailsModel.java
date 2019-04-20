@@ -7,7 +7,6 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import io.jenkins.plugins.analysis.core.scm.BlameRequest;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 
 /**
@@ -22,12 +21,13 @@ import io.jenkins.plugins.analysis.core.scm.Blames;
  *
  * @author Ullrich Hafner
  */
-class ReferenceDetailsModel extends DetailsTableModel {
+class ScmPropertiesDetailsModel extends DetailsTableModel {
     static final String UNDEFINED = "-";
 
+    // FIXME: replace with Dipp Model
     private final Blames blames;
 
-    ReferenceDetailsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+    ScmPropertiesDetailsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
             final DescriptionProvider descriptionProvider, final Blames blames) {
         super(ageBuilder, fileNameRenderer, descriptionProvider);
 
@@ -52,9 +52,9 @@ class ReferenceDetailsModel extends DetailsTableModel {
         visibleColumns.add(Messages.Table_Column_Details());
         visibleColumns.add(Messages.Table_Column_File());
         visibleColumns.add(Messages.Table_Column_Age());
-        visibleColumns.add("Author");
-        visibleColumns.add("Email");
-        visibleColumns.add("Commit");
+        visibleColumns.add("#Committers");
+        visibleColumns.add("#Changes");
+        visibleColumns.add("#LastModified");
         return visibleColumns;
     }
 
@@ -64,18 +64,10 @@ class ReferenceDetailsModel extends DetailsTableModel {
         columns.add(formatDetails(issue, description));
         columns.add(formatFileName(issue));
         columns.add(formatAge(issue));
-        if (blames.contains(issue.getFileName())) {
-            BlameRequest blameRequest = blames.get(issue.getFileName());
-            int line = issue.getLineStart();
-            columns.add(blameRequest.getName(line));
-            columns.add(blameRequest.getEmail(line));
-            columns.add(blameRequest.getCommit(line));
-        }
-        else {
-            columns.add(UNDEFINED);
-            columns.add(UNDEFINED);
-            columns.add(UNDEFINED);
-        }
+        // TODO: Add actual values for the specified issue
+        columns.add(UNDEFINED);
+        columns.add(UNDEFINED);
+        columns.add(UNDEFINED);
         return columns;
     }
 }
