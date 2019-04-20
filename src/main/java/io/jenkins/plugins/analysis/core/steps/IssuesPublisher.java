@@ -17,12 +17,13 @@ import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluat
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
-import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.History;
 import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
 import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.scm.GsResults;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
@@ -81,7 +82,7 @@ class IssuesPublisher {
 
         ResultSelector selector = ensureThatIdIsUnique();
         AnalysisResult result = createAnalysisResult(report.getReport(), selector, report.getBlames(),
-                report.getSizeOfOrigin());
+                report.getGsResults(), report.getSizeOfOrigin());
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                 result.getTotalSize(), result.getNewSize(), result.getFixedSize());
 
@@ -105,16 +106,19 @@ class IssuesPublisher {
 
     @SuppressWarnings("PMD.PrematureDeclaration")
     private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector,
-            final Blames blames, final Map<String, Integer> sizeOfOrigin) {
+            final Blames blames, final GsResults gsResults,
+            final Map<String, Integer> sizeOfOrigin) {
         DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector, filtered), run.getNumber());
         QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
         reportHealth(filtered);
         logger.log(filtered);
         return new AnalysisHistory(run, selector).getResult()
-                .map(previous -> new AnalysisResult(run, getId(), deltaReport, blames, qualityGateStatus, sizeOfOrigin,
+                .map(previous -> new AnalysisResult(run, getId(), deltaReport, blames, gsResults, qualityGateStatus,
+                        sizeOfOrigin,
                         previous))
                 .orElseGet(
-                        () -> new AnalysisResult(run, getId(), deltaReport, blames, qualityGateStatus, sizeOfOrigin));
+                        () -> new AnalysisResult(run, getId(), deltaReport, blames, gsResults, qualityGateStatus,
+                                sizeOfOrigin));
     }
 
     private void reportHealth(final Report filtered) {

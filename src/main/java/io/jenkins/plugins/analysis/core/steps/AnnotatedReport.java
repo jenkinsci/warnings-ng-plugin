@@ -25,7 +25,7 @@ public final class AnnotatedReport implements Serializable {
     private final String id;
     private final Report aggregatedReport = new Report();
     private final Blames aggregatedBlames = new Blames();
-    private GsResults gsResults;
+    private final GsResults aggregatedGsResults = new GsResults();
     private final Map<String, Integer> sizeOfOrigin = new HashMap<>();
 
     /**
@@ -47,7 +47,7 @@ public final class AnnotatedReport implements Serializable {
      *         report with issues
      */
     public AnnotatedReport(@Nullable final String id, final Report report) {
-        this(id, report, new Blames());
+        this(id, report, new Blames(), new GsResults());
     }
 
     /**
@@ -63,25 +63,7 @@ public final class AnnotatedReport implements Serializable {
     public AnnotatedReport(@Nullable final String id, final Report report, final Blames blames, final GsResults gsResults) {
         this(id);
 
-        addReport(id, report, blames);
-        this.gsResults = gsResults;
-
-    }
-
-    /**
-     * Creates a new instance of {@link AnnotatedReport}.
-     *
-     * @param id
-     *         ID of the report
-     * @param report
-     *         report with issues
-     * @param blames
-     *         author and commit information
-     */
-    public AnnotatedReport(@Nullable final String id, final Report report, final Blames blames) {
-        this(id);
-
-        addReport(id, report, blames);
+        addReport(id, report, blames, gsResults);
     }
 
     /**
@@ -125,6 +107,10 @@ public final class AnnotatedReport implements Serializable {
      */
     public Report getReport() {
         return aggregatedReport;
+    }
+
+    public GsResults getGsResults() {
+        return aggregatedGsResults;
     }
 
     /**
@@ -185,7 +171,7 @@ public final class AnnotatedReport implements Serializable {
      *         the ID to use when adding the report
      */
     public void add(final AnnotatedReport other, final String actualId) {
-        addReport(actualId, other.getReport(), other.getBlames());
+        addReport(actualId, other.getReport(), other.getBlames(), other.getGsResults());
     }
 
     /**
@@ -200,9 +186,10 @@ public final class AnnotatedReport implements Serializable {
         add(other, getId());
     }
 
-    private void addReport(final String actualId, final Report report, final Blames blames) {
+    private void addReport(final String actualId, final Report report, final Blames blames, final GsResults gsResults) {
         aggregatedReport.addAll(report);
         sizeOfOrigin.merge(actualId, report.size(), Integer::sum);
         aggregatedBlames.addAll(blames);
+        aggregatedGsResults.addAll(gsResults);
     }
 }

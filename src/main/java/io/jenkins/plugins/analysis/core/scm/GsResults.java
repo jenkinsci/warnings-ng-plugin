@@ -15,4 +15,21 @@ public class GsResults implements Serializable {
     public void setResults(final Map<String, GsResult> results) {
         this.results = results;
     }
+
+    public void addAll(final GsResults other) {
+        results.putAll(
+                other.getResults()); // overwrites results for the same file, but GsResult will contain the same information anyway
+    }
+
+    public boolean contains(final String fileName) {
+        return results.containsKey(fileName);
+    }
+
+    public GsResult get(final String fileName) {
+        return results.get(fileName);
+    }
+
+    public void add(final String fileName, final GsResult gsResult) {
+        results.put(fileName, gsResult);
+    }
 }

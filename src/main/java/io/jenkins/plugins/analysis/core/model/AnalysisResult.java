@@ -35,6 +35,7 @@ import hudson.model.Run;
 import hudson.util.XStream2;
 
 import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.scm.GsResults;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
@@ -92,9 +93,13 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Nullable
     private transient WeakReference<Report> fixedIssuesReference;
+
     /** All SCM blames. Provides a mapping of file names to SCM commit information like author, email or commit ID. */
     @Nullable
     private transient WeakReference<Blames> blamesReference;
+
+    @Nullable
+    private transient WeakReference<GsResults> gsResultsReference;
 
     /** Determines since which build we have zero warnings. */
     private int noIssuesSinceBuild;
@@ -122,9 +127,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the analysis result of the previous run
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin,
+            final GsResults gsResults, final QualityGateStatus qualityGateStatus,
+            final Map<String, Integer> sizePerOrigin,
             final AnalysisResult previousResult) {
-        this(owner, id, report, blames, qualityGateStatus, sizePerOrigin, true);
+        this(owner, id, report, blames, gsResults, qualityGateStatus, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -168,8 +174,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the number of issues per origin
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin) {
-        this(owner, id, report, blames, qualityGateStatus, sizePerOrigin, true);
+            final GsResults gsResults, final QualityGateStatus qualityGateStatus,
+            final Map<String, Integer> sizePerOrigin) {
+        this(owner, id, report, blames, gsResults, qualityGateStatus, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -204,7 +211,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
-    protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
+    protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
+            final Blames blames, final GsResults gsResults,
             final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin,
             final boolean canSerialize) {
         this.owner = owner;
@@ -236,9 +244,12 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.qualityGateStatus = qualityGateStatus;
 
         blamesReference = new WeakReference<>(blames);
+        gsResultsReference = new WeakReference<>(gsResults);
+
         if (canSerialize) {
             serializeIssues(outstandingIssues, newIssues, fixedIssues);
             serializeBlames(blames);
+            serializeGsResults(gsResults);
         }
     }
 
@@ -264,6 +275,23 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         }
     }
 
+    public GsResults getGsResults() {
+        lock.lock();
+        try {
+            if (gsResultsReference == null) {
+                return readGsResults();
+            }
+            GsResults result = gsResultsReference.get();
+            if (result == null) {
+                return readGsResults();
+            }
+            return result;
+        }
+        finally {
+            lock.unlock();
+        }
+    }
+
     private void serializeBlames(final Blames blames) {
         try {
             getBlamesFile().write(blames);
@@ -275,14 +303,35 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         }
     }
 
+    private void serializeGsResults(final GsResults gsResults) {
+        try {
+            getGsResultsFile().write(gsResults);
+        }
+        catch (IOException exception) {
+            LOGGER.log(Level.SEVERE,
+                    String.format("Failed to serialize SCM properties information for results %s in build %s.",
+                            id, owner), exception);
+        }
+    }
+
     private XmlFile getBlamesFile() {
         return new XmlFile(new XStream2(), new File(getOwner().getRootDir(), id + "-blames.xml"));
+    }
+
+    private XmlFile getGsResultsFile() {
+        return new XmlFile(new XStream2(), new File(getOwner().getRootDir(), id + "-scm.xml"));
     }
 
     private Blames readBlames() {
         Blames blames = readXml(Blames.class, getBlamesFile(), new Blames());
         blamesReference = new WeakReference<>(blames);
         return blames;
+    }
+
+    private GsResults readGsResults() {
+        GsResults gsResults = readXml(GsResults.class, getGsResultsFile(), new GsResults());
+        gsResultsReference = new WeakReference<>(gsResults);
+        return gsResults;
     }
 
     private <T> T readXml(final Class<T> type, final XmlFile dataFile, final T defaultValue) {

@@ -77,7 +77,7 @@ public class IssuesAggregator extends MatrixAggregator {
     }
 
     private AnnotatedReport createReport(final String id, final AnalysisResult result) {
-        return new AnnotatedReport(id, result.getIssues(), result.getBlames());
+        return new AnnotatedReport(id, result.getIssues(), result.getBlames(), result.getGsResults());
     }
 
     private void updateMap(final List<ResultAction> actions) {

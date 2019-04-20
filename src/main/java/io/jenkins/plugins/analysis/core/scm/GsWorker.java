@@ -96,10 +96,14 @@ public class GsWorker implements Serializable {
             catch (Exception e) {
                 report.logInfo("Error reading git for filechanges", e);
             }
+            GsResults gsResults = new GsResults();
             for (Map.Entry<String, Integer> entry : lastChangedPerFile.entrySet()) {
-                report.logInfo("found {} - {} ", entry.getKey(), entry.getValue());
+                report.logInfo("found {%s} - {%d} ", entry.getKey(), entry.getValue());
+                GsResult gsResult = new GsResult();
+                gsResult.setAge(entry.getValue());
+                gsResults.add(workspace + "/" + entry.getKey(), gsResult);
             }
-            return new GsResults();
+            return gsResults;
         }
 
     }

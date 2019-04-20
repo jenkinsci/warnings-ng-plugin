@@ -7,7 +7,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.scm.GsResult;
+import io.jenkins.plugins.analysis.core.scm.GsResults;
 
 /**
  * Provides the model for the source control details table. The model consists of the following parts:
@@ -24,14 +25,13 @@ import io.jenkins.plugins.analysis.core.scm.Blames;
 class ScmPropertiesDetailsModel extends DetailsTableModel {
     static final String UNDEFINED = "-";
 
-    // FIXME: replace with Dipp Model
-    private final Blames blames;
+    private final GsResults gsResults;
 
     ScmPropertiesDetailsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-            final DescriptionProvider descriptionProvider, final Blames blames) {
+            final DescriptionProvider descriptionProvider, final GsResults gsResults) {
         super(ageBuilder, fileNameRenderer, descriptionProvider);
 
-        this.blames = blames;
+        this.gsResults = gsResults;
     }
 
     @Override
@@ -52,6 +52,7 @@ class ScmPropertiesDetailsModel extends DetailsTableModel {
         visibleColumns.add(Messages.Table_Column_Details());
         visibleColumns.add(Messages.Table_Column_File());
         visibleColumns.add(Messages.Table_Column_Age());
+        // FIXME: add correct headers
         visibleColumns.add("#Committers");
         visibleColumns.add("#Changes");
         visibleColumns.add("#LastModified");
@@ -64,10 +65,18 @@ class ScmPropertiesDetailsModel extends DetailsTableModel {
         columns.add(formatDetails(issue, description));
         columns.add(formatFileName(issue));
         columns.add(formatAge(issue));
-        // TODO: Add actual values for the specified issue
-        columns.add(UNDEFINED);
-        columns.add(UNDEFINED);
-        columns.add(UNDEFINED);
+        if (gsResults.contains(issue.getFileName())) {
+            GsResult result = gsResults.get(issue.getFileName());
+            // FIXME: add correct formatting
+            columns.add(String.valueOf(result.getSize()));
+            columns.add(UNDEFINED);
+            columns.add(String.valueOf(result.getAge()));
+        }
+        else {
+            columns.add(UNDEFINED);
+            columns.add(UNDEFINED);
+            columns.add(UNDEFINED);
+        }
         return columns;
     }
 }

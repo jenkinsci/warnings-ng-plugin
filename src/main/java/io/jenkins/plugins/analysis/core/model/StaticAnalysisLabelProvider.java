@@ -18,6 +18,7 @@ import hudson.model.BallColor;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.scm.GsResults;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
@@ -123,15 +124,13 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the build of the results
      * @param url
      *         the URL of the results
-     * @param blames
-     *         the SCM blames
      *
      * @return the table model
      */
     public DetailsTableModel getScmPropertiesModel(final Run<?, ?> build,
-            final String url, final Blames blames) {
+            final String url, final GsResults gsResults) {
         return new ScmPropertiesDetailsModel(getAgeBuilder(build, url),
-                getFileNameRenderer(build), this, blames);
+                getFileNameRenderer(build), this, gsResults);
     }
 
     /**

@@ -244,7 +244,7 @@ public class IssuesDetail implements ModelObject {
      * @return the table model
      */
     public DetailsTableModel getScmPropertiesModel() {
-        return labelProvider.getScmPropertiesModel(owner, getUrl(), result.getBlames());
+        return labelProvider.getScmPropertiesModel(owner, getUrl(), result.getGsResults());
     }
 
     private JSONObject toJsonArray(final List<List<String>> rows) {
@@ -270,8 +270,14 @@ public class IssuesDetail implements ModelObject {
         if ("#issues".equals(id)) {
             rows = getIssuesModel().getContent(getIssues());
         }
-        else {
+        else if ("#scmBlames".equals(id)) {
             rows = getScmBlamesModel().getContent(getIssues());
+        }
+        else if ("#scmProperties".equals(id)) {
+            rows = getScmPropertiesModel().getContent(getIssues());
+        }
+        else {
+            throw new NoSuchElementException("No such table model: " + id);
         }
 
         return toJsonArray(rows);
