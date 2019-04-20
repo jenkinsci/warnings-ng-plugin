@@ -16,6 +16,7 @@ import org.jvnet.hudson.test.TestExtension;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 
 import org.kohsuke.stapler.HttpResponse;
 import org.jenkinsci.Symbol;
@@ -114,6 +115,46 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(first.getResult().getIssues()).hasSize(5);
         assertThat(second.getResult().getIssues()).hasSize(3);
+    }
+
+    /** Runs the Clang parser on an output file that contains 1 issue. */
+    @Test
+    public void shouldFindAllClangIssuesIfConsoleIsAnnotatedWithTimeStamps() {
+        Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
+
+        WorkflowJob job = createPipelineWithWorkspaceFiles("issue56484.txt");
+        job.setDefinition(asStage(
+                "sh 'cat *.txt'",
+                "def issues = scanForIssues tool: clang()",
+                PUBLISH_ISSUES_STEP));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result).hasTotalSize(1);
+        assertThat(result.getIssues().get(0))
+                .hasLineStart(1)
+                .hasLineEnd(1)
+                .hasColumnStart(2)
+                .hasColumnEnd(2)
+                .hasMessage("This is an error.")
+                .hasFileName("test.c")
+                .hasSeverity(Severity.WARNING_HIGH);
+    }
+
+    /** Runs the Clang parser on an output file that contains 1 issue. */
+    @Test
+    public void shouldFindAllJavaIssuesIfConsoleIsAnnotatedWithTimeStamps() {
+        Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
+
+        WorkflowJob job = createPipelineWithWorkspaceFiles("issue56484-maven.txt");
+        job.setDefinition(asStage(
+                "sh 'cat *.txt'",
+                "def issues = scanForIssues tool: java()",
+                PUBLISH_ISSUES_STEP));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result).hasTotalSize(10);
     }
 
     /**

@@ -21,6 +21,9 @@ Additional new features:
 ### Fixed
 
 - Added missing dependency to JSON-Smart library.
+- [JENKINS-56484](https://issues.jenkins-ci.org/browse/JENKINS-56484),
+[analysis-model-PR#19](https://github.com/jenkinsci/analysis-model/pull/130): 
+Filter TimeStamper Console log decorations
 - [PR#19](https://github.com/jenkinsci/warnings-ng-plugin/pull/19): Use `BuildStepMonitor.NONE` in step 
 to allow for higher concurrency.
 
