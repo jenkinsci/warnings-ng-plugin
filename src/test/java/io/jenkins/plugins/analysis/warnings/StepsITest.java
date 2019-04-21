@@ -461,23 +461,18 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createPipelineWithWorkspaceFiles("pmd-filtering.xml");
 
         setFilter(job, "includeFile('File.*.java')");
-        final Pmd tool = new Pmd();
         assertThat(scheduleSuccessfulBuild(job).getTotalSize()).isEqualTo(16);
 
         setFilter(job, "excludeFile('File.*.java')");
-        final Pmd tool1 = new Pmd();
         assertThat(scheduleSuccessfulBuild(job).getTotalSize()).isZero();
 
         setFilter(job, "includeFile('')");
-        final Pmd tool2 = new Pmd();
         assertThat(scheduleSuccessfulBuild(job).getTotalSize()).isEqualTo(16);
 
         setFilter(job, "excludeFile('')");
-        final Pmd tool3 = new Pmd();
         assertThat(scheduleSuccessfulBuild(job).getTotalSize()).isEqualTo(16);
 
         setFilter(job, "");
-        final Pmd tool4 = new Pmd();
         assertThat(scheduleSuccessfulBuild(job).getTotalSize()).isEqualTo(16);
 
         verifyIncludeFile(job, "File1.java");

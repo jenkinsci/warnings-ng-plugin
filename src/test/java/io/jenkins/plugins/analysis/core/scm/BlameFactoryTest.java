@@ -93,7 +93,6 @@ class BlameFactoryTest {
 
         Job pipeline = mock(Job.class, withSettings().extraInterfaces(SCMTriggerItem.class));
 
-        GitSCM gitScm = createGitStub();
         when(((SCMTriggerItem) pipeline).getSCMs()).thenReturn(new ArrayList<>());
 
         Run<?, ?> run = createRunFor(pipeline);
