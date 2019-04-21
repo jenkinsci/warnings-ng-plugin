@@ -20,31 +20,30 @@ import static org.mockito.Mockito.*;
 class LogHandlerTest {
     private static final String LOG_HANDLER_NAME = "TestHandler";
     private static final String MESSAGE = "TestMessage";
+    private static final String LINE_SEPARATOR = System.getProperty("line.separator");
 
-    LogHandler createMockedLogHandler(final PrintStream printStream) {
+    private TaskListener createTaskListener(final PrintStream printStream) {
         TaskListener taskListener = mock(TaskListener.class);
         when(taskListener.getLogger()).thenReturn(printStream);
-        return spy(new LogHandler(taskListener, LOG_HANDLER_NAME));
+        return taskListener;
     }
 
     @Test
     void shouldLogInfoAndErrorMessage() {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
-        LogHandler logHandler = createMockedLogHandler(printStream);
+        TaskListener taskListener = createTaskListener(printStream);
 
         Report report = new Report();
+        LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME, report);
         report.logInfo(MESSAGE);
         report.logError(MESSAGE);
         logHandler.log(report);
 
-        // Assert if the output has the following structure:
-        //      "[LOG_HANDLER_NAME] [-ERROR-] MESSAGE\n
-        //      [LOG_HANDLER_NAME] MESSAGE\n"
         assertThat(outputStream.toString()).isEqualTo(String.format(
-                "[%s] [-ERROR-] %s" + System.getProperty("line.separator")
-                        + "[%s] %s" + System.getProperty("line.separator"),
-                LOG_HANDLER_NAME, MESSAGE, LOG_HANDLER_NAME, MESSAGE));
+                "[%s] [-ERROR-] %s%s"
+                        + "[%s] %s%s",
+                LOG_HANDLER_NAME, MESSAGE, LINE_SEPARATOR, LOG_HANDLER_NAME, MESSAGE, LINE_SEPARATOR));
     }
 
     @Test
@@ -53,13 +52,13 @@ class LogHandlerTest {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(outputStream);
-        LogHandler logHandler = createMockedLogHandler(printStream);
+        TaskListener taskListener = createTaskListener(printStream);
+        LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME);
 
         logHandler.log(logFormat, MESSAGE);
 
         assertThat(outputStream.toString()).isEqualTo(
-                String.format("[%s] " + logFormat + System.getProperty("line.separator"), LOG_HANDLER_NAME, MESSAGE)
+                String.format("[%s] " + logFormat + "%s", LOG_HANDLER_NAME, MESSAGE, LINE_SEPARATOR)
         );
     }
-
 }
