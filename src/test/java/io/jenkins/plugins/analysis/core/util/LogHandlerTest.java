@@ -21,12 +21,8 @@ class LogHandlerTest {
     private static final String LOG_HANDLER_NAME = "TestHandler";
     private static final String MESSAGE = "TestMessage";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
-
-    private TaskListener createTaskListener(final PrintStream printStream) {
-        TaskListener taskListener = mock(TaskListener.class);
-        when(taskListener.getLogger()).thenReturn(printStream);
-        return taskListener;
-    }
+    private static final String NOT_SHOWN = "Not shown";
+    private static final String ADDITIONAL_MESSAGE = "Additional";
 
     @Test
     void shouldLogInfoAndErrorMessage() {
@@ -35,15 +31,31 @@ class LogHandlerTest {
         TaskListener taskListener = createTaskListener(printStream);
 
         Report report = new Report();
+        report.logInfo(NOT_SHOWN);
+        report.logError(NOT_SHOWN);
+
         LogHandler logHandler = new LogHandler(taskListener, LOG_HANDLER_NAME, report);
         report.logInfo(MESSAGE);
         report.logError(MESSAGE);
+
         logHandler.log(report);
 
         assertThat(outputStream.toString()).isEqualTo(String.format(
-                "[%s] [-ERROR-] %s%s"
-                        + "[%s] %s%s",
-                LOG_HANDLER_NAME, MESSAGE, LINE_SEPARATOR, LOG_HANDLER_NAME, MESSAGE, LINE_SEPARATOR));
+                "[%s] [-ERROR-] %s%n"
+                        + "[%s] %s%n",
+                LOG_HANDLER_NAME, MESSAGE, LOG_HANDLER_NAME, MESSAGE));
+
+        report.logInfo(ADDITIONAL_MESSAGE);
+        report.logError(ADDITIONAL_MESSAGE);
+        logHandler.log(report);
+
+        assertThat(outputStream.toString()).isEqualTo(String.format(
+                "[%s] [-ERROR-] %s%n"
+                        + "[%s] %s%n"
+                        + "[%s] [-ERROR-] %s%n"
+                        + "[%s] %s%n",
+                LOG_HANDLER_NAME, MESSAGE, LOG_HANDLER_NAME, MESSAGE, LOG_HANDLER_NAME,
+                ADDITIONAL_MESSAGE, LOG_HANDLER_NAME, ADDITIONAL_MESSAGE));
     }
 
     @Test
@@ -60,5 +72,11 @@ class LogHandlerTest {
         assertThat(outputStream.toString()).isEqualTo(
                 String.format("[%s] " + logFormat + "%s", LOG_HANDLER_NAME, MESSAGE, LINE_SEPARATOR)
         );
+    }
+
+    private TaskListener createTaskListener(final PrintStream printStream) {
+        TaskListener taskListener = mock(TaskListener.class);
+        when(taskListener.getLogger()).thenReturn(printStream);
+        return taskListener;
     }
 }
