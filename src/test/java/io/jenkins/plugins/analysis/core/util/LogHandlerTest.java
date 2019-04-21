@@ -67,9 +67,8 @@ class LogHandlerTest {
 
         logHandler.log(LOGGER_MESSAGE);
 
-        assertThat(outputStream.toString()).isEqualTo(
-                String.format("[%s] %s%n", LOG_HANDLER_NAME, LOGGER_MESSAGE)
-        );
+        assertThat(outputStream.toString())
+                .isEqualTo(String.format("[%s] %s%n", LOG_HANDLER_NAME, LOGGER_MESSAGE));
     }
 
     private TaskListener createTaskListener(final PrintStream printStream) {
