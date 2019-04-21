@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.28</version>
+    <version>3.42</version>
     <relativePath/>
   </parent>
 
@@ -26,7 +26,7 @@
     <!-- Override properties defined in parent POM -->
     <jenkins.version>2.89.1</jenkins.version>
     <java.level>8</java.level>
-    <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
+    <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>4.0.0</analysis-model-api.version>
@@ -90,8 +90,7 @@
     <revapi-maven-plugin.version>0.11.0</revapi-maven-plugin.version>
     <revapi-java.version>0.19.0</revapi-java.version>
 
-    <!-- Enabled while there are fatal Findbugs issues -->
-    <findbugs.failOnError>false</findbugs.failOnError>
+    <spotbugs.failOnError>false</spotbugs.failOnError>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
