@@ -54,7 +54,7 @@ public class HealthReportBuilder {
                     percentage = 0;
                 }
                 else {
-                    percentage = 100 - ((relevantIssuesSize - healthy) * 100 / (unhealthy - healthy));
+                    percentage = 100 - ((relevantIssuesSize - healthy + 1) * 100 / (unhealthy - healthy + 2));
                 }
             }
 
