@@ -970,7 +970,8 @@ public abstract class IntegrationTest extends ResourceTest {
 
     private void setAccessModeOnWindows(final String path, final String command, final String accessMode) {
         try {
-            Process process = Runtime.getRuntime().exec("icacls " + path + " " + command + " *S-1-1-0:" + accessMode);
+            Process process = Runtime.getRuntime()
+                    .exec("icacls \"" + path + "\" " + command + " *S-1-1-0:" + accessMode);
             process.waitFor();
         }
         catch (IOException | InterruptedException e) {
