@@ -83,7 +83,7 @@ view.getBuildTrend(function (pieModel) {
                 {
                     type: 'category',
                     boundaryGap: false,
-                    data: pieModel.responseJSON.XAxisLabels
+                    data: pieModel.responseJSON.xAxisLabels
                 }
             ],
             yAxis: [

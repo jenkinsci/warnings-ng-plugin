@@ -3,10 +3,11 @@
         /**
          * Renders a trend chart in the a div using ECharts.
          *
-         * @param {JSON} pieModel - the line chart model
+         * @param {String} model - the chart model
          * @param {boolean} isTitleVisible - determines whether a title should be shown
          */
-        renderPieChart: function (pieModel, isTitleVisible) {
+        renderPieChart: function (model, isTitleVisible) {
+            var pieModel = JSON.parse(model);
             var chart = echarts.init($(this)[0]);
             var options = {
                 title: getTitle(isTitleVisible),

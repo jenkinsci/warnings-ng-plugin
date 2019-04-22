@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import net.sf.json.JSONObject;
-
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.model.InvisibleAction;
 import hudson.model.Job;
@@ -18,6 +16,7 @@ import io.jenkins.plugins.analysis.core.charts.CompositeResult;
 import io.jenkins.plugins.analysis.core.charts.LinesChartModel;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 
 /**
  * Project action that renders a combined trend chart of all tools in the job.
@@ -62,8 +61,8 @@ public class AggregatedTrendAction extends InvisibleAction {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getBuildTrend() {
-        return JSONObject.fromObject(createChartModel());
+    public String getBuildTrend() {
+        return new JacksonFacade().toJson(createChartModel());
     }
 
     private LinesChartModel createChartModel() {
