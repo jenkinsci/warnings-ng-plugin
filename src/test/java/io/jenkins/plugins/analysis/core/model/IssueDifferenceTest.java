@@ -19,6 +19,7 @@ import static java.util.Collections.*;
  */
 class IssueDifferenceTest {
     private static final String REFERENCE_BUILD = "100";
+    private static final String CURRENT_BUILD = "2";
 
     /**
      * Verifies that issue difference report is created correctly.
@@ -89,19 +90,20 @@ class IssueDifferenceTest {
      */
     @Test
     void shouldCreateIssueDifferenceWithEmptyCurrent() {
-        Report currentIssues = new Report();
         Report referenceIssues = new Report().addAll(createIssue("OLD 1", "FA"),
                 createIssue("OLD 2", "FB"));
+        Report currentIssues = new Report();
 
         IssueDifference issueDifference = new IssueDifference(currentIssues, 2, referenceIssues);
 
-        assertThat(issueDifference.getFixedIssues()).hasSize(2);
         assertThat(issueDifference.getNewIssues()).isEmpty();
         assertThat(issueDifference.getOutstandingIssues()).isEmpty();
-        assertThat(issueDifference.getFixedIssues().get(0).getMessage()).isEqualTo("OLD 1");
-        assertThat(issueDifference.getFixedIssues().get(1).getMessage()).isEqualTo("OLD 2");
-        assertThat(issueDifference.getFixedIssues().get(0).getReference()).isEqualTo(REFERENCE_BUILD);
-        assertThat(issueDifference.getFixedIssues().get(1).getReference()).isEqualTo(REFERENCE_BUILD);
+
+        Report fixed = issueDifference.getFixedIssues();
+
+        assertThat(fixed).hasSize(2);
+        assertThat(fixed.get(0)).hasMessage("OLD 1").hasReference(REFERENCE_BUILD);
+        assertThat(fixed.get(1)).hasMessage("OLD 2").hasReference(REFERENCE_BUILD);
     }
 
     /**
@@ -115,33 +117,13 @@ class IssueDifferenceTest {
 
         IssueDifference issueDifference = new IssueDifference(currentIssues, 2, referenceIssues);
 
-        assertThat(issueDifference.getNewIssues()).hasSize(2);
         assertThat(issueDifference.getFixedIssues()).isEmpty();
         assertThat(issueDifference.getOutstandingIssues()).isEmpty();
-        assertThat(issueDifference.getNewIssues().get(0).getMessage()).isEqualTo("NEW 1");
-        assertThat(issueDifference.getNewIssues().get(1).getMessage()).isEqualTo("NEW 2");
-        assertThat(issueDifference.getNewIssues().get(0).getReference()).isEqualTo("2");
-        assertThat(issueDifference.getNewIssues().get(1).getReference()).isEqualTo("2");
-    }
 
-    /**
-     * Verifies that issue difference report can distinguish issues based on fingerprint.
-     */
-    @Test
-    void shouldCreateIssueDifferenceWithNewAndOutstandingIssue() {
-        Report referenceIssues = new Report().add(createIssue("B", "F"));
-        Report currentIssues = new Report().addAll(createIssue("A", "F1"),
-                createIssue("B", "F"));
-
-        IssueDifference issueDifference = new IssueDifference(currentIssues, 2, referenceIssues);
-
-        assertThat(issueDifference.getFixedIssues()).isEmpty();
-        assertThat(issueDifference.getNewIssues()).hasSize(1);
-        assertThat(issueDifference.getOutstandingIssues()).hasSize(1);
-        assertThat(issueDifference.getNewIssues().get(0).getMessage()).isEqualTo("A");
-        assertThat(issueDifference.getNewIssues().get(0).getReference()).isEqualTo("2");
-        assertThat(issueDifference.getOutstandingIssues().get(0).getMessage()).isEqualTo("B");
-        assertThat(issueDifference.getOutstandingIssues().get(0).getReference()).isEqualTo(REFERENCE_BUILD);
+        Report newIssues = issueDifference.getNewIssues();
+        assertThat(newIssues).hasSize(2);
+        assertThat(newIssues.get(0)).hasMessage("NEW 1").hasReference(CURRENT_BUILD);
+        assertThat(newIssues.get(1)).hasMessage("NEW 2").hasReference(CURRENT_BUILD);
     }
 
     private Issue createIssue(final String message, final String fingerprint) {
