@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.Arrays;
+
 import org.junit.Assume;
 import org.junit.Test;
 
@@ -66,6 +68,36 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "do\n"
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
+
+    /**
+     * Runs with several tools that internally delegate to CheckStyle's  parser on an output file that contains 6
+     * issues.
+     */
+    @Test
+    public void shouldFindAllIssuesForCheckStyleAlias() {
+        for (ReportScanningTool tool : Arrays.asList(new Detekt(), new EsLint(), new KtLint(), new PhpCodeSniffer(),
+                new SwiftLint(), new TsLint())) {
+            shouldFindIssuesOfTool(6, tool, "checkstyle.xml");
+        }
+    }
+
+    /** Runs the Iar parser on an output file that contains 262 issues. */
+    @Test
+    public void shouldFindAllIssuesForPmdAlias() {
+        shouldFindIssuesOfTool(262, new Infer(), "pmd-6.xml");
+    }
+
+    /** Runs the Iar parser on an output file that contains 262 issues. */
+    @Test
+    public void shouldFindAllIssuesForMsBuildAlias() {
+        shouldFindIssuesOfTool(6, new PcLint(), "msbuild.txt");
+    }
+
+    /** Runs the Iar parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllYamlLintIssues() {
+        shouldFindIssuesOfTool(4, new YamlLint(), "yamllint.txt");
+    }
 
     /** Runs the Iar parser on an output file that contains 6 issues. */
     @Test
