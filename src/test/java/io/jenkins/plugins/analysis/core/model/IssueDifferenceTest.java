@@ -9,8 +9,8 @@ import edu.hm.hafner.analysis.LineRangeList;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
+import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static java.util.Collections.*;
-import static org.assertj.core.api.Assertions.*;
 
 /**
  * Unit Tests of the class {@link IssueDifference}.
@@ -18,43 +18,42 @@ import static org.assertj.core.api.Assertions.*;
  * @author Artem Polovyi
  */
 class IssueDifferenceTest {
+
+    private static final String REFERENCE_BUILD = "100";
+
     /**
      * Verifies that issue difference report is created correctly.
      */
     @Test
     void shouldCreateIssueDifference() {
         Report referenceIssues = new Report().addAll(
-                createIssue("OUTSTANDING 1", "FF 1"),
-                createIssue("OUTSTANDING 2", "FF 2"),
-                createIssue("OUTSTANDING 3", "FF 3"),
-                createIssue("TO FIX 1", "TF 1"),
-                createIssue("TO FIX 2", "TF 2"));
+                createIssue("OUTSTANDING 1", "OUT 1"),
+                createIssue("OUTSTANDING 2", "OUT 2"),
+                createIssue("OUTSTANDING 3", "OUT 3"),
+                createIssue("TO FIX 1", "FIX 1"),
+                createIssue("TO FIX 2", "FIX 2"));
 
         Report currentIssues = new Report().addAll(
-                createIssue("UPD OUTSTANDING 1", "FF 1"),
-                createIssue("UPD OUTSTANDING 2", "FF 2"),
-                createIssue("OUTSTANDING 3", "FF 3"),
-                createIssue("NEW 1", "NF 1"));
+                createIssue("UPD OUTSTANDING 1", "OUT 1"),
+                createIssue("OUTSTANDING 2", "UPD OUT 2"),
+                createIssue("OUTSTANDING 3", "OUT 3"),
+                createIssue("NEW 1", "NEW 1"));
 
-        IssueDifference issueDifference = new IssueDifference(currentIssues, 200, referenceIssues);
+        IssueDifference issueDifference = new IssueDifference(currentIssues, 2, referenceIssues);
 
-        assertThat(issueDifference.getOutstandingIssues()).hasSize(3);
-        assertThat(issueDifference.getOutstandingIssues().get(0).getMessage()).isEqualTo("UPD OUTSTANDING 1");
-        assertThat(issueDifference.getOutstandingIssues().get(1).getMessage()).isEqualTo("UPD OUTSTANDING 2");
-        assertThat(issueDifference.getOutstandingIssues().get(2).getMessage()).isEqualTo("OUTSTANDING 3");
-        assertThat(issueDifference.getOutstandingIssues().get(0).getReference()).isEqualTo("100");
-        assertThat(issueDifference.getOutstandingIssues().get(1).getReference()).isEqualTo("100");
-        assertThat(issueDifference.getOutstandingIssues().get(2).getReference()).isEqualTo("100");
+        Report outstanding = issueDifference.getOutstandingIssues();
+        assertThat(outstanding).hasSize(3);
+        assertThat(outstanding.get(0)).hasMessage("UPD OUTSTANDING 1").hasReference(REFERENCE_BUILD);
+        assertThat(outstanding.get(1)).hasMessage("OUTSTANDING 2").hasReference(REFERENCE_BUILD);
+        assertThat(outstanding.get(2)).hasMessage("OUTSTANDING 3").hasReference(REFERENCE_BUILD);
 
-        assertThat(issueDifference.getFixedIssues()).hasSize(2);
-        assertThat(issueDifference.getFixedIssues().get(0).getMessage()).isEqualTo("TO FIX 1");
-        assertThat(issueDifference.getFixedIssues().get(1).getMessage()).isEqualTo("TO FIX 2");
-        assertThat(issueDifference.getFixedIssues().get(0).getReference()).isEqualTo("100");
-        assertThat(issueDifference.getFixedIssues().get(1).getReference()).isEqualTo("100");
+        Report fixed = issueDifference.getFixedIssues();
+        assertThat(fixed).hasSize(2);
+        assertThat(fixed.get(0)).hasMessage("TO FIX 1").hasReference(REFERENCE_BUILD);
+        assertThat(fixed.get(1)).hasMessage("TO FIX 2").hasReference(REFERENCE_BUILD);
 
         assertThat(issueDifference.getNewIssues()).hasSize(1);
-        assertThat(issueDifference.getNewIssues().get(0).getMessage()).isEqualTo("NEW 1");
-        assertThat(issueDifference.getNewIssues().get(0).getReference()).isEqualTo("200");
+        assertThat(issueDifference.getNewIssues().get(0)).hasMessage("NEW 1").hasReference("2");
     }
 
     /**
@@ -72,7 +71,7 @@ class IssueDifferenceTest {
         assertThat(issueDifference.getNewIssues()).isEmpty();
         assertThat(issueDifference.getOutstandingIssues()).hasSize(1);
         assertThat(issueDifference.getOutstandingIssues().get(0).getMessage()).isEqualTo("A NEW");
-        assertThat(issueDifference.getOutstandingIssues().get(0).getReference()).isEqualTo("100");
+        assertThat(issueDifference.getOutstandingIssues().get(0).getReference()).isEqualTo(REFERENCE_BUILD);
     }
 
     /**
@@ -91,8 +90,8 @@ class IssueDifferenceTest {
         assertThat(issueDifference.getOutstandingIssues()).isEmpty();
         assertThat(issueDifference.getFixedIssues().get(0).getMessage()).isEqualTo("OLD 1");
         assertThat(issueDifference.getFixedIssues().get(1).getMessage()).isEqualTo("OLD 2");
-        assertThat(issueDifference.getFixedIssues().get(0).getReference()).isEqualTo("100");
-        assertThat(issueDifference.getFixedIssues().get(1).getReference()).isEqualTo("100");
+        assertThat(issueDifference.getFixedIssues().get(0).getReference()).isEqualTo(REFERENCE_BUILD);
+        assertThat(issueDifference.getFixedIssues().get(1).getReference()).isEqualTo(REFERENCE_BUILD);
     }
 
     /**
@@ -132,7 +131,7 @@ class IssueDifferenceTest {
         assertThat(issueDifference.getNewIssues().get(0).getMessage()).isEqualTo("A");
         assertThat(issueDifference.getNewIssues().get(0).getReference()).isEqualTo("200");
         assertThat(issueDifference.getOutstandingIssues().get(0).getMessage()).isEqualTo("B");
-        assertThat(issueDifference.getOutstandingIssues().get(0).getReference()).isEqualTo("100");
+        assertThat(issueDifference.getOutstandingIssues().get(0).getReference()).isEqualTo(REFERENCE_BUILD);
     }
 
     private Issue createIssue(final String message, final String fingerprint) {
@@ -152,7 +151,7 @@ class IssueDifferenceTest {
                 .setOrigin("origin")
                 .setLineRanges(new LineRangeList(singletonList(new LineRange(5, 6))))
                 .setFingerprint(fingerprint)
-                .setReference("100");
+                .setReference(REFERENCE_BUILD);
         return builder.build();
     }
 }
