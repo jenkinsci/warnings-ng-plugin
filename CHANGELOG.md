@@ -26,6 +26,9 @@ Additional new features:
 Filter TimeStamper Console log decorations
 - [PR#19](https://github.com/jenkinsci/warnings-ng-plugin/pull/19): Use `BuildStepMonitor.NONE` in step 
 to allow for higher concurrency.
+- [JENKINS-56324](https://issues.jenkins-ci.org/browse/JENKINS-56324): 
+If an issue in the current build is equal to several issues in the reference build 
+then select the issue with the same fingerprint as the outstanding issue. 
 
 ### Changed
 

@@ -133,7 +133,7 @@ class IssueDifferenceTest {
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-56324">Issue 56324</a>
      */
     @Test
-    void shouldFavorEqualsOverFingerprint() {
+    void shouldAlsoUseFingerprintIfIssuesAreEqual() {
         Report referenceIssues = new Report().addAll(
                 createIssue("OLD 1", "FP"));
         Report currentIssues = new Report().addAll(
@@ -151,34 +151,6 @@ class IssueDifferenceTest {
         Report newIssues = issueDifference.getNewIssues();
         assertThat(newIssues).hasSize(1);
         assertThat(newIssues.get(0)).hasMessage("NEW 1").hasReference(CURRENT_BUILD);
-    }
-
-    /**
-     * Verifies that if two issues have the same fingerprint then equals is used to select the matching issue in the
-     * reference build.
-     *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-56324">Issue 56324</a>
-     */
-    @Test
-    void shouldFavorEqualsOverFingerprint2() {
-        Report referenceIssues = new Report().addAll(
-                createIssue("OLD 1", "FP"));
-        Report currentIssues = new Report().addAll(
-                createIssue("NEW 1", "FP"),
-                createIssue("OLD 1", "FP"));
-
-        IssueDifference issueDifference = new IssueDifference(currentIssues, 2, referenceIssues);
-
-        assertThat(issueDifference.getFixedIssues()).isEmpty();
-
-        Report outstandingIssues = issueDifference.getOutstandingIssues();
-        assertThat(outstandingIssues).hasSize(1);
-        assertThat(outstandingIssues.get(0)).hasMessage("OLD 1").hasReference(REFERENCE_BUILD);
-
-        Report newIssues = issueDifference.getNewIssues();
-        assertThat(newIssues).hasSize(1);
-        assertThat(newIssues.get(0)).hasMessage("NEW 1").hasReference(CURRENT_BUILD);
-
     }
 
     private Issue createIssue(final String message, final String fingerprint) {
