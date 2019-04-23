@@ -18,6 +18,7 @@ public class JacksonFacade {
      *
      * @param bean
      *         the bean to convert
+     * @return the JSON representation (as a String)
      */
     public String toJson(final Object bean) {
         try {
@@ -29,10 +30,20 @@ public class JacksonFacade {
         }
     }
 
+    /**
+     * Creates a new root {@link ArrayNode}.
+     *
+     * @return the created node
+     */
     public ArrayNode createArray() {
         return mapper.createArrayNode();
     }
 
+    /**
+     * Creates a new root {@link ObjectNode}.
+     *
+     * @return the created node
+     */
     public ObjectNode createObject() {
         return mapper.createObjectNode();
     }
