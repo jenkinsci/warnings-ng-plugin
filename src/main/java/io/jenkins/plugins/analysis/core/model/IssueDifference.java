@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -34,20 +35,24 @@ public class IssueDifference {
         fixedIssues = referenceIssues.copy();
         outstandingIssues = new Report();
 
-        matchIssuesByEquals(currentIssues);
-        matchIssuesByFingerprint(currentIssues);
+        List<UUID> removed = matchIssuesByEquals(currentIssues);
+        Report secondPass = currentIssues.copy();
+        removed.forEach(secondPass::remove);
+        matchIssuesByFingerprint(secondPass);
 
         newIssues.forEach(issue -> issue.setReference(String.valueOf(currentBuildNumber)));
     }
 
-    private void matchIssuesByEquals(final Report currentIssues) {
+    private List<UUID> matchIssuesByEquals(final Report currentIssues) {
+        List<UUID> removedIds = new ArrayList<>();
         for (Issue current : currentIssues) {
             List<Issue> equalIssues = findReferenceByEquals(current);
 
             if (!equalIssues.isEmpty()) {
-                remove(current, selectIssueWithSameFingerprint(current, equalIssues));
+                removedIds.add(remove(current, selectIssueWithSameFingerprint(current, equalIssues)));
             }
         }
+        return removedIds;
     }
 
     private void matchIssuesByFingerprint(final Report currentIssues) {
@@ -56,11 +61,13 @@ public class IssueDifference {
         }
     }
 
-    private void remove(final Issue current, final Issue oldIssue) {
-        Issue issueWithLatestProperties = newIssues.remove(current.getId());
+    private UUID remove(final Issue current, final Issue oldIssue) {
+        UUID id = current.getId();
+        Issue issueWithLatestProperties = newIssues.remove(id);
         issueWithLatestProperties.setReference(oldIssue.getReference());
         outstandingIssues.add(issueWithLatestProperties);
         fixedIssues.remove(oldIssue.getId());
+        return id;
     }
 
     private Issue selectIssueWithSameFingerprint(final Issue current, final List<Issue> equalIssues) {

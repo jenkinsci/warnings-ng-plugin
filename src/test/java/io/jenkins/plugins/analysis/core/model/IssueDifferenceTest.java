@@ -153,6 +153,22 @@ class IssueDifferenceTest {
         assertThat(newIssues.get(0)).hasMessage("NEW 1").hasReference(CURRENT_BUILD);
     }
 
+    @Test
+    void shouldRemoveForSecondPass() {
+        Report referenceIssues = new Report().addAll(
+                createIssue("NEW 1", "FP1"),
+                createIssue("NEW 2", "FP1"));
+        Report currentIssues = new Report().addAll(
+                createIssue("NEW 1", "FP1"),
+                createIssue("NEW 3", "FP2"));
+
+        IssueDifference issueDifference = new IssueDifference(currentIssues, 2, referenceIssues);
+
+        assertThat(issueDifference.getFixedIssues()).hasSize(1);
+        assertThat(issueDifference.getNewIssues()).hasSize(1);
+        assertThat(issueDifference.getOutstandingIssues()).hasSize(1);
+    }
+
     private Issue createIssue(final String message, final String fingerprint) {
         IssueBuilder builder = new IssueBuilder();
         builder.setFileName("file-name")
