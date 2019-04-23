@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Artem Polovyi
  */
-public class IssueDifferenceTest {
+class IssueDifferenceTest {
     /**
      * Verifies that issue difference report is created correctly.
      */
