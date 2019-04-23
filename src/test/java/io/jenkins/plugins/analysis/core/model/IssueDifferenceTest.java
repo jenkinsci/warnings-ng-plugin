@@ -22,26 +22,26 @@ class IssueDifferenceTest {
      * Verifies that issue difference report is created correctly.
      */
     @Test
-    public void shouldCreateIssueDifference() {
+    void shouldCreateIssueDifference() {
         Report referenceIssues = new Report().addAll(
-                createFilledIssueForIssueDifference("FIXED 1", "FF 1", "100"),
-                createFilledIssueForIssueDifference("FIXED 2", "FF 2", "100"),
-                createFilledIssueForIssueDifference("FIXED 3", "FF 3", "100"),
-                createFilledIssueForIssueDifference("TO FIX 1", "TF 1", "100"),
-                createFilledIssueForIssueDifference("TO FIX 2", "TF 2", "100"));
+                createIssue("OUTSTANDING 1", "FF 1"),
+                createIssue("OUTSTANDING 2", "FF 2"),
+                createIssue("OUTSTANDING 3", "FF 3"),
+                createIssue("TO FIX 1", "TF 1"),
+                createIssue("TO FIX 2", "TF 2"));
 
         Report currentIssues = new Report().addAll(
-                createFilledIssueForIssueDifference("UPD FIXED 1", "FF 1", "100"),
-                createFilledIssueForIssueDifference("UPD FIXED 2", "FF 2", "100"),
-                createFilledIssueForIssueDifference("FIXED 3", "FF 3", "100"),
-                createFilledIssueForIssueDifference("NEW 1", "NF 1", "100"));
+                createIssue("UPD OUTSTANDING 1", "FF 1"),
+                createIssue("UPD OUTSTANDING 2", "FF 2"),
+                createIssue("OUTSTANDING 3", "FF 3"),
+                createIssue("NEW 1", "NF 1"));
 
         IssueDifference issueDifference = new IssueDifference(currentIssues, 200, referenceIssues);
 
         assertThat(issueDifference.getOutstandingIssues()).hasSize(3);
-        assertThat(issueDifference.getOutstandingIssues().get(0).getMessage()).isEqualTo("UPD FIXED 1");
-        assertThat(issueDifference.getOutstandingIssues().get(1).getMessage()).isEqualTo("UPD FIXED 2");
-        assertThat(issueDifference.getOutstandingIssues().get(2).getMessage()).isEqualTo("FIXED 3");
+        assertThat(issueDifference.getOutstandingIssues().get(0).getMessage()).isEqualTo("UPD OUTSTANDING 1");
+        assertThat(issueDifference.getOutstandingIssues().get(1).getMessage()).isEqualTo("UPD OUTSTANDING 2");
+        assertThat(issueDifference.getOutstandingIssues().get(2).getMessage()).isEqualTo("OUTSTANDING 3");
         assertThat(issueDifference.getOutstandingIssues().get(0).getReference()).isEqualTo("100");
         assertThat(issueDifference.getOutstandingIssues().get(1).getReference()).isEqualTo("100");
         assertThat(issueDifference.getOutstandingIssues().get(2).getReference()).isEqualTo("100");
@@ -62,9 +62,9 @@ class IssueDifferenceTest {
      * same issues.
      */
     @Test
-    public void shouldCreateOutstandingIssueDifference() {
-        Report currentIssues = new Report().add(createFilledIssueForIssueDifference("A NEW", "FA", "100"));
-        Report referenceIssues = new Report().add(createFilledIssueForIssueDifference("A OLD", "FA", "100"));
+    void shouldCreateOutstandingIssueDifference() {
+        Report currentIssues = new Report().add(createIssue("A NEW", "FA"));
+        Report referenceIssues = new Report().add(createIssue("A OLD", "FA"));
 
         IssueDifference issueDifference = new IssueDifference(currentIssues, 200, referenceIssues);
 
@@ -79,10 +79,10 @@ class IssueDifferenceTest {
      * Verifies that issue difference report has only fixed issues when current report is empty.
      */
     @Test
-    public void shouldCreateIssueDifferenceWithEmptyCurrent() {
+    void shouldCreateIssueDifferenceWithEmptyCurrent() {
         Report currentIssues = new Report();
-        Report referenceIssues = new Report().addAll(createFilledIssueForIssueDifference("OLD 1", "FA", "100"),
-                createFilledIssueForIssueDifference("OLD 2", "FB", "100"));
+        Report referenceIssues = new Report().addAll(createIssue("OLD 1", "FA"),
+                createIssue("OLD 2", "FB"));
 
         IssueDifference issueDifference = new IssueDifference(currentIssues, 200, referenceIssues);
 
@@ -99,10 +99,10 @@ class IssueDifferenceTest {
      * Verifies that issue difference report has only new issues when reference report is empty.
      */
     @Test
-    public void shouldCreateIssueDifferenceWithEmptyReference() {
+    void shouldCreateIssueDifferenceWithEmptyReference() {
         Report referenceIssues = new Report();
-        Report currentIssues = new Report().addAll(createFilledIssueForIssueDifference("NEW 1", "FA", "100"),
-                createFilledIssueForIssueDifference("NEW 2", "FB", "100"));
+        Report currentIssues = new Report().addAll(createIssue("NEW 1", "FA"),
+                createIssue("NEW 2", "FB"));
 
         IssueDifference issueDifference = new IssueDifference(currentIssues, 200, referenceIssues);
 
@@ -119,10 +119,10 @@ class IssueDifferenceTest {
      * Verifies that issue difference report can distinguish issues based on fingerprint.
      */
     @Test
-    public void shouldCreateIssueDifferenceWithNewAndOutstandingIssue() {
-        Report referenceIssues = new Report().add(createFilledIssueForIssueDifference("B", "F", "100"));
-        Report currentIssues = new Report().addAll(createFilledIssueForIssueDifference("A", "F1", "100"),
-                createFilledIssueForIssueDifference("B", "F", "100"));
+    void shouldCreateIssueDifferenceWithNewAndOutstandingIssue() {
+        Report referenceIssues = new Report().add(createIssue("B", "F"));
+        Report currentIssues = new Report().addAll(createIssue("A", "F1"),
+                createIssue("B", "F"));
 
         IssueDifference issueDifference = new IssueDifference(currentIssues, 200, referenceIssues);
 
@@ -135,8 +135,7 @@ class IssueDifferenceTest {
         assertThat(issueDifference.getOutstandingIssues().get(0).getReference()).isEqualTo("100");
     }
 
-    private Issue createFilledIssueForIssueDifference(final String message, final String fingerprint,
-            final String reference) {
+    private Issue createIssue(final String message, final String fingerprint) {
         IssueBuilder builder = new IssueBuilder();
         builder.setFileName("file-name")
                 .setLineStart(1)
@@ -153,7 +152,7 @@ class IssueDifferenceTest {
                 .setOrigin("origin")
                 .setLineRanges(new LineRangeList(singletonList(new LineRange(5, 6))))
                 .setFingerprint(fingerprint)
-                .setReference(reference);
+                .setReference("100");
         return builder.build();
     }
 }
