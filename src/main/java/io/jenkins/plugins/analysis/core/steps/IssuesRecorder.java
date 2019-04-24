@@ -16,7 +16,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
-import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -52,6 +51,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatusHandler;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -73,7 +73,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
-    private static final String NO_REFERENCE_JOB = "-";
+    static final String NO_REFERENCE_JOB = "-";
 
     private List<Tool> analysisTools = new ArrayList<>();
 
@@ -284,7 +284,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         analysisTools = Collections.singletonList(tool);
     }
 
-    private void ensureThatToolIsValid(final Tool tool) {
+    static void ensureThatToolIsValid(final Tool tool) {
         if (tool == null) {
             throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
                     + "definition that is also a symbol in another plugin. "
@@ -504,9 +504,19 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     public void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
             @NonNull final Launcher launcher, @NonNull final TaskListener listener)
             throws InterruptedException, IOException {
+        perform(run, workspace, listener, new QualityGateStatusHandler.SetBuildResultStatusHandler(run));
+    }
+
+    /**
+     * Executes the build step. Used from {@link RecordIssuesStep} to provide a {@link QualityGateStatusHandler}
+     * that has Pipeline-specific behavior.
+     */
+    void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
+            @NonNull final TaskListener listener, @NonNull final QualityGateStatusHandler statusHandler)
+            throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            record(run, workspace, listener);
+            record(run, workspace, listener, statusHandler);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -518,7 +528,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return analysisTools.stream().map(Tool::getActualName).collect(Collectors.joining());
     }
 
-    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener)
+    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+            final QualityGateStatusHandler statusHandler)
             throws IOException, InterruptedException {
         for (Tool tool : getTools()) {
             ensureThatToolIsValid(tool);
@@ -529,7 +540,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
-            publishResult(run, listener, toolName, totalIssues, toolName);
+            publishResult(run, listener, toolName, totalIssues, toolName, statusHandler);
         }
         else {
             for (Tool tool : analysisTools) {
@@ -543,7 +554,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
                             name, id);
                 }
-                publishResult(run, listener, tool.getActualName(), report, getReportName(tool));
+                publishResult(run, listener, tool.getActualName(), report, getReportName(tool), statusHandler);
             }
         }
     }
@@ -605,7 +616,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @SuppressWarnings("deprecation")
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-            final AnnotatedReport report, final String reportName) {
+            final AnnotatedReport report, final String reportName, QualityGateStatusHandler statusHandler) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         if (qualityGates.isEmpty()) {
             qualityGates.addAll(QualityGate.map(thresholds));
@@ -614,7 +625,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
-                new LogHandler(listener, loggerName, report.getReport()));
+                new LogHandler(listener, loggerName, report.getReport()), statusHandler);
         publisher.attachAction();
     }
 
@@ -1030,7 +1041,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      * Descriptor for this step: defines the context and the UI elements.
      */
     @Extension
-    @Symbol("recordIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         /** Retain backward compatibility. */

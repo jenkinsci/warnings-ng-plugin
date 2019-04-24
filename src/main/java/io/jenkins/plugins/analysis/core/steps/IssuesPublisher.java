@@ -27,6 +27,7 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatusHandler;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
@@ -48,12 +49,14 @@ class IssuesPublisher {
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
+    private final QualityGateStatusHandler qualityGateStatusHandler;
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
-            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger) {
+            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
+            final QualityGateStatusHandler qualityGateStatusHandler) {
         this.report = report;
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -64,6 +67,7 @@ class IssuesPublisher {
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
+        this.qualityGateStatusHandler = qualityGateStatusHandler;
     }
 
     private String getId() {
@@ -142,7 +146,7 @@ class IssuesPublisher {
             else {
                 filtered.logInfo("-> Some quality gates have been missed: overall result is %s", qualityGateStatus);
             }
-            qualityGateStatus.setResult(run);
+            qualityGateStatusHandler.handleStatus(qualityGateStatus);
         }
         else {
             filtered.logInfo("No quality gates have been set - skipping");

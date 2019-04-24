@@ -4,8 +4,8 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.42</version>
-    <relativePath />
+    <version>3.43</version>
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -23,7 +23,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Override properties defined in parent POM -->
-    <jenkins.version>2.121.1</jenkins.version>
+    <jenkins.version>2.138.4</jenkins.version>
     <java.level>8</java.level>
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
@@ -59,6 +59,7 @@
     <matrix-project.version>1.13</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>3.9.1</git-plugin.version>
+    <workflow-api.version>2.34</workflow-api.version>
     <workflow-step.version>2.19</workflow-step.version>
     <workflow-job.version>2.32</workflow-job.version>
     <structs.version>1.17</structs.version>
@@ -245,6 +246,11 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>script-security</artifactId>
       <version>${script-security.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-api</artifactId>
+      <version>${workflow-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -481,12 +487,6 @@
     </dependency>
 
     <!-- Declarative Pipeline -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-api</artifactId>
-      <version>2.33</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-support</artifactId>
@@ -738,59 +738,22 @@
           </dependency>
         </dependencies>
         <configuration>
+          <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
+          <checkDependencies>false</checkDependencies>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
             </revapi.semver.ignore>
             <revapi.ignore>
               <item>
-                <code>java.method.returnTypeChanged</code>
-                <newType>edu.hm.hafner.analysis.IssueParser</newType>
-                <justification>The parser should not be visible.</justification>
-              </item>
-            </revapi.ignore>
-            <revapi.ignore>
-              <item>
                 <regex>true</regex>
                 <code>java.missing.*</code>
-                <classQualifiedName>hudson.matrix.*</classQualifiedName>
-                <justification>Optional dependency</justification>
+                <justification>Dependencies are not being checked, so they are reported as missing</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.jvnet.hudson.reactor.Reactor.Node</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.remoting.Command</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.remoting.CommandTransport.CommandReceiver</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.model.FingerprintMap.FingerprintParams</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.kohsuke.stapler.AncestorImpl</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>net.sf.json.AbstractJSON.WritingVisitor</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <regex>true</regex>
-                <classQualifiedName>com.fasterxml.jackson.databind.*</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>java.annotation.removed</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor</classQualifiedName>
+                <justification>Symbol-based usage migrated transparently to RecordIssuesStep</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>

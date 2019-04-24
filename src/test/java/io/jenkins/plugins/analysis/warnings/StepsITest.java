@@ -19,8 +19,12 @@ import edu.hm.hafner.analysis.Severity;
 
 import org.kohsuke.stapler.HttpResponse;
 import org.jenkinsci.Symbol;
+import org.jenkinsci.plugins.workflow.actions.WarningAction;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
+import org.jenkinsci.plugins.workflow.graphanalysis.DepthFirstScanner;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.UnprotectedRootAction;
@@ -560,6 +564,48 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result.getReferenceBuild()).hasValue(referenceResult.getOwner());
 
         // TODO: add verification for io.jenkins.plugins.analysis.core.model.IssueDifference
+    }
+
+    /**
+     * Verifies that when publishIssues marks the build as unstable it also marks the step with
+     * WarningAction so that visualizations can display the step as unstable rather than just
+     * the whole build.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-39203">Issue 39203</a>
+     */
+    @Test
+    public void publishIssuesShouldMarkStepWithWarningAction() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("javac.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
+                "publishIssues(issues:[java], qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
+        WorkflowRun run = (WorkflowRun)buildWithResult(job, Result.UNSTABLE);
+        FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
+                node -> node.getDisplayFunctionName().equals("publishIssues"));
+        assertThat(publishIssuesNode).isNotNull();
+        WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
+        assertThat(warningAction).isNotNull();
+        assertThat(warningAction.getMessage()).isEqualTo("Some quality gates have been missed: overall result is WARNING");
+    }
+
+    /**
+     * Verifies that when recordIssues marks the build as unstable it also marks the step with
+     * WarningAction so that visualizations can display the step as unstable rather than just
+     * the whole build.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-39203">Issue 39203</a>
+     */
+    @Test
+    public void recordIssuesShouldMarkStepWithWarningAction() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("javac.txt");
+        job.setDefinition(asStage("recordIssues(tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8'),"
+                + "qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
+        WorkflowRun run = (WorkflowRun)buildWithResult(job, Result.UNSTABLE);
+        FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
+                node -> node.getDisplayFunctionName().equals("recordIssues"));
+        assertThat(publishIssuesNode).isNotNull();
+        WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
+        assertThat(warningAction).isNotNull();
+        assertThat(warningAction.getMessage()).isEqualTo("Some quality gates have been missed: overall result is WARNING");
     }
 
     /**

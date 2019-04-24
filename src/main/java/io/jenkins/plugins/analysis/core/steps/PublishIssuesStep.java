@@ -15,6 +15,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -38,6 +39,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatusHandler;
 
 /**
  * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
@@ -569,10 +571,13 @@ public class PublishIssuesStep extends Step {
             }
             report.addAll(reports);
 
+            QualityGateStatusHandler statusHandler = new QualityGateStatusHandler.PipelineStatusHandler(getRun(),
+                    getContext().get(FlowNode.class));
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
-                    getCharset(sourceCodeEncoding), getLogger(report));
-            return publisher.attachAction();
+                    getCharset(sourceCodeEncoding), getLogger(report), statusHandler);
+            ResultAction resultAction = publisher.attachAction();
+            return resultAction;
         }
 
         private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {
@@ -590,7 +595,7 @@ public class PublishIssuesStep extends Step {
 
         @Override
         public Set<Class<?>> getRequiredContext() {
-            return Sets.immutable.of(Run.class, TaskListener.class).castToSet();
+            return Sets.immutable.of(FlowNode.class, Run.class, TaskListener.class).castToSet();
         }
 
         @Override

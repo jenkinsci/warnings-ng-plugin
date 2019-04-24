@@ -49,15 +49,22 @@ public enum QualityGateStatus {
     }
 
     /**
+     * Returns the associated {@link Result}.
+     *
+     * @return the associated {@link Result}
+     */
+    public Result getResult() {
+        return result;
+    }
+
+    /**
      * Sets the result of the specified run to the associated value of this quality gate status.
      *
      * @param run
      *         the run to set the result for
      */
     public void setResult(final Run<?, ?> run) {
-        if (!isSuccessful()) {
-            run.setResult(result);
-        }
+        new QualityGateStatusHandler.SetBuildResultStatusHandler(run).handleStatus(this);
     }
 
     /**
