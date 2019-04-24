@@ -72,7 +72,7 @@ node ('windows') {
                 writeFile file: settingsXml, text: libraryResource('settings-azure.xml')
                 mavenOptions += "-s $settingsXml"
             }
-            mavenOptions += "clean verify -Djenkins.test.timeout=240"
+            mavenOptions += "clean verify -Djenkins.test.timeout=240 -Djenkins.version=2.150.1"
             command = "mvn ${mavenOptions.join(' ')}"
             env << "PATH+MAVEN=${tool 'mvn'}/bin"
 
