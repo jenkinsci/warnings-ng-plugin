@@ -7,7 +7,9 @@
          * @param {boolean} isTitleVisible - determines whether a title should be shown
          */
         renderPieChart: function (pieModel, isTitleVisible) {
-            var chart = echarts.init($(this)[0]);
+            var chartPlaceHolder = $(this)[0];
+            var chart = echarts.init(chartPlaceHolder);
+            chartPlaceHolder.echart = chart;
             var options = {
                 title: getTitle(isTitleVisible),
                 tooltip: {

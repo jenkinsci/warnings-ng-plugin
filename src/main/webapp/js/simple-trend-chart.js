@@ -18,6 +18,7 @@ function renderTrendChart(chartDivId, chartModel, urlName) {
     }
 
     var chart = echarts.init(chartPlaceHolder);
+    chartPlaceHolder.echart = chart;
     var options = {
         tooltip: {
             trigger: 'axis',

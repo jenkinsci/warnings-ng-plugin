@@ -25,6 +25,7 @@ import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -650,8 +651,8 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished
-     * the builds result is checked to be equals to {@link Result#SUCCESS}.
+     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the
+     * builds result is checked to be equals to {@link Result#SUCCESS}.
      *
      * @param job
      *         the job to schedule
@@ -663,8 +664,8 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished
-     * the builds result is checked to be equals to {@code expectedResult}.
+     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the
+     * builds result is checked to be equals to {@code expectedResult}.
      *
      * @param job
      *         the job to schedule
@@ -685,8 +686,8 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished
-     * the builds result is checked to be equals to {@link Result#SUCCESS}.
+     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the
+     * builds result is checked to be equals to {@link Result#SUCCESS}.
      *
      * @param job
      *         the job to schedule
@@ -714,8 +715,8 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished
-     * the builds result is checked to be equals to {@code expectedResult}.
+     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the
+     * builds result is checked to be equals to {@code expectedResult}.
      *
      * @param job
      *         the job to schedule
@@ -730,8 +731,8 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished
-     * the builds result is checked to be equals to {@code expectedResult}.
+     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the
+     * builds result is checked to be equals to {@code expectedResult}.
      *
      * @param job
      *         the job to schedule
@@ -1061,6 +1062,24 @@ public abstract class IntegrationTest extends ResourceTest {
             builder.append(argument);
         }
         return builder.toString();
+    }
+
+    /**
+     * Returns the model of a chart in the specified HTML page.
+     *
+     * @param page
+     *         the HTML page that contains the chart
+     * @param id
+     *         the element ID of the chart placeholder (that has the EChart instance attached in property @{@code
+     *         echart}
+     *
+     * @return the model (as JSON representation)
+     */
+    protected String getChartModel(final HtmlPage page, final String id) {
+        ScriptResult scriptResult = page.executeJavaScript(
+                String.format("JSON.stringify(document.getElementById(\"%s\").echart.getOption());", id));
+
+        return scriptResult.getJavaScriptResult().toString();
     }
 
     /**
