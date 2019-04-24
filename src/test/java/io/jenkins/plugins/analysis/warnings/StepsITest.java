@@ -68,7 +68,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 + "    stages {\n"
                 + "        stage ('Create a fake warning') {\n"
                 + "            steps {\n"
-                + "                sh 'echo \"foo.cc:4:39: error: foo.h: No such file or directory\" >warnings.log' "
+                + "                " + getShellStep(
+                "echo \"foo.cc:4:39: error: foo.h: No such file or directory\" >warnings.log")
                 + "            }\n"
                 + "        }\n"
                 + "    }\n"
@@ -82,6 +83,15 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(1);
+    }
+
+    private String getShellStep(final String script) {
+        if (isWindows()) {
+            return String.format("bat '%s'", script);
+        }
+        else {
+            return String.format("sh '%s'", script);
+        }
     }
 
     /**
