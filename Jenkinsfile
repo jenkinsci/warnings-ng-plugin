@@ -1,10 +1,10 @@
 node ('linux') {
     timeout(200) {
-        stage ('Checkout') {
+        stage ('Linux Checkout') {
             checkout scm
         }
 
-        stage ('Build') {
+        stage ('Linux Build') {
             String jdk = '8'
             String jdkTool = "jdk${jdk}"
             List<String> env = [
@@ -48,11 +48,11 @@ node ('linux') {
 
 node ('windows') {
     timeout(200) {
-        stage ('Checkout') {
+        stage ('Windows Checkout') {
             checkout scm
         }
 
-        stage ('Build') {
+        stage ('Windows Build') {
             String jdk = '8'
             String jdkTool = "jdk${jdk}"
             List<String> env = [
