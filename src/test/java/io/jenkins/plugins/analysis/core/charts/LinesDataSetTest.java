@@ -3,9 +3,11 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import static org.assertj.core.api.AssertionsForClassTypes.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Testclass for LinesDataSet.
@@ -14,78 +16,58 @@ import static org.assertj.core.api.AssertionsForClassTypes.*;
  */
 class LinesDataSetTest {
 
+    private static final String TESTLABEL = "Testlabel";
+
+    private Map<String, Integer> getdataSetSeriesMap() {
+        Map<String, Integer>  dataSetSeries = new HashMap<>();
+        dataSetSeries.put("Eins", 1);
+        dataSetSeries.put("Zwei", 2);
+        dataSetSeries.put("Drei", 3);
+        dataSetSeries.put("Vier", 4);
+
+        return dataSetSeries;
+    }
 
     @Test
-    void getXAxisSize() {
+    void shouldGetXAxisSize() {
         LinesDataSet linesDataSet  = new LinesDataSet();
         assertThat(linesDataSet.getXAxisSize()).isEqualTo(0);
 
         Map<String, Integer>  dataSetSeries = new HashMap<>();
-        linesDataSet.add("Testlabel", dataSetSeries);
+        linesDataSet.add(TESTLABEL, dataSetSeries);
         assertThat(linesDataSet.getXAxisSize()).isEqualTo(1);
+        assertThat(linesDataSet.getXAxisLabels()).containsOnly("Testlabel");
     }
 
     @Test
-    void getXAxisLabels() {
+    void shouldGetDataSetIds() {
         LinesDataSet linesDataSet  = new LinesDataSet();
-        Map<String, Integer>  dataSetSeries = new HashMap<>();
-        linesDataSet.add("Testlabel", dataSetSeries);
-        assertThat(linesDataSet.getXAxisLabels()).isEqualTo(Collections.singletonList("Testlabel"));
+        Map<String, Integer>  dataSetSeries = getdataSetSeriesMap();
+        linesDataSet.add(TESTLABEL, dataSetSeries);
+        assertThat(linesDataSet.getDataSetIds())
+                .hasSize(4)
+                .contains("Eins")
+                .contains("Zwei")
+                .contains("Drei")
+                .contains("Vier");
     }
 
     @Test
-    void getDataSetIds() {
-        LinesDataSet linesDataSet  = new LinesDataSet();
-        Map<String, Integer>  dataSetSeries = new HashMap<>();
-        dataSetSeries.put("Eins", 1);
-        dataSetSeries.put("Zwei", 2);
-        dataSetSeries.put("Drei", 3);
-        dataSetSeries.put("Vier", 4);
-        linesDataSet.add("Testlabel", dataSetSeries);
-        assertThat(linesDataSet.getDataSetIds().size()).isEqualTo(4);
-        assertThat(linesDataSet.getDataSetIds().contains("Eins")).isEqualTo(true);
-        assertThat(linesDataSet.getDataSetIds().contains("Zwei")).isEqualTo(true);
-        assertThat(linesDataSet.getDataSetIds().contains("Drei")).isEqualTo(true);
-        assertThat(linesDataSet.getDataSetIds().contains("Vier")).isEqualTo(true);
-        assertThat(linesDataSet.getDataSetIds().contains("Fuenf")).isEqualTo(false);
-    }
-
-    @Test
-    void hasSeries() {
+    void shouldHasSeries() {
         LinesDataSet linesDataSet  = new LinesDataSet();
         assertThat(linesDataSet.hasSeries("Eins")).isEqualTo(false);
-        Map<String, Integer>  dataSetSeries = new HashMap<>();
-        dataSetSeries.put("Eins", 1);
-        dataSetSeries.put("Zwei", 2);
-        dataSetSeries.put("Drei", 3);
-        dataSetSeries.put("Vier", 4);
-        linesDataSet.add("Testlabel", dataSetSeries);
+        Map<String, Integer>  dataSetSeries = getdataSetSeriesMap();
+        linesDataSet.add(TESTLABEL, dataSetSeries);
         assertThat(linesDataSet.hasSeries("Eins")).isEqualTo(true);
-    }
-
-    @Test
-    void getSeries() {
-        LinesDataSet linesDataSet  = new LinesDataSet();
-        assertThat(linesDataSet.hasSeries("Eins")).isEqualTo(false);
-        Map<String, Integer>  dataSetSeries = new HashMap<>();
-        dataSetSeries.put("Eins", 1);
-        dataSetSeries.put("Zwei", 2);
-        dataSetSeries.put("Drei", 3);
-        dataSetSeries.put("Vier", 4);
-        linesDataSet.add("Testlabel", dataSetSeries);
         assertThat(linesDataSet.getSeries("Eins")).isEqualTo(Collections.singletonList(1));
     }
 
     @Test
-    void getSeriesWithMissingEntry() {
+    void shouldGetSeriesWithMissingEntry() {
         LinesDataSet linesDataSet  = new LinesDataSet();
         assertThat(linesDataSet.hasSeries("Eins")).isEqualTo(false);
-        Map<String, Integer>  dataSetSeries = new HashMap<>();
-        dataSetSeries.put("Eins", 1);
-        dataSetSeries.put("Zwei", 2);
-        dataSetSeries.put("Drei", 3);
-        dataSetSeries.put("Vier", 4);
-        linesDataSet.add("Testlabel", dataSetSeries);
+        Map<String, Integer>  dataSetSeries = getdataSetSeriesMap();
+        linesDataSet.add(TESTLABEL, dataSetSeries);
 
         assertThatThrownBy(() -> linesDataSet.getSeries("Test"))
                 .isInstanceOf(AssertionError.class)
@@ -94,11 +76,11 @@ class LinesDataSetTest {
     }
 
     @Test
-    void addWithException() {
+    void shouldAddWithException() {
         LinesDataSet linesDataSet  = new LinesDataSet();
         assertThat(linesDataSet.hasSeries("Eins")).isEqualTo(false);
-        Map<String, Integer>  dataSetSeries = new HashMap<>();
-        linesDataSet.add("Testlabel", dataSetSeries);
+        Map<String, Integer>  dataSetSeries = Collections.emptyMap();
+        linesDataSet.add(TESTLABEL, dataSetSeries);
 
         assertThatThrownBy(() -> linesDataSet.add("Testlabel", dataSetSeries))
                 .isInstanceOf(IllegalStateException.class)
