@@ -25,8 +25,8 @@ class LinesChartModelTest {
     void testEmptyCtor() {
         LinesChartModel model = new LinesChartModel();
         assertThat(model.getId()).isEqualTo("");
-        assertThat(model.getSeries().size()).isEqualTo(0);
-        assertThat(model.getXAxisLabels()).isEqualTo(Collections.EMPTY_LIST);
+        assertThat(model.getSeries()).isEmpty();
+        assertThat(model.getXAxisLabels()).isEmpty();
 
     }
 
@@ -50,7 +50,7 @@ class LinesChartModelTest {
         LinesChartModel model = new LinesChartModel("spotbugs");
         model.addXAxisLabels(Arrays.asList("1", "2", "3"));
         assertThat(model.size()).isEqualTo(3);
-
+        assertThat(model.getXAxisLabels()).hasSize(3);
     }
 
     @Test
@@ -75,11 +75,19 @@ class LinesChartModelTest {
     void testGetXAxisLabels() {
         LinesChartModel modelForSingleXAxisLabelTest = new LinesChartModel("spotbugs");
         modelForSingleXAxisLabelTest.addXAxisLabel("a");
-        assertThat(modelForSingleXAxisLabelTest.getXAxisLabels()).isEqualTo(Arrays.asList("a"));
+        assertThat(modelForSingleXAxisLabelTest.getXAxisLabels())
+                .hasSize(1)
+                .isEqualTo(Arrays.asList("a"));
 
         LinesChartModel modelForXAxisListLabelTest = new LinesChartModel("spotbugs");
         modelForXAxisListLabelTest.addXAxisLabels(Arrays.asList("a", "b", "c"));
-        assertThat(modelForXAxisListLabelTest.getXAxisLabels()).isEqualTo(Arrays.asList("a", "b", "c"));
+        assertThat(modelForXAxisListLabelTest.getXAxisLabels())
+                .hasSize(3)
+                .isEqualTo(Arrays.asList("a", "b", "c"));
+        modelForXAxisListLabelTest.addXAxisLabels(Arrays.asList("d", "e", "f"));
+        assertThat(modelForXAxisListLabelTest.getXAxisLabels())
+                .hasSize(6)
+                .isEqualTo(Arrays.asList("a", "b", "c", "d", "e", "f"));
     }
 
     @Test
