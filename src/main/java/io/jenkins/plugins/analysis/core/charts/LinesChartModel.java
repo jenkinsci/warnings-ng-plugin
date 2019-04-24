@@ -6,7 +6,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
-import net.sf.json.JSONObject;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 
 /**
  * UI model for an ECharts line chart. Simple data bean that will be converted to JSON. On the client side the three
@@ -88,6 +90,7 @@ public class LinesChartModel {
         Collections.addAll(series, lineSeries);
     }
 
+    @JsonProperty("xAxisLabels")
     public List<String> getXAxisLabels() {
         return xAxisLabels;
     }
@@ -107,6 +110,6 @@ public class LinesChartModel {
 
     @Override
     public String toString() {
-        return JSONObject.fromObject(this).toString(2);
+        return new JacksonFacade().toJson(this);
     }
 }
