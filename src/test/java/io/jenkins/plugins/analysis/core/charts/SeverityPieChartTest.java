@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link SeverityPieChart}
+ * Tests the class {@link SeverityPieChart}.
  * @author Matthias Herpers
  */
 class SeverityPieChartTest {
@@ -24,7 +24,8 @@ class SeverityPieChartTest {
         Report report = createReport(0, 0, 0, 0);
         PieChartModel pieChartModel = severityPieChart.create(report);
         List<PieData> data = pieChartModel.getData();
-        assertThat(data.get(0).getName()).isEqualTo("High");// Without Severity.ERROR
+
+        assertThat(data.get(0).getName()).isEqualTo("High"); // Without Severity.ERROR
         assertThat(data.get(0).getValue()).isEqualTo(0);
         assertThat(data.get(1).getName()).isEqualTo("Normal");
         assertThat(data.get(1).getValue()).isEqualTo(0);
@@ -41,7 +42,8 @@ class SeverityPieChartTest {
         Report report = createReport(0, 0, 0, 1);
         PieChartModel pieChartModel = severityPieChart.create(report);
         List<PieData> data = pieChartModel.getData();
-        assertThat(data.get(0).getName()).isEqualTo("Error");// With Severity.ERROR
+
+        assertThat(data.get(0).getName()).isEqualTo("Error"); // With Severity.ERROR
         assertThat(data.get(0).getValue()).isEqualTo(1);
         assertThat(data.get(1).getName()).isEqualTo("High");
         assertThat(data.get(1).getValue()).isEqualTo(0);
@@ -60,7 +62,8 @@ class SeverityPieChartTest {
         Report report = createReport(1, 1, 1, 1);
         PieChartModel pieChartModel = severityPieChart.create(report);
         List<PieData> data = pieChartModel.getData();
-        assertThat(data.get(0).getName()).isEqualTo("Error");// With Severity.ERROR
+
+        assertThat(data.get(0).getName()).isEqualTo("Error"); // With Severity.ERROR
         assertThat(data.get(0).getValue()).isEqualTo(1);
         assertThat(data.get(1).getName()).isEqualTo("High");
         assertThat(data.get(1).getValue()).isEqualTo(1);
