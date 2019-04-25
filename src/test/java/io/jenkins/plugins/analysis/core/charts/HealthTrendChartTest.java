@@ -18,6 +18,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link HealthTrendChart}.
+ *
  * @author Matthias Herpers
  */
 class HealthTrendChartTest {
@@ -30,25 +31,25 @@ class HealthTrendChartTest {
         HealthTrendChart chart = new HealthTrendChart(healthDescriptor);
 
         List<AnalysisBuildResult> resultsCheckStyle = new ArrayList<>();
-        resultsCheckStyle.add(createResult(0,0,0,1));
-        resultsCheckStyle.add(createResult(0,0,10,2));
-        resultsCheckStyle.add(createResult(0,3,0,3));
-        resultsCheckStyle.add(createResult(0,7,0,4));
-        resultsCheckStyle.add(createResult(11,0,0,5));
-        resultsCheckStyle.add(createResult(200,0,0,6));
+        resultsCheckStyle.add(createResult(0, 0, 0, 1));
+        resultsCheckStyle.add(createResult(0, 0, 10, 2));
+        resultsCheckStyle.add(createResult(0, 3, 0, 3));
+        resultsCheckStyle.add(createResult(0, 7, 0, 4));
+        resultsCheckStyle.add(createResult(11, 0, 0, 5));
+        resultsCheckStyle.add(createResult(200, 0, 0, 6));
         LinesChartModel model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
 
         assertThatJson(model).node("xAxisLabels")
-                .isArray().hasSize(6).containsExactly("#1", "#2","#3","#4","#5","#6");
+                .isArray().hasSize(6).containsExactly("#1", "#2", "#3", "#4", "#5", "#6");
         assertThatJson(model).node("series")
                 .isArray().hasSize(3);
         assertThat(healthDescriptor.isEnabled()).isTrue();
         assertThat(model.getSeries().get(0).getName()).isEqualTo("Excellent");
-        verifySeries(model,0,0,0,3,5,5,5);
+        verifySeries(model, 0, 0, 0, 3, 5, 5, 5);
         assertThat(model.getSeries().get(1).getName()).isEqualTo("Satisfactory");
-        verifySeries(model,1,0,0,0,2,5,5);
+        verifySeries(model, 1, 0, 0, 0, 2, 5, 5);
         assertThat(model.getSeries().get(2).getName()).isEqualTo("Failing");
-        verifySeries(model,2,0,0,0,0,1,190);
+        verifySeries(model, 2, 0, 0, 0, 0, 1, 190);
     }
 
     private AnalysisBuildResult createResult(final int high, final int normal, final int low, final int number) {
@@ -60,11 +61,11 @@ class HealthTrendChartTest {
 
         AnalysisBuild build = new BuildProperties(number, "#" + number, 10);
         when(buildResult.getBuild()).thenReturn(build);
-        when(buildResult.getTotalSize()).thenReturn(high+normal);
+        when(buildResult.getTotalSize()).thenReturn(high + normal);
         return buildResult;
     }
 
-    private void verifySeries(LinesChartModel model,int index, final int... numbers) {
+    private void verifySeries(LinesChartModel model, int index, final int... numbers) {
         for (int i = 0; i < numbers.length; i++) {
             assertThat(model.getSeries().get(index).getData().get(i)).isEqualTo(numbers[i]);
         }
