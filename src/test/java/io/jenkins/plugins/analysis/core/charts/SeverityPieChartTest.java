@@ -12,6 +12,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link SeverityPieChart}.
+ *
  * @author Matthias Herpers
  */
 class SeverityPieChartTest {
@@ -21,16 +22,13 @@ class SeverityPieChartTest {
     @Test
     void shouldCreateChartFromEmptyReport() {
         SeverityPieChart severityPieChart = new SeverityPieChart();
-        Report report = createReport(0, 0, 0, 0);
-        PieChartModel pieChartModel = severityPieChart.create(report);
+
+        PieChartModel pieChartModel = severityPieChart.create(createReport(0, 0, 0, 0));
         List<PieData> data = pieChartModel.getData();
 
-        assertThat(data.get(0).getName()).isEqualTo("High"); // Without Severity.ERROR
-        assertThat(data.get(0).getValue()).isEqualTo(0);
-        assertThat(data.get(1).getName()).isEqualTo("Normal");
-        assertThat(data.get(1).getValue()).isEqualTo(0);
-        assertThat(data.get(2).getName()).isEqualTo("Low");
-        assertThat(data.get(2).getValue()).isEqualTo(0);
+        assertThat(data.get(0)).isEqualTo(new PieData("High", 0));
+        assertThat(data.get(1)).isEqualTo(new PieData("Normal", 0));
+        assertThat(data.get(2)).isEqualTo(new PieData("Low", 0));
     }
 
     /**
@@ -39,18 +37,14 @@ class SeverityPieChartTest {
     @Test
     void shouldCreateChartFromReportWithOneError() {
         SeverityPieChart severityPieChart = new SeverityPieChart();
-        Report report = createReport(0, 0, 0, 1);
-        PieChartModel pieChartModel = severityPieChart.create(report);
+
+        PieChartModel pieChartModel = severityPieChart.create(createReport(0, 0, 0, 1));
         List<PieData> data = pieChartModel.getData();
 
-        assertThat(data.get(0).getName()).isEqualTo("Error"); // With Severity.ERROR
-        assertThat(data.get(0).getValue()).isEqualTo(1);
-        assertThat(data.get(1).getName()).isEqualTo("High");
-        assertThat(data.get(1).getValue()).isEqualTo(0);
-        assertThat(data.get(2).getName()).isEqualTo("Normal");
-        assertThat(data.get(2).getValue()).isEqualTo(0);
-        assertThat(data.get(3).getName()).isEqualTo("Low");
-        assertThat(data.get(3).getValue()).isEqualTo(0);
+        assertThat(data.get(0)).isEqualTo(new PieData("Error", 1));
+        assertThat(data.get(1)).isEqualTo(new PieData("High", 0));
+        assertThat(data.get(2)).isEqualTo(new PieData("Normal", 0));
+        assertThat(data.get(3)).isEqualTo(new PieData("Low", 0));
     }
 
     /**
@@ -59,18 +53,14 @@ class SeverityPieChartTest {
     @Test
     void shouldCreateChartFromSimpleReport() {
         SeverityPieChart severityPieChart = new SeverityPieChart();
-        Report report = createReport(1, 1, 1, 1);
-        PieChartModel pieChartModel = severityPieChart.create(report);
+
+        PieChartModel pieChartModel = severityPieChart.create(createReport(1, 1, 1, 1));
         List<PieData> data = pieChartModel.getData();
 
-        assertThat(data.get(0).getName()).isEqualTo("Error"); // With Severity.ERROR
-        assertThat(data.get(0).getValue()).isEqualTo(1);
-        assertThat(data.get(1).getName()).isEqualTo("High");
-        assertThat(data.get(1).getValue()).isEqualTo(1);
-        assertThat(data.get(2).getName()).isEqualTo("Normal");
-        assertThat(data.get(2).getValue()).isEqualTo(1);
-        assertThat(data.get(3).getName()).isEqualTo("Low");
-        assertThat(data.get(3).getValue()).isEqualTo(1);
+        assertThat(data.get(0)).isEqualTo(new PieData("Error", 1));
+        assertThat(data.get(1)).isEqualTo(new PieData("High", 1));
+        assertThat(data.get(2)).isEqualTo(new PieData("Normal", 1));
+        assertThat(data.get(3)).isEqualTo(new PieData("Low", 1));
     }
 
     private Report createReport(final int high, final int normal, final int low, final int error) {
