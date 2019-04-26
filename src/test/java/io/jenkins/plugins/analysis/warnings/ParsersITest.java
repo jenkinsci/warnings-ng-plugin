@@ -153,9 +153,9 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the SonarQube parsers on two files that contains 6 and 31 issues. */
     @Test
     public void shouldFindAllSonarQubeIssues() {
-        shouldFindIssuesOfTool(31, new SonarQube(), "sonarqube-api.json");
+        shouldFindIssuesOfTool(32, new SonarQube(), "sonarqube-api.json");
         shouldFindIssuesOfTool(6, new SonarQube(), "sonarqube-differential.json");
-        shouldFindIssuesOfTool(37, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
+        shouldFindIssuesOfTool(38, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
     }
 
     /** Runs the TagList parser on an output file that contains 6 issues. */
