@@ -29,8 +29,8 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>5.0.0-20190426.123946-1</analysis-model-api.version>
-    <analysis-model.version>5.0.0-20190426.123048-1</analysis-model.version>
+    <analysis-model-api.version>5.0.0-20190426.130429-2</analysis-model-api.version>
+    <analysis-model.version>5.0.0-20190426.130258-2</analysis-model.version>
 
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>

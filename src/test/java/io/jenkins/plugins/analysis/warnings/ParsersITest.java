@@ -69,6 +69,11 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    @Test
+    public void shouldSilentlyIgnoreWrongFile() {
+        shouldFindIssuesOfTool(0, new CheckStyle(), "sun_checks.xml");
+    }
+
     /**
      * Runs with several tools that internally delegate to CheckStyle's  parser on an output file that contains 6
      * issues.
