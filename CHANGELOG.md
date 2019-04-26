@@ -17,6 +17,10 @@ Additional new features:
  Support for [IBLinter](https://github.com/IBDecodable/IBLinter) - Xcode Storyboard Linter
 - [PR#21](https://github.com/jenkinsci/warnings-ng-plugin/pull/21):
  Support for [PHPStan](https://github.com/phpstan/phpstan) - PHP Static Analysis Tool 
+- [PR#132](https://github.com/jenkinsci/analysis-model/pull/132): 
+Added a parser for CMake warnings.
+- [PR#137](https://github.com/jenkinsci/analysis-model/pull/137):
+Added a parser for JSON output from Cargo.
 
 ### Fixed
 

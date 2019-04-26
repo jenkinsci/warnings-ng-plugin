@@ -86,6 +86,18 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
+    /** Runs the Iar parser on an output file that contains 8 issues. */
+    @Test
+    public void shouldFindAllCmakeIssues() {
+        shouldFindIssuesOfTool(8, new Cmake(), "cmake.txt");
+    }
+
+    /** Runs the Iar parser on an output file that contains 2 issues. */
+    @Test
+    public void shouldFindAllCargoIssues() {
+        shouldFindIssuesOfTool(2, new Cargo(), "CargoCheck.json");
+    }
+
     /** Runs the Iar parser on an output file that contains 262 issues. */
     @Test
     public void shouldFindAllIssuesForPmdAlias() {
