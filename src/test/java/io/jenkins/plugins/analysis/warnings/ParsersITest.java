@@ -69,6 +69,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    /** Verifies that a broken file does not fail. */
     @Test
     public void shouldSilentlyIgnoreWrongFile() {
         shouldFindIssuesOfTool(0, new CheckStyle(), "sun_checks.xml");
