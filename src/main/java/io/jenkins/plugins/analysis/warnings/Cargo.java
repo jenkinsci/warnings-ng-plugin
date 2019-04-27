@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.parser.DrMemoryParser;
+import edu.hm.hafner.analysis.parser.CargoCheckParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -10,28 +10,29 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 /**
- * Provides a parser and customized messages for Dr. Memory Errors.
+ * Provides a parser and customized messages for {@code rustc} compiler messages emitted b {@code cargo check
+ * --message-format json}.
  *
  * @author Ullrich Hafner
  */
-public class DrMemory extends ReportScanningTool {
-    private static final long serialVersionUID = -8292426833255285102L;
-    private static final String ID = "dr-memory";
+public class Cargo extends ReportScanningTool {
+    private static final long serialVersionUID = -3997235880208767455L;
+    private static final String ID = "cargo";
 
-    /** Creates a new instance of {@link DrMemory}. */
+    /** Creates a new instance of {@link Cargo}. */
     @DataBoundConstructor
-    public DrMemory() {
+    public Cargo() {
         super();
         // empty constructor required for stapler
     }
 
     @Override
-    public DrMemoryParser createParser() {
-        return new DrMemoryParser();
+    public CargoCheckParser createParser() {
+        return new CargoCheckParser();
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("drMemory")
+    @Symbol("cargo")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
@@ -42,7 +43,12 @@ public class DrMemory extends ReportScanningTool {
         @NonNull
         @Override
         public String getDisplayName() {
-            return Messages.Warnings_DrMemory_ParserName();
+            return Messages.Warnings_Cargo_ParserName();
+        }
+
+        @Override
+        public String getHelp() {
+            return "Use commandline <code>cargo check --message-format json</code>";
         }
     }
 }
