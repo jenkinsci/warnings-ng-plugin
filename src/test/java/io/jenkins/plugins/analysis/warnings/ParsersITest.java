@@ -69,12 +69,6 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
-    /** Verifies that a broken file does not fail. */
-    @Test
-    public void shouldSilentlyIgnoreWrongFile() {
-        shouldFindIssuesOfTool(0, new CheckStyle(), "sun_checks.xml");
-    }
-
     /**
      * Runs with several tools that internally delegate to CheckStyle's  parser on an output file that contains 6
      * issues.
@@ -85,18 +79,6 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 new SwiftLint(), new TsLint())) {
             shouldFindIssuesOfTool(6, tool, "checkstyle.xml");
         }
-    }
-
-    /** Runs the Iar parser on an output file that contains 8 issues. */
-    @Test
-    public void shouldFindAllCmakeIssues() {
-        shouldFindIssuesOfTool(8, new Cmake(), "cmake.txt");
-    }
-
-    /** Runs the Iar parser on an output file that contains 2 issues. */
-    @Test
-    public void shouldFindAllCargoIssues() {
-        shouldFindIssuesOfTool(2, new Cargo(), "CargoCheck.json");
     }
 
     /** Runs the Iar parser on an output file that contains 262 issues. */
@@ -153,9 +135,9 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the SonarQube parsers on two files that contains 6 and 31 issues. */
     @Test
     public void shouldFindAllSonarQubeIssues() {
-        shouldFindIssuesOfTool(32, new SonarQube(), "sonarqube-api.json");
+        shouldFindIssuesOfTool(31, new SonarQube(), "sonarqube-api.json");
         shouldFindIssuesOfTool(6, new SonarQube(), "sonarqube-differential.json");
-        shouldFindIssuesOfTool(38, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
+        shouldFindIssuesOfTool(37, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
     }
 
     /** Runs the TagList parser on an output file that contains 6 issues. */
