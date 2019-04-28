@@ -1,0 +1,55 @@
+[INFO] --- maven-antrun-plugin:1.3:run (createTempDir) @ warnings-ng ---
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-plugin-api/2.0.4/maven-plugin-api-2.0.4.pom
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-plugin-api/2.0.4/maven-plugin-api-2.0.4.pom (643 B at 1.8 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-project/2.0.4/maven-project-2.0.4.pom
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-project/2.0.4/maven-project-2.0.4.pom (1.8 kB at 7.2 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-settings/2.0.4/maven-settings-2.0.4.pom
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-settings/2.0.4/maven-settings-2.0.4.pom (1.6 kB at 6.6 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-model/2.0.4/maven-model-2.0.4.pom
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-model/2.0.4/maven-model-2.0.4.pom (2.7 kB at 10 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-profile/2.0.4/maven-profile-2.0.4.pom
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-profile/2.0.4/maven-profile-2.0.4.pom (1.6 kB at 6.4 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-artifact-manager/2.0.4/maven-artifact-manager-2.0.4.pom
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-artifact-manager/2.0.4/maven-artifact-manager-2.0.4.pom (1.4 kB at 5.3 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-repository-metadata/2.0.4/maven-repository-metadata-2.0.4.pom
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-repository-metadata/2.0.4/maven-repository-metadata-2.0.4.pom (1.5 kB at 5.3 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-artifact/2.0.4/maven-artifact-2.0.4.pom
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-artifact/2.0.4/maven-artifact-2.0.4.pom (765 B at 2.6 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-plugin-api/2.0.4/maven-plugin-api-2.0.4.jar
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-project/2.0.4/maven-project-2.0.4.jar
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-settings/2.0.4/maven-settings-2.0.4.jar
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-model/2.0.4/maven-model-2.0.4.jar
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-profile/2.0.4/maven-profile-2.0.4.jar
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-plugin-api/2.0.4/maven-plugin-api-2.0.4.jar (8.3 kB at 24 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-artifact-manager/2.0.4/maven-artifact-manager-2.0.4.jar
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-profile/2.0.4/maven-profile-2.0.4.jar (30 kB at 83 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-repository-metadata/2.0.4/maven-repository-metadata-2.0.4.jar
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-settings/2.0.4/maven-settings-2.0.4.jar (44 kB at 111 kB/s)
+[INFO] Downloading from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-artifact/2.0.4/maven-artifact-2.0.4.jar
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-model/2.0.4/maven-model-2.0.4.jar (80 kB at 211 kB/s)
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-project/2.0.4/maven-project-2.0.4.jar (109 kB at 257 kB/s)
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-artifact-manager/2.0.4/maven-artifact-manager-2.0.4.jar (49 kB at 83 kB/s)
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-repository-metadata/2.0.4/maven-repository-metadata-2.0.4.jar (20 kB at 31 kB/s)
+[INFO] Downloaded from repo.jenkins-ci.org: http://repo.jenkins-ci.org/public/org/apache/maven/maven-artifact/2.0.4/maven-artifact-2.0.4.jar (80 kB at 108 kB/s)
+[INFO] Executing tasks
+    [mkdir] Created dir: /var/data/workspace/pipeline-warnings-ng/target/tmp
+[INFO] Executed tasks
+[INFO]
+[INFO] --- maven-resources-plugin:3.0.2:testResources (default-testResources) @ warnings-ng ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 238 resources
+[INFO]
+[INFO] --- maven-compiler-plugin:3.8.0:testCompile (default-testCompile) @ warnings-ng ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 175 source files to /var/data/workspace/pipeline-warnings-ng/target/test-classes
+[WARNING] /var/data/workspace/pipeline-warnings-ng/src/test/java/io/jenkins/plugins/analysis/core/scm/GitCheckerTest.java:[48,48] unchecked method invocation: method thenReturn in interface org.mockito.stubbing.OngoingStubbing is applied to given types
+  required: T
+  found: hudson.util.DescribableList
+[INFO] API checks completed without failures.
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  18:12 min
+[INFO] Finished at: 2019-04-04T16:19:08Z
+[INFO] ------------------------------------------------------------------------
+[INFO] [jenkins-event-spy] Generated /var/data/workspace/pipeline-warnings-ng@tmp/withMaven8024827a/maven-
