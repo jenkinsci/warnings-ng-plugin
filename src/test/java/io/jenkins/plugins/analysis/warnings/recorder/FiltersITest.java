@@ -139,10 +139,10 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
         SelectSourceDialog.java:980     com.avaloq.adt.env.internal.ui.dialogs          Basic Rules EmptyCatchBlock High    1
          */
         HashMap<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
-        filterResultMap.put(new IncludePackage(".*actions"), new Integer[]{54});
+        filterResultMap.put(new IncludePackage(".*actions"), new Integer[] {54, 14});
         filterResultMap.put(new IncludePackage(".*actions.*"), new Integer[]{54, 14});
         filterResultMap.put(new ExcludePackage(".*actions.*"), new Integer[]{938, 980});
-        filterResultMap.put(new ExcludePackage(".*actions"), new Integer[]{14, 938, 980});
+        filterResultMap.put(new ExcludePackage(".*actions"), new Integer[] {938, 980});
 
         filterResultMap.put(new IncludeType(".*EmptyCatchBlock"), new Integer[]{938, 980});
         filterResultMap.put(new ExcludeType(".*EmptyCatchBlock"), new Integer[]{54, 14});
