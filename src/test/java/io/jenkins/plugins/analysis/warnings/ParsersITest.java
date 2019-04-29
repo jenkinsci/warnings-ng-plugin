@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.Arrays;
+
 import org.junit.Assume;
 import org.junit.Test;
 
@@ -67,10 +69,46 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    /**
+     * Runs with several tools that internally delegate to CheckStyle's  parser on an output file that contains 6
+     * issues.
+     */
+    @Test
+    public void shouldFindAllIssuesForCheckStyleAlias() {
+        for (ReportScanningTool tool : Arrays.asList(new Detekt(), new EsLint(), new KtLint(), new PhpCodeSniffer(),
+                new SwiftLint(), new TsLint())) {
+            shouldFindIssuesOfTool(6, tool, "checkstyle.xml");
+        }
+    }
+
+    /** Runs the Iar parser on an output file that contains 262 issues. */
+    @Test
+    public void shouldFindAllIssuesForPmdAlias() {
+        shouldFindIssuesOfTool(262, new Infer(), "pmd-6.xml");
+    }
+
+    /** Runs the Iar parser on an output file that contains 262 issues. */
+    @Test
+    public void shouldFindAllIssuesForMsBuildAlias() {
+        shouldFindIssuesOfTool(6, new PcLint(), "msbuild.txt");
+    }
+
+    /** Runs the Iar parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllYamlLintIssues() {
+        shouldFindIssuesOfTool(4, new YamlLint(), "yamllint.txt");
+    }
+
     /** Runs the Iar parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllIarIssues() {
         shouldFindIssuesOfTool(6, new Iar(), "iar.txt");
+    }
+
+    /** Runs the IbLinter parser on an output file that contains 1 issue. */
+    @Test
+    public void shouldFindAllIbLinterIssues() {
+        shouldFindIssuesOfTool(1, new IbLinter(), "iblinter.xml");
     }
 
     /** Runs the IarCStat parser on an output file that contains 6 issues. */
@@ -82,13 +120,13 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the TagList parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllOpenTasks() {
-        WorkflowJob job = createJobWithWorkspaceFiles("tasks/file-with-tasks.txt");
+        WorkflowJob job = createPipelineWithWorkspaceFiles("tasks/file-with-tasks.txt");
         job.setDefinition(asStage(
-                "def issues = scanForIssues tool: " 
+                "def issues = scanForIssues tool: "
                         + "taskScanner(includePattern:'**/*issues.txt', highTags:'FIXME', normalTags:'TODO')",
                 PUBLISH_ISSUES_STEP));
 
-        AnalysisResult result = scheduleBuild(job, "open-tasks");
+        AnalysisResult result = scheduleSuccessfulBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(2);
         assertThat(result.getIssues()).hasSize(2).hasSeverities(0, 1, 1, 0);
@@ -328,7 +366,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), issue,
                 "<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter. \n"
                         + "If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>\n");
-        assertThat(issue).hasMessage("java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
+        assertThat(issue).hasMessage(
+                "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
     }
 
     /** Runs the Clang-Tidy parser on an output file that contains 6 issues. */
@@ -573,6 +612,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindAllEclipseIssues() {
         shouldFindIssuesOfTool(8, new Eclipse(), "eclipse.txt");
 
+        // FIXME: fails if offline
         shouldFindIssuesOfTool(6, new Eclipse(), "eclipse-withinfo.xml");
 
         shouldFindIssuesOfTool(8 + 6, new Eclipse(), "eclipse-withinfo.xml", "eclipse.txt");
@@ -685,10 +725,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         try {
-            WorkflowJob job = createJobWithWorkspaceFiles(fileNames);
-            job.setDefinition(parseAndPublish(tool));
+            WorkflowJob job = createPipelineWithWorkspaceFiles(fileNames);
+            job.setDefinition(createPipelineScriptWithScanAndPublishSteps(tool));
 
-            AnalysisResult result = scheduleBuild(job, tool.getActualId());
+            AnalysisResult result = scheduleSuccessfulBuild(job);
 
             assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);

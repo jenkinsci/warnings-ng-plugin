@@ -92,13 +92,36 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldTestHealthBoundary() {
-        HealthReport reportHighPriority = createValidHealthReport(10, 15, Severity.WARNING_HIGH, 10, 20, 30, 0);
-        HealthReport reportNormalPriority = createValidHealthReport(30, 35, Severity.WARNING_NORMAL, 10, 20, 30, 0);
-        HealthReport reportLowPriority = createValidHealthReport(60, 65, Severity.WARNING_LOW, 10, 20, 30, 0);
+        assertThat(create20PercentSteps(0, 4).getScore()).isEqualTo(100);
+        assertThat(create20PercentSteps(1, 4).getScore()).isEqualTo(80);
+        assertThat(create20PercentSteps(2, 4).getScore()).isEqualTo(60);
+        assertThat(create20PercentSteps(3, 4).getScore()).isEqualTo(40);
+        assertThat(create20PercentSteps(4, 4).getScore()).isEqualTo(20);
+        assertThat(create20PercentSteps(5, 4).getScore()).isEqualTo(0);
+
+        assertThat(create20PercentSteps(0, 9).getScore()).isEqualTo(100);
+        assertThat(create20PercentSteps(1, 9).getScore()).isEqualTo(90);
+        assertThat(create20PercentSteps(2, 9).getScore()).isEqualTo(80);
+        assertThat(create20PercentSteps(3, 9).getScore()).isEqualTo(70);
+        assertThat(create20PercentSteps(4, 9).getScore()).isEqualTo(60);
+        assertThat(create20PercentSteps(5, 9).getScore()).isEqualTo(50);
+        assertThat(create20PercentSteps(6, 9).getScore()).isEqualTo(40);
+        assertThat(create20PercentSteps(7, 9).getScore()).isEqualTo(30);
+        assertThat(create20PercentSteps(8, 9).getScore()).isEqualTo(20);
+        assertThat(create20PercentSteps(9, 9).getScore()).isEqualTo(10);
+        assertThat(create20PercentSteps(10, 9).getScore()).isEqualTo(0);
+
+        HealthReport reportHighPriority = createValidHealthReport(11, 15, Severity.WARNING_HIGH, 10, 20, 30, 0);
+        HealthReport reportNormalPriority = createValidHealthReport(31, 35, Severity.WARNING_NORMAL, 10, 20, 30, 0);
+        HealthReport reportLowPriority = createValidHealthReport(61, 65, Severity.WARNING_LOW, 10, 20, 30, 0);
 
         assertThat(reportHighPriority.getScore()).isEqualTo(100);
         assertThat(reportNormalPriority.getScore()).isEqualTo(100);
         assertThat(reportLowPriority.getScore()).isEqualTo(100);
+    }
+
+    private HealthReport create20PercentSteps(final int total, final int unhealthyThreshold) {
+        return createValidHealthReport(1, unhealthyThreshold, Severity.WARNING_HIGH, total, 0, 0, 0);
     }
 
     /**
@@ -106,9 +129,9 @@ class HealthReportBuilderTest {
      */
     @Test
     void shouldTestUnHealthBoundary() {
-        HealthReport reportHighPriority = createValidHealthReport(4, 10, Severity.WARNING_HIGH, 10, 20, 30, 0);
-        HealthReport reportNormalPriority = createValidHealthReport(15, 30, Severity.WARNING_NORMAL, 10, 20, 30, 0);
-        HealthReport reportLowPriority = createValidHealthReport(15, 60, Severity.WARNING_LOW, 10, 20, 30, 0);
+        HealthReport reportHighPriority = createValidHealthReport(4, 9, Severity.WARNING_HIGH, 10, 20, 30, 0);
+        HealthReport reportNormalPriority = createValidHealthReport(15, 29, Severity.WARNING_NORMAL, 10, 20, 30, 0);
+        HealthReport reportLowPriority = createValidHealthReport(15, 59, Severity.WARNING_LOW, 10, 20, 30, 0);
 
         assertThat(reportHighPriority.getScore()).isEqualTo(0);
         assertThat(reportNormalPriority.getScore()).isEqualTo(0);

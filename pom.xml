@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.28</version>
+    <version>3.42</version>
     <relativePath/>
   </parent>
 
@@ -24,15 +24,15 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Override properties defined in parent POM -->
-    <jenkins.version>2.89.1</jenkins.version>
+    <jenkins.version>2.121.1</jenkins.version>
     <java.level>8</java.level>
-    <jenkins-test-harness.version>2.42</jenkins-test-harness.version>
+    <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>4.0.0</analysis-model-api.version>
     <analysis-model.version>4.0.0</analysis-model.version>
 
-    <commons.lang.version>3.8.1</commons.lang.version>
+    <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
     <commons.digester.version>3.2</commons.digester.version>
     <commons.text.version>1.6</commons.text.version>
@@ -45,10 +45,10 @@
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.4.1</junit.version>
     <junit-platform-launcher.version>1.4.1</junit-platform-launcher.version>
-    <mockito.version>2.25.1</mockito.version>
+    <mockito.version>2.27.0</mockito.version>
     <assertj.version>3.12.2</assertj.version>
-    <archunit.version>0.10.1</archunit.version>
-    <json-unit-fluent.version>2.5.0</json-unit-fluent.version>
+    <archunit.version>0.10.2</archunit.version>
+    <json-unit-fluent.version>2.6.1</json-unit-fluent.version>
     <xmlunit.version>1.6</xmlunit.version>
     <jsoup.version>1.11.3</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
@@ -59,19 +59,19 @@
     <matrix-project.version>1.13</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>3.9.1</git-plugin.version>
-    <workflow-step.version>2.13</workflow-step.version>
-    <workflow-job.version>2.16</workflow-job.version>
-    <structs.version>1.10</structs.version>
+    <workflow-step.version>2.19</workflow-step.version>
+    <workflow-job.version>2.32</workflow-job.version>
+    <structs.version>1.17</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
-    <script-security.version>1.50</script-security.version>
+    <script-security.version>1.58</script-security.version>
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.11.0</maven-pmd-plugin.version>
     <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
-    <pmd.version>6.12.0</pmd.version>
+    <pmd.version>6.13.0</pmd.version>
     <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
-    <checkstyle.version>8.18</checkstyle.version>
+    <checkstyle.version>8.19</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.11</spotbugs-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
     <maven-surefire.plugin>3.0.0-M3</maven-surefire.plugin>
@@ -85,13 +85,12 @@
     <maven-hpi-plugin.version>2.5</maven-hpi-plugin.version>
     <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
     <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-    <pitest-maven.plugin>1.4.6</pitest-maven.plugin>
+    <pitest-maven.plugin>1.4.7</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.8</pitest-maven.junit5.plugin>
     <revapi-maven-plugin.version>0.11.0</revapi-maven-plugin.version>
     <revapi-java.version>0.19.0</revapi-java.version>
 
-    <!-- Enabled while there are fatal Findbugs issues -->
-    <findbugs.failOnError>false</findbugs.failOnError>
+    <spotbugs.failOnError>false</spotbugs.failOnError>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
@@ -106,6 +105,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>credentials</artifactId>
+        <version>2.1.16</version>
+      </dependency>
       <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
@@ -124,12 +128,17 @@
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>mailer</artifactId>
-        <version>1.18</version>
+        <version>1.20</version>
       </dependency>
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>scm-api</artifactId>
-        <version>2.2.0</version>
+        <version>2.2.7</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins.workflow</groupId>
+        <artifactId>workflow-scm-step</artifactId>
+        <version>2.6</version>
       </dependency>
       <dependency>
         <groupId>commons-net</groupId>
@@ -139,7 +148,7 @@
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
-        <version>3.8.1</version>
+        <version>${commons.lang.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -219,6 +228,11 @@
           <artifactId>saxon</artifactId>
         </exclusion>
       </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>2.9.8</version>
     </dependency>
 
     <!-- Required Jenkins Plug-in Dependencies -->
@@ -393,7 +407,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-cps</artifactId>
-      <version>2.42</version>
+      <version>2.67</version>
       <scope>test</scope>
     </dependency>
     <!-- stage -->
@@ -407,7 +421,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-durable-task-step</artifactId>
-      <version>2.16</version>
+      <version>2.30</version>
       <scope>test</scope>
     </dependency>
     <!-- recorder -> step -->
@@ -415,6 +429,26 @@
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-basic-steps</artifactId>
       <version>2.7</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Declarative Pipeline -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-api</artifactId>
+      <version>2.33</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-support</artifactId>
+      <version>3.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkinsci.plugins</groupId>
+      <artifactId>pipeline-model-definition</artifactId>
+      <version>1.3.8</version>
       <scope>test</scope>
     </dependency>
 

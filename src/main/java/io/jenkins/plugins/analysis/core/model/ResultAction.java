@@ -125,6 +125,17 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return getOwner().getUrl() + getUrlName();
     }
 
+    /**
+     * Gets the absolute path to the build from the owner.
+     * This is needed for testing due to {@link Run#getAbsoluteUrl()} being final and therefore not mockable.
+     *
+     * @return the absolute url to the job
+     */
+    @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
+    public String getAbsoluteUrl() {
+        return this.getOwner().getAbsoluteUrl();
+    }
+
     @Override
     @Nullable
     public HealthReport getBuildHealth() {

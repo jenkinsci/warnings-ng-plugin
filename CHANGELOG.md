@@ -12,11 +12,23 @@ I finally managed it to port the charting functionality of the former analysis-c
 - Trend chart (job page): shows the warnings of all static analysis results in a single chart. 
 - Portlet (dashboard view): shows the number of warnings from all jobs in the view in a chart. 
 
+Additional new features:
+- [PR#27](https://github.com/jenkinsci/warnings-ng-plugin/pull/27):
+ Support for [IBLinter](https://github.com/IBDecodable/IBLinter) - Xcode Storyboard Linter
+- [PR#21](https://github.com/jenkinsci/warnings-ng-plugin/pull/21):
+ Support for [PHPStan](https://github.com/phpstan/phpstan) - PHP Static Analysis Tool 
+
 ### Fixed
 
 - Added missing dependency to JSON-Smart library.
-- [PR#19](https://github.com/jenkinsci/warnings-ng-plugin/pull/13): Use `BuildStepMonitor.NONE` in step 
+- [JENKINS-56484](https://issues.jenkins-ci.org/browse/JENKINS-56484),
+[analysis-model-PR#19](https://github.com/jenkinsci/analysis-model/pull/130): 
+Filter TimeStamper Console log decorations
+- [PR#19](https://github.com/jenkinsci/warnings-ng-plugin/pull/19): Use `BuildStepMonitor.NONE` in step 
 to allow for higher concurrency.
+- [JENKINS-56324](https://issues.jenkins-ci.org/browse/JENKINS-56324): 
+If an issue in the current build is equal to several issues in the reference build 
+then select the issue with the same fingerprint as the outstanding issue. 
 
 ### Changed
 

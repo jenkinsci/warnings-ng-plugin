@@ -2,10 +2,11 @@
  * Renders a trend chart in the specified div using ECharts.
  *
  * @param {String} chartDivId - the ID of the div where the chart should be shown in
- * @param {JSON} chartModel - the line chart model
+ * @param {String} model - the line chart model
  * @param {String} urlName - the URL to the results, if empty or unset then clicking on the chart is disabled
  */
-function renderTrendChart(chartDivId, chartModel, urlName) {
+function renderTrendChart(chartDivId, model, urlName) {
+    var chartModel = JSON.parse(model);
     var chartPlaceHolder = document.getElementById(chartDivId);
     var currentSelection; // the tooltip formatter will change this value while hoovering
 
@@ -18,6 +19,7 @@ function renderTrendChart(chartDivId, chartModel, urlName) {
     }
 
     var chart = echarts.init(chartPlaceHolder);
+    chartPlaceHolder.echart = chart;
     var options = {
         tooltip: {
             trigger: 'axis',
@@ -57,7 +59,7 @@ function renderTrendChart(chartDivId, chartModel, urlName) {
         xAxis: [{
             type: 'category',
             boundaryGap: false,
-            data: chartModel.XAxisLabels
+            data: chartModel.xAxisLabels
         }
         ],
         yAxis: [{
