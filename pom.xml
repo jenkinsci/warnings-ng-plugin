@@ -548,6 +548,7 @@
             <package>io.jenkins.plugins.analysis.core.scm</package>
             <package>io.jenkins.plugins.analysis.core.model</package>
             <package>io.jenkins.plugins.analysis.core.util</package>
+            <package>io.jenkins.plugins.analysis.warnings.recorder.pageobj</package>
           </packages>
           <entryPointClassPackage>io.jenkins.plugins.analysis.core.assertions</entryPointClassPackage>
           <excludes>

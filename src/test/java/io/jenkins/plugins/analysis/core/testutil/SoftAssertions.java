@@ -6,9 +6,11 @@ import java.util.function.Consumer;
 import org.assertj.core.api.AbstractStandardSoftAssertions;
 import org.assertj.core.api.SoftAssertionError;
 
-import static org.assertj.core.api.Assertions.*;
-
 import hudson.util.FormValidation;
+
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BuildInfoPage;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Custom soft assertions for {@link FormValidation} instances.
@@ -67,4 +69,16 @@ public class SoftAssertions extends AbstractStandardSoftAssertions {
         softly.accept(assertions);
         assertions.assertAll();
     }
+
+    /**
+     * Creates a new "soft" instance of <code>{@link io.jenkins.plugins.analysis.warnings.recorder.pageobj.BuildInfoPageAssert}</code>.
+     *
+     * @param actual the actual value.
+     * @return the created "soft" assertion object.
+     */
+    @org.assertj.core.util.CheckReturnValue
+    public BuildInfoPageAssert assertThat(BuildInfoPage actual) {
+        return proxy(BuildInfoPageAssert.class, BuildInfoPage.class, actual);
+    }
+
 }
