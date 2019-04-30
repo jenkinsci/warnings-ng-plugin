@@ -19,7 +19,7 @@ import io.jenkins.plugins.analysis.warnings.Java;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
-public class PipelineITest extends IntegrationTestWithJenkinsPerSuite {
+public class FreestyleJobITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldCreateFreestyleJobWithJavaWarningsQualityGateAndHealthReport() {
         FreeStyleProject project = createFreeStyleProject();
@@ -38,8 +38,8 @@ public class PipelineITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasInfoMessages(
-                "-> WARNING - Total number of issues (any severity): 5 - Quality QualityGate: 5");
-        assertThat(result).hasInfoMessages("-> Some quality gates have been missed: overall result is WARNING");
+                "-> WARNING - Total number of issues (any severity): 5 - Quality QualityGate: 5",
+                "-> Some quality gates have been missed: overall result is WARNING");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
     }
 
@@ -62,10 +62,9 @@ public class PipelineITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
         assertThat(result).hasTotalSize(10);
         assertThat(result).hasInfoMessages(
-                "-> WARNING - Total number of issues (any severity): 10 - Quality QualityGate: 5");
-        assertThat(result).hasInfoMessages(
-                "-> FAILED - Total number of issues (any severity): 10 - Quality QualityGate: 10");
-        assertThat(result).hasInfoMessages("-> Some quality gates have been missed: overall result is FAILED");
+                "-> WARNING - Total number of issues (any severity): 10 - Quality QualityGate: 5",
+                "-> FAILED - Total number of issues (any severity): 10 - Quality QualityGate: 10",
+                "-> Some quality gates have been missed: overall result is FAILED");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
     }
 
@@ -90,10 +89,9 @@ public class PipelineITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasInfoMessages(
-                "-> WARNING - Total number of issues (any severity): 5 - Quality QualityGate: 5");
-        assertThat(result).hasInfoMessages(
-                "-> PASSED - Total number of issues (any severity): 5 - Quality QualityGate: 10");
-        assertThat(result).hasInfoMessages("-> Some quality gates have been missed: overall result is WARNING");
+                "-> WARNING - Total number of issues (any severity): 5 - Quality QualityGate: 5",
+                "-> PASSED - Total number of issues (any severity): 5 - Quality QualityGate: 10",
+                "-> Some quality gates have been missed: overall result is WARNING");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
     }
 }
