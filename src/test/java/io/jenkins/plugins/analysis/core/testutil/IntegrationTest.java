@@ -793,6 +793,8 @@ public abstract class IntegrationTest extends ResourceTest {
         assertThat(analysisResults).hasSize(1);
 
         AnalysisResult result = analysisResults.get(0);
+        System.out.println("----- Console Log -----");
+        System.out.println(getConsoleLog(result));
         System.out.println("----- Error Messages -----");
         result.getErrorMessages().forEach(System.out::println);
         System.out.println("----- Info Messages -----");
