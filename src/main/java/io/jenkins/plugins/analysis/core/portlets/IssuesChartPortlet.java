@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
-import net.sf.json.JSONObject;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -25,6 +23,7 @@ import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
@@ -131,7 +130,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getTrend() {
+    public String getTrend() {
         SeverityTrendChart severityChart = new SeverityTrendChart();
 
         List<Iterable<? extends AnalysisBuildResult>> histories = jobs.stream()
@@ -140,7 +139,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
                 .filter(createToolFilter(selectTools, tools))
                 .map(JobAction::createBuildHistory).collect(Collectors.toList());
 
-        return JSONObject.fromObject(
+        return new JacksonFacade().toJson(
                 severityChart.create(new CompositeResult(histories), new ChartModelConfiguration(AxisType.DATE)));
     }
 

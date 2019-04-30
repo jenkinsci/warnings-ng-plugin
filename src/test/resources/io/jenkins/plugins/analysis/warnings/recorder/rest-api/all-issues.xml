@@ -8,7 +8,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-b0f2231b</fingerprint>
+    <fingerprint>FALLBACK-19b1fd71</fingerprint>
     <lineEnd>29</lineEnd>
     <lineStart>29</lineStart>
     <message>Zeile länger als 80 Zeichen</message>
@@ -16,7 +16,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>2</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>LineLengthCheck</type>
   </issue>
   <issue>
@@ -28,7 +28,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-acef6cb9</fingerprint>
+    <fingerprint>FALLBACK-15af470f</fingerprint>
     <lineEnd>30</lineEnd>
     <lineStart>30</lineStart>
     <message>'}' sollte in derselben Zeile stehen.</message>
@@ -36,7 +36,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>2</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>RightCurlyCheck</type>
   </issue>
   <issue>
@@ -48,7 +48,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-acef6cc0</fingerprint>
+    <fingerprint>FALLBACK-15af4716</fingerprint>
     <lineEnd>37</lineEnd>
     <lineStart>37</lineStart>
     <message>'}' sollte in derselben Zeile stehen.</message>
@@ -56,7 +56,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>2</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>RightCurlyCheck</type>
   </issue>
   <issue>
@@ -68,7 +68,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-8cb34ad6</fingerprint>
+    <fingerprint>FALLBACK-f573252c</fingerprint>
     <lineEnd>22</lineEnd>
     <lineStart>22</lineStart>
     <message>Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein.
@@ -77,7 +77,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>1</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>DesignForExtensionCheck</type>
   </issue>
   <size>4</size>

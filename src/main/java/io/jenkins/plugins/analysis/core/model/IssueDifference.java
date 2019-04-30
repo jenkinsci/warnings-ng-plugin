@@ -1,6 +1,9 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -32,22 +35,46 @@ public class IssueDifference {
         fixedIssues = referenceIssues.copy();
         outstandingIssues = new Report();
 
+        List<UUID> removed = matchIssuesByEquals(currentIssues);
+        Report secondPass = currentIssues.copy();
+        removed.forEach(secondPass::remove);
+        matchIssuesByFingerprint(secondPass);
+
+        newIssues.forEach(issue -> issue.setReference(String.valueOf(currentBuildNumber)));
+    }
+
+    private List<UUID> matchIssuesByEquals(final Report currentIssues) {
+        List<UUID> removedIds = new ArrayList<>();
         for (Issue current : currentIssues) {
-            Optional<Issue> referenceToRemove = findReferenceByEquals(current);
+            List<Issue> equalIssues = findReferenceByEquals(current);
 
-            if (!referenceToRemove.isPresent()) {
-                referenceToRemove = findReferenceByFingerprint(current);
-            }
-
-            if (referenceToRemove.isPresent()) {
-                Issue oldIssue = referenceToRemove.get();
-                Issue issueWithLatestProperties = newIssues.remove(current.getId());
-                issueWithLatestProperties.setReference(oldIssue.getReference());
-                outstandingIssues.add(issueWithLatestProperties);
-                fixedIssues.remove(oldIssue.getId());
+            if (!equalIssues.isEmpty()) {
+                removedIds.add(remove(current, selectIssueWithSameFingerprint(current, equalIssues)));
             }
         }
-        newIssues.forEach(issue -> issue.setReference(String.valueOf(currentBuildNumber)));
+        return removedIds;
+    }
+
+    private void matchIssuesByFingerprint(final Report currentIssues) {
+        for (Issue current : currentIssues) {
+            findReferenceByFingerprint(current).ifPresent(issue -> remove(current, issue));
+        }
+    }
+
+    private UUID remove(final Issue current, final Issue oldIssue) {
+        UUID id = current.getId();
+        Issue issueWithLatestProperties = newIssues.remove(id);
+        issueWithLatestProperties.setReference(oldIssue.getReference());
+        outstandingIssues.add(issueWithLatestProperties);
+        fixedIssues.remove(oldIssue.getId());
+        return id;
+    }
+
+    private Issue selectIssueWithSameFingerprint(final Issue current, final List<Issue> equalIssues) {
+        return equalIssues.stream()
+                .filter(issue -> issue.getFingerprint().equals(current.getFingerprint()))
+                .findFirst()
+                .orElse(equalIssues.get(0));
     }
 
     private Optional<Issue> findReferenceByFingerprint(final Issue current) {
@@ -59,13 +86,14 @@ public class IssueDifference {
         return Optional.empty();
     }
 
-    private Optional<Issue> findReferenceByEquals(final Issue current) {
+    private List<Issue> findReferenceByEquals(final Issue current) {
+        List<Issue> equalIssues = new ArrayList<>();
         for (Issue reference : fixedIssues) {
             if (current.equals(reference)) {
-                return Optional.of(reference);
+                equalIssues.add(reference);
             }
         }
-        return Optional.empty();
+        return equalIssues;
     }
 
     /**

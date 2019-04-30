@@ -1,0 +1,4 @@
+file.yml:6:2: [warning] missing starting space in comment (comments)
+test/file.yml:57:1: [error] trailing spaces (trailing-spaces)
+file.yml:60:3: [error] wrong indentation: expected 4 but found 2 (indentation)
+./molecule-default/create.yml:117:89: [error] syntax error: expected '<document start>', but found '<block mapping start>'
