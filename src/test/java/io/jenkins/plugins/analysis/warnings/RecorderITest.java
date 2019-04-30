@@ -32,7 +32,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * Tests the class {@link IssuesRecorder}.
+ * Verifies the info page of the Java parser and the health report configuration via Web-Gui.
  *
  * @author Raphael Furch
  */
