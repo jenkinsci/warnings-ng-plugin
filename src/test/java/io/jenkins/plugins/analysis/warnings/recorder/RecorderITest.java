@@ -25,6 +25,12 @@ import io.jenkins.plugins.analysis.warnings.Java;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
+
+/**
+ * Verifies the info page of Java Warnings Recorders and their health report configuration via HTML Unit Tests.
+ *
+ * @author Andreas Neumeier
+ */
 public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     private static final int HEALTHY = 1;
@@ -34,7 +40,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /***
      * Checks whether a FreestyleJob with HealthReport and no warning scores 100 and the information displayed on the UI is correct.
-     * @throws IOException
+     * @throws IOException Button not found in HTML.
      */
     @Test
     public void verifyFreestyleJobWithHealthReportAndZeroWarnings() throws IOException {
@@ -43,7 +49,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /***
      * Checks whether a FreestyleJob with HealthReport and six warning scores 40 and the information displayed on the UI is correct.
-     * @throws IOException
+     * @throws IOException Button not found in HTML.
      */
     @Test
     public void verifyFreestyleJobWithHealthReportAndSixWarnings() throws IOException {
@@ -52,7 +58,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /***
      * Checks whether a FreestyleJob with HealthReport and ten warning scores 0 and the information displayed on the UI is correct.
-     * @throws IOException
+     * @throws IOException Button not found in HTML.
      */
     @Test
     public void verifyFreestyleJobWithHealthReportAndTenWarnings() throws IOException {
@@ -61,7 +67,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /***
      * Checks whether a FreestyleJob with HealthReport and eleven warning scores 0 and the information displayed on the UI is correct.
-     * @throws IOException
+     * @throws IOException Button not found in HTML.
      */
     @Test
     public void verifyFreestyleJobWithHealthReportAndElevenWarnings() throws IOException {
@@ -70,7 +76,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /***
      * Checks whether a FreestyleJob result without HealthReport and no warning shows up correctly on API and UI.
-     * @throws IOException
+     * @throws IOException Button not found in HTML.
      */
     @Test
     public void verifyFreestyleJobWithZeroWarnings() throws IOException {
@@ -79,7 +85,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /***
      * Checks whether a FreestyleJob result without HealthReport and six warning shows up correctly on API and UI.
-     * @throws IOException
+     * @throws IOException Button not found in HTML.
      */
     @Test
     public void verifyFreestyleJobWithSixWarnings() throws IOException {
@@ -88,7 +94,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /***
      * Checks whether a FreestyleJob result without HealthReport and ten warning shows up correctly on API and UI.
-     * @throws IOException
+     * @throws IOException Button not found in HTML.
      */
     @Test
     public void verifyFreestyleJobWithTenWarnings() throws IOException {
@@ -97,7 +103,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /***
      * Checks whether a FreestyleJob result without HealthReport and eleven warning shows up correctly on API and UI.
-     * @throws IOException
+     * @throws IOException Button not found in HTML.
      */
     @Test
     public void verifyFreestyleJobWithElevenWarnings() throws IOException {
