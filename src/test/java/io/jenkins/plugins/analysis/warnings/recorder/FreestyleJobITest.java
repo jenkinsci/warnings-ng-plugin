@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.util.Collections;
-import java.util.List;
 import javax.print.attribute.standard.Severity;
 
 import org.junit.Test;
@@ -12,9 +11,6 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
-import io.jenkins.plugins.analysis.core.filter.ExcludeModule;
-import io.jenkins.plugins.analysis.core.filter.ExcludePackage;
-import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -146,7 +142,6 @@ public class FreestyleJobITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(0);
         assertThat(project.getBuildHealth().getScore()).isEqualTo(100);
     }
-
 
     @Test
     public void shouldCreateFreestyleJobAndGetHealthReportInfoMessages() {
