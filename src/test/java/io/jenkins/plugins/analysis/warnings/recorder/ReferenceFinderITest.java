@@ -51,7 +51,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(8)
                         .hasNewSize(6)
-                        .hasQualityGateStatus(QualityGateStatus.WARNING));
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
         createResetAction(unstable, "eclipse");
         createResetAction(unstable, "additional");
 
@@ -75,7 +75,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
 
         // #5 UNSTABLE
         cleanAndCopy(project, "eclipse8Warnings.txt");
@@ -107,7 +107,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
 
         // #2 UNSTABLE
         cleanAndCopy(project, "eclipse8Warnings.txt");
@@ -115,7 +115,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
                 analysisResult -> assertThat(analysisResult)
                         .hasTotalSize(8)
                         .hasNewSize(6)
-                        .hasQualityGateStatus(QualityGateStatus.WARNING));
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
         createResetAction(unstable, "wrong-id"); // checks that this has no influence
 
         // #3 SUCCESS (Reference #1)
@@ -144,7 +144,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
 
         // #2 UNSTABLE
         cleanAndCopy(project, "eclipse6Warnings.txt");
@@ -183,7 +183,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(6)
                         .hasNewSize(4)
-                        .hasQualityGateStatus(QualityGateStatus.WARNING));
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
 
         // #3 SUCCESS (Reference #2)
         cleanAndCopy(project, "eclipse8Warnings.txt");
@@ -212,7 +212,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         issuesRecorder.addQualityGate(3, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
-                        .hasQualityGateStatus(QualityGateStatus.WARNING));
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
 
         // #3 UNSTABLE (Reference #2)
         cleanAndCopy(project, "eclipse8Warnings.txt");
@@ -242,7 +242,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
 
         // #2 FAILURE
         cleanAndCopy(project, "eclipse4Warnings.txt");
@@ -277,7 +277,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.INACTIVE));
+                        .hasQualityGateStatus(QualityGateStatus.INACTIVE)).getOwner();
 
         // #2 FAILURE
         cleanAndCopy(project, "eclipse2Warnings.txt");
@@ -322,7 +322,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.FAILURE,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
 
         cleanAndCopy(project, "eclipse6Warnings.txt");
         removeBuilder(project, failureStep);
@@ -359,7 +359,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.FAILURE,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(2)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
 
         // #3 SUCCESS (Reference #2)
         cleanAndCopy(project, "eclipse6Warnings.txt");
@@ -384,7 +384,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
 
         // #2 UNSTABLE
         cleanAndCopy(reference, "eclipse8Warnings.txt");
@@ -422,7 +422,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
 
         // #2 UNSTABLE
         cleanAndCopy(reference, "eclipse6Warnings.txt");
@@ -468,7 +468,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.UNSTABLE,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(6)
                         .hasNewSize(4)
-                        .hasQualityGateStatus(QualityGateStatus.WARNING));
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
 
         // #1 SUCCESS (Reference #2)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
@@ -505,7 +505,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.UNSTABLE,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.WARNING));
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
 
         // #1 SUCCESS (Reference #2)
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
@@ -538,7 +538,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
 
         // #2 FAILURE
         cleanAndCopy(reference, "eclipse4Warnings.txt");
@@ -579,7 +579,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.INACTIVE));
+                        .hasQualityGateStatus(QualityGateStatus.INACTIVE)).getOwner();
 
         // #2 FAILURE
         cleanAndCopy(reference, "eclipse2Warnings.txt");
@@ -629,7 +629,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.FAILURE,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(2)
                         .hasNewSize(0)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
         removeBuilder(reference, failureStep);
 
         // #1 UNSTABLE (Reference #2)
@@ -672,7 +672,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.FAILURE,
                 analysisResult -> assertThat(analysisResult).hasTotalSize(4)
                         .hasNewSize(2)
-                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
         removeBuilder(reference, failureStep);
 
         // #1 UNSTABLE (Reference #2)

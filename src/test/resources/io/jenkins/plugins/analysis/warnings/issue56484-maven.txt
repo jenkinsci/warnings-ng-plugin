@@ -1,0 +1,17 @@
+[2019-03-09T19:12:04.459Z] [INFO] --- maven-compiler-plugin:3.8.0:compile (default-compile) @ analysis-model ---
+[2019-03-09T19:12:05.864Z] [INFO] Changes detected - recompiling the module!
+[2019-03-09T19:12:05.864Z] [INFO] Compiling 174 source files to /var/data/workspace/pipeline-analysis-model/target/classes
+[2019-03-09T19:12:23.994Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/parser/NagFortranParser.java:[11,30] edu.hm.hafner.analysis.RegexpDocumentParser in edu.hm.hafner.analysis has been deprecated
+[2019-03-09T19:12:23.994Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/parser/DrMemoryParser.java:[13,30] edu.hm.hafner.analysis.RegexpDocumentParser in edu.hm.hafner.analysis has been deprecated
+[2019-03-09T19:12:23.995Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/parser/YuiCompressorParser.java:[10,30] edu.hm.hafner.analysis.RegexpDocumentParser in edu.hm.hafner.analysis has been deprecated
+[2019-03-09T19:12:23.995Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/parser/DoxygenParser.java:[11,30] edu.hm.hafner.analysis.RegexpDocumentParser in edu.hm.hafner.analysis has been deprecated
+[2019-03-09T19:12:23.995Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/parser/GnuFortranParser.java:[10,30] edu.hm.hafner.analysis.RegexpDocumentParser in edu.hm.hafner.analysis has been deprecated
+[2019-03-09T19:12:23.995Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/parser/GhsMultiParser.java:[11,30] edu.hm.hafner.analysis.RegexpDocumentParser in edu.hm.hafner.analysis has been deprecated
+[2019-03-09T19:12:23.995Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/util/XmlElementUtil.java:[68,33] [MixedMutabilityReturnType] This method returns both mutable and immutable collections or maps from different paths. This may be confusing for users of the method.
+[2019-03-09T19:12:23.995Z]     (see https://errorprone.info/bugpattern/MixedMutabilityReturnType)
+[2019-03-09T19:12:23.995Z]   Did you mean 'public static ImmutableList<Element> nodeListToList(@Nullable final NodeList nodeList) {'?
+[2019-03-09T19:12:23.995Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/FilteredLog.java:[112,107] [FormatStringAnnotation] Format strings must be compile time constants or parameters annotated @FormatString: s
+[2019-03-09T19:12:23.995Z]     (see https://errorprone.info/bugpattern/FormatStringAnnotation)
+[2019-03-09T19:12:23.995Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/Report.java:[82,44] [ConstructorLeaksThis] Constructors should not pass the 'this' reference out in method invocations, since the object may not be fully constructed.
+[2019-03-09T19:12:23.996Z]     (see https://errorprone.info/bugpattern/ConstructorLeaksThis)
+[2019-03-09T19:12:23.996Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/Report.java:[100,44] [ConstructorLeaksThis] Constructors should not pass the 'this' reference out in method invocations, since the object may not be fully constructed.

@@ -8,7 +8,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-8cb34ad6</fingerprint>
+    <fingerprint>FALLBACK-f573252c</fingerprint>
     <lineEnd>22</lineEnd>
     <lineStart>22</lineStart>
     <message>Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein.
@@ -17,7 +17,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>1</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>DesignForExtensionCheck</type>
   </issue>
   <size>1</size>

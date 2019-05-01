@@ -1,10 +1,10 @@
 node ('linux') {
     timeout(200) {
-        stage ('Checkout') {
+        stage ('Linux Checkout') {
             checkout scm
         }
 
-        stage ('Build') {
+        stage ('Linux Build') {
             String jdk = '8'
             String jdkTool = "jdk${jdk}"
             List<String> env = [
@@ -24,7 +24,7 @@ node ('linux') {
                 writeFile file: settingsXml, text: libraryResource('settings-azure.xml')
                 mavenOptions += "-s $settingsXml"
             }
-            mavenOptions += "clean verify checkstyle:checkstyle pmd:pmd findbugs:findbugs jacoco:prepare-agent test jacoco:report -Djenkins.test.timeout=240"
+            mavenOptions += "clean verify jacoco:prepare-agent test jacoco:report -Djenkins.test.timeout=240 -Djenkins.version=2.150.1"
             command = "mvn ${mavenOptions.join(' ')}"
             env << "PATH+MAVEN=${tool 'mvn'}/bin"
 
@@ -48,11 +48,11 @@ node ('linux') {
 
 node ('windows') {
     timeout(200) {
-        stage ('Checkout') {
+        stage ('Windows Checkout') {
             checkout scm
         }
 
-        stage ('Build') {
+        stage ('Windows Build') {
             String jdk = '8'
             String jdkTool = "jdk${jdk}"
             List<String> env = [
@@ -72,7 +72,7 @@ node ('windows') {
                 writeFile file: settingsXml, text: libraryResource('settings-azure.xml')
                 mavenOptions += "-s $settingsXml"
             }
-            mavenOptions += "clean verify -Djenkins.test.timeout=240"
+            mavenOptions += "clean verify -Djenkins.test.timeout=240 -Djenkins.version=2.150.1"
             command = "mvn ${mavenOptions.join(' ')}"
             env << "PATH+MAVEN=${tool 'mvn'}/bin"
 

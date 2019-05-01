@@ -83,7 +83,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldCreate20To39HealthReport() {
-        HealthReport report = createHealthReportTestSetupEclipse(5, 10);
+        HealthReport report = createHealthReportTestSetupEclipse(4, 10);
         assertThat(report.getDescription()).isEqualTo("Eclipse ECJ: 8 warnings");
         assertThat(report.getIconClassName()).isEqualTo(H20TO39);
     }

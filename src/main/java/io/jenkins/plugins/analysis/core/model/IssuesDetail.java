@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -41,6 +41,7 @@ import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
+import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
 /**
@@ -52,6 +53,7 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 @ExportedBean
 public class IssuesDetail implements ModelObject {
     private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
+    private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
 
     private final Run<?, ?> owner;
 
@@ -238,12 +240,21 @@ public class IssuesDetail implements ModelObject {
         return labelProvider.getScmModel(owner, getUrl(), result.getBlames());
     }
 
-    private JSONObject toJsonArray(final List<List<String>> rows) {
-        JSONArray array = new JSONArray();
-        array.addAll(rows);
-        JSONObject data = new JSONObject();
-        data.put("data", array);
-        return data;
+    private String toJsonArray(final List<List<String>> rows) {
+        JacksonFacade facade = new JacksonFacade();
+        ArrayNode dataValue = facade.createArray();
+
+        for (List<String> row : rows) {
+            ArrayNode rowArray = facade.createArray();
+            for (String column : row) {
+                rowArray.add(column);
+            }
+            dataValue.add(rowArray);
+        }
+
+        ObjectNode data = facade.createObject();
+        data.set("data", dataValue);
+        return data.toString();
     }
 
     /**
@@ -256,7 +267,7 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getTableModel(final String id) {
+    public String getTableModel(final String id) {
         List<List<String>> rows;
         if ("#issues".equals(id)) {
             rows = getIssuesModel().getContent(getIssues());
@@ -275,10 +286,8 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getSeverityModel() {
-        SeverityPieChart pieChart = new SeverityPieChart();
-
-        return JSONObject.fromObject(pieChart.create(report));
+    public String getSeverityModel() {
+        return JACKSON_FACADE.toJson(new SeverityPieChart().create(report));
     }
 
     /**
@@ -288,10 +297,8 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getTrendModel() {
-        NewVersusFixedPieChart pieChart = new NewVersusFixedPieChart();
-
-        return JSONObject.fromObject(pieChart.create(newIssues, outstandingIssues, fixedIssues));
+    public String getTrendModel() {
+        return JACKSON_FACADE.toJson(new NewVersusFixedPieChart().create(newIssues, outstandingIssues, fixedIssues));
     }
 
     /**
@@ -304,7 +311,7 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getBuildTrend(final boolean isBuildOnXAxis) {
+    public String getBuildTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new SeverityTrendChart(), isBuildOnXAxis);
     }
 
@@ -322,7 +329,7 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getToolsTrend(final boolean isBuildOnXAxis) {
+    public String getToolsTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new ToolsTrendChart(), isBuildOnXAxis);
     }
 
@@ -336,7 +343,7 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getNewVersusFixedTrend(final boolean isBuildOnXAxis) {
+    public String getNewVersusFixedTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new NewVersusFixedTrendChart(), isBuildOnXAxis);
     }
 
@@ -350,7 +357,7 @@ public class IssuesDetail implements ModelObject {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getHealthTrend(final boolean isBuildOnXAxis) {
+    public String getHealthTrend(final boolean isBuildOnXAxis) {
         return createTrendAsJson(new HealthTrendChart(healthDescriptor), isBuildOnXAxis);
     }
 
@@ -364,10 +371,10 @@ public class IssuesDetail implements ModelObject {
         return healthDescriptor.isEnabled();
     }
 
-    private JSONObject createTrendAsJson(final TrendChart trendChart, final boolean isBuildOnXAxis) {
+    private String createTrendAsJson(final TrendChart trendChart, final boolean isBuildOnXAxis) {
         History history = new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
 
-        return JSONObject.fromObject(trendChart.create(history, createChartConfiguration(isBuildOnXAxis)));
+        return new JacksonFacade().toJson(trendChart.create(history, createChartConfiguration(isBuildOnXAxis)));
     }
 
     /**
