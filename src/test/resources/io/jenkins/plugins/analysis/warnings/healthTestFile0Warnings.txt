@@ -1,0 +1,28 @@
+started
+[workspace] $ mvn.bat clean compile -DeclipseTarget=C:/Build/Results/jobs/ADT-Base-Target/workspace/eclipse
+[INFO] [clean:clean]
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\classes
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [psteclipse:update {execution: update}]
+[INFO] Defaulting prefixes to the single prefix 'com.avaloq.'.
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant/1.7.0/org.apache.ant-1.7.0.jar
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant/1.7.0/org.apache.ant-1.7.0.jar
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-swing/1.7.0/org.apache.ant.ant-swing-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-trax/1.7.0/org.apache.ant.ant-trax-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-trax/1.7.0/org.apache.ant.ant-trax-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-weblogic/1.7.0/org.apache.ant.ant-weblogic-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-weblogic/1.7.0/org.apache.ant.ant-weblogic-1.7.0.pom
+[INFO] [compiler:compile]
+[INFO] Compiling 981 source files to C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\classes
+
+[FINDBUGS] Collecting findbugs analysis files...
+[FINDBUGS] No annotations have been found.
+[PMD] Collecting pmd analysis files...
+[PMD] No annotations have been found.
+[TASKS] Scanning workspace files for tasks...
+[TASKS] A total of 555 annotations have been found.
+[WARNINGS] Parsing warnings of log file...
+[WARNINGS] A total of 105 annotations have been found.
+finished: SUCCESS
