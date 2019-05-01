@@ -17,6 +17,9 @@ Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-web
 [INFO] [compiler:compile]
 [INFO] Compiling 981 source files to C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\classes
 
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\0.java:[0,1] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\0.java:[0,1] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
 [FINDBUGS] Collecting findbugs analysis files...
 [FINDBUGS] No annotations have been found.
 [PMD] Collecting pmd analysis files...
