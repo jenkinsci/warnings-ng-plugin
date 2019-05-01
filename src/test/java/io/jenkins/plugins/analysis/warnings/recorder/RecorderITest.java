@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 
 import org.junit.Test;
 
+
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
@@ -36,9 +37,59 @@ public class RecorderITest  extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
     }
 
+    /**
+     * Test if configured health report correctly shows 100 percent health.
+     */
     @Test
     public void shouldHaveHealthReportOf100() {
         FreeStyleProject project = createFreeStyleProject();
+
+        AnalysisResult result = builtWithWarnings(project, 0, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(0);
+        assertThat(project.getBuildHealth().getScore()).isEqualTo(100);
+    }
+
+    /**
+     * Test if configured health report correctly shows 90 percent health.
+     */
+    @Test
+    public void shouldHaveHealthReportOf90() {
+        FreeStyleProject project = createFreeStyleProject();
+
+        AnalysisResult result = builtWithWarnings(project, 1, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(1);
+        assertThat(project.getBuildHealth().getScore()).isEqualTo(90);
+    }
+
+    /**
+     * Test if configured health report correctly shows 10 percent health.
+     */
+    @Test
+    public void shouldHaveHealthReportOf10() {
+        FreeStyleProject project = createFreeStyleProject();
+
+        AnalysisResult result = builtWithWarnings(project, 9, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(9);
+        assertThat(project.getBuildHealth().getScore()).isEqualTo(10);
+    }
+
+    /**
+     * Test if configured health report correctly shows 90 percent health.
+     */
+    @Test
+    public void shouldHaveHealthReportOf0() {
+        FreeStyleProject project = createFreeStyleProject();
+
+        AnalysisResult result = builtWithWarnings(project, 10, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(10);
+        assertThat(project.getBuildHealth().getScore()).isEqualTo(0);
+    }
+
+    private AnalysisResult builtWithWarnings(FreeStyleProject project, int numWarnings, Result expectedResult) {
 
         Java java = new Java();
         java.setPattern("**/*.txt");
@@ -48,41 +99,13 @@ public class RecorderITest  extends IntegrationTestWithJenkinsPerSuite {
         issuesRecorder.setUnhealthy(9);
 
 
-        copySingleFileToWorkspace(project, "../javac-success.txt", "javac.txt");
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        assertThat(result).hasTotalSize(0);
-        assertThat(project.getBuildHealth().getScore()).isEqualTo(100);
-    }
-
-    @Test
-    public void shouldHaveHealthReportOf90() {
-        FreeStyleProject project = createFreeStyleProject();
-
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(project, java);
-
-        issuesRecorder.setHealthy(1);
-        issuesRecorder.setUnhealthy(10);
-
-
-        //for (int i = 0; i < 5; i++) {
-        //    copySingleFileToWorkspace(project, "../javac-1-warning.txt", i + "_javac.txt");
-        //}
-
         StringBuilder warningText = new StringBuilder();
-        for (int i = 0; i < 9; i++) {
-            warningText.append(createDeprecationWarning(i));
+        for (int i = 0; i < numWarnings; i++) {
+            warningText.append(createDeprecationWarning(i)).append("\n");
         }
         createFileInWorkspace(project, "javac.txt", warningText.toString());
 
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        //assertThat(result).hasTotalSize(1);
-        assertThat(project.getBuildHealth().getScore()).isEqualTo(90);
+        return scheduleBuildAndAssertStatus(project, expectedResult);
     }
 
     private String createDeprecationWarning(int lineNumber) {
