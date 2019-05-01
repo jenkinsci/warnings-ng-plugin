@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,6 +9,9 @@ import javax.print.attribute.standard.Severity;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
+import com.gargoylesoftware.htmlunit.html.HtmlNumberInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import hudson.model.FreeStyleProject;
@@ -136,8 +140,8 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         ArrayList<RegexpFilter> filters = new ArrayList<>();
         filters.add(new ExcludeFile("warnings-ng-plugin-devenv/analysis-model/src/main/java/edu/hm/hafner/analysis/parser/.*"));
         filters.add(new ExcludeFile("warnings-ng-plugin-devenv/warnings-ng-plugin/.*"));
-        filters.add(new ExcludeCategory("NullAway")); // 5
-        filters.add(new ExcludeCategory("UngroupedOverloads")); // 4
+        filters.add(new ExcludeCategory("NullAway"));
+        filters.add(new ExcludeCategory("UngroupedOverloads"));
         recorder.setFilters(filters);
 
         recorder.addQualityGate(5, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
@@ -157,9 +161,10 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Test that with 10 warnings the health score is 0%.
+     * @throws IOException on submit
      */
     @Test
-    public void shouldHit0PercentInHealthReport() {
+    public void shouldHit0PercentInHealthReport() throws IOException {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, "../javac_plugin_build.txt", "javac_plugin_build.txt");
 
@@ -171,28 +176,27 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         ArrayList<RegexpFilter> filters = new ArrayList<>();
         filters.add(new ExcludeFile("warnings-ng-plugin-devenv/analysis-model/src/main/java/edu/hm/hafner/analysis/parser/.*"));
         filters.add(new ExcludeFile("warnings-ng-plugin-devenv/warnings-ng-plugin/.*"));
-        filters.add(new ExcludeCategory("NullAway")); // 5
-        filters.add(new ExcludeCategory("UngroupedOverloads")); // 4
+        filters.add(new ExcludeCategory("NullAway"));
+        filters.add(new ExcludeCategory("UngroupedOverloads"));
         recorder.setFilters(filters);
 
-        recorder.setHealthy(1);
-        recorder.setUnhealthy(9);
-        recorder.setMinimumSeverity(Severity.WARNING.getName());
-        recorder.addQualityGate(5, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
-        recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        ConfigPageObject configPage = new ConfigPageObject(project);
+        configPage.setHealthy(1);
+        configPage.setUnhealthy(9);
+        configPage.apply();
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(10);
         assertThat(project.getBuildHealth().getScore()).isEqualTo(0);
-        assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
     }
 
     /**
      * Test that with 9 warnings the health score is 10%.
+     * @throws IOException on submit
      */
     @Test
-    public void shouldHit10PercentInHealthReport() {
+    public void shouldHit10PercentInHealthReport() throws IOException {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, "../javac_plugin_build.txt", "javac_plugin_build.txt");
 
@@ -202,24 +206,23 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         IssuesRecorder recorder = enableWarnings(project, java);
         recorder.setFilters(Collections.singletonList(new ExcludeFile("warnings-ng-plugin-devenv/analysis-model/src/main/java/edu/hm/hafner/analysis/.*")));
 
-        recorder.setHealthy(1);
-        recorder.setUnhealthy(9);
-        recorder.setMinimumSeverity(Severity.WARNING.getName());
-        recorder.addQualityGate(5, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
-        recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        ConfigPageObject configPage = new ConfigPageObject(project);
+        configPage.setHealthy(1);
+        configPage.setUnhealthy(9);
+        configPage.apply();
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.UNSTABLE);
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(9);
         assertThat(project.getBuildHealth().getScore()).isEqualTo(10);
-        assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
     }
 
     /**
      * Test that with 1 warnings the health score is 90%.
+     * @throws IOException on submit
      */
     @Test
-    public void shouldHit90PercentInHealthReport() {
+    public void shouldHit90PercentInHealthReport() throws IOException {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, "../javac.txt", "javac.txt");
 
@@ -230,24 +233,23 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         recorder.setFilters(Collections.singletonList(new ExcludeMessage("org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated")));
 
-        recorder.setHealthy(1);
-        recorder.setUnhealthy(9);
-        recorder.setMinimumSeverity(Severity.WARNING.getName());
-        recorder.addQualityGate(5, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
-        recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        ConfigPageObject configPage = new ConfigPageObject(project);
+        configPage.setHealthy(1);
+        configPage.setUnhealthy(9);
+        configPage.apply();
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(1);
         assertThat(project.getBuildHealth().getScore()).isEqualTo(90);
-        assertThat(result).hasQualityGateStatus(QualityGateStatus.PASSED);
     }
 
     /**
      * Test that with 0 warnings the health score is 100%.
+     * @throws IOException on submit
      */
     @Test
-    public void shouldHit100PercentInHealthReport() {
+    public void shouldHit100PercentInHealthReport() throws IOException {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, "../javac_plugin_build.txt", "javac_plugin_build.txt");
 
@@ -257,17 +259,15 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         IssuesRecorder recorder = enableWarnings(project, java);
         recorder.setFilters(Collections.singletonList(new ExcludeFile(".*")));
 
-        recorder.setHealthy(1);
-        recorder.setUnhealthy(9);
-        recorder.setMinimumSeverity(Severity.WARNING.getName());
-        recorder.addQualityGate(5, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
-        recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        ConfigPageObject configPage = new ConfigPageObject(project);
+        configPage.setHealthy(1);
+        configPage.setUnhealthy(9);
+        configPage.apply();
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasTotalSize(0);
         assertThat(project.getBuildHealth().getScore()).isEqualTo(100);
-        assertThat(result).hasQualityGateStatus(QualityGateStatus.PASSED);
     }
 
     /**
@@ -275,7 +275,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private class InfoPageObject {
 
-        private HtmlPage infoPage;
+        private final HtmlPage infoPage;
 
         /**
          * Creates the PageObject for the {buildNr}/java/info page. The fetching of the webpage will take some time.
@@ -292,7 +292,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
          * @param id The id to get the messages for.
          * @return A list of messages.
          */
-        private List<String> getMessages(String id) {
+        private List<String> getMessages(final String id) {
             List<String> result = new ArrayList<>();
             DomElement element = infoPage.getElementById(id);
             if (element != null) {
@@ -316,5 +316,50 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         public List<String> getErrorMessages() {
             return getMessages("errors");
         }
+    }
+
+    /**
+     * Page Object for the Config page.
+     */
+    private class ConfigPageObject {
+
+        private final HtmlForm form;
+
+        /**
+         * Creates a config page object for health report configuration.
+         * @param project The project that will be configured
+         */
+        ConfigPageObject(final Project project) {
+            form = getWebPage(project, "configure").getFormByName("config");
+        }
+
+        /**
+         * Set the healthy threshold.
+         * @param threshold The threshold
+         */
+        @SuppressWarnings("SameParameterValue")
+        void setHealthy(final int threshold) {
+            HtmlNumberInput input = form.getInputByName("_.healthy");
+            input.setText(String.valueOf(threshold));
+        }
+
+        /**
+         * Set the unhealthy threshold.
+         * @param threshold The threshold
+         */
+        @SuppressWarnings("SameParameterValue")
+        void setUnhealthy(final int threshold) {
+            HtmlNumberInput input = form.getInputByName("_.unhealthy");
+            input.setText(String.valueOf(threshold));
+        }
+
+        /**
+         * Apply the configuration changes.
+         * @throws IOException on submit
+         */
+        void apply() throws IOException {
+            HtmlFormUtil.submit(form);
+        }
+
     }
 }
