@@ -464,10 +464,10 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.TYPE, IssueRow.PRIORITY, IssueRow.AGE);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
-                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 2),
-                new IssueRow("CsharpNamespaceDetector.java:29", "-", "Sizes", "LineLengthCheck", "High", 1),
-                new IssueRow("CsharpNamespaceDetector.java:30", "-", "Blocks", "RightCurlyCheck", "High", 1),
-                new IssueRow("CsharpNamespaceDetector.java:37", "-", "Blocks", "RightCurlyCheck", "High", 1));
+                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "Error", 2),
+                new IssueRow("CsharpNamespaceDetector.java:29", "-", "Sizes", "LineLengthCheck", "Error", 1),
+                new IssueRow("CsharpNamespaceDetector.java:30", "-", "Blocks", "RightCurlyCheck", "Error", 1),
+                new IssueRow("CsharpNamespaceDetector.java:37", "-", "Blocks", "RightCurlyCheck", "Error", 1));
     }
 
     private void verifyBaselineDetails(final AnalysisResult baseline) {
@@ -492,9 +492,9 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.TYPE, IssueRow.PRIORITY, IssueRow.AGE);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
-                new IssueRow("CsharpNamespaceDetector.java:17", "-", "Design", "DesignForExtensionCheck", "High", 1),
-                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 1),
-                new IssueRow("CsharpNamespaceDetector.java:42", "-", "Sizes", "LineLengthCheck", "High", 1));
+                new IssueRow("CsharpNamespaceDetector.java:17", "-", "Design", "DesignForExtensionCheck", "Error", 1),
+                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "Error", 1),
+                new IssueRow("CsharpNamespaceDetector.java:42", "-", "Sizes", "LineLengthCheck", "Error", 1));
     }
 
     /**

@@ -5,8 +5,6 @@ import java.util.Optional;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import net.sf.json.JSONObject;
-
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -19,6 +17,7 @@ import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration;
 import io.jenkins.plugins.analysis.core.charts.LinesChartModel;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
+import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -163,8 +162,8 @@ public class JobAction implements Action {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public JSONObject getBuildTrend() {
-        return JSONObject.fromObject(createChartModel());
+    public String getBuildTrend() {
+        return new JacksonFacade().toJson(createChartModel());
     }
 
     private LinesChartModel createChartModel() {

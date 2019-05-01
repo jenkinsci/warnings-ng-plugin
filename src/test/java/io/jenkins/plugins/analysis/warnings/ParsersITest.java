@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.Arrays;
+
 import org.junit.Assume;
 import org.junit.Test;
 
@@ -67,6 +69,54 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    /** Verifies that a broken file does not fail. */
+    @Test
+    public void shouldSilentlyIgnoreWrongFile() {
+        shouldFindIssuesOfTool(0, new CheckStyle(), "sun_checks.xml");
+    }
+
+    /**
+     * Runs with several tools that internally delegate to CheckStyle's  parser on an output file that contains 6
+     * issues.
+     */
+    @Test
+    public void shouldFindAllIssuesForCheckStyleAlias() {
+        for (ReportScanningTool tool : Arrays.asList(new Detekt(), new EsLint(), new KtLint(), new PhpCodeSniffer(),
+                new SwiftLint(), new TsLint())) {
+            shouldFindIssuesOfTool(6, tool, "checkstyle.xml");
+        }
+    }
+
+    /** Runs the Iar parser on an output file that contains 8 issues. */
+    @Test
+    public void shouldFindAllCmakeIssues() {
+        shouldFindIssuesOfTool(8, new Cmake(), "cmake.txt");
+    }
+
+    /** Runs the Iar parser on an output file that contains 2 issues. */
+    @Test
+    public void shouldFindAllCargoIssues() {
+        shouldFindIssuesOfTool(2, new Cargo(), "CargoCheck.json");
+    }
+
+    /** Runs the Iar parser on an output file that contains 262 issues. */
+    @Test
+    public void shouldFindAllIssuesForPmdAlias() {
+        shouldFindIssuesOfTool(262, new Infer(), "pmd-6.xml");
+    }
+
+    /** Runs the Iar parser on an output file that contains 262 issues. */
+    @Test
+    public void shouldFindAllIssuesForMsBuildAlias() {
+        shouldFindIssuesOfTool(6, new PcLint(), "msbuild.txt");
+    }
+
+    /** Runs the Iar parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllYamlLintIssues() {
+        shouldFindIssuesOfTool(4, new YamlLint(), "yamllint.txt");
+    }
+
     /** Runs the Iar parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllIarIssues() {
@@ -103,9 +153,9 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the SonarQube parsers on two files that contains 6 and 31 issues. */
     @Test
     public void shouldFindAllSonarQubeIssues() {
-        shouldFindIssuesOfTool(31, new SonarQube(), "sonarqube-api.json");
+        shouldFindIssuesOfTool(32, new SonarQube(), "sonarqube-api.json");
         shouldFindIssuesOfTool(6, new SonarQube(), "sonarqube-differential.json");
-        shouldFindIssuesOfTool(37, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
+        shouldFindIssuesOfTool(38, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
     }
 
     /** Runs the TagList parser on an output file that contains 6 issues. */
@@ -581,7 +631,6 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(8, new Eclipse(), "eclipse.txt");
 
         // FIXME: fails if offline
-        // Parsing of file '/var/folders/pg/qr8ry2kd4qjc151jhq9ksgx00000gn/T/jenkinsTests.tmp/jenkins6034409647481918217test/workspace/test18/eclipse-withinfo-issues.txt' failed due to an exception:, java.net.UnknownHostException: www.eclipse.org, 	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:184), 	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392), 	at java.net.Socket.connect(Socket.java:589), 	at java.net.Socket.connect(Socket.java:538), 	at sun.net.NetworkClient.doConnect(NetworkClient.java:180), 	at sun.net.www.http.HttpClient.openServer(HttpClient.java:463), 	at sun.net.www.http.HttpClient.openServer(HttpClient.java:558), 	at sun.net.www.http.HttpClient.<init>(HttpClient.java:242), 	at sun.net.www.http.HttpClient.New(HttpClient.java:339), 	at sun.net.www.http.HttpClient.New(HttpClient.java:357), 	at sun.net.www.protocol.http.HttpURLConnection.getNewHttpClient(HttpURLConnection.java:1220), 	at sun.net.www.protocol.http.HttpURLConnection.plainConnect0(HttpURLConnection.java:1156), 	at sun.net.www.protocol.http.HttpURLConnection.plainConnect(HttpURLConnection.java:1050), 	at sun.net.www.protocol.http.HttpURLConnection.connect(HttpURLConnection.java:984), 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1564), 	at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1492), 	at org.apache.xerces.impl.XMLEntityManager.setupCurrentEntity(Unknown Source), 	at org.apache.xerces.impl.XMLEntityManager.startEntity(Unknown Source), 	at org.apache.xerces.impl.XMLEntityManager.startDTDEntity(Unknown Source), 	at org.apache.xerces.impl.XMLDTDScannerImpl.setInputSource(Unknown Source), 	at org.apache.xerces.impl.XMLDocumentScannerImpl$DTDDispatcher.dispatch(Unknown Source), 	at org.apache.xerces.impl.XMLDocumentFragmentScannerImpl.scanDocument(Unknown Source), 	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source), 	at org.apache.xerces.parsers.XML11Configuration.parse(Unknown Source), 	at org.apache.xerces.parsers.XMLParser.parse(Unknown Source), 	at org.apache.xerces.parsers.DOMParser.parse(Unknown Source), 	at org.apache.xerces.jaxp.DocumentBuilderImpl.parse(Unknown Source),
         shouldFindIssuesOfTool(6, new Eclipse(), "eclipse-withinfo.xml");
 
         shouldFindIssuesOfTool(8 + 6, new Eclipse(), "eclipse-withinfo.xml", "eclipse.txt");

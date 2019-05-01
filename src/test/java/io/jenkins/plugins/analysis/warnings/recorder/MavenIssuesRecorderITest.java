@@ -1,18 +1,21 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.hudson.test.ToolInstallations;
 
 import edu.hm.hafner.analysis.Severity;
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+
+import hudson.maven.MavenModuleSet;
+import hudson.model.Result;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.MavenConsole;
 
-import hudson.maven.MavenModuleSet;
-import hudson.model.Result;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Integration tests of the warnings plug-in in maven jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -43,6 +46,8 @@ public class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite
      * Runs a maven build without a pom.xml. Enables reporting of maven warnings and errors. 
      */
     @Test
+    // FIXME: remove if there is an option to verify the colored console log
+    @Ignore("Check how the maven plugin reports colored console logs")
     public void shouldParseMavenError() {
         MavenModuleSet project = createMavenJob();
         copySingleFileToWorkspace(project, "pom-error.xml", "pom.xml");

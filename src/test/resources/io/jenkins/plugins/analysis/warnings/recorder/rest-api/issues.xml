@@ -8,7 +8,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-8cb34ad1</fingerprint>
+    <fingerprint>FALLBACK-f5732527</fingerprint>
     <lineEnd>17</lineEnd>
     <lineStart>17</lineStart>
     <message>Die Methode 'accepts' ist nicht für Vererbung entworfen - muss abstract, final oder leer sein.</message>
@@ -16,7 +16,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>1</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>DesignForExtensionCheck</type>
   </issue>
   <issue>
@@ -28,7 +28,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-b0f22328</fingerprint>
+    <fingerprint>FALLBACK-19b1fd7e</fingerprint>
     <lineEnd>42</lineEnd>
     <lineStart>42</lineStart>
     <message>Zeile länger als 80 Zeichen</message>
@@ -36,7 +36,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>1</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>LineLengthCheck</type>
   </issue>
   <issue>
@@ -48,7 +48,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-8cb34ad6</fingerprint>
+    <fingerprint>FALLBACK-f573252c</fingerprint>
     <lineEnd>22</lineEnd>
     <lineStart>22</lineStart>
     <message>Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein.
@@ -57,7 +57,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>1</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>DesignForExtensionCheck</type>
   </issue>
   <issue>
@@ -69,7 +69,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-b0f2231b</fingerprint>
+    <fingerprint>FALLBACK-19b1fd71</fingerprint>
     <lineEnd>29</lineEnd>
     <lineStart>29</lineStart>
     <message>Zeile länger als 80 Zeichen</message>
@@ -77,7 +77,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>1</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>LineLengthCheck</type>
   </issue>
   <issue>
@@ -89,7 +89,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-acef6cb9</fingerprint>
+    <fingerprint>FALLBACK-15af470f</fingerprint>
     <lineEnd>30</lineEnd>
     <lineStart>30</lineStart>
     <message>'}' sollte in derselben Zeile stehen.</message>
@@ -97,7 +97,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>1</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>RightCurlyCheck</type>
   </issue>
   <issue>
@@ -109,7 +109,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
     </fileName>
-    <fingerprint>FALLBACK-acef6cc0</fingerprint>
+    <fingerprint>FALLBACK-15af4716</fingerprint>
     <lineEnd>37</lineEnd>
     <lineStart>37</lineStart>
     <message>'}' sollte in derselben Zeile stehen.</message>
@@ -117,7 +117,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>1</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>RightCurlyCheck</type>
   </issue>
   <issue>
@@ -129,7 +129,7 @@
     <fileName>
       X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/test/CategoryBuildResultGraph.java
     </fileName>
-    <fingerprint>FALLBACK-60eeeeeb</fingerprint>
+    <fingerprint>FALLBACK-c9aec941</fingerprint>
     <lineEnd>99</lineEnd>
     <lineStart>99</lineStart>
     <message>'}' sollte in derselben Zeile stehen.</message>
@@ -137,7 +137,7 @@
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>1</reference>
-    <severity>HIGH</severity>
+    <severity>ERROR</severity>
     <type>RightCurlyCheck</type>
   </issue>
   <size>7</size>

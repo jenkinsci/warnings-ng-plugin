@@ -234,7 +234,8 @@
                     view.getTableModel(id, function (t) {
                         (function ($) {
                             var table = $(id).DataTable();
-                            table.rows.add(t.responseObject().data).draw()
+                            var model = JSON.parse(t.responseObject());
+                            table.rows.add(model.data).draw();
                         })(jQuery);
                     });
                 }

@@ -5,7 +5,7 @@ if [[ -z "$JENKINS_HOME" ]]; then
     echo "JENKINS_HOME is not defined, using $JENKINS_HOME"
 fi
 
-mvn clean install || { echo "Build failed"; exit 1; }
+mvn clean install -Djenkins.version=2.150.1 || { echo "Build failed"; exit 1; }
 
 echo "Installing plugin in $JENKINS_HOME"
 rm -rf $JENKINS_HOME/plugins/warnings-ng*

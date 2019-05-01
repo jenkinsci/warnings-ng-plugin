@@ -40,11 +40,6 @@ public class Doxygen extends ReportScanningTool {
             super(ID);
         }
 
-        @Override
-        public String getHelp() {
-            return Messages.Warning_SlowMultiLineParser();
-        }
-
         @NonNull
         @Override
         public String getDisplayName() {

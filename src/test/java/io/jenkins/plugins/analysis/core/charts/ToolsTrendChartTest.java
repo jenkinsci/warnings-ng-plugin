@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -70,8 +69,6 @@ class ToolsTrendChartTest {
     /**
      * Creates a chart with more series than distinct colors are available
      * Verifies that the same colors are used for multiple series.
-     *
-     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56704">Issue 56704</a>
      */
     @Test
     void shouldCreateLineChartWithDuplicateColors() {
@@ -85,9 +82,9 @@ class ToolsTrendChartTest {
 
         LinesChartModel model = chart.create(results, new ChartModelConfiguration());
 
-        List<String> lineColors = new ArrayList();
-        for (LineSeries lineSerie : model.getSeries()) {
-            lineColors.add(lineSerie.getItemStyle().getColor());
+        List<String> lineColors = new ArrayList<>();
+        for (LineSeries lineSeries : model.getSeries()) {
+            lineColors.add(lineSeries.getItemStyle().getColor());
         }
 
         boolean modelHasDuplicateColors = hasDuplicates(lineColors);
@@ -95,12 +92,9 @@ class ToolsTrendChartTest {
 
     }
 
-    private boolean hasDuplicates(List<String> list) {
-        int sizeWithoutDuplicate = new HashSet<String>(list).size();
-        if (list.size() > sizeWithoutDuplicate) {
-            return true;
-        }
-        return false;
+    private boolean hasDuplicates(final List<String> list) {
+        int sizeWithoutDuplicate = new HashSet<>(list).size();
+        return list.size() > sizeWithoutDuplicate;
     }
 
 }

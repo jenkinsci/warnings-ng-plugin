@@ -14,6 +14,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 
 import static java.util.Arrays.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -61,28 +62,28 @@ class HealthSeriesBuilderTest {
                         .setTestName("one medium when above health, below unhealth threshold")
                         .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
                         .setRun(createRunWithSize(HEALTH_THRESHOLD + 1))
-                        .setExpectedSeries(2, 1, 0)
+                        .setExpectedSeries(HEALTH_THRESHOLD, 1, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("none unhealthy when below unhealth threshold")
                         .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
                         .setRun(createRunWithSize(UNHEALTHY_THRESHOLD - 1))
-                        .setExpectedSeries(2, 2, 0)
+                        .setExpectedSeries(HEALTH_THRESHOLD, 2, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("none unhealthy when at unhealth threshold")
                         .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
                         .setRun(createRunWithSize(UNHEALTHY_THRESHOLD))
-                        .setExpectedSeries(2, 3, 0)
+                        .setExpectedSeries(HEALTH_THRESHOLD, 3, 0)
                         .build(),
 
                 new TestArgumentsBuilder()
                         .setTestName("one unhealthy when above unhealth threshold")
                         .setDescriptor(createEnabledDescriptor(HEALTH_THRESHOLD, UNHEALTHY_THRESHOLD))
                         .setRun(createRunWithSize(UNHEALTHY_THRESHOLD + 1))
-                        .setExpectedSeries(2, 3, 1)
+                        .setExpectedSeries(HEALTH_THRESHOLD, 3, 1)
                         .build()
         );
     }
@@ -91,14 +92,22 @@ class HealthSeriesBuilderTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("testData")
     void testComputeSeries(
-            final String name, final HealthDescriptor descriptor, final AnalysisResult run, final Iterable<Integer> expectedSeries) {
+            final String name, final HealthDescriptor descriptor, final AnalysisResult run,
+            final List<Integer> expectedSeries) {
         HealthSeriesBuilder sut = new HealthSeriesBuilder(descriptor);
 
         Map<String, Integer> series = sut.computeSeries(run);
-        List<Object> values = new ArrayList<>();
-        values.add(series.get(HealthSeriesBuilder.HEALTHY));
-        values.add(series.get(HealthSeriesBuilder.BETWEEN));
-        values.add(series.get(HealthSeriesBuilder.UNHEALTHY));
+        List<Integer> values = new ArrayList<>();
+        if (expectedSeries.size() == 1) {
+            values.add(series.get(HealthSeriesBuilder.TOTAL));
+        }
+        else {
+            values.add(series.get(HealthSeriesBuilder.HEALTHY));
+            values.add(series.get(HealthSeriesBuilder.BETWEEN));
+            values.add(series.get(HealthSeriesBuilder.UNHEALTHY));
+        }
+
+        expectedSeries.forEach(value -> assertThat(values).contains(value));
     }
 
     private static AnalysisResult createRunWithSize(final int totalSize) {
