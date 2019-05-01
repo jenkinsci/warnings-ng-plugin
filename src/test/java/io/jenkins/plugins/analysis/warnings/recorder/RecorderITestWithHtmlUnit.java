@@ -111,13 +111,14 @@ public class RecorderITestWithHtmlUnit extends IntegrationTestWithJenkinsPerSuit
     /**
      * Creates a FreeStyle job with certain number of warnings in file.
      *
-     * @param warningsNumber number of warnings in the file
+     * @param warningsNumber
+     *         number of warnings in the file
      *
      * @return FreeStyle job to execute
      */
     private FreeStyleProject configureFreeStyleProjectForFileWithWarnings(final int warningsNumber) {
         FreeStyleProject project = createFreeStyleProject();
-        copySingleFileToWorkspace(project, "warning-test/warnings-"+warningsNumber+".txt", "java.txt");
+        copySingleFileToWorkspace(project, "warning-test/warnings-" + warningsNumber + ".txt", "java.txt");
 
         Java java = new Java();
         java.setPattern("java.txt");

@@ -163,8 +163,9 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(10);
         assertThat(result).hasInfoMessages(
-                "-> WARNING - Total number of issues (any severity): 10 - Quality QualityGate: "+UNSTABLE_QUALITY_GATE,
-                "-> FAILED - Total number of issues (any severity): 10 - Quality QualityGate: "+FAILURE_QUALITY_GATE,
+                "-> WARNING - Total number of issues (any severity): 10 - Quality QualityGate: "
+                        + UNSTABLE_QUALITY_GATE,
+                "-> FAILED - Total number of issues (any severity): 10 - Quality QualityGate: " + FAILURE_QUALITY_GATE,
                 "-> Some quality gates have been missed: overall result is FAILED"
         );
         assertThat(result).hasQualityGateStatus(QualityGateStatus.FAILED);
@@ -187,8 +188,8 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(9);
         assertThat(result).hasInfoMessages(
-                "-> WARNING - Total number of issues (any severity): 9 - Quality QualityGate: "+UNSTABLE_QUALITY_GATE,
-                "-> PASSED - Total number of issues (any severity): 9 - Quality QualityGate: "+FAILURE_QUALITY_GATE,
+                "-> WARNING - Total number of issues (any severity): 9 - Quality QualityGate: " + UNSTABLE_QUALITY_GATE,
+                "-> PASSED - Total number of issues (any severity): 9 - Quality QualityGate: " + FAILURE_QUALITY_GATE,
                 "-> Some quality gates have been missed: overall result is WARNING"
         );
         assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
