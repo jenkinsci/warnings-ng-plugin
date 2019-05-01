@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.*;
 
 public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
-    private static final int HEALTHY_VALUE = 0;
+    private static final int HEALTHY_VALUE = 1;
     private static final int UNHEALTHY_VALUE = 9;
 
     /**
@@ -48,10 +48,46 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
     public void tenWarningsWithHealthZero() throws IOException {
-        verifyInfoView("javac_10_warnings.txt", true, 0, 10);
+        verifyWarningsAndHealth("javac_10_warnings.txt", true, 0, 10);
     }
 
-    void verifyInfoView(String filePath, boolean healthReport, int healthScore, int warnings) throws IOException {
+    @Test
+    public void tenWarningsWithoutHealth() throws IOException {
+        verifyWarningsAndHealth("javac_10_warnings.txt", false, 0, 10);
+    }
+
+    @Test
+    public void nineWarningsWithHealthTen() throws IOException {
+        verifyWarningsAndHealth("javac_9_warnings.txt", true, 10, 9);
+    }
+
+    @Test
+    public void nineWarningsWithoutHealth() throws IOException {
+        verifyWarningsAndHealth("javac_9_warnings.txt", false, 10, 9);
+    }
+
+    @Test
+    public void oneWarningWithHealthNinety() throws IOException {
+        verifyWarningsAndHealth("javac_1_warning.txt", true, 90, 1);
+    }
+
+    @Test
+    public void oneWarningWithoutHealth() throws IOException {
+        verifyWarningsAndHealth("javac_1_warning.txt", false, 90, 1);
+    }
+
+    @Test
+    public void noWarningsWithoutHealth() throws IOException {
+        verifyWarningsAndHealth("javac_0_warnings.txt", false, 100, 0);
+    }
+
+    @Test
+    public void noWarningsWithHealthFull() throws IOException {
+        verifyWarningsAndHealth("javac_0_warnings.txt", true, 100, 0);
+    }
+
+    private void verifyWarningsAndHealth(final String filePath, final boolean healthReport, final int healthScore,
+            final int warnings) throws IOException {
         FreeStyleProject project = createFreeStyleProject();
 
         Java javaAnalysis = new Java();

@@ -1,0 +1,9 @@
+[WARNING] C:\File.java:[40,36] [deprecation] something has been deprecated
+[WARNING] C:\File.java:[41,36] [deprecation] something has been deprecated
+[WARNING] C:\File.java:[42,36] [deprecation] something has been deprecated
+[WARNING] C:\File.java:[43,36] [deprecation] something has been deprecated
+[WARNING] C:\File.java:[44,36] [deprecation] something has been deprecated
+[WARNING] C:\File.java:[45,36] [deprecation] something has been deprecated
+[WARNING] C:\File.java:[46,36] [deprecation] something has been deprecated
+[WARNING] C:\File.java:[47,36] [deprecation] something has been deprecated
+[WARNING] C:\File.java:[48,36] [deprecation] something has been deprecated

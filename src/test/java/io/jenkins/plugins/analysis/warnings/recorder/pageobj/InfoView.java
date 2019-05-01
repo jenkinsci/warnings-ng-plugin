@@ -13,12 +13,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 public class InfoView {
     private final HtmlPage infoPage;
 
-    /**
-     * Create a new InfoPage Object for the given web Page.
-     *
-     * @param infoPage
-     *         Loaded info web page.
-     */
     public InfoView(final HtmlPage infoPage) {
         this.infoPage = infoPage;
     }
