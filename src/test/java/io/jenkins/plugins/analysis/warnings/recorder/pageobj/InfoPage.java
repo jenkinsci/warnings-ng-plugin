@@ -6,17 +6,22 @@ import java.util.List;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import edu.umd.cs.findbugs.Project;
-
+/**
+ * Representation of the HTML Info Page of a job.
+ */
 public class InfoPage {
 
     private final HtmlPage infoWebPage;
 
-    public InfoPage(HtmlPage infoWebPage) {
+    /**
+     * Create a new InfoPage Object for the given web Page.
+     * @param infoWebPage Loaded info web page.
+     */
+    public InfoPage(final HtmlPage infoWebPage) {
         this.infoWebPage = infoWebPage;
     }
 
-    private List<String> getMessages(String id) {
+    private List<String> getMessages(final String id) {
         List<String> result = new ArrayList<>();
         DomElement element = infoWebPage.getElementById(id);
         if (element != null) {
