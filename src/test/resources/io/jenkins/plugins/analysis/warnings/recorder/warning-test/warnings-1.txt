@@ -1,0 +1,1 @@
+[WARNING] C:/Build/Results/jobs/ADT-Base-Target/workspace/eclipse/AvaloqDialog.java:[12,39] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated

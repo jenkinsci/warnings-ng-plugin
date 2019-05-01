@@ -1,0 +1,18 @@
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[40,36] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[13,39] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[41,36] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[14,39] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[42,36] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[42,37] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[42,38] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[42,39] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[42,40] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
