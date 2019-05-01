@@ -22,6 +22,11 @@ import io.jenkins.plugins.analysis.warnings.Java;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
+/**
+ * Integration Tests with HealthReport.
+ *
+ * @author Matthias Herpers
+ */
 public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void verifyHealthOfProjectWithWarnings(String file, int warnings, int health, boolean withHealthReport) {
@@ -58,41 +63,65 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         submit(webForm);
     }
 
+    /**
+     * Verifies that an activated HealthReport with zero warnings has a health of 100.
+     */
     @Test
     public void shouldCreateReportWithZeroWarnings() {
         verifyHealthOfProjectWithWarnings("demoJavacZeroWarnings.txt", 0, 100, true);
     }
 
+    /**
+     * Verifies that an activated HealthReport with one warning has a health of 90.
+     */
     @Test
     public void shouldCreateReportWithOneWarning() {
         verifyHealthOfProjectWithWarnings("demoJavacOneWarning.txt", 1, 90, true);
     }
 
+    /**
+     * Verifies that an activated HealthReport with nine warnings has a health of 10.
+     */
     @Test
     public void shouldCreateReportWithNineWarnings() {
         verifyHealthOfProjectWithWarnings("demoJavacNineWarnings.txt", 9, 10, true);
     }
 
+    /**
+     * Verifies that an activated HealthReport with ten warnings has a health of 0.
+     */
     @Test
     public void shouldCreateReportWithTenWarnings() {
         verifyHealthOfProjectWithWarnings("demoJavacTenWarnings.txt", 10, 0, true);
     }
 
+    /**
+     * Verifies that a deactivated HealthReport with yero warnings is displayed correctly.
+     */
     @Test
     public void shouldCreateReportWithZeroWarningsWithDisabledHealthReport() {
         verifyHealthOfProjectWithWarnings("demoJavacZeroWarnings.txt", 0, 100, false);
     }
 
+    /**
+     * Verifies that a deactivated HealthReport with one warning is displayed correctly.
+     */
     @Test
     public void shouldCreateReportWithOneWarningWithDisabledHealthReport() {
         verifyHealthOfProjectWithWarnings("demoJavacOneWarning.txt", 1, 100, false);
     }
 
+    /**
+     * Verifies that a deactivated HealthReport with nine warnings is displayed correctly.
+     */
     @Test
     public void shouldCreateReportWithNineWarningsWithDisabledHealthReport() {
         verifyHealthOfProjectWithWarnings("demoJavacNineWarnings.txt", 9, 100, false);
     }
 
+    /**
+     * Verifies that a deactivated HealthReport with ten warnings is displayed correctly.
+     */
     @Test
     public void shouldCreateReportWithTenWarningsWithDisabledHealthReport() {
         verifyHealthOfProjectWithWarnings("demoJavacTenWarnings.txt", 10, 100, false);
@@ -103,7 +132,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private class HtmlJenkinsJavaInfo {
 
-        HtmlPage webPage;
+        private HtmlPage webPage;
 
         HtmlJenkinsJavaInfo(Project project, String remainingUrl) {
             String buildnumber = String.valueOf(project.getLastBuild().getNumber());
