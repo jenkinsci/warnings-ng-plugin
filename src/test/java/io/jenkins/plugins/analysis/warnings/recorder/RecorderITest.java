@@ -79,7 +79,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies the info page with warning as input.
      */
     @Test
-    public void shouldCreateReportWithouWarnings() {
+    public void shouldCreateReportWithoutWarnings() {
 
         FreeStyleProject job = createFreeStyleProject();
         copySingleFileToWorkspace(job, "javac_0Warning.txt", "javac.txt");
@@ -211,7 +211,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         ConfigurationPage configPage = new ConfigurationPage(job);
         configPage.setHealthy(healthy);
         configPage.setUnHealthy(unhealty);
-        submit(configPage.GetForm());
+        submit(configPage.getForm());
     }
 
     /**
