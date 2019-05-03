@@ -99,7 +99,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     private IssueRow getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPageWithJs(result);
         IssuesTable issues = new IssuesTable(details);
         return issues.getRow(rowNumber);
     }
@@ -205,7 +205,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         assertThat(getConsoleLog(result)).contains("0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPageWithJs(result);
         IssuesTable issues = new IssuesTable(details);
         assertThat(issues.getColumnNames()).containsExactly(
                 IssueRow.DETAILS, IssueRow.FILE, IssueRow.PRIORITY, IssueRow.AGE);

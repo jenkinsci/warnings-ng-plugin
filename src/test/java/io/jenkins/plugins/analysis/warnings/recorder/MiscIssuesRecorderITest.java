@@ -441,7 +441,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     private void verifyDetails(final AnalysisResult result) {
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPageWithJs(result);
 
         PropertyTable categories = new PropertyTable(details, "category");
         assertThat(categories.getTitle()).isEqualTo("Categories");
@@ -471,7 +471,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     private void verifyBaselineDetails(final AnalysisResult baseline) {
-        HtmlPage baselineDetails = getWebPage(baseline);
+        HtmlPage baselineDetails = getWebPageWithJs(baseline);
 
         PropertyTable categories = new PropertyTable(baselineDetails, "category");
         assertThat(categories.getTitle()).isEqualTo("Categories");
@@ -570,7 +570,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         assertThat(result).hasTotalSize(5);
 
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPageWithJs(result);
         PropertyTable categories = new PropertyTable(details, "fileName");
         assertThat(categories.getTitle()).isEqualTo("Files");
         assertThat(categories.getColumnName()).isEqualTo("File");

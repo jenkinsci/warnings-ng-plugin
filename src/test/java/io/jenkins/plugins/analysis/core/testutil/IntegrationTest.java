@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -26,6 +27,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.ScriptResult;
+import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -889,8 +891,28 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the HTML page
      */
     protected HtmlPage getWebPage(final Run<?, ?> build, final String relativeUrl) {
+        return getWebPage(build, relativeUrl, false);
+    }
+
+    /**
+     * Returns the HTML page content of the specified URL for a given build.
+     *
+     * @param build
+     *         the build to show the page for
+     * @param relativeUrl
+     *         the relative URL within the job
+     * @param isJavaScriptEnabled
+     *         determines whether Java Script is enabled
+     *
+     * @return the HTML page
+     */
+    protected HtmlPage getWebPage(final Run<?, ?> build, final String relativeUrl, final boolean isJavaScriptEnabled) {
         try {
-            return createWebClient().getPage(build, relativeUrl);
+            WebClient webClient = createWebClient();
+            webClient.setJavaScriptEnabled(isJavaScriptEnabled);
+            webClient.getCookieManager().setCookiesEnabled(isJavaScriptEnabled);
+
+            return webClient.getPage(build, relativeUrl);
         }
         catch (SAXException | IOException e) {
             throw new AssertionError(e);
@@ -919,13 +941,33 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
+    protected HtmlPage getWebPageWithJs(final AnalysisResult result) {
+        return getWebPage(result.getOwner(), result.getId(), true);
+    }
+
+    /**
+     * Returns the HTML page content of the specified analysis result.
+     *
+     * @param result
+     *         the analysis result to show
+     *
+     * @return the HTML page
+     */
     protected HtmlPage getWebPage(final AnalysisResult result) {
         return getWebPage(result.getOwner(), result.getId());
     }
 
     private WebClient createWebClient() {
         WebClient webClient = getJenkins().createWebClient();
-        webClient.setJavaScriptEnabled(true);
+        webClient.setCssErrorHandler(new SilentCssErrorHandler());
+        java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.SEVERE);
+        webClient.setIncorrectnessListener((s, o) -> {
+        });
+        webClient.getCookieManager().setCookiesEnabled(false);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setPrintContentOnFailingStatusCode(false);
         return webClient;
     }
 
