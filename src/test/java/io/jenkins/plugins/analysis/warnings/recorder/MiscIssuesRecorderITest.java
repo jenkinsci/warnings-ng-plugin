@@ -572,9 +572,9 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         HtmlPage details = getWebPage(result);
         PropertyTable categories = new PropertyTable(details, "fileName");
-        assertThat(categories).hasTitle("Files");
-        assertThat(categories).hasColumnName("File");
-        assertThat(categories).hasOnlyRows(
+        assertThat(categories.getTitle()).isEqualTo("Files");
+        assertThat(categories.getColumnName()).isEqualTo("File");
+        assertThat(categories.getRows()).containsExactly(
                 new PropertyRow("AjcParser.java", 2, 100),
                 new PropertyRow("FindBugsParser.java", 1, 50),
                 new PropertyRow("SonarQubeParser.java", 2, 100));
