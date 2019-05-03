@@ -1,7 +1,7 @@
 language: java
 jdk: oraclejdk8
 install : true
-script: mvn -B -V clean verify jacoco:prepare-agent test failsafe:integration-test jacoco:report -Djenkins.version=2.150.1
+script: mvn -B -V clean verify jacoco:prepare-agent test failsafe:integration-test jacoco:report
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 
