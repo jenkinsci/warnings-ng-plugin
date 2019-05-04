@@ -21,6 +21,9 @@ Additional new features:
 Added a parser for CMake warnings.
 - [PR#137](https://github.com/jenkinsci/analysis-model/pull/137):
 Added a parser for JSON output from Cargo.
+- [JENKINS-56510](https://issues.jenkins-ci.org/browse/JENKINS-56510),
+[PR#154](https://github.com/jenkinsci/analysis-model/pull/154): 
+Added a generic parser that reads all properties of the internal `Issue` object.
 
 ### Fixed
 
