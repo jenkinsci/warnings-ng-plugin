@@ -17,10 +17,12 @@ Additional new features:
  Support for [IBLinter](https://github.com/IBDecodable/IBLinter) - Xcode Storyboard Linter
 - [PR#21](https://github.com/jenkinsci/warnings-ng-plugin/pull/21):
  Support for [PHPStan](https://github.com/phpstan/phpstan) - PHP Static Analysis Tool 
+- [PR#20](https://github.com/jenkinsci/warnings-ng-plugin/pull/20):
+ Support for [Axivion Suite](https://www.axivion.com/en/produkte-60)
 - [PR#132](https://github.com/jenkinsci/analysis-model/pull/132): 
-Added a parser for CMake warnings.
+Support for CMake warnings.
 - [PR#137](https://github.com/jenkinsci/analysis-model/pull/137):
-Added a parser for JSON output from Cargo.
+Support for JSON output from Cargo.
 - [JENKINS-56510](https://issues.jenkins-ci.org/browse/JENKINS-56510),
 [PR#154](https://github.com/jenkinsci/analysis-model/pull/154): 
 Added a generic parser that reads all properties of the internal `Issue` object.
@@ -44,7 +46,6 @@ then select the issue with the same fingerprint as the outstanding issue.
 
 ### Removed
 
-- \[API\]: Removed deprecated getters for `Thresholds`.
 - \[API\]: Removed trend chart aggregation methods.
 
 ## [4.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.3...warnings-ng-4.0.0) - 2019-3-15
