@@ -24,7 +24,7 @@ class LinesChartModelTest {
     @Test
     void testEmptyCtor() {
         LinesChartModel model = new LinesChartModel();
-        assertThat(model.getId()).isEqualTo("");
+        assertThat(model.getId()).isEmpty();
         assertThat(model.getSeries()).isEmpty();
         assertThat(model.getXAxisLabels()).isEmpty();
     }
