@@ -1,12 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.groovy;
 
-import java.util.Optional;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
@@ -16,13 +15,12 @@ import edu.hm.hafner.analysis.Report;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("deprecation")
-class DynamicDocumentParser extends edu.hm.hafner.analysis.RegexpDocumentParser {
+class DynamicDocumentParser extends IssueParser {
     private static final long serialVersionUID = -690643673847390322L;
+    private final Pattern pattern;
     private static final int NO_LINE_NUMBER_AVAILABLE = 0;
     
     private final GroovyExpressionMatcher expressionMatcher;
-    private String fileName = StringUtils.EMPTY;
 
     /**
      * Creates a new instance of {@link DynamicDocumentParser}.
@@ -33,21 +31,28 @@ class DynamicDocumentParser extends edu.hm.hafner.analysis.RegexpDocumentParser 
      *         Groovy script
      */
     DynamicDocumentParser(final String regexp, final String script) {
-        super(regexp, true);
+        super();
 
+        pattern = Pattern.compile(regexp, Pattern.MULTILINE);
         expressionMatcher = new GroovyExpressionMatcher(script);
+
     }
 
     @Override
     public Report parse(final ReaderFactory reader) throws ParsingException {
-        fileName = reader.getFileName();
+        Report report = new Report();
+        Matcher matcher = pattern.matcher(reader.readString() + "\n");
 
-        return super.parse(reader);
-    }
+        while (matcher.find()) {
+            expressionMatcher.createIssue(
+                    matcher, new IssueBuilder(), NO_LINE_NUMBER_AVAILABLE, reader.getFileName())
+                    .ifPresent(report::add);
 
-    @Override
-    protected Optional<Issue> createIssue(final Matcher matcher, final IssueBuilder builder) {
-        return expressionMatcher.createIssue(matcher, builder, NO_LINE_NUMBER_AVAILABLE, fileName);
+            if (Thread.interrupted()) {
+                throw new ParsingCanceledException();
+            }
+        }
+        return report;
     }
 }
 

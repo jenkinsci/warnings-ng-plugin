@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.charts;
 
+import java.util.Objects;
+
 /**
  * UI model for an ECharts pie chart.
  * <p>
@@ -31,5 +33,22 @@ public class PieData {
 
     public String getName() {
         return name;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        PieData pieData = (PieData) o;
+        return value == pieData.value && Objects.equals(name, pieData.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(value, name);
     }
 }

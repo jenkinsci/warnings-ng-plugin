@@ -99,7 +99,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     private IssueRow getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPageWithJs(result);
         IssuesTable issues = new IssuesTable(details);
         return issues.getRow(rowNumber);
     }
@@ -173,14 +173,13 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThatLogContains(result.getOwner(), "0 copied");
+        String consoleLog = getConsoleLog(result);
+        assertThat(consoleLog).contains("0 copied");
         if (Functions.isWindows()) { // On Windows a file without read permissions does not exist!
-            assertThatLogContains(result.getOwner(), "4 not-found");
-            assertThatLogContains(result.getOwner(), "0 with I/O error");
+            assertThat(consoleLog).contains("4 not-found", "0 with I/O error");
         }
         else {
-            assertThatLogContains(result.getOwner(), "3 not-found");
-            assertThatLogContains(result.getOwner(), "1 with I/O error");
+            assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
         }
     }
 
@@ -191,9 +190,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     public void shouldFindAffectedFilesWhereasThreeFilesAreNotFound() {
         AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT, SOURCE_FILE);
 
-        assertThatLogContains(result.getOwner(), "1 copied");
-        assertThatLogContains(result.getOwner(), "3 not-found");
-        assertThatLogContains(result.getOwner(), "0 with I/O error");
+        assertThat(getConsoleLog(result)).contains("1 copied", "3 not-found", "0 with I/O error");
     }
 
     /**
@@ -206,12 +203,9 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
-        assertThatLogContains(result.getOwner(), "0 copied");
-        assertThatLogContains(result.getOwner(), "1 not in workspace");
-        assertThatLogContains(result.getOwner(), "0 not-found");
-        assertThatLogContains(result.getOwner(), "0 with I/O error");
+        assertThat(getConsoleLog(result)).contains("0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPageWithJs(result);
         IssuesTable issues = new IssuesTable(details);
         assertThat(issues.getColumnNames()).containsExactly(
                 IssueRow.DETAILS, IssueRow.FILE, IssueRow.PRIORITY, IssueRow.AGE);
@@ -242,9 +236,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     public void shouldFindOneAffectedFile() {
         AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT_ONE_AFFECTED_FILE, SOURCE_FILE);
 
-        assertThatLogContains(result.getOwner(), "1 copied");
-        assertThatLogContains(result.getOwner(), "0 not-found");
-        assertThatLogContains(result.getOwner(), "0 with I/O error");
+        assertThat(getConsoleLog(result)).contains("1 copied", "0 not-found", "0 with I/O error");
     }
 
     private Issue getIssueWithSource(final AnalysisResult result) {

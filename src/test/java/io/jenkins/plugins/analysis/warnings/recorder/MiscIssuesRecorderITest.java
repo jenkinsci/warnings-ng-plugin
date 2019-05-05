@@ -141,7 +141,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         configuration.setName(name);
         enableGenericWarnings(project, configuration);
 
-        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
 
         ResultAction action = getResultAction(build);
         assertThat(action.getId()).isEqualTo(id);
@@ -207,7 +207,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
                 createTool(new Pmd(), "**/pmd-warnings-issues.txt"));
 
-        return getAnalysisResults(buildWithStatus(project, Result.SUCCESS));
+        return getAnalysisResults(buildWithResult(project, Result.SUCCESS));
     }
 
     /**
@@ -226,7 +226,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
                 createTool(new Pmd(), "**/pmd-warnings-issues.txt"));
 
-        AnalysisResult result = getAnalysisResult(buildWithStatus(project, Result.SUCCESS));
+        AnalysisResult result = getAnalysisResult(buildWithResult(project, Result.SUCCESS));
         assertThat(result).hasTotalSize(0);
         assertThat(result.getSizePerOrigin()).containsExactly(entry("checkstyle", 0), entry("pmd", 0));
         assertThat(result).hasId("analysis");
@@ -239,10 +239,10 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldThrowExceptionIfSameToolIsConfiguredTwice() {
         Run<?, ?> build = runJobWithCheckStyleTwice(false, Result.FAILURE);
-        assertThatLogContains(build, "ID checkstyle is already used by another action: "
-                + "io.jenkins.plugins.analysis.core.model.ResultAction for CheckStyle");
 
         AnalysisResult result = getAnalysisResult(build);
+        assertThat(getConsoleLog(result)).contains("ID checkstyle is already used by another action: "
+                + "io.jenkins.plugins.analysis.core.model.ResultAction for CheckStyle");
         assertThat(result).hasId("checkstyle");
         assertThat(result).hasTotalSize(6);
     }
@@ -259,7 +259,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         second.setId("second");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(false), first, second);
 
-        Run<?, ?> build = buildWithStatus(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
 
         List<AnalysisResult> results = getAnalysisResults(build);
         assertThat(results).hasSize(2);
@@ -289,7 +289,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 createTool(new CheckStyle(), "**/checkstyle-issues.txt"),
                 createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt"));
 
-        return buildWithStatus(project, result);
+        return buildWithResult(project, result);
     }
 
     /**
@@ -419,7 +419,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     public void shouldFindNewCheckStyleWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
 
-        buildWithStatus(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
+        buildWithResult(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
 
         IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "**/checkstyle1*"));
 
@@ -441,7 +441,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     private void verifyDetails(final AnalysisResult result) {
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPageWithJs(result);
 
         PropertyTable categories = new PropertyTable(details, "category");
         assertThat(categories.getTitle()).isEqualTo("Categories");
@@ -464,14 +464,14 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.TYPE, IssueRow.PRIORITY, IssueRow.AGE);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
-                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 2),
-                new IssueRow("CsharpNamespaceDetector.java:29", "-", "Sizes", "LineLengthCheck", "High", 1),
-                new IssueRow("CsharpNamespaceDetector.java:30", "-", "Blocks", "RightCurlyCheck", "High", 1),
-                new IssueRow("CsharpNamespaceDetector.java:37", "-", "Blocks", "RightCurlyCheck", "High", 1));
+                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "Error", 2),
+                new IssueRow("CsharpNamespaceDetector.java:29", "-", "Sizes", "LineLengthCheck", "Error", 1),
+                new IssueRow("CsharpNamespaceDetector.java:30", "-", "Blocks", "RightCurlyCheck", "Error", 1),
+                new IssueRow("CsharpNamespaceDetector.java:37", "-", "Blocks", "RightCurlyCheck", "Error", 1));
     }
 
     private void verifyBaselineDetails(final AnalysisResult baseline) {
-        HtmlPage baselineDetails = getWebPage(baseline);
+        HtmlPage baselineDetails = getWebPageWithJs(baseline);
 
         PropertyTable categories = new PropertyTable(baselineDetails, "category");
         assertThat(categories.getTitle()).isEqualTo("Categories");
@@ -492,9 +492,9 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.TYPE, IssueRow.PRIORITY, IssueRow.AGE);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
-                new IssueRow("CsharpNamespaceDetector.java:17", "-", "Design", "DesignForExtensionCheck", "High", 1),
-                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "High", 1),
-                new IssueRow("CsharpNamespaceDetector.java:42", "-", "Sizes", "LineLengthCheck", "High", 1));
+                new IssueRow("CsharpNamespaceDetector.java:17", "-", "Design", "DesignForExtensionCheck", "Error", 1),
+                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "Error", 1),
+                new IssueRow("CsharpNamespaceDetector.java:42", "-", "Sizes", "LineLengthCheck", "Error", 1));
     }
 
     /**
@@ -520,7 +520,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     public void shouldNotRunWhenResultIsFailure() {
         FreeStyleProject project = createCheckStyleProjectWithFailureStep(false);
 
-        Run<?, ?> run = buildWithStatus(project, Result.FAILURE);
+        Run<?, ?> run = buildWithResult(project, Result.FAILURE);
         assertThat(getAnalysisResults(run)).isEmpty();
     }
 
@@ -570,7 +570,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         assertThat(result).hasTotalSize(5);
 
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPageWithJs(result);
         PropertyTable categories = new PropertyTable(details, "fileName");
         assertThat(categories.getTitle()).isEqualTo("Files");
         assertThat(categories.getColumnName()).isEqualTo("File");

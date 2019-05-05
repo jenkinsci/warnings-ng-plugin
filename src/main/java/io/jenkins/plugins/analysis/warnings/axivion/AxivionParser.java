@@ -12,7 +12,6 @@ import net.sf.json.JSONObject;
  * Is aware of how to parse json payloads according to different issue kinds.
  */
 class AxivionParser implements Serializable {
-
     private static final long serialVersionUID = -1055658369957572701L;
 
     private final String projectUrl;

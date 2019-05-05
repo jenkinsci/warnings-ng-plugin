@@ -7,7 +7,7 @@ node {
         def mvnHome = tool 'mvn-default'
 
         sh "${mvnHome}/bin/mvn --batch-mode -V -U -e clean verify -DskipTests"
-        sh "${mvnHome}/bin/mvn -batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs"
+        sh "${mvnHome}/bin/mvn --batch-mode -V -U -e checkstyle:checkstyle pmd:pmd pmd:cpd spotbugs:spotbugs"
 
         recordIssues tools: [java(), javaDoc(), 
             checkStyle(), spotBugs(pattern: 'target/spotbugsXml.xml'), pmdParser(pattern: 'target/pmd.xml'), cpd(pattern: 'target/cpd.xml'),

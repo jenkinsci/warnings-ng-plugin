@@ -40,7 +40,6 @@ public class HealthReportBuilder {
         for (Severity severity : Severity.collectSeveritiesFrom(healthDescriptor.getMinimumSeverity())) {
             relevantIssuesSize += sizePerSeverity.getOrDefault(severity, 0);
         }
-        relevantIssuesSize += sizePerSeverity.getOrDefault(Severity.ERROR, 0);
 
         if (healthDescriptor.isValid()) {
             int percentage;
@@ -54,7 +53,7 @@ public class HealthReportBuilder {
                     percentage = 0;
                 }
                 else {
-                    percentage = 100 - ((relevantIssuesSize - healthy) * 100 / (unhealthy - healthy));
+                    percentage = 100 - ((relevantIssuesSize - healthy + 1) * 100 / (unhealthy - healthy + 2));
                 }
             }
 

@@ -17,12 +17,27 @@ Additional new features:
  Support for [IBLinter](https://github.com/IBDecodable/IBLinter) - Xcode Storyboard Linter
 - [PR#21](https://github.com/jenkinsci/warnings-ng-plugin/pull/21):
  Support for [PHPStan](https://github.com/phpstan/phpstan) - PHP Static Analysis Tool 
+- [PR#20](https://github.com/jenkinsci/warnings-ng-plugin/pull/20):
+ Support for [Axivion Suite](https://www.axivion.com/en/produkte-60)
+- [PR#132](https://github.com/jenkinsci/analysis-model/pull/132): 
+Support for CMake warnings.
+- [PR#137](https://github.com/jenkinsci/analysis-model/pull/137):
+Support for JSON output from Cargo.
+- [JENKINS-56510](https://issues.jenkins-ci.org/browse/JENKINS-56510),
+[PR#154](https://github.com/jenkinsci/analysis-model/pull/154): 
+Added a generic parser that reads all properties of the internal `Issue` object.
 
 ### Fixed
 
 - Added missing dependency to JSON-Smart library.
+- [JENKINS-56484](https://issues.jenkins-ci.org/browse/JENKINS-56484),
+[analysis-model-PR#19](https://github.com/jenkinsci/analysis-model/pull/130): 
+Filter TimeStamper Console log decorations
 - [PR#19](https://github.com/jenkinsci/warnings-ng-plugin/pull/19): Use `BuildStepMonitor.NONE` in step 
 to allow for higher concurrency.
+- [JENKINS-56324](https://issues.jenkins-ci.org/browse/JENKINS-56324): 
+If an issue in the current build is equal to several issues in the reference build 
+then select the issue with the same fingerprint as the outstanding issue. 
 
 ### Changed
 
@@ -31,7 +46,6 @@ to allow for higher concurrency.
 
 ### Removed
 
-- \[API\]: Removed deprecated getters for `Thresholds`.
 - \[API\]: Removed trend chart aggregation methods.
 
 ## [4.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-3.0.3...warnings-ng-4.0.0) - 2019-3-15

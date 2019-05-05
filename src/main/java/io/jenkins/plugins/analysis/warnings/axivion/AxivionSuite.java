@@ -48,10 +48,9 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 
 /** Provides a parser and customized messages for the Axivion Suite. */
-public class AxivionSuite extends Tool {
-
+public final class AxivionSuite extends Tool {
     private static final long serialVersionUID = 967222727302169818L;
-    static final String ID = "axivion-suite";
+    private static final String ID = "axivion-suite";
 
     private String projectUrl = StringUtils.EMPTY;
     private String credentialsId = StringUtils.EMPTY;
@@ -105,11 +104,11 @@ public class AxivionSuite extends Tool {
             throws ParsingException, ParsingCanceledException {
 
         AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials());
-        AxivionParser parser = new AxivionParser(projectUrl, expandBaseDir(run, this.basedir));
+        AxivionParser parser = new AxivionParser(projectUrl, expandBaseDir(run, basedir));
 
         Report report = new Report();
-        report.logInfo("Axivion webservice: " + this.projectUrl);
-        report.logInfo("Local basedir: " + this.basedir);
+        report.logInfo("Axivion webservice: " + projectUrl);
+        report.logInfo("Local basedir: " + basedir);
 
         for (AxIssueKind kind : AxIssueKind.values()) {
             JSONObject payload = dashboard.getIssues(kind);
@@ -226,7 +225,7 @@ public class AxivionSuite extends Tool {
          * @return {@link FormValidation#ok()} if credentials exist and are valid
          */
         public FormValidation doCheckCredentialsId(
-                @AncestorInPath Item item, @QueryParameter String credentialsId) {
+                @AncestorInPath final Item item, @QueryParameter final String credentialsId) {
             if (StringUtils.isBlank(credentialsId)) {
                 return FormValidation.error("You have to provide credentials.");
             }
@@ -266,7 +265,7 @@ public class AxivionSuite extends Tool {
          * @return a list view of all credential ids
          */
         public ListBoxModel doFillCredentialsIdItems(
-                @AncestorInPath Item item, @QueryParameter String credentialsId) {
+                @AncestorInPath final Item item, @QueryParameter final String credentialsId) {
             StandardListBoxModel result = new StandardListBoxModel();
             if (item == null) {
                 if (!new JenkinsFacade().hasPermission(Jenkins.ADMINISTER)) {

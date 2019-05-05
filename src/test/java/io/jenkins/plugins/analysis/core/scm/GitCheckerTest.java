@@ -15,6 +15,7 @@ import hudson.model.Saveable;
 import hudson.model.TaskListener;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.GitSCMExtension;
+import hudson.plugins.git.extensions.GitSCMExtensionDescriptor;
 import hudson.plugins.git.extensions.impl.CloneOption;
 import hudson.scm.NullSCM;
 import hudson.util.DescribableList;
@@ -28,7 +29,6 @@ import static org.mockito.Mockito.*;
  * @author Andreas Pabst
  */
 class GitCheckerTest {
-
     @Test
     void shouldDetermineIfSCMIsGit() {
         GitChecker gitChecker = new GitChecker();
@@ -43,7 +43,8 @@ class GitCheckerTest {
         TaskListener taskListener = mock(TaskListener.class);
         when(taskListener.getLogger()).thenReturn(logger);
 
-        DescribableList describableList = mock(DescribableList.class);
+        DescribableList<GitSCMExtension, GitSCMExtensionDescriptor> describableList
+                = new DescribableList<>(Saveable.NOOP);
         GitSCM gitSCM = mock(GitSCM.class);
         when(gitSCM.getExtensions()).thenReturn(describableList);
 
@@ -71,7 +72,9 @@ class GitCheckerTest {
         when(shallowCloneOption.isShallow()).thenReturn(true);
 
         GitSCM gitSCM = mock(GitSCM.class);
-        when(gitSCM.getExtensions()).thenReturn(new DescribableList(Saveable.NOOP, Lists.list(shallowCloneOption)));
+        DescribableList<GitSCMExtension, GitSCMExtensionDescriptor> extensions
+                = new DescribableList<>(Saveable.NOOP, Lists.list(shallowCloneOption));
+        when(gitSCM.getExtensions()).thenReturn(extensions);
 
         Run run = mock(Run.class);
         GitChecker gitChecker = new GitChecker();
@@ -79,7 +82,7 @@ class GitCheckerTest {
     }
 
     @Test
-    void shouldCreateNullBlamerOnError() throws Exception {
+    void shouldCreateNullBlamerOnError() throws IOException, InterruptedException {
         GitChecker gitChecker = new GitChecker();
         TaskListener taskListener = mock(TaskListener.class);
         Run run = mock(Run.class);

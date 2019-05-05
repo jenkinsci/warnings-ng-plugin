@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.List;
-import java.util.Locale;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.collections.api.list.ImmutableList;
@@ -9,15 +8,12 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static j2html.TagCreator.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -25,16 +21,9 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
-class DetailsTableModelTest {
-    private static final String DESCRIPTION
-            = join("Hello description with", a().withHref("url").withText("link")).render();
-    private static final String MESSAGE
-            = join("Hello message with", a().withHref("url").withText("link")).render();
-
+class DetailsTableModelTest extends AbstractDetailsModelTest {
     @Test
     void shouldConvertIssuesToArrayWithAllColumns() {
-        Locale.setDefault(Locale.ENGLISH);
-
         DetailsTableModel model = createModel();
 
         Report report = new Report();
@@ -72,8 +61,6 @@ class DetailsTableModelTest {
 
     @Test
     void shouldShowOnlyColumnsWithMeaningfulContent() {
-        Locale.setDefault(Locale.ENGLISH);
-
         DetailsTableModel model = createModel();
 
         ImmutableList<Issue> issues = Lists.immutable.of(createIssue(1));
@@ -95,22 +82,6 @@ class DetailsTableModelTest {
         when(report.hasTypes()).thenReturn(true);
         assertThat(model.getHeaders(report)).hasSize(7).contains("Package", "Category", "Type");
         assertThat(model.getWidths(report)).hasSize(7);
-    }
-
-    private IssueBuilder createBuilder() {
-        return new IssueBuilder().setMessage(MESSAGE);
-    }
-
-    private Issue createIssue(final int index) {
-        IssueBuilder builder = createBuilder();
-        builder.setFileName("/path/to/file-" + index)
-                .setPackageName("package-" + index)
-                .setCategory("category-" + index)
-                .setType("type-" + index)
-                .setLineStart(15)
-                .setSeverity(Severity.WARNING_HIGH)
-                .setReference("1");
-        return builder.build();
     }
 }
 
