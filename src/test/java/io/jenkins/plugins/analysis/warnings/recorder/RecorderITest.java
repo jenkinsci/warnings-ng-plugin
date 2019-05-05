@@ -2,18 +2,10 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.Timeout;
-import org.jvnet.hudson.test.JenkinsRule.WebClient;
-import org.xml.sax.SAXException;
-
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
-import hudson.model.Job;
 import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -32,29 +24,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Florian Hageneders
  */
 public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
-    private WebClient client;
-
-    /**
-     * Timeout for all tests.
-     */
-    @Rule
-    public Timeout timeout = Timeout.seconds(60);
-
-    /**
-     * Initializes the single webClient to use for all tests.
-     */
-    @Before
-    public void init() {
-        if (client == null) {
-            client = getJenkins().createWebClient();
-            client.setJavaScriptEnabled(true);
-            client.getOptions().setCssEnabled(true);
-            client.getOptions().setDownloadImages(false);
-            client.getOptions().setUseInsecureSSL(true);
-            client.setCssErrorHandler(new com.gargoylesoftware.htmlunit.SilentCssErrorHandler());
-        }
-    }
-
     /**
      * Filter half of the warnings of an freestyle job to achieve a medium quality gate status.
      *
@@ -278,7 +247,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
      *         When clicking or typing on the page fails.
      */
     private ConfigurationForm setUpFreeStyleJob(final FreeStyleProject job) throws IOException {
-        ConfigurationForm config = new ConfigurationForm(loadWebPage(job, "configure"));
+        ConfigurationForm config = new ConfigurationForm(getWebPage(JsSupport.JS_ENABLED, job, "configure"));
         config.setReportFilePattern("**/*.txt");
         config.setDisableBlame(true);
         config.addQualityGates(5, 10);
@@ -299,7 +268,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
      *         When clicking or typing on the page fails.
      */
     private ConfigurationForm setUpPipelineJob(final WorkflowJob job) throws IOException {
-        ConfigurationForm config = new ConfigurationForm(loadWebPage(job, "configure"));
+        ConfigurationForm config = new ConfigurationForm(getWebPage(JsSupport.JS_ENABLED, job, "configure"));
         //config.initialize();
         config.setPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"
@@ -314,24 +283,5 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         submit(config.getForm());
 
         return config;
-    }
-
-    /**
-     * Custom web page loading that uses the static webclient.
-     *
-     * @param job
-     *         Job to load a page from.
-     * @param relative
-     *         Page relative to the job.
-     *
-     * @return Loaded web page.
-     */
-    private HtmlPage loadWebPage(final Job job, final String relative) {
-        try {
-            return client.getPage(job, relative);
-        }
-        catch (SAXException | IOException e) {
-            throw new AssertionError(e);
-        }
     }
 }

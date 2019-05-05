@@ -92,14 +92,15 @@ public abstract class IntegrationTest extends ResourceTest {
 
     static WebClient create(final boolean isJavaScriptEnabled) {
         WebClient webClient = IntegrationTestWithJenkinsPerSuite.JENKINS_PER_SUITE.createWebClient();
-        webClient.setJavaScriptEnabled(isJavaScriptEnabled);
-        webClient.getCookieManager().setCookiesEnabled(isJavaScriptEnabled);
         webClient.setCssErrorHandler(new SilentCssErrorHandler());
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.SEVERE);
         webClient.setIncorrectnessListener((s, o) -> {
         });
-        webClient.getCookieManager().setCookiesEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
+
+        webClient.setJavaScriptEnabled(isJavaScriptEnabled);
+        webClient.getCookieManager().setCookiesEnabled(isJavaScriptEnabled);
+        webClient.getOptions().setCssEnabled(isJavaScriptEnabled);
+
         webClient.getOptions().setDownloadImages(false);
         webClient.getOptions().setUseInsecureSSL(true);
         webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
