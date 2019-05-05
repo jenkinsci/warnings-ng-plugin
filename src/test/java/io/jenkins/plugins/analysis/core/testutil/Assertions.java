@@ -3,9 +3,11 @@ package io.jenkins.plugins.analysis.core.testutil;
 import org.jfree.data.category.CategoryDataset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 
 import hudson.util.FormValidation;
+
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BuildInfoPage;
 
 /**
  * Custom assertions for {@link FormValidation} instances.
@@ -52,4 +54,16 @@ public class Assertions extends edu.hm.hafner.analysis.assertj.Assertions {
     public static FormValidationAssert assertThat(final FormValidation actual) {
         return new FormValidationAssert(actual);
     }
+
+    /**
+     * Creates a new instance of <code>{@link io.jenkins.plugins.analysis.warnings.recorder.pageobj.BuildInfoPageAssert}</code>.
+     *
+     * @param actual the actual value.
+     * @return the created assertion object.
+     */
+    @org.assertj.core.util.CheckReturnValue
+    public static BuildInfoPageAssert assertThat(final BuildInfoPage actual) {
+        return new BuildInfoPageAssert(actual);
+    }
+
 }
