@@ -11,11 +11,13 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 import edu.hm.hafner.analysis.Severity;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import static org.assertj.core.api.Assertions.assertThat;
 
 import hudson.model.FreeStyleProject;
+
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Verifies the UI configuration of the {@link IssuesRecorder}.
@@ -47,7 +49,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
             tool.setAggregatingResults(true);
         });
 
-        HtmlPage configPage = getWebPage(job, "configure");
+        HtmlPage configPage = getWebPage(JsSupport.NO_JS, job, "configure");
         HtmlForm form = configPage.getFormByName("config");
 
         verifyAndChangeEntry(form, "sourceCodeEncoding", "sourceCodeEncoding");

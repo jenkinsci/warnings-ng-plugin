@@ -67,7 +67,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         );
 
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPage(JsSupport.NO_JS, result);
 
         verifyNamespaces(details,
                 new PropertyRow("edu.hm.hafner.analysis._123.int.naming.structure", 1),
@@ -89,7 +89,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java"
         );
 
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPage(JsSupport.NO_JS, result);
 
         verifyPackages(details,
                 new PropertyRow("-", 5, 100),
@@ -107,7 +107,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithNestedAndNormalNamespace.cs",
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs");
 
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPage(JsSupport.NO_JS, result);
 
         verifyNamespaces(details,
                 new PropertyRow("SampleClassWithNamespace", 1),

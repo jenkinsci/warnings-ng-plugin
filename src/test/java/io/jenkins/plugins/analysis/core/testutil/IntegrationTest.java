@@ -47,6 +47,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
+import hudson.model.Item;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.Slave;
@@ -86,6 +87,36 @@ public abstract class IntegrationTest extends ResourceTest {
     protected static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
     private static final String WINDOWS_FILE_DENY = "/deny";
+
+    public enum JsSupport {JS_ENABLED, NO_JS}
+
+    static WebClient create(final boolean isJavaScriptEnabled) {
+        WebClient webClient = IntegrationTestWithJenkinsPerSuite.JENKINS_PER_SUITE.createWebClient();
+        webClient.setJavaScriptEnabled(isJavaScriptEnabled);
+        webClient.getCookieManager().setCookiesEnabled(isJavaScriptEnabled);
+        webClient.setCssErrorHandler(new SilentCssErrorHandler());
+        java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.SEVERE);
+        webClient.setIncorrectnessListener((s, o) -> {
+        });
+        webClient.getCookieManager().setCookiesEnabled(false);
+        webClient.getOptions().setCssEnabled(false);
+        webClient.getOptions().setDownloadImages(false);
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setPrintContentOnFailingStatusCode(false);
+
+        return webClient;
+    }
+
+    /**
+     * Returns the Jenkins rule to manage the Jenkins instance.
+     *
+     * @return Jenkins rule
+     */
+    protected abstract JenkinsRule getJenkins();
+
+    protected abstract WebClient getWebClient(final JsSupport javaScriptSupport);
 
     /**
      * Creates a file with the specified content in the workspace.
@@ -473,13 +504,6 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Returns the Jenkins rule to manage the Jenkins instance.
-     *
-     * @return Jenkins rule
-     */
-    protected abstract JenkinsRule getJenkins();
-
-    /**
      * Enables an {@link Eclipse} recorder for the specified project.
      *
      * @param project
@@ -840,6 +864,8 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Returns the HTML page content of the specified URL for a given job.
      *
+     *
+     * @param javaScriptSupport
      * @param job
      *         the job that owns the URL
      * @param relativeUrl
@@ -847,9 +873,9 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final AbstractProject<?, ?> job, final String relativeUrl) {
+    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final Item job, final String relativeUrl) {
         try {
-            return createWebClient().getPage(job, relativeUrl);
+            return getWebClient(javaScriptSupport).getPage(job, relativeUrl);
         }
         catch (SAXException | IOException e) {
             throw new AssertionError(e);
@@ -859,30 +885,33 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Returns the HTML page content of the specified job.
      *
+     * @param javaScriptSupport
      * @param job
      *         the job to show the page for
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final AbstractProject<?, ?> job) {
-        return getWebPage(job, StringUtils.EMPTY);
+    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final Item job) {
+        return getWebPage(javaScriptSupport, job, StringUtils.EMPTY);
     }
 
     /**
      * Returns the HTML page content of the specified build.
      *
+     * @param javaScriptSupport
      * @param build
      *         the build to show the page for
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final Run<?, ?> build) {
-        return getWebPage(build, StringUtils.EMPTY);
+    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final Run<?, ?> build) {
+        return getWebPage(javaScriptSupport, build, StringUtils.EMPTY);
     }
 
     /**
      * Returns the HTML page content of the specified URL for a given build.
      *
+     * @param javaScriptSupport
      * @param build
      *         the build to show the page for
      * @param relativeUrl
@@ -890,29 +919,9 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final Run<?, ?> build, final String relativeUrl) {
-        return getWebPage(build, relativeUrl, false);
-    }
-
-    /**
-     * Returns the HTML page content of the specified URL for a given build.
-     *
-     * @param build
-     *         the build to show the page for
-     * @param relativeUrl
-     *         the relative URL within the job
-     * @param isJavaScriptEnabled
-     *         determines whether Java Script is enabled
-     *
-     * @return the HTML page
-     */
-    protected HtmlPage getWebPage(final Run<?, ?> build, final String relativeUrl, final boolean isJavaScriptEnabled) {
+    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final Run<?, ?> build, final String relativeUrl) {
         try {
-            WebClient webClient = createWebClient();
-            webClient.setJavaScriptEnabled(isJavaScriptEnabled);
-            webClient.getCookieManager().setCookiesEnabled(isJavaScriptEnabled);
-
-            return webClient.getPage(build, relativeUrl);
+            return getWebClient(javaScriptSupport).getPage(build, relativeUrl);
         }
         catch (SAXException | IOException e) {
             throw new AssertionError(e);
@@ -922,6 +931,7 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Returns the HTML page content of the specified URL for a given analysis result.
      *
+     * @param javaScriptSupport
      * @param result
      *         the analysis result to show the sub page for
      * @param relativeUrl
@@ -929,46 +939,22 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final AnalysisResult result, final String relativeUrl) {
-        return getWebPage(result.getOwner(), result.getId() + "/" + relativeUrl);
+    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final AnalysisResult result,
+            final String relativeUrl) {
+        return getWebPage(JsSupport.NO_JS, result.getOwner(), result.getId() + "/" + relativeUrl);
     }
 
     /**
      * Returns the HTML page content of the specified analysis result.
      *
+     * @param javaScriptSupport
      * @param result
      *         the analysis result to show
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPageWithJs(final AnalysisResult result) {
-        return getWebPage(result.getOwner(), result.getId(), true);
-    }
-
-    /**
-     * Returns the HTML page content of the specified analysis result.
-     *
-     * @param result
-     *         the analysis result to show
-     *
-     * @return the HTML page
-     */
-    protected HtmlPage getWebPage(final AnalysisResult result) {
-        return getWebPage(result.getOwner(), result.getId());
-    }
-
-    private WebClient createWebClient() {
-        WebClient webClient = getJenkins().createWebClient();
-        webClient.setCssErrorHandler(new SilentCssErrorHandler());
-        java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.SEVERE);
-        webClient.setIncorrectnessListener((s, o) -> {
-        });
-        webClient.getCookieManager().setCookiesEnabled(false);
-        webClient.getOptions().setCssEnabled(false);
-        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
-        webClient.getOptions().setThrowExceptionOnScriptError(false);
-        webClient.getOptions().setPrintContentOnFailingStatusCode(false);
-        return webClient;
+    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final AnalysisResult result) {
+        return getWebPage(javaScriptSupport, result.getOwner(), result.getId());
     }
 
     /**

@@ -99,7 +99,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     private IssueRow getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
-        HtmlPage details = getWebPageWithJs(result);
+        HtmlPage details = getWebPage(JsSupport.JS_ENABLED, result);
         IssuesTable issues = new IssuesTable(details);
         return issues.getRow(rowNumber);
     }
@@ -110,7 +110,9 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
     // TODO: Navigate to source code from details page 
     private HtmlPage getSourceCodePage(final AnalysisResult result) {
-        return getWebPage(result, new FileNameRenderer(result.getOwner()).getSourceCodeUrl(getIssueWithSource(result)));
+        return getWebPage(JsSupport.NO_JS, result,
+                new FileNameRenderer(result.getOwner()).getSourceCodeUrl(getIssueWithSource(result))
+        );
     }
 
     private FreeStyleProject createEclipseProject() {
@@ -205,7 +207,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         assertThat(getConsoleLog(result)).contains("0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
-        HtmlPage details = getWebPageWithJs(result);
+        HtmlPage details = getWebPage(JsSupport.JS_ENABLED, result);
         IssuesTable issues = new IssuesTable(details);
         assertThat(issues.getColumnNames()).containsExactly(
                 IssueRow.DETAILS, IssueRow.FILE, IssueRow.PRIORITY, IssueRow.AGE);

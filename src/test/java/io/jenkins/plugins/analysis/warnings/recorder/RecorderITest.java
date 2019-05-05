@@ -16,6 +16,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Job;
 import hudson.model.Result;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
@@ -44,7 +45,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Before
     public void init() {
-        if (this.client == null) {
+        if (client == null) {
             client = getJenkins().createWebClient();
             client.setJavaScriptEnabled(true);
             client.getOptions().setCssEnabled(true);
@@ -71,10 +72,10 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         setUpFreeStyleJob(job);
 
-        scheduleBuildAndAssertStatus(job, Result.FAILURE);
-        BuildInfoPage result = new BuildInfoPage(loadWebPage(job, "1/java/info"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
+        BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(result).hasInfoMessages(
+        assertThat(infoPage).hasInfoMessages(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 10 issues (skipped 0 duplicates)",
                 "-> WARNING - Total number of issues (any severity): 10 - Quality QualityGate: 5",
@@ -100,10 +101,10 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         setUpFreeStyleJob(job);
 
-        scheduleBuildAndAssertStatus(job, Result.UNSTABLE);
-        BuildInfoPage result = new BuildInfoPage(loadWebPage(job, "1/java/info"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.UNSTABLE);
+        BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(result).hasInfoMessages(
+        assertThat(infoPage).hasInfoMessages(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 9 issues (skipped 0 duplicates)",
                 "-> WARNING - Total number of issues (any severity): 9 - Quality QualityGate: 5",
@@ -129,10 +130,10 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         setUpFreeStyleJob(job);
 
-        scheduleBuildAndAssertStatus(job, Result.SUCCESS);
-        BuildInfoPage result = new BuildInfoPage(loadWebPage(job, "1/java/info"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+        BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(result).hasInfoMessages(
+        assertThat(infoPage).hasInfoMessages(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 1 issue (skipped 0 duplicates)",
                 "-> PASSED - Total number of issues (any severity): 1 - Quality QualityGate: 5",
@@ -158,11 +159,10 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
         setUpFreeStyleJob(job);
 
-        scheduleBuildAndAssertStatus(job, Result.SUCCESS);
-        BuildInfoPage result = new BuildInfoPage(loadWebPage(job, "1/java/info"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+        BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(result).hasInfoMessages(
-                "Skipping blaming as requested in the job configuration",
+        assertThat(infoPage).hasInfoMessages(
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 5",
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 10",
                 "Enabling health report (Healthy=1, Unhealthy=9, Minimum Severity=LOW)",
@@ -181,10 +181,10 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(job, "javac-10-warnings.txt", "javac.txt");
         setUpPipelineJob(job);
 
-        scheduleBuildAndAssertStatus(job, Result.FAILURE);
-        BuildInfoPage result = new BuildInfoPage(loadWebPage(job, "1/java/info"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
+        BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(result).hasInfoMessages(
+        assertThat(infoPage).hasInfoMessages(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 10 issues (skipped 0 duplicates)",
                 "-> WARNING - Total number of issues (any severity): 10 - Quality QualityGate: 5",
@@ -205,10 +205,10 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(job, "javac-9-warnings.txt", "javac.txt");
         setUpPipelineJob(job);
 
-        scheduleBuildAndAssertStatus(job, Result.UNSTABLE);
-        BuildInfoPage result = new BuildInfoPage(loadWebPage(job, "1/java/info"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.UNSTABLE);
+        BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(result).hasInfoMessages(
+        assertThat(infoPage).hasInfoMessages(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 9 issues (skipped 0 duplicates)",
                 "-> WARNING - Total number of issues (any severity): 9 - Quality QualityGate: 5",
@@ -229,10 +229,10 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(job, "javac-1-warnings.txt", "javac.txt");
         setUpPipelineJob(job);
 
-        scheduleBuildAndAssertStatus(job, Result.SUCCESS);
-        BuildInfoPage result = new BuildInfoPage(loadWebPage(job, "1/java/info"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+        BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(result).hasInfoMessages(
+        assertThat(infoPage).hasInfoMessages(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 1 issue (skipped 0 duplicates)",
                 "-> PASSED - Total number of issues (any severity): 1 - Quality QualityGate: 5",
@@ -253,14 +253,18 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(job, "javac-0-warnings.txt", "javac.txt");
         setUpPipelineJob(job);
 
-        scheduleBuildAndAssertStatus(job, Result.SUCCESS);
-        BuildInfoPage result = new BuildInfoPage(loadWebPage(job, "1/java/info"));
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+        BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(result).hasInfoMessages(
+        assertThat(infoPage).hasInfoMessages(
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 5",
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 10",
                 "Enabling health report (Healthy=1, Unhealthy=9, Minimum Severity=LOW)",
                 "-> All quality gates have been passed");
+    }
+
+    private BuildInfoPage createInfoPage(final AnalysisResult result) {
+        return new BuildInfoPage(getWebPage(JsSupport.NO_JS, result, "info"));
     }
 
     /**
@@ -274,7 +278,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
      *         When clicking or typing on the page fails.
      */
     private ConfigurationForm setUpFreeStyleJob(final FreeStyleProject job) throws IOException {
-        ConfigurationForm config = new ConfigurationForm(this.loadWebPage(job, "configure"));
+        ConfigurationForm config = new ConfigurationForm(loadWebPage(job, "configure"));
         config.setReportFilePattern("**/*.txt");
         config.setDisableBlame(true);
         config.addQualityGates(5, 10);
@@ -295,7 +299,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
      *         When clicking or typing on the page fails.
      */
     private ConfigurationForm setUpPipelineJob(final WorkflowJob job) throws IOException {
-        ConfigurationForm config = new ConfigurationForm(this.loadWebPage(job, "configure"));
+        ConfigurationForm config = new ConfigurationForm(loadWebPage(job, "configure"));
         //config.initialize();
         config.setPipelineScript("node {\n"
                 + "  stage ('Integration Test') {\n"

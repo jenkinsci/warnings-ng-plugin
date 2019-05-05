@@ -10,7 +10,7 @@ import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 /**
- * Page object for build informations about a specific tool.
+ * Page object for the information page of a specific tool. This page shows error and information messages.
  *
  * @author Florian Hageneder
  */
@@ -55,8 +55,8 @@ public class BuildInfoPage {
             return false;
         }
         BuildInfoPage that = (BuildInfoPage) o;
-        return Objects.equals(infoMessages, that.infoMessages) &&
-                Objects.equals(errorMessages, that.errorMessages);
+        return Objects.equals(infoMessages, that.infoMessages)
+                && Objects.equals(errorMessages, that.errorMessages);
     }
 
     @Override
