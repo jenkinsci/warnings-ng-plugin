@@ -123,17 +123,17 @@ class BlameFactoryTest {
 
     private Run<?, ?> createRunFor(final Job<?, ?> job) {
         Run build = mock(Run.class);
-        createRunWithEnvironment(job, build, build.getParent());
+        createRunWithEnvironment(job, build);
         return build;
     }
 
     private AbstractBuild createBuildFor(final AbstractProject job) {
         AbstractBuild build = mock(AbstractBuild.class);
-        createRunWithEnvironment(job, build, build.getProject());
+        createRunWithEnvironment(job, build);
         return build;
     }
 
-    private void createRunWithEnvironment(final Job<?, ?> job, final Run build, final Job parent) {
+    private void createRunWithEnvironment(final Job<?, ?> job, final Run build) {
         try {
             EnvVars environment = mock(EnvVars.class);
             when(build.getEnvironment(TaskListener.NULL)).thenReturn(environment);

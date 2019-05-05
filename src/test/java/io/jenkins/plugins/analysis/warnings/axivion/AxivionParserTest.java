@@ -12,8 +12,7 @@ import static org.assertj.core.api.Assertions.*;
  * Issue}'s.
  */
 class AxivionParserTest {
-
-    private AxivionParser parser = new AxivionParser("testUrl", "/root");
+    private final AxivionParser parser = new AxivionParser("testUrl", "/root");
     private final TestDashboard dashboard = new TestDashboard();
 
     @Test

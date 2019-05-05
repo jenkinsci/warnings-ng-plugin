@@ -26,6 +26,7 @@ class RemoteAxivionDashboard implements AxivionDashboard {
     private static final String X_AXIVION_USER_AGENT = "x-axivion-user-agent";
     private static final String API_USER_AGENT = "ApiClient/6.9.3";
     private static final String FALL_USER_AGENT = "AxivionEclipsePlugin/6.9.2";
+    private static final int HTTP_STATUS_OK = 200;
 
     private final String projectUrl;
     private final UsernamePasswordCredentials credentials;
@@ -49,7 +50,7 @@ class RemoteAxivionDashboard implements AxivionDashboard {
             httpget.addHeader(userAgent);
 
             try (CloseableHttpResponse response = client.execute(httpget)) {
-                if (response.getStatusLine().getStatusCode() == 200) {
+                if (response.getStatusLine().getStatusCode() == HTTP_STATUS_OK) {
                     return convertToJson(response);
                 }
             }

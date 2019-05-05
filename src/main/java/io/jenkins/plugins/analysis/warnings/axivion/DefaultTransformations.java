@@ -12,7 +12,6 @@ import net.sf.json.JSONObject;
  * Provides json to generic jenkins issue transformations for all six Axivion violation kinds.
  */
 final class DefaultTransformations {
-
     private DefaultTransformations() {
         throw new InstantiationError("no instances");
     }
@@ -86,9 +85,9 @@ final class DefaultTransformations {
     static Issue createCLIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.CL));
 
-        final JSONObject issue = rawIssue.getPayload();
-        final String cloneType = "type " + issue.getInt("cloneType");
-        final String description =
+        JSONObject issue = rawIssue.getPayload();
+        String cloneType = "type " + issue.getInt("cloneType");
+        String description =
                 "Left part of clone pair"
                         + " of "
                         + (cloneType + " clone")
@@ -111,8 +110,8 @@ final class DefaultTransformations {
     }
 
     static Issue createCYIssue(final AxRawIssue rawIssue) {
-        final JSONObject payload = rawIssue.getPayload();
-        final String description =
+        JSONObject payload = rawIssue.getPayload();
+        String description =
                 "Source: "
                         + payload.getString("sourceEntity")
                         + " Target: "
@@ -138,7 +137,7 @@ final class DefaultTransformations {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.DE));
 
         JSONObject payload = rawIssue.getPayload();
-        final String description =
+        String description =
                 payload.getString("entityType")
                         + "<i>"
                         + payload.getString("entity")
@@ -163,8 +162,8 @@ final class DefaultTransformations {
     static Issue createMVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.MV));
 
-        final JSONObject payload = rawIssue.getPayload();
-        final String description =
+        JSONObject payload = rawIssue.getPayload();
+        String description =
                 payload.getString("entityType")
                         + " <i>"
                         + payload.getString("entity")
@@ -196,8 +195,8 @@ final class DefaultTransformations {
     static Issue createSVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.SV));
 
-        final JSONObject payload = rawIssue.getPayload();
-        final String description =
+        JSONObject payload = rawIssue.getPayload();
+        String description =
                 payload.getString("message")
                         + " <i>"
                         + payload.optString("entity", "")
@@ -219,7 +218,7 @@ final class DefaultTransformations {
     /**
      * Converts dashboard severity to a warnings-ng severity.
      */
-    static Severity parsePriority(final JSONObject issue) {
+    private static Severity parsePriority(final JSONObject issue) {
         String severity = issue.optString("severity", null);
 
         if (severity != null) {
@@ -236,7 +235,7 @@ final class DefaultTransformations {
     /**
      * Creates a link to the issue instance inside the Axivion-Dashboard.
      */
-    static String createLink(final AxRawIssue issue, final int id) {
+    private static String createLink(final AxRawIssue issue, final int id) {
         return "<p><a target=\"_blank\" rel=\"noopener noreferrer\" href=\""
                 + issue.getDashboardUrl()
                 + "/issues/"
