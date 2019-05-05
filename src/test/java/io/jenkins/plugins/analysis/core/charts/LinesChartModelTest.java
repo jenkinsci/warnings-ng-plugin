@@ -27,7 +27,6 @@ class LinesChartModelTest {
         assertThat(model.getId()).isEqualTo("");
         assertThat(model.getSeries()).isEmpty();
         assertThat(model.getXAxisLabels()).isEmpty();
-
     }
 
     @Test
