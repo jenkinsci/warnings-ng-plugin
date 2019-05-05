@@ -39,12 +39,12 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
             tool.addQualityGate(0, QualityGateType.TOTAL, QualityGateResult.FAILURE);
         }, createTool(new Java(), "**/*.txt"));
 
-        setUpFreeStyleJob(job);
+        configure(job);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
         BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(infoPage).hasInfoMessages(
+        assertThat(infoPage.getInfoMessages()).contains(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 10 issues (skipped 0 duplicates)",
                 "-> WARNING - Total number of issues (any severity): 10 - Quality QualityGate: 5",
@@ -68,12 +68,12 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
             tool.addQualityGate(0, QualityGateType.TOTAL, QualityGateResult.FAILURE);
         }, createTool(new Java(), "**/*.txt"));
 
-        setUpFreeStyleJob(job);
+        configure(job);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.UNSTABLE);
         BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(infoPage).hasInfoMessages(
+        assertThat(infoPage.getInfoMessages()).contains(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 9 issues (skipped 0 duplicates)",
                 "-> WARNING - Total number of issues (any severity): 9 - Quality QualityGate: 5",
@@ -97,12 +97,12 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
             tool.addQualityGate(0, QualityGateType.TOTAL, QualityGateResult.FAILURE);
         }, createTool(new Java(), "**/*.txt"));
 
-        setUpFreeStyleJob(job);
+        configure(job);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
         BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(infoPage).hasInfoMessages(
+        assertThat(infoPage.getInfoMessages()).contains(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 1 issue (skipped 0 duplicates)",
                 "-> PASSED - Total number of issues (any severity): 1 - Quality QualityGate: 5",
@@ -126,12 +126,12 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
             tool.addQualityGate(0, QualityGateType.TOTAL, QualityGateResult.FAILURE);
         }, createTool(new Java(), "**/*.txt"));
 
-        setUpFreeStyleJob(job);
+        configure(job);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
         BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(infoPage).hasInfoMessages(
+        assertThat(infoPage.getInfoMessages()).contains(
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 5",
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 10",
                 "Enabling health report (Healthy=1, Unhealthy=9, Minimum Severity=LOW)",
@@ -153,7 +153,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
         BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(infoPage).hasInfoMessages(
+        assertThat(infoPage.getInfoMessages()).contains(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 10 issues (skipped 0 duplicates)",
                 "-> WARNING - Total number of issues (any severity): 10 - Quality QualityGate: 5",
@@ -177,7 +177,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.UNSTABLE);
         BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(infoPage).hasInfoMessages(
+        assertThat(infoPage.getInfoMessages()).contains(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 9 issues (skipped 0 duplicates)",
                 "-> WARNING - Total number of issues (any severity): 9 - Quality QualityGate: 5",
@@ -201,7 +201,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
         BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(infoPage).hasInfoMessages(
+        assertThat(infoPage.getInfoMessages()).contains(
                 "Skipping blaming as requested in the job configuration",
                 "-> found 1 issue (skipped 0 duplicates)",
                 "-> PASSED - Total number of issues (any severity): 1 - Quality QualityGate: 5",
@@ -225,7 +225,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
         BuildInfoPage infoPage = createInfoPage(result);
 
-        assertThat(infoPage).hasInfoMessages(
+        assertThat(infoPage.getInfoMessages()).contains(
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 5",
                 "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 10",
                 "Enabling health report (Healthy=1, Unhealthy=9, Minimum Severity=LOW)",
@@ -246,7 +246,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws IOException
      *         When clicking or typing on the page fails.
      */
-    private ConfigurationForm setUpFreeStyleJob(final FreeStyleProject job) throws IOException {
+    private ConfigurationForm configure(final FreeStyleProject job) throws IOException {
         ConfigurationForm config = new ConfigurationForm(getWebPage(JsSupport.JS_ENABLED, job, "configure"));
         config.setReportFilePattern("**/*.txt");
         config.setDisableBlame(true);
