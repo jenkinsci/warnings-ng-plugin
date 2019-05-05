@@ -64,7 +64,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HealthReport healthReport = project.getBuildHealth();
 
-        assertThat(healthReport.getScore()).isEqualTo(100);
+        assertThat(healthReport.getScore()).isEqualTo(90);
         assertThat(result).hasTotalSize(1);
     }
 
@@ -82,7 +82,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HealthReport healthReport = project.getBuildHealth();
 
-        assertThat(healthReport.getScore()).isEqualTo(0);
+        assertThat(healthReport.getScore()).isEqualTo(10);
         assertThat(result).hasTotalSize(9);
     }
 

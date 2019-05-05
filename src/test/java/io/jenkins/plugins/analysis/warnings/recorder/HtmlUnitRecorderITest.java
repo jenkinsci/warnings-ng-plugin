@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlNumberInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
@@ -35,11 +36,10 @@ public class HtmlUnitRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         InfoPage infoPage = new InfoPage(project);
 
-        assertThat(project.getBuildHealth().getScore()).isEqualTo(0);
+        assertThat(project.getBuildHealth().getScore()).isEqualTo(100);
         assertThat(result.getInfoMessages()).isEqualTo(infoPage.getInfoMessages());
         assertThat(result).hasTotalSize(0);
     }
-
 
     @Test
     public void shouldCreateHealthreportWith1Warnings() {
@@ -47,7 +47,7 @@ public class HtmlUnitRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         InfoPage infoPage = new InfoPage(project);
 
-        assertThat(project.getBuildHealth().getScore()).isEqualTo(0);
+        assertThat(project.getBuildHealth().getScore()).isEqualTo(90);
         assertThat(result.getInfoMessages()).isEqualTo(infoPage.getInfoMessages());
         assertThat(result).hasTotalSize(1);
     }
@@ -59,7 +59,7 @@ public class HtmlUnitRecorderITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         InfoPage infoPage = new InfoPage(project);
 
-        assertThat(project.getBuildHealth().getScore()).isEqualTo(0);
+        assertThat(project.getBuildHealth().getScore()).isEqualTo(10);
         assertThat(result.getInfoMessages()).isEqualTo(infoPage.getInfoMessages());
         assertThat(result).hasTotalSize(9);
     }
@@ -99,8 +99,10 @@ public class HtmlUnitRecorderITest extends IntegrationTestWithJenkinsPerSuite {
 
     private class ConfigPage {
         private final HtmlForm configForm;
+        private final HtmlPage page;
 
         ConfigPage(final FreeStyleProject project) {
+            page = getWebPage(project, "configure");
             configForm = getWebPage(project, "configure").getFormByName("config");
         }
 
