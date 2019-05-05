@@ -5,41 +5,26 @@ import java.util.List;
 
 import com.gargoylesoftware.htmlunit.html.HtmlButton;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
+import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTextArea;
 
 /**
- * Page object for a generic job configuration.
+ * Page object for a configuration of the post build step "Record compiler warnings and static analysis results".
  *
  * @author Florian Hageneder
  */
-public class ConfigurationForm {
-    private final HtmlPage page;
+public class IssueRecorderConfiguration {
     private final HtmlForm form;
 
     /**
      * Creates a page object for the given configuration page.
      *
      * @param page
-     *         Fetched configuration html page.
+     *         fetched configuration html page.
      */
-    public ConfigurationForm(final HtmlPage page) {
-        this.page = page;
-        this.form = page.getFormByName("config");
-    }
-
-    /**
-     * Fills in the given pipeline script into the text-area.
-     *
-     * @param script
-     *         Script to be applied to the pipeline.
-     *
-     * @throws IOException
-     *         When typing into the script textarea failed.
-     */
-    public void setPipelineScript(final String script) throws IOException {
-        ((HtmlTextArea) this.page.getElementByName("_.script")).type(script);
+    public IssueRecorderConfiguration(final HtmlPage page) {
+        form = page.getFormByName("config");
     }
 
     /**
@@ -49,7 +34,7 @@ public class ConfigurationForm {
      *         When clicking buttons fails.
      */
     public void initialize() throws IOException {
-        List<HtmlButton> buttons = this.form.getButtonsByName("");
+        List<HtmlButton> buttons = form.getButtonsByName("");
 
         for (HtmlButton button : buttons) {
             if ("Advanced...".equals(button.getFirstChild().toString())) {
@@ -66,7 +51,7 @@ public class ConfigurationForm {
      *         Pattern to be set.
      */
     public void setReportFilePattern(final String pattern) {
-        this.form.getInputByName("_.pattern").setValueAttribute(pattern);
+        getInputByName("_.pattern").setValueAttribute(pattern);
     }
 
     /**
@@ -76,7 +61,11 @@ public class ConfigurationForm {
      *         The value for the disable-blame option.
      */
     public void setDisableBlame(final boolean checked) {
-        this.form.getInputByName("_.blameDisabled").setChecked(checked);
+        getInputByName("_.blameDisabled").setChecked(checked);
+    }
+
+    public HtmlInput getInputByName(final String name) {
+        return form.getInputByName(name);
     }
 
     /**
@@ -92,7 +81,7 @@ public class ConfigurationForm {
      */
     public void addQualityGates(final int healthy, final int unhealthy) throws IOException {
         // add two new quality gates
-        List<HtmlButton> buttons = this.form.getButtonsByName("");
+        List<HtmlButton> buttons = form.getButtonsByName("");
         for (HtmlButton button : buttons) {
             if ("Add Quality Gate".equals(button.getFirstChild().getNodeValue())) {
                 button.dblClick();
@@ -102,7 +91,7 @@ public class ConfigurationForm {
         }
 
         // set thresholds
-        List<HtmlInput> thresholds = this.form.getInputsByName("_.threshold");
+        List<HtmlInput> thresholds = form.getInputsByName("_.threshold");
         thresholds.get(0).setValueAttribute(Integer.toString(healthy));
         thresholds.get(1).setValueAttribute(Integer.toString(unhealthy));
 
@@ -118,11 +107,19 @@ public class ConfigurationForm {
      *         Threshold for unstable builds.
      */
     public void setHealthReport(final int healthy, final int unhealthy) {
-        this.form.getInputByName("_.healthy").setValueAttribute(Integer.toString(healthy));
-        this.form.getInputByName("_.unhealthy").setValueAttribute(Integer.toString(unhealthy));
+        getInputByName("_.healthy").setValueAttribute(Integer.toString(healthy));
+        getInputByName("_.unhealthy").setValueAttribute(Integer.toString(unhealthy));
     }
 
-    public HtmlForm getForm() {
-        return form;
+    /**
+     * Saves the configuration.
+     */
+    public void save() {
+        try {
+            HtmlFormUtil.submit(form);
+        }
+        catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
     }
 }

@@ -49,7 +49,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
             tool.setAggregatingResults(true);
         });
 
-        HtmlPage configPage = getWebPage(JsSupport.NO_JS, job, "configure");
+        HtmlPage configPage = getWebPage(JsSupport.JS_ENABLED, job, "configure");
         HtmlForm form = configPage.getFormByName("config");
 
         verifyAndChangeEntry(form, "sourceCodeEncoding", "sourceCodeEncoding");

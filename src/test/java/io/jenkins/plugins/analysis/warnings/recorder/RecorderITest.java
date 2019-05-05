@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -14,7 +16,8 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BuildInfoPage;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.ConfigurationForm;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRecorderConfiguration;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PipelineConfiguration;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -148,7 +151,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldCreatePipelineJobWith10JavaWarnings() throws IOException {
         WorkflowJob job = createPipeline();
         copySingleFileToWorkspace(job, "javac-10-warnings.txt", "javac.txt");
-        setUpPipelineJob(job);
+        configure(job);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
         BuildInfoPage infoPage = createInfoPage(result);
@@ -172,7 +175,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldCreatePipelineJobWith9JavaWarnings() throws IOException {
         WorkflowJob job = createPipeline();
         copySingleFileToWorkspace(job, "javac-9-warnings.txt", "javac.txt");
-        setUpPipelineJob(job);
+        configure(job);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.UNSTABLE);
         BuildInfoPage infoPage = createInfoPage(result);
@@ -196,7 +199,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldCreatePipelineJobWith1JavaWarnings() throws IOException {
         WorkflowJob job = createPipeline();
         copySingleFileToWorkspace(job, "javac-1-warnings.txt", "javac.txt");
-        setUpPipelineJob(job);
+        configure(job);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
         BuildInfoPage infoPage = createInfoPage(result);
@@ -220,7 +223,7 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldCreatePipelineJobWith0JavaWarnings() throws IOException {
         WorkflowJob job = createPipeline();
         copySingleFileToWorkspace(job, "javac-0-warnings.txt", "javac.txt");
-        setUpPipelineJob(job);
+        configure(job);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
         BuildInfoPage infoPage = createInfoPage(result);
@@ -232,56 +235,49 @@ public class RecorderITest extends IntegrationTestWithJenkinsPerSuite {
                 "-> All quality gates have been passed");
     }
 
-    private BuildInfoPage createInfoPage(final AnalysisResult result) {
-        return new BuildInfoPage(getWebPage(JsSupport.NO_JS, result, "info"));
-    }
-
     /**
      * Configures a freestyle job.
      *
      * @param job
      *         Job to configure.
      *
-     * @return PageObject of the configuration page.
      * @throws IOException
      *         When clicking or typing on the page fails.
      */
-    private ConfigurationForm configure(final FreeStyleProject job) throws IOException {
-        ConfigurationForm config = new ConfigurationForm(getWebPage(JsSupport.JS_ENABLED, job, "configure"));
-        config.setReportFilePattern("**/*.txt");
-        config.setDisableBlame(true);
-        config.addQualityGates(5, 10);
-        config.setHealthReport(1, 9);
-        submit(config.getForm());
+    private void configure(final FreeStyleProject job) throws IOException {
+        IssueRecorderConfiguration configuration = new IssueRecorderConfiguration(
+                getWebPage(JsSupport.JS_ENABLED, job, "configure"));
+        configuration.setReportFilePattern("**/*.txt");
+        configuration.setDisableBlame(true);
+        configuration.addQualityGates(5, 10);
+        configuration.setHealthReport(1, 9);
 
-        return config;
+        configuration.save();
     }
 
     /**
-     * Configures a pipeline job.
+     * Configures a pipeline.
      *
      * @param job
-     *         Job to configure.
-     *
-     * @return PageObject of the configuration page.
-     * @throws IOException
-     *         When clicking or typing on the page fails.
+     *         the pipeline to configure.
      */
-    private ConfigurationForm setUpPipelineJob(final WorkflowJob job) throws IOException {
-        ConfigurationForm config = new ConfigurationForm(getWebPage(JsSupport.JS_ENABLED, job, "configure"));
-        //config.initialize();
-        config.setPipelineScript("node {\n"
+    private void configure(final WorkflowJob job) {
+        HtmlPage configurePage = getWebPage(JsSupport.JS_ENABLED, job, "configure");
+        PipelineConfiguration configuration = new PipelineConfiguration(configurePage);
+        configuration.setScript(
+                "node {\n"
                 + "  stage ('Integration Test') {\n"
                 + "    recordIssues blameDisabled: true, "
-                //+ "filters: [includeMessage('.jface.*')], "
-                + "healthy: 1, unhealthy: 9,"
-                + "qualityGates: [[threshold: 5, type: 'TOTAL', unstable: true], "
-                + "[threshold: 10, type: 'TOTAL', unstable: false]], "
-                + "tools: [java(pattern: '**/*.txt')]\n"
+                        + "         healthy: 1, unhealthy: 9,"
+                        + "         qualityGates: [[threshold: 5, type: 'TOTAL', unstable: true], "
+                        + "                        [threshold: 10, type: 'TOTAL', unstable: false]], "
+                        + "tools: [java(pattern: '**/*.txt')]\n"
                 + "  }\n"
                 + "}");
-        submit(config.getForm());
+        configuration.save();
+    }
 
-        return config;
+    private BuildInfoPage createInfoPage(final AnalysisResult result) {
+        return new BuildInfoPage(getWebPage(JsSupport.NO_JS, result, "info"));
     }
 }
