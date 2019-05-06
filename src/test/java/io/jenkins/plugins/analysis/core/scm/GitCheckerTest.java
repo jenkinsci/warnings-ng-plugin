@@ -48,7 +48,7 @@ class GitCheckerTest {
         GitSCM gitSCM = mock(GitSCM.class);
         when(gitSCM.getExtensions()).thenReturn(describableList);
 
-        Run run = mock(Run.class);
+        Run<?, ?> run = mock(Run.class);
         EnvVars envVars = new EnvVars();
         envVars.put("GIT_COMMIT", "test_commit");
         when(run.getEnvironment(taskListener)).thenReturn(envVars);
@@ -76,7 +76,7 @@ class GitCheckerTest {
                 = new DescribableList<>(Saveable.NOOP, Lists.list(shallowCloneOption));
         when(gitSCM.getExtensions()).thenReturn(extensions);
 
-        Run run = mock(Run.class);
+        Run<?, ?> run = mock(Run.class);
         GitChecker gitChecker = new GitChecker();
         assertThat(gitChecker.createBlamer(run, gitSCM, null, taskListener)).isInstanceOf(NullBlamer.class);
     }
@@ -85,7 +85,7 @@ class GitCheckerTest {
     void shouldCreateNullBlamerOnError() throws IOException, InterruptedException {
         GitChecker gitChecker = new GitChecker();
         TaskListener taskListener = mock(TaskListener.class);
-        Run run = mock(Run.class);
+        Run<?, ?> run = mock(Run.class);
         List<GitSCMExtension> extensions = new ArrayList<>();
         GitSCM gitSCM = new GitSCM(null, null, false, null, null, null, extensions);
 

@@ -250,6 +250,6 @@ public class JenkinsFacade implements Serializable {
     }
 
     private Jenkins getJenkins() {
-        return Jenkins.getInstance();
+        return Jenkins.get();
     }
 }
