@@ -108,14 +108,13 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject job = createFreeStyleProject();
         enableEclipseWarnings(job);
 
-        FreestyleConfiguration configuration = new FreestyleConfiguration(
-                getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"));
-        configuration.setPattern(PATTERN);
-        configuration.setSourceCodeEncoding(PATTERN);
-        configuration.setAggregatingResults(true);
-        configuration.setDisableBlame(true);
-        configuration.setHealthReport(1, 9);
-        configuration.save();
+        new FreestyleConfiguration(getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"))
+                .setPattern(PATTERN)
+                .setSourceCodeEncoding(PATTERN)
+                .setAggregatingResults(true)
+                .setDisableBlame(true)
+                .setHealthReport(1, 9)
+                .save();
 
         FreestyleConfiguration saved = new FreestyleConfiguration(
                 getWebPage(JavaScriptSupport.JS_DISABLED, job, "configure"));

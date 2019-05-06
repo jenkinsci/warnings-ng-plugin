@@ -32,46 +32,60 @@ public class FreestyleConfiguration {
         form = page.getFormByName("config");
     }
 
-    public String getSourceCodeEncoding() {
-        return getTextOf(SOURCE_CODE_ENCODING);
-    }
-
     /**
      * Sets the encoding to use to read source files.
      *
      * @param sourceCodeEncoding
      *         the encoding, e.g. "ISO-8859-1"
+     *
+     * @return this
      */
-    public void setSourceCodeEncoding(final String sourceCodeEncoding) {
+    public FreestyleConfiguration setSourceCodeEncoding(final String sourceCodeEncoding) {
         setText(SOURCE_CODE_ENCODING, sourceCodeEncoding);
+
+        return this;
+    }
+
+    public String getSourceCodeEncoding() {
+        return getTextOf(SOURCE_CODE_ENCODING);
     }
 
     /**
-     * Returns whether the results for each configured static analysis result should be aggregated into a single result
-     * or if every tool should get an individual result.
+     * Determines whether the results for each configured static analysis result should be aggregated into a single
+     * result or if every tool should get an individual result.
      *
-     * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
+     * @param aggregatingResults
+     *         {@code true}  if the results of each static analysis tool should be aggregated into a single result,
      *         {@code false} if every tool should get an individual result.
+     *
+     * @return this
      */
+    public FreestyleConfiguration setAggregatingResults(final boolean aggregatingResults) {
+        setChecked(AGGREGATING_RESULTS, aggregatingResults);
+
+        return this;
+    }
+
     public boolean isAggregatingResults() {
         return isChecked(AGGREGATING_RESULTS);
     }
 
-    public void setAggregatingResults(final boolean aggregatingResults) {
-        setChecked(AGGREGATING_RESULTS, aggregatingResults);
+    /**
+     * Determines whether SCM blaming is disabled.
+     *
+     * @param blameDisabled
+     *         {@code true} if SCM blaming should be disabled, {@code false} if blames should be collected in the SCM
+     *
+     * @return this
+     */
+    public FreestyleConfiguration setDisableBlame(final boolean blameDisabled) {
+        setChecked(BLAME_DISABLED, blameDisabled);
+
+        return this;
     }
 
-    /**
-     * Returns whether SCM blaming is disabled.
-     *
-     * @return {@code true} if SCM blaming is disabled
-     */
     public boolean isBlameDisabled() {
         return isChecked(BLAME_DISABLED);
-    }
-
-    public void setDisableBlame(final boolean checked) {
-        setChecked(BLAME_DISABLED, checked);
     }
 
     /**
@@ -88,9 +102,13 @@ public class FreestyleConfiguration {
      *
      * @param pattern
      *         Pattern to be set.
+     *
+     * @return this
      */
-    public void setPattern(final String pattern) {
+    public FreestyleConfiguration setPattern(final String pattern) {
         setText(PATTERN, pattern);
+
+        return this;
     }
 
     /**
@@ -99,11 +117,15 @@ public class FreestyleConfiguration {
      * @param healthy
      *         threshold for healthy builds
      * @param unhealthy
-     *         threshold for unstable builds
+     *         threshold for unhealthy builds
+     *
+     * @return this
      */
-    public void setHealthReport(final int healthy, final int unhealthy) {
+    public FreestyleConfiguration setHealthReport(final int healthy, final int unhealthy) {
         setText(HEALTHY, Integer.toString(healthy));
         setText(UNHEALTHY, Integer.toString(unhealthy));
+
+        return this;
     }
 
     public String getHealthy() {

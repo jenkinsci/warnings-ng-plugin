@@ -25,13 +25,12 @@ public class InfoErrorPage {
      *         Page to gather information from.
      */
     public InfoErrorPage(final HtmlPage page) {
-        infoMessages = StreamSupport.stream(page.getElementById("info")
-                .getChildElements().spliterator(), false)
-                .map(DomElement::getFirstChild)
-                .map(DomNode::getNodeValue)
-                .collect(Collectors.toList());
+        infoMessages = extractItems(page, "info");
+        errorMessages = extractItems(page, "errors");
+    }
 
-        errorMessages = StreamSupport.stream(page.getElementById("errors")
+    private List<String> extractItems(final HtmlPage page, final String id) {
+        return StreamSupport.stream(page.getElementById(id)
                 .getChildElements().spliterator(), false)
                 .map(DomElement::getFirstChild)
                 .map(DomNode::getNodeValue)
