@@ -2,22 +2,39 @@ package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
 import java.io.IOException;
 
+import org.junit.platform.commons.util.StringUtils;
+
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlInput;
+import com.gargoylesoftware.htmlunit.html.HtmlOption;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
+
+import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Page object for a configuration of the post build step "Record compiler warnings and static analysis results".
  *
  * @author Florian Hageneder
+ * @author Ullrich Hafner
  */
+@SuppressWarnings("JavaDocMethod")
 public class FreestyleConfiguration {
+    private static final String IGNORE_QUALITY_GATE = "_.ignoreQualityGate";
+    private static final String IGNORE_FAILED_BUILDS = "_.ignoreFailedBuilds";
+    private static final String REFERENCE_JOB_NAME = "_.referenceJobName";
+
     private static final String HEALTHY = "_.healthy";
     private static final String UNHEALTHY = "_.unhealthy";
+    private static final String MINIMUM_SEVERITY = "_.minimumSeverity";
+
     private static final String SOURCE_CODE_ENCODING = "_.sourceCodeEncoding";
+
     private static final String PATTERN = "_.pattern";
     private static final String BLAME_DISABLED = "_.blameDisabled";
+    private static final String ENABLED_FOR_FAILURE = "_.enabledForFailure";
     private static final String AGGREGATING_RESULTS = "_.aggregatingResults";
 
     private final HtmlForm form;
@@ -78,7 +95,7 @@ public class FreestyleConfiguration {
      *
      * @return this
      */
-    public FreestyleConfiguration setDisableBlame(final boolean blameDisabled) {
+    public FreestyleConfiguration setBlameDisabled(final boolean blameDisabled) {
         setChecked(BLAME_DISABLED, blameDisabled);
 
         return this;
@@ -86,6 +103,89 @@ public class FreestyleConfiguration {
 
     public boolean isBlameDisabled() {
         return isChecked(BLAME_DISABLED);
+    }
+
+    /**
+     * Returns whether recording should be enabled for failed builds as well.
+     *
+     * @param enabledForFailure
+     *         {@code true} if recording should be enabled for failed builds as well, {@code false} if recording is
+     *         enabled for successful or unstable builds only
+     *
+     * @return this
+     */
+    public FreestyleConfiguration setEnabledForFailure(final boolean enabledForFailure) {
+        setChecked(ENABLED_FOR_FAILURE, enabledForFailure);
+
+        return this;
+    }
+
+    public boolean isEnabledForFailure() {
+        return isChecked(ENABLED_FOR_FAILURE);
+    }
+
+    /**
+     * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
+     * disabled by default so a failing quality gate will be passed from build to build until the original reason for
+     * the failure has been resolved.
+     *
+     * @param ignoreQualityGate
+     *         if {@code true} then the result of the quality gate is ignored, otherwise only build with a successful
+     *         quality gate are selected
+     *
+     * @return this
+     */
+    public FreestyleConfiguration setIgnoreQualityGate(final boolean ignoreQualityGate) {
+        setChecked(IGNORE_QUALITY_GATE, ignoreQualityGate);
+
+        return this;
+    }
+
+    public boolean canIgnoreQualityGate() {
+        return isChecked(IGNORE_QUALITY_GATE);
+    }
+
+    /**
+     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
+     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
+     * contains a static analysis result is considered, even if the build failed.
+     *
+     * @param ignoreFailedBuilds
+     *         if {@code true} then a stable build is used as reference
+     *
+     * @return this
+     */
+    public FreestyleConfiguration setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
+        setChecked(IGNORE_FAILED_BUILDS, ignoreFailedBuilds);
+
+        return this;
+    }
+
+    public boolean canIgnoreFailedBuilds() {
+        return isChecked(IGNORE_FAILED_BUILDS);
+    }
+
+    /**
+     * Sets the reference job to get the results for the issue difference computation.
+     *
+     * @param referenceJobName
+     *         the name of reference job
+     *
+     * @return this
+     */
+    public FreestyleConfiguration setReferenceJobName(final String referenceJobName) {
+        setText(REFERENCE_JOB_NAME, referenceJobName);
+
+        return this;
+    }
+
+    /**
+     * Returns the reference job to get the results for the issue difference computation.
+     *
+     * @return the name of reference job
+     */
+    public String getReferenceJobName() {
+        return getTextOf(REFERENCE_JOB_NAME);
     }
 
     /**
@@ -118,26 +218,40 @@ public class FreestyleConfiguration {
      *         threshold for healthy builds
      * @param unhealthy
      *         threshold for unhealthy builds
+     * @param minimumSeverity
+     *         minimum severity to consider
      *
      * @return this
      */
-    public FreestyleConfiguration setHealthReport(final int healthy, final int unhealthy) {
+    public FreestyleConfiguration setHealthReport(final int healthy, final int unhealthy,
+            final Severity minimumSeverity) {
         setText(HEALTHY, Integer.toString(healthy));
         setText(UNHEALTHY, Integer.toString(unhealthy));
+
+        HtmlSelect select = form.getSelectByName(MINIMUM_SEVERITY);
+        select.setSelectedAttribute(select.getOptionByValue(minimumSeverity.getName()), true);
 
         return this;
     }
 
     public String getHealthy() {
-        return getNumberAsString(HEALTHY);
+        return getTextOf(HEALTHY);
     }
 
     public String getUnhealthy() {
-        return getNumberAsString(UNHEALTHY);
+        return getTextOf(UNHEALTHY);
     }
 
-    private String getNumberAsString(final String s) {
-        return getTextOf(s);
+    @Nullable
+    public Severity getMinimumSeverity() {
+        HtmlSelect select = form.getSelectByName(MINIMUM_SEVERITY);
+        HtmlOption selected = select.getSelectedOptions().get(0);
+
+        String valueAttribute = selected.getValueAttribute();
+        if (StringUtils.isBlank(valueAttribute)) {
+            return null;
+        }
+        return Severity.valueOf(valueAttribute);
     }
 
     private String getTextOf(final String id) {
