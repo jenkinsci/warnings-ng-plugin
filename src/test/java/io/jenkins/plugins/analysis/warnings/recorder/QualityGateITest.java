@@ -54,7 +54,7 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.WARNING);
 
-        HtmlPage page = getWebPage(JsSupport.NO_JS, project, "eclipse");
+        HtmlPage page = getWebPage(JavaScriptSupport.JS_DISABLED, project, "eclipse");
         assertThat(page.getElementsByIdAndOrName("statistics")).hasSize(1);
     }
 

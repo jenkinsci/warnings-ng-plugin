@@ -88,7 +88,7 @@ public abstract class IntegrationTest extends ResourceTest {
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
     private static final String WINDOWS_FILE_DENY = "/deny";
 
-    public enum JsSupport {JS_ENABLED, NO_JS}
+    public enum JavaScriptSupport {JS_ENABLED, JS_DISABLED}
 
     static WebClient create(final boolean isJavaScriptEnabled) {
         WebClient webClient = IntegrationTestWithJenkinsPerSuite.JENKINS_PER_SUITE.createWebClient();
@@ -117,7 +117,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected abstract JenkinsRule getJenkins();
 
-    protected abstract WebClient getWebClient(final JsSupport javaScriptSupport);
+    protected abstract WebClient getWebClient(final JavaScriptSupport javaScriptSupport);
 
     /**
      * Creates a file with the specified content in the workspace.
@@ -874,7 +874,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final Item job, final String relativeUrl) {
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final Item job, final String relativeUrl) {
         try {
             return getWebClient(javaScriptSupport).getPage(job, relativeUrl);
         }
@@ -892,7 +892,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final Item job) {
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final Item job) {
         return getWebPage(javaScriptSupport, job, StringUtils.EMPTY);
     }
 
@@ -905,7 +905,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final Run<?, ?> build) {
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final Run<?, ?> build) {
         return getWebPage(javaScriptSupport, build, StringUtils.EMPTY);
     }
 
@@ -920,7 +920,8 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final Run<?, ?> build, final String relativeUrl) {
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final Run<?, ?> build,
+            final String relativeUrl) {
         try {
             return getWebClient(javaScriptSupport).getPage(build, relativeUrl);
         }
@@ -940,9 +941,9 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final AnalysisResult result,
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final AnalysisResult result,
             final String relativeUrl) {
-        return getWebPage(JsSupport.NO_JS, result.getOwner(), result.getId() + "/" + relativeUrl);
+        return getWebPage(JavaScriptSupport.JS_DISABLED, result.getOwner(), result.getId() + "/" + relativeUrl);
     }
 
     /**
@@ -954,7 +955,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final JsSupport javaScriptSupport, final AnalysisResult result) {
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final AnalysisResult result) {
         return getWebPage(javaScriptSupport, result.getOwner(), result.getId());
     }
 

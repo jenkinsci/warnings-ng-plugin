@@ -14,10 +14,13 @@ import edu.hm.hafner.analysis.Severity;
 
 import hudson.model.FreeStyleProject;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.FreestyleConfiguration;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.InfoErrorPage;
 
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Verifies the UI configuration of the {@link IssuesRecorder}.
@@ -25,6 +28,15 @@ import static org.assertj.core.api.Assertions.*;
  * @author Ullrich Hafner
  */
 public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
+    private static final String PATTERN = "**/*.txt";
+    private static final String[] EXPECTED_INFO_MESSAGES = {
+            "Ignoring 'aggregatingResults' and ID 'null' since only a single tool is defined.",
+            "No valid reference build found that meets the criteria (NO_JOB_FAILURE - SUCCESSFUL_QUALITY_GATE)",
+            "All reported issues will be considered outstanding",
+            "No quality gates have been set - skipping",
+            "Enabling health report (Healthy=1, Unhealthy=9, Minimum Severity=LOW)"};
+    private static final String EXPECTED_ERRORS = "No files found for pattern '**/*.txt'. Configuration error?";
+
     /**
      * Verifies that the properties of an {@link IssuesRecorder} instance created via API are correctly shown in the job
      * configuration screen. Then these properties are changed in the HTML form, submitted to Jenkins, and verified in
@@ -49,7 +61,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
             tool.setAggregatingResults(true);
         });
 
-        HtmlPage configPage = getWebPage(JsSupport.JS_ENABLED, job, "configure");
+        HtmlPage configPage = getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure");
         HtmlForm form = configPage.getFormByName("config");
 
         verifyAndChangeEntry(form, "sourceCodeEncoding", "sourceCodeEncoding");
@@ -86,6 +98,43 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
 
         assertThat(recorder.getEnabledForFailure()).isFalse();
         assertThat(recorder.getAggregatingResults()).isFalse();
+    }
+
+    /**
+     * Verifies that job configuration screen correctly modifies the properties of an {@link IssuesRecorder} instance.
+     */
+    @Test
+    public void shouldSetPropertiesInJobConfiguration() {
+        FreeStyleProject job = createFreeStyleProject();
+        enableEclipseWarnings(job);
+
+        FreestyleConfiguration configuration = new FreestyleConfiguration(
+                getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"));
+        configuration.setPattern(PATTERN);
+        configuration.setSourceCodeEncoding(PATTERN);
+        configuration.setAggregatingResults(true);
+        configuration.setDisableBlame(true);
+        configuration.setHealthReport(1, 9);
+        configuration.save();
+
+        FreestyleConfiguration saved = new FreestyleConfiguration(
+                getWebPage(JavaScriptSupport.JS_DISABLED, job, "configure"));
+
+        assertThat(saved.isBlameDisabled()).isTrue();
+        assertThat(saved.isAggregatingResults()).isTrue();
+        assertThat(saved.getHealthy()).isEqualTo("1");
+        assertThat(saved.getUnhealthy()).isEqualTo("9");
+        assertThat(saved.getSourceCodeEncoding()).isEqualTo(PATTERN);
+        assertThat(saved.getPattern()).isEqualTo(PATTERN);
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(result).hasInfoMessages(EXPECTED_INFO_MESSAGES);
+        assertThat(result).hasErrorMessages(EXPECTED_ERRORS);
+
+        InfoErrorPage page = new InfoErrorPage(getWebPage(JavaScriptSupport.JS_DISABLED, result));
+        assertThat(page.getInfoMessages()).contains(EXPECTED_INFO_MESSAGES);
+        assertThat(page.getErrorMessages()).contains(EXPECTED_ERRORS);
+
     }
 
     private void verifyAndChangeEntry(final HtmlForm form, final String id,

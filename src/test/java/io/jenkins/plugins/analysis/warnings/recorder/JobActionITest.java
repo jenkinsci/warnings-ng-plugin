@@ -40,7 +40,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
-        HtmlPage jobPage = getWebPage(JsSupport.NO_JS, project);
+        HtmlPage jobPage = getWebPage(JavaScriptSupport.JS_DISABLED, project);
         assertThatTrendChartIsHidden(jobPage); // trend chart requires at least two builds
 
         assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
@@ -48,7 +48,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
-        jobPage = getWebPage(JsSupport.NO_JS, project);
+        jobPage = getWebPage(JavaScriptSupport.JS_DISABLED, project);
         assertThatTrendChartIsVisible(jobPage);
 
         assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
@@ -68,7 +68,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         JobAction jobAction = project.getAction(JobAction.class);
         assertThat(jobAction).isNotNull();
 
-        HtmlPage jobPage = getWebPage(JsSupport.NO_JS, project);
+        HtmlPage jobPage = getWebPage(JavaScriptSupport.JS_DISABLED, project);
 
         assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, emptyResult.getOwner());
     }

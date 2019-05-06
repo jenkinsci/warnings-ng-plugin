@@ -335,7 +335,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void verifyModules(final AnalysisResult result, final PropertyRow... modules) {
-        HtmlPage details = getWebPage(JsSupport.NO_JS, result);
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_DISABLED, result);
         assertThatModuleTableIsVisible(result, true);
 
         PropertyTable propertyTable = new PropertyTable(details, PROPERTY);
@@ -422,7 +422,8 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatModuleTableIsVisible(final AnalysisResult result, final boolean isVisible) {
-        assertThat(PropertyTable.isVisible(getWebPage(JsSupport.NO_JS, result), PROPERTY)).isEqualTo(isVisible);
+        assertThat(PropertyTable.isVisible(getWebPage(JavaScriptSupport.JS_DISABLED, result), PROPERTY)).isEqualTo(
+                isVisible);
     }
 
     private AnalysisResult createResult(final int numberOfExpectedModules, final boolean appendNonExistingFile,

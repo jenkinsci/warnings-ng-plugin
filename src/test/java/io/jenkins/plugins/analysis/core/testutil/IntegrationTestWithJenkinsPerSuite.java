@@ -31,7 +31,7 @@ public abstract class IntegrationTestWithJenkinsPerSuite extends IntegrationTest
     }
 
     @Override
-    protected WebClient getWebClient(final JsSupport javaScriptSupport) {
-        return javaScriptSupport == JsSupport.NO_JS ? noJsWebClient : jsEnabledClient;
+    protected WebClient getWebClient(final JavaScriptSupport javaScriptSupport) {
+        return javaScriptSupport == JavaScriptSupport.JS_DISABLED ? noJsWebClient : jsEnabledClient;
     }
 }

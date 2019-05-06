@@ -14,7 +14,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  *
  * @author Florian Hageneder
  */
-public class BuildInfoPage {
+public class InfoErrorPage {
     private final List<String> infoMessages;
     private final List<String> errorMessages;
 
@@ -24,7 +24,7 @@ public class BuildInfoPage {
      * @param page
      *         Page to gather information from.
      */
-    public BuildInfoPage(final HtmlPage page) {
+    public InfoErrorPage(final HtmlPage page) {
         infoMessages = StreamSupport.stream(page.getElementById("info")
                 .getChildElements().spliterator(), false)
                 .map(DomElement::getFirstChild)
@@ -54,7 +54,7 @@ public class BuildInfoPage {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        BuildInfoPage that = (BuildInfoPage) o;
+        InfoErrorPage that = (InfoErrorPage) o;
         return Objects.equals(infoMessages, that.infoMessages)
                 && Objects.equals(errorMessages, that.errorMessages);
     }
