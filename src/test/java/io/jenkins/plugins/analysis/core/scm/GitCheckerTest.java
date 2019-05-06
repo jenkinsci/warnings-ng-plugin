@@ -38,7 +38,7 @@ class GitCheckerTest {
     }
 
     @Test
-    void shouldCreateBlamer() throws Exception {
+    void shouldCreateBlamer() throws IOException, InterruptedException {
         PrintStream logger = mock(PrintStream.class);
         TaskListener taskListener = mock(TaskListener.class);
         when(taskListener.getLogger()).thenReturn(logger);
