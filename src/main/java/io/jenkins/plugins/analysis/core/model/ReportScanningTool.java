@@ -77,6 +77,7 @@ public abstract class ReportScanningTool extends Tool {
         this.skipSymbolicLinks = skipSymbolicLinks;
     }
 
+    @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
     public boolean getSkipSymbolicLinks() {
         return skipSymbolicLinks;
     }
