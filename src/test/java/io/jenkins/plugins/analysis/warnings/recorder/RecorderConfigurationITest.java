@@ -29,13 +29,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String PATTERN = "**/*.txt";
-    private static final String[] EXPECTED_INFO_MESSAGES = {
-            "Ignoring 'aggregatingResults' and ID 'null' since only a single tool is defined.",
-            "No valid reference build found that meets the criteria (NO_JOB_FAILURE - SUCCESSFUL_QUALITY_GATE)",
-            "All reported issues will be considered outstanding",
-            "No quality gates have been set - skipping",
-            "Enabling health report (Healthy=1, Unhealthy=9, Minimum Severity=LOW)"};
-    private static final String EXPECTED_ERRORS = "No files found for pattern '**/*.txt'. Configuration error?";
+    private static final String ENCODING = "UTF-8";
 
     /**
      * Verifies that the properties of an {@link IssuesRecorder} instance created via API are correctly shown in the job
@@ -110,7 +104,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
 
         new FreestyleConfiguration(getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"))
                 .setPattern(PATTERN)
-                .setSourceCodeEncoding(PATTERN)
+                .setSourceCodeEncoding(ENCODING)
                 .setAggregatingResults(true)
                 .setDisableBlame(true)
                 .setHealthReport(1, 9)
@@ -123,16 +117,21 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         assertThat(saved.isAggregatingResults()).isTrue();
         assertThat(saved.getHealthy()).isEqualTo("1");
         assertThat(saved.getUnhealthy()).isEqualTo("9");
-        assertThat(saved.getSourceCodeEncoding()).isEqualTo(PATTERN);
+        assertThat(saved.getSourceCodeEncoding()).isEqualTo(ENCODING);
         assertThat(saved.getPattern()).isEqualTo(PATTERN);
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
-        assertThat(result).hasInfoMessages(EXPECTED_INFO_MESSAGES);
-        assertThat(result).hasErrorMessages(EXPECTED_ERRORS);
+        assertThat(result).hasInfoMessages(
+                "Ignoring 'aggregatingResults' and ID 'null' since only a single tool is defined.",
+                "No valid reference build found that meets the criteria (NO_JOB_FAILURE - SUCCESSFUL_QUALITY_GATE)",
+                "All reported issues will be considered outstanding",
+                "No quality gates have been set - skipping",
+                "Enabling health report (Healthy=1, Unhealthy=9, Minimum Severity=LOW)");
+        assertThat(result).hasErrorMessages("No files found for pattern '**/*.txt'. Configuration error?");
 
         InfoErrorPage page = new InfoErrorPage(getWebPage(JavaScriptSupport.JS_DISABLED, result));
-        assertThat(page.getInfoMessages()).contains(EXPECTED_INFO_MESSAGES);
-        assertThat(page.getErrorMessages()).contains(EXPECTED_ERRORS);
+        assertThat(page.getInfoMessages()).isEqualTo(result.getInfoMessages());
+        assertThat(page.getErrorMessages()).isEqualTo(result.getErrorMessages());
 
     }
 
