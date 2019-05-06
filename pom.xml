@@ -32,6 +32,7 @@
     <analysis-model-api.version>5.0.0-20190505.155829-4</analysis-model-api.version>
     <analysis-model.version>5.0.0-20190505.155516-4</analysis-model.version>
 
+    <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
     <commons.digester.version>3.2</commons.digester.version>
@@ -160,6 +161,11 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
       <version>${analysis-model-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.spotbugs</groupId>
+      <artifactId>spotbugs-annotations</artifactId>
+      <version>${spotbugs.annotations}</version>
     </dependency>
     <dependency>
       <groupId>org.eclipse.collections</groupId>
