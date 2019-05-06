@@ -20,7 +20,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
  */
 public class Gcc4 extends ReportScanningToolSuite {
     private static final long serialVersionUID = 7699675509414211993L;
-    private static final String ID = "gcc4";
+    private static final String ID = "gcc";
 
     /** Creates a new instance of {@link Gcc4}. */
     @DataBoundConstructor
@@ -35,7 +35,7 @@ public class Gcc4 extends ReportScanningToolSuite {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("gcc4")
+    @Symbol({"gcc", "gcc4"})
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
