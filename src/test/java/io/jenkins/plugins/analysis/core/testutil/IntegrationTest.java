@@ -88,7 +88,30 @@ public abstract class IntegrationTest extends ResourceTest {
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
     private static final String WINDOWS_FILE_DENY = "/deny";
 
-    public enum JavaScriptSupport {JS_ENABLED, JS_DISABLED}
+    /** Determines whether JavaScript is enabled in the {@link WebClient}. */
+    public enum JavaScriptSupport {
+        /** JavaScript is disabled. */
+        JS_ENABLED,
+        /** JavaScript is enabled. */
+        JS_DISABLED
+    }
+
+    /**
+     * Returns the Jenkins rule to manage the Jenkins instance.
+     *
+     * @return Jenkins rule
+     */
+    protected abstract JenkinsRule getJenkins();
+
+    /**
+     * Returns a {@link WebClient} to access the HTML pages of Jenkins.
+     *
+     * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
+     *
+     * @return the web client to use
+     */
+    protected abstract WebClient getWebClient(JavaScriptSupport javaScriptSupport);
 
     static WebClient create(final boolean isJavaScriptEnabled) {
         WebClient webClient = IntegrationTestWithJenkinsPerSuite.JENKINS_PER_SUITE.createWebClient();
@@ -109,15 +132,6 @@ public abstract class IntegrationTest extends ResourceTest {
 
         return webClient;
     }
-
-    /**
-     * Returns the Jenkins rule to manage the Jenkins instance.
-     *
-     * @return Jenkins rule
-     */
-    protected abstract JenkinsRule getJenkins();
-
-    protected abstract WebClient getWebClient(final JavaScriptSupport javaScriptSupport);
 
     /**
      * Creates a file with the specified content in the workspace.
@@ -865,8 +879,8 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Returns the HTML page content of the specified URL for a given job.
      *
-     *
      * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param job
      *         the job that owns the URL
      * @param relativeUrl
@@ -887,6 +901,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * Returns the HTML page content of the specified job.
      *
      * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param job
      *         the job to show the page for
      *
@@ -900,6 +915,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * Returns the HTML page content of the specified build.
      *
      * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param build
      *         the build to show the page for
      *
@@ -913,6 +929,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * Returns the HTML page content of the specified URL for a given build.
      *
      * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param build
      *         the build to show the page for
      * @param relativeUrl
@@ -934,6 +951,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * Returns the HTML page content of the specified URL for a given analysis result.
      *
      * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param result
      *         the analysis result to show the sub page for
      * @param relativeUrl
@@ -941,15 +959,16 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final AnalysisResult result,
-            final String relativeUrl) {
-        return getWebPage(JavaScriptSupport.JS_DISABLED, result.getOwner(), result.getId() + "/" + relativeUrl);
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport,
+            final AnalysisResult result, final String relativeUrl) {
+        return getWebPage(javaScriptSupport, result.getOwner(), result.getId() + "/" + relativeUrl);
     }
 
     /**
      * Returns the HTML page content of the specified analysis result.
      *
      * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param result
      *         the analysis result to show
      *
