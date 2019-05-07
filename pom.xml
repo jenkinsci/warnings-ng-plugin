@@ -744,6 +744,12 @@
                 <classQualifiedName>net.sf.json.AbstractJSON.WritingVisitor</classQualifiedName>
                 <justification>Not relevant</justification>
               </item>
+              <item>
+                <code>java.class.nonPublicPartOfAPI</code>
+                <regex>true</regex>
+                <classQualifiedName>com.fasterxml.jackson.databind.*</classQualifiedName>
+                <justification>Not relevant</justification>
+              </item>
             </revapi.ignore>
           </analysisConfiguration>
         </configuration>
