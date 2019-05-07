@@ -27,8 +27,8 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
                 project.getLastBuild().getNumber() + "/java");
         assertThat(htmlPage).isNotNull();
         DetailsTab detailsTab = new DetailsTab(htmlPage);
-
         assertThat(detailsTab.getTabs()).hasSize(1);
+        assertThat(detailsTab.getTabs().containsKey("Issues")).isTrue();
     }
 
     private FreeStyleProject createFreeStyleJobWithWarnings(final String fileName) {

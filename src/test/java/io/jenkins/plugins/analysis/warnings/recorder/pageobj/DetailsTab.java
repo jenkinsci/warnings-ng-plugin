@@ -16,15 +16,40 @@ public class DetailsTab {
 
     private final HashMap<String, Object> tabs = new HashMap<>();
 
+    /**
+     * Parse information from the given page and creates a new instance of {@link DetailsTab}.
+     *
+     * @param page
+     *         the whole details HTML page
+     */
     public DetailsTab(final HtmlPage page) {
         DomElement detailsNav = page.getElementById("tab-details");
         DomNodeList<HtmlElement> navList = detailsNav.getElementsByTagName("a");
         for (HtmlElement navElement : navList) {
-            tabs.put(navElement.getFirstChild().getTextContent(), null);
+            String tabName = navElement.getFirstChild().getTextContent();
+            tabs.put(tabName, retrieveContent(page, tabName));
         }
     }
 
+    private Object retrieveContent(final HtmlPage page, final String tabName) {
+        switch (tabName) {
+            case "Issues":
+                return null; //new IssuesTable(page); TODO fix IssueTable#getBodies();
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Returns the tabs and corresponding content of navigation bar (tab header).
+     *
+     * @return the hashmap with title as key and content as value
+     */
     public HashMap<String, Object> getTabs() {
         return tabs;
+    }
+
+    public boolean tabIsActive(final String tabName) {
+        return tabs.containsKey(tabName);
     }
 }
