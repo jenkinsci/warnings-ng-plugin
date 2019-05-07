@@ -36,10 +36,6 @@ main build page. From there you can also dive into the details:
     
 ## Table of Contents
 
-  * [Transition from the static analysis suite](#transition-from-the-static-analysis-suite)
-     * [Migration of Pipelines](#migration-of-pipelines)
-     * [Migration of all other jobs](#migration-of-all-other-jobs)
-     * [Migration of plugins depending on analysis-core](#migration-of-plugins-depending-on-analysis-core)
   * [Configuration](#configuration)
      * [Tool selection](#tool-selection)
      * [Creating support for a custom tool](#creating-support-for-a-custom-tool)
@@ -70,57 +66,14 @@ main build page. From there you can also dive into the details:
         * [Summary of the analysis result](#summary-of-the-analysis-result)
         * [Details of the analysis result](#details-of-the-analysis-result)
      * [Token macro support](#token-macro-support)
-  * [Not Yet Supported Features](#not-yet-supported-features)
+  * [Transition from the static analysis suite](#transition-from-the-static-analysis-suite)
+     * [Migration of Pipelines](#migration-of-pipelines)
+     * [Migration of all other jobs](#migration-of-all-other-jobs)
+     * [Migration of plugins depending on analysis-core](#migration-of-plugins-depending-on-analysis-core)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
-    
-## Transition from the static analysis suite
-
-Previously the same set of features has been provided by the plugins of the static analysis suite 
-(CheckStyle, PMD, FindBugs, Static Analysis Utilities, Analysis Collector, Task Scanner, Warnings etc.). 
-In order to simplify the user experience and the development process, these
-plugins and the core functionality have been merged into the Warnings Next Generation plugin. 
-These old static analysis plugins are not required anymore and are now end-of-life. 
-If you currently use one of these old plugins you should migrate
-to the new recorders and steps as soon as possible. I will still maintain the old code for a while, 
-but the main development effort will be spent into the new code base. 
-
-### Migration of Pipelines
-
-Pipelines calling the old static analysis steps (e.g., `findbugs`, `checkstyle`, etc.) need to call the new `recordIssues` 
-step now. The same step is used for all static analysis tools, the actual parser is selected
-by using the step property `tools`. For more details on the set of available parameters please see section 
-[Configuration](#configuration).     
-
-### Migration of all other jobs
-
-Freestyle, Matrix or Maven Jobs using the old API used a so called **Post Build Action** that was provided by 
-each individual plugin. E.g., the FindBugs plugin did provide the post build action 
-*"Publish FindBugs analysis results"*. These old plugin specific actions are not supported anymore, 
-they are now marked with *\[Deprecated\]* in the user interface. 
-Now you need to add a new post build step - this step now is called 
-*"Record compiler warnings and static analysis results"* for all static analysis tools. The selection of the tool is part of the configuration of this post build step. 
-Note: the warnings produced by a post build step using the old API cannot not be read by the new post build actions.
-I.e., you can't see a combined history of the old and new results - you simply see two unrelated results. There is
-also no automatic conversion of results stored in the old format available.
-
-### Migration of plugins depending on analysis-core
-
-The following plugins have been integrated into this new version of the Warnings plugin:
-
-- Android-Lint Plugin
-- CheckStyle Plugin
-- CCM Plugin
-- Dry Plugin
-- PMD Plugin
-- FindBugs Plugin
-- Tasks Scanner Plugin
-- Warnings Plugin
-
-All other plugins still need to be integrated or need to be refactored to use the new API.
-
-## Configuration
+# Configuration
 
 The configuration of the plugin is the same for all Jenkins job types. It is enabled in the UI by adding 
 the post build action *"Record compiler warnings and static analysis results"* to your job. In pipelines the plugin will be activated 
@@ -185,7 +138,15 @@ recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle
 
 ### Creating support for a custom tool
 
-If none of the built-in tools works in your project you have two ways to add additional tools. 
+If none of the built-in tools works in your project you have three ways to add additional tools. 
+
+#### Export your issues into a supported format
+
+A simple way to get the analysis results of your tool into the Warnings plugin is to export the information into one
+of the already supported format. E.g., several tools export their issues into the CheckStyle or PMD format. If you
+want to use all features of the Warnings Plugin it would be even better if you would export the information into the
+*native* [XML](../src/test/resources/io/jenkins/plugins/analysis/warnings/warnings-issues.xml) or JSON format. 
+These formats are already registered in the user interface and you can use them out-of-the-box. 
 
 #### Deploying a new tool using a custom plugin
 
@@ -794,3 +755,48 @@ Examples:
 
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
 - `${ANALYSIS_ISSUES_COUNT, tool='checkstyle'}`: expands to the total number of **CheckStyle** issues
+
+## Transition from the static analysis suite
+
+Previously the same set of features has been provided by the plugins of the static analysis suite 
+(CheckStyle, PMD, FindBugs, Static Analysis Utilities, Analysis Collector, Task Scanner, Warnings etc.). 
+In order to simplify the user experience and the development process, these
+plugins and the core functionality have been merged into the Warnings Next Generation plugin. 
+These old static analysis plugins are not required anymore and are now end-of-life. 
+If you currently use one of these old plugins you should migrate
+to the new recorders and steps as soon as possible. I will still maintain the old code for a while, 
+but the main development effort will be spent into the new code base. 
+
+### Migration of Pipelines
+
+Pipelines calling the old static analysis steps (e.g., `findbugs`, `checkstyle`, etc.) need to call the new `recordIssues` 
+step now. The same step is used for all static analysis tools, the actual parser is selected
+by using the step property `tools`. For more details on the set of available parameters please see section 
+[Configuration](#configuration).     
+
+### Migration of all other jobs
+
+Freestyle, Matrix or Maven Jobs using the old API used a so called **Post Build Action** that was provided by 
+each individual plugin. E.g., the FindBugs plugin did provide the post build action 
+*"Publish FindBugs analysis results"*. These old plugin specific actions are not supported anymore, 
+they are now marked with *\[Deprecated\]* in the user interface. 
+Now you need to add a new post build step - this step now is called 
+*"Record compiler warnings and static analysis results"* for all static analysis tools. The selection of the tool is part of the configuration of this post build step. 
+Note: the warnings produced by a post build step using the old API cannot not be read by the new post build actions.
+I.e., you can't see a combined history of the old and new results - you simply see two unrelated results. There is
+also no automatic conversion of results stored in the old format available.
+
+### Migration of plugins depending on analysis-core
+
+The following plugins have been integrated into this new version of the Warnings plugin:
+
+- Android-Lint Plugin
+- CheckStyle Plugin
+- CCM Plugin
+- Dry Plugin
+- PMD Plugin
+- FindBugs Plugin
+- Tasks Scanner Plugin
+- Warnings Plugin
+
+All other plugins still need to be integrated or need to be refactored to use the new API.
