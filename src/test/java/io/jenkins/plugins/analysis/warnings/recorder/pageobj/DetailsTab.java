@@ -14,6 +14,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  */
 public class DetailsTab {
 
+    private String activeTab;
     private final HashMap<String, Object> tabs = new HashMap<>();
 
     /**
@@ -27,6 +28,10 @@ public class DetailsTab {
         DomNodeList<HtmlElement> navList = detailsNav.getElementsByTagName("a");
         for (HtmlElement navElement : navList) {
             String tabName = navElement.getFirstChild().getTextContent();
+            if (navElement.hasAttribute("aria-selected")) {
+                boolean isActive = Boolean.parseBoolean(navElement.getAttribute("aria-selected"));
+                activeTab = tabName;
+            }
             tabs.put(tabName, retrieveContent(page, tabName));
         }
     }
@@ -34,7 +39,7 @@ public class DetailsTab {
     private Object retrieveContent(final HtmlPage page, final String tabName) {
         switch (tabName) {
             case "Issues":
-                return null; //new IssuesTable(page); TODO fix IssueTable#getBodies();
+                return new IssuesTable(page); // TODO fix IssueTable#getBodies();
             default:
                 return null;
         }
@@ -49,7 +54,11 @@ public class DetailsTab {
         return tabs;
     }
 
+    public String getActiveTab() {
+        return activeTab;
+    }
+
     public boolean tabIsActive(final String tabName) {
-        return tabs.containsKey(tabName);
+        return activeTab.equals(tabName);
     }
 }
