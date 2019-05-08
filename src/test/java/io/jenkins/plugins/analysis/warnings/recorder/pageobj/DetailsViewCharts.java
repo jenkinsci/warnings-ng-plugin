@@ -35,23 +35,30 @@ public class DetailsViewCharts {
         return scriptResult.getJavaScriptResult().toString();
     }
 
-
-    // TODO: Replace with either direct methods to get the different charts are method to return map of all charts
     /**
-     * Get the overview carousel
+     * Get the Severities Distribution Chart
      *
-     * @return The overview carousel
+     * @return the severities chart
      */
-    public String getOverviewCarousel() {
-        return getChartModel("overview-carousel");
+    public String getSeveritiesChart() {
+        return getChartModel("single-severities-chart");
     }
 
     /**
-     * Get the trend carousel
+     * Get the Reference Comparison Chart
      *
-     * @return the trend carousel
+     * @return the reference comparison chart
      */
-    public String getTrendCarousel() {
-        return getChartModel("trend-carousel");
+    public String getReferenceChart() {
+        return getChartModel("single-trend-chart");
+    }
+
+    /**
+     * Get the History Chart
+     *
+     * @return the history chart
+     */
+    public String getHistoryChart() {
+        return getChartModel("severities-trend-chart");
     }
 }

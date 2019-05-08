@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.util.List;
-import java.util.Objects;
-
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -16,7 +13,6 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
 
@@ -53,8 +49,9 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         DomElement severitiesChart = page.getElementsById("severities-chart").get(0);
         DetailsViewCharts charts = new DetailsViewCharts(page);
 
-        charts.getOverviewCarousel();
-
+        System.out.println(charts.getSeveritiesChart());
+        System.out.println(charts.getReferenceChart());
+        System.out.println(charts.getHistoryChart());
     }
 
 
