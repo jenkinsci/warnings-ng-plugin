@@ -52,6 +52,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         DomElement trendChart = page.getElementsById("trend-chart").get(0);
         DomElement severitiesChart = page.getElementsById("severities-chart").get(0);
         DetailsViewCharts charts = new DetailsViewCharts(page);
+
         charts.getOverviewCarousel();
 
     }

@@ -30,11 +30,13 @@ public class DetailsViewCharts {
      */
     private String getChartModel(final String id) {
         ScriptResult scriptResult = detailsViewWebPage.executeJavaScript(
-                String.format("JSON.stringify(document.getElementById(\"%s\").echart.getOption());", id));
+                String.format("JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())", id));
 
         return scriptResult.getJavaScriptResult().toString();
     }
 
+
+    // TODO: Replace with either direct methods to get the different charts are method to return map of all charts
     /**
      * Get the overview carousel
      *
