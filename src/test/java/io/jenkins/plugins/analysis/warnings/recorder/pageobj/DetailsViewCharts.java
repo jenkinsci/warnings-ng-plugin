@@ -15,7 +15,7 @@ public class DetailsViewCharts {
      *
      * @param detailsViewWebPage The details view webpage to get the charts from.
      */
-    DetailsViewCharts(final HtmlPage detailsViewWebPage) {
+    public DetailsViewCharts(final HtmlPage detailsViewWebPage) {
         this.detailsViewWebPage = detailsViewWebPage;
     }
 
