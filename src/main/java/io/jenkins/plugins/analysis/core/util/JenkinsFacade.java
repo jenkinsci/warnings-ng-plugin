@@ -146,7 +146,6 @@ public class JenkinsFacade implements Serializable {
      *
      * @return the selected build, if it exists with the given ID and if it is accessible
      */
-    @SuppressWarnings("unchecked")
     public Optional<Run<?, ?>> getBuild(final String id) {
         try {
             return Optional.ofNullable(Run.fromExternalizableId(id));
@@ -191,7 +190,6 @@ public class JenkinsFacade implements Serializable {
      */
     public String getAbsoluteUrl(final String... urlElements) {
         return getAbsoluteUrl(StringUtils.join(urlElements, "/"));
-
     }
 
     private String getAbsoluteUrl(final String url) {
