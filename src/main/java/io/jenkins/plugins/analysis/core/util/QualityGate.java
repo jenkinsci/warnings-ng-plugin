@@ -53,6 +53,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         status = unstable ? QualityGateStatus.WARNING : QualityGateStatus.FAILED;
     }
 
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getUnstable() {
         return status == QualityGateStatus.WARNING;
     }
@@ -61,6 +62,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         return type;
     }
 
+    @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getWarning() {
         return status == QualityGateStatus.WARNING;
     }
@@ -334,6 +336,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          *
          * @return the validation result
          */
+        @SuppressWarnings("WeakerAccess")
         public FormValidation doCheckThreshold(@QueryParameter final int threshold) {
             if (threshold > 0) {
                 return FormValidation.ok();

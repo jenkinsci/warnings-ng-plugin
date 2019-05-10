@@ -23,48 +23,7 @@ final class DefaultTransformations {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.AV));
 
         JSONObject issue = rawIssue.getPayload();
-        final String description;
-        if (issue.getString("violationType").equals("Divergence")) {
-            description =
-                    "Unexpected dependency from <i>"
-                            + issue.getString("architectureSourceType")
-                            + " &lt;"
-                            + issue.getString("architectureSource")
-                            + "&gt;"
-                            + "</i> to <i>"
-                            + issue.getString("architectureTargetType")
-                            + " &lt;"
-                            + issue.getString("architectureTarget")
-                            + "&gt;</i>"
-                            + "<p>Cause is a <i>"
-                            + issue.getString("dependencyType")
-                            + "</i> dependency"
-                            + " from <i>"
-                            + issue.getString("sourceEntityType")
-                            + " &lt;"
-                            + issue.getString("sourceEntity")
-                            + "&gt;"
-                            + "</i> to <i>"
-                            + issue.getString("targetEntityType")
-                            + " &lt;"
-                            + issue.getString("sourceEntity")
-                            + "&gt;</i>"
-                            + createLink(rawIssue, issue.getInt("id"));
-        }
-        else {
-            description =
-                    "Missing Architecture Dependency from <i>"
-                            + issue.getString("architectureSourceType")
-                            + " &lt;"
-                            + issue.getString("architectureSource")
-                            + "&gt;"
-                            + "</i> to <i>"
-                            + issue.getString("architectureTargetType")
-                            + " &lt;"
-                            + issue.getString("architectureTarget")
-                            + "&gt;</i>"
-                            + createLink(rawIssue, issue.getInt("id"));
-        }
+        String description = createDescription(rawIssue, issue);
 
         return new IssueBuilder()
                 .setDirectory(rawIssue.getProjectDir())
@@ -77,6 +36,48 @@ final class DefaultTransformations {
                 .setFingerprint(rawIssue.getKind().name() + issue.getInt("id"))
                 .setSeverity(Severity.WARNING_HIGH)
                 .build();
+    }
+
+    private static String createDescription(final AxRawIssue rawIssue, final JSONObject issue) {
+        if (issue.getString("violationType").equals("Divergence")) {
+            return "Unexpected dependency from <i>"
+                    + issue.getString("architectureSourceType")
+                    + " &lt;"
+                    + issue.getString("architectureSource")
+                    + "&gt;"
+                    + "</i> to <i>"
+                    + issue.getString("architectureTargetType")
+                    + " &lt;"
+                    + issue.getString("architectureTarget")
+                    + "&gt;</i>"
+                    + "<p>Cause is a <i>"
+                    + issue.getString("dependencyType")
+                    + "</i> dependency"
+                    + " from <i>"
+                    + issue.getString("sourceEntityType")
+                    + " &lt;"
+                    + issue.getString("sourceEntity")
+                    + "&gt;"
+                    + "</i> to <i>"
+                    + issue.getString("targetEntityType")
+                    + " &lt;"
+                    + issue.getString("sourceEntity")
+                    + "&gt;</i>"
+                    + createLink(rawIssue, issue.getInt("id"));
+        }
+        else {
+            return "Missing Architecture Dependency from <i>"
+                    + issue.getString("architectureSourceType")
+                    + " &lt;"
+                    + issue.getString("architectureSource")
+                    + "&gt;"
+                    + "</i> to <i>"
+                    + issue.getString("architectureTargetType")
+                    + " &lt;"
+                    + issue.getString("architectureTarget")
+                    + "&gt;</i>"
+                    + createLink(rawIssue, issue.getInt("id"));
+        }
     }
 
     /**

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -24,7 +23,6 @@ import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
@@ -52,11 +50,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
         super(name);
     }
 
-    @VisibleForTesting
-    void setJenkinsFacade(final JenkinsFacade jenkinsFacade) {
-    }
-
-    @SuppressWarnings("unused") // called by Stapler
+    @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
     public boolean getHideCleanJobs() {
         return hideCleanJobs;
     }
@@ -67,13 +61,13 @@ public class IssuesChartPortlet extends DashboardPortlet {
      * @param hideCleanJobs
      *         if {@code true} then all jobs with no issues will be hidden, {@code false} otherwise
      */
-    @SuppressWarnings("WeakerAccess")
+    @SuppressWarnings("unused")
     @DataBoundSetter
     public void setHideCleanJobs(final boolean hideCleanJobs) {
         this.hideCleanJobs = hideCleanJobs;
     }
 
-    @SuppressWarnings("unused") // called by Stapler
+    @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
     public boolean getSelectTools() {
         return selectTools;
     }
@@ -85,7 +79,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
      *         if {@code true} the selection of tools can be done manually by selecting the corresponding ID, otherwise
      *         all available tools in a job are automatically selected
      */
-    @SuppressWarnings("WeakerAccess") // called by Stapler
+    @SuppressWarnings({"WeakerAccess", "unused"}) // called by Stapler
     @DataBoundSetter
     public void setSelectTools(final boolean selectTools) {
         this.selectTools = selectTools;

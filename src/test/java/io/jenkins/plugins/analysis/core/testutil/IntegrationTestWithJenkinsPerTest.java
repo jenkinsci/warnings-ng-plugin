@@ -24,6 +24,7 @@ public abstract class IntegrationTestWithJenkinsPerTest extends IntegrationTest 
     private WebClient noJsWebClient;
     private WebClient jsEnabledClient;
 
+    /** Creates two web clients, one with and one without JS support. */
     @Before
     public void createWebClients() {
         noJsWebClient = create(false);

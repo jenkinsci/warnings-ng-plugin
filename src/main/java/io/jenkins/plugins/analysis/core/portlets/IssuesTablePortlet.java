@@ -80,7 +80,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
         return ObjectUtils.defaultIfNull(jenkinsFacade, new JenkinsFacade());
     }
 
-    @SuppressWarnings("unused") // called by Stapler
+    @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
     public boolean getHideCleanJobs() {
         return hideCleanJobs;
     }
@@ -97,7 +97,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
         this.hideCleanJobs = hideCleanJobs;
     }
 
-    @SuppressWarnings("unused") // called by Stapler
+    @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
     public boolean getShowIcons() {
         return showIcons;
     }
@@ -115,7 +115,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
         this.showIcons = showIcons;
     }
 
-    @SuppressWarnings("unused") // called by Stapler
+    @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
     public boolean getSelectTools() {
         return selectTools;
     }
