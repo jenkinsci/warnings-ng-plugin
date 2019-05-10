@@ -4,7 +4,6 @@ import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
 
 /**
  * Page Object for the charts in details views.
@@ -40,6 +39,10 @@ public class DetailsViewCharts {
                 String.format("JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
                         id));
 
+        // If no chart is found throw a assertion error
+        if (scriptResult.getJavaScriptResult() == null) {
+            throw new AssertionError(String.format("No Chart with id %s found.", id));
+        }
         return JSONObject.fromObject(scriptResult.getJavaScriptResult().toString());
     }
 

@@ -1,10 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import hudson.model.FreeStyleProject;
@@ -13,52 +16,66 @@ import hudson.model.Result;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
 
 import static org.assertj.core.api.Assertions.*;
 
+/**
+ * Provides tests for the charts shown on the details page.
+ */
 public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
-
-
+    /**
+     * Tests if the New-Versus-Fixed trend chart is correctly rendered after a series of builds.
+     */
     @Test
-    public void shouldShowFullPieChart() {
+    public void shouldShowNewVersusFixedTrendChart() {
 
-
+        // Set up the project and configure the java warnings
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
         java.setPattern("**/*.txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
-        issuesRecorder.addQualityGate(5, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+        List<AnalysisResult> buildResults = new ArrayList<>();
+        // Create the initial workspace for comparision
+        createWorkspaceFileWithWarnings(project, 1, 2);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
+        // Schedule a build which adds more warnings
+        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        createWorkspaceFileWithWarnings(project, "javac.txt", 1);
+        // Schedule a build which resolves some of the warnings
+        createWorkspaceFileWithWarnings(project, 3);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        JSONObject chartModel = charts.getChartModel("new-versus-fixed-trend-chart");
 
+        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
+        // Make sure each of our builds is listed on the x axis
+        for (int iResult = 0; iResult < buildResults.size(); iResult++) {
+            String buildName = buildResults.get(iResult).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(iResult)).isEqualTo(buildName);
+        }
 
-        //assertThat(result.getTotalSize()).isEqualTo(2);
-        //assertThat(result.getQualityGateStatus()).isEqualTo(QualityGateStatus.PASSED);
+        JSONArray allSeries = chartModel.getJSONArray("series");
+        assertThat(allSeries.size()).isEqualTo(2); // Only New and Fixed should be shown.
 
-        HtmlPage page = getDetailsWebPage(project, result);
-        DomElement carousel = page.getElementsById("overview-carousel").get(0);
-        DomElement trendChart = page.getElementsById("trend-chart").get(0);
-        DomElement severitiesChart = page.getElementsById("severities-chart").get(0);
-        DetailsViewCharts charts = new DetailsViewCharts(page);
+        // Check the series which describes the "new" issues of each build
+        JSONObject seriesNewTrend = allSeries.getJSONObject(0);
+        assertThat(seriesNewTrend.getString("name")).isEqualTo("New");
+        assertThat(convertToIntArray(seriesNewTrend.getJSONArray("data"))).isEqualTo(new int[] {0, 2, 0});
 
-        JSONObject chartModel = charts.getChartModel("trend-chart");
-        JSONObject chartModel1 = charts.getChartModel("severities-chart");
-
-        System.out.println(charts.getSeveritiesChart());
-        System.out.println(charts.getReferenceChart());
-        System.out.println(charts.getHistoryChart());
+        // Check the series which describes the fixed issues of each build
+        JSONObject seriesFixedTrend = allSeries.getJSONObject(1);
+        assertThat(seriesFixedTrend.getString("name")).isEqualTo("Fixed");
+        assertThat(convertToIntArray(seriesFixedTrend.getJSONArray("data"))).isEqualTo(new int[] {0, 0, 3});
     }
-
 
     private HtmlPage getDetailsWebPage(final FreeStyleProject project, final AnalysisResult result) {
         int buildNumber = result.getBuild().getNumber();
@@ -66,16 +83,28 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         return getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
     }
 
-    private void createWorkspaceFileWithWarnings(final FreeStyleProject project, final String name, final int numWarnings) {
+    private void createWorkspaceFileWithWarnings(final FreeStyleProject project,
+            final int... linesWithWarning) {
         StringBuilder warningText = new StringBuilder();
-        for (int i = 0; i < numWarnings; i++) {
-            warningText.append(createDeprecationWarning(i)).append("\n");
+        for (int lineNumber : linesWithWarning) {
+            warningText.append(createDeprecationWarning(lineNumber)).append("\n");
         }
-        createFileInWorkspace(project, name, warningText.toString());
+
+        createFileInWorkspace(project, "javac.txt", warningText.toString());
     }
 
     private String createDeprecationWarning(final int lineNumber) {
-        // TODO: make constant
-        return String.format("[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated\n", lineNumber);
+        return String.format(
+                "[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
+                lineNumber);
+    }
+
+    private int[] convertToIntArray(final JSONArray jsonArray) {
+        int[] result = new int[jsonArray.size()];
+
+        for (int i = 0; i < jsonArray.size(); i++) {
+            result[i] = jsonArray.getInt(i);
+        }
+        return result;
     }
 }
