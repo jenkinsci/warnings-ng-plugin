@@ -77,6 +77,103 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(convertToIntArray(seriesFixedTrend.getJSONArray("data"))).isEqualTo(new int[] {0, 0, 3});
     }
 
+    /**
+     * Tests if the Tools trend chart is correctly rendered after a series of builds.
+     */
+    @Test
+    public void shouldShowToolsTrendChart() {
+
+        // Set up the project and configure the java warnings
+        FreeStyleProject project = createFreeStyleProject();
+
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+
+        List<AnalysisResult> buildResults = new ArrayList<>();
+        // Create the initial workspace for comparision
+        createWorkspaceFileWithWarnings(project, 1, 2);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which adds more warnings
+        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which resolves some of the warnings
+        createWorkspaceFileWithWarnings(project, 3);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        JSONObject chartModel = charts.getChartModel("tools-trend-chart");
+
+        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
+        // Make sure each of our builds is listed on the x axis
+        for (int iResult = 0; iResult < buildResults.size(); iResult++) {
+            String buildName = buildResults.get(iResult).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(iResult)).isEqualTo(buildName);
+        }
+
+        JSONArray allSeries = chartModel.getJSONArray("series");
+        assertThat(allSeries.size()).isEqualTo(1); // Only and tool was configured
+
+        // Check the series describing the java warnings is correctly shown
+        JSONObject seriesNewTrend = allSeries.getJSONObject(0);
+        assertThat(seriesNewTrend.getString("name")).isEqualTo(java.getActualId());
+        assertThat(convertToIntArray(seriesNewTrend.getJSONArray("data"))).isEqualTo(new int[] {2, 4, 1});
+
+    }
+
+    /**
+     * Tests if the severities trend chart is correctly rendered after a series of builds.
+     */
+    @Test
+    public void shouldShowSeveritiesTrendChart() {
+
+        // Set up the project and configure the java warnings
+        FreeStyleProject project = createFreeStyleProject();
+
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+
+        List<AnalysisResult> buildResults = new ArrayList<>();
+        // Create the initial workspace for comparision
+        createWorkspaceFileWithWarnings(project, 1, 2);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which adds more warnings
+        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which resolves some of the warnings
+        createWorkspaceFileWithWarnings(project, 3);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        JSONObject chartModel = charts.getChartModel("severities-trend-chart");
+
+        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
+        // Make sure each of our builds is listed on the x axis
+        for (int iResult = 0; iResult < buildResults.size(); iResult++) {
+            String buildName = buildResults.get(iResult).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(iResult)).isEqualTo(buildName);
+        }
+
+        JSONArray allSeries = chartModel.getJSONArray("series");
+        assertThat(allSeries.size()).isEqualTo(1); // Only and tool was configured
+
+        // Check the series describing the java warnings is correctly shown
+        JSONObject seriesNewTrend = allSeries.getJSONObject(0);
+        assertThat(seriesNewTrend.getString("name")).isEqualTo("Normal");
+        assertThat(convertToIntArray(seriesNewTrend.getJSONArray("data"))).isEqualTo(new int[] {2, 4, 1});
+
+        //TODO: Create some issues with other severities
+
+
+    }
+
     private HtmlPage getDetailsWebPage(final FreeStyleProject project, final AnalysisResult result) {
         int buildNumber = result.getBuild().getNumber();
         String pluginId = result.getId();
