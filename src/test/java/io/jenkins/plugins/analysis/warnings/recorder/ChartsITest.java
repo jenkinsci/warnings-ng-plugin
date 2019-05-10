@@ -5,6 +5,8 @@ import org.junit.Test;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import net.sf.json.JSONObject;
+
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
@@ -48,6 +50,9 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         DomElement trendChart = page.getElementsById("trend-chart").get(0);
         DomElement severitiesChart = page.getElementsById("severities-chart").get(0);
         DetailsViewCharts charts = new DetailsViewCharts(page);
+
+        JSONObject chartModel = charts.getChartModel("trend-chart");
+        JSONObject chartModel1 = charts.getChartModel("severities-chart");
 
         System.out.println(charts.getSeveritiesChart());
         System.out.println(charts.getReferenceChart());
