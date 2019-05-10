@@ -7,9 +7,12 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.DetailsTabType;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -25,15 +28,43 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleJobWithWarnings();
 
         copySingleFileToWorkspace(project, "../java1Warning.txt", "java.txt");
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(project.getLastBuild()).isNotNull();
-        HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, project,
-                project.getLastBuild().getNumber() + "/java");
+        HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult);
         assertThat(htmlPage).isNotNull();
+
         DetailsTab detailsTab = new DetailsTab(htmlPage);
-        assertThat(detailsTab.getTabs()).hasSize(1);
-        assertThat(detailsTab.getTabs().containsKey("Issues")).isTrue();
+        assertThat(detailsTab.getTabTypes())
+                .hasSize(1)
+                .contains(DetailsTabType.ISSUES);
+        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.ISSUES);
+        assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
+    }
+
+    @Test
+    public void shouldSwitchDetailsTabsCorrectly() {
+        FreeStyleProject project = createFreeStyleJobWithWarnings();
+
+        copySingleFileToWorkspace(project, "../java2Warnings.txt", "java.txt");
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(project.getLastBuild()).isNotNull();
+        HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult);
+        assertThat(htmlPage).isNotNull();
+
+        DetailsTab detailsTab = new DetailsTab(htmlPage);
+        assertThat(detailsTab.getTabTypes())
+                .hasSize(3)
+                .contains(DetailsTabType.ISSUES,
+                        DetailsTabType.FILES,
+                        DetailsTabType.FOLDERS);
+        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.FOLDERS);
+        //assertThat(detailsTab.getActive()).isInstanceOf(FoldersTable.class);
+
+        detailsTab.select(DetailsTabType.ISSUES);
+        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.ISSUES);
+        assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
     }
 
     @Test
@@ -41,17 +72,26 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleJobWithWarnings();
 
         copySingleFileToWorkspace(project, "../java2Warnings.txt", "java.txt");
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(project.getLastBuild()).isNotNull();
-        HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, project,
-                project.getLastBuild().getNumber() + "/java");
+        HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult);
         assertThat(htmlPage).isNotNull();
+
         DetailsTab detailsTab = new DetailsTab(htmlPage);
-        assertThat(detailsTab.getTabs()).hasSize(3);
-        assertThat(detailsTab.getTabs().containsKey("Issues")).isTrue();
-        assertThat(detailsTab.getTabs().containsKey("Folders")).isTrue();
-        assertThat(detailsTab.getTabs().containsKey("Files")).isTrue();
+        assertThat(detailsTab.getTabTypes())
+                .hasSize(3)
+                .contains(
+                        DetailsTabType.ISSUES,
+                        DetailsTabType.FILES,
+                        DetailsTabType.FOLDERS);
+        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.FOLDERS);
+        //assertThat(detailsTab.getActive()).isInstanceOf(FoldersTable.class);
+
+        detailsTab.select(DetailsTabType.ISSUES);
+        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.ISSUES);
+        assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
+
     }
 
     @Test
@@ -60,17 +100,21 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
 
         copySingleFileToWorkspace(project, "../java2Warnings.txt", "java.txt");
         copySingleFileToWorkspace(project, "../java2Warnings.txt", "java2.txt");
-        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(project.getLastBuild()).isNotNull();
-        HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, project,
-                project.getLastBuild().getNumber() + "/java");
+        HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult);
         assertThat(htmlPage).isNotNull();
+
         DetailsTab detailsTab = new DetailsTab(htmlPage);
-        assertThat(detailsTab.getTabs()).hasSize(3);
-        assertThat(detailsTab.getTabs().containsKey("Issues")).isTrue();
-        assertThat(detailsTab.getTabs().containsKey("Folders")).isTrue();
-        assertThat(detailsTab.getTabs().containsKey("Files")).isTrue();
+        assertThat(detailsTab.getTabTypes())
+                .hasSize(3)
+                .contains(
+                        DetailsTabType.ISSUES,
+                        DetailsTabType.FILES,
+                        DetailsTabType.FOLDERS);
+        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.FOLDERS);
+        //assertThat(detailsTab.getActive()).isInstanceOf(FoldersTable.class);
     }
 
     private FreeStyleProject createFreeStyleJobWithWarnings() {

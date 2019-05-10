@@ -1,11 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
 import java.util.HashMap;
+import java.util.Objects;
+import java.util.Set;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Page Object for the details-tab that shows tables containing details of the issues of a build.
@@ -14,8 +18,9 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  */
 public class DetailsTab {
 
-    private String activeTab;
-    private final HashMap<String, Object> tabs = new HashMap<>();
+    private DetailsTabType activeTabType;
+    private final HashMap<DetailsTabType, Object> tabs = new HashMap<>();
+    private HtmlPage page;
 
     /**
      * Parse information from the given page and creates a new instance of {@link DetailsTab}.
@@ -24,41 +29,83 @@ public class DetailsTab {
      *         the whole details HTML page
      */
     public DetailsTab(final HtmlPage page) {
+        this.page = page;
         DomElement detailsNav = page.getElementById("tab-details");
         DomNodeList<HtmlElement> navList = detailsNav.getElementsByTagName("a");
         for (HtmlElement navElement : navList) {
             String tabName = navElement.getFirstChild().getTextContent();
+            DetailsTabType tabType = DetailsTabType.valueOf(tabName.toUpperCase());
             if (navElement.hasAttribute("aria-selected")) {
-                boolean isActive = Boolean.parseBoolean(navElement.getAttribute("aria-selected"));
-                activeTab = tabName;
+                activeTabType = tabType;
             }
-            tabs.put(tabName, retrieveContent(page, tabName));
+            tabs.put(tabType, null);
         }
     }
 
-    private Object retrieveContent(final HtmlPage page, final String tabName) {
-        switch (tabName) {
-            case "Issues":
-                return new IssuesTable(page); // TODO fix IssueTable#getBodies();
+    /**
+     * Returns the page-object of the currently active details-tab.
+     *
+     * @return the page-object of the active tab
+     */
+    public Object getActive() {
+        return select(activeTabType);
+    }
+
+    /**
+     * Selects a specific tab and returns the corresponding page-object.
+     *
+     * @param tapType
+     *         tab to be selected.
+     *
+     * @return the corresponding page-object
+     */
+    public Object select(final DetailsTabType tapType) {
+        assertThat(tabs).containsKey(tapType);
+
+        Object container = tabs.get(tapType);
+        if (Objects.isNull(container)) {
+            Object retrievedContent = retrieveContent(tapType);
+            tabs.put(tapType, retrievedContent);
+            container = retrievedContent;
+        }
+        activeTabType = tapType;
+        return container;
+    }
+
+    private Object retrieveContent(final DetailsTabType tabType) {
+        switch (tabType) {
+            case ISSUES:
+                return new IssuesTable(page);
+            case FOLDERS:
+            case FILES:
+                return null;
             default:
                 return null;
         }
     }
 
     /**
-     * Returns the tabs and corresponding content of navigation bar (tab header).
+     * All types of details-tab which are available on current page.
      *
-     * @return the hashmap with title as key and content as value
+     * @return the set of tab-types of current details-tab
      */
-    public HashMap<String, Object> getTabs() {
-        return tabs;
+    public Set<DetailsTabType> getTabTypes() {
+        return tabs.keySet();
     }
 
-    public String getActiveTab() {
-        return activeTab;
+    /**
+     * The type of the currently active details-tab.
+     *
+     * @return activeTabType
+     */
+    public DetailsTabType getActiveTabType() {
+        return activeTabType;
     }
 
-    public boolean tabIsActive(final String tabName) {
-        return activeTab.equals(tabName);
+    /**
+     * Types for DetailsTab.
+     */
+    public enum DetailsTabType {
+        FILES, FOLDERS, ISSUES;
     }
 }
