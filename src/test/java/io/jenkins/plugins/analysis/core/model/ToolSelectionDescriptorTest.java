@@ -39,7 +39,6 @@ class ToolSelectionDescriptorTest {
 
         ComboBoxModel model = toolSelectionDescriptor.doFillIdItems();
 
-        assertThat(model.contains("1")).isTrue();
-        assertThat(model.contains("2")).isTrue();
+        assertThat(model).containsOnly("1", "2");
     }
 }
