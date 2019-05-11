@@ -34,7 +34,7 @@ public class DetailsTab {
         DomNodeList<HtmlElement> navList = detailsNav.getElementsByTagName("a");
         for (HtmlElement navElement : navList) {
             String tabName = navElement.getFirstChild().getTextContent();
-            DetailsTabType tabType = DetailsTabType.valueOf(tabName.toUpperCase());
+            DetailsTabType tabType = DetailsTabType.valueOfIgnoreCase(tabName);
             if (navElement.hasAttribute("aria-selected")) {
                 activeTabType = tabType;
             }
@@ -107,5 +107,9 @@ public class DetailsTab {
      */
     public enum DetailsTabType {
         FILES, FOLDERS, ISSUES;
+
+        private static DetailsTabType valueOfIgnoreCase(final String tabName) {
+            return valueOf(tabName.toUpperCase());
+        }
     }
 }
