@@ -23,6 +23,9 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
 
+    /**
+     * When a single warning is being recognized only the issues-tab should be shown.
+     */
     @Test
     public void shouldPopulateDetailsTabSingleWarning() {
         FreeStyleProject project = createFreeStyleJobWithWarnings();
@@ -42,6 +45,9 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
     }
 
+    /**
+     * When two warnings are being recognized in one file the tabs issues, files and folders should be shown.
+     */
     @Test
     public void shouldPopulateDetailsTab1File() {
         FreeStyleProject project = createFreeStyleJobWithWarnings();
@@ -70,6 +76,10 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
     }
 
+    /**
+     * The following test should test the functionality of the details-tab page-object when switching to a tab other
+     * than the active one.
+     */
     @Test
     public void shouldSwitchDetailsTabsCorrectly() {
         FreeStyleProject project = createFreeStyleJobWithWarnings();
@@ -95,6 +105,9 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
     }
 
+    /**
+     * When four warnings are being recognized in two files the tabs issues, files and folders should be shown.
+     */
     @Test
     public void shouldPopulateDetailsTab2Files() {
         FreeStyleProject project = createFreeStyleJobWithWarnings();
