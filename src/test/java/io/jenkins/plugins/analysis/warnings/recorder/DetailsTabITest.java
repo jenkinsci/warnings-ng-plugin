@@ -1,8 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import org.junit.FixMethodOrder;
 import org.junit.Test;
-import org.junit.runners.MethodSorters;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
@@ -23,7 +21,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Nils Engelbrecht
  */
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
@@ -88,12 +85,12 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
                 .contains(DetailsTabType.ISSUES,
                         DetailsTabType.FILES,
                         DetailsTabType.FOLDERS);
-        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.ISSUES);
-        assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
-
-        detailsTab.select(DetailsTabType.FOLDERS);
         assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.FOLDERS);
         //assertThat(detailsTab.getActive()).isInstanceOf(FoldersTable.class);
+
+        detailsTab.select(DetailsTabType.ISSUES);
+        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.ISSUES);
+        assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
     }
 
     @Test
@@ -115,7 +112,7 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
                         DetailsTabType.ISSUES,
                         DetailsTabType.FILES,
                         DetailsTabType.FOLDERS);
-        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.ISSUES);
+        assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.FOLDERS);
         //assertThat(detailsTab.getActive()).isInstanceOf(FoldersTable.class);
     }
 
