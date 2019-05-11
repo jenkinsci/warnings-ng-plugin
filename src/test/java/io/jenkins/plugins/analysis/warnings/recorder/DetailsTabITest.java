@@ -60,6 +60,8 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
                         DetailsTabType.ISSUES,
                         DetailsTabType.FILES,
                         DetailsTabType.FOLDERS);
+
+        //TODO find inconsistency: singleRun of test vs all test with JenkinsPerSuite
         assertThat(detailsTab.getActiveTabType()).isEqualTo(DetailsTabType.FOLDERS);
         //assertThat(detailsTab.getActive()).isInstanceOf(FoldersTable.class);
 
