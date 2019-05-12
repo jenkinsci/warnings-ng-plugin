@@ -7,18 +7,21 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 /**
- * Page Object for the console log view (Maven Console Log parser).
+ * Page object for the console log view.
  *
  * @author Veronika Zwickenpflug
  */
 public class ConsoleLogView {
+    private List<String> messages = new ArrayList<>();
+    private List<String> markedMessages = new ArrayList<>();
 
-    private List<String> messages;
-    private List<String> markedMessages;
-
+    /**
+     * Creates a new instance of {@link ConsoleLogView}.
+     *
+     * @param page
+     *         the whole details HTML page
+     */
     public ConsoleLogView(final HtmlPage page) {
-        messages = new ArrayList<>();
-        markedMessages = new ArrayList<>();
         for (DomElement td : page.getElementsByTagName("td")) {
             messages.add(td.getTextContent());
 
@@ -35,5 +38,4 @@ public class ConsoleLogView {
     public List<String> getMarkedMessages() {
         return markedMessages;
     }
-
 }
