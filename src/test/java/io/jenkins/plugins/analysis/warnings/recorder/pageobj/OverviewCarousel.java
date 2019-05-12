@@ -12,40 +12,49 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  * @author Artem Polovyi
  */
 public class OverviewCarousel {
-    private final DomElement previous;
-    private final DomElement next;
-    private final List<DomElement> items;
     private final DomElement overview;
+    private final DomElement prev;
+    private final DomElement next;
+    private List<DomElement> items;
+    private static final String CAROUSEL_ITEMS_XPATH = ".//div[contains(@class, 'carousel-item')]";
 
     public OverviewCarousel(final HtmlPage page) {
         this.overview = page.getElementById("overview-carousel");
-        this.previous = (DomElement) overview.getByXPath(".//a[contains(@class, 'carousel-control-prev')]").get(0);
-        this.next = (DomElement) overview.getByXPath(".//a[contains(@class, 'carousel-control-next')]").get(0);
-        this.items = overview.getByXPath(".//div[contains(@class, 'carousel-item')]");
+        this.prev = page.getElementById("overview-carousel-prev");
+        this.next = page.getElementById("overview-carousel-next");
+        this.items = overview.getByXPath(CAROUSEL_ITEMS_XPATH);
     }
 
+    /**
+     * TODO: replace with Carousel Element once it's done.
+     *
+     */
     public DomElement getActiveItem(){
-        return (DomElement) overview.getByXPath(".//div[contains(@class, 'active')]").get(0);
+        for (DomElement item: items){
+            if (item.getAttribute("class").contains("active"))
+                return item;
+        }
+        return null;
     }
 
-    public DomElement previous() {
+    public void prev() {
         try {
-            previous.click();
+            prev.click();
+            this.items = overview.getByXPath(CAROUSEL_ITEMS_XPATH);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-        return getActiveItem();
     }
 
-    public DomElement next() {
+    public void next() {
         try {
             next.click();
+            this.items = overview.getByXPath(CAROUSEL_ITEMS_XPATH);
         }
         catch (IOException e) {
             e.printStackTrace();
         }
-        return getActiveItem();
     }
 
     public List<DomElement> getItems() {
