@@ -101,9 +101,9 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
         }
 
         /**
-         * Returns a model with all available charsets.
+         * Returns a model that contains all static analysis tool IDs of all jobs.
          *
-         * @return a model with all available charsets
+         * @return a model with all static analysis tool IDs of all jobs
          */
         public ComboBoxModel doFillIdItems() {
             ComboBoxModel model = new ComboBoxModel();

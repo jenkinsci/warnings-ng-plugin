@@ -1,7 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.assertj.core.util.Lists;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import hudson.model.Job;
 import hudson.util.ComboBoxModel;
@@ -17,21 +21,23 @@ import static org.mockito.Mockito.*;
  *
  * @author Fabian Janker
  */
-
 class ToolSelectionDescriptorTest {
+    @ParameterizedTest(name = "{index} => Existing Job IDs = <{0}>")
+    @ValueSource(strings = {"", "1", "1, 2", "1, 2, 3"})
+    void shouldFillIDItems(final String ids) {
+        String[] elements = ids.split(",", -1);
 
-    @Test
-    void shouldFillIDItems() {
         ToolSelectionDescriptor toolSelectionDescriptor = new ToolSelectionDescriptor();
 
-        JobAction jobAction1 = mock(JobAction.class);
-        when(jobAction1.getId()).thenReturn("1");
-
-        JobAction jobAction2 = mock(JobAction.class);
-        when(jobAction2.getId()).thenReturn("2");
+        List<JobAction> actions = new ArrayList<>();
+        for (String element : elements) {
+            JobAction jobAction = mock(JobAction.class);
+            when(jobAction.getId()).thenReturn(element);
+            actions.add(jobAction);
+        }
 
         Job job = mock(Job.class);
-        when(job.getActions(JobAction.class)).thenReturn(Lists.list(jobAction1, jobAction2));
+        when(job.getActions(JobAction.class)).thenReturn(actions);
 
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.getAllJobs()).thenReturn(Lists.list(job));
@@ -39,6 +45,6 @@ class ToolSelectionDescriptorTest {
 
         ComboBoxModel model = toolSelectionDescriptor.doFillIdItems();
 
-        assertThat(model).containsOnly("1", "2");
+        assertThat(model).containsExactly(elements);
     }
 }
