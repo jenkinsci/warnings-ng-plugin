@@ -1,13 +1,11 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNode;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -21,7 +19,7 @@ public class SourceCodeView {
     /** The html element id of the main panel. */
     public static final String mainPanelElementId = "main-panel";
 
-    /** The regex pattern describing the head line of the page (including file name).*/
+    /** The regex pattern describing the head line of the page (including file name). */
     public static final Pattern fileNamePattern = Pattern.compile("Content of file (.*)");
 
     /** The xPath to the file name (starting at the main panel). */
@@ -33,13 +31,14 @@ public class SourceCodeView {
     /** The xPath to the message describing the issue (starting at the main panel). */
     public static final String issueMessageXpath = "//pre//div//div";
 
-    /** The source code view html page.*/
+    /** The source code view html page. */
     private HtmlPage sourceCodeViewPage;
 
     /**
      * Constructor.
      *
-     * @param sourceCodeViewPage The source code view html page.
+     * @param sourceCodeViewPage
+     *         The source code view html page.
      */
     public SourceCodeView(HtmlPage sourceCodeViewPage) {
         this.sourceCodeViewPage = sourceCodeViewPage;
@@ -74,7 +73,6 @@ public class SourceCodeView {
         StringBuilder stringBuilder = new StringBuilder();
         List<DomNode> sourceCodeList = getMainPanel().getByXPath(sourceCodeXpath);
 
-
         for (DomNode node : sourceCodeList) {
             String code = node.asText();
             stringBuilder.append(code);
@@ -92,9 +90,10 @@ public class SourceCodeView {
         StringBuilder sourceCodeLineBuilder = new StringBuilder();
         List<DomNode> issueSourceCodeList = getMainPanel().getByXPath(issueSourceCodeXpath);
 
-        if(!issueSourceCodeList.isEmpty()){
-            issueSourceCodeList.forEach(c->sourceCodeLineBuilder.append(c.asText()));
-        } else {
+        if (!issueSourceCodeList.isEmpty()) {
+            issueSourceCodeList.forEach(c -> sourceCodeLineBuilder.append(c.asText()));
+        }
+        else {
             throw new NoSuchElementException("Can't find the issue source code line on page.");
         }
 
@@ -110,15 +109,16 @@ public class SourceCodeView {
         StringBuilder issueMessageBuilder = new StringBuilder();
         List<DomNode> issueMessageList = getMainPanel().getByXPath(issueMessageXpath);
 
-        if(!issueMessageList.isEmpty()){
-            for(DomNode node : issueMessageList) {
+        if (!issueMessageList.isEmpty()) {
+            for (DomNode node : issueMessageList) {
                 String issueMessage = node.asText();
 
                 //replacing "new line" and "tab" character at the start of the message
                 issueMessage = issueMessage.replace("\t", "").replace("\n", "");
                 issueMessageBuilder.append(issueMessage);
             }
-        } else {
+        }
+        else {
             throw new NoSuchElementException("Can't find the issue message on page.");
         }
 
@@ -126,29 +126,9 @@ public class SourceCodeView {
     }
 
     /**
-     *
      * @return The main panel element of the html page.
      */
     private DomElement getMainPanel() {
         return sourceCodeViewPage.getElementById(mainPanelElementId);
-    }
-
-    /**
-     * Just a test method to see if everything works as expected.
-     * (Will be deleted later!)
-     *
-     * @param args
-     * @throws IOException
-     */
-    public static void main(String[] args) throws IOException {
-        WebClient webClient = new WebClient();
-        HtmlPage page = webClient.getPage(
-                "http://localhost:8081/job/pipeline-analysis-model/5/java/packageName.-423259349/fileName.-1473104080/source.b116f8a7-71d7-4890-a19b-c4eb2dd87947/#112");
-
-        SourceCodeView sourceCodeView = new SourceCodeView(page);
-        System.out.println(sourceCodeView.getFileName());
-        System.out.println(sourceCodeView.getIssueSourceCodeLine());
-        System.out.println(sourceCodeView.getIssueMessage());
-        System.out.println(sourceCodeView.getSourceCode());
     }
 }
