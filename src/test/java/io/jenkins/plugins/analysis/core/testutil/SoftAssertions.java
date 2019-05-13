@@ -6,9 +6,9 @@ import java.util.function.Consumer;
 import org.assertj.core.api.AbstractStandardSoftAssertions;
 import org.assertj.core.api.SoftAssertionError;
 
-import static org.assertj.core.api.Assertions.*;
-
 import hudson.util.FormValidation;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Custom soft assertions for {@link FormValidation} instances.

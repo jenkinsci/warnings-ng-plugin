@@ -71,7 +71,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     private static final String NO_REFERENCE_JOB = "-";
 

@@ -69,6 +69,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    /** Runs the native parser on a file that contains 8 issues.. */
+    @Test
+    public void shouldReadNativeFormat() {
+        shouldFindIssuesOfTool(9, new WarningsPlugin(), "warnings-issues.xml");
+    }
+
     /** Verifies that a broken file does not fail. */
     @Test
     public void shouldSilentlyIgnoreWrongFile() {

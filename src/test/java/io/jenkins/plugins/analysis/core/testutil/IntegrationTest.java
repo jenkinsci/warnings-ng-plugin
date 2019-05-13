@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -26,6 +27,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.ScriptResult;
+import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
@@ -45,6 +47,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
+import hudson.model.Item;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.Slave;
@@ -84,6 +87,51 @@ public abstract class IntegrationTest extends ResourceTest {
     protected static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
     private static final String WINDOWS_FILE_ACCESS_READ_ONLY = "RX";
     private static final String WINDOWS_FILE_DENY = "/deny";
+
+    /** Determines whether JavaScript is enabled in the {@link WebClient}. */
+    public enum JavaScriptSupport {
+        /** JavaScript is disabled. */
+        JS_ENABLED,
+        /** JavaScript is enabled. */
+        JS_DISABLED
+    }
+
+    /**
+     * Returns the Jenkins rule to manage the Jenkins instance.
+     *
+     * @return Jenkins rule
+     */
+    protected abstract JenkinsRule getJenkins();
+
+    /**
+     * Returns a {@link WebClient} to access the HTML pages of Jenkins.
+     *
+     * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
+     *
+     * @return the web client to use
+     */
+    protected abstract WebClient getWebClient(JavaScriptSupport javaScriptSupport);
+
+    static WebClient create(final boolean isJavaScriptEnabled) {
+        WebClient webClient = IntegrationTestWithJenkinsPerSuite.JENKINS_PER_SUITE.createWebClient();
+        webClient.setCssErrorHandler(new SilentCssErrorHandler());
+        java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.SEVERE);
+        webClient.setIncorrectnessListener((s, o) -> {
+        });
+
+        webClient.setJavaScriptEnabled(isJavaScriptEnabled);
+        webClient.getCookieManager().setCookiesEnabled(isJavaScriptEnabled);
+        webClient.getOptions().setCssEnabled(isJavaScriptEnabled);
+
+        webClient.getOptions().setDownloadImages(false);
+        webClient.getOptions().setUseInsecureSSL(true);
+        webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+        webClient.getOptions().setThrowExceptionOnScriptError(false);
+        webClient.getOptions().setPrintContentOnFailingStatusCode(false);
+
+        return webClient;
+    }
 
     /**
      * Creates a file with the specified content in the workspace.
@@ -471,13 +519,6 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Returns the Jenkins rule to manage the Jenkins instance.
-     *
-     * @return Jenkins rule
-     */
-    protected abstract JenkinsRule getJenkins();
-
-    /**
      * Enables an {@link Eclipse} recorder for the specified project.
      *
      * @param project
@@ -838,6 +879,8 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Returns the HTML page content of the specified URL for a given job.
      *
+     * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param job
      *         the job that owns the URL
      * @param relativeUrl
@@ -845,9 +888,9 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final AbstractProject<?, ?> job, final String relativeUrl) {
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final Item job, final String relativeUrl) {
         try {
-            return createWebClient().getPage(job, relativeUrl);
+            return getWebClient(javaScriptSupport).getPage(job, relativeUrl);
         }
         catch (SAXException | IOException e) {
             throw new AssertionError(e);
@@ -857,30 +900,36 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Returns the HTML page content of the specified job.
      *
+     * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param job
      *         the job to show the page for
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final AbstractProject<?, ?> job) {
-        return getWebPage(job, StringUtils.EMPTY);
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final Item job) {
+        return getWebPage(javaScriptSupport, job, StringUtils.EMPTY);
     }
 
     /**
      * Returns the HTML page content of the specified build.
      *
+     * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param build
      *         the build to show the page for
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final Run<?, ?> build) {
-        return getWebPage(build, StringUtils.EMPTY);
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final Run<?, ?> build) {
+        return getWebPage(javaScriptSupport, build, StringUtils.EMPTY);
     }
 
     /**
      * Returns the HTML page content of the specified URL for a given build.
      *
+     * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param build
      *         the build to show the page for
      * @param relativeUrl
@@ -888,9 +937,10 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final Run<?, ?> build, final String relativeUrl) {
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final Run<?, ?> build,
+            final String relativeUrl) {
         try {
-            return createWebClient().getPage(build, relativeUrl);
+            return getWebClient(javaScriptSupport).getPage(build, relativeUrl);
         }
         catch (SAXException | IOException e) {
             throw new AssertionError(e);
@@ -900,6 +950,8 @@ public abstract class IntegrationTest extends ResourceTest {
     /**
      * Returns the HTML page content of the specified URL for a given analysis result.
      *
+     * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param result
      *         the analysis result to show the sub page for
      * @param relativeUrl
@@ -907,26 +959,23 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final AnalysisResult result, final String relativeUrl) {
-        return getWebPage(result.getOwner(), result.getId() + "/" + relativeUrl);
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport,
+            final AnalysisResult result, final String relativeUrl) {
+        return getWebPage(javaScriptSupport, result.getOwner(), result.getId() + "/" + relativeUrl);
     }
 
     /**
      * Returns the HTML page content of the specified analysis result.
      *
+     * @param javaScriptSupport
+     *         determines whether JavaScript is enabled in the {@link WebClient}
      * @param result
      *         the analysis result to show
      *
      * @return the HTML page
      */
-    protected HtmlPage getWebPage(final AnalysisResult result) {
-        return getWebPage(result.getOwner(), result.getId());
-    }
-
-    private WebClient createWebClient() {
-        WebClient webClient = getJenkins().createWebClient();
-        webClient.setJavaScriptEnabled(true);
-        return webClient;
+    protected HtmlPage getWebPage(final JavaScriptSupport javaScriptSupport, final AnalysisResult result) {
+        return getWebPage(javaScriptSupport, result.getOwner(), result.getId());
     }
 
     /**

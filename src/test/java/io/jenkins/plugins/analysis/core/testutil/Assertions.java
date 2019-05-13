@@ -3,9 +3,10 @@ package io.jenkins.plugins.analysis.core.testutil;
 import org.jfree.data.category.CategoryDataset;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 
 import hudson.util.FormValidation;
+
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 
 /**
  * Custom assertions for {@link FormValidation} instances.

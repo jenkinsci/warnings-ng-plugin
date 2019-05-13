@@ -6,7 +6,6 @@ import net.sf.json.JSONObject;
  * Represents a location-aware violation in json format.
  */
 final class AxRawIssue {
-
     private final String dashboardUrl;
     private final String projectDir;
     private final JSONObject payload;
@@ -15,7 +14,7 @@ final class AxRawIssue {
     AxRawIssue(final String dashboardUrl, final String baseDir, final JSONObject payload,
             final AxIssueKind kind) {
         this.dashboardUrl = dashboardUrl;
-        this.projectDir = baseDir;
+        projectDir = baseDir;
         this.payload = payload;
         this.kind = kind;
     }

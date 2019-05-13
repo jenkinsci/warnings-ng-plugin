@@ -24,7 +24,7 @@ node ('linux') {
                 writeFile file: settingsXml, text: libraryResource('settings-azure.xml')
                 mavenOptions += "-s $settingsXml"
             }
-            mavenOptions += "clean verify jacoco:prepare-agent test jacoco:report -Djenkins.test.timeout=240 -Djenkins.version=2.150.1"
+            mavenOptions += "clean verify jacoco:prepare-agent test jacoco:report -Djenkins.test.timeout=1000"
             command = "mvn ${mavenOptions.join(' ')}"
             env << "PATH+MAVEN=${tool 'mvn'}/bin"
 
@@ -36,7 +36,7 @@ node ('linux') {
             junit testResults: '**/target/*-reports/TEST-*.xml'
             recordIssues enabledForFailure: true, tool: mavenConsole(), referenceJobName: 'Plugins/warnings-ng-plugin/master'
             recordIssues enabledForFailure: true, tools: [java(), javaDoc()], sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
-            recordIssues enabledForFailure: true, tool: checkStyle(pattern: 'target/checkstyle.xml'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
+            recordIssues enabledForFailure: true, tool: checkStyle(pattern: 'target/checkstyle-result.xml'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
             recordIssues enabledForFailure: true, tool: cpd(pattern: 'target/cpd.xml'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
             recordIssues enabledForFailure: true, tool: pmdParser(pattern: 'target/pmd.xml'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
             recordIssues enabledForFailure: true, tool: spotBugs(pattern: 'target/spotbugsXml.xml'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
@@ -72,7 +72,7 @@ node ('windows') {
                 writeFile file: settingsXml, text: libraryResource('settings-azure.xml')
                 mavenOptions += "-s $settingsXml"
             }
-            mavenOptions += "clean verify -Djenkins.test.timeout=240 -Djenkins.version=2.150.1"
+            mavenOptions += "clean verify -Djenkins.test.timeout=1000"
             command = "mvn ${mavenOptions.join(' ')}"
             env << "PATH+MAVEN=${tool 'mvn'}/bin"
 

@@ -305,7 +305,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         // First build: baseline
         AnalysisResult baselineResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage buildPage = getWebPage(baselineResult.getOwner());
+        HtmlPage buildPage = getWebPage(JavaScriptSupport.JS_DISABLED, baselineResult.getOwner());
 
         SummaryBox baselineSummary = new SummaryBox(buildPage, "eclipse");
         assertThat(baselineSummary.exists()).isTrue();
@@ -322,7 +322,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
-        SummaryBox resultSummary = new SummaryBox(getWebPage(result.getOwner()), "eclipse");
+        SummaryBox resultSummary = new SummaryBox(getWebPage(JavaScriptSupport.JS_DISABLED, result.getOwner()),
+                "eclipse");
         assertThat(resultSummary.exists()).isTrue();
         assertThat(resultSummary.getTitle()).isEqualTo("Eclipse ECJ: 5 warnings");
         assertThat(resultSummary.getItems()).containsExactly("3 fixed warnings",
@@ -441,7 +442,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     private void verifyDetails(final AnalysisResult result) {
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
         PropertyTable categories = new PropertyTable(details, "category");
         assertThat(categories.getTitle()).isEqualTo("Categories");
@@ -471,7 +472,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     private void verifyBaselineDetails(final AnalysisResult baseline) {
-        HtmlPage baselineDetails = getWebPage(baseline);
+        HtmlPage baselineDetails = getWebPage(JavaScriptSupport.JS_ENABLED, baseline);
 
         PropertyTable categories = new PropertyTable(baselineDetails, "category");
         assertThat(categories.getTitle()).isEqualTo("Categories");
@@ -570,7 +571,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         assertThat(result).hasTotalSize(5);
 
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
         PropertyTable categories = new PropertyTable(details, "fileName");
         assertThat(categories.getTitle()).isEqualTo("Files");
         assertThat(categories.getColumnName()).isEqualTo("File");

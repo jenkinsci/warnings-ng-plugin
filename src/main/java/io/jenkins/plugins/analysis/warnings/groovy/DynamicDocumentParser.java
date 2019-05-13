@@ -31,6 +31,8 @@ class DynamicDocumentParser extends IssueParser {
      *         Groovy script
      */
     DynamicDocumentParser(final String regexp, final String script) {
+        super();
+
         pattern = Pattern.compile(regexp, Pattern.MULTILINE);
         expressionMatcher = new GroovyExpressionMatcher(script);
 

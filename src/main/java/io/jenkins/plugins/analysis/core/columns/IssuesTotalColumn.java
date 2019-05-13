@@ -52,7 +52,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         // empty constructor required for stapler
     }
 
-    @SuppressWarnings("unused") // called by Stapler
+    @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
     public boolean getSelectTools() {
         return selectTools;
     }
@@ -212,8 +212,8 @@ public class IssuesTotalColumn extends ListViewColumn {
 
         AnalysisResultDescription(final ResultAction result, final LabelProviderFactory labelProviderFactory) {
             StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(result.getId(), result.getName());
-            this.name = labelProvider.getLinkName();
-            this.icon = labelProvider.getSmallIconUrl();
+            name = labelProvider.getLinkName();
+            icon = labelProvider.getSmallIconUrl();
             total = result.getResult().getTotalSize();
             url = result.getUrlName();
         }

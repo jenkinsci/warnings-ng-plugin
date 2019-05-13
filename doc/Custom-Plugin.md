@@ -14,7 +14,7 @@ The plugin should depend on Jenkins plugin parent pom and on the Warnings Next G
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.32</version>
+    <version>[latest-version]</version>
     <relativePath />
   </parent>
 
@@ -43,11 +43,11 @@ Each custom tool requires a parser that will be instantiated to scan the console
 must derive from the abstract class `IssueParser` or one of its child classes. 
 The following classes can be used as  base class:
 
-- `IssueParser`: parses a report file. You have under full control on how to access the report.
-- `RegexpLineParser`: parses all lines of a report one by one with a regular expression.
-- `FastRegexpLineParser`: same as `RegexpLineParser`, but with additional support to skip lines based on string comparisons.
-- `RegexpDocumentParser`: parses the whole report by reading it into a string and parsing the whole string 
-with a regular expression. This type of parser is quite slow and should only be used if there is no other way.
+- `IssueParser`: parses a report file. You have under full control on how to access the report using the `ReaderFactory`.
+- `LookaheadParser`: parses all lines of a report one by one with a regular expression. If the regular expression matches,
+then you can create a new `Issue` based on the matching groups. You can also consume additional lines of the log
+if required. 
+- `RegexpLineParser`: Simplified version of `LookaheadParser`, that does not allow to consume additional lines.
   
 Please have a look at one of the 
 [existing parsers](https://github.com/jenkinsci/analysis-model/tree/master/src/main/java/edu/hm/hafner/analysis/parser)

@@ -6,7 +6,6 @@ import net.sf.json.JSONObject;
  * Strategy how to retrieve issues from the Axivion dashboard.
  */
 interface AxivionDashboard {
-
     /**
      * Loads issues for given issue kind.
      *

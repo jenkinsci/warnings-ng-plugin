@@ -100,7 +100,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         enableGenericWarnings(project, cpd);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
         DuplicationTable issues = new DuplicationTable(details, false);
         assertThat(issues.getRows()).hasSize(10); // paging of 10 is activated by default
@@ -132,7 +132,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         enableGenericWarnings(project, cpd);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
         DuplicationTable issues = new DuplicationTable(details, false);
         assertThat(issues.getRows()).hasSize(10);
@@ -153,7 +153,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         enableGenericWarnings(project, cpd);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage details = getWebPage(result);
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
         DuplicationTable issues = new DuplicationTable(details, false);
 
         assertThat(issues.getTitle()).isEqualTo("Issues");
@@ -303,7 +303,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private List<HtmlTableRow> scheduleBuildAndGetRows(final FreeStyleProject project) {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        HtmlPage page = getWebPage(result);
+        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
         HtmlTable table = getIssuesTable(page);
 
         List<HtmlTableBody> bodies = table.getBodies();

@@ -7,7 +7,6 @@ import edu.hm.hafner.analysis.Issue;
  */
 @FunctionalInterface
 interface AxIssueTransformation {
-
     /**
      * Transforms raw json-based Axivion-Dashboard violations to {@link Issue}'s.
      *
