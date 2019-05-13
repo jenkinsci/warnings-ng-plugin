@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,7 +31,7 @@ public class SourceCodeView {
     /** The xPath to the source code producing the issue (starting at the main panel). */
     public static final String issueSourceCodeXpath = "//pre//code[2]";
     /** The xPath to the message describing the issue (starting at the main panel). */
-    public static final String issueMessageXpath = "//pre//div";
+    public static final String issueMessageXpath = "//pre//div//div";
 
     /** The source code view html page.*/
     private HtmlPage sourceCodeViewPage;
@@ -50,18 +51,18 @@ public class SourceCodeView {
      * @return The file name.
      */
     public String getFileName() {
-        String name = "";
+        String name;
 
         List<DomNode> headingByXPath = getMainPanel().getByXPath(fileNameXpath);
         if (!headingByXPath.isEmpty()) {
             String heading = headingByXPath.get(0).asText();
             Matcher matcher = fileNamePattern.matcher(heading);
             if (matcher.matches()) {
-                name = matcher.group(1);
+                return matcher.group(1);
             }
         }
 
-        return name;
+        throw new NoSuchElementException("Can't find the file name on page.");
     }
 
     /**
@@ -71,17 +72,12 @@ public class SourceCodeView {
      */
     public String getSourceCode() {
         StringBuilder stringBuilder = new StringBuilder();
-
         List<DomNode> sourceCodeList = getMainPanel().getByXPath(sourceCodeXpath);
+
 
         for (DomNode node : sourceCodeList) {
             String code = node.asText();
-            for (char c : code.toCharArray()) {
-                stringBuilder.append(c);
-                if (lineEndElements.contains(c)) {
-                    stringBuilder.append('\n');
-                }
-            }
+            stringBuilder.append(code);
         }
 
         return stringBuilder.toString();
@@ -93,14 +89,16 @@ public class SourceCodeView {
      * @return The source code line producing the issue.
      */
     public String getIssueSourceCodeLine() {
-        String issueSourceCodeLine = "";
+        StringBuilder sourceCodeLineBuilder = new StringBuilder();
         List<DomNode> issueSourceCodeList = getMainPanel().getByXPath(issueSourceCodeXpath);
 
         if(!issueSourceCodeList.isEmpty()){
-           issueSourceCodeLine = issueSourceCodeList.get(0).asText();
+            issueSourceCodeList.forEach(c->sourceCodeLineBuilder.append(c.asText()));
+        } else {
+            throw new NoSuchElementException("Can't find the issue source code line on page.");
         }
 
-        return issueSourceCodeLine;
+        return sourceCodeLineBuilder.toString();
     }
 
     /**
@@ -109,17 +107,22 @@ public class SourceCodeView {
      * @return The issue message.
      */
     public String getIssueMessage() {
-        String issueMessage = "";
+        StringBuilder issueMessageBuilder = new StringBuilder();
         List<DomNode> issueMessageList = getMainPanel().getByXPath(issueMessageXpath);
 
         if(!issueMessageList.isEmpty()){
-            issueMessage = issueMessageList.get(0).asText();
+            for(DomNode node : issueMessageList) {
+                String issueMessage = node.asText();
 
-            //replacing "new line" and "tab" character at the start of the message
-            issueMessage = issueMessage.replace("\t", "").replace("\n", "");
+                //replacing "new line" and "tab" character at the start of the message
+                issueMessage = issueMessage.replace("\t", "").replace("\n", "");
+                issueMessageBuilder.append(issueMessage);
+            }
+        } else {
+            throw new NoSuchElementException("Can't find the issue message on page.");
         }
 
-        return issueMessage;
+        return issueMessageBuilder.toString();
     }
 
     /**
