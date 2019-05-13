@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.dry.simian.SimianParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class Simian extends DuplicateCodeScanner {
     }
 
     @Override
-    public SimianParser createParser() {
+    public IssueParser createParser() {
         return new SimianParser(getHighThreshold(), getNormalThreshold());
     }
 

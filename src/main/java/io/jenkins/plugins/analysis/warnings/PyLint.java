@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.PyLintParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -38,7 +39,7 @@ public class PyLint extends ReportScanningTool {
     }
 
     @Override
-    public PyLintParser createParser() {
+    public IssueParser createParser() {
         return new PyLintParser();
     }
 

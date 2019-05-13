@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.PreFastParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class PreFast extends ReportScanningTool {
     }
 
     @Override
-    public PreFastParser createParser() {
+    public IssueParser createParser() {
         return new PreFastParser();
     }
 

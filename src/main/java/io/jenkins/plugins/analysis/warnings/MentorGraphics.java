@@ -1,11 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.MentorParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import hudson.Extension;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import org.jenkinsci.Symbol;
+
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
+import hudson.Extension;
+
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 /**
  * Provides a parser and customized messages for the Mentor Graphics Modelsim/Questa Simulators.
@@ -24,7 +27,7 @@ public class MentorGraphics extends ReportScanningTool {
     }
 
     @Override
-    public MentorParser createParser() {
+    public IssueParser createParser() {
         return new MentorParser();
     }
 

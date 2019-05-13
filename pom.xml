@@ -744,10 +744,9 @@
             </revapi.semver.ignore>
             <revapi.ignore>
               <item>
-                <regex>true</regex>
-                <code>java.method.removed</code>
-                <classQualifiedName>edu.hm.hafner.analysis..*</classQualifiedName>
-                <justification>Optional dependency</justification>
+                <code>java.method.returnTypeChanged</code>
+                <newType>edu.hm.hafner.analysis.IssueParser</newType>
+                <justification>The parser should not be visible.</justification>
               </item>
             </revapi.ignore>
             <revapi.ignore>

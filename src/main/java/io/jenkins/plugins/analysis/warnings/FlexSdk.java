@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.FlexSdkParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class FlexSdk extends ReportScanningTool {
     }
 
     @Override
-    public FlexSdkParser createParser() {
+    public IssueParser createParser() {
         return new FlexSdkParser();
     }
 

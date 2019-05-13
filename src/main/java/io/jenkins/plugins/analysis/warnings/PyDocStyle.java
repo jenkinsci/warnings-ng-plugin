@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.violations.PyDocStyleAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class PyDocStyle extends ReportScanningTool {
     }
 
     @Override
-    public PyDocStyleAdapter createParser() {
+    public IssueParser createParser() {
         return new PyDocStyleAdapter();
     }
 
