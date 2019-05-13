@@ -31,7 +31,7 @@ import hudson.remoting.VirtualChannel;
  *
  * @author Lukas Krose
  * @author Ullrich Hafner
- * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
+ * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-6748">Issue 6748</a>
  */
 @SuppressFBWarnings(value = "SE", justification = "GitClient implementation is Serializable")
 class GitBlamer implements Blamer {

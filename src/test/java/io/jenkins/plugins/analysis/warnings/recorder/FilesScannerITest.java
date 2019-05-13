@@ -119,7 +119,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Runs the {@link FilesScanner} on a workspace with multiple files where some do match the criteria.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-51588">Issue 51588</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-51588">Issue 51588</a>
      */
     @Test
     public void findIssuesWithMultipleFiles() {
@@ -142,7 +142,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Runs the {@link FilesScanner} on a directory contain symbolic links and expects to traverse them.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
      */
     @Test
     public void findIssuesWithMultipleFilesReachableWithSymbolicLinks() {
@@ -179,7 +179,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Runs the {@link FilesScanner} on a directory contain symbolic links and expects to skip them.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56065">Issue 56065</a>
      */
     @Test
     public void findNoIssuesWithMultipleFilesReachableWithSymlinksWithSkipSymbolicLinks() {

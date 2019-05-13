@@ -130,7 +130,7 @@ class IssueDifferenceTest {
      * Verifies that if two issues have the same fingerprint then equals is used to select the matching issue in the
      * reference build.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-56324">Issue 56324</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56324">Issue 56324</a>
      */
     @Test
     void shouldAlsoUseFingerprintIfIssuesAreEqual() {
