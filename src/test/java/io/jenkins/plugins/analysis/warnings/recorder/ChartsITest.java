@@ -174,6 +174,109 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
     }
 
+
+    /**
+     * Tests if the severities trend chart is correctly rendered after a series of builds.
+     */
+    @Test
+    public void shouldShowSeveritiesDistributionPieChart() {
+
+        // Set up the project and configure the java warnings
+        FreeStyleProject project = createFreeStyleProject();
+
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+
+        List<AnalysisResult> buildResults = new ArrayList<>();
+        // Create the initial workspace for comparision
+        createWorkspaceFileWithWarnings(project, 1, 2);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which adds more warnings
+        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which resolves some of the warnings
+        createWorkspaceFileWithWarnings(project, 3);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        JSONObject chartModel = charts.getChartModel("single-severities-chart");
+
+        JSONArray allSeries = chartModel.getJSONArray("series");
+        assertThat(allSeries.size()).isEqualTo(1);
+
+        JSONObject series = allSeries.getJSONObject(0);
+        assertThat(series.getString("type")).isEqualTo("pie");
+
+        JSONArray data = series.getJSONArray("data");
+        assertThat(data.size()).isEqualTo(3);
+
+        JSONObject high = data.getJSONObject(0);
+        assertThat(high.getString("name")).isEqualTo("High");
+        assertThat(high.getInt("value")).isEqualTo(0);
+
+        JSONObject normal = data.getJSONObject(1);
+        assertThat(normal.getString("name")).isEqualTo("Normal");
+        assertThat(normal.getInt("value")).isEqualTo(1);
+
+        JSONObject low = data.getJSONObject(2);
+        assertThat(low.getString("name")).isEqualTo("Low");
+        assertThat(low.getInt("value")).isEqualTo(0);
+    }
+
+    /**
+     * Tests if the severities trend chart is correctly rendered after a series of builds.
+     */
+    @Test
+    public void shouldShowReferenceComparisonPieChart() {
+
+        // Set up the project and configure the java warnings
+        FreeStyleProject project = createFreeStyleProject();
+
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+
+        List<AnalysisResult> buildResults = new ArrayList<>();
+        // Create the initial workspace for comparision
+        createWorkspaceFileWithWarnings(project, 1, 2);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which adds more warnings
+        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which resolves some of the warnings
+        createWorkspaceFileWithWarnings(project, 3);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        JSONObject chartModel = charts.getChartModel("single-trend-chart");
+
+        JSONArray allSeries = chartModel.getJSONArray("series");
+        assertThat(allSeries.size()).isEqualTo(1);
+
+        JSONObject series = allSeries.getJSONObject(0);
+        assertThat(series.getString("type")).isEqualTo("pie");
+
+        JSONArray data = series.getJSONArray("data");
+        assertThat(data.size()).isEqualTo(3);
+
+        JSONObject high = data.getJSONObject(0);
+        assertThat(high.getString("name")).isEqualTo("New");
+        assertThat(high.getInt("value")).isEqualTo(0);
+
+        JSONObject normal = data.getJSONObject(1);
+        assertThat(normal.getString("name")).isEqualTo("Outstanding");
+        assertThat(normal.getInt("value")).isEqualTo(1);
+
+        JSONObject low = data.getJSONObject(2);
+        assertThat(low.getString("name")).isEqualTo("Fixed");
+        assertThat(low.getInt("value")).isEqualTo(3);
+    }
+
     private HtmlPage getDetailsWebPage(final FreeStyleProject project, final AnalysisResult result) {
         int buildNumber = result.getBuild().getNumber();
         String pluginId = result.getId();
