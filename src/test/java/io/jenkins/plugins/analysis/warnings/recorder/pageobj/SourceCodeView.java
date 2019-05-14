@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
@@ -14,22 +13,20 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  * Page object for the source code view page.
  */
 public class SourceCodeView {
-    /** List of characters which causing a line break in formatted java code. */
-    public static final List<Character> lineEndElements = Arrays.asList(';', '{', '}');
     /** The html element id of the main panel. */
-    public static final String mainPanelElementId = "main-panel";
+    public static final String MAIN_PANEL_ELEMENT_ID = "main-panel";
 
     /** The regex pattern describing the head line of the page (including file name). */
-    public static final Pattern fileNamePattern = Pattern.compile("Content of file (.*)");
+    public static final Pattern FILE_NAME_PATTERN = Pattern.compile("Content of file (.*)");
 
     /** The xPath to the file name (starting at the main panel). */
-    public static final String fileNameXpath = "//h1";
+    public static final String FILE_NAME_XPATH = "//h1";
     /** The xPath to the source code (starting at the main panel). */
-    public static final String sourceCodeXpath = "//pre//code";
+    public static final String SOURCE_CODE_XPATH = "//pre//code";
     /** The xPath to the source code producing the issue (starting at the main panel). */
-    public static final String issueSourceCodeXpath = "//pre//code[2]";
+    public static final String ISSUE_SOURCE_CODE_XPATH = "//pre//code[2]";
     /** The xPath to the message describing the issue (starting at the main panel). */
-    public static final String issueMessageXpath = "//pre//div//div";
+    public static final String ISSUE_MESSAGE_XPATH = "//pre//div//div";
 
     /** The source code view html page. */
     private HtmlPage sourceCodeViewPage;
@@ -52,10 +49,10 @@ public class SourceCodeView {
     public String getFileName() {
         String name;
 
-        List<DomNode> headingByXPath = getMainPanel().getByXPath(fileNameXpath);
+        List<DomNode> headingByXPath = getMainPanel().getByXPath(FILE_NAME_XPATH);
         if (!headingByXPath.isEmpty()) {
             String heading = headingByXPath.get(0).asText();
-            Matcher matcher = fileNamePattern.matcher(heading);
+            Matcher matcher = FILE_NAME_PATTERN.matcher(heading);
             if (matcher.matches()) {
                 return matcher.group(1);
             }
@@ -71,7 +68,7 @@ public class SourceCodeView {
      */
     public String getSourceCode() {
         StringBuilder stringBuilder = new StringBuilder();
-        List<DomNode> sourceCodeList = getMainPanel().getByXPath(sourceCodeXpath);
+        List<DomNode> sourceCodeList = getMainPanel().getByXPath(SOURCE_CODE_XPATH);
 
         for (DomNode node : sourceCodeList) {
             String code = node.asText();
@@ -88,7 +85,7 @@ public class SourceCodeView {
      */
     public String getIssueSourceCodeLine() {
         StringBuilder sourceCodeLineBuilder = new StringBuilder();
-        List<DomNode> issueSourceCodeList = getMainPanel().getByXPath(issueSourceCodeXpath);
+        List<DomNode> issueSourceCodeList = getMainPanel().getByXPath(ISSUE_SOURCE_CODE_XPATH);
 
         if (!issueSourceCodeList.isEmpty()) {
             issueSourceCodeList.forEach(c -> sourceCodeLineBuilder.append(c.asText()));
@@ -107,7 +104,7 @@ public class SourceCodeView {
      */
     public String getIssueMessage() {
         StringBuilder issueMessageBuilder = new StringBuilder();
-        List<DomNode> issueMessageList = getMainPanel().getByXPath(issueMessageXpath);
+        List<DomNode> issueMessageList = getMainPanel().getByXPath(ISSUE_MESSAGE_XPATH);
 
         if (!issueMessageList.isEmpty()) {
             for (DomNode node : issueMessageList) {
@@ -126,9 +123,11 @@ public class SourceCodeView {
     }
 
     /**
+     * Extracts the main panel out of the html page.
+     *
      * @return The main panel element of the html page.
      */
     private DomElement getMainPanel() {
-        return sourceCodeViewPage.getElementById(mainPanelElementId);
+        return sourceCodeViewPage.getElementById(MAIN_PANEL_ELEMENT_ID);
     }
 }
