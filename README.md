@@ -40,6 +40,7 @@ All source code is licensed under the MIT license.
 
 [![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/badge/icon)](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/)
 [![Travis](https://img.shields.io/travis/jenkinsci/warnings-ng-plugin.svg?logo=travis&label=travis%20build&logoColor=white)](https://travis-ci.org/jenkinsci/warnings-ng-plugin)
+[![Codacy](https://api.codacy.com/project/badge/Grade/2a5c80b9064749a09d128f89f661d1c3)](https://www.codacy.com/app/uhafner/warnings-ng-plugin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jenkinsci/warnings-ng-plugin&amp;utm_campaign=Badge_Grade)
 [![Codecov](https://img.shields.io/codecov/c/github/jenkinsci/warnings-ng-plugin/master.svg)](https://codecov.io/gh/jenkinsci/warnings-ng-plugin/branch/master)
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/warnings-ng-plugin.svg)](https://github.com/jenkinsci/warnings-ng-plugin/pulls)
 
