@@ -51,7 +51,7 @@ public class DetailsViewCharts {
      *
      * @return the severities chart
      */
-    public JSONObject getSeveritiesChart() {
+    public JSONObject getSeveritiesDistributionPieChart() {
         return getChartModel("single-severities-chart");
     }
 
@@ -60,16 +60,34 @@ public class DetailsViewCharts {
      *
      * @return the reference comparison chart
      */
-    public JSONObject getReferenceChart() {
+    public JSONObject getReferenceComparisonPieChart() {
         return getChartModel("single-trend-chart");
     }
 
     /**
-     * Get the History Chart.
+     * Get the severities trend Chart.
      *
-     * @return the history chart
+     * @return the severities trend chart
      */
-    public JSONObject getHistoryChart() {
+    public JSONObject getSeveritiesTrendChart() {
         return getChartModel("severities-trend-chart");
+    }
+
+    /**
+     * Get the tools trend Chart.
+     *
+     * @return the tools trend chart
+     */
+    public JSONObject getToolsTrendChart() {
+        return getChartModel("tools-trend-chart");
+    }
+
+    /**
+     * Get the new vs. fixed trend Chart.
+     *
+     * @return the new vs. fixed trend chart
+     */
+    public JSONObject getNewVsFixedTrendChart() {
+        return getChartModel("new-versus-fixed-trend-chart");
     }
 }
