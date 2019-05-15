@@ -35,6 +35,7 @@
     </module>
     <module name="JavadocVariable">
       <property name="scope" value="protected"/>
+      <property name="tokens" value="VARIABLE_DEF"/>
     </module>
     <module name="JavadocStyle">
       <property name="severity" value="warning"/>

@@ -169,8 +169,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      * Runs the Eclipse parser on the console log that contains 8 issues which are decorated with console notes. The
      * output file is copied to the console log using a shell cat command.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-11675">Issue 11675</a>
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-55368">Issue 55368</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-11675">Issue 11675</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-55368">Issue 55368</a>
      */
     @Test
     public void shouldRemoveConsoleNotes() {

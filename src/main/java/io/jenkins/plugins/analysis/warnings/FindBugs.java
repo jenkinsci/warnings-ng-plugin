@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.FindBugsParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -52,7 +53,7 @@ public class FindBugs extends ReportScanningTool {
     }
 
     @Override
-    public FindBugsParser createParser() {
+    public IssueParser createParser() {
         return new FindBugsParser(useRankAsPriority ? RANK : CONFIDENCE);
     }
 

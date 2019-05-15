@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -29,7 +30,7 @@ public class Pmd extends ReportScanningTool {
     }
 
     @Override
-    public PmdParser createParser() {
+    public IssueParser createParser() {
         return new PmdParser();
     }
 
