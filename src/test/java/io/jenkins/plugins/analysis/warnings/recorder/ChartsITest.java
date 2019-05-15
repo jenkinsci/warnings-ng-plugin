@@ -196,19 +196,24 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
+
         // Create the initial workspace for comparision
-        createFileWithJavaWarnings(project, 1, 2);
+        createFileInWorkspace(project, "javac.java-txt",
+                createJavaError(1)
+                        + createJavaWarning(2));
+
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createFileWithJavaWarnings(project, 1, 2, 3, 4);
+        createFileInWorkspace(project, "javac.java-txt",
+                createJavaWarning(1)
+                        + createJavaWarning(2)
+                        + createJavaError(3)
+                        + createJavaWarning(4)
+        );
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        // Schedule a build which resolves some of the warnings
-        createFileWithJavaWarnings(project, 3);
-        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
-
-        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(1)));
         JSONObject chartModel = charts.getChartModel("single-severities-chart");
 
         JSONArray allSeries = chartModel.getJSONArray("series");
@@ -218,17 +223,21 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(series.getString("type")).isEqualTo("pie");
 
         JSONArray data = series.getJSONArray("data");
-        assertThat(data.size()).isEqualTo(3);
+        assertThat(data.size()).isEqualTo(4);
 
-        JSONObject high = data.getJSONObject(0);
+        JSONObject error = data.getJSONObject(0);
+        assertThat(error.getString("name")).isEqualTo("Error");
+        assertThat(error.getInt("value")).isEqualTo(1);
+
+        JSONObject high = data.getJSONObject(1);
         assertThat(high.getString("name")).isEqualTo("High");
         assertThat(high.getInt("value")).isEqualTo(0);
 
-        JSONObject normal = data.getJSONObject(1);
+        JSONObject normal = data.getJSONObject(2);
         assertThat(normal.getString("name")).isEqualTo("Normal");
-        assertThat(normal.getInt("value")).isEqualTo(1);
+        assertThat(normal.getInt("value")).isEqualTo(3);
 
-        JSONObject low = data.getJSONObject(2);
+        JSONObject low = data.getJSONObject(3);
         assertThat(low.getString("name")).isEqualTo("Low");
         assertThat(low.getInt("value")).isEqualTo(0);
     }
@@ -337,17 +346,20 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
     }
     
     private String createJavaError(final int lineNumber) {
-        return String.format("[ERROR] OtherSourceFile.java:[%d,9] cannot access some.class\n"
-            + "class file for some.class not found", lineNumber);
+        return String.format("[ERROR] C:\\Path\\SourceFile.java:[%d,42] cannot access TestTool.TestToolDescriptor class file for TestToolDescriptor not found\n",
+                lineNumber);
     }
 
     private String createGccWarning(final int lineNumber) {
-        return String.format("/home/dev/sourceFile.ipp:%d: warning: missing initializer for member sigaltstack::ss_sp", lineNumber);
+        return String.format("/home/dev/sourceFile.ipp:%d: warning: missing initializer for member sigaltstack::ss_sp\n",
+                lineNumber);
     }
 
     private String createGccError(final int lineNumber) {
-        return String.format("/home/dev/OtherSource.cc:%d: error: implicit typename is deprecated, please see the documentation for details", lineNumber);
+        return String.format("/home/dev/OtherSource.cc:%d: error: implicit typename is deprecated, please see the documentation for details\n",
+                lineNumber);
     }
+
 
     private int[] convertToIntArray(final JSONArray jsonArray) {
         int[] result = new int[jsonArray.size()];
