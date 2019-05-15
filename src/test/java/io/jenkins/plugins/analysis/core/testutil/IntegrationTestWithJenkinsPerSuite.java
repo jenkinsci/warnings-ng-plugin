@@ -27,8 +27,8 @@ public abstract class IntegrationTestWithJenkinsPerSuite extends IntegrationTest
     /** Creates two web clients, one with and one without JS support. */
     @BeforeClass
     public static void createWebClients() {
-        noJsWebClient = create(false);
-        jsEnabledClient = create(true);
+        noJsWebClient = create(JENKINS_PER_SUITE, false);
+        jsEnabledClient = create(JENKINS_PER_SUITE, true);
     }
 
     @Override
