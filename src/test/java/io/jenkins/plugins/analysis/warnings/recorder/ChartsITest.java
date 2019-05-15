@@ -189,19 +189,28 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
+
         // Create the initial workspace for comparision
-        createWorkspaceFileWithWarnings(project, 1, 2);
+        createFileInWorkspace(project, "javac.txt",
+                new StringBuilder()
+                        .append(createClassNotFoundError(1))
+                        .append(createDeprecationWarning(2))
+                        .toString()
+                );
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        createFileInWorkspace(project, "javac.txt",
+                new StringBuilder()
+                        .append(createDeprecationWarning(1))
+                        .append(createDeprecationWarning(2))
+                        .append(createClassNotFoundError(3))
+                        .append(createDeprecationWarning(4))
+                        .toString()
+        );
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        // Schedule a build which resolves some of the warnings
-        createWorkspaceFileWithWarnings(project, 3);
-        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
-
-        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(1)));
         JSONObject chartModel = charts.getChartModel("single-severities-chart");
 
         JSONArray allSeries = chartModel.getJSONArray("series");
@@ -211,17 +220,21 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(series.getString("type")).isEqualTo("pie");
 
         JSONArray data = series.getJSONArray("data");
-        assertThat(data.size()).isEqualTo(3);
+        assertThat(data.size()).isEqualTo(4);
 
-        JSONObject high = data.getJSONObject(0);
+        JSONObject error = data.getJSONObject(0);
+        assertThat(error.getString("name")).isEqualTo("Error");
+        assertThat(error.getInt("value")).isEqualTo(1);
+
+        JSONObject high = data.getJSONObject(1);
         assertThat(high.getString("name")).isEqualTo("High");
         assertThat(high.getInt("value")).isEqualTo(0);
 
-        JSONObject normal = data.getJSONObject(1);
+        JSONObject normal = data.getJSONObject(2);
         assertThat(normal.getString("name")).isEqualTo("Normal");
-        assertThat(normal.getInt("value")).isEqualTo(1);
+        assertThat(normal.getInt("value")).isEqualTo(3);
 
-        JSONObject low = data.getJSONObject(2);
+        JSONObject low = data.getJSONObject(3);
         assertThat(low.getString("name")).isEqualTo("Low");
         assertThat(low.getInt("value")).isEqualTo(0);
     }
@@ -296,6 +309,12 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
     private String createDeprecationWarning(final int lineNumber) {
         return String.format(
                 "[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
+                lineNumber);
+    }
+
+    private String createClassNotFoundError(final int lineNumber) {
+        return String.format(
+                "[ERROR] C:\\Path\\SourceFile.java:[%d,42] cannot access TestTool.TestToolDescriptor class file for TestToolDescriptor not found\n",
                 lineNumber);
     }
 
