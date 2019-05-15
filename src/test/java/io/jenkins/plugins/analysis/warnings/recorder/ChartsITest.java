@@ -16,6 +16,7 @@ import hudson.model.Result;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
 
@@ -36,20 +37,21 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
-        java.setPattern("**/*.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+        java.setPattern("**/*.java-txt");
+        enableWarnings(project, java);
+
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
-        createWorkspaceFileWithWarnings(project, 1, 2);
+        createFileWithJavaWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        createFileWithJavaWarnings(project, 1, 2, 3, 4);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which resolves some of the warnings
-        createWorkspaceFileWithWarnings(project, 3);
+        createFileWithJavaWarnings(project, 3);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
@@ -86,21 +88,26 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         // Set up the project and configure the java warnings
         FreeStyleProject project = createFreeStyleProject();
 
+        // Set up a java tool
         Java java = new Java();
-        java.setPattern("**/*.txt");
+        java.setPattern("**/*.java-txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
+        // And a gcc tool
+        Gcc4 gcc4 = new Gcc4();
+        gcc4.setPattern("**/*.gcc-txt");
+        enableWarnings(project, gcc4);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
-        createWorkspaceFileWithWarnings(project, 1, 2);
+        createFileWithJavaWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        createFileWithJavaWarnings(project, 1, 2, 3, 4);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which resolves some of the warnings
-        createWorkspaceFileWithWarnings(project, 3);
+        createFileWithJavaWarnings(project, 3);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
@@ -134,20 +141,20 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
-        java.setPattern("**/*.txt");
+        java.setPattern("**/*.java-txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
-        createWorkspaceFileWithWarnings(project, 1, 2);
+        createFileWithJavaWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        createFileWithJavaWarnings(project, 1, 2, 3, 4);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which resolves some of the warnings
-        createWorkspaceFileWithWarnings(project, 3);
+        createFileWithJavaWarnings(project, 3);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
@@ -185,20 +192,20 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
-        java.setPattern("**/*.txt");
+        java.setPattern("**/*.java-txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
-        createWorkspaceFileWithWarnings(project, 1, 2);
+        createFileWithJavaWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        createFileWithJavaWarnings(project, 1, 2, 3, 4);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which resolves some of the warnings
-        createWorkspaceFileWithWarnings(project, 3);
+        createFileWithJavaWarnings(project, 3);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
@@ -236,20 +243,20 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
-        java.setPattern("**/*.txt");
+        java.setPattern("**/*.java-txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
-        createWorkspaceFileWithWarnings(project, 1, 2);
+        createFileWithJavaWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        createFileWithJavaWarnings(project, 1, 2, 3, 4);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which resolves some of the warnings
-        createWorkspaceFileWithWarnings(project, 3);
+        createFileWithJavaWarnings(project, 3);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
@@ -283,20 +290,63 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         return getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
     }
 
-    private void createWorkspaceFileWithWarnings(final FreeStyleProject project,
+    private void createFileWithJavaWarnings(final FreeStyleProject project,
             final int... linesWithWarning) {
         StringBuilder warningText = new StringBuilder();
         for (int lineNumber : linesWithWarning) {
-            warningText.append(createDeprecationWarning(lineNumber)).append("\n");
+            warningText.append(createJavaWarning(lineNumber)).append("\n");
         }
 
-        createFileInWorkspace(project, "javac.txt", warningText.toString());
+        createFileInWorkspace(project, "javac_warnings.java-txt", warningText.toString());
     }
 
-    private String createDeprecationWarning(final int lineNumber) {
+    private void createFileWithJavaErrors(final FreeStyleProject project,
+            final int... linesWithWarning) {
+        StringBuilder warningText = new StringBuilder();
+        for (int lineNumber : linesWithWarning) {
+            warningText.append(createJavaError(lineNumber)).append("\n");
+        }
+
+        createFileInWorkspace(project, "javac_errors.java-txt", warningText.toString());
+    }
+
+    private void createFileWithGccWarnings(final FreeStyleProject project,
+            final int... linesWithWarning) {
+        StringBuilder warningText = new StringBuilder();
+        for (int lineNumber : linesWithWarning) {
+            warningText.append(createGccWarning(lineNumber)).append("\n");
+        }
+
+        createFileInWorkspace(project, "javac_warnings.gcc-txt", warningText.toString());
+    }
+
+    private void createFileWithGccErrors(final FreeStyleProject project,
+            final int... linesWithWarning) {
+        StringBuilder warningText = new StringBuilder();
+        for (int lineNumber : linesWithWarning) {
+            warningText.append(createGccError(lineNumber)).append("\n");
+        }
+
+        createFileInWorkspace(project, "javac_errors.gcc-txt", warningText.toString());
+    }
+
+    private String createJavaWarning(final int lineNumber) {
         return String.format(
                 "[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
                 lineNumber);
+    }
+    
+    private String createJavaError(final int lineNumber) {
+        return String.format("[ERROR] OtherSourceFile.java:[%d,9] cannot access some.class\n"
+            + "class file for some.class not found", lineNumber);
+    }
+
+    private String createGccWarning(final int lineNumber) {
+        return String.format("/home/dev/sourceFile.ipp:%d: warning: missing initializer for member sigaltstack::ss_sp", lineNumber);
+    }
+
+    private String createGccError(final int lineNumber) {
+        return String.format("/home/dev/OtherSource.cc:%d: error: implicit typename is deprecated, please see the documentation for details", lineNumber);
     }
 
     private int[] convertToIntArray(final JSONArray jsonArray) {
