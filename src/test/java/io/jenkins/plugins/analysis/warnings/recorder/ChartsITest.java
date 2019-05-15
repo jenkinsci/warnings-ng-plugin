@@ -39,7 +39,6 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         java.setPattern("**/*.txt");
         enableWarnings(project, java);
 
-
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
         createFileWithJavaWarnings(project, 1, 2);
@@ -90,7 +89,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         // Set up a java tool
         Java java = new Java();
         java.setPattern("**/*.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+        enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
@@ -137,7 +136,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
         Java java = new Java();
         java.setPattern("**/*.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+        enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
@@ -246,7 +245,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
         Java java = new Java();
         java.setPattern("**/*.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+        enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
 
@@ -306,7 +305,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
         Java java = new Java();
         java.setPattern("**/*.txt");
-        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+        enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
@@ -348,8 +347,12 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Get the details web page of a recent build.
-     * @param project of the build used for web request
-     * @param result of the most recent build to show the charts
+     *
+     * @param project
+     *         of the build used for web request
+     * @param result
+     *         of the most recent build to show the charts
+     *
      * @return loaded web page which contains the charts
      */
     private HtmlPage getDetailsWebPage(final FreeStyleProject project, final AnalysisResult result) {
@@ -360,8 +363,11 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Create a file with some java warnings in the workspace of the project.
-     * @param project in which the file will be placed
-     * @param linesWithWarning all lines in which a mocked warning should be placed
+     *
+     * @param project
+     *         in which the file will be placed
+     * @param linesWithWarning
+     *         all lines in which a mocked warning should be placed
      */
     private void createFileWithJavaWarnings(final FreeStyleProject project,
             final int... linesWithWarning) {
@@ -375,8 +381,11 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Create a file with some java warnings in the workspace of the project.
-     * @param project in which the file will be placed
-     * @param linesWithErrors all lines in which a mocked errors should be placed
+     *
+     * @param project
+     *         in which the file will be placed
+     * @param linesWithErrors
+     *         all lines in which a mocked errors should be placed
      */
     private void createFileWithJavaErrors(final FreeStyleProject project,
             final int... linesWithErrors) {
@@ -390,7 +399,10 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Builds a string representing a java deprecation warning.
-     * @param lineNumber line number in which the mock warning occurred
+     *
+     * @param lineNumber
+     *         line number in which the mock warning occurred
+     *
      * @return a mocked warning string
      */
     private String createJavaWarning(final int lineNumber) {
@@ -401,18 +413,25 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Builds a string representing a java error.
-     * @param lineNumber line number in which the mock error occurred
+     *
+     * @param lineNumber
+     *         line number in which the mock error occurred
+     *
      * @return a mock error string
      */
     private String createJavaError(final int lineNumber) {
-        return String.format("[ERROR] C:\\Path\\SourceFile.java:[%d,42] cannot access TestTool.TestToolDescriptor class file for TestToolDescriptor not found\n",
+        return String.format(
+                "[ERROR] C:\\Path\\SourceFile.java:[%d,42] cannot access TestTool.TestToolDescriptor class file for TestToolDescriptor not found\n",
                 lineNumber);
     }
 
     /**
-     * Converts a jsonArray containg integer values into a regular int array.
-     * This is used to better compare JsonArrays to expected values.
-     * @param jsonArray JsonArray containing integer values
+     * Converts a jsonArray containg integer values into a regular int array. This is used to better compare JsonArrays
+     * to expected values.
+     *
+     * @param jsonArray
+     *         JsonArray containing integer values
+     *
      * @return regular java integer array
      */
     private int[] convertToIntArray(final JSONArray jsonArray) {
