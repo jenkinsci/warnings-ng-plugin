@@ -7,9 +7,6 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
@@ -17,10 +14,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewTrendCarousel;
-
-import static org.assertj.core.api.Assertions.*;
 
 /**
  * Provides tests for the trend carousel shown on the details page.
@@ -29,7 +23,7 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
 
 
     /**
-     *
+     * Test that tools trend chart is default.
      */
     @Test
     public void shouldShowToolsTrendChart() {
@@ -49,8 +43,11 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         createWorkspaceFileWithWarnings(project, 3);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        DetailsViewTrendCarousel carousel = new DetailsViewTrendCarousel(getDetailsWebPage(project, buildResults.get(2)));
-        carousel.nextCarouselChart();
+        DetailsViewTrendCarousel carousel = new DetailsViewTrendCarousel(
+                getDetailsWebPage(project, buildResults.get(0)));
+        carousel.clickCarouselControlNext();
+        carousel.clickCarouselControlNext();
+        carousel.clickCarouselControlNext();
     }
 
 
