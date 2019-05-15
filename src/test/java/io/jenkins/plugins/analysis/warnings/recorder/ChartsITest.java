@@ -236,7 +236,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the severities trend chart is correctly rendered after a series of builds.
+     * Tests if the severities pie chart is correctly rendered after a series of builds.
      */
     @Test
     public void shouldShowSeveritiesDistributionPieChart() {
@@ -296,7 +296,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the severities trend chart is correctly rendered after a series of builds.
+     * Tests if the reference pie chart is correctly rendered after a series of builds.
      */
     @Test
     public void shouldShowReferenceComparisonPieChart() {
@@ -346,12 +346,23 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(low.getInt("value")).isEqualTo(3);
     }
 
+    /**
+     * Get the details web page of a recent build.
+     * @param project of the build used for web request
+     * @param result of the most recent build to show the charts
+     * @return loaded web page which contains the charts
+     */
     private HtmlPage getDetailsWebPage(final FreeStyleProject project, final AnalysisResult result) {
         int buildNumber = result.getBuild().getNumber();
         String pluginId = result.getId();
         return getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
     }
 
+    /**
+     * Create a file with some java warnings in the workspace of the project.
+     * @param project in which the file will be placed
+     * @param linesWithWarning all lines in which a mocked warning should be placed
+     */
     private void createFileWithJavaWarnings(final FreeStyleProject project,
             final int... linesWithWarning) {
         StringBuilder warningText = new StringBuilder();
@@ -362,30 +373,48 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         createFileInWorkspace(project, "javac_warnings.txt", warningText.toString());
     }
 
+    /**
+     * Create a file with some java warnings in the workspace of the project.
+     * @param project in which the file will be placed
+     * @param linesWithErrors all lines in which a mocked errors should be placed
+     */
     private void createFileWithJavaErrors(final FreeStyleProject project,
-            final int... linesWithWarning) {
+            final int... linesWithErrors) {
         StringBuilder warningText = new StringBuilder();
-        for (int lineNumber : linesWithWarning) {
+        for (int lineNumber : linesWithErrors) {
             warningText.append(createJavaError(lineNumber)).append("\n");
         }
 
         createFileInWorkspace(project, "javac_errors.txt", warningText.toString());
     }
-    
 
+    /**
+     * Builds a string representing a java deprecation warning.
+     * @param lineNumber line number in which the mock warning occurred
+     * @return a mocked warning string
+     */
     private String createJavaWarning(final int lineNumber) {
         return String.format(
                 "[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
                 lineNumber);
     }
-    
+
+    /**
+     * Builds a string representing a java error.
+     * @param lineNumber line number in which the mock error occurred
+     * @return a mock error string
+     */
     private String createJavaError(final int lineNumber) {
         return String.format("[ERROR] C:\\Path\\SourceFile.java:[%d,42] cannot access TestTool.TestToolDescriptor class file for TestToolDescriptor not found\n",
                 lineNumber);
     }
-    
 
-
+    /**
+     * Converts a jsonArray containg integer values into a regular int array.
+     * This is used to better compare JsonArrays to expected values.
+     * @param jsonArray JsonArray containing integer values
+     * @return regular java integer array
+     */
     private int[] convertToIntArray(final JSONArray jsonArray) {
         int[] result = new int[jsonArray.size()];
 
