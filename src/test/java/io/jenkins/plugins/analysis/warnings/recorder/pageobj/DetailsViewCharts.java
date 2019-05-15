@@ -83,6 +83,15 @@ public class DetailsViewCharts {
     }
 
     /**
+     * Get the health trend Chart.
+     *
+     * @return the health trend chart
+     */
+    public JSONObject getHealthTrendChart() {
+        return getChartModel("health-trend-chart");
+    }
+
+    /**
      * Get the new vs. fixed trend Chart.
      *
      * @return the new vs. fixed trend chart

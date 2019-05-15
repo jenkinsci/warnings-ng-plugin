@@ -16,7 +16,6 @@ import hudson.model.Result;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
 
@@ -37,7 +36,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
-        java.setPattern("**/*.java-txt");
+        java.setPattern("**/*.txt");
         enableWarnings(project, java);
 
 
@@ -55,7 +54,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
-        JSONObject chartModel = charts.getChartModel("new-versus-fixed-trend-chart");
+        JSONObject chartModel = charts.getNewVsFixedTrendChart();
 
         JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
@@ -90,12 +89,8 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
         // Set up a java tool
         Java java = new Java();
-        java.setPattern("**/*.java-txt");
+        java.setPattern("**/*.txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
-        // And a gcc tool
-        Gcc4 gcc4 = new Gcc4();
-        gcc4.setPattern("**/*.gcc-txt");
-        enableWarnings(project, gcc4);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
@@ -111,7 +106,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
-        JSONObject chartModel = charts.getChartModel("tools-trend-chart");
+        JSONObject chartModel = charts.getToolsTrendChart();
 
         JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
@@ -141,24 +136,27 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
-        java.setPattern("**/*.java-txt");
+        java.setPattern("**/*.txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparision
         createFileWithJavaWarnings(project, 1, 2);
+        createFileWithJavaErrors(project, 12, 14, 16);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
         createFileWithJavaWarnings(project, 1, 2, 3, 4);
+        createFileWithJavaErrors(project, 12);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which resolves some of the warnings
         createFileWithJavaWarnings(project, 3);
+        createFileWithJavaErrors(project);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
-        JSONObject chartModel = charts.getChartModel("severities-trend-chart");
+        JSONObject chartModel = charts.getSeveritiesTrendChart();
 
         JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
@@ -169,18 +167,73 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         }
 
         JSONArray allSeries = chartModel.getJSONArray("series");
-        assertThat(allSeries.size()).isEqualTo(1); // Only and tool was configured
+        assertThat(allSeries.size()).isEqualTo(2);
 
         // Check the series describing the java warnings is correctly shown
-        JSONObject seriesNewTrend = allSeries.getJSONObject(0);
-        assertThat(seriesNewTrend.getString("name")).isEqualTo("Normal");
-        assertThat(convertToIntArray(seriesNewTrend.getJSONArray("data"))).isEqualTo(new int[] {2, 4, 1});
+        JSONObject seriesNormalTrend = allSeries.getJSONObject(0);
+        assertThat(seriesNormalTrend.getString("name")).isEqualTo("Normal");
+        assertThat(convertToIntArray(seriesNormalTrend.getJSONArray("data"))).isEqualTo(new int[] {2, 4, 1});
 
-        //TODO: Create some issues with other severities
-
-
+        JSONObject seriesErrorTrend = allSeries.getJSONObject(1);
+        assertThat(seriesErrorTrend.getString("name")).isEqualTo("Error");
+        assertThat(convertToIntArray(seriesErrorTrend.getJSONArray("data"))).isEqualTo(new int[] {3, 1, 0});
     }
 
+    /**
+     * Tests if the health trend chart is correctly rendered after a series of builds.
+     */
+    @Test
+    public void shouldShowHealthTrendChart() {
+
+        // Set up the project and configure the java warnings
+        FreeStyleProject project = createFreeStyleProject();
+
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        IssuesRecorder issuesRecorder = enableWarnings(project, java);
+        issuesRecorder.setHealthy(3);
+        issuesRecorder.setUnhealthy(7);
+
+        List<AnalysisResult> buildResults = new ArrayList<>();
+        // Create the initial workspace for comparision
+        createFileWithJavaWarnings(project, 1, 2, 3, 4, 5, 6, 7, 8, 9);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which adds more warnings
+        createFileWithJavaWarnings(project, 1, 2, 3, 4);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which resolves some of the warnings
+        createFileWithJavaWarnings(project, 1);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        JSONObject chartModel = charts.getHealthTrendChart();
+
+        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
+        // Make sure each of our builds is listed on the x axis
+        for (int iResult = 0; iResult < buildResults.size(); iResult++) {
+            String buildName = buildResults.get(iResult).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(iResult)).isEqualTo(buildName);
+        }
+
+        JSONArray allSeries = chartModel.getJSONArray("series");
+        assertThat(allSeries.size()).isEqualTo(3);
+
+        // Check the series describing the java warnings is correctly shown
+        JSONObject seriesExcellentTrend = allSeries.getJSONObject(0);
+        assertThat(seriesExcellentTrend.getString("name")).isEqualTo("Excellent");
+        assertThat(convertToIntArray(seriesExcellentTrend.getJSONArray("data"))).isEqualTo(new int[] {3, 3, 1});
+
+        JSONObject seriesSatisfactoryTrend = allSeries.getJSONObject(1);
+        assertThat(seriesSatisfactoryTrend.getString("name")).isEqualTo("Satisfactory");
+        assertThat(convertToIntArray(seriesSatisfactoryTrend.getJSONArray("data"))).isEqualTo(new int[] {4, 1, 0});
+
+        JSONObject seriesFailingTrend = allSeries.getJSONObject(2);
+        assertThat(seriesFailingTrend.getString("name")).isEqualTo("Failing");
+        assertThat(convertToIntArray(seriesFailingTrend.getJSONArray("data"))).isEqualTo(new int[] {2, 0, 0});
+    }
 
     /**
      * Tests if the severities trend chart is correctly rendered after a series of builds.
@@ -192,20 +245,20 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
-        java.setPattern("**/*.java-txt");
+        java.setPattern("**/*.txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
 
         // Create the initial workspace for comparision
-        createFileInWorkspace(project, "javac.java-txt",
+        createFileInWorkspace(project, "javac.txt",
                 createJavaError(1)
                         + createJavaWarning(2));
 
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createFileInWorkspace(project, "javac.java-txt",
+        createFileInWorkspace(project, "javac.txt",
                 createJavaWarning(1)
                         + createJavaWarning(2)
                         + createJavaError(3)
@@ -214,7 +267,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(1)));
-        JSONObject chartModel = charts.getChartModel("single-severities-chart");
+        JSONObject chartModel = charts.getSeveritiesDistributionPieChart();
 
         JSONArray allSeries = chartModel.getJSONArray("series");
         assertThat(allSeries.size()).isEqualTo(1);
@@ -252,7 +305,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
-        java.setPattern("**/*.java-txt");
+        java.setPattern("**/*.txt");
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
@@ -269,7 +322,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
-        JSONObject chartModel = charts.getChartModel("single-trend-chart");
+        JSONObject chartModel = charts.getReferenceComparisonPieChart();
 
         JSONArray allSeries = chartModel.getJSONArray("series");
         assertThat(allSeries.size()).isEqualTo(1);
@@ -306,7 +359,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
             warningText.append(createJavaWarning(lineNumber)).append("\n");
         }
 
-        createFileInWorkspace(project, "javac_warnings.java-txt", warningText.toString());
+        createFileInWorkspace(project, "javac_warnings.txt", warningText.toString());
     }
 
     private void createFileWithJavaErrors(final FreeStyleProject project,
@@ -316,28 +369,9 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
             warningText.append(createJavaError(lineNumber)).append("\n");
         }
 
-        createFileInWorkspace(project, "javac_errors.java-txt", warningText.toString());
+        createFileInWorkspace(project, "javac_errors.txt", warningText.toString());
     }
-
-    private void createFileWithGccWarnings(final FreeStyleProject project,
-            final int... linesWithWarning) {
-        StringBuilder warningText = new StringBuilder();
-        for (int lineNumber : linesWithWarning) {
-            warningText.append(createGccWarning(lineNumber)).append("\n");
-        }
-
-        createFileInWorkspace(project, "javac_warnings.gcc-txt", warningText.toString());
-    }
-
-    private void createFileWithGccErrors(final FreeStyleProject project,
-            final int... linesWithWarning) {
-        StringBuilder warningText = new StringBuilder();
-        for (int lineNumber : linesWithWarning) {
-            warningText.append(createGccError(lineNumber)).append("\n");
-        }
-
-        createFileInWorkspace(project, "javac_errors.gcc-txt", warningText.toString());
-    }
+    
 
     private String createJavaWarning(final int lineNumber) {
         return String.format(
@@ -349,16 +383,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         return String.format("[ERROR] C:\\Path\\SourceFile.java:[%d,42] cannot access TestTool.TestToolDescriptor class file for TestToolDescriptor not found\n",
                 lineNumber);
     }
-
-    private String createGccWarning(final int lineNumber) {
-        return String.format("/home/dev/sourceFile.ipp:%d: warning: missing initializer for member sigaltstack::ss_sp\n",
-                lineNumber);
-    }
-
-    private String createGccError(final int lineNumber) {
-        return String.format("/home/dev/OtherSource.cc:%d: error: implicit typename is deprecated, please see the documentation for details\n",
-                lineNumber);
-    }
+    
 
 
     private int[] convertToIntArray(final JSONArray jsonArray) {
