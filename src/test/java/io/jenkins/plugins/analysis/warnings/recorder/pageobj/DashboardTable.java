@@ -1,80 +1,101 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import hudson.model.Project;
 
+/**
+ * Page Object for a table that shows the warning summary of selected builds.
+ *
+ * @author Michael Schmid, Raphael Furch
+ */
 public class DashboardTable {
 
-    private final List<List<String>> listEntries;
-    private final Map<String, Integer> jobIndex = new HashMap<>();
-    private final Map<String, Integer> pluginIndex = new HashMap<>();
+    private final Map<String, Map<String, Integer>> table;
 
-
+    /**
+     * Creates a new instance of {@link DashboardTable}.
+     *
+     * @param page
+     *         the whole details HTML page
+     */
     public DashboardTable(final HtmlPage page) {
-        List<String> tableLines = page.getElementsByTagName("table").stream()
+
+        List<String> tableLines = page.getElementsByTagName("table")
+                .stream()
                 .filter(domElement -> domElement.asText().startsWith("Static analysis issues per tool and job"))
                 .flatMap(domElement -> domElement.getElementsByTagName("table").stream())
                 .map(domElement -> Arrays.asList(domElement.asText().split("\n")))
-                .findFirst().orElseThrow(() -> new RuntimeException("The Static analysis issues per tool and job couldn't be load"));
+                .findFirst()
+                .orElseThrow(
+                        () -> new RuntimeException("The Static analysis issues per tool and job couldn't be load"));
 
-        listEntries = tableLines.stream().map(line -> Arrays.asList(line.split("\t"))).collect(Collectors.toList());
+        List<String> plugins = tableLines.stream().limit(1).flatMap(line -> Arrays.stream(line.split("\t")))
+                .collect(Collectors.toList());
 
-        for (int index = 1; index < listEntries.size(); index++) {
-            jobIndex.put(listEntries.get(index).get(0), index);
-        }
+        table = tableLines.stream().skip(1).map(line -> Arrays.asList(line.split("\t")))
+                .collect(Collectors.toMap(list -> list.get(0), list -> createPluginValueMapping(list, plugins)));
 
-        for (int index = 1; index < listEntries.get(0).size(); index++) {
-            pluginIndex.put(listEntries.get(0).get(index), index);
-        }
     }
 
-    public Optional<Integer> getWarningCount(final Project project, final String plugin) {
-        return getWarningCount(project.getName(), plugin);
-    }
-
-    public Optional<Integer> getWarningCount(final String job, final String plugin) {
-        Optional<Integer> result = Optional.empty();
-        if (getJobIndex().containsKey(job) && getPluginIndex().containsKey(plugin)) {
-            String count = getListEntries().get(getJobIndex().get(job)).get(getPluginIndex().get(plugin));
-            if (!"-".equals(count)) {
-                result = Optional.of(Integer.parseInt(count));
+    /**
+     * Creates mapping between plugins and warnings counts. If no warning exists for a plugin, it will not be included
+     * in the Map.
+     *
+     * @param warnings
+     *         list of warnings
+     * @param plugins
+     *         list of plugins
+     *
+     * @return mapping between plugins and warnings counts.
+     */
+    private Map<String, Integer> createPluginValueMapping(final List<String> warnings, final List<String> plugins) {
+        Map<String, Integer> valuePluginMapping = new HashMap<>();
+        for (int i = 1; i < warnings.size(); i++) {
+            if (!"-".equals(warnings.get(i))) {
+                valuePluginMapping.put(plugins.get(i), Integer.parseInt(warnings.get(i)));
             }
         }
-        return result;
+        return valuePluginMapping;
     }
 
-    public Map<String, Integer> getWarningCounts(final Project project) {
-        return getWarningCounts(project.getName());
+    /**
+     * Gets Warnings count for a specified job and plugin.
+     *
+     * @param job
+     *         job name
+     * @param plugin
+     *         plugin name
+     *
+     * @return warnings count
+     */
+    public Optional<Integer> getWarningCount(final String job, final String plugin) {
+        return Optional.ofNullable(this.getWarningCounts(job).getOrDefault(plugin, null));
     }
 
+    /**
+     * Gets Warnings counts for a specified job.
+     *
+     * @param job
+     *         job name
+     *
+     * @return warnings count
+     */
     public Map<String, Integer> getWarningCounts(final String job) {
-        Map<String, Integer> result = new HashMap<>();
-
-        for (Map.Entry<String, Integer> entry : getPluginIndex().entrySet()) {
-            getWarningCount(job, entry.getKey()).ifPresent(c -> result.put(entry.getKey(), c));
-        }
-        return result;
+        return getListEntries().get(job);
     }
 
-
-
-    private List<List<String>> getListEntries() {
-        return listEntries;
+    private Map<String, Map<String, Integer>> getListEntries() {
+        return table;
     }
 
-    private Map<String, Integer> getJobIndex() {
-        return jobIndex;
-    }
-
-    private Map<String, Integer> getPluginIndex() {
-        return pluginIndex;
-    }
 }
