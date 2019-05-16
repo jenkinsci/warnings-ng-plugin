@@ -746,6 +746,11 @@
             </revapi.semver.ignore>
             <revapi.ignore>
               <item>
+                <code>java.method.returnTypeChanged</code>
+                <newType>edu.hm.hafner.analysis.IssueParser</newType>
+                <justification>The parser should not be visible.</justification>
+              </item>
+              <item>
                 <regex>true</regex>
                 <code>java.missing.*</code>
                 <justification>Dependencies are not being checked, so they are reported as missing</justification>
