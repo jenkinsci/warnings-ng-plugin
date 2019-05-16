@@ -31,7 +31,7 @@ public class DetailsViewCharts {
      *
      * @return the model (as JSON representation)
      */
-    public JSONObject getChartModel(final String id) {
+    private JSONObject getChartModel(final String id) {
         // Workaround for Javascript dependency, problem is explained here:
         // https://stackoverflow.com/questions/29637962/json-stringify-turned-the-value-array-into-a-string
         detailsViewWebPage.executeJavaScript("delete(Array.prototype.toJSON)");
@@ -80,6 +80,15 @@ public class DetailsViewCharts {
      */
     public JSONObject getToolsTrendChart() {
         return getChartModel("tools-trend-chart");
+    }
+
+    /**
+     * Get the health trend Chart.
+     *
+     * @return the health trend chart
+     */
+    public JSONObject getHealthTrendChart() {
+        return getChartModel("health-trend-chart");
     }
 
     /**
