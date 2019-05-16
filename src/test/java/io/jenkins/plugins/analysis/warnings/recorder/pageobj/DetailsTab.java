@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
-import java.util.HashMap;
-import java.util.Objects;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -18,8 +18,8 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class DetailsTab {
 
-    private DetailsTabType activeTabType;
-    private final HashMap<DetailsTabType, Object> tabs = new HashMap<>();
+    private TabType activeTabType;
+    private final Set<TabType> tabs = new HashSet<>();
     private HtmlPage page;
 
     /**
@@ -34,11 +34,11 @@ public class DetailsTab {
         DomNodeList<HtmlElement> navList = detailsNav.getElementsByTagName("a");
         for (HtmlElement navElement : navList) {
             String tabName = navElement.getFirstChild().getTextContent();
-            DetailsTabType tabType = DetailsTabType.valueOfIgnoreCase(tabName);
+            TabType tabType = TabType.valueOfIgnoreCase(tabName);
             if (navElement.hasAttribute("aria-selected")) {
                 activeTabType = tabType;
             }
-            tabs.put(tabType, null);
+            tabs.add(tabType);
         }
     }
 
@@ -59,28 +59,29 @@ public class DetailsTab {
      *
      * @return the corresponding page-object
      */
-    public Object select(final DetailsTabType tapType) {
-        assertThat(tabs).containsKey(tapType);
-
-        Object container = tabs.get(tapType);
-        if (Objects.isNull(container)) {
-            Object retrievedContent = retrieveContent(tapType);
-            tabs.put(tapType, retrievedContent);
-            container = retrievedContent;
-        }
+    public Object select(final TabType tapType) {
+        assertThat(tabs).contains(tapType);
         activeTabType = tapType;
-        return container;
+        return retrieveContent(tapType);
     }
 
-    private Object retrieveContent(final DetailsTabType tabType) {
+    private Object retrieveContent(final TabType tabType) {
         switch (tabType) {
-            case ISSUES:
-                return new IssuesTable(page);
+            case TOOLS:
+            case MODULES:
+            case PACKAGES:
             case FOLDERS:
             case FILES:
+            case CATEGORIES:
+            case TYPES:
+                return new PropertyTable(page, tabType.getProperty());
+            case ISSUES:
+                return new IssuesTable(page);
+            case BLAMES:
                 return null;
+            // FIXME: return new Blame(page);
             default:
-                return null;
+                throw new NoSuchElementException();
         }
     }
 
@@ -89,8 +90,8 @@ public class DetailsTab {
      *
      * @return the set of tab-types of current details-tab
      */
-    public Set<DetailsTabType> getTabTypes() {
-        return tabs.keySet();
+    public Set<TabType> getTabTypes() {
+        return tabs;
     }
 
     /**
@@ -98,17 +99,36 @@ public class DetailsTab {
      *
      * @return activeTabType
      */
-    public DetailsTabType getActiveTabType() {
+    public TabType getActiveTabType() {
         return activeTabType;
     }
 
     /**
      * Types for DetailsTab.
      */
-    public enum DetailsTabType {
-        FILES, FOLDERS, ISSUES;
+    public enum TabType {
 
-        private static DetailsTabType valueOfIgnoreCase(final String tabName) {
+        TOOLS("origin"),
+        MODULES("moduleName"),
+        PACKAGES("packageName"),
+        FOLDERS("folder"),
+        FILES("fileName"),
+        CATEGORIES("category"),
+        TYPES("type"),
+        ISSUES("issues"),
+        BLAMES("scm");
+
+        private String property;
+
+        TabType(final String property) {
+            this.property = property;
+        }
+
+        public String getProperty() {
+            return property;
+        }
+
+        private static TabType valueOfIgnoreCase(final String tabName) {
             return valueOf(tabName.toUpperCase());
         }
     }
