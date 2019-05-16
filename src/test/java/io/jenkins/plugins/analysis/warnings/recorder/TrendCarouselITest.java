@@ -37,14 +37,14 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         createWorkspaceFileWithWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
-        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
-
-        createWorkspaceFileWithWarnings(project, 3);
-        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+        //createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
+        //buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+        //
+        //createWorkspaceFileWithWarnings(project, 3);
+        //buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewTrendCarousel carousel = new DetailsViewTrendCarousel(
-                getDetailsWebPage(project, buildResults.get(0)));
+                getDetailsWebPage(project, buildResults.get(0)), getWebClient(JavaScriptSupport.JS_ENABLED));
         carousel.clickCarouselControlNext();
         carousel.clickCarouselControlNext();
         carousel.clickCarouselControlNext();
