@@ -8,7 +8,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.DetailsTabType;
@@ -21,7 +21,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Nils Engelbrecht
  */
-public class DetailsTabITest extends IntegrationTestWithJenkinsPerSuite {
+public class DetailsTabITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * When a single warning is being recognized only the issues-tab should be shown.
