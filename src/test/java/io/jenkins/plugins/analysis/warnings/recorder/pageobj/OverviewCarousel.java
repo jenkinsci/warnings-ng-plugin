@@ -14,17 +14,19 @@ import edu.hm.hafner.util.NoSuchElementException;
  * @author Artem Polovyi
  */
 public class OverviewCarousel {
-    private final DomElement overview;
+    private final DomElement overviewCarousel;
     private final DomElement previous;
     private final DomElement next;
     private List<DomElement> items;
 
     private static final String CAROUSEL_ITEMS_XPATH = ".//div[contains(@class, 'carousel-item')]";
+    private static final String CAROUSEL_NEXT_XPATH = ".//a[contains(@class, 'carousel-control-next')]";
+    private static final String CAROUSEL_PREVIOUS_XPATH = ".//a[contains(@class, 'carousel-control-prev')]";
 
     public OverviewCarousel(final HtmlPage page) {
-        this.overview = page.getElementById("overview-carousel");
-        this.previous = page.getElementById("overview-carousel-prev");
-        this.next = page.getElementById("overview-carousel-next");
+        this.overviewCarousel = page.getElementById("overview-carousel");
+        this.next = (DomElement) overviewCarousel.getByXPath(CAROUSEL_NEXT_XPATH).get(0);
+        this.previous = (DomElement) overviewCarousel.getByXPath(CAROUSEL_PREVIOUS_XPATH).get(0);
         this.items = retrieveCarouselItems();
     }
 
@@ -34,10 +36,10 @@ public class OverviewCarousel {
      * @return List of overview carousel items.
      */
     private List<DomElement> retrieveCarouselItems() {
-        if (overview == null) {
+        if (overviewCarousel == null) {
             throw new AssertionError("No overview carousel found");
         }
-        List<DomElement> itemList = overview.getByXPath(CAROUSEL_ITEMS_XPATH);
+        List<DomElement> itemList = overviewCarousel.getByXPath(CAROUSEL_ITEMS_XPATH);
         if (itemList.size() == 0) {
             throw new AssertionError("No overview carousel items found");
         }
@@ -60,8 +62,7 @@ public class OverviewCarousel {
     }
 
     /**
-     * Clicks the button to switch to the next element of overview carousel and sets new overview items.
-     *
+     * Clicks the button to switch to the next element of overview carousel and sets new overview carousel items.
      */
     public void clickNext() {
         if (next == null) {
@@ -72,8 +73,7 @@ public class OverviewCarousel {
     }
 
     /**
-     * Clicks the button to switch to the previous element of overview carousel and sets new overview items.
-     *
+     * Clicks the button to switch to the previous element of overview carousel and sets new overview carousel items.
      */
     public void clickPrevious() {
         if (previous == null) {
