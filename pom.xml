@@ -403,6 +403,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Timestamper plugin -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>timestamper</artifactId>
+      <version>1.9</version>
+      <scope>test</scope>
+    </dependency>
     <!-- Maven Project Type -->
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
