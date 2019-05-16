@@ -17,6 +17,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import net.sourceforge.pmd.cpd.SourceCode;
+
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
@@ -28,6 +30,7 @@ import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
 import io.jenkins.plugins.analysis.warnings.Simian;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable.DuplicationRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -138,9 +141,10 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(issues.getRows()).hasSize(10);
 
         HtmlPage sourceCodePage = issues.getRow(0).clickSourceCode();
+        SourceCodeView sourceCodeView = new SourceCodeView(sourceCodePage);
 
         String htmlFile = toString(FOLDER + "Main.source");
-        assertThat(extractSourceCodeFromDetailsPage(sourceCodePage)).isEqualToIgnoringWhitespace(htmlFile);
+        assertThat(sourceCodeView.getSourceCode()).isEqualToIgnoringWhitespace(htmlFile);
     }
 
     /**

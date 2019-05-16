@@ -35,20 +35,22 @@ public class SourceCodeView {
     }
 
     /**
-     * Extracts the whole source code displayed on the html page.
+     * Extracts the plain source code displayed on the html page.
      *
-     * @return The source code.
+     * @return The source code displayed in the html page.
      */
     public String getSourceCode() {
-        StringBuilder stringBuilder = new StringBuilder();
-        List<DomNode> sourceCodeList = getMainPanel().getByXPath(SOURCE_CODE_XPATH);
+        StringBuilder sourceCodeBuilder = new StringBuilder();
+        List<DomNode> sourceCodeElements = getMainPanel().getByXPath(SOURCE_CODE_XPATH);
 
-        for (DomNode node : sourceCodeList) {
-            String code = node.asText();
-            stringBuilder.append(code);
+        if (sourceCodeElements.isEmpty()) {
+            throw new NoSuchElementException("Can't find source code on page.");
+        }
+        else {
+            sourceCodeElements.forEach(c -> sourceCodeBuilder.append(c.asText()));
         }
 
-        return stringBuilder.toString();
+        return sourceCodeBuilder.toString();
     }
 
     /**

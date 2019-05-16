@@ -28,6 +28,7 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -53,9 +54,11 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         IssueRow row = getIssuesTableRow(result, 1);
-        assertThat(row.hasLink(IssueRow.FILE)).isTrue();
+        SourceCodeView sourceCodeView = new SourceCodeView(getSourceCodePage(result));
 
-        assertThat(extractSourceCodeFromDetailsPage(getSourceCodePage(result))).isEqualToIgnoringWhitespace(readSourceCode(project));
+
+        assertThat(row.hasLink(IssueRow.FILE)).isTrue();
+        assertThat(sourceCodeView.getSourceCode()).isEqualToIgnoringWhitespace(readSourceCode(project));
 
         deleteAffectedFilesInBuildFolder(result);
 
