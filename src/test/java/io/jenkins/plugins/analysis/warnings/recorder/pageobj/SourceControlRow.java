@@ -17,12 +17,33 @@ import edu.hm.hafner.util.VisibleForTesting;
  * @author Andreas Pabst
  */
 public class SourceControlRow {
+    /**
+     * Label for the details column.
+     */
     public static final String DETAILS = "Details";
+    /**
+     * Label for the details content.
+     */
     public static final String DETAILS_CONTENT = "DetailsContent";
+    /**
+     * Label for the file column.
+     */
     public static final String FILE = "File";
+    /**
+     * Label for the age column.
+     */
     public static final String AGE = "Age";
+    /**
+     * Label for the author column.
+     */
     public static final String AUTHOR = "Author";
+    /**
+     * Label for the email column.
+     */
     public static final String EMAIL = "Email";
+    /**
+     * Label for the commit column.
+     */
     public static final String COMMIT = "Commit";
 
     private static final String NOT_SET = "-";
@@ -114,6 +135,14 @@ public class SourceControlRow {
                 .toString();
     }
 
+    /**
+     * Get a specific value of this row.
+     *
+     * @param name
+     *         the key for the value to get (e.g. the column name)
+     *
+     * @return the requested value
+     */
     public String getValue(final String name) {
         return valueByName.get(name);
     }
