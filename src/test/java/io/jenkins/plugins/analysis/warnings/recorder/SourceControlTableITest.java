@@ -39,7 +39,7 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
         project.setScm(new GitSCM("https://github.com/jenkinsci/warnings-ng-plugin.git"));
 
         addScriptStep(project,
-                "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/AndroidLint.java:10: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt");
+                escape("echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/AndroidLint.java:10: warning: Test Warning for Jenkins >> test-warnings.custom.txt"));
 
         Java javaJob = new Java();
         javaJob.setPattern("**/*.custom.txt");
@@ -73,9 +73,11 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
         project.setScm(new GitSCM("https://github.com/jenkinsci/warnings-ng-plugin.git"));
 
         addScriptStep(project,
-                "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/AndroidLint.java:10: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:39: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/IarCstat.java:24: warning: Another Test Warning for Jenkins\" >> test-warnings.custom.txt");
+                escape("echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/AndroidLint.java:10: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:39: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/IarCstat.java:24: warning: Another Test Warning for Jenkins >> test-warnings.custom.txt"));
 
         Java javaJob = new Java();
         javaJob.setPattern("**/*.custom.txt");
@@ -113,9 +115,11 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
         project.setScm(new GitSCM("https://github.com/jenkinsci/warnings-ng-plugin.git"));
 
         addScriptStep(project,
-                "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/AndroidLint.java:10: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:39: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/IarCstat.java:24: warning: Another Test Warning for Jenkins\" >> test-warnings.custom.txt");
+                escape("echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/AndroidLint.java:10: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:39: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/IarCstat.java:24: warning: Another Test Warning for Jenkins >> test-warnings.custom.txt"));
 
         Java javaJob = new Java();
         javaJob.setPattern("**/*.custom.txt");
@@ -159,17 +163,27 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
         project.setScm(new GitSCM("https://github.com/jenkinsci/warnings-ng-plugin.git"));
 
         addScriptStep(project,
-                "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/AndroidLint.java:10: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:39: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:40: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:41: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:42: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:43: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:44: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:45: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:46: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:47: warning: Test Warning for Jenkins\" >> test-warnings.custom.txt\n"
-                        + "echo \"[javac] src/main/java/io/jenkins/plugins/analysis/warnings/IarCstat.java:24: warning: Another Test Warning for Jenkins\" >> test-warnings.custom.txt");
+                escape("echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/AndroidLint.java:10: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:39: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:40: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:41: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:42: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:43: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:44: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:45: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:46: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/Gendarme.java:47: warning: Test Warning for Jenkins >> test-warnings.custom.txt\n")
+                        + escape(
+                        "echo [javac] src/main/java/io/jenkins/plugins/analysis/warnings/IarCstat.java:24: warning: Another Test Warning for Jenkins >> test-warnings.custom.txt"));
 
         Java javaJob = new Java();
         javaJob.setPattern("**/*.custom.txt");
@@ -214,5 +228,14 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
                 new SourceControlRow("Another Test Warning for Jenkins", "IarCstat.java:24", "Lorenz Aebi",
                         "git@xca.ch", "a8f5fc0e6c1ba43878502e0e983dba5cc966b5b0", 1));
 
+    }
+
+    private String escape(final String message) {
+        if (!isWindows()) {
+            return message
+                    .replace("[", "\\[")
+                    .replace("]", "\\]");
+        }
+        return message;
     }
 }
