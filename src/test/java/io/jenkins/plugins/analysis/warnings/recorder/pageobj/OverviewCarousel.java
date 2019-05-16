@@ -23,6 +23,12 @@ public class OverviewCarousel {
     private static final String CAROUSEL_NEXT_XPATH = ".//a[contains(@class, 'carousel-control-next')]";
     private static final String CAROUSEL_PREVIOUS_XPATH = ".//a[contains(@class, 'carousel-control-prev')]";
 
+    /**
+     * Creates a new instance of {@link OverviewCarousel}.
+     *
+     * @param page
+     *          the whole HTML page.
+     */
     public OverviewCarousel(final HtmlPage page) {
         this.overviewCarousel = page.getElementById("overview-carousel");
         this.next = (DomElement) overviewCarousel.getByXPath(CAROUSEL_NEXT_XPATH).get(0);
@@ -85,6 +91,8 @@ public class OverviewCarousel {
 
     /**
      * TODO: replace with Carousel Element once it's done.
+     *
+     * @return active overview carousel item.
      */
     public DomElement getActiveItem() {
         for (DomElement item : items) {
@@ -95,6 +103,11 @@ public class OverviewCarousel {
         throw new NoSuchElementException("No active element in overview carousel found");
     }
 
+    /**
+     * Returns the items of carousel overview.
+     *
+     * @return all items.
+     */
     public List<DomElement> getItems() {
         return items;
     }
