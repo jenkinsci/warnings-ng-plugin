@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.MsBuildParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class MsBuild extends ReportScanningTool {
     }
 
     @Override
-    public MsBuildParser createParser() {
+    public IssueParser createParser() {
         return new MsBuildParser();
     }
 

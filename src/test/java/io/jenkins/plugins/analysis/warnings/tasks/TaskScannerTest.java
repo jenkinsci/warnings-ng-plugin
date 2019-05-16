@@ -50,7 +50,7 @@ class TaskScannerTest extends ResourceTest {
     /**
      * Parses tasks using a regular expression.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-17225">Issue 17225</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-17225">Issue 17225</a>
      */
     @Test
     void shouldParseRegularExpressionsIssue17225() {
@@ -87,7 +87,7 @@ class TaskScannerTest extends ResourceTest {
     /**
      * Parses a warning log with characters in different locale.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-22744">Issue 22744</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-22744">Issue 22744</a>
      */
     @Test
     void issue22744() {
@@ -114,7 +114,7 @@ class TaskScannerTest extends ResourceTest {
     /**
      * Parses a warning log with !!! and !!!! warnings.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-12782">Issue 12782</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-12782">Issue 12782</a>
      */
     @Test
     void issue12782() {

@@ -35,7 +35,7 @@ class AnalysisHistoryTest {
     /**
      * Creates a sequence of three failing builds. Verifies that the history contains all of these builds.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-41598">Issue 41598</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-41598">Issue 41598</a>
      */
     @Test
     void issue41598() {

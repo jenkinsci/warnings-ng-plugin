@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.IntelParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -27,7 +28,7 @@ public class Intel extends ReportScanningTool {
     }
 
     @Override
-    public IntelParser createParser() {
+    public IssueParser createParser() {
         return new IntelParser();
     }
 

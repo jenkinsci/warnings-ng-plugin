@@ -113,8 +113,8 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected abstract WebClient getWebClient(JavaScriptSupport javaScriptSupport);
 
-    static WebClient create(final boolean isJavaScriptEnabled) {
-        WebClient webClient = IntegrationTestWithJenkinsPerSuite.JENKINS_PER_SUITE.createWebClient();
+    static WebClient create(final JenkinsRule jenkins, final boolean isJavaScriptEnabled) {
+        WebClient webClient = jenkins.createWebClient();
         webClient.setCssErrorHandler(new SilentCssErrorHandler());
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.SEVERE);
         webClient.setIncorrectnessListener((s, o) -> {

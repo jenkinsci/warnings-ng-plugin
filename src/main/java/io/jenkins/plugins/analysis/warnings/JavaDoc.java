@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.JavaDocParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -28,7 +29,7 @@ public class JavaDoc extends ReportScanningTool {
     }
 
     @Override
-    public JavaDocParser createParser() {
+    public IssueParser createParser() {
         return new JavaDocParser();
     }
 
