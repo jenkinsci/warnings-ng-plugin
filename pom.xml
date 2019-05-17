@@ -394,6 +394,13 @@
     </dependency>
 
     <!-- Integration Test Dependencies -->
+    <!-- EnvInject Plugin Dependency -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>envinject</artifactId>
+      <version>2.1.6</version>
+      <scope>test</scope>
+    </dependency>
     <!-- Maven Project Type -->
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
