@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -11,7 +8,6 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewTrendCarousel;
@@ -158,6 +154,23 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
 
         Java java = new Java();
         java.setPattern("**/*.txt");
+        enableWarnings(project, java);
+
+        createWorkspaceFileWithWarnings(project, 1, 2);
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        int buildNumber = analysisResult.getBuild().getNumber();
+        String pluginId = analysisResult.getId();
+        HtmlPage webPage = getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
+
+        return new DetailsViewTrendCarousel(webPage);
+    }
+
+    /* private DetailsViewTrendCarousel setUpTrendChartTest() {
+        FreeStyleProject project = createFreeStyleProject();
+
+        Java java = new Java();
+        java.setPattern("** /*.txt"); //remove space in front of /
         IssuesRecorder issuesRecorder = enableWarnings(project, java);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
@@ -171,7 +184,7 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         int buildNumber = result.getBuild().getNumber();
         String pluginId = result.getId();
         return getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
-    }
+    } */
 
     private void createWorkspaceFileWithWarnings(final FreeStyleProject project,
             final int... linesWithWarning) {
