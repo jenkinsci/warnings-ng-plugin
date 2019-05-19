@@ -16,17 +16,28 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewTrendCarousel;
 
+import static org.assertj.core.api.Assertions.*;
+
 /**
  * Provides tests for the trend carousel shown on the details page.
  */
 public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
 
+    private static final String SEVERITIES_TREND_CHART = "severities-trend-chart";
+    private static final String TOOLS_TREND_CHART = "tools-trend-chart";
+    private static final String NEW_VERSUS_FIXED_TREND_CHART = "new-versus-fixed-trend-chart";
 
     /**
      * Test that tools trend chart is default.
      */
     @Test
-    public void shouldShowToolsTrendChart() {
+    public void shouldShowToolsTrendChartAsDefault() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+    }
+
+    private DetailsViewTrendCarousel setUpTrendChartTest() {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
@@ -37,23 +48,8 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         createWorkspaceFileWithWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        //createWorkspaceFileWithWarnings(project, 1, 2, 3, 4);
-        //buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
-        //
-        //createWorkspaceFileWithWarnings(project, 3);
-        //buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
-
-        DetailsViewTrendCarousel carousel = new DetailsViewTrendCarousel(
-                getDetailsWebPage(project, buildResults.get(0)), getWebClient(JavaScriptSupport.JS_ENABLED));
-        System.out.println(carousel.getCarouselItemActiveId());
-        carousel.clickCarouselControlNext();
-        System.out.println(carousel.getCarouselItemActiveId());
-        carousel.clickCarouselControlNext();
-        System.out.println(carousel.getCarouselItemActiveId());
-        carousel.clickCarouselControlNext();
-        System.out.println(carousel.getCarouselItemActiveId());
+        return new DetailsViewTrendCarousel(getDetailsWebPage(project, buildResults.get(0)));
     }
-
 
     private HtmlPage getDetailsWebPage(final FreeStyleProject project, final AnalysisResult result) {
         int buildNumber = result.getBuild().getNumber();
