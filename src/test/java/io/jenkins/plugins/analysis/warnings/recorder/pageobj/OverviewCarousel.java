@@ -38,8 +38,8 @@ public class OverviewCarousel {
     }
 
     /**
-     * TODO: replace DomElement with CarouselElement once it's done.
-     * Helper-method to find an active item in overview carousel.
+     * TODO: replace DomElement with CarouselElement once it's done. Helper-method to find an active item in overview
+     * carousel.
      *
      * @return active overview carousel item.
      */
@@ -53,8 +53,8 @@ public class OverviewCarousel {
     }
 
     /**
-     * TODO: replace DomElement with CarouselElement once it's done.
-     * Helper-method to find all items in overview carousel.
+     * TODO: replace DomElement with CarouselElement once it's done. Helper-method to find all items in overview
+     * carousel.
      *
      * @return List of all overview carousel items.
      */
@@ -85,21 +85,23 @@ public class OverviewCarousel {
     }
 
     /**
-     * Clicks the button to switch to the next element of overview carousel and sets new active item in overview carousel.
+     * Clicks the button to switch to the next element of overview carousel and sets new active item in overview
+     * carousel.
      *
-     * * @return an updated {@link OverviewCarousel} object with new active item.
+     * @return an updated {@link OverviewCarousel} object with new active item.
      */
     public OverviewCarousel clickNext() {
         if (next == null) {
             throw new AssertionError("No next element link found");
         }
         clickOnButton(next);
-        this.activeItem =findActiveItem();
+        this.activeItem = findActiveItem();
         return this;
     }
 
     /**
-     * Clicks the button to switch to the previous element of overview carousel and sets new active item in overview carousel.
+     * Clicks the button to switch to the previous element of overview carousel and sets new active item in overview
+     * carousel.
      *
      * @return an updated {@link OverviewCarousel} object with new active item.
      */
@@ -113,8 +115,7 @@ public class OverviewCarousel {
     }
 
     /**
-     * TODO: replace with Carousel Element once it's done.
-     * Returns the active item of carousel overview.
+     * TODO: replace with Carousel Element once it's done. Returns the active item of carousel overview.
      *
      * @return active item.
      */
