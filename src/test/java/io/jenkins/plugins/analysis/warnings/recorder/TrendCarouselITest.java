@@ -59,6 +59,100 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(carousel.getCarouselItemActiveId().equals(SEVERITIES_TREND_CHART));
     }
 
+    /**
+     * Test that severities trend chart is shown after two clicks on next.
+     */
+    @Test
+    public void shouldShowSeveritiesTrendChartAfterTwoTimesNext() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.getCarouselItemActiveId().equals(SEVERITIES_TREND_CHART));
+    }
+
+    /**
+     * Test that new versus fixed trend chart is shown after two clicks on previous.
+     */
+    @Test
+    public void shouldShowNewVersusFixedTrendChartAfterTwoTimesPrevious() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.getCarouselItemActiveId().equals(NEW_VERSUS_FIXED_TREND_CHART));
+    }
+
+    /**
+     * Test that tools trend chart is shown after three clicks on next.
+     */
+    @Test
+    public void shouldShowToolsTrendChartAfterThreeTimesNext() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+    }
+
+    /**
+     * Test that tools trend chart is shown after three clicks on previous.
+     */
+    @Test
+    public void shouldShowToolsTrendChartAfterThreeTimesPrevious() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+    }
+
+    /**
+     * Test that tools, new versus fixed and severities trend charts are shown in this order by clicking next.
+     */
+    @Test
+    public void shouldShowTrendChartsInRightOrderByNext() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.getCarouselItemActiveId().equals(NEW_VERSUS_FIXED_TREND_CHART));
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.getCarouselItemActiveId().equals(SEVERITIES_TREND_CHART));
+    }
+
+    /**
+     * Test that tools, severities and new versus fixed trend charts are shown in this order by clicking previous.
+     */
+    @Test
+    public void shouldShowTrendChartsInRightOrderByPrevious() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.getCarouselItemActiveId().equals(SEVERITIES_TREND_CHART));
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.getCarouselItemActiveId().equals(NEW_VERSUS_FIXED_TREND_CHART));
+    }
+
+    /**
+     * Test that tools trend chart is shown after clicking next and previous and clicking previous and next.
+     */
+    @Test
+    public void shouldShowToolsTrendChartAfterNextAndPrevious() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+    }
+
     private DetailsViewTrendCarousel setUpTrendChartTest() {
         FreeStyleProject project = createFreeStyleProject();
 
