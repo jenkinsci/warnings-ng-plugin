@@ -37,6 +37,28 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
     }
 
+    /**
+     * Test that new versus fixed trend chart is next.
+     */
+    @Test
+    public void shouldShowNewVersusFixedTrendChartAsNext() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.clickCarouselControlNext());
+        assertThat(carousel.getCarouselItemActiveId().equals(NEW_VERSUS_FIXED_TREND_CHART));
+    }
+
+    /**
+     * Test that severities trend chart is previous.
+     */
+    @Test
+    public void shouldShowSeveritiesTrendChartAsPrevious() {
+        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+
+        assertThat(carousel.clickCarouselControlPrev());
+        assertThat(carousel.getCarouselItemActiveId().equals(SEVERITIES_TREND_CHART));
+    }
+
     private DetailsViewTrendCarousel setUpTrendChartTest() {
         FreeStyleProject project = createFreeStyleProject();
 
