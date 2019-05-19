@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.util.NoSuchElementException;
@@ -15,9 +16,9 @@ import edu.hm.hafner.util.NoSuchElementException;
  */
 public class OverviewCarousel {
     private final DomElement overviewCarousel;
-    private final DomElement previous;
-    private final DomElement next;
-    private List<DomElement> items;
+    private final HtmlAnchor previous;
+    private final HtmlAnchor next;
+    private DomElement activeItem;
 
     private static final String CAROUSEL_ITEMS_XPATH = ".//div[contains(@class, 'carousel-item')]";
     private static final String CAROUSEL_NEXT_XPATH = ".//a[contains(@class, 'carousel-control-next')]";
@@ -27,27 +28,43 @@ public class OverviewCarousel {
      * Creates a new instance of {@link OverviewCarousel}.
      *
      * @param page
-     *          the whole HTML page.
+     *         the whole HTML page.
      */
     public OverviewCarousel(final HtmlPage page) {
         this.overviewCarousel = page.getElementById("overview-carousel");
-        this.next = (DomElement) overviewCarousel.getByXPath(CAROUSEL_NEXT_XPATH).get(0);
-        this.previous = (DomElement) overviewCarousel.getByXPath(CAROUSEL_PREVIOUS_XPATH).get(0);
-        this.items = retrieveCarouselItems();
+        this.next = (HtmlAnchor) overviewCarousel.getByXPath(CAROUSEL_NEXT_XPATH).get(0);
+        this.previous = (HtmlAnchor) overviewCarousel.getByXPath(CAROUSEL_PREVIOUS_XPATH).get(0);
+        this.activeItem = findActiveItem();
     }
 
     /**
-     * Helper-method to retrieve overview carousel items.
+     * TODO: replace DomElement with CarouselElement once it's done.
+     * Helper-method to find an active item in overview carousel.
      *
-     * @return List of overview carousel items.
+     * @return active overview carousel item.
      */
-    private List<DomElement> retrieveCarouselItems() {
+    private DomElement findActiveItem() {
+        for (DomElement item : findAllCarouselItems()) {
+            if (item.getAttribute("class").contains("active")) {
+                return item;
+            }
+        }
+        throw new NoSuchElementException("No active item in overview carousel found");
+    }
+
+    /**
+     * TODO: replace DomElement with CarouselElement once it's done.
+     * Helper-method to find all items in overview carousel.
+     *
+     * @return List of all overview carousel items.
+     */
+    private List<DomElement> findAllCarouselItems() {
         if (overviewCarousel == null) {
             throw new AssertionError("No overview carousel found");
         }
         List<DomElement> itemList = overviewCarousel.getByXPath(CAROUSEL_ITEMS_XPATH);
         if (itemList.size() == 0) {
-            throw new AssertionError("No overview carousel items found");
+            throw new AssertionError("No items in overview carousel found");
         }
         return itemList;
     }
@@ -68,47 +85,40 @@ public class OverviewCarousel {
     }
 
     /**
-     * Clicks the button to switch to the next element of overview carousel and sets new overview carousel items.
+     * Clicks the button to switch to the next element of overview carousel and sets new active item in overview carousel.
+     *
+     * * @return an updated {@link OverviewCarousel} object with new active item.
      */
-    public void clickNext() {
+    public OverviewCarousel clickNext() {
         if (next == null) {
             throw new AssertionError("No next element link found");
         }
         clickOnButton(next);
-        this.items = retrieveCarouselItems();
+        this.activeItem =findActiveItem();
+        return this;
     }
 
     /**
-     * Clicks the button to switch to the previous element of overview carousel and sets new overview carousel items.
+     * Clicks the button to switch to the previous element of overview carousel and sets new active item in overview carousel.
+     *
+     * @return an updated {@link OverviewCarousel} object with new active item.
      */
-    public void clickPrevious() {
+    public OverviewCarousel clickPrevious() {
         if (previous == null) {
             throw new AssertionError("No previous element link found");
         }
         clickOnButton(previous);
-        this.items = retrieveCarouselItems();
+        this.activeItem = findActiveItem();
+        return this;
     }
 
     /**
      * TODO: replace with Carousel Element once it's done.
+     * Returns the active item of carousel overview.
      *
-     * @return active overview carousel item.
+     * @return active item.
      */
     public DomElement getActiveItem() {
-        for (DomElement item : items) {
-            if (item.getAttribute("class").contains("active")) {
-                return item;
-            }
-        }
-        throw new NoSuchElementException("No active element in overview carousel found");
-    }
-
-    /**
-     * Returns the items of carousel overview.
-     *
-     * @return all items.
-     */
-    public List<DomElement> getItems() {
-        return items;
+        return activeItem;
     }
 }
