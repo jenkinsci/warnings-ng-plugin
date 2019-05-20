@@ -26,6 +26,7 @@ import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -122,6 +123,7 @@ public abstract class IntegrationTest extends ResourceTest {
         });
 
         webClient.setJavaScriptEnabled(isJavaScriptEnabled);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         webClient.getCookieManager().setCookiesEnabled(isJavaScriptEnabled);
         webClient.getOptions().setCssEnabled(isJavaScriptEnabled);
 
