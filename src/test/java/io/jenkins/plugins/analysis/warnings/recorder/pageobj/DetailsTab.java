@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class DetailsTab {
     private TabType activeTabType;
-    private final Set<TabType> tabs = new HashSet<>();
+    private final SortedSet<TabType> tabs = new TreeSet<>();
     private HtmlPage page;
 
     /**
@@ -94,18 +94,19 @@ public class DetailsTab {
     }
 
     /**
-     * All types of details-tab which are available on current page.
+     * Returns all types of details-tab which are available on current page. The order of the elements is the same as
+     * in the UI.
      *
      * @return the set of tab-types of current details-tab
      */
-    public Set<TabType> getTabTypes() {
+    public SortedSet<TabType> getTabTypes() {
         return tabs;
     }
 
     /**
-     * The type of the currently active details-tab.
+     * Returns the type of the currently active details-tab.
      *
-     * @return activeTabType
+     * @return currently active details-tab
      */
     public TabType getActiveTabType() {
         return activeTabType;
