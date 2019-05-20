@@ -9,7 +9,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.eclipse.collections.impl.factory.Lists;
-import org.junit.Assume;
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 
@@ -68,7 +67,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 + "    stages {\n"
                 + "        stage ('Create a fake warning') {\n"
                 + "            steps {\n"
-                + getShellStep("echo \"foo.cc:4:39: error: foo.h: No such file or directory\" >warnings.log")
+                + createShellStep("echo \"foo.cc:4:39: error: foo.h: No such file or directory\" >warnings.log")
                 + "            }\n"
                 + "        }\n"
                 + "    }\n"
@@ -84,7 +83,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result).hasTotalSize(1);
     }
 
-    private String getShellStep(final String script) {
+    private String createShellStep(final String script) {
         if (isWindows()) {
             return String.format("bat '%s'", script);
         }
@@ -128,11 +127,9 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
     public void shouldFindAllClangIssuesIfConsoleIsAnnotatedWithTimeStamps() {
-        Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
-
         WorkflowJob job = createPipelineWithWorkspaceFiles("issue56484.txt");
         job.setDefinition(asStage(
-                "sh 'cat *.txt'",
+                createShellStep("cat *.txt"),
                 "def issues = scanForIssues tool: clang()",
                 PUBLISH_ISSUES_STEP));
 
@@ -152,11 +149,9 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
     public void shouldFindAllJavaIssuesIfConsoleIsAnnotatedWithTimeStamps() {
-        Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
-
         WorkflowJob job = createPipelineWithWorkspaceFiles("issue56484-maven.txt");
         job.setDefinition(asStage(
-                "sh 'cat *.txt'",
+                createShellStep("cat *.txt"),
                 "def issues = scanForIssues tool: java()",
                 PUBLISH_ISSUES_STEP));
 
@@ -179,11 +174,9 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private void assertThatConsoleNotesAreRemoved(final String fileName, final int expectedSize) {
-        Assume.assumeFalse("Test not yet OS independent: requires UNIX commands", isWindows());
-
         WorkflowJob job = createPipelineWithWorkspaceFiles(fileName);
         job.setDefinition(asStage(
-                "sh 'cat *.txt'",
+                createShellStep("cat *.txt"),
                 "def issues = scanForIssues tool: eclipse()",
                 PUBLISH_ISSUES_STEP));
 
