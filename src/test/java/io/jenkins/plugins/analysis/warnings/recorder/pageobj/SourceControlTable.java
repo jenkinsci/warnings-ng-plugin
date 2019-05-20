@@ -25,7 +25,6 @@ import static org.assertj.core.api.Assertions.*;
  * @author Fabian Janker
  */
 public class SourceControlTable {
-
     private DomElement scmInfo = null;
     private DomElement scmPaginate = null;
     private DomElement scmFilter = null;
@@ -47,14 +46,14 @@ public class SourceControlTable {
     }
 
     private void load() {
-        this.rows = new ArrayList<>();
+        rows = new ArrayList<>();
 
         HtmlAnchor content = page.getAnchorByHref("#scmContent");
         clickOnLink(content);
 
-        this.scmInfo = page.getElementById("scm_info");
-        this.scmPaginate = page.getElementById("scm_paginate");
-        this.scmFilter = page.getElementById("scm_filter");
+        scmInfo = page.getElementById("scm_info");
+        scmPaginate = page.getElementById("scm_paginate");
+        scmFilter = page.getElementById("scm_filter");
 
         DomElement scm = page.getElementById("scm");
         assertThat(scm).isInstanceOf(HtmlTable.class);
@@ -100,14 +99,16 @@ public class SourceControlTable {
      *
      * @param term
      *         The term to filter for
-     *
-     * @throws IOException
-     *         if the term can't be typed
      */
-    public void filter(final String term) throws IOException {
-        HtmlTextInput search = (HtmlTextInput) scmFilter.getElementsByTagName("input").get(0);
-        search.type(term);
-        load();
+    public void filter(final String term) {
+        try {
+            HtmlTextInput search = (HtmlTextInput) scmFilter.getElementsByTagName("input").get(0);
+            search.type(term);
+            load();
+        }
+        catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
     }
 
     /**
