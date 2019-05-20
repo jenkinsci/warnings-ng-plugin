@@ -1,13 +1,17 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
 import java.util.HashSet;
-import java.util.NoSuchElementException;
 import java.util.Set;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
+import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
+import edu.hm.hafner.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -17,7 +21,6 @@ import static org.assertj.core.api.Assertions.*;
  * @author Nils Engelbrecht
  */
 public class DetailsTab {
-
     private TabType activeTabType;
     private final Set<TabType> tabs = new HashSet<>();
     private HtmlPage page;
@@ -33,8 +36,8 @@ public class DetailsTab {
         DomElement detailsNav = page.getElementById("tab-details");
         DomNodeList<HtmlElement> navList = detailsNav.getElementsByTagName("a");
         for (HtmlElement navElement : navList) {
-            String tabName = navElement.getFirstChild().getTextContent();
-            TabType tabType = TabType.valueOfIgnoreCase(tabName);
+            assertThat(navElement).isInstanceOf(HtmlAnchor.class);
+            TabType tabType = TabType.valueOfReference(((HtmlAnchor) navElement).getHrefAttribute());
             if (navElement.hasAttribute("aria-selected")) {
                 activeTabType = tabType;
             }
@@ -45,9 +48,12 @@ public class DetailsTab {
     /**
      * Returns the page-object of the currently active details-tab.
      *
+     * @param <T>
+     *         the actual type of the page-object
+     *
      * @return the page-object of the active tab
      */
-    public Object getActive() {
+    public <T> T getActive() {
         return select(activeTabType);
     }
 
@@ -56,13 +62,17 @@ public class DetailsTab {
      *
      * @param tapType
      *         tab to be selected.
+     * @param <T>
+     *         the actual type of the page-object
      *
      * @return the corresponding page-object
      */
-    public Object select(final TabType tapType) {
+    @SuppressWarnings("unchecked") // makes tests more readable
+    public <T> T select(final TabType tapType) {
         assertThat(tabs).contains(tapType);
         activeTabType = tapType;
-        return retrieveContent(tapType);
+
+        return (T) retrieveContent(tapType);
     }
 
     private Object retrieveContent(final TabType tabType) {
@@ -78,11 +88,9 @@ public class DetailsTab {
             case ISSUES:
                 return new IssuesTable(page);
             case BLAMES:
-                return null;
-            // FIXME: return new Blame(page);
-            default:
-                throw new NoSuchElementException();
+                return new SourceControlTable(page);
         }
+        throw new NoSuchElementException("No page object registered for %s", tabType);
     }
 
     /**
@@ -107,7 +115,6 @@ public class DetailsTab {
      * Types for DetailsTab.
      */
     public enum TabType {
-
         TOOLS("origin"),
         MODULES("moduleName"),
         PACKAGES("packageName"),
@@ -124,12 +131,18 @@ public class DetailsTab {
             this.property = property;
         }
 
-        public String getProperty() {
-            return property;
+        static TabType valueOfReference(final String hrefAttribute) {
+            String actualValue = hrefAttribute.substring(1).replace("Content", StringUtils.EMPTY);
+            for (TabType type : values()) {
+                if (type.getProperty().equals(actualValue)) {
+                    return type;
+                }
+            }
+            throw new NoSuchElementException("No tab found with reference %s", hrefAttribute);
         }
 
-        private static TabType valueOfIgnoreCase(final String tabName) {
-            return valueOf(tabName.toUpperCase());
+        public String getProperty() {
+            return property;
         }
     }
 }

@@ -12,6 +12,8 @@ import hudson.plugins.git.GitSCM;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
 
@@ -47,9 +49,7 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
 
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-
-        SourceControlTable table = new SourceControlTable(page);
+        SourceControlTable table = getSourceControlTable(result);
 
         assertThat(result.getTotalSize()).isEqualTo(1);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
@@ -58,6 +58,15 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(table.getRows()).containsExactly(
                 new SourceControlRow("Test Warning for Jenkins", "AndroidLint.java:10", "Ulli Hafner",
                         "ullrich.hafner@gmail.com", "762e9bf397cb7c4f9ec954d97e464884ed33ded5", 1));
+    }
+
+    private SourceControlTable getSourceControlTable(final AnalysisResult result) {
+        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
+
+        DetailsTab detailsTab = new DetailsTab(page);
+        assertThat(detailsTab.getTabTypes()).contains(TabType.BLAMES);
+
+        return detailsTab.select(TabType.BLAMES);
     }
 
     /**
@@ -85,9 +94,7 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
 
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-
-        SourceControlTable table = new SourceControlTable(page);
+        SourceControlTable table = getSourceControlTable(result);
 
         assertThat(result.getTotalSize()).isEqualTo(3);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 3 of 3 entries");
@@ -127,9 +134,7 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
 
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-
-        SourceControlTable table = new SourceControlTable(page);
+        SourceControlTable table = getSourceControlTable(result);
 
         assertThat(result.getTotalSize()).isEqualTo(3);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 3 of 3 entries");
@@ -191,9 +196,7 @@ public class SourceControlTableITest extends IntegrationTestWithJenkinsPerSuite 
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
 
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-
-        SourceControlTable table = new SourceControlTable(page);
+        SourceControlTable table = getSourceControlTable(result);
 
         assertThat(result.getTotalSize()).isEqualTo(11);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 10 of 11 entries");
