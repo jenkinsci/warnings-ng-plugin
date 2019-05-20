@@ -1168,25 +1168,6 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Returns the plain text of the source code from the specified HTML page.
-     *
-     * @param contentPage
-     *         the page containing the colorized HTML visualization of the source code
-     *
-     * @return the source code
-     */
-    protected String extractSourceCodeFromDetailsPage(final HtmlPage contentPage) {
-        DomElement domElement = contentPage.getElementById("main-panel");
-
-        StringBuilder builder = new StringBuilder();
-        for (HtmlElement code : domElement.getElementsByTagName("code")) {
-            builder.append(code.asText());
-        }
-
-        return builder.toString();
-    }
-
-    /**
      * Returns the console log as a String.
      *
      * @param result
