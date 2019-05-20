@@ -10,19 +10,16 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 /**
  * Page object for the source code view page.
  */
-public class SourceCodeView {
+public class SourceCodeView extends PageObject {
     /** The html element id of the main panel. */
-    public static final String MAIN_PANEL_ELEMENT_ID = "main-panel";
+    private static final String MAIN_PANEL_ELEMENT_ID = "main-panel";
 
     /** The xPath to the source code (starting at the main panel). */
-    public static final String SOURCE_CODE_XPATH = "//pre//code";
+    private static final String SOURCE_CODE_XPATH = "//pre//code";
     /** The xPath to the source code producing the issue (starting at the main panel). */
-    public static final String AFFECTED_LINES_XPATH = "//pre//code[2]";
+    private static final String AFFECTED_LINES_XPATH = "//pre//code[2]";
     /** The xPath to the message describing the issue (starting at the main panel). */
-    public static final String ISSUE_MESSAGE_XPATH = "//pre//div//div";
-
-    /** The source code view html page. */
-    private HtmlPage sourceCodeViewPage;
+    private static final String ISSUE_MESSAGE_XPATH = "//pre//div//div";
 
     /**
      * Creates a new instance of {@link SourceCodeView}.
@@ -31,7 +28,7 @@ public class SourceCodeView {
      *         The source code view html page.
      */
     public SourceCodeView(final HtmlPage sourceCodeViewPage) {
-        this.sourceCodeViewPage = sourceCodeViewPage;
+        super(sourceCodeViewPage);
     }
 
     /**
@@ -97,6 +94,6 @@ public class SourceCodeView {
      * @return The main panel element of the html page.
      */
     private DomElement getMainPanel() {
-        return sourceCodeViewPage.getElementById(MAIN_PANEL_ELEMENT_ID);
+        return getPage().getElementById(MAIN_PANEL_ELEMENT_ID);
     }
 }

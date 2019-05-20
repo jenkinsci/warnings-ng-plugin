@@ -24,15 +24,13 @@ import static org.assertj.core.api.Assertions.*;
  * @author Andreas Pabst
  * @author Fabian Janker
  */
-public class SourceControlTable {
+public class SourceControlTable extends PageObject {
     private DomElement scmInfo = null;
     private DomElement scmPaginate = null;
     private DomElement scmFilter = null;
 
     private List<SourceControlRow> rows = new ArrayList<>();
     private List<String> columnNames = new ArrayList<>();
-
-    private final HtmlPage page;
 
     /**
      * Create a page object for the source control table in the details view.
@@ -41,13 +39,14 @@ public class SourceControlTable {
      *         the whole build details HtmlPage
      */
     public SourceControlTable(final HtmlPage page) {
-        this.page = page;
+        super(page);
         load();
     }
 
     private void load() {
         rows = new ArrayList<>();
 
+        HtmlPage page = getPage();
         HtmlAnchor content = page.getAnchorByHref("#scmContent");
         clickOnLink(content);
 

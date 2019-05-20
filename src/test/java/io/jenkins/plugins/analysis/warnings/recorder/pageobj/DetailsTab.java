@@ -20,10 +20,9 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Nils Engelbrecht
  */
-public class DetailsTab {
+public class DetailsTab extends PageObject {
     private TabType activeTabType;
     private final SortedSet<TabType> tabs = new TreeSet<>();
-    private HtmlPage page;
 
     /**
      * Parse information from the given page and creates a new instance of {@link DetailsTab}.
@@ -32,7 +31,8 @@ public class DetailsTab {
      *         the whole details HTML page
      */
     public DetailsTab(final HtmlPage page) {
-        this.page = page;
+        super(page);
+
         DomElement detailsNav = page.getElementById("tab-details");
         DomNodeList<HtmlElement> navList = detailsNav.getElementsByTagName("a");
         for (HtmlElement navElement : navList) {
@@ -70,7 +70,10 @@ public class DetailsTab {
     @SuppressWarnings("unchecked") // makes tests more readable
     public <T> T select(final TabType tapType) {
         assertThat(tabs).contains(tapType);
+
         activeTabType = tapType;
+        HtmlAnchor content = getPage().getAnchorByHref(String.format("#%sContent", tapType.getProperty()));
+        clickOnElement(content);
 
         return (T) retrieveContent(tapType);
     }
@@ -84,11 +87,11 @@ public class DetailsTab {
             case FILES:
             case CATEGORIES:
             case TYPES:
-                return new PropertyTable(page, tabType.getProperty());
+                return new PropertyTable(getPage(), tabType.getProperty());
             case ISSUES:
-                return new IssuesTable(page);
+                return new IssuesTable(getPage());
             case BLAMES:
-                return new SourceControlTable(page);
+                return new SourceControlTable(getPage());
         }
         throw new NoSuchElementException("No page object registered for %s", tabType);
     }

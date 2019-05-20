@@ -21,7 +21,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("JavaDocMethod")
-public class FreestyleConfiguration {
+public class FreestyleConfiguration extends PageObject {
     private static final String IGNORE_QUALITY_GATE = "_.ignoreQualityGate";
     private static final String IGNORE_FAILED_BUILDS = "_.ignoreFailedBuilds";
     private static final String REFERENCE_JOB_NAME = "_.referenceJobName";
@@ -46,7 +46,13 @@ public class FreestyleConfiguration {
      *         fetched configuration html page.
      */
     public FreestyleConfiguration(final HtmlPage page) {
+        super(page);
+
         form = page.getFormByName("config");
+    }
+
+    HtmlForm getForm() {
+        return form;
     }
 
     /**
@@ -228,7 +234,7 @@ public class FreestyleConfiguration {
         setText(HEALTHY, Integer.toString(healthy));
         setText(UNHEALTHY, Integer.toString(unhealthy));
 
-        HtmlSelect select = form.getSelectByName(MINIMUM_SEVERITY);
+        HtmlSelect select = getForm().getSelectByName(MINIMUM_SEVERITY);
         select.setSelectedAttribute(select.getOptionByValue(minimumSeverity.getName()), true);
 
         return this;
@@ -244,7 +250,7 @@ public class FreestyleConfiguration {
 
     @Nullable
     public Severity getMinimumSeverity() {
-        HtmlSelect select = form.getSelectByName(MINIMUM_SEVERITY);
+        HtmlSelect select = getForm().getSelectByName(MINIMUM_SEVERITY);
         HtmlOption selected = select.getSelectedOptions().get(0);
 
         String valueAttribute = selected.getValueAttribute();
@@ -271,7 +277,7 @@ public class FreestyleConfiguration {
     }
 
     private HtmlInput getInputByName(final String name) {
-        return form.getInputByName(name);
+        return getForm().getInputByName(name);
     }
 
     /**
@@ -279,7 +285,7 @@ public class FreestyleConfiguration {
      */
     public void save() {
         try {
-            HtmlFormUtil.submit(form);
+            HtmlFormUtil.submit(getForm());
         }
         catch (IOException exception) {
             throw new AssertionError(exception);
