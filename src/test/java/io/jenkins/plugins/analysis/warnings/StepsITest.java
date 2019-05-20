@@ -92,6 +92,15 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         }
     }
 
+    private String createCatStep(final String arguments) {
+        if (isWindows()) {
+            return String.format("bat 'type %s'", arguments);
+        }
+        else {
+            return String.format("sh 'cat %s'", arguments);
+        }
+    }
+
     /**
      * Creates a JenkinsFile with parallel steps and aggregates the warnings.
      */
@@ -129,7 +138,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldFindAllClangIssuesIfConsoleIsAnnotatedWithTimeStamps() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("issue56484.txt");
         job.setDefinition(asStage(
-                createShellStep("cat *.txt"),
+                createCatStep("*.txt"),
                 "def issues = scanForIssues tool: clang()",
                 PUBLISH_ISSUES_STEP));
 
@@ -151,7 +160,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldFindAllJavaIssuesIfConsoleIsAnnotatedWithTimeStamps() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("issue56484-maven.txt");
         job.setDefinition(asStage(
-                createShellStep("cat *.txt"),
+                createCatStep("*.txt"),
                 "def issues = scanForIssues tool: java()",
                 PUBLISH_ISSUES_STEP));
 
@@ -176,7 +185,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     private void assertThatConsoleNotesAreRemoved(final String fileName, final int expectedSize) {
         WorkflowJob job = createPipelineWithWorkspaceFiles(fileName);
         job.setDefinition(asStage(
-                createShellStep("cat *.txt"),
+                createCatStep("*.txt"),
                 "def issues = scanForIssues tool: eclipse()",
                 PUBLISH_ISSUES_STEP));
 
