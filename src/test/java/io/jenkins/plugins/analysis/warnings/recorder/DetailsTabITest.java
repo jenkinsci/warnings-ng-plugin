@@ -36,7 +36,6 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(project.getLastBuild()).isNotNull();
         HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult);
-        assertThat(htmlPage).isNotNull();
 
         DetailsTab detailsTab = new DetailsTab(htmlPage);
         assertThat(detailsTab.getTabTypes())
@@ -58,7 +57,6 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(project.getLastBuild()).isNotNull();
         HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult);
-        assertThat(htmlPage).isNotNull();
 
         DetailsTab detailsTab = new DetailsTab(htmlPage);
         assertThat(detailsTab.getTabTypes())
@@ -118,7 +116,6 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(project.getLastBuild()).isNotNull();
         HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult);
-        assertThat(htmlPage).isNotNull();
 
         DetailsTab detailsTab = new DetailsTab(htmlPage);
         assertThat(detailsTab.getTabTypes())
@@ -144,7 +141,6 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(project.getLastBuild()).isNotNull();
         HtmlPage htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult);
-        assertThat(htmlPage).isNotNull();
 
         DetailsTab detailsTab = new DetailsTab(htmlPage);
         assertThat(detailsTab.getTabTypes())
@@ -161,10 +157,9 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(detailsTab.getActiveTabType()).isEqualTo(TabType.ISSUES);
         assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
 
-        htmlPage = getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult);
-        assertThat(htmlPage).isNotNull();
-        assertThat(detailsTab.getActiveTabType()).isEqualTo(TabType.ISSUES);
-        assertThat(detailsTab.getActive()).isInstanceOf(IssuesTable.class);
+        DetailsTab refreshedTab = new DetailsTab(getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult));
+        assertThat(refreshedTab.getActiveTabType()).isEqualTo(TabType.ISSUES);
+        assertThat(refreshedTab.getActive()).isInstanceOf(IssuesTable.class);
     }
 
     private FreeStyleProject createFreeStyleJobWithWarnings() {
