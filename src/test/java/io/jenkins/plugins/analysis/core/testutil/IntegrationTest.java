@@ -36,6 +36,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import edu.hm.hafner.util.ResourceTest;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.flow.FlowDefinition;
@@ -1041,7 +1042,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the created script step
      */
-    private Builder addScriptStep(final FreeStyleProject project, final String script) {
+    protected Builder addScriptStep(final FreeStyleProject project, final String script) {
         Builder item;
         if (Functions.isWindows()) {
             item = new BatchFile(script);
