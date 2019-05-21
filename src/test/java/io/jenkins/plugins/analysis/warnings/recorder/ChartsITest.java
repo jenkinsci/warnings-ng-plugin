@@ -18,6 +18,10 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewTrendCarousel;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewTrendCarousel.TrendChartType;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel.PieChartType;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -25,22 +29,14 @@ import static org.assertj.core.api.Assertions.*;
  * Provides tests for the charts shown on the details page.
  */
 public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
-
-    /**
-     * Tests if the New-Versus-Fixed trend chart is correctly rendered after a series of builds.
-     */
+    /** Tests if the New-Versus-Fixed trend chart is correctly rendered after a series of builds. */
     @Test
     public void shouldShowNewVersusFixedTrendChart() {
-
-        // Set up the project and configure the java warnings
-        FreeStyleProject project = createFreeStyleProject();
-
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        enableWarnings(project, java);
+        FreeStyleProject project = createJob();
 
         List<AnalysisResult> buildResults = new ArrayList<>();
-        // Create the initial workspace for comparision
+
+        // Create the initial workspace for comparison
         createFileWithJavaWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
@@ -52,15 +48,26 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         createFileWithJavaWarnings(project, 3);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
-        JSONObject chartModel = charts.getNewVsFixedTrendChart();
+        DetailsViewTrendCarousel carousel = new DetailsViewTrendCarousel(getDetailsWebPage(project, buildResults.get(2)));
+        assertThat(carousel.getChartTypes())
+                .containsExactly(TrendChartType.SEVERITIES, TrendChartType.TOOLS, TrendChartType.NEW_VERSUS_FIXED);
+        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
+
+        carousel.next();
+        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
+
+        carousel.next();
+        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
+
+        JSONObject chartModel = carousel.getActive();
 
         JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
+
         // Make sure each of our builds is listed on the x axis
-        for (int iResult = 0; iResult < buildResults.size(); iResult++) {
-            String buildName = buildResults.get(iResult).getBuild().getDisplayName();
-            assertThat(xAxisNames.get(iResult)).isEqualTo(buildName);
+        for (int build = 0; build < buildResults.size(); build++) {
+            String buildName = buildResults.get(build).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
         }
 
         JSONArray allSeries = chartModel.getJSONArray("series");
@@ -82,17 +89,10 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowToolsTrendChart() {
-
-        // Set up the project and configure the java warnings
-        FreeStyleProject project = createFreeStyleProject();
-
-        // Set up a java tool
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        enableWarnings(project, java);
+        FreeStyleProject project = createJob();
 
         List<AnalysisResult> buildResults = new ArrayList<>();
-        // Create the initial workspace for comparision
+        // Create the initial workspace for comparison
         createFileWithJavaWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
@@ -120,7 +120,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
         // Check the series describing the java warnings is correctly shown
         JSONObject seriesNewTrend = allSeries.getJSONObject(0);
-        assertThat(seriesNewTrend.getString("name")).isEqualTo(java.getActualId());
+        assertThat(seriesNewTrend.getString("name")).isEqualTo(new Java().getActualId());
         assertThat(convertToIntArray(seriesNewTrend.getJSONArray("data"))).isEqualTo(new int[] {2, 4, 1});
 
     }
@@ -130,16 +130,10 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowSeveritiesTrendChart() {
-
-        // Set up the project and configure the java warnings
-        FreeStyleProject project = createFreeStyleProject();
-
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        enableWarnings(project, java);
+        FreeStyleProject project = createJob();
 
         List<AnalysisResult> buildResults = new ArrayList<>();
-        // Create the initial workspace for comparision
+        // Create the initial workspace for comparison
         createFileWithJavaWarnings(project, 1, 2);
         createFileWithJavaErrors(project, 12, 14, 16);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
@@ -183,8 +177,6 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowHealthTrendChart() {
-
-        // Set up the project and configure the java warnings
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
@@ -194,7 +186,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         issuesRecorder.setUnhealthy(7);
 
         List<AnalysisResult> buildResults = new ArrayList<>();
-        // Create the initial workspace for comparision
+        // Create the initial workspace for comparison
         createFileWithJavaWarnings(project, 1, 2, 3, 4, 5, 6, 7, 8, 9);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
@@ -239,17 +231,11 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowSeveritiesDistributionPieChart() {
-
-        // Set up the project and configure the java warnings
-        FreeStyleProject project = createFreeStyleProject();
-
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        enableWarnings(project, java);
+        FreeStyleProject project = createJob();
 
         List<AnalysisResult> buildResults = new ArrayList<>();
 
-        // Create the initial workspace for comparision
+        // Create the initial workspace for comparison
         createFileInWorkspace(project, "javac.txt",
                 createJavaError(1)
                         + createJavaWarning(2));
@@ -265,8 +251,12 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         );
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(1)));
-        JSONObject chartModel = charts.getSeveritiesDistributionPieChart();
+        OverviewCarousel carousel = new OverviewCarousel(getDetailsWebPage(project, buildResults.get(1)));
+        assertThat(carousel.getChartTypes())
+                .containsExactly(PieChartType.SEVERITIES, PieChartType.TREND);
+        assertThat(carousel.getActiveChartType()).isEqualTo(PieChartType.SEVERITIES);
+
+        JSONObject chartModel = carousel.getActive();
 
         JSONArray allSeries = chartModel.getJSONArray("series");
         assertThat(allSeries.size()).isEqualTo(1);
@@ -299,16 +289,10 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowReferenceComparisonPieChart() {
-
-        // Set up the project and configure the java warnings
-        FreeStyleProject project = createFreeStyleProject();
-
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        enableWarnings(project, java);
+        FreeStyleProject project = createJob();
 
         List<AnalysisResult> buildResults = new ArrayList<>();
-        // Create the initial workspace for comparision
+        // Create the initial workspace for comparison
         createFileWithJavaWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
@@ -343,6 +327,16 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         JSONObject low = data.getJSONObject(2);
         assertThat(low.getString("name")).isEqualTo("Fixed");
         assertThat(low.getInt("value")).isEqualTo(3);
+    }
+
+    private FreeStyleProject createJob() {
+        FreeStyleProject project = createFreeStyleProject();
+
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        enableWarnings(project, java);
+
+        return project;
     }
 
     /**

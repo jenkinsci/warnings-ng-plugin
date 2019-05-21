@@ -1,125 +1,145 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
-import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.util.NoSuchElementException;
+
+import net.sf.json.JSONObject;
 
 /**
  * Page Object for the Overview Carousel.
  *
  * @author Artem Polovyi
  */
-public class OverviewCarousel {
-    private final DomElement overviewCarousel;
-    private final HtmlAnchor previous;
-    private final HtmlAnchor next;
-    private DomElement activeItem;
+public class OverviewCarousel extends PageObject {
+    private final HtmlAnchor nextButton;
+    private final HtmlAnchor previousButton;
 
-    private static final String CAROUSEL_ITEMS_XPATH = ".//div[contains(@class, 'carousel-item')]";
-    private static final String CAROUSEL_NEXT_XPATH = ".//a[contains(@class, 'carousel-control-next')]";
-    private static final String CAROUSEL_PREVIOUS_XPATH = ".//a[contains(@class, 'carousel-control-prev')]";
+    private String activeId;
 
     /**
-     * Creates a new instance of {@link OverviewCarousel}.
+     * Creates the trend carousel PageObject for the details view web page. E.g. {buildNr}/java
      *
-     * @param page
-     *         the whole HTML page.
+     * @param detailsViewWebPage
+     *         The details view web page to get the trend carousel from.
      */
-    public OverviewCarousel(final HtmlPage page) {
-        this.overviewCarousel = page.getElementById("overview-carousel");
-        this.next = (HtmlAnchor) overviewCarousel.getByXPath(CAROUSEL_NEXT_XPATH).get(0);
-        this.previous = (HtmlAnchor) overviewCarousel.getByXPath(CAROUSEL_PREVIOUS_XPATH).get(0);
-        this.activeItem = findActiveItem();
+    public OverviewCarousel(final HtmlPage detailsViewWebPage) {
+        super(detailsViewWebPage);
+
+        nextButton = getButton("next");
+        previousButton = getButton("prev");
+        activeId = getActiveCarouselItemId();
+    }
+
+    private HtmlAnchor getButton(final String name) {
+        return (HtmlAnchor) getPage().getByXPath(String.format(
+                "//div[@id='overview-carousel']/a[contains(@class, 'carousel-control-%s')]", name)).get(0);
+    }
+
+    private String getActiveCarouselItemId() {
+        HtmlDivision carouselItemActive = (HtmlDivision) getPage().getByXPath(
+                "//div[@id='overview-carousel']/div/div[contains(@class, 'carousel-item active')]").get(0);
+        return ((HtmlDivision) carouselItemActive.getChildNodes().get(0)).getId();
+    }
+
+    private void waitForAjaxCall(final String oldActive) {
+        while (oldActive.equals(getActiveCarouselItemId())) {
+            System.out.println("Waiting for Ajax call to finish carousel animation...");
+            getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
+        }
     }
 
     /**
-     * TODO: replace DomElement with CarouselElement once it's done. Helper-method to find an active item in overview
-     * carousel.
+     * Clicks on the next button to show the next chart.
      *
-     * @return active overview carousel item.
+     * @return the active chart
      */
-    private DomElement findActiveItem() {
-        for (DomElement item : findAllCarouselItems()) {
-            if (item.getAttribute("class").contains("active")) {
-                return item;
+    public JSONObject next() {
+        return select(nextButton);
+    }
+
+    /**
+     * Clicks on the previous button to show the next chart.
+     *
+     * @return the active chart
+     */
+    public JSONObject previous() {
+        return select(previousButton);
+    }
+
+    private JSONObject select(final HtmlAnchor anchor) {
+        String oldActive = activeId;
+        clickOnElement(anchor);
+        waitForAjaxCall(oldActive);
+        activeId = getActiveCarouselItemId();
+        return getActive();
+    }
+
+    /**
+     * Get the json object of the current trend carousel item.
+     *
+     * @return json object
+     */
+    public JSONObject getActive() {
+        return new DetailsViewCharts(getPage()).getChartModel(activeId);
+    }
+
+    /**
+     * Returns the type of the currently visible chart.
+     *
+     * @return the chart type that is currently visible
+     */
+    public PieChartType getActiveChartType() {
+        return PieChartType.fromId(activeId);
+    }
+
+    /**
+     * Returns all chart types that are available in the carousel.
+     *
+     * @return the available set of chart types
+     */
+    public SortedSet<PieChartType> getChartTypes() {
+        return getDivs("overview").stream()
+                .map(DomElement::getId)
+                .map(PieChartType::fromId)
+                .collect(Collectors.toCollection(TreeSet::new));
+    }
+
+    private List<HtmlDivision> getDivs(final String id) {
+        return getPage().getByXPath(String.format(
+                "//div[@id='%s-carousel']/div/div[contains(@class, 'carousel-item')]/div", id));
+    }
+
+    /**
+     * Defines the supported chart types.
+     */
+    public enum PieChartType {
+        SEVERITIES, TREND;
+
+        static PieChartType fromId(final String domId) {
+            for (PieChartType type : values()) {
+                if (convertDomIdToName(domId).equals(type.name())) {
+                    return type;
+                }
             }
+            throw new NoSuchElementException("No such chart type found with div id '%s'", domId);
         }
-        throw new NoSuchElementException("No active item in overview carousel found");
-    }
 
-    /**
-     * TODO: replace DomElement with CarouselElement once it's done. Helper-method to find all items in overview
-     * carousel.
-     *
-     * @return List of all overview carousel items.
-     */
-    private List<DomElement> findAllCarouselItems() {
-        if (overviewCarousel == null) {
-            throw new AssertionError("No overview carousel found");
+        private static String convertDomIdToName(final String domId) {
+            return domId.replaceAll("-chart", StringUtils.EMPTY)
+                    .replace("-", "_")
+                    .toUpperCase(Locale.ENGLISH);
         }
-        List<DomElement> itemList = overviewCarousel.getByXPath(CAROUSEL_ITEMS_XPATH);
-        if (itemList.size() == 0) {
-            throw new AssertionError("No items in overview carousel found");
-        }
-        return itemList;
-    }
-
-    /**
-     * Helper-method for clicking on a button.
-     *
-     * @param element
-     *         a {@link DomElement} which will trigger the carousel element switch .
-     */
-    private void clickOnButton(final DomElement element) {
-        try {
-            element.click();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
-     * Clicks the button to switch to the next element of overview carousel and sets new active item in overview
-     * carousel.
-     *
-     * @return an updated {@link OverviewCarousel} object with new active item.
-     */
-    public OverviewCarousel clickNext() {
-        if (next == null) {
-            throw new AssertionError("No next element link found");
-        }
-        clickOnButton(next);
-        this.activeItem = findActiveItem();
-        return this;
-    }
-
-    /**
-     * Clicks the button to switch to the previous element of overview carousel and sets new active item in overview
-     * carousel.
-     *
-     * @return an updated {@link OverviewCarousel} object with new active item.
-     */
-    public OverviewCarousel clickPrevious() {
-        if (previous == null) {
-            throw new AssertionError("No previous element link found");
-        }
-        clickOnButton(previous);
-        this.activeItem = findActiveItem();
-        return this;
-    }
-
-    /**
-     * TODO: replace with Carousel Element once it's done. Returns the active item of carousel overview.
-     *
-     * @return active item.
-     */
-    public DomElement getActiveItem() {
-        return activeItem;
     }
 }
