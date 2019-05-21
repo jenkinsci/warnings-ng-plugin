@@ -15,20 +15,20 @@ import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewTrendCarousel;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewTrendCarousel.TrendChartType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel.PieChartType;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel.TrendChartType;
 
 import static org.assertj.core.api.Assertions.*;
 
 /**
  * Provides tests for the charts shown on the details page.
  */
-public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
+public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
     /** Tests if the New-Versus-Fixed trend chart is correctly rendered after a series of builds. */
     @Test
     public void shouldShowNewVersusFixedTrendChart() {
@@ -48,7 +48,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         createFileWithJavaWarnings(project, 3);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        DetailsViewTrendCarousel carousel = new DetailsViewTrendCarousel(getDetailsWebPage(project, buildResults.get(2)));
+        TrendCarousel carousel = new TrendCarousel(getDetailsWebPage(project, buildResults.get(2)));
         assertThat(carousel.getChartTypes())
                 .containsExactly(TrendChartType.SEVERITIES, TrendChartType.TOOLS, TrendChartType.NEW_VERSUS_FIXED);
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);

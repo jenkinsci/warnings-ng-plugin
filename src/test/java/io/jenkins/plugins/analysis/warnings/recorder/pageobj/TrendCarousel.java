@@ -13,21 +13,19 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import edu.hm.hafner.util.NoSuchElementException;
 
 /**
- * Page Object for the Overview Carousel.
- *
- * @author Artem Polovyi
+ * Page Object for the trend carousel in details views.
  */
-public class OverviewCarousel extends CarouselPageObject {
-    private static final String OVERVIEW_CAROUSEL_ID = "overview";
+public class TrendCarousel extends CarouselPageObject {
+    private static final String TREND_CAROUSEL_ID = "trend";
 
     /**
-     * Creates a carousel page object for the overview pie charts.
+     * Creates a carousel page object for the trend charts.
      *
      * @param page
      *         the details view web page to get the carousel from
      */
-    public OverviewCarousel(final HtmlPage page) {
-        super(page, OVERVIEW_CAROUSEL_ID);
+    public TrendCarousel(final HtmlPage page) {
+        super(page, TREND_CAROUSEL_ID);
     }
 
     /**
@@ -35,8 +33,8 @@ public class OverviewCarousel extends CarouselPageObject {
      *
      * @return the chart type that is currently visible
      */
-    public PieChartType getActiveChartType() {
-        return PieChartType.fromId(getActiveId());
+    public TrendChartType getActiveChartType() {
+        return TrendChartType.fromId(getActiveId());
     }
 
     /**
@@ -44,21 +42,21 @@ public class OverviewCarousel extends CarouselPageObject {
      *
      * @return the available set of chart types
      */
-    public SortedSet<PieChartType> getChartTypes() {
+    public SortedSet<TrendChartType> getChartTypes() {
         return getDivs().stream()
                 .map(DomElement::getId)
-                .map(PieChartType::fromId)
+                .map(TrendChartType::fromId)
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
     /**
      * Defines the supported chart types.
      */
-    public enum PieChartType {
-        SEVERITIES, TREND;
+    public enum TrendChartType {
+        SEVERITIES, TOOLS, NEW_VERSUS_FIXED, HEALTH;
 
-        static PieChartType fromId(final String domId) {
-            for (PieChartType type : values()) {
+        static TrendChartType fromId(final String domId) {
+            for (TrendChartType type : values()) {
                 if (convertDomIdToName(domId).equals(type.name())) {
                     return type;
                 }
@@ -67,7 +65,7 @@ public class OverviewCarousel extends CarouselPageObject {
         }
 
         private static String convertDomIdToName(final String domId) {
-            return domId.replaceAll("-chart", StringUtils.EMPTY)
+            return domId.replaceAll("-trend-chart", StringUtils.EMPTY)
                     .replace("-", "_")
                     .toUpperCase(Locale.ENGLISH);
         }
