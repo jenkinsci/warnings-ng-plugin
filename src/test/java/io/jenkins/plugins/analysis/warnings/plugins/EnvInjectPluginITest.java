@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.plugins;
 
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
 import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
@@ -8,12 +8,12 @@ import org.jenkinsci.plugins.envinject.EnvInjectPlugin;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 
-public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerSuite {
+public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
     @Test
-    void shouldRunWithEnvPlugin() {
+    public void shouldRunWithEnvPlugin() {
         // Set up the project and configure the java warnings
         FreeStyleProject project = createFreeStyleProject();
         EnvInjectPlugin envInjectPlugin = new EnvInjectPlugin();
