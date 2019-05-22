@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.Pep8Parser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class Pep8 extends ReportScanningTool {
     }
 
     @Override
-    public Pep8Parser createParser() {
+    public IssueParser createParser() {
         return new Pep8Parser();
     }
 

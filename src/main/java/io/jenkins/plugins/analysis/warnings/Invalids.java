@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.InvalidsParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class Invalids extends ReportScanningTool {
     }
 
     @Override
-    public InvalidsParser createParser() {
+    public IssueParser createParser() {
         return new InvalidsParser();
     }
 

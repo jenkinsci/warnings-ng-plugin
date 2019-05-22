@@ -28,6 +28,7 @@ import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
 import io.jenkins.plugins.analysis.warnings.Simian;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable.DuplicationRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -102,7 +103,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
-        DuplicationTable issues = new DuplicationTable(details, false);
+        DuplicationTable issues = getDuplicationTable(details);
         assertThat(issues.getRows()).hasSize(10); // paging of 10 is activated by default
         
         assertSizeOfSeverity(issues, 2, 5); // HIGH
@@ -110,12 +111,16 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertSizeOfSeverity(issues, 5, 6); // LOW
     }
 
+    private DuplicationTable getDuplicationTable(final HtmlPage details) {
+        return new DuplicationTable(details, false);
+    }
+
     private void assertSizeOfSeverity(final DuplicationTable table, final int row, 
             final int numberOfSelectedIssues) {
         DuplicationRow selectedRow = table.getRow(row);
         HtmlPage detailsOfSeverity = selectedRow.clickSeverity();
 
-        DuplicationTable issues = new DuplicationTable(detailsOfSeverity, false);
+        DuplicationTable issues = getDuplicationTable(detailsOfSeverity);
         assertThat(issues.getRows()).hasSize(numberOfSelectedIssues);
     }
 
@@ -134,13 +139,14 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
-        DuplicationTable issues = new DuplicationTable(details, false);
+        DuplicationTable issues = getDuplicationTable(details);
         assertThat(issues.getRows()).hasSize(10);
 
         HtmlPage sourceCodePage = issues.getRow(0).clickSourceCode();
+        SourceCodeView sourceCodeView = new SourceCodeView(sourceCodePage);
 
         String htmlFile = toString(FOLDER + "Main.source");
-        assertThat(extractSourceCodeFromDetailsPage(sourceCodePage)).isEqualToIgnoringWhitespace(htmlFile);
+        assertThat(sourceCodeView.getSourceCode()).isEqualToIgnoringWhitespace(htmlFile);
     }
 
     /**
@@ -154,7 +160,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-        DuplicationTable issues = new DuplicationTable(details, false);
+        DuplicationTable issues = getDuplicationTable(details);
 
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(

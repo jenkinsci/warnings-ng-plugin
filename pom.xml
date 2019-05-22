@@ -12,7 +12,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>5.0.1-SNAPSHOT</version>
+  <version>5.1.0-SNAPSHOT</version>
   <url>https://wiki.jenkins.io/x/1YTeCQ</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -394,6 +394,13 @@
     </dependency>
 
     <!-- Integration Test Dependencies -->
+    <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>form-element-path</artifactId>
+      <version>1.8</version>
+      <scope>test</scope>
+    </dependency>
     <!-- EnvInject Plugin Dependency -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -442,6 +449,40 @@
       <artifactId>workflow-basic-steps</artifactId>
       <version>2.7</version>
       <scope>test</scope>
+    </dependency>
+    <!-- Docker Agents -->
+    <dependency>
+      <groupId>org.jenkins-ci.test</groupId>
+      <artifactId>docker-fixtures</artifactId>
+      <version>1.8</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>ssh-slaves</artifactId>
+      <version>1.25</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>jdk-tool</artifactId>
+      <version>1.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- GitSampleRepoRule -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>git</artifactId>
+      <version>${git-plugin.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>scm-api</artifactId>
+      <version>2.2.7</version>
+      <type>test-jar</type>
     </dependency>
 
     <!-- Declarative Pipeline -->
@@ -708,10 +749,9 @@
             </revapi.semver.ignore>
             <revapi.ignore>
               <item>
-                <regex>true</regex>
-                <code>java.method.removed</code>
-                <classQualifiedName>edu.hm.hafner.analysis..*</classQualifiedName>
-                <justification>Optional dependency</justification>
+                <code>java.method.returnTypeChanged</code>
+                <newType>edu.hm.hafner.analysis.IssueParser</newType>
+                <justification>The parser should not be visible.</justification>
               </item>
             </revapi.ignore>
             <revapi.ignore>

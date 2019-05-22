@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.P4Parser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class Perforce extends ReportScanningTool {
     }
 
     @Override
-    public P4Parser createParser() {
+    public IssueParser createParser() {
         return new P4Parser();
     }
 

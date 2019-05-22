@@ -1,0 +1,28 @@
+# ** Error: Simulation ran too long.  Should finish in 200us.  Bad AXI handshaking?
+#    Time: 0 us  Scope: channel_processor_tb_fir_emulation.u_channel_processor_tb File: /net/test_tb.sv Line: 312
+# ** Note: Data structure takes 20152432 bytes of memory
+#          Process time 2.89 seconds
+#          $stop    : /net/test_tb.sv(313)
+#    Time: 200 us  Iteration: 0  Instance: /tb_fir_emulation/u_tb
+# Break in Module channel_processor_tb at /net/channel_processor_tb.sv line 313
+# ** Warning: (vsim-3015) <protected>(<protected>): [PCDPC] - Port size (<protected>) does not match connection size (<protected>) for <protected>.<protected>
+#    Time: 0 ps  Iteration: 0  Protected: /tb_app_nvm/u_app_flash/sei_flash/onchip_flash_0/altera_onchip_flash_block/inst/<protected>/<protected>/<protected>/<protected>/<protected> File: nofile
+# ** Warning: (vsim-8315) /data/tmp/jenkins/workspace/src/comm//ping_pong_control.sv(26): No condition is true in the unique/priority if/case statement.
+#    Time: 0 ps  Iteration: 1  Instance: /tb_g/uut/esa_ping_pong_control
+# ** Warning: (vsim-8234) /local_home/jenkins/jobs/modelsim_compile/workspace/src/comm/spi/spi_writer.v(24): Index xxxx into array dimension [15:0] is out of bounds.
+#    Time: 0 ps  Iteration: 0  Instance: /tb_g/uut/spi/out
+# ** Note: (vsim-3812) Design is being optimized...
+
+# ** Warning: ** while parsing file included at sim/src/tb_grizzly_all.sv(12)
+# ** while parsing file included at src/grizzly_top.sv(9)
+# ** at src/io/ps.v(71): (vlog-2623) Undefined variable: fifo_full.
+
+# ** Warning: (vsim-8233) /tmp/jenkins/workspace/tb_ps_pl.v(146): Index xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx into array dimension [0:999] is out of bounds.
+#    Time: 0 ps  Iteration: 1  Instance: /grizzly_elaboration_test/u_tb_grizzly_all/uut/ps/ps_comm
+# ** Warning: (vsim-3533) [FOFIW] - Failed to open file "C:/pl2ps_dma.txt" for writing.
+# ** Warning: src/io/ps_registers_io.v(71): (vlog-2623) Undefined variable: fifo_e.
+# Start time: 13:45:42 on Mar 11,2019
+# ** Note: (vsim-3812) Design is being optimized...
+# ** Note: (vopt-143) Recognized 1 FSM in module "capture_ram(fast)".
+# ** Note: (vopt-143) Recognized 1 FSM in module "capture_ram(fast__1)".
+###### prj/2017.2/grizzly.srcs/sim_1/axi_vfifo.v(69647):

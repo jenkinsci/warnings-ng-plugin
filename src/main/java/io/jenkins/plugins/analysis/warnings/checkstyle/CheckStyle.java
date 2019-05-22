@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.checkstyle;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -30,7 +31,7 @@ public class CheckStyle extends ReportScanningTool {
     }
 
     @Override
-    public CheckStyleParser createParser() {
+    public IssueParser createParser() {
         return new CheckStyleParser();
     }
 

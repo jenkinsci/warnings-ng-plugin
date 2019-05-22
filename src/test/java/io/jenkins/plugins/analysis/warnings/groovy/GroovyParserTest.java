@@ -40,7 +40,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     /**
      * Tries to expose JENKINS-35262: multi-line regular expression parser.
      *
-     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-35262">Issue 35262</a>
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-35262">Issue 35262</a>
      */
     @Test
     void issue35262() throws IOException {
