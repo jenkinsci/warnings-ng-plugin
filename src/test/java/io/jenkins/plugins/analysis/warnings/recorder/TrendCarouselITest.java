@@ -226,6 +226,7 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
 
     private TrendCarousel setUpTrendChartTest(final boolean hasHealthReport) {
         FreeStyleProject project = createFreeStyleProject();
+        copySingleFileToWorkspace(project, "../java1Warning.txt", "java1Warning.txt");
 
         Java java = new Java();
         java.setPattern("**/*.txt");
@@ -236,7 +237,6 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
             recorder.setUnhealthy(9);
         }
 
-        createWorkspaceFileWithWarnings(project, 1, 2);
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         int buildNumber = analysisResult.getBuild().getNumber();
@@ -244,21 +244,5 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         webPage = getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
 
         return new TrendCarousel(webPage);
-    }
-
-    private void createWorkspaceFileWithWarnings(final FreeStyleProject project,
-            final int... linesWithWarning) {
-        StringBuilder warningText = new StringBuilder();
-        for (int lineNumber : linesWithWarning) {
-            warningText.append(createDeprecationWarning(lineNumber)).append("\n");
-        }
-
-        createFileInWorkspace(project, "javac.txt", warningText.toString());
-    }
-
-    private String createDeprecationWarning(final int lineNumber) {
-        return String.format(
-                "[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
-                lineNumber);
     }
 }
