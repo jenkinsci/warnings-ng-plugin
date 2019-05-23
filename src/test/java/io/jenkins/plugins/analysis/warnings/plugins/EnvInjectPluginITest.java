@@ -1,20 +1,14 @@
 package io.jenkins.plugins.analysis.warnings.plugins;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.List;
 
 import org.junit.Test;
 
-import com.google.common.collect.Lists;
-
 import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
 import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
-import org.jenkinsci.plugins.envinject.EnvInjectPlugin;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
