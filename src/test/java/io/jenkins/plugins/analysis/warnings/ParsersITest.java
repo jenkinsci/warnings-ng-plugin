@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.util.Arrays;
 
-import org.junit.Assume;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -511,8 +510,6 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Gendarme parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllGendarmeIssues() {
-        Assume.assumeFalse("FIXME: check why this does not work on Windows", isWindows());
-
         shouldFindIssuesOfTool(3, new Gendarme(), "Gendarme.xml");
     }
 

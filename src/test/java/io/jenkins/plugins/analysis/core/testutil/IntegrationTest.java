@@ -26,6 +26,7 @@ import org.jvnet.hudson.test.JenkinsRule.WebClient;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.html.DomElement;
@@ -36,6 +37,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import edu.hm.hafner.util.ResourceTest;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.flow.FlowDefinition;
@@ -113,14 +115,15 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected abstract WebClient getWebClient(JavaScriptSupport javaScriptSupport);
 
-    static WebClient create(final boolean isJavaScriptEnabled) {
-        WebClient webClient = IntegrationTestWithJenkinsPerSuite.JENKINS_PER_SUITE.createWebClient();
+    static WebClient create(final JenkinsRule jenkins, final boolean isJavaScriptEnabled) {
+        WebClient webClient = jenkins.createWebClient();
         webClient.setCssErrorHandler(new SilentCssErrorHandler());
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.SEVERE);
         webClient.setIncorrectnessListener((s, o) -> {
         });
 
         webClient.setJavaScriptEnabled(isJavaScriptEnabled);
+        webClient.setAjaxController(new NicelyResynchronizingAjaxController());
         webClient.getCookieManager().setCookiesEnabled(isJavaScriptEnabled);
         webClient.getOptions().setCssEnabled(isJavaScriptEnabled);
 
@@ -1041,7 +1044,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the created script step
      */
-    private Builder addScriptStep(final FreeStyleProject project, final String script) {
+    protected Builder addScriptStep(final FreeStyleProject project, final String script) {
         Builder item;
         if (Functions.isWindows()) {
             item = new BatchFile(script);
@@ -1165,25 +1168,6 @@ public abstract class IntegrationTest extends ResourceTest {
         catch (IOException | SAXException e) {
             throw new AssertionError(e);
         }
-    }
-
-    /**
-     * Returns the plain text of the source code from the specified HTML page.
-     *
-     * @param contentPage
-     *         the page containing the colorized HTML visualization of the source code
-     *
-     * @return the source code
-     */
-    protected String extractSourceCodeFromDetailsPage(final HtmlPage contentPage) {
-        DomElement domElement = contentPage.getElementById("main-panel");
-
-        StringBuilder builder = new StringBuilder();
-        for (HtmlElement code : domElement.getElementsByTagName("code")) {
-            builder.append(code.asText());
-        }
-
-        return builder.toString();
     }
 
     /**

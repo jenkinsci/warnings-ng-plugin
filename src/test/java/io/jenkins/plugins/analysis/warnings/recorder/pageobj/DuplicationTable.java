@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +24,7 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class DuplicationTable {
+public class DuplicationTable extends PageObject {
     private final String title;
     private final List<DuplicationRow> rows = new ArrayList<>();
 
@@ -39,8 +38,10 @@ public class DuplicationTable {
      */
     @SuppressFBWarnings("BC")
     public DuplicationTable(final HtmlPage page, final boolean hasPackages) {
+        super(page);
+
         HtmlAnchor content = page.getAnchorByHref("#issuesContent");
-        clickOnLink(content);
+        clickOnElement(content);
 
         title = content.getTextContent();
 
@@ -68,27 +69,11 @@ public class DuplicationTable {
         assertThat(bodies).hasSize(1);
 
         HtmlTableBody mainBody = bodies.get(0);
-        IssuesTable.waitForAjaxCall(mainBody);
         List<HtmlTableRow> contentRows = mainBody.getRows();
 
         for (HtmlTableRow row : contentRows) {
             List<HtmlTableCell> rowCells = row.getCells();
             rows.add(new DuplicationRow(rowCells, hasPackages));
-        }
-    }
-
-    /**
-     * Helper-method for clicking on a link.
-     *
-     * @param element
-     *         a {@link DomElement} which will trigger the redirection to a new page.
-     */
-    private static HtmlPage clickOnLink(final DomElement element) {
-        try {
-            return element.click();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
         }
     }
 
@@ -212,7 +197,7 @@ public class DuplicationTable {
             if (fileNameLink == null) {
                 throw new AssertionError("No source code column link found");
             }
-            return clickOnLink(fileNameLink);
+            return clickOnElement(fileNameLink);
         }
 
         /**
@@ -224,7 +209,7 @@ public class DuplicationTable {
             if (priorityLink == null) {
                 throw new AssertionError("No severity column link found");
             }
-            return clickOnLink(priorityLink);
+            return clickOnElement(priorityLink);
         }
 
         @Override

@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import java.io.IOException;
-import java.nio.file.Paths;
 
 import org.eclipse.jgit.api.BlameCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
@@ -15,6 +14,7 @@ import org.eclipse.jgit.revwalk.RevCommit;
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -69,7 +69,7 @@ class GitBlamer implements Blamer {
             }
             report.logInfo("Git commit ID = '%s'", headCommit.getName());
 
-            String workspacePath = getWorkspacePath();
+            String workspacePath = new PathUtil().getAbsolutePath(workspace.getRemote());
             report.logInfo("Job workspace = '%s'", workspacePath);
             return git.withRepository(new BlameCallback(report, headCommit, workspacePath));
         }
@@ -83,10 +83,6 @@ class GitBlamer implements Blamer {
             // nothing to do, already logged
         }
         return new Blames();
-    }
-
-    private String getWorkspacePath() throws IOException {
-        return Paths.get(workspace.getRemote()).toAbsolutePath().normalize().toRealPath().toString();
     }
 
     /**

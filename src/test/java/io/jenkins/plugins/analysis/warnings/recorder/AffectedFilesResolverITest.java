@@ -26,8 +26,11 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -53,9 +56,10 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         IssueRow row = getIssuesTableRow(result, 1);
-        assertThat(row.hasLink(IssueRow.FILE)).isTrue();
+        SourceCodeView sourceCodeView = new SourceCodeView(getSourceCodePage(result));
 
-        assertThat(extractSourceCodeFromDetailsPage(getSourceCodePage(result))).isEqualToIgnoringWhitespace(readSourceCode(project));
+        assertThat(row.hasLink(IssueRow.FILE)).isTrue();
+        assertThat(sourceCodeView.getSourceCode()).isEqualToIgnoringWhitespace(readSourceCode(project));
 
         deleteAffectedFilesInBuildFolder(result);
 
@@ -99,9 +103,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     private IssueRow getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-        IssuesTable issues = new IssuesTable(details);
-        return issues.getRow(rowNumber);
+        return getIssuesTable(result).getRow(rowNumber);
     }
 
     private String readSourceCode(final FreeStyleProject project) {
@@ -207,8 +209,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         assertThat(getConsoleLog(result)).contains("0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-        IssuesTable issues = new IssuesTable(details);
+        IssuesTable issues = getIssuesTable(result);
         assertThat(issues.getColumnNames()).containsExactly(
                 IssueRow.DETAILS, IssueRow.FILE, IssueRow.PRIORITY, IssueRow.AGE);
         assertThat(issues.getRows()).containsExactly(
@@ -216,6 +217,12 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
                         "-", "-", "Normal", 1));
         IssueRow row = issues.getRow(0);
         assertThat(row.hasLink(IssueRow.FILE)).isFalse();
+    }
+
+    private IssuesTable getIssuesTable(final AnalysisResult result) {
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
+        DetailsTab detailsTab = new DetailsTab(details);
+        return detailsTab.select(TabType.ISSUES);
     }
 
     private void prepareGccLog(final FreeStyleProject job) {
