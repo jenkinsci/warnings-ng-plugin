@@ -29,6 +29,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     @Rule
     public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
 
+    /*
     @BeforeClass
     public static void assumeThatWeAreRunningLinux() throws Exception {
         assumeTrue("This test is only for Unix", !Functions.isWindows());
@@ -43,6 +44,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         assumeThat("Docker must be at least 1.13.0 for this test (uses --init)",
                 new VersionNumber(baos.toString().trim()), greaterThanOrEqualTo(new VersionNumber("1.13.0")));
     }
+    */
 
     @Test
     public void shouldStartAgent() {
