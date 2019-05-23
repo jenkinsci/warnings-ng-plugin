@@ -7,9 +7,11 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import org.junit.Test;
+import org.jvnet.hudson.test.CaptureEnvironmentBuilder;
 
 import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
 import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
+import hudson.EnvVars;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -43,6 +45,10 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
                 null, null, false, null
         ));
 
+        // Setup capturing for environment vars
+        CaptureEnvironmentBuilder capture = new CaptureEnvironmentBuilder();
+        project.getBuildersList().add(capture);
+
         // Set the env inject plugin to run and add a script step which will print out all set env vars
         project.getBuildWrappersList().add(envInjectBuildWrapper);
         addScriptStep(project, "printenv");
@@ -54,6 +60,10 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
         // Each env var will be printed out by the plugin itself once, so we need to search for two occurrences
         assertThatLogContainsNTimes(project, "HELLO_WORLD=hello_test", 2);
         assertThatLogContainsNTimes(project, "MY_ENV_VAR=42", 2);
+
+        EnvVars envVars = capture.getEnvVars();
+        assertThat(envVars.get("HELLO_WORLD")).isEqualTo("hello_test");
+        assertThat(envVars.get("MY_ENV_VAR")).isEqualTo("42");
 
         assertThat(analysisResult).hasTotalSize(2);
     }
