@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -16,8 +17,13 @@ import hudson.model.Result;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+
 
 public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
@@ -50,6 +56,33 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
         assertThatLogContainsNTimes(project, "MY_ENV_VAR=42", 2);
 
         assertThat(analysisResult).hasTotalSize(2);
+    }
+
+
+    @Test
+    public void shouldStoreEnvironmentVariablesInFile() throws IOException {
+        // Set up the project and configure the java warnings
+        FreeStyleProject project = createFreeStyleProject();
+
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        enableWarnings(project, java);
+
+        createFileWithJavaWarnings(project, 1, 2);
+
+        EnvInjectBuildWrapper envInjectBuildWrapper = new EnvInjectBuildWrapper(new EnvInjectJobPropertyInfo(
+                null, "HELLO_WORLD=hello_test\nMY_ENV_VAR=42",
+                null, null, false, null
+        ));
+        project.getBuildWrappersList().add(envInjectBuildWrapper);
+
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        Path envFile =  Paths.get(project.getLastBuild().getRootDir().getPath(), "injectedEnvVars.txt");
+        List<String> lines = Files.readAllLines(envFile, Charset.forName("ISO-8859-1"));
+        
+        assertThat(lines.contains("HELLO_WORLD=hello_test"));
+        assertThat(lines.contains("MY_ENV_VAR=42"));
     }
 
 
