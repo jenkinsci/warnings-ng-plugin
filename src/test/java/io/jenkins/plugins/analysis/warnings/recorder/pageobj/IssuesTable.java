@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +21,7 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class IssuesTable {
+public class IssuesTable extends PageObject {
     private final String title;
     private final List<IssueRow> rows = new ArrayList<>();
     private final List<String> columnNames;
@@ -35,9 +34,9 @@ public class IssuesTable {
      */
     @SuppressFBWarnings("BC")
     public IssuesTable(final HtmlPage page) {
-        HtmlAnchor content = page.getAnchorByHref("#issuesContent");
-        clickOnLink(content);
+        super(page);
 
+        HtmlAnchor content = page.getAnchorByHref("#issuesContent");
         title = content.getTextContent();
 
         DomElement issues = page.getElementById("issues");
@@ -76,21 +75,6 @@ public class IssuesTable {
         }
     }
 
-    /**
-     * Clicks a link.
-     *
-     * @param element
-     *         a {@link DomElement} which will trigger the redirection to a new page.
-     */
-    private void clickOnLink(final DomElement element) {
-        try {
-            element.click();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-    }
-
     private List<String> getHeaders(final List<HtmlTableCell> cells) {
         return cells.stream().map(HtmlTableCell::getTextContent).collect(Collectors.toList());
     }
@@ -124,5 +108,4 @@ public class IssuesTable {
     public IssueRow getRow(final int index) {
         return rows.get(index);
     }
-
 }

@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.0.0...master)
 
+- [PR#57](https://github.com/jenkinsci/warnings-ng-plugin/pull/57):
+Added a parser for MentorGraphcis Modelsim/Questa.
+
 ## [5.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-4.0.0...warnings-ng-5.0.0) - 2019-5-7
 
 ### Added 

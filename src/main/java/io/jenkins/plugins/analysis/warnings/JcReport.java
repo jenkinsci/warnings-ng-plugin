@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.jcreport.JcReportParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class JcReport extends ReportScanningTool {
     }
 
     @Override
-    public JcReportParser createParser() {
+    public IssueParser createParser() {
         return new JcReportParser();
     }
 

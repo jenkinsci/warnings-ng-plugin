@@ -15,7 +15,6 @@ import static org.mockito.Mockito.*;
  * @author Veronika Zwickenpflug
  */
 class NewVersusFixedPieChartTest {
-
     @Test
     void testCreate() {
         int[] sizes = new int[] {2, 3, 4};

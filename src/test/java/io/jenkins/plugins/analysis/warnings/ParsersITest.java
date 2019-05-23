@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.util.Arrays;
 
-import org.junit.Assume;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -301,6 +300,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new Cadence(), "CadenceIncisive.txt");
     }
 
+    /** Runs the Mentor parser on an output file that contains 13 issues. */
+    @Test
+    public void shouldFindAllMentorGraphicsIssues() {
+        shouldFindIssuesOfTool(13, new MentorGraphics(), "MentorGraphics.log");
+    }
+
     /** Runs the PMD parser on an output file that contains 262 issues (PMD 6.1.0). */
     @Test
     public void shouldFindAllPmdIssues() {
@@ -505,8 +510,6 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Gendarme parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllGendarmeIssues() {
-        Assume.assumeFalse("FIXME: check why this does not work on Windows", isWindows());
-
         shouldFindIssuesOfTool(3, new Gendarme(), "Gendarme.xml");
     }
 

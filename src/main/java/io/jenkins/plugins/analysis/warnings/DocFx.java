@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.violations.DocFxAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class DocFx extends ReportScanningTool {
     }
 
     @Override
-    public DocFxAdapter createParser() {
+    public IssueParser createParser() {
         return new DocFxAdapter();
     }
 

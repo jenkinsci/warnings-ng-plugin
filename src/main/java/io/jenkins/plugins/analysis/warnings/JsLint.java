@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.LintParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -27,7 +28,7 @@ public class JsLint extends ReportScanningTool {
     }
 
     @Override
-    public LintParser createParser() {
+    public IssueParser createParser() {
         return new LintParser();
     }
 

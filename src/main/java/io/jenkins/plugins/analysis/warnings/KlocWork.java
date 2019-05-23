@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.violations.KlocWorkAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,7 +27,7 @@ public class KlocWork extends ReportScanningTool {
     }
 
     @Override
-    public KlocWorkAdapter createParser() {
+    public IssueParser createParser() {
         return new KlocWorkAdapter();
     }
 

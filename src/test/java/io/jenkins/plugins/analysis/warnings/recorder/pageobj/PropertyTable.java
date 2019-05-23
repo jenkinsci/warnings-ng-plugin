@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-public class PropertyTable {
+public class PropertyTable extends PageObject {
     /**
      * Returns whether the specified property table is visible on the specified page.
      *
@@ -66,6 +66,8 @@ public class PropertyTable {
      */
     @SuppressFBWarnings("BC")
     public PropertyTable(final HtmlPage page, final String property) {
+        super(page);
+
         title = getTitleOfTable(page, property);
 
         DomElement propertyElement = page.getElementById(property);

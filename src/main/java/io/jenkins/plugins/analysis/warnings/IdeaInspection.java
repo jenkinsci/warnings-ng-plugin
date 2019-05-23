@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.IdeaInspectionParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -28,7 +29,7 @@ public class IdeaInspection extends ReportScanningTool {
     }
 
     @Override
-    public IdeaInspectionParser createParser() {
+    public IssueParser createParser() {
         return new IdeaInspectionParser();
     }
 

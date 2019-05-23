@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.dry.cpd.CpdParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -27,7 +28,7 @@ public class Cpd extends DuplicateCodeScanner {
     }
 
     @Override
-    public CpdParser createParser() {
+    public IssueParser createParser() {
         return new CpdParser(getHighThreshold(), getNormalThreshold());
     }
 

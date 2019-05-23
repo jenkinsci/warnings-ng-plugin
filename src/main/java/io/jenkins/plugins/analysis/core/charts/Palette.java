@@ -5,7 +5,6 @@ package io.jenkins.plugins.analysis.core.charts;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("all")
 public enum Palette {
     RED("#EF9A9A", "#FFCDD2"),
     PURPLE("#CE93D8", "#E1BEE7"),
