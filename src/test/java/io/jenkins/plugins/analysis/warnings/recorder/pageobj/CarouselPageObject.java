@@ -35,7 +35,7 @@ class CarouselPageObject extends PageObject {
 
     private HtmlAnchor getButton(final String name) {
         return (HtmlAnchor) getPage().getByXPath(String.format(
-                "//div[@id='%s-carousel']/a[contains(@class, 'carousel-control-%s')]", carouselId,  name)).get(0);
+                "//div[@id='%s-carousel']/a[contains(@class, 'carousel-control-%s')]", carouselId, name)).get(0);
     }
 
     private String getActiveCarouselItemId() {
@@ -61,12 +61,44 @@ class CarouselPageObject extends PageObject {
     }
 
     /**
-     * Clicks on the previous button to show the next chart.
+     * Clicks multiple times on the next button to show the next chart.
+     *
+     * @param count
+     *         clicks this many times
+     *
+     * @return the active chart
+     */
+    public JSONObject next(final int count) {
+        JSONObject result = new JSONObject();
+        for (int i = 0; i < count; i++) {
+            result = select(nextButton);
+        }
+        return result;
+    }
+
+    /**
+     * Clicks on the previous button to show the previous chart.
      *
      * @return the active chart
      */
     public JSONObject previous() {
         return select(previousButton);
+    }
+
+    /**
+     * Clicks multiple times on the previous button to show the previous chart.
+     *
+     * @param count
+     *         clicks this many times
+     *
+     * @return the active chart
+     */
+    public JSONObject previous(final int count) {
+        JSONObject result = new JSONObject();
+        for (int i = 0; i < count; i++) {
+            result = select(previousButton);
+        }
+        return result;
     }
 
     private JSONObject select(final HtmlAnchor anchor) {
