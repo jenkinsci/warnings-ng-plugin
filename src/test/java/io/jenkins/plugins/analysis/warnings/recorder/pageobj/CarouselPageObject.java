@@ -12,7 +12,8 @@ import net.sf.json.JSONObject;
  * Page object for a Bootstrap Carousel.
  *
  * @author Artem Polovyi
- * @author FIXME: add names
+ * @author Andreas Neumeier
+ * @author Tobias Redl
  * @author Ullrich Hafner
  */
 class CarouselPageObject extends PageObject {
