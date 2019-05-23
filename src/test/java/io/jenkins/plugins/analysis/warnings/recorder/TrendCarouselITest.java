@@ -10,7 +10,8 @@ import hudson.model.Result;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewTrendCarousel;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel.TrendChartType;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -19,18 +20,14 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
 
-    private static final String SEVERITIES_TREND_CHART = "severities-trend-chart";
-    private static final String TOOLS_TREND_CHART = "tools-trend-chart";
-    private static final String NEW_VERSUS_FIXED_TREND_CHART = "new-versus-fixed-trend-chart";
-
     /**
      * Test that tools trend chart is default.
      */
     @Test
     public void shouldShowToolsTrendChartAsDefault() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.TOOLS));
     }
 
     /**
@@ -38,10 +35,11 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowNewVersusFixedTrendChartAsNext() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.getCarouselItemActiveId().equals(NEW_VERSUS_FIXED_TREND_CHART));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.NEW_VERSUS_FIXED));
+
     }
 
     /**
@@ -49,10 +47,10 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowSeveritiesTrendChartAsPrevious() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.getCarouselItemActiveId().equals(SEVERITIES_TREND_CHART));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.SEVERITIES));
     }
 
     /**
@@ -60,11 +58,11 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowSeveritiesTrendChartAfterTwoTimesNext() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.getCarouselItemActiveId().equals(SEVERITIES_TREND_CHART));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.SEVERITIES));
     }
 
     /**
@@ -72,11 +70,11 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowNewVersusFixedTrendChartAfterTwoTimesPrevious() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.getCarouselItemActiveId().equals(NEW_VERSUS_FIXED_TREND_CHART));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.NEW_VERSUS_FIXED));
     }
 
     /**
@@ -84,12 +82,12 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowToolsTrendChartAfterThreeTimesNext() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.TOOLS));
     }
 
     /**
@@ -97,12 +95,12 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowToolsTrendChartAfterThreeTimesPrevious() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.TOOLS));
     }
 
     /**
@@ -110,13 +108,13 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowTrendChartsInRightOrderByNext() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.getCarouselItemActiveId().equals(NEW_VERSUS_FIXED_TREND_CHART));
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.getCarouselItemActiveId().equals(SEVERITIES_TREND_CHART));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.TOOLS));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.NEW_VERSUS_FIXED));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.SEVERITIES));
     }
 
     /**
@@ -124,13 +122,13 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowTrendChartsInRightOrderByPrevious() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.getCarouselItemActiveId().equals(SEVERITIES_TREND_CHART));
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.getCarouselItemActiveId().equals(NEW_VERSUS_FIXED_TREND_CHART));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.TOOLS));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.SEVERITIES));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.NEW_VERSUS_FIXED));
     }
 
     /**
@@ -138,18 +136,18 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowToolsTrendChartAfterNextAndPrevious() {
-        DetailsViewTrendCarousel carousel = setUpTrendChartTest();
+        TrendCarousel carousel = setUpTrendChartTest();
 
-        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
-        assertThat(carousel.clickCarouselControlPrev());
-        assertThat(carousel.clickCarouselControlNext());
-        assertThat(carousel.getCarouselItemActiveId().equals(TOOLS_TREND_CHART));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.TOOLS));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.TOOLS));
+        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.getActiveChartType().equals(TrendChartType.TOOLS));
     }
 
-    private DetailsViewTrendCarousel setUpTrendChartTest() {
+    private TrendCarousel setUpTrendChartTest() {
         FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
@@ -163,7 +161,7 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         String pluginId = analysisResult.getId();
         HtmlPage webPage = getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
 
-        return new DetailsViewTrendCarousel(webPage);
+        return new TrendCarousel(webPage);
     }
 
     /* private DetailsViewTrendCarousel setUpTrendChartTest() {
