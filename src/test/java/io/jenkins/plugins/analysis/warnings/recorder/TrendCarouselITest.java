@@ -46,7 +46,7 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldShowNewVersusFixedTrendChartAsNext() {
         TrendCarousel carousel = setUpTrendChartTest(false);
 
-        assertThat(carousel.next().equals(carousel.getActive()));
+        assertThat(carousel.next().equals(carousel.getActive())).isTrue();
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
 
     }
@@ -58,7 +58,7 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldShowSeveritiesTrendChartAsPrevious() {
         TrendCarousel carousel = setUpTrendChartTest(false);
 
-        assertThat(carousel.previous().equals(carousel.getActive()));
+        assertThat(carousel.previous().equals(carousel.getActive())).isTrue();
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
     }
 
@@ -114,9 +114,9 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         TrendCarousel carousel = setUpTrendChartTest(false);
 
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
-        assertThat(carousel.next().equals(carousel.getActive()));
+        carousel.next();
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
-        assertThat(carousel.next().equals(carousel.getActive()));
+        carousel.next();
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
     }
 
@@ -128,9 +128,9 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         TrendCarousel carousel = setUpTrendChartTest(false);
 
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
-        assertThat(carousel.previous().equals(carousel.getActive()));
+        carousel.previous();
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
-        assertThat(carousel.previous().equals(carousel.getActive()));
+        carousel.previous();
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
     }
 
@@ -142,11 +142,11 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         TrendCarousel carousel = setUpTrendChartTest(false);
 
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
-        assertThat(carousel.next().equals(carousel.getActive()));
-        assertThat(carousel.previous().equals(carousel.getActive()));
+        carousel.previous();
+        carousel.next();
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
-        assertThat(carousel.previous().equals(carousel.getActive()));
-        assertThat(carousel.next().equals(carousel.getActive()));
+        carousel.previous();
+        carousel.next();
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
     }
 
@@ -221,7 +221,7 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         TrendCarousel carousel = setUpTrendChartTest(true);
 
         carousel.previous();
-        assertThat(carousel.getActiveChartType().equals(TrendChartType.HEALTH));
+        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.HEALTH);
     }
 
     private TrendCarousel setUpTrendChartTest(final boolean hasHealthReport) {
