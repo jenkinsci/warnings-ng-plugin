@@ -72,17 +72,19 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
         createFileWithJavaWarnings(project, 1, 2);
 
         EnvInjectPlugin envInjectPlugin = new EnvInjectPlugin();
-        EnvInjectBuildWrapper envInjectBuildWrapper = new EnvInjectBuildWrapper(new EnvInjectJobPropertyInfo());
+        EnvInjectBuildWrapper envInjectBuildWrapper = new EnvInjectBuildWrapper(new EnvInjectJobPropertyInfo(
+                null, "HELLO_WORLD=hello_test\nMY_ENV_VAR=42",
+                null, null, false, null
+        ));
         project.getBuildWrappersList().add(envInjectBuildWrapper);
 
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         Path envFile =  Paths.get(project.getLastBuild().getRootDir().getPath(), "injectedEnvVars.txt");
         List<String> lines = Files.readAllLines(envFile, Charset.forName("ISO-8859-1"));
-        for (String line: lines)
-        {
-            System.out.println(line);
-        }
+        
+        assertThat(lines.contains("HELLO_WORLD=hello_test"));
+        assertThat(lines.contains("MY_ENV_VAR=42"));
     }
 
 
