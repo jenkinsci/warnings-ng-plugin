@@ -19,7 +19,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static io.jenkins.plugins.analysis.core.util.AnalysisBuildResultAssert.*;
 
 public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
@@ -36,12 +36,15 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         java.setPattern("**/*.txt");
         enableWarnings(project, java);
 
+        createFileWithJavaWarningsInRepository(project, fileName, 3, 6);
+
         project.setScm(new GitSCM("file://" + repositoryRoot));
 
-        createFileWithJavaWarnings(project, fileName, 3, 6);
-        AnalysisResult buildResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        HtmlPage DetailsPage = getDetailsWebPage(project, buildResult);
+        assertThat(analysisResult).hasTotalSize(2);
+
+        HtmlPage DetailsPage = getDetailsWebPage(project, analysisResult);
         SourceControlTable sourceControlTable = new SourceControlTable(DetailsPage);
 
         System.out.println(sourceControlTable.getInfo());
@@ -81,7 +84,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
         repository.git("add", fileName);
         repository.git("commit", "-m", "Adding to " + fileName, fileName);
-        repository.git("blame", fileName);
+
         return repository.getRoot();
     }
 
@@ -95,15 +98,19 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @param linesWithWarning
      *         all lines in which a mocked warning should be placed
      */
-    private void createFileWithJavaWarnings(final FreeStyleProject project,
+    private void createFileWithJavaWarningsInRepository(final FreeStyleProject project,
             final String sourceFile,
-            final int... linesWithWarning) {
+            final int... linesWithWarning) throws Exception {
+        String warningsFile = "javac_warnings.txt";
+
         StringBuilder warningText = new StringBuilder();
         for (int lineNumber : linesWithWarning) {
             warningText.append(createJavaWarning(sourceFile, lineNumber)).append("\n");
         }
 
-        createFileInWorkspace(project, "javac_warnings.txt", warningText.toString());
+        repository.write(warningsFile, warningText.toString());
+        repository.git("add", warningsFile);
+        repository.git("commit", "-m", "Adding to " + warningsFile, warningsFile);
     }
 
     /**
@@ -115,10 +122,8 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @return a mocked warning string
      */
     private String createJavaWarning(final String file, final int lineNumber) {
-        return "[WARNING] C:\\Path\\SourceFile.java:[4,42] [deprecation] path.AClass in path has been deprecated\n";
-        /*return String.format(
-                "[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
-                file, lineNumber);*/
+        return String.format("[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
+                file, lineNumber);
     }
 
     /**
