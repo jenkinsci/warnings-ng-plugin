@@ -21,7 +21,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
 
 /**
  * This class tests the compatibility between the warnings-ng and the EnvInject plugins. It makes sure the basic
