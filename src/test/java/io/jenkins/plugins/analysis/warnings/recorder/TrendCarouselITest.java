@@ -259,8 +259,8 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
         String pluginId = analysisResult.getId();
         webPage = getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
 
-        webPage.executeJavaScript("window.localStorage.clear();");
-
+        //use this workaround to start with default trend chart
+        //sadly webPage.executeJavaScript("window.localStorage.clear();"); is not enough
         TrendCarousel carousel = new TrendCarousel(webPage);
         while (!carousel.getActiveChartType().equals(TrendChartType.SEVERITIES)) {
             carousel.next();
