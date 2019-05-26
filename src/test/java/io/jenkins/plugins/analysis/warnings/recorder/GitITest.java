@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -17,113 +18,84 @@ import jenkins.plugins.git.GitSampleRepoRule;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
 
-import static io.jenkins.plugins.analysis.core.util.AnalysisBuildResultAssert.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
+/**
+ * Tests if the details in the git history can be properly retrieved and shown in the source control table.
+ */
 public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
+    /**
+     * The git repo rule used to create and use the git repository.
+     */
     @ClassRule
     public static GitSampleRepoRule repository = new GitSampleRepoRule();
 
+    /**
+     * Creates a java file with commits by two different users and checks if the details in the source control table
+     * table reflects the information of the commits.
+     * @throws Exception on exception in the git plugin.
+     */
     @Test
-    public void shouldCreateRepositoryWithTwoContributors() throws Exception {
+    public void shouldGetCommitDetailsForWarnings() throws Exception {
         final String fileName = "helloWorld.java";
-        final File repositoryRoot = createFileInRepositoryWithTwoContributors(fileName);
         final FreeStyleProject project = createFreeStyleProject();
 
         Java java = new Java();
         java.setPattern("**/*.txt");
         enableWarnings(project, java);
 
-        createFileWithJavaWarningsInRepository(project, fileName, 3, 6);
-
-        project.setScm(new GitSCM("file://" + repositoryRoot));
+        createRepositoryInProject(project);
+        appendTextToFileInRepository(fileName, "public class HelloWorld {\n", "Hans Hamburg", "hans@hamburg.com");
+        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
+        appendTextToFileInRepository(fileName, "}", "Peter Petersburg", "peter@petersburg.com");
+        createJavaWarningInRepository(fileName, 2, "HelloWorld method closed");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
         assertThat(analysisResult).hasTotalSize(2);
 
-        HtmlPage DetailsPage = getDetailsWebPage(project, analysisResult);
-        SourceControlTable sourceControlTable = new SourceControlTable(DetailsPage);
+        HtmlPage detailsPage = getDetailsWebPage(project, analysisResult);
+        SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
 
-        System.out.println(sourceControlTable.getInfo());
+        List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
+        assertThat(sourceControlRows.size()).isEqualTo(2);
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("Hans Hamburg");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("hans@hamburg.com");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":1");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo("HelloWorld method opened");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo("Peter Petersburg");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("peter@petersburg.com");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":2");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo("HelloWorld method closed");
     }
 
     /**
-     * Creates a Repository with one file. The file will have contributions by two different people.
-     * @param fileName The name of the file that will be created in the Repository.
-     * @return The path to the root of the created repository.
-     * @throws Exception
+     * Create a repository with the git plugin and add it to the project.
+     * @param project The project to add the git repository to.
+     * @throws Exception on exception in the git plugin.
      */
-    private File createFileInRepositoryWithTwoContributors(final String fileName) throws Exception {
+    private void createRepositoryInProject(final FreeStyleProject project) throws Exception {
         repository.init();
-        repository.git("config", "user.name", "Hans Hamburg");
-        repository.git("config", "user.email", "hans@hamburg.com");
         repository.git("checkout", "master");
-
-        appendTextToFile(repository.getRoot(), fileName,
-                "public class HelloWorld \n"
-                        + "{\n"
-                        + "       public static void main (String[] args)\n"
-                        + "       {\n");
-
-        repository.git("add", fileName);
-        repository.git("commit", "-m", "Initial " + fileName, fileName);
-
-        repository.git("config", "user.name", "Peter Petersburg");
-        repository.git("config", "user.email", "peter@petersburg.com");
-
-        appendTextToFile(repository.getRoot(), fileName,
-                "             // Ausgabe Hello World!\n"
-                        + "             System.out.println(\"Hello World!\");\n"
-                        + "       }\n"
-                        + "}"
-
-        );
-
-        repository.git("add", fileName);
-        repository.git("commit", "-m", "Adding to " + fileName, fileName);
-
-        return repository.getRoot();
+        project.setScm(new GitSCM("file://" + repository.getRoot()));
     }
 
     /**
-     * Create a file with some java warnings in the workspace of the project.
-     *
-     * @param project
-     *         in which the file will be placed
-     * @param sourceFile
-     *         the source file that the warning corresponds to.
-     * @param linesWithWarning
-     *         all lines in which a mocked warning should be placed
-     */
-    private void createFileWithJavaWarningsInRepository(final FreeStyleProject project,
-            final String sourceFile,
-            final int... linesWithWarning) throws Exception {
-        String warningsFile = "javac_warnings.txt";
-
-        StringBuilder warningText = new StringBuilder();
-        for (int lineNumber : linesWithWarning) {
-            warningText.append(createJavaWarning(sourceFile, lineNumber)).append("\n");
-        }
-
-        repository.write(warningsFile, warningText.toString());
-        repository.git("add", warningsFile);
-        repository.git("commit", "-m", "Adding to " + warningsFile, warningsFile);
-    }
-
-    /**
-     * Builds a string representing a java deprecation warning.
-     *
+     * Builds a string representing a java warning and adds it to the warnings file in the repository.
+     * @param file
+     *         The the warning should point to.
      * @param lineNumber
-     *         line number in which the mock warning occurred
-     *
-     * @return a mocked warning string
+     *         The line number in where the warning occurred.
+     * @param warningText
+     *         The text the warning should show.
      */
-    private String createJavaWarning(final String file, final int lineNumber) {
-        return String.format("[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
-                file, lineNumber);
+    private void createJavaWarningInRepository(final String file, final int lineNumber, final String warningText) throws Exception {
+        String warningsFile = "javac_warnings.txt";
+        String warning = String.format("[WARNING] %s:[%d,42] [deprecation] %s\n", file, lineNumber, warningText);
+        appendTextToFileInRepository(warningsFile, warning, "dummy user", "dummy@user.de");
     }
 
     /**
@@ -143,6 +115,29 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Append text to a file in the git repository and commit it with the given user details.
+     * @param fileName
+     *         The file name where the text should be appended.
+     * @param text
+     *         The text that should be appended.
+     * @param user
+     *         The user in the commit message.
+     * @param email
+     *         The email in the commit message.
+     * @throws Exception on exception in the git plugin.
+     */
+    private void appendTextToFileInRepository(final String fileName, final String text, final String user, final String email)
+            throws Exception {
+        repository.git("config", "user.name", user);
+        repository.git("config", "user.email", email);
+
+        appendTextToFile(repository.getRoot(), fileName, text);
+
+        repository.git("add", fileName);
+        repository.git("commit", "-m", "Adding to " + fileName, fileName);
+    }
+
+    /**
      * Append text to a file in a given Path.
      *
      * @param path
@@ -151,9 +146,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      *         The name of the file that should be written to.
      * @param text
      *         The text that should be appended.
-     * @throws IOException
+     * @throws IOException if the file can not be opened or writing fails.
      */
-    private void appendTextToFile(File path, String fileName, String text) throws IOException {
+    private void appendTextToFile(final File path, final String fileName, final String text) throws IOException {
         File file = new File(path, fileName);
         FileWriter fileWriter = new FileWriter(file, true);
         fileWriter.write(text);
