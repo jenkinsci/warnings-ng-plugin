@@ -10,9 +10,13 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
+import hudson.model.Label;
 import hudson.model.Result;
 import hudson.plugins.git.GitSCM;
+import hudson.security.HudsonPrivateSecurityRealm;
 import jenkins.plugins.git.GitSampleRepoRule;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -70,6 +74,27 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("peter@petersburg.com");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":2");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo("HelloWorld method closed");
+    }
+
+    @Test
+    public void shouldRunBuildOnDumbSlave() throws Exception {
+        getJenkins().createOnlineSlave(Label.get("DumbSlave"));
+        getJenkins().jenkins.setSecurityRealm(
+            new HudsonPrivateSecurityRealm(
+                    true,
+                    false,
+                    null
+            )
+        );
+        getJenkins().jenkins.save();
+
+        WorkflowJob project = createPipeline();
+        project.setDefinition(
+                new CpsFlowDefinition(
+                        "node('DumbSlave') {\n"
+                             + "    checkout scm"
+                             + "}", true));
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
 
     /**
