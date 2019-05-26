@@ -1,0 +1,4 @@
+// spelled wrong intentionally to trick actual task scanners
+// TODOO: I will finish what I start
+// FIXMEE: I will finish what I mark as todoo
+// TODOO: I will stop lying on todoo marks
