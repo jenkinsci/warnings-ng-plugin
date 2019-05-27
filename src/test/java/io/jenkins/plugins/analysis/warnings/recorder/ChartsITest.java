@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 import org.junit.Test;
 
@@ -38,47 +39,26 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldShowNewVersusFixedTrendChartWithBuildDomain() {
         FreeStyleProject project = createJob();
 
+        initializeTimeFacade();
         List<AnalysisResult> buildResults = build3Times(project);
 
-        TrendCarousel carousel = new TrendCarousel(getDetailsWebPage(project, buildResults.get(2)));
-        assertThat(carousel.getChartTypes())
-                .containsExactly(TrendChartType.SEVERITIES, TrendChartType.TOOLS, TrendChartType.NEW_VERSUS_FIXED);
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
-
-        carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
-
-        carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
-
-        JSONObject chartModel = carousel.getActive();
-
-        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
-        assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
-
-        // Make sure each of our builds is listed on the x axis
-        for (int build = 0; build < buildResults.size(); build++) {
-            String buildName = buildResults.get(build).getBuild().getDisplayName();
-            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
-        }
-
-        JSONArray allSeries = chartModel.getJSONArray("series");
-        assertThat(allSeries.size()).isEqualTo(2); // Only New and Fixed should be shown.
-
-        // Check the series which describes the "new" issues of each build
-        JSONObject seriesNewTrend = allSeries.getJSONObject(0);
-        assertThat(seriesNewTrend.getString("name")).isEqualTo("New");
-        assertThat(convertToIntArray(seriesNewTrend.getJSONArray("data"))).isEqualTo(new int[] {0, 2, 0});
-
-        // Check the series which describes the fixed issues of each build
-        JSONObject seriesFixedTrend = allSeries.getJSONObject(1);
-        assertThat(seriesFixedTrend.getString("name")).isEqualTo("Fixed");
-        assertThat(convertToIntArray(seriesFixedTrend.getJSONArray("data"))).isEqualTo(new int[] {0, 0, 3});
+        verifyNewVersusFixedChart(project, buildResults, "build",
+                build -> buildResults.get(build).getBuild().getDisplayName());
     }
 
     /** Tests if the New-Versus-Fixed trend chart with build date axis is correctly rendered after a series of builds. */
     @Test
     public void shouldShowNewVersusFixedTrendChartWithDateDomain() {
+        FreeStyleProject project = createJob();
+
+        initializeTimeFacade();
+        List<AnalysisResult> buildResults = build3Times(project);
+
+        verifyNewVersusFixedChart(project, buildResults, "date",
+                build -> String.format("01-%02d", build + 1));
+    }
+
+    private void initializeTimeFacade() {
         TimeFacade facade = mock(TimeFacade.class);
         TimeFacade.setInstance(facade);
         when(facade.getBuildDate(any()))
@@ -87,13 +67,13 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
                         january(1), january(2), january(3),
                         january(1), january(2), january(3));
         when(facade.getToday()).thenReturn(january(3));
+    }
 
-        FreeStyleProject project = createJob();
-
-        List<AnalysisResult> buildResults = build3Times(project);
+    private void verifyNewVersusFixedChart(final FreeStyleProject project, final List<AnalysisResult> buildResults,
+            final String axisName, final Function<Integer, String> xAxisNameFunction) {
 
         HtmlPage page = getDetailsWebPage(project, buildResults.get(2));
-        page.executeJavaScript("window.localStorage.setItem('#trendBuildAxis','date');");
+        page.executeJavaScript(String.format("window.localStorage.setItem('#trendBuildAxis', '%s');", axisName));
         page = getDetailsWebPage(project, buildResults.get(2));
 
         TrendCarousel carousel = new TrendCarousel(page);
@@ -116,7 +96,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         for (int build = 0; build < buildResults.size(); build++) {
             assertThat(xAxisNames.get(build))
                     .as("X-Axis label [%d]", build + 1)
-                    .isEqualTo(String.format("01-%02d", build + 1));
+                    .isEqualTo(xAxisNameFunction.apply(build));
         }
 
         JSONArray allSeries = chartModel.getJSONArray("series");
