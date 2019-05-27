@@ -191,6 +191,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
       <version>${commons.digester.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>asm</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
