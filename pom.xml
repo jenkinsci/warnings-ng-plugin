@@ -28,8 +28,8 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>5.0.2</analysis-model-api.version>
-    <analysis-model.version>5.0.2</analysis-model.version>
+    <analysis-model-api.version>5.1.0</analysis-model-api.version>
+    <analysis-model.version>5.1.0</analysis-model.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
@@ -191,6 +191,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
       <version>${commons.digester.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>asm</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
