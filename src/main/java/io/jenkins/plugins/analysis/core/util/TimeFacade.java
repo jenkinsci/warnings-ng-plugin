@@ -21,6 +21,14 @@ public class TimeFacade {
         return timeFacade;
     }
 
+    /**
+     * Replaces a stubbed facade with the real facade.
+     */
+    @VisibleForTesting
+    public static void reset() {
+        setInstance(new TimeFacade());
+    }
+
     @VisibleForTesting
     public static void setInstance(final TimeFacade stubFacade) {
         timeFacade = stubFacade;
