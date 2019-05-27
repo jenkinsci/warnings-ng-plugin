@@ -10,6 +10,7 @@ import org.eclipse.collections.api.map.FixedSizeMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.Issue;
 
 import hudson.model.BallColor;
 import hudson.model.Run;
@@ -31,6 +32,28 @@ import static org.mockito.Mockito.*;
 class SummaryTest {
     private static final FixedSizeMap<String, Integer> EMPTY_ORIGINS = Maps.fixedSize.empty();
     private static final ImmutableList<String> EMPTY_ERRORS = Lists.immutable.empty();
+
+    @Test
+    @Issue("SECURITY-1373")
+    void shouldSanitizeName() {
+        AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
+                Lists.immutable.of("Error 1", "Error 2"), 0);
+
+        Locale.setDefault(Locale.ENGLISH);
+
+        LabelProviderFactoryFacade facade = mock(LabelProviderFactoryFacade.class);
+        StaticAnalysisLabelProvider checkStyleLabelProvider = createLabelProvider("checkstyle",
+                "<b>CheckStyle</b> <script>execute</script>");
+        when(facade.get("checkstyle")).thenReturn(checkStyleLabelProvider);
+
+        Summary summary = new Summary(checkStyleLabelProvider, analysisResult, facade);
+        setResetReferenceAction(summary, false);
+
+        String createdHtml = summary.create();
+
+        assertThat(createdHtml).contains("<b>CheckStyle</b>");
+        assertThat(createdHtml).doesNotContain("<script>execute</script>");
+    }
 
     @Test
     void shouldShowAggregatedWarnings() {
@@ -293,11 +316,15 @@ class SummaryTest {
         when(facade.get("pmd")).thenReturn(pmdLabelProvider);
 
         Summary summary = new Summary(createLabelProvider("test", "SummaryTest"), analysisResult, facade);
+        setResetReferenceAction(summary, isResetReferenceAvailable);
+
+        return summary;
+    }
+
+    private void setResetReferenceAction(final Summary summary, final boolean isResetReferenceAvailable) {
         ResetQualityGateCommand resetQualityGateCommand = mock(ResetQualityGateCommand.class);
         when(resetQualityGateCommand.isEnabled(any(), any())).thenReturn(isResetReferenceAvailable);
         summary.setResetQualityGateCommand(resetQualityGateCommand);
-
-        return summary;
     }
 
     private AnalysisResult createAnalysisResult(final Map<String, Integer> sizesPerOrigin,
@@ -323,11 +350,11 @@ class SummaryTest {
         return analysisRun;
     }
 
-    private StaticAnalysisLabelProvider createLabelProvider(final String checkstyle, final String checkStyle) {
+    private StaticAnalysisLabelProvider createLabelProvider(final String id, final String name) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getImagePath(any(BallColor.class))).thenReturn("color");
         when(jenkins.getAbsoluteUrl(any())).thenReturn("absoluteUrl");
-        return new StaticAnalysisLabelProvider(checkstyle, checkStyle, jenkins);
+        return new StaticAnalysisLabelProvider(id, name, jenkins);
     }
 
     private Pattern createWarningsLink(final String href) {

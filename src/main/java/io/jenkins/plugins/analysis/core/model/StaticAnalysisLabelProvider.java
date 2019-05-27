@@ -20,6 +20,7 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.Sanitizer;
 
 import static j2html.TagCreator.*;
 
@@ -31,6 +32,8 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 public class StaticAnalysisLabelProvider implements DescriptionProvider {
+    private static final Sanitizer SANITIZER = new Sanitizer();
+
     private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
@@ -65,7 +68,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     @VisibleForTesting
     StaticAnalysisLabelProvider(final String id, @Nullable final String name, final JenkinsFacade jenkins) {
         this.id = id;
-        this.name = name;
+        this.name = SANITIZER.render(name);
         this.jenkins = jenkins;
     }
 
