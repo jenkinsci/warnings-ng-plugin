@@ -1,6 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
@@ -41,7 +44,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Creates a java file with commits by two different users and checks if the details in the source control table
      * table reflects the information of the commits.
-     * @throws Exception on exception in the git plugin.
+     *
+     * @throws Exception
+     *         on exception in the git plugin.
      */
     @Test
     public void shouldGetCommitDetailsForWarnings() throws Exception {
@@ -69,22 +74,79 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("Hans Hamburg");
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("hans@hamburg.com");
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":1");
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo("HelloWorld method opened");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "HelloWorld method opened");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo("Peter Petersburg");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("peter@petersburg.com");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":2");
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo("HelloWorld method closed");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "HelloWorld method closed");
+    }
+
+    /**
+     * Creates a java file with commits by two different users and checks if the details in the source control table
+     * table reflects the information of the commits. The commits override the same lines multiple times, the details
+     * should only display the most recent author.
+     *
+     * @throws Exception
+     *         on exception in the git plugin.
+     */
+    @Test
+    public void shouldGetCommitDetailsWithOverwritingCommits() throws Exception {
+        final String fileName = "helloWorld.java";
+        final FreeStyleProject project = createFreeStyleProject();
+
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        enableWarnings(project, java);
+
+        createRepositoryInProject(project);
+        appendTextToFileInRepository(fileName, "public class HelloWorld {\nprintln(':)');\n}",
+                "Hans Hamburg", "hans@hamburg.com");
+        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
+
+        // Pretend that the initial commit triggered the pipeline
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        // Now change a line in the file which creates a new warning
+        replaceLineInRepository(fileName, 2, "error(':(')",
+                "Peter Petersburg", "peter@petersburg.com");
+        createJavaWarningInRepository(fileName, 2, "Error method called");
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        // Change the line again, updating once again the "owner" of the error.
+        replaceLineInRepository(fileName, 2, "error('other msg')",
+                "August Augsburg", "august@augsburg.com");
+
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(analysisResult).hasTotalSize(2);
+
+        HtmlPage detailsPage = getDetailsWebPage(project, analysisResult);
+        SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
+
+        List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
+        assertThat(sourceControlRows.size()).isEqualTo(2);
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("Hans Hamburg");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("hans@hamburg.com");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":1");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "HelloWorld method opened");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo("August Augsburg");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("august@augsburg.com");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":2");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "Error method called");
     }
 
     @Test
     public void shouldRunBuildOnDumbSlave() throws Exception {
         getJenkins().createOnlineSlave(Label.get("DumbSlave"));
         getJenkins().jenkins.setSecurityRealm(
-            new HudsonPrivateSecurityRealm(
-                    true,
-                    false,
-                    null
-            )
+                new HudsonPrivateSecurityRealm(
+                        true,
+                        false,
+                        null
+                )
         );
         getJenkins().jenkins.save();
 
@@ -92,15 +154,19 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         project.setDefinition(
                 new CpsFlowDefinition(
                         "node('DumbSlave') {\n"
-                             + "    checkout scm"
-                             + "}", true));
+                                + "    checkout scm"
+                                + "}", true));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
 
     /**
      * Create a repository with the git plugin and add it to the project.
-     * @param project The project to add the git repository to.
-     * @throws Exception on exception in the git plugin.
+     *
+     * @param project
+     *         The project to add the git repository to.
+     *
+     * @throws Exception
+     *         on exception in the git plugin.
      */
     private void createRepositoryInProject(final FreeStyleProject project) throws Exception {
         repository.init();
@@ -110,6 +176,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Builds a string representing a java warning and adds it to the warnings file in the repository.
+     *
      * @param file
      *         The the warning should point to.
      * @param lineNumber
@@ -117,7 +184,8 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @param warningText
      *         The text the warning should show.
      */
-    private void createJavaWarningInRepository(final String file, final int lineNumber, final String warningText) throws Exception {
+    private void createJavaWarningInRepository(final String file, final int lineNumber, final String warningText)
+            throws Exception {
         String warningsFile = "javac_warnings.txt";
         String warning = String.format("[WARNING] %s:[%d,42] [deprecation] %s\n", file, lineNumber, warningText);
         appendTextToFileInRepository(warningsFile, warning, "dummy user", "dummy@user.de");
@@ -141,6 +209,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Append text to a file in the git repository and commit it with the given user details.
+     *
      * @param fileName
      *         The file name where the text should be appended.
      * @param text
@@ -149,9 +218,12 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      *         The user in the commit message.
      * @param email
      *         The email in the commit message.
-     * @throws Exception on exception in the git plugin.
+     *
+     * @throws Exception
+     *         on exception in the git plugin.
      */
-    private void appendTextToFileInRepository(final String fileName, final String text, final String user, final String email)
+    private void appendTextToFileInRepository(final String fileName, final String text, final String user,
+            final String email)
             throws Exception {
         repository.git("config", "user.name", user);
         repository.git("config", "user.email", email);
@@ -163,6 +235,56 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Update one line of a file stored in the local repository.
+     *
+     * @param fileName
+     *         The file to be updated.
+     * @param lineToReplace
+     *         Line Number in which the update should be done.
+     * @param text
+     *         New Line content.
+     * @param user
+     *         The user in the commit message.
+     * @param email
+     *         The email in the commit message.
+     *
+     * @throws Exception
+     *         if one or more git command fails.
+     */
+    private void replaceLineInRepository(final String fileName, final int lineToReplace, final String text,
+            final String user, final String email)
+            throws Exception {
+        repository.git("config", "user.name", user);
+        repository.git("config", "user.email", email);
+
+        File targetFile = new File(repository.getRoot(), fileName);
+        BufferedReader fileReader = new BufferedReader(new FileReader(targetFile));
+        StringBuilder outputBuilder = new StringBuilder();
+        String currentLine = "";
+        int currentLineNum = 1; // Lines start at index 1
+
+        while ((currentLine = fileReader.readLine()) != null) {
+            if (lineToReplace == currentLineNum++) {
+                outputBuilder.append(text);
+            }
+            else {
+                outputBuilder.append(currentLine);
+            }
+            outputBuilder.append('\n');
+        }
+        fileReader.close();
+
+        FileOutputStream fileOut = new FileOutputStream(targetFile);
+        fileOut.write(outputBuilder.toString().getBytes());
+        fileOut.close();
+
+        repository.git("status");
+        repository.git("add", fileName);
+        repository.git("status");
+        repository.git("commit", "-m", "File update");
+    }
+
+    /**
      * Append text to a file in a given Path.
      *
      * @param path
@@ -171,7 +293,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      *         The name of the file that should be written to.
      * @param text
      *         The text that should be appended.
-     * @throws IOException if the file can not be opened or writing fails.
+     *
+     * @throws IOException
+     *         if the file can not be opened or writing fails.
      */
     private void appendTextToFile(final File path, final String fileName, final String text) throws IOException {
         File file = new File(path, fileName);
