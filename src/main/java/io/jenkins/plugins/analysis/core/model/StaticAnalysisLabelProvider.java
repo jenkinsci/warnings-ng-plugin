@@ -318,7 +318,10 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     public DomContent getQualityGateResult(final QualityGateStatus qualityGateStatus, final boolean hasResetLink) {
         if (hasResetLink) {
             return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus),
-                    a("(reset)").withHref(getId() + "/resetReference"));
+                    button("Reset quality gate")
+                            .withId(getId() + "-resetReference")
+                            .withType("button")
+                            .withClasses("btn", "btn-outline-primary", "btn-sm"));
         }
         return join(Messages.Tool_QualityGate(), getResultIcon(qualityGateStatus));
     }

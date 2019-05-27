@@ -298,8 +298,8 @@ class SummaryTest {
         Summary summary = createSummary(analysisResult, true);
 
         assertThat(summary.create()).contains(
-                "Quality gate: <img src=\"color\" class=\"icon-blue\" alt=\"Success\" title=\"Success\"> Success"
-                        + " <a href=\"test/resetReference\">(reset)</a>");
+                "Quality gate: <img src=\"color\" class=\"icon-blue\" alt=\"Success\" title=\"Success\"> Success "
+                        + "<button id=\"test-resetReference\" type=\"button\" class=\"btn btn-outline-primary btn-sm\">Reset quality gate</button>");
     }
 
     private Summary createSummary(final AnalysisResult analysisResult) {
