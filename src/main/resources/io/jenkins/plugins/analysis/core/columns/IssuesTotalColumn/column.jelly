@@ -3,7 +3,7 @@
 
   <j:set var="total" value="${it.getTotal(job)}"/>
   <j:set var="url" value="${it.getUrl(job)}"/>
-  <td class="healthReport"
+  <td class="healthReport" id="issues-total"
       onmouseover="this.className='healthReport hover';return true;"
       onmouseout="this.className='healthReport';return true;">
     <j:choose>
@@ -28,7 +28,7 @@
                     <img src="${resURL}/${result.icon}" style="width: 16px; height: 16px; " />
                   </td>
                   <td><a href="${rootURL}/${job.url}/${result.url}">${result.name}</a></td>
-                  <td id="issues-total" align="right">${result.total}</td>
+                  <td align="right">${result.total}</td>
                 </tr>
               </j:forEach>
             </tbody>
