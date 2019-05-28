@@ -763,6 +763,12 @@
                 <justification>The parser should not be visible.</justification>
               </item>
               <item>
+                <code>java.method.removed</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.util.AffectedFilesResolver</classQualifiedName>
+                <methodName>copyFilesWithAnnotationsToBuildFolder</methodName>
+                <justification>Now method copies on the master.</justification>
+              </item>
+              <item>
                 <regex>true</regex>
                 <code>.*</code>
                 <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
