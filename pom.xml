@@ -762,38 +762,38 @@
                 <newType>edu.hm.hafner.analysis.IssueParser</newType>
                 <justification>The parser should not be visible.</justification>
               </item>
-            </revapi.ignore>
-            <revapi.ignore>
               <item>
                 <regex>true</regex>
-                <code>java.missing.*</code>
-                <classQualifiedName>hudson.matrix.*</classQualifiedName>
-                <justification>Optional dependency</justification>
+                <code>.*</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
+                <justification>The tool is not part of API.</justification>
+              </item>
+            </revapi.ignore>
+            <!-- Always ignore Jenkins API -->
+            <revapi.ignore>
+              <item>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>hudson.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.jvnet.hudson.reactor.Reactor.Node</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>jenkins.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.remoting.Command</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.remoting.CommandTransport.CommandReceiver</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.model.FingerprintMap.FingerprintParams</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.kohsuke.stapler.AncestorImpl</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>org.kohsuke.stapler.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
                 <code>java.class.nonPublicPartOfAPI</code>
