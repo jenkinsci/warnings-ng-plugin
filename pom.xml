@@ -401,6 +401,13 @@
     </dependency>
 
     <!-- Integration Test Dependencies -->
+    <!-- EnvInject Plugin Dependency -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>envinject</artifactId>
+      <version>2.1.6</version>
+      <scope>test</scope>
+    </dependency>
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>

@@ -69,7 +69,7 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldResolveEnvVariablesInPattern() {
-        FreeStyleProject project = createJavaWarningsFreestyleProject( "**/*.${FILE_EXT}");
+        FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.${FILE_EXT}");
 
         injectEnvironmentVariables(project, "HELLO_WORLD=hello_test", "FILE_EXT=txt");
 
@@ -115,9 +115,10 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
      * @param properties The environment variables in format variable=value.
      * @return A capture object that can be used to retrieve the variables that where available during build.
      */
-    private CaptureEnvironmentBuilder injectEnvironmentVariables(FreeStyleProject project, String... properties) {
+    private CaptureEnvironmentBuilder injectEnvironmentVariables(final FreeStyleProject project,
+            final String... properties) {
         StringBuilder propertiesStringBuilder = new StringBuilder();
-        for(String property : properties) {
+        for (String property : properties) {
             propertiesStringBuilder.append(property);
             propertiesStringBuilder.append('\n');
         }
