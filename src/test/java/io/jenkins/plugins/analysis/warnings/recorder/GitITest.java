@@ -38,8 +38,15 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * The git repo rule used to create and use the git repository.
      */
-    @ClassRule
-    public static GitSampleRepoRule repository = new GitSampleRepoRule();
+     @ClassRule
+     public static GitSampleRepoRule repository1 = new GitSampleRepoRule();
+
+    /**
+     * The git repo rule used to create and use the git repository.
+     */
+     @ClassRule
+     public static GitSampleRepoRule repository2 = new GitSampleRepoRule();
+
 
     /**
      * Creates a java file with commits by two different users and checks if the details in the source control table
@@ -57,11 +64,11 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         java.setPattern("**/*.txt");
         enableWarnings(project, java);
 
-        createRepositoryInProject(project);
-        appendTextToFileInRepository(fileName, "public class HelloWorld {\n", "Hans Hamburg", "hans@hamburg.com");
-        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
-        appendTextToFileInRepository(fileName, "}", "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(fileName, 2, "HelloWorld method closed");
+        createRepositoryInProject(repository1, project);
+        appendTextToFileInRepository(repository1, fileName, "public class HelloWorld {\n", "Hans Hamburg", "hans@hamburg.com");
+        createJavaWarningInRepository(repository1, fileName, 1, "HelloWorld method opened");
+        appendTextToFileInRepository(repository1, fileName, "}", "Peter Petersburg", "peter@petersburg.com");
+        createJavaWarningInRepository(repository1, fileName, 2, "HelloWorld method closed");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(analysisResult).hasTotalSize(2);
@@ -100,22 +107,22 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         java.setPattern("**/*.txt");
         enableWarnings(project, java);
 
-        createRepositoryInProject(project);
-        appendTextToFileInRepository(fileName, "public class HelloWorld {\nprintln(':)');\n}",
+        createRepositoryInProject(repository2, project);
+        appendTextToFileInRepository(repository2, fileName, "public class HelloWorld {\nprintln(':)');\n}",
                 "Hans Hamburg", "hans@hamburg.com");
-        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
+        createJavaWarningInRepository(repository2, fileName, 1, "HelloWorld method opened");
 
         // Pretend that the initial commit triggered the pipeline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Now change a line in the file which creates a new warning
-        replaceLineInRepository(fileName, 2, "error(':(')",
+        replaceLineInRepository(repository2, fileName, 2, "error(':(')",
                 "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(fileName, 2, "Error method called");
+        createJavaWarningInRepository(repository2, fileName, 2, "Error method called");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Change the line again, updating once again the "owner" of the error.
-        replaceLineInRepository(fileName, 2, "error('other msg')",
+        replaceLineInRepository(repository2, fileName, 2, "error('other msg')",
                 "August Augsburg", "august@augsburg.com");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -138,6 +145,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
                 "Error method called");
     }
 
+    /*
     @Test
     public void shouldRunBuildOnDumbSlave() throws Exception {
         getJenkins().createOnlineSlave(Label.get("DumbSlave"));
@@ -158,6 +166,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
                                 + "}", true));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
+    */
 
     /**
      * Create a repository with the git plugin and add it to the project.
@@ -168,7 +177,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws Exception
      *         on exception in the git plugin.
      */
-    private void createRepositoryInProject(final FreeStyleProject project) throws Exception {
+    private void createRepositoryInProject(final GitSampleRepoRule repository,
+            final FreeStyleProject project)
+            throws Exception {
         repository.init();
         repository.git("checkout", "master");
         project.setScm(new GitSCM("file://" + repository.getRoot()));
@@ -184,11 +195,12 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @param warningText
      *         The text the warning should show.
      */
-    private void createJavaWarningInRepository(final String file, final int lineNumber, final String warningText)
+    private void createJavaWarningInRepository(final GitSampleRepoRule repository, final String file,
+            final int lineNumber, final String warningText)
             throws Exception {
         String warningsFile = "javac_warnings.txt";
         String warning = String.format("[WARNING] %s:[%d,42] [deprecation] %s\n", file, lineNumber, warningText);
-        appendTextToFileInRepository(warningsFile, warning, "dummy user", "dummy@user.de");
+        appendTextToFileInRepository(repository, warningsFile, warning, "dummy user", "dummy@user.de");
     }
 
     /**
@@ -222,8 +234,8 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws Exception
      *         on exception in the git plugin.
      */
-    private void appendTextToFileInRepository(final String fileName, final String text, final String user,
-            final String email)
+    private void appendTextToFileInRepository(final GitSampleRepoRule repository, final String fileName,
+            final String text, final String user, final String email)
             throws Exception {
         repository.git("config", "user.name", user);
         repository.git("config", "user.email", email);
@@ -251,8 +263,8 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws Exception
      *         if one or more git command fails.
      */
-    private void replaceLineInRepository(final String fileName, final int lineToReplace, final String text,
-            final String user, final String email)
+    private void replaceLineInRepository(final GitSampleRepoRule repository, final String fileName,
+            final int lineToReplace, final String text, final String user, final String email)
             throws Exception {
         repository.git("config", "user.name", user);
         repository.git("config", "user.email", email);
