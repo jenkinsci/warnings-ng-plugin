@@ -1,0 +1,12 @@
+// This is a test LOG, on each line an issue serialized in JSON format
+// {"fileName":"comment.text","severity":"ERROR","lineStart":10,"description":"some comment"}
+{"fileName":"file.text","lineRanges":[{"start":10,"end":11},{"start":20,"end":21}],"directory":"d","category":"c","type":"t","severity":"LOW","message":"msg","description":"d","packageName":"pn","moduleName":"mdl","origin":"orgn","reference":"ref","fingerprint":"fgpt","additionalProperties":"ap","id":"823b92b6-98eb-41c4-83ce-b6ec1ed6f98f"}
+{"fileName":"test.text","severity":"ERROR","lineStart":10,"lineEnd":11,"columnStart":110,"columnEnd":120,"message":"some message","description":"some description"}
+
+{"fileName":"test.text", "lineRanges":[{"start":10}, {"end":220}, {}], "severity":"HIGH", "message":"an \"important\" message", "description":"an \"important\" description"}
+    
+    {"fileName":"some.properties.text","severity":"NORMAL", "lineStart":10, "other":value, "additional": "stuff"}
+{"fileName":"file.xml.txt","lineRanges":[{"start":11, "end":12, "other":10, "additional": "stuff"}, {"s":11, "e":12, "start":21, "end":22}]}
+
+ # {"fileName":"comment.text","severity":"ERROR","lineStart":10,"description":"some comment"}
+ # this is the end

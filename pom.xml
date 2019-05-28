@@ -28,8 +28,8 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>5.0.0</analysis-model-api.version>
-    <analysis-model.version>5.0.0</analysis-model.version>
+    <analysis-model-api.version>5.1.0</analysis-model-api.version>
+    <analysis-model.version>5.1.0</analysis-model.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
@@ -41,6 +41,7 @@
 
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
     <json.version>20180813</json.version>
+    <jackson-databind.version>2.9.9</jackson-databind.version>
 
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.4.1</junit.version>
@@ -48,9 +49,9 @@
     <mockito.version>2.27.0</mockito.version>
     <assertj.version>3.12.2</assertj.version>
     <archunit.version>0.10.2</archunit.version>
-    <json-unit-fluent.version>2.6.1</json-unit-fluent.version>
+    <json-unit-fluent.version>2.6.2</json-unit-fluent.version>
     <xmlunit.version>1.6</xmlunit.version>
-    <jsoup.version>1.11.3</jsoup.version>
+    <jsoup.version>1.12.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
@@ -70,10 +71,10 @@
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <pmd.version>6.14.0</pmd.version>
-    <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+    <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
     <checkstyle.version>8.20</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.11</spotbugs-maven-plugin.version>
-    <jacoco-maven-plugin.version>0.8.3</jacoco-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.4</jacoco-maven-plugin.version>
     <maven-surefire.plugin>3.0.0-M3</maven-surefire.plugin>
     <maven-failsafe.plugin>3.0.0-M3</maven-failsafe.plugin>
     <jar.maven.plugin>3.0.2</jar.maven.plugin>
@@ -81,11 +82,11 @@
     <error-prone.version>2.3.1</error-prone.version>
     <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
     <depgraph-maven-plugin.version>3.3.0</depgraph-maven-plugin.version>
-    <animal-sniffer-maven-plugin.version>1.17</animal-sniffer-maven-plugin.version>
+    <animal-sniffer-maven-plugin.version>1.18</animal-sniffer-maven-plugin.version>
     <maven-hpi-plugin.version>2.5</maven-hpi-plugin.version>
     <maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
-    <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-    <pitest-maven.plugin>1.4.7</pitest-maven.plugin>
+    <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
+    <pitest-maven.plugin>1.4.8</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.8</pitest-maven.junit5.plugin>
     <revapi-maven-plugin.version>0.11.1</revapi-maven-plugin.version>
     <revapi-java.version>0.19.1</revapi-java.version>
@@ -190,6 +191,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
       <version>${commons.digester.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>asm</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -236,8 +243,8 @@
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
+      <version>${jackson-databind.version}</version>
       <artifactId>jackson-databind</artifactId>
-      <version>2.9.8</version>
     </dependency>
 
     <!-- Required Jenkins Plug-in Dependencies -->
@@ -401,11 +408,12 @@
       <version>1.8</version>
       <scope>test</scope>
     </dependency>
-    <!-- EnvInject Plugin Dependency -->
+
+    <!-- Timestamper plugin -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>envinject</artifactId>
-      <version>2.1.6</version>
+      <artifactId>timestamper</artifactId>
+      <version>1.9</version>
       <scope>test</scope>
     </dependency>
     <!-- Maven Project Type -->
@@ -753,38 +761,38 @@
                 <newType>edu.hm.hafner.analysis.IssueParser</newType>
                 <justification>The parser should not be visible.</justification>
               </item>
-            </revapi.ignore>
-            <revapi.ignore>
               <item>
                 <regex>true</regex>
-                <code>java.missing.*</code>
-                <classQualifiedName>hudson.matrix.*</classQualifiedName>
-                <justification>Optional dependency</justification>
+                <code>.*</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
+                <justification>The tool is not part of API.</justification>
+              </item>
+            </revapi.ignore>
+            <!-- Always ignore Jenkins API -->
+            <revapi.ignore>
+              <item>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>hudson.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.jvnet.hudson.reactor.Reactor.Node</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>jenkins.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.remoting.Command</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.remoting.CommandTransport.CommandReceiver</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.model.FingerprintMap.FingerprintParams</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.kohsuke.stapler.AncestorImpl</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>org.kohsuke.stapler.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
                 <code>java.class.nonPublicPartOfAPI</code>
