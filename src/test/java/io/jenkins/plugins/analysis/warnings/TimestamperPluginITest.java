@@ -9,14 +9,13 @@ import edu.hm.hafner.analysis.Severity;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-
 import hudson.FilePath;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
-import static io.jenkins.plugins.analysis.core.model.AnalysisResultAssert.*;
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.model.AnalysisResultAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration test for the use of the warnings-ng plugin together with the timestamper plugin.
@@ -24,8 +23,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Fabian Janker
  * @author Andreas Pabst
  */
-public class TimestampPluginITest extends IntegrationTestWithJenkinsPerSuite {
-
+public class TimestamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Tests for the correct parsing of javac warnings with enabled timestamper plugin.
      */
@@ -48,7 +46,7 @@ public class TimestampPluginITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasNoErrorMessages();
 
         Issue issue = result.getIssues().get(0);
-        assertThat(new FilePath(new File(issue.getFileName()))).isEqualTo(getWorkspace(project).child("Test.java"));
+        assertThat(getAbsolutePath(issue)).isEqualTo(getWorkspace(project).child("Test.java"));
         assertThat(issue.getLineStart()).isEqualTo(39);
         assertThat(issue.getLineEnd()).isEqualTo(39);
         assertThat(issue.getMessage()).isEqualTo("Test Warning");
@@ -58,7 +56,7 @@ public class TimestampPluginITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Tests JENKINS-56484: Error while parsing clang errors with active timestamper plugin.
      */
-    @Test
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-56484")
     public void shouldCorrectlyParseClangErrors() {
         WorkflowJob project = createPipeline();
 
@@ -77,11 +75,15 @@ public class TimestampPluginITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasNoErrorMessages();
 
         Issue issue = result.getIssues().get(0);
-        assertThat(new FilePath(new File(issue.getFileName()))).isEqualTo(getWorkspace(project).child("test.c"));
+        assertThat(getAbsolutePath(issue)).isEqualTo(getWorkspace(project).child("test.c"));
         assertThat(issue.getLineStart()).isEqualTo(1);
         assertThat(issue.getLineEnd()).isEqualTo(1);
         assertThat(issue.getMessage()).isEqualTo("This is an error.");
         assertThat(issue.getSeverity()).isEqualTo(Severity.WARNING_HIGH);
+    }
+
+    private FilePath getAbsolutePath(final Issue issue) {
+        return new FilePath(new File(issue.getFileName()));
     }
 }
 
