@@ -30,7 +30,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
 public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
-     * Tests that the build still runes successful and captures all warnings if used in combination with the envinject
+     * Tests that the build still runs successfully and captures all warnings if used in combination with the envinject
      * plugin. In addition check if the variables where successfully injected.
      *
      * @throws IOException
@@ -38,12 +38,7 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldRunWithEnvPlugin() throws IOException {
-        // Set up the project and configure the java warnings
-        FreeStyleProject project = createFreeStyleProject();
-
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        enableWarnings(project, java);
+        FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.txt");
 
         createFileWithJavaWarnings("javac.txt", project, 1, 2);
 
@@ -57,7 +52,6 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
         CaptureEnvironmentBuilder capture = new CaptureEnvironmentBuilder();
         project.getBuildersList().add(capture);
 
-        // Do the actual build
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Assert that the injected env vars where available during the build
@@ -82,12 +76,7 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldResolveEnvVariablesInPattern() {
-        // Set up the project and configure the java warnings
-        FreeStyleProject project = createFreeStyleProject();
-
-        Java java = new Java();
-        java.setPattern("**/*.${FILE_EXT}");
-        enableWarnings(project, java);
+        FreeStyleProject project = createJavaWarningsFreestyleProject( "**/*.${FILE_EXT}");
 
         // Set up the environment variable we want and one additional one
         EnvInjectBuildWrapper envInjectBuildWrapper = new EnvInjectBuildWrapper(new EnvInjectJobPropertyInfo(
@@ -104,7 +93,6 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
         // Assert that the expected amount of warnings were found with the pattern
         assertThat(analysisResult).hasTotalSize(3);
-        // Make sure that only the expected files where found
         analysisResult.getInfoMessages().contains("-> found 1 file");
     }
 
@@ -114,14 +102,8 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldResolveNestedEnvVariablesInPattern() {
-        // Set up the project and configure the java warnings
-        FreeStyleProject project = createFreeStyleProject();
+        FreeStyleProject project = createJavaWarningsFreestyleProject("${FILE_PATTERN}");
 
-        Java java = new Java();
-        java.setPattern("${FILE_PATTERN}");
-        enableWarnings(project, java);
-
-        // Set up the environment variable we want and one additional one
         EnvInjectBuildWrapper envInjectBuildWrapper = new EnvInjectBuildWrapper(new EnvInjectJobPropertyInfo(
                 null, "FILE_PATTERN=${FILE_NAME}.${FILE_EXT}\nFILE_NAME=*_javac\nFILE_EXT=txt",
                 null, null, false, null
@@ -139,8 +121,20 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
         // Assert that the expected amount of warnings were found with the pattern
         assertThat(analysisResult).hasTotalSize(4);
-        // Make sure that only the expected files where found
         analysisResult.getInfoMessages().contains("-> found 2 files");
+    }
+
+    /**
+     * Create a Freestyle Project with enabled Java warnings.
+     * @param pattern The pattern that is set for the warning files.
+     * @return The created Freestyle Project.
+     */
+    private FreeStyleProject createJavaWarningsFreestyleProject(final String pattern) {
+        FreeStyleProject project = createFreeStyleProject();
+        Java java = new Java();
+        java.setPattern(pattern);
+        enableWarnings(project, java);
+        return project;
     }
 
     /**
