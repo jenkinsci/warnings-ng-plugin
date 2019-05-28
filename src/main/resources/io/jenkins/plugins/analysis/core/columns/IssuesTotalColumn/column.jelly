@@ -28,7 +28,7 @@
                     <img src="${resURL}/${result.icon}" style="width: 16px; height: 16px; " />
                   </td>
                   <td><a href="${rootURL}/${job.url}/${result.url}">${result.name}</a></td>
-                  <td align="right">${result.total}</td>
+                  <td id="issues-total" align="right">${result.total}</td>
                 </tr>
               </j:forEach>
             </tbody>
