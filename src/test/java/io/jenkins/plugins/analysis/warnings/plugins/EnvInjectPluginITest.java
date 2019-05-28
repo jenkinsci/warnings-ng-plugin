@@ -42,15 +42,8 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
         createFileWithJavaWarnings("javac.txt", project, 1, 2);
 
-        EnvInjectBuildWrapper envInjectBuildWrapper = new EnvInjectBuildWrapper(new EnvInjectJobPropertyInfo(
-                null, "HELLO_WORLD=hello_test\nMY_ENV_VAR=42",
-                null, null, false, null
-        ));
-        project.getBuildWrappersList().add(envInjectBuildWrapper);
-
-        // Setup capturing for environment vars
-        CaptureEnvironmentBuilder capture = new CaptureEnvironmentBuilder();
-        project.getBuildersList().add(capture);
+        CaptureEnvironmentBuilder capture = injectEnvironmentVariables(project, "HELLO_WORLD=hello_test",
+                "MY_ENV_VAR=42");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
@@ -78,12 +71,7 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldResolveEnvVariablesInPattern() {
         FreeStyleProject project = createJavaWarningsFreestyleProject( "**/*.${FILE_EXT}");
 
-        // Set up the environment variable we want and one additional one
-        EnvInjectBuildWrapper envInjectBuildWrapper = new EnvInjectBuildWrapper(new EnvInjectJobPropertyInfo(
-                null, "HELLO_WORLD=hello_test\nFILE_EXT=txt",
-                null, null, false, null
-        ));
-        project.getBuildWrappersList().add(envInjectBuildWrapper);
+        injectEnvironmentVariables(project, "HELLO_WORLD=hello_test", "FILE_EXT=txt");
 
         // Create one file which matches the pattern and once which should not match
         createFileWithJavaWarnings("javac.txt", project, 1, 2, 3);
@@ -104,11 +92,8 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldResolveNestedEnvVariablesInPattern() {
         FreeStyleProject project = createJavaWarningsFreestyleProject("${FILE_PATTERN}");
 
-        EnvInjectBuildWrapper envInjectBuildWrapper = new EnvInjectBuildWrapper(new EnvInjectJobPropertyInfo(
-                null, "FILE_PATTERN=${FILE_NAME}.${FILE_EXT}\nFILE_NAME=*_javac\nFILE_EXT=txt",
-                null, null, false, null
-        ));
-        project.getBuildWrappersList().add(envInjectBuildWrapper);
+        injectEnvironmentVariables(project, "FILE_PATTERN=${FILE_NAME}.${FILE_EXT}", "FILE_NAME=*_javac",
+                "FILE_EXT=txt");
 
         // Create one file which matches the pattern and once which should not match
         createFileWithJavaWarnings("A_javac.txt", project, 1, 2);
@@ -122,6 +107,30 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
         // Assert that the expected amount of warnings were found with the pattern
         assertThat(analysisResult).hasTotalSize(4);
         analysisResult.getInfoMessages().contains("-> found 2 files");
+    }
+
+    /**
+     * Inject Environment variables into a given project and return a capture object.
+     * @param project The project to inject the environment variables into.
+     * @param properties The environment variables in format variable=value.
+     * @return A capture object that can be used to retrieve the variables that where available during build.
+     */
+    private CaptureEnvironmentBuilder injectEnvironmentVariables(FreeStyleProject project, String... properties) {
+        StringBuilder propertiesStringBuilder = new StringBuilder();
+        for(String property : properties) {
+            propertiesStringBuilder.append(property);
+            propertiesStringBuilder.append('\n');
+        }
+        EnvInjectBuildWrapper envInjectBuildWrapper = new EnvInjectBuildWrapper(new EnvInjectJobPropertyInfo(
+                null, propertiesStringBuilder.toString(), null, null,
+                false, null
+        ));
+        project.getBuildWrappersList().add(envInjectBuildWrapper);
+
+        CaptureEnvironmentBuilder capture = new CaptureEnvironmentBuilder();
+        project.getBuildersList().add(capture);
+
+        return capture;
     }
 
     /**
