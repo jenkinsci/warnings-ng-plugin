@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.0.0...master)
 
+### Fixed 
+- [JENKINS-56007](https://issues.jenkins-ci.org/browse/JENKINS-56007): Obtain the affected files in a process on the 
+master (rather than pushing them from the agent to the master) so that master - agent security will not block the copy process. 
+
+### Added 
+
 - [PR#57](https://github.com/jenkinsci/warnings-ng-plugin/pull/57):
 Added a parser for MentorGraphcis Modelsim/Questa.
 
