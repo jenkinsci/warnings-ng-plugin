@@ -193,7 +193,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
                 true));
 
 
-//        AnalysisResult result = scheduleSuccessfulBuild(job);
+//        AnalysisResult result = scheduleSuccessfulBuild(jobgit
     }
 
     private FreeStyleProject initFreeStyleProject() throws Exception {
