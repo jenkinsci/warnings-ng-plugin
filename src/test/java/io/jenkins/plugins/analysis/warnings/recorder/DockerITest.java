@@ -8,6 +8,8 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
+import edu.hm.hafner.analysis.Issue;
+
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.test.acceptance.docker.DockerContainer;
@@ -25,16 +27,24 @@ import hudson.util.VersionNumber;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.*;
 
+/**
+ * Tests some pipelines which start slaves on docker containers.
+ */
 public class DockerITest extends IntegrationTestWithJenkinsPerTest {
+    /**
+     * Java Container which can do maven builds.
+     */
     @Rule
     public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
 
-
+    /**
+     * Check that we are running on linux and have a valid docker installation for these tests.
+     * @throws Exception if environment checks fail.
+     */
     @BeforeClass
     public static void assumeThatWeAreRunningLinux() throws Exception {
         assumeTrue("This test is only for Unix", !Functions.isWindows());
@@ -50,29 +60,68 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
                 new VersionNumber(baos.toString().trim()), greaterThanOrEqualTo(new VersionNumber("1.13.0")));
     }
 
+    /**
+     * Creates a minimal maven project and builds it on the java slave.
+     * The created java warnings are collected and checked.
+     */
     @Test
     public void shouldDoMavenBuildOnSlave() {
         DumbSlave agent = createAgent();
 
         WorkflowJob project = createPipeline();
 
-        // TODO: Put actual content in Hello.java
-        // This can be used to trigger a "warning" new org.xml.sax.helpers.AttributeListImpl()
-        // TODO: Trigger actual maven build
-        createFileInAgentWorkspace(agent, project, "Hello.java", "public class Hello extends Old {}");
-        createFileInAgentWorkspace(agent, project, "javac.txt", "[WARNING] Hello.java:[1,42] [deprecation] Something uses Old.class\n");
+        // Create the src file in the directory where maven expects it
+        // The file contains a call to a deprecated Constructor.
+        createFileInAgentWorkspace(agent, project, "src/main/java/Hello.java",
+                "public class Hello {"
+                        + "public String doMagic() {"
+                        + "return new org.xml.sax.helpers.AttributeListImpl().toString();"
+                        + "}"
+                        + "}");
+        // In addition store a minimal pom.xml which allows a build without errors.
+        createFileInAgentWorkspace(agent, project, "pom.xml", getMinimalPomXml());
 
-        project.setDefinition(new CpsFlowDefinition("node('docker') {recordIssues tool: java(pattern: '**/*.txt')}", true));
+        // Setup build and record stages, deprecation warnings need to be toggled on too
+        project.setDefinition(new CpsFlowDefinition("node('docker') {"
+                + "stage ('Build') {"
+                + "sh \"mvn clean install -Dmaven.compiler.showDeprecation=true\"}\n"
+                + "recordIssues tool: java()}", true));
+
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(result).hasTotalSize(1);
+        Issue foundIssue = result.getIssues().get(0);
+        assertThat(foundIssue).hasBaseName("Hello.java");
+        assertThat(foundIssue).hasLineStart(1);
+        assertThat(foundIssue).hasMessage("org.xml.sax.helpers.AttributeListImpl in org.xml.sax.helpers has been deprecated");
     }
 
 
     @Test
     public void shouldStartAgent() {
         DumbSlave agent = createAgent();
-
         assertThat(agent.getWorkspaceRoot().toString()).isEqualTo("/home/test/workspace");
+    }
+
+    private String getMinimalPomXml() {
+        return "<project>\n"
+                + "<modelVersion>4.0.0</modelVersion>\n"
+                + "<groupId>edu.hm.testing</groupId>\n"
+                + "<artifactId>my-app</artifactId>\n"
+                + "<version>1</version>\n"
+                + "<build>\n"
+                + "<plugins>\n"
+                + "<plugin>\n"
+                + "  <groupId>org.apache.maven.plugins</groupId>\n"
+                + "  <artifactId>maven-compiler-plugin</artifactId>\n"
+                + "  <version>3.5.1</version>\n"
+                + "  <configuration>\n"
+                + "    <source>1.8</source>\n"
+                + "    <target>1.8</target>\n"
+                + "  </configuration>\n"
+                + "</plugin>\n"
+                + "</plugins>\n"
+                + "</build>\n"
+                + "</project>";
     }
 
     private DumbSlave createAgent() {
