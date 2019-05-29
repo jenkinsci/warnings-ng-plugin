@@ -44,30 +44,61 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
     public void shouldShowGitBlameHistory() throws Exception {
-        final FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.java");
+        final FreeStyleProject project = createJavaWarningsFreestyleProject();
         final String fileName = "Hello.java";
-        gitRepo.init();
 
+        createRepositoryInProject(project);
         appendTextToFileInRepo(gitRepo, fileName, "public class HelloWorld {\n"
                 + "       public static void main (String[] args) {\n"
                 + "             System.out.println(\"Hello World!\");\n"
-                + "       }", "John Doe", "John@localhost");
-        appendTextToFileInRepo(gitRepo, fileName, "}", "Jane Doe", "Jane@localhost");
-
+                + "       }}", "John Doe", "John@localhost");
+        //createJavaWarningInRepository(gitRepo, fileName, 4, "Some Error");
+        appendTextToFileInRepo(gitRepo, fileName, "{", "Jane Doe", "Jane@localhost");
+        createJavaWarningInRepository(gitRepo, fileName, 4, "Unexpected end of File");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        System.out.println(analysisResult.getTotalSize());
+        assertThat(analysisResult).hasTotalSize(1);
 
         HtmlPage detailsPage = getDetailsWebPage(project, analysisResult);
         SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
 
         List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
-        assertThat(sourceControlRows.size()).isEqualTo(2);
+        assertThat(sourceControlRows.size()).isEqualTo(2);cd 
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("John Doe");
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("hans@hamburg.com");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":1");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "HelloWorld method opened");
 
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo("Jane Doe");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("Jane@localhost");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":2");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "HelloWorld method closed");
+    }
+
+
+    private void createRepositoryInProject(final FreeStyleProject project)
+            throws Exception {
+        gitRepo.init();
+        gitRepo.git("checkout", "master");
+        project.setScm(new GitSCM(gitRepo.fileUrl()));
+    }
+
+    private FreeStyleProject createJavaWarningsFreestyleProject() {
+        FreeStyleProject project = createFreeStyleProject();
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        enableWarnings(project, java);
+        return project;
+    }
+
+    private void createJavaWarningInRepository(final GitSampleRepoRule repository, final String file,
+            final int lineNumber, final String warningText)
+            throws Exception {
+        String warningsFile = "javac_warnings.txt";
+        String warning = String.format("[WARNING] %s:[%d,42] [deprecation] %s\n", file, lineNumber, warningText);
+        appendTextToFileInRepo(repository, warningsFile, warning, "dummy user", "dummy@user.de");
     }
 
     private FreeStyleProject createJavaWarningsFreestyleProject(final String pattern) {
@@ -81,6 +112,7 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
     private HtmlPage getDetailsWebPage(final FreeStyleProject project, final AnalysisResult result) {
         int buildNumber = result.getBuild().getNumber();
         String pluginId = result.getId();
+        System.out.println(String.format("%d/%s", buildNumber, pluginId));
         return getWebPage(JavaScriptSupport.JS_ENABLED, project, String.format("%d/%s", buildNumber, pluginId));
     }
 
