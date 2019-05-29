@@ -17,18 +17,14 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 public class RemoteBuildITest  extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
-    public void shouldRunBuildOnDumbSlave() throws Exception {
+    public void shouldRunBuildOnDumbSlave() {
 
         Slave agent = createAgentWithEnabledSecurity("slave");
 
         WorkflowJob project = createPipeline();
-        //Java java = new Java();
-        //java.setPattern("**/*.txt");
-        //enableWarnings(project, java);
-        // TODO: set pattern through cps flow definition
         createFileInAgentWorkspace(agent, project, "javac.txt", "[WARNING] MyWarn:[1,42] [deprecation] Something is old\n");
 
-        project.setDefinition(new CpsFlowDefinition("node('slave') {recordIssues tools: [java()]}", true));
+        project.setDefinition(new CpsFlowDefinition("node('slave') {recordIssues tool: java(pattern: '**/*.txt')}", true));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(result).hasTotalSize(1);
     }
