@@ -576,8 +576,7 @@ public class PublishIssuesStep extends Step {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
                     getCharset(sourceCodeEncoding), getLogger(report), statusHandler);
-            ResultAction resultAction = publisher.attachAction();
-            return resultAction;
+            return publisher.attachAction();
         }
 
         private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {

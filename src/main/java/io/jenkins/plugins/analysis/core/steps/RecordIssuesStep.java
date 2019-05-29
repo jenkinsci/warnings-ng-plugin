@@ -59,6 +59,7 @@ import org.kohsuke.stapler.QueryParameter;
  * </li>
  * </ul>
  */
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports"})
 public class RecordIssuesStep extends Step implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -82,7 +83,9 @@ public class RecordIssuesStep extends Step implements Serializable {
      * Creates a new instance of {@link RecordIssuesStep}.
      */
     @DataBoundConstructor
-    public RecordIssuesStep() { }
+    public RecordIssuesStep() {
+        super();
+    }
 
     /**
      * Defines the optional list of quality gates.
@@ -435,7 +438,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     @Override
-    public StepExecution start(StepContext context) throws Exception {
+    public StepExecution start(final StepContext context) throws Exception {
         return new Execution(context, this);
     }
 

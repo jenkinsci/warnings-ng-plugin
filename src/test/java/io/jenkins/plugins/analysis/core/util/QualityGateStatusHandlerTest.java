@@ -8,11 +8,7 @@ import org.jenkinsci.plugins.workflow.actions.WarningAction;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.junit.jupiter.api.Test;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.refEq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link QualityGateStatusHandler}.
@@ -33,7 +29,8 @@ class QualityGateStatusHandlerTest {
     }
 
     @Test
-    void pipelineHandlerShouldSetBuildResultAndAddWarningAction() throws Exception {
+    void pipelineHandlerShouldSetBuildResultAndAddWarningAction()
+            throws IllegalAccessException, IllegalArgumentException, NoSuchFieldException {
         Run run = mock(Run.class);
         FlowNode flowNode = mock(FlowNode.class);
         // Needed to keep `FlowNode.getPersistentAction` from failing. We can't mock the method directly because it's final.
