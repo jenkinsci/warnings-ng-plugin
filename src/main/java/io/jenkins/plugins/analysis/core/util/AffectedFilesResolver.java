@@ -10,6 +10,7 @@ import java.util.Set;
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.PathUtil;
 
 import hudson.FilePath;
 import hudson.model.Run;
@@ -149,8 +150,9 @@ public class AffectedFilesResolver {
      * @return {@code true} if the file is in the workspace, {@code false} otherwise
      */
     private boolean isInWorkspace(final FilePath fileName, final FilePath workspace) {
-        String workspaceDirectory = workspace.getRemote();
-        String sourceFile = fileName.getRemote();
+        PathUtil pathUtil = new PathUtil();
+        String workspaceDirectory = pathUtil.getAbsolutePath(workspace.getRemote());
+        String sourceFile = pathUtil.getAbsolutePath(fileName.getRemote());
 
         return sourceFile.startsWith(workspaceDirectory);
     }
