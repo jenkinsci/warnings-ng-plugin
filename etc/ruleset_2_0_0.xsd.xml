@@ -9,7 +9,6 @@
     <exclude name="JUnitTestContainsTooManyAsserts"/>
     <exclude name="JUnitTestsShouldIncludeAssert"/>
     <exclude name="JUnitAssertionsShouldIncludeMessage"/>
-    <exclude name="UnusedImports"/>
     <exclude name="AccessorMethodGeneration"/>
   </rule>
   <rule ref="category/java/codestyle.xml">
