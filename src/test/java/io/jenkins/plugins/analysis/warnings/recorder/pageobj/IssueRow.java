@@ -6,8 +6,13 @@ import java.util.Map;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
+
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.PageObject.*;
 
 /**
  * Simple Java bean that represents an issue row in the issues table.
@@ -111,6 +116,18 @@ public class IssueRow {
      * @return {@code true} if the column contains a link, {@code false} if the column contains plain text
      */
     public boolean hasLink(final String columnId) {
-        return cellsByName.get(columnId).getFirstElementChild() instanceof HtmlAnchor;
+        return getLink(columnId) instanceof HtmlAnchor;
+    }
+
+    private DomElement getLink(final String columnId) {
+        return cellsByName.get(columnId).getFirstElementChild();
+    }
+
+    public SourceCodeView click(final String columnId) {
+        assertThat(hasLink(columnId)).isTrue();
+
+        HtmlPage htmlPage = clickOnElement(getLink(IssueRow.FILE));
+
+        return new SourceCodeView(htmlPage);
     }
 }
