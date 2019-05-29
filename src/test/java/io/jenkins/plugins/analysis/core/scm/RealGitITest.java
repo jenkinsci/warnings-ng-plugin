@@ -165,32 +165,7 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(blames.get(secondFile).getEmail(5)).isEqualTo(USER_EMAIL_1);
     }
 
-    /**
-     * Verify git blames of warnings from different users via gui.
-     */
-    @Test
-    public void gitBlameWithDifferentUsersViaGui() {
-        gitInitTwoUser();
-
-        FreeStyleProject project = createFreeStyleProject();
-        AnalysisResult result = scheduleSuccessfulBuild(project);
-        int buildNr = result.getBuild().getNumber();
-        String pluginId = result.getId();
-
-        HtmlPage detailsPage = getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNr + "/" + pluginId);
-        SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
-
-        List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
-        assertThat(sourceControlRows.size()).isEqualTo(1);
-
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_NAME_1);
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_EMAIL_1);
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).contains(FILE_NAME_1);
-
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_NAME_2);
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_EMAIL_2);
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).contains(FILE_NAME_2);
-    }
+    
     private void gitInitIssue57260() {
         try {
             sampleRepo.init();
