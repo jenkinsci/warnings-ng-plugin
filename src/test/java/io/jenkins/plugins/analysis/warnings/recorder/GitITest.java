@@ -8,9 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeEach;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
@@ -38,20 +37,10 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * The git repo rule used to create and use the git repository.
      */
-    @ClassRule
-    public static GitSampleRepoRule repository = new GitSampleRepoRule();
+    @Rule
+    public GitSampleRepoRule repository = new GitSampleRepoRule();
 
 
-    /**
-     * Test method setup.
-     */
-    @BeforeEach
-    public void testMethodSetup() {
-        // Create a new repository for each test, to avoid unwanted side effects.
-        // TODO: This could be used to setup the project itself too
-        repository = new GitSampleRepoRule();
-
-    }
 
     /**
      * Creates a java file with commits by two different users and checks if the details in the source control table
