@@ -10,6 +10,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.jenkinsci.test.acceptance.docker.DockerClassRule;
+import org.jenkinsci.test.acceptance.docker.DockerFixture;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaContainer;
 import org.jenkinsci.test.acceptance.docker.fixtures.SshdContainer;
 
@@ -19,13 +20,11 @@ import hudson.plugins.sshslaves.SSHLauncher;
 import hudson.slaves.DumbSlave;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
-import hudson.tasks.CommandInterpreter;
 import hudson.tasks.Maven;
 import hudson.tasks.Shell;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.GccContainer;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.MavenConsole;
 
@@ -121,7 +120,8 @@ public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
 
         List<AnalysisResult> result = getAnalysisResults(project.getLastBuild());
         //assertThat(result.get(0).getTotalSize()).isEqualTo(2);
-        assertThat(project.getLastBuild().getBuiltOn().getLabelString()).isEqualTo(worker.getLabelString());
+        assertThat(Objects.requireNonNull(project.getLastBuild().getBuiltOn()).getLabelString()).isEqualTo(
+                worker.getLabelString());
     }
 
     private DumbSlave setupDumpSlave() {
@@ -152,5 +152,14 @@ public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
             throw new RuntimeException(exception);
         }
         return worker;
+    }
+
+    @DockerFixture(
+            id = "gcc",
+            ports = {22, 8080}
+    )
+    public static class GccContainer extends JavaContainer {
+        public GccContainer() {
+        }
     }
 }
