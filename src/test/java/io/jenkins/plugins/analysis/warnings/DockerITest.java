@@ -189,6 +189,31 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result).hasTotalSize(1);
     }
 
+    /**
+     * This test should compile via gcc on docker-container.
+     *
+     * @throws Exception
+     *         throws Exception.
+     */
+    @Test
+    public void shouldCompileGccOnDockerAgent() throws Exception {
+        DumbSlave agent = createDockerAgent(gccDockerRule.get());
+        assertWorkSpace(agent);
+
+        WorkflowJob job = createPipeline();
+        copySingleFileToAgentWorkspace(agent, job, "Test.c", "Test.c");
+
+        job.setDefinition(new CpsFlowDefinition("node('gcc') {\n"
+                + "     stage ('Build and Analysis') {\n"
+                + "         sh 'gcc Test.c'\n"
+                + "         recordIssues enabledForFailure: true, tool: gcc()\n"
+                + "      }\n"
+                + "}", true));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(result).hasTotalSize(1);
+    }
+
     private DumbSlave createAgent() {
         try {
             DumbSlave agent = getJenkins().createOnlineSlave(Label.get(SLAVE_LABEL));

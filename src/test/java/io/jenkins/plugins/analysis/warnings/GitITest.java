@@ -1,199 +1,156 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
+
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.plugins.git.GitSCM;
+import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
+import jenkins.plugins.git.GitSCMBuilder;
 import jenkins.plugins.git.GitSampleRepoRule;
+import jenkins.scm.api.SCMHead;
+import jenkins.scm.api.trait.SCMBuilder;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * @author Colin Kaschel
  * @author Nils Engelbrecht
  */
-public class GitITest extends IntegrationTestWithJenkinsPerTest {
+public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
-    @ClassRule
-    public static GitSampleRepoRule repository = new GitSampleRepoRule();
+    @Rule
+    public GitSampleRepoRule repository = new GitSampleRepoRule();
 
     private static final String TEST_CLASS_FILE_NAME = "Test.java";
+    private static final String TEST_CLASS_FILE_CONTENT_1 = "public class Test {\n"
+            + "\n"
+            + "     private String test1;\n"
+            + "\n"
+            + "     public Test() {\n"
+            + "         this.test1 = (String) \"Test1\";\n"
+            + "     }\n"
+            + "\n"
+            + " }";
+
+    private static final String TEST_CLASS_FILE_CONTENT_2 = "public class Test {\n"
+            + "\n"
+            + "     private String test1;\n"
+            + "     private String test2;\n"
+            + "\n"
+            + "     public Test() {\n"
+            + "         this.test1 = (String) \"Test1\";\n"
+            + "         this.test2 = (String) \"Test2\";\n"
+            + "     }\n"
+            + "\n"
+            + " }";
+
     private static final String WARNINGS_FILE_NAME = "Warnings.txt";
+    private static final String WARNINGS_FILE_CONTENT_1 = "Test.java:6: warning: [cast] redundant cast to String";
+    private static final String WARNINGS_FILE_CONTENT_2 =
+            "Test.java:7: warning: [cast] redundant cast to String\n"
+                    + "Test.java:8: warning: [cast] redundant cast to String\"";
 
-    @BeforeClass
-    public static void initGit() throws Exception {
+    private static final String GIT_USER_NAME_1 = "GitUser 1";
+    private static final String GIT_USER_EMAIL_1 = "gituser1@email.com";
+
+    private static final String GIT_USER_NAME_2 = "GitUser 2";
+    private static final String GIT_USER_EMAIL_2 = "gituser2@email.com";
+
+
+    @Before
+    public void initGit() throws Exception {
         repository.init();
-        repository.git("checkout", "master");
     }
 
+    /**
+     * Should blame the committer who wrote the line that causes the Issue
+     */
     @Test
-    public void shouldBlameUser() throws Exception {
-        setGitUser("GitUser 1", "gituser1@email.com");
-        writeAndCommitFile(TEST_CLASS_FILE_NAME,
-                "public class Test {\n"
-                        + "\n"
-                        + "     private String test1;\n"
-                        + "\n"
-                        + "     public Test() {\n"
-                        + "         this.test1 = (String) \"Test1\";\n"
-                        + "     }\n"
-                        + "\n"
-                        + " }",
-                "Add Test.java");
+    public void shouldBlameOneCommitter() throws Exception {
+        setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
 
-        writeAndCommitFile(WARNINGS_FILE_NAME,
-                "Test.java:6: warning: [cast] redundant cast to String",
-                "Add Warnings");
+        writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
+        writeAndCommitFile(WARNINGS_FILE_NAME, WARNINGS_FILE_CONTENT_1, "Add Warnings");
 
         FreeStyleProject project = initFreeStyleProject();
-        final String workspacePath = project.getParent().getRootDir().getAbsolutePath() + "/workspace/test0/";
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        List<SourceControlRow> controlRows = getSourceControlRows(project, result);
+        assertThat(controlRows).hasSize(1);
+        validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1, TEST_CLASS_FILE_NAME);
+    }
+
+    /**
+     * Should blame the correct committer who wrote the line that causes the Issue
+     */
+    @Test
+    public void shouldBlameTwoCommitter() throws Exception {
+        setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
+        writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
+
+        setGitUser(GIT_USER_NAME_2, GIT_USER_EMAIL_2);
+        writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_2, "Edit Test.java");
+
+        writeAndCommitFile(WARNINGS_FILE_NAME, WARNINGS_FILE_CONTENT_2, "Add Warnings");
+
+        FreeStyleProject project = initFreeStyleProject();
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        assertThat(result.getBlames().get(workspacePath + TEST_CLASS_FILE_NAME).getEmail(6)).isEqualTo(
-                "gituser1@email.com");
-
-        SourceControlTable sourceControlTable = new SourceControlTable(
-                getWebPage(JavaScriptSupport.JS_ENABLED, result));
-        String email = sourceControlTable.getRows().get(0).getValue(SourceControlRow.EMAIL);
-        assertThat(email).isEqualTo("gituser1@email.com");
+        List<SourceControlRow> controlRows = getSourceControlRows(project, result);
+        assertThat(controlRows).hasSize(2);
+        validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1, TEST_CLASS_FILE_NAME);
+        validateRow(controlRows.get(1), GIT_USER_NAME_2, GIT_USER_EMAIL_2, TEST_CLASS_FILE_NAME);
     }
 
     @Test
-    public void shouldBlameDifferentUser() throws Exception {
-        setGitUser("GitUser 1", "gituser1@email.com");
-        writeAndCommitFile(TEST_CLASS_FILE_NAME,
-                "public class Test {\n"
-                        + "\n"
-                        + "     private String test1;\n"
-                        + "\n"
-                        + "     public Test() {\n"
-                        + "         this.test1 = (String) \"Test1\";\n"
-                        + "     }\n"
-                        + "\n"
-                        + " }",
-                "Add Test.java");
-
-        setGitUser("GitUser 2", "gituser2@email.com");
-        writeAndCommitFile(TEST_CLASS_FILE_NAME,
-                "public class Test {\n"
-                        + "\n"
-                        + "     private String test1;\n"
-                        + "     private String test2;\n"
-                        + "\n"
-                        + "     public Test() {\n"
-                        + "         this.test1 = (String) \"Test1\";\n"
-                        + "         this.test2 = (String) \"Test2\";\n"
-                        + "     }\n"
-                        + "\n"
-                        + " }",
-                "Add Test.java");
-
-        writeAndCommitFile(WARNINGS_FILE_NAME,
-                "Test.java:7: warning: [cast] redundant cast to String\n"
-                        + "Test.java:8: warning: [cast] redundant cast to String",
-                "Add Warnings");
-
-        FreeStyleProject project = initFreeStyleProject();
-        final String workspacePath = project.getParent().getRootDir().getAbsolutePath() + "/workspace/test0/";
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        assertThat(result.getBlames().get(workspacePath + TEST_CLASS_FILE_NAME).getEmail(7)).isEqualTo(
-                "gituser1@email.com");
-        assertThat(result.getBlames().get(workspacePath + TEST_CLASS_FILE_NAME).getEmail(8)).isEqualTo(
-                "gituser2@email.com");
-    }
-
-    @Test
-    public void shouldBlameCorrectUser() throws Exception {
-        setGitUser("GitUser 1", "gituser1@email.com");
-        writeAndCommitFile(TEST_CLASS_FILE_NAME,
-                "public class Test {\n"
-                        + "\n"
-                        + "     private String test1;\n"
-                        + "\n"
-                        + "     public Test() {\n"
-                        + "         this.test1 = \"Test1\";\n"
-                        + "     }\n"
-                        + "\n"
-                        + " }",
-                "Add Test.java");
-
-        setGitUser("GitUser 2", "gituser2@email.com");
-        writeAndCommitFile(TEST_CLASS_FILE_NAME,
-                "public class Test {\n"
-                        + "\n"
-                        + "     private String test1;\n"
-                        + "\n"
-                        + "     public Test() {\n"
-                        + "         this.test1 = (String) \"Test1\";\n"
-                        + "     }\n"
-                        + "\n"
-                        + " }",
-                "Add Test.java");
-
-        writeAndCommitFile(WARNINGS_FILE_NAME,
-                "Test.java:6: warning: [cast] redundant cast to String\n",
-                "Add Warnings");
-
-        FreeStyleProject project = initFreeStyleProject();
-        final String workspacePath = project.getParent().getRootDir().getAbsolutePath() + "/workspace/test0/";
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        assertThat(result.getBlames().get(workspacePath + TEST_CLASS_FILE_NAME).getEmail(6)).isEqualTo(
-                "gituser2@email.com");
-    }
-
-    //TODO finish test
-    @Test
-    public void shouldBlameOutOfTreeBuilds() throws Exception {
-        setGitUser("GitUser 1", "gituser1@email.com");
-        writeAndCommitFile(TEST_CLASS_FILE_NAME,
-                "public class Test {\n"
-                        + "\n"
-                        + "     private String test1;\n"
-                        + "\n"
-                        + "     public Test() {\n"
-                        + "         this.test1 = (String) \"Test1\";\n"
-                        + "     }\n"
-                        + "\n"
-                        + " }",
-                "Add Test.java");
-
-        writeAndCommitFile(WARNINGS_FILE_NAME,
-                "Test.java:6: warning: [cast] redundant cast to String",
-                "Add Warnings");
-        WorkflowJob job = createPipeline();
-        final String workspacePath = job.getParent().getRootDir().getAbsolutePath() + "/workspace/test0/";
-        // FIXME checkout scm does not work
-        job.setDefinition(new CpsFlowDefinition(
+    @Issue("JENKINS-57260")
+    //FIXME: enable blaming does not work
+    public void shouldBlameOutOfTreeBuildsWithPipeLine() throws Exception {
+        setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
+        writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
+        writeAndCommitFile("Jenkinsfile",
                 "node {\n"
-                        + "     stage ('Git') {\n"
-                        + "         git branch:'master', url: '" + repository.toString() + "'\n"
-                        + "     }\n"
-                        + "     stage ('Checkout'){\n"
-                        + "         dir('src'){\n"
+                        + "     agent 'any'\n"
+                        + "     stage ('Checkout and Analysis') {\n"
+                        + "         dir('src') {\n"
                         + "             checkout scm\n"
-                        + "             recordIssues tool: java(pattern: 'Warnings.txt')\n"
                         + "         }\n"
                         + "     }\n"
-                        + "}",
-                true));
+                        + "     stage (' Analysis') {\n"
+                        + "         dir('build') {\n"
+                        + "             sh 'echo \"src/Test.java:6: warning: [cast] redundant cast to String\" >Warnings.txt'\n"
+                        + "         }\n"
+                        + "         recordIssues(tool: java(pattern: 'build/Warnings.txt'), blameDisabled: false)\n"
+                        + "     }\n"
+                        + " }",
+                "add jenkinsfile");
 
+        WorkflowJob job = createPipeline();
+        job.setDefinition(new CpsScmFlowDefinition(new GitSCM(repository.toString()), "Jenkinsfile"));
 
-//        AnalysisResult result = scheduleSuccessfulBuild(jobgit
+        AnalysisResult result = scheduleSuccessfulBuild(job);
     }
 
     private FreeStyleProject initFreeStyleProject() throws Exception {
@@ -207,12 +164,26 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
         return project;
     }
 
-    private void setGitUser(String userName, String userEmail) throws Exception {
-        repository.git("config", "user.name", userEmail);
+    private List<SourceControlRow> getSourceControlRows(final FreeStyleProject project, final AnalysisResult result) {
+        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED,
+                project,
+                result.getBuild().getNumber() + "/" + result.getId());
+        return new SourceControlTable(page).getRows();
+    }
+
+    private void validateRow(final SourceControlRow row, final String name, final String email, final String fileName) {
+        assertThat(row.getValue(SourceControlRow.AUTHOR)).isEqualTo(name);
+        assertThat(row.getValue(SourceControlRow.EMAIL)).isEqualTo(email);
+        assertThat(row.getValue(SourceControlRow.FILE)).contains(fileName);
+    }
+
+    private void setGitUser(final String userName, final String userEmail) throws Exception {
+        repository.git("config", "user.name", userName);
         repository.git("config", "user.email", userEmail);
     }
 
-    private void writeAndCommitFile(String fileName, String content, String commitMsg) throws Exception {
+    private void writeAndCommitFile(final String fileName, final String content, final String commitMsg)
+            throws Exception {
         repository.write(fileName, content);
         repository.git("add", fileName);
         repository.git("commit", "-m", commitMsg);
