@@ -1,0 +1,9 @@
+CC=gcc
+CFLAGS=-I.
+OBJ = testClass.o 
+
+%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+testClass: $(OBJ)
+	$(CC) -o $@ $^ $(CFLAGS)
