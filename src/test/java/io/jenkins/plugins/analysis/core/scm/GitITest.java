@@ -10,7 +10,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
-import hudson.model.Run;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
 import jenkins.plugins.git.GitSCMBuilder;
@@ -85,14 +84,10 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         project.setScm(builder.build());
         IssuesRecorder recorder = enableGenericWarnings(project, new Java());
         recorder.setBlameDisabled(false);
-        Run<?, ?> run = buildWithResult(project, Result.SUCCESS);
+        buildWithResult(project, Result.SUCCESS);
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
-        int buildNr = result.getBuild().getNumber();
-        String pluginId = result.getId();
 
-
-        result.getInfoMessages().forEach(message -> System.out.println(message));
         assertThat(
                 result.getInfoMessages().contains("Created no blame requests - Git blame will be skipped")).isFalse();
 
@@ -119,7 +114,6 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         Blames blames = result.getBlames();
         String blamedFile = (String) blames.getFiles().toArray()[0];
-        System.out.println(blamedFile);
         BlameRequest blameRequest = blames.get(blamedFile);
         assertThat(blameRequest).isNotNull();
         assertThat(blameRequest.getEmail(2)).isEqualTo(FIRST_EMAIL);
@@ -210,7 +204,8 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws IOException
      *         comes from Git-Plugin.
      */
-    private FreeStyleProject buildWithGit(GitSampleRepoRule repository, final ReportScanningTool tool) throws IOException {
+    private FreeStyleProject buildWithGit(final GitSampleRepoRule repository, final ReportScanningTool tool)
+            throws IOException {
         GitSCMBuilder builder = new GitSCMBuilder(new SCMHead("master"),
                 null, repository.fileUrl(), null);
         GitSCM git = builder.build();
@@ -234,7 +229,8 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @param checkFile
      *         expected file.
      */
-    private void checkRow(final SourceControlRow sourceControlRow, String checkAuthor, String checkEmail, String checkFile) {
+    private void checkRow(final SourceControlRow sourceControlRow, final String checkAuthor, final String checkEmail,
+            final String checkFile) {
         assertThat(sourceControlRow.getValue(SourceControlRow.AUTHOR)).isEqualTo(checkAuthor);
         assertThat(sourceControlRow.getValue(SourceControlRow.EMAIL)).isEqualTo(checkEmail);
         assertThat(sourceControlRow.getValue(SourceControlRow.FILE)).contains(checkFile);
