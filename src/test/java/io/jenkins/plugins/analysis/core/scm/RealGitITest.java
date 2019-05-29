@@ -10,6 +10,7 @@ import org.jvnet.hudson.test.Issue;
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
+import hudson.model.Project;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
 import jenkins.plugins.git.GitSCMBuilder;
@@ -44,19 +45,13 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
     public void gitBlameOnDifferentDirectoryIssue57260FreeStyleProject() {
         gitInitIssue57260();
 
+        FreeStyleProject project = createFreeStyleProject();
+
         GitSCMBuilder builder = new GitSCMBuilder(new SCMHead("master"), null, sampleRepo.fileUrl(), null);
         RelativeTargetDirectory extension = new RelativeTargetDirectory("src"); // JENKINS-57260
         builder.withExtension(extension);
-        GitSCM git = builder.build();
+        setGitAtProject(project, builder.build());
 
-        FreeStyleProject project = createFreeStyleProject();
-
-        try {
-            project.setScm(git);
-        }
-        catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
         project.getBuildersList().add(new CreateFileBuilder("build/doxygen/doxygen/doxygen.log",
                 "Notice: Output directory `build/doxygen/doxygen' does not exist. I have created it for you.\n"
                         + "src/CentralDifferenceSolver.cpp:11: Warning: reached end of file while inside a dot block!\n"
@@ -136,17 +131,10 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
             throw new RuntimeException(exception);
         }
 
-        GitSCMBuilder builder = new GitSCMBuilder(new SCMHead("master"), null, sampleRepo.fileUrl(), null);
-        GitSCM git = builder.build();
-
         FreeStyleProject project = createFreeStyleProject();
+        GitSCMBuilder builder = new GitSCMBuilder(new SCMHead("master"), null, sampleRepo.fileUrl(), null);
+        setGitAtProject(project, builder.build());
 
-        try {
-            project.setScm(git);
-        }
-        catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
         project.getBuildersList().add(new CreateFileBuilder("doxygen.log",
                 "Notice: Output directory `build/doxygen/doxygen' does not exist. I have created it for you.\n"
                         + "CentralDifferenceSolver.cpp:4: Warning: reached end of file while inside a dot block!\n"
@@ -185,6 +173,15 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
             sampleRepo.git("commit", "--all", "--message=init");
         }
         catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    private void setGitAtProject(final Project project, final GitSCM git) {
+        try {
+            project.setScm(git);
+        }
+        catch (IOException exception) {
             throw new RuntimeException(exception);
         }
     }
