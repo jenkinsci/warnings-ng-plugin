@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -111,7 +112,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldBlameElevenIssuesWithPipeline() throws Exception {
-        HashMap<String, String> commits = createGitRepository();
+        Map<String, String> commits = createGitRepository();
 
         createAndCommitFile("Jenkinsfile", "node {\n"
                 + "  stage ('Checkout') {\n"
@@ -151,7 +152,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldBlameElevenIssuesWithFreestyle() throws Exception {
-        HashMap<String, String> commits = createGitRepository();
+        Map<String, String> commits = createGitRepository();
 
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(gitRepo.toString()));
@@ -188,7 +189,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldFilter() throws Exception {
-        HashMap<String, String> commits = createGitRepository();
+        Map<String, String> commits = createGitRepository();
 
         createAndCommitFile("Jenkinsfile", "node {\n"
                 + "  stage ('Checkout') {\n"
@@ -314,7 +315,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                         "gits@mplereporule", commit, 1));
     }
 
-    private void assertElevenIssues(final HashMap<String, String> commits, final SourceControlTable table) {
+    private void assertElevenIssues(final Map<String, String> commits, final SourceControlTable table) {
         assertThat(table.getColumnNames())
                 .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 10 of 11 entries");
@@ -348,8 +349,8 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         );
     }
 
-    private HashMap<String, String> createGitRepository() throws Exception {
-        HashMap<String, String> commits = new HashMap<>();
+    private Map<String, String> createGitRepository() throws Exception {
+        Map<String, String> commits = new HashMap<>();
 
         gitRepo.init();
         createAndCommitFile("Test.java", "public class Test {\n"
