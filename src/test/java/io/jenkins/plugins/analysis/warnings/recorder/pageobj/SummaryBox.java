@@ -71,4 +71,22 @@ public class SummaryBox {
     public List<String> getItems() {
         return items;
     }
+
+    /**
+     * Returns all hrefs in the title of te summary as plain text.
+     * @return Hrefs in title
+     */
+    public List<String> getTitleHrefs() {
+        List<DomElement> elements = title.getByXPath("./a");
+        return elements.stream().map(el -> el.getAttribute("href")).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns all hrefs in items of te summary as plain text.
+     * @return Hrefs in items
+     */
+    public List<String> getItemHrefs() {
+        List<DomElement> elements = summary.getByXPath("./ul/li/a");
+        return elements.stream().map(el -> el.getAttribute("href")).collect(Collectors.toList());
+    }
 }

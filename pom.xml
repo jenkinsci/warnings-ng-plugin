@@ -66,6 +66,7 @@
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
     <script-security.version>1.58</script-security.version>
+    <folder-plugin.version>6.1.2</folder-plugin.version>
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
@@ -478,6 +479,13 @@
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>cloudbees-folder</artifactId>
+      <version>${folder-plugin.version}</version>
+      <scope>test</scope>
+    </dependency>
+
 
     <!-- GitSampleRepoRule -->
     <dependency>
