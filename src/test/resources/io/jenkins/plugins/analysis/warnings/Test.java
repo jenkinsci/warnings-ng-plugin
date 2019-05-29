@@ -1,8 +1,10 @@
+package com.mycompany.app;
+
 public class Test {
 
     private String test1;
 
-    public Test() {
+    public void main(String[] args) {
         this.test1 = (String) "Test1";
     }
 }
