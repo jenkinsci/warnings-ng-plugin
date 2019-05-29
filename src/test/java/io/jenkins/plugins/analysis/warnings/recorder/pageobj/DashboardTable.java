@@ -1,17 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
-import hudson.model.Project;
 
 /**
  * Page Object for a table that shows the warning summary of selected builds.
@@ -68,19 +63,6 @@ public class DashboardTable {
         return valuePluginMapping;
     }
 
-    /**
-     * Gets Warnings count for a specified job and plugin.
-     *
-     * @param job
-     *         job name
-     * @param plugin
-     *         plugin name
-     *
-     * @return warnings count
-     */
-    public Optional<Integer> getWarningCount(final String job, final String plugin) {
-        return Optional.ofNullable(this.getWarningCounts(job).getOrDefault(plugin, null));
-    }
 
     /**
      * Gets Warnings counts for a specified job.
