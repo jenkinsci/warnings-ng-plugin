@@ -752,7 +752,6 @@
           </dependency>
         </dependencies>
         <configuration>
-
           <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
           <analysisConfiguration>
             <revapi.semver.ignore>

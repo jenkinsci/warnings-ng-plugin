@@ -14,6 +14,7 @@ import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
 import hudson.model.Project;
+import hudson.model.Result;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
 import jenkins.plugins.git.GitSCMBuilder;
@@ -50,6 +51,7 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
 
     private static final String USER_EMAIL_1 = "user1@git.git";
     private static final String USER_EMAIL_2 = "user2@git.git";
+
     /**
      * Validates issue JENKINS-57260 with freestyle projects.
      */
@@ -173,11 +175,24 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         gitInitTwoUser();
 
         FreeStyleProject project = createFreeStyleProject();
+        GitSCMBuilder builder = new GitSCMBuilder(new SCMHead("master"), null, sampleRepo.fileUrl(), null);
+        GitSCM git = builder.build();
+        setGitAtProject(project, builder.build());
+        project.getBuildersList().add(new CreateFileBuilder("doxygen.log",
+                "Notice: Output directory `build/doxygen/doxygen' does not exist. I have created it for you.\n"
+                        + "CentralDifferenceSolver.cpp:4: Warning: reached end of file while inside a dot block!\n"
+                        + "CentralDifferenceSolver.cpp:11: Warning: reached end of file while inside a dot block!\n"
+                        + "The command that should end the block seems to be missing!\n"
+                        + " \n"
+                        + "LCPcalc.cpp:5: Warning: the name `lcp_lexicolemke.c' supplied as the second argument in the \\file statement is not an input file"));
+        IssuesRecorder recorder =  enableWarnings(project, createTool(new Doxygen(), "doxygen.log"));
+        recorder.setBlameDisabled(false);
+        buildWithResult(project, Result.SUCCESS);
         AnalysisResult result = scheduleSuccessfulBuild(project);
-        int buildNr = result.getBuild().getNumber();
+        int buildNumber = result.getBuild().getNumber();
         String pluginId = result.getId();
-
-        HtmlPage detailsPage = getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNr + "/" + pluginId);
+        
+        HtmlPage detailsPage = getWebPage(JavaScriptSupport.JS_ENABLED, project, String.format("%d/%s", buildNumber, pluginId));
         SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
 
         List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
@@ -191,6 +206,7 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_EMAIL_2);
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).contains(FILE_NAME_2);
     }
+
     private void gitInitIssue57260() {
         try {
             sampleRepo.init();
@@ -204,18 +220,19 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
-
     private void gitInitTwoUser() {
         try {
             sampleRepo.init();
             sampleRepo.write(FILE_NAME_1, "1\n2\n3\n4\n5\n6");
             sampleRepo.write(FILE_NAME_2, "1\n2\n3\n4\n5\n6\n7");
             sampleRepo.git("add", FILE_NAME_1, FILE_NAME_2);
-            sampleRepo.git("commit", "--author=\"" + USER_NAME_1 + " <" + USER_EMAIL_1 + ">\"", "--all", "--message=\"commit from user1\"");
+            sampleRepo.git("commit", "--author=\"" + USER_NAME_1 + " <" + USER_EMAIL_1 + ">\"", "--all",
+                    "--message=\"commit from user1\"");
             sampleRepo.write(FILE_NAME_1, "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12");
             sampleRepo.write(FILE_NAME_2, "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13");
             sampleRepo.git("add", FILE_NAME_1, FILE_NAME_2);
-            sampleRepo.git("commit", "--author=\"" + USER_NAME_2 + " <" + USER_EMAIL_2 + ">\"", "--all", "--message=\"commit from user2\"");
+            sampleRepo.git("commit", "--author=\"" + USER_NAME_2 + " <" + USER_EMAIL_2 + ">\"", "--all",
+                    "--message=\"commit from user2\"");
         }
         catch (Exception exception) {
             throw new RuntimeException(exception);
