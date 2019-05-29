@@ -62,7 +62,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         createFileInAgentWorkspace(agent, project, "Hello.java", "public class Hello extends Old {}");
         createFileInAgentWorkspace(agent, project, "javac.txt", "[WARNING] Hello.java:[1,42] [deprecation] Something uses Old.class\n");
 
-        project.setDefinition(new CpsFlowDefinition("node('slave') {recordIssues tool: java(pattern: '**/*.txt')}", true));
+        project.setDefinition(new CpsFlowDefinition("node('docker') {recordIssues tool: java(pattern: '**/*.txt')}", true));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(result).hasTotalSize(1);
     }
