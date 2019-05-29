@@ -52,14 +52,14 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldGetCommitDetailsForWarnings() throws Exception {
         final String fileName = "helloWorld.java";
-        final FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.txt");
+        final FreeStyleProject project = createJavaWarningsFreestyleProject();
 
-        createRepositoryInProject(repository, project);
-        appendTextToFileInRepository(repository, fileName, "public class HelloWorld {\n", "Hans Hamburg",
+        createRepositoryInProject(project);
+        appendTextToFileInRepository(fileName, "public class HelloWorld {\n", "Hans Hamburg",
                 "hans@hamburg.com");
-        createJavaWarningInRepository(repository, fileName, 1, "HelloWorld method opened");
-        appendTextToFileInRepository(repository, fileName, "}", "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(repository, fileName, 2, "HelloWorld method closed");
+        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
+        appendTextToFileInRepository(fileName, "}", "Peter Petersburg", "peter@petersburg.com");
+        createJavaWarningInRepository(fileName, 2, "HelloWorld method closed");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(analysisResult).hasTotalSize(2);
@@ -92,24 +92,26 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldGetCommitDetailsWithOverwritingCommits() throws Exception {
         final String fileName = "helloWorld.java";
-        final FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.txt");
+        final FreeStyleProject project = createJavaWarningsFreestyleProject();
 
-        createRepositoryInProject(repository, project);
-        appendTextToFileInRepository(repository, fileName, "public class HelloWorld {\nprintln(':)');\n}",
+        createRepositoryInProject(project);
+        appendTextToFileInRepository(fileName, "public class HelloWorld {\nprintln(':)');\n}",
                 "Hans Hamburg", "hans@hamburg.com");
-        createJavaWarningInRepository(repository, fileName, 1, "HelloWorld method opened");
+        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
 
         // Pretend that the initial commit triggered the pipeline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Now change a line in the file which creates a new warning
-        replaceLineInRepository(repository, fileName, 2, "error(':(')",
+        replaceLineInRepository(fileName, 2, "error(':(')",
                 "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(repository, fileName, 2, "Error method called");
+        createJavaWarningInRepository(fileName, 2, "Error method called");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Change the line again, updating once again the "owner" of the error.
-        replaceLineInRepository(repository, fileName, 2, "error('other msg')",
+        replaceLineInRepository(fileName, 1, "public class HelloWorld extends World {",
+                "Hans Hamburg", "hans@hamburg.com");
+        replaceLineInRepository(fileName, 2, "error('other msg')",
                 "August Augsburg", "august@augsburg.com");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -134,11 +136,12 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * This tests the behaviour of [JENKINS-57260].
+     * @throws Exception if git commands fail to execute.
      */
     @Test
     public void shouldGitBlameForOutOfTreeSources() throws Exception {
         final String fileName = "helloWorld.java";
-        final FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.txt");
+        final FreeStyleProject project = createJavaWarningsFreestyleProject();
 
         // Copied code to init repo
         repository.init();
@@ -147,11 +150,11 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
                 .withExtension(new RelativeTargetDirectory("src"));
         project.setScm(builder.build());
 
-        appendTextToFileInRepository(repository, fileName, "public class HelloWorld {\n", "Hans Hamburg",
+        appendTextToFileInRepository(fileName, "public class HelloWorld {\n", "Hans Hamburg",
                 "hans@hamburg.com");
-        createJavaWarningInRepository(repository, fileName, 1, "HelloWorld method opened");
-        appendTextToFileInRepository(repository, fileName, "}", "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(repository, fileName, 2, "HelloWorld method closed");
+        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
+        appendTextToFileInRepository(fileName, "}", "Peter Petersburg", "peter@petersburg.com");
+        createJavaWarningInRepository(fileName, 2, "HelloWorld method closed");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(analysisResult).hasTotalSize(2);
@@ -173,38 +176,15 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
                 "HelloWorld method closed");
     }
 
-    /*
-    @Test
-    public void shouldRunBuildOnDumbSlave() throws Exception {
-        getJenkins().createOnlineSlave(Label.get("DumbSlave"));
-        getJenkins().jenkins.setSecurityRealm(
-                new HudsonPrivateSecurityRealm(
-                        true,
-                        false,
-                        null
-                )
-        );
-        getJenkins().jenkins.save();
-
-        WorkflowJob project = createPipeline();
-        project.setDefinition(
-                new CpsFlowDefinition(
-                        "node('DumbSlave') {\n"
-                                + "    checkout scm"
-                                + "}", true));
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-    }
-    */
 
     /**
      * Create a Freestyle Project with enabled Java warnings.
-     * @param pattern The pattern that is set for the warning files.
      * @return The created Freestyle Project.
      */
-    private FreeStyleProject createJavaWarningsFreestyleProject(final String pattern) {
+    private FreeStyleProject createJavaWarningsFreestyleProject() {
         FreeStyleProject project = createFreeStyleProject();
         Java java = new Java();
-        java.setPattern(pattern);
+        java.setPattern("**/*.txt");
         enableWarnings(project, java);
         return project;
     }
@@ -218,8 +198,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws Exception
      *         on exception in the git plugin.
      */
-    private void createRepositoryInProject(final GitSampleRepoRule repository,
-            final FreeStyleProject project)
+    private void createRepositoryInProject(final FreeStyleProject project)
             throws Exception {
         repository.init();
         repository.git("checkout", "master");
@@ -236,12 +215,11 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @param warningText
      *         The text the warning should show.
      */
-    private void createJavaWarningInRepository(final GitSampleRepoRule repository, final String file,
-            final int lineNumber, final String warningText)
+    private void createJavaWarningInRepository(final String file, final int lineNumber, final String warningText)
             throws Exception {
         String warningsFile = "javac_warnings.txt";
         String warning = String.format("[WARNING] %s:[%d,42] [deprecation] %s\n", file, lineNumber, warningText);
-        appendTextToFileInRepository(repository, warningsFile, warning, "dummy user", "dummy@user.de");
+        appendTextToFileInRepository(warningsFile, warning, "dummy user", "dummy@user.de");
     }
 
     /**
@@ -275,7 +253,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws Exception
      *         on exception in the git plugin.
      */
-    private void appendTextToFileInRepository(final GitSampleRepoRule repository, final String fileName,
+    private void appendTextToFileInRepository(final String fileName,
             final String text, final String user, final String email)
             throws Exception {
         repository.git("config", "user.name", user);
@@ -304,7 +282,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws Exception
      *         if one or more git command fails.
      */
-    private void replaceLineInRepository(final GitSampleRepoRule repository, final String fileName,
+    private void replaceLineInRepository(final String fileName,
             final int lineToReplace, final String text, final String user, final String email)
             throws Exception {
         repository.git("config", "user.name", user);
@@ -313,7 +291,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         File targetFile = new File(repository.getRoot(), fileName);
         BufferedReader fileReader = new BufferedReader(new FileReader(targetFile));
         StringBuilder outputBuilder = new StringBuilder();
-        String currentLine = "";
+        String currentLine;
         int currentLineNum = 1; // Lines start at index 1
 
         while ((currentLine = fileReader.readLine()) != null) {
@@ -331,9 +309,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         fileOut.write(outputBuilder.toString().getBytes());
         fileOut.close();
 
-        repository.git("status");
         repository.git("add", fileName);
-        repository.git("status");
         repository.git("commit", "-m", "File update");
     }
 
