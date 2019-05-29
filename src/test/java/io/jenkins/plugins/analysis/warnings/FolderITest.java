@@ -112,8 +112,7 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
     private void verifyJavaSummaryBox(final AnalysisResult analysisResult,
             final String title, final List<String> titleHrefs, final List<String> items, final List<String> itemHrefs) {
 
-        SummaryBox summaryBox = new SummaryBox(
-                getWebPage(JavaScriptSupport.JS_DISABLED, analysisResult.getOwner()), "java");
+        SummaryBox summaryBox = new SummaryBox(getWebPage(JS_DISABLED, analysisResult.getOwner()), "java");
 
         assertThat(summaryBox.getTitle()).isEqualTo(title);
         assertThat(summaryBox.getTitleHrefs()).containsAll(titleHrefs);
