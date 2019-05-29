@@ -63,11 +63,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldGetCommitDetailsForWarnings() throws Exception {
         final String fileName = "helloWorld.java";
-        final FreeStyleProject project = createFreeStyleProject();
-
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        enableWarnings(project, java);
+        final FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.txt");
 
         createRepositoryInProject(repository, project);
         appendTextToFileInRepository(repository, fileName, "public class HelloWorld {\n", "Hans Hamburg",
@@ -107,11 +103,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldGetCommitDetailsWithOverwritingCommits() throws Exception {
         final String fileName = "helloWorld.java";
-        final FreeStyleProject project = createFreeStyleProject();
-
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        enableWarnings(project, java);
+        final FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.txt");
 
         createRepositoryInProject(repository, project);
         appendTextToFileInRepository(repository, fileName, "public class HelloWorld {\nprintln(':)');\n}",
@@ -157,10 +149,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldGitBlameForOutOfTreeSources() throws Exception {
         final String fileName = "helloWorld.java";
-        final FreeStyleProject project = createFreeStyleProject();
-        Java java = new Java();
-        java.setPattern("**/*.txt");
-        enableWarnings(project, java);
+        final FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.txt");
 
         // Copied code to init repo
         repository.init();
@@ -217,6 +206,19 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
     */
+
+    /**
+     * Create a Freestyle Project with enabled Java warnings.
+     * @param pattern The pattern that is set for the warning files.
+     * @return The created Freestyle Project.
+     */
+    private FreeStyleProject createJavaWarningsFreestyleProject(final String pattern) {
+        FreeStyleProject project = createFreeStyleProject();
+        Java java = new Java();
+        java.setPattern(pattern);
+        enableWarnings(project, java);
+        return project;
+    }
 
     /**
      * Create a repository with the git plugin and add it to the project.
