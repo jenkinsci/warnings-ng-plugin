@@ -5,6 +5,7 @@ import org.junit.Test;
 import edu.hm.hafner.analysis.Severity;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.FreestyleConfiguration;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SnippetGenerator;
@@ -15,7 +16,6 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
  * Integration test of the {@link SnippetGenerator}.
  *
  * @author Matthias Herpers
- *
  */
 public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
 

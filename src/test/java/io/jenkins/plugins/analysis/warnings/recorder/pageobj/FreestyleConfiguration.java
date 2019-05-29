@@ -217,7 +217,6 @@ public class FreestyleConfiguration extends PageObject {
         return this;
     }
 
-
     /**
      * Sets the report file pattern for given configured tool.
      *
@@ -229,18 +228,18 @@ public class FreestyleConfiguration extends PageObject {
 
     /**
      * Sets the report file pattern for given configured tool.
+     *
      * @param pattern
      *         Pattern to be set.
      * @param id
      *         Id of the Tool.
+     *
      * @return this
      */
-    public FreestyleConfiguration setPattern(final String pattern, int id) {
+    public FreestyleConfiguration setPattern(final String pattern, final int id) {
         form.getInputsByName(PATTERN).get(id).setValueAttribute(pattern);
         return this;
     }
-
-
 
     /**
      * Sets the health report thresholds.
