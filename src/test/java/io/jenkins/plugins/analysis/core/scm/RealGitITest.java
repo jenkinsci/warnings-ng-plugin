@@ -196,15 +196,19 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
 
         List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
-        assertThat(sourceControlRows.size()).isEqualTo(1);
+        assertThat(sourceControlRows.size()).isEqualTo(3);
 
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_NAME_1);
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_EMAIL_1);
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_NAME_2);
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_EMAIL_2);
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).contains(FILE_NAME_1);
 
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_NAME_2);
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_EMAIL_2);
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).contains(FILE_NAME_2);
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_NAME_1);
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_EMAIL_1);
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).contains(FILE_NAME_1);
+
+        assertThat(sourceControlRows.get(2).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_NAME_1);
+        assertThat(sourceControlRows.get(2).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_EMAIL_1);
+        assertThat(sourceControlRows.get(2).getValue(SourceControlRow.FILE)).contains(FILE_NAME_2);
     }
 
     private void gitInitIssue57260() {

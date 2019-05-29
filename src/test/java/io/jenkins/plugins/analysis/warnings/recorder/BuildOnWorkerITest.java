@@ -35,57 +35,9 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Michael Schmid, Raphael Furch
  */
-public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
+abstract class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
 
-    /**
-     * Rules for the used Java Docker image.
-     */
-    @ClassRule
-    public static final DockerClassRule<JavaContainer> JAVA_DOCKER = new DockerClassRule<>(JavaContainer.class);
-
-    /**
-     * Rules for the used Gcc Docker image.
-     */
-    @ClassRule
-    public static final DockerClassRule<GccContainer> GCC_DOCKER = new DockerClassRule<>(GccContainer.class);
-
-    /**
-     * Builds a maven project on a dump slave..
-     */
-    @Test
-    public void buildMavenOnDumpSlave() {
-        DumbSlave worker = setupDumpSlave();
-        buildMavenProjectOnWorker(worker);
-    }
-
-    /**
-     * Builds a maven project in a docker container.
-     */
-    @Test
-    public void buildMavenOnDocker() {
-        DumbSlave worker = setupDockerContainer(JAVA_DOCKER);
-        buildMavenProjectOnWorker(worker);
-    }
-
-    /**
-     * Builds a make/gcc project on a dump slave..
-     */
-    @Test
-    public void buildMakeOnDumpSlave() {
-        DumbSlave worker = setupDumpSlave();
-        buildMakeProjectOnWorker(worker);
-    }
-
-    /**
-     * Builds a make/gcc project in a docker container.
-     */
-    @Test
-    public void buildMakeOnDocker() {
-        DumbSlave worker = setupDockerContainer(GCC_DOCKER);
-        buildMakeProjectOnWorker(worker);
-    }
-
-    private void buildMavenProjectOnWorker(final Slave worker) {
+    void buildMavenProjectOnWorker(final Slave worker) {
         FreeStyleProject project = createFreeStyleProject();
         try {
             project.setAssignedNode(worker);
@@ -105,12 +57,11 @@ public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
 
         List<AnalysisResult> result = getAnalysisResults(Objects.requireNonNull(project.getLastBuild()));
         assertThat(result.size()).isEqualTo(1);
-        assertThat(result.get(0).getTotalSize()).isEqualTo(0);
         assertThat(Objects.requireNonNull(project.getLastBuild().getBuiltOn()).getLabelString()).isEqualTo(
                 worker.getLabelString());
     }
 
-    private void buildMakeProjectOnWorker(final Slave worker) {
+    void buildMakeProjectOnWorker(final Slave worker) {
         FreeStyleProject project = createFreeStyleProject();
         try {
             project.setAssignedNode(worker);
@@ -129,12 +80,11 @@ public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
 
         List<AnalysisResult> results = getAnalysisResults(Objects.requireNonNull(project.getLastBuild()));
         assertThat(results.size()).isEqualTo(1);
-        assertThat(results.get(0).getTotalSize()).isEqualTo(0);
         assertThat(Objects.requireNonNull(project.getLastBuild().getBuiltOn()).getLabelString()).isEqualTo(
                 worker.getLabelString());
     }
 
-    private DumbSlave setupDumpSlave() {
+    DumbSlave setupDumpSlave() {
         try {
             return JENKINS_PER_SUITE.createSlave();
         }
@@ -143,7 +93,7 @@ public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
-    private <T extends SshdContainer> DumbSlave setupDockerContainer(final DockerClassRule<T> docker) {
+    <T extends SshdContainer> DumbSlave setupDockerContainer(final DockerClassRule<T> docker) {
         DumbSlave worker;
         try {
             T container = docker.create();
