@@ -34,13 +34,13 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
+    private static final String SRC_FILE_NAME = "helloWorld.java";
+
     /**
      * The git repo rule used to create and use the git repository.
      */
     @Rule
     public GitSampleRepoRule repository = new GitSampleRepoRule();
-
-
 
     /**
      * Creates a java file with commits by two different users and checks if the details in the source control table
@@ -51,15 +51,14 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldGetCommitDetailsForWarnings() throws Exception {
-        final String fileName = "helloWorld.java";
         final FreeStyleProject project = createJavaWarningsFreestyleProject();
 
         createRepositoryInProject(project);
-        appendTextToFileInRepository(fileName, "public class HelloWorld {\n", "Hans Hamburg",
+        appendTextToFileInRepository(SRC_FILE_NAME, "public class HelloWorld {\n", "Hans Hamburg",
                 "hans@hamburg.com");
-        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
-        appendTextToFileInRepository(fileName, "}", "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(fileName, 2, "HelloWorld method closed");
+        createJavaWarningInRepository(1, "HelloWorld method opened");
+        appendTextToFileInRepository(SRC_FILE_NAME, "}", "Peter Petersburg", "peter@petersburg.com");
+        createJavaWarningInRepository(2, "HelloWorld method closed");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(analysisResult).hasTotalSize(2);
@@ -71,12 +70,12 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(sourceControlRows.size()).isEqualTo(2);
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("Hans Hamburg");
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("hans@hamburg.com");
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":1");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(SRC_FILE_NAME + ":1");
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
                 "HelloWorld method opened");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo("Peter Petersburg");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("peter@petersburg.com");
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":2");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(SRC_FILE_NAME + ":2");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
                 "HelloWorld method closed");
     }
@@ -91,27 +90,26 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldGetCommitDetailsWithOverwritingCommits() throws Exception {
-        final String fileName = "helloWorld.java";
         final FreeStyleProject project = createJavaWarningsFreestyleProject();
 
         createRepositoryInProject(project);
-        appendTextToFileInRepository(fileName, "public class HelloWorld {\nprintln(':)');\n}",
+        appendTextToFileInRepository(SRC_FILE_NAME, "public class HelloWorld {\nprintln(':)');\n}",
                 "Hans Hamburg", "hans@hamburg.com");
-        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
+        createJavaWarningInRepository(1, "HelloWorld method opened");
 
         // Pretend that the initial commit triggered the pipeline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Now change a line in the file which creates a new warning
-        replaceLineInRepository(fileName, 2, "error(':(')",
+        replaceLineInRepository(2, "error(':(')",
                 "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(fileName, 2, "Error method called");
+        createJavaWarningInRepository(2, "Error method called");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Change the line again, updating once again the "owner" of the error.
-        replaceLineInRepository(fileName, 1, "public class HelloWorld extends World {",
+        replaceLineInRepository(1, "public class HelloWorld extends World {",
                 "Hans Hamburg", "hans@hamburg.com");
-        replaceLineInRepository(fileName, 2, "error('other msg')",
+        replaceLineInRepository(2, "error('other msg')",
                 "August Augsburg", "august@augsburg.com");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -124,19 +122,21 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(sourceControlRows.size()).isEqualTo(2);
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("Hans Hamburg");
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("hans@hamburg.com");
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":1");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(SRC_FILE_NAME + ":1");
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
                 "HelloWorld method opened");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo("August Augsburg");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("august@augsburg.com");
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":2");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(SRC_FILE_NAME + ":2");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
                 "Error method called");
     }
 
     /**
      * This tests the behaviour of [JENKINS-57260].
-     * @throws Exception if git commands fail to execute.
+     *
+     * @throws Exception
+     *         if git commands fail to execute.
      */
     @Test
     public void shouldGitBlameForOutOfTreeSources() throws Exception {
@@ -152,9 +152,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
         appendTextToFileInRepository(fileName, "public class HelloWorld {\n", "Hans Hamburg",
                 "hans@hamburg.com");
-        createJavaWarningInRepository(fileName, 1, "HelloWorld method opened");
+        createJavaWarningInRepository(1, "HelloWorld method opened");
         appendTextToFileInRepository(fileName, "}", "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(fileName, 2, "HelloWorld method closed");
+        createJavaWarningInRepository(2, "HelloWorld method closed");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(analysisResult).hasTotalSize(2);
@@ -176,9 +176,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
                 "HelloWorld method closed");
     }
 
-
     /**
      * Create a Freestyle Project with enabled Java warnings.
+     *
      * @return The created Freestyle Project.
      */
     private FreeStyleProject createJavaWarningsFreestyleProject() {
@@ -208,17 +208,16 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Builds a string representing a java warning and adds it to the warnings file in the repository.
      *
-     * @param file
-     *         The the warning should point to.
      * @param lineNumber
      *         The line number in where the warning occurred.
      * @param warningText
-     *         The text the warning should show.
+     *         The message the created warning will contain.
      */
-    private void createJavaWarningInRepository(final String file, final int lineNumber, final String warningText)
+    private void createJavaWarningInRepository(final int lineNumber, final String warningText)
             throws Exception {
         String warningsFile = "javac_warnings.txt";
-        String warning = String.format("[WARNING] %s:[%d,42] [deprecation] %s\n", file, lineNumber, warningText);
+        String warning = String.format("[WARNING] %s:[%d,42] [deprecation] %s\n", SRC_FILE_NAME, lineNumber,
+                warningText);
         appendTextToFileInRepository(warningsFile, warning, "dummy user", "dummy@user.de");
     }
 
@@ -268,8 +267,6 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Update one line of a file stored in the local repository.
      *
-     * @param fileName
-     *         The file to be updated.
      * @param lineToReplace
      *         Line Number in which the update should be done.
      * @param text
@@ -282,13 +279,13 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws Exception
      *         if one or more git command fails.
      */
-    private void replaceLineInRepository(final String fileName,
-            final int lineToReplace, final String text, final String user, final String email)
+    private void replaceLineInRepository(final int lineToReplace, final String text, final String user,
+            final String email)
             throws Exception {
         repository.git("config", "user.name", user);
         repository.git("config", "user.email", email);
 
-        File targetFile = new File(repository.getRoot(), fileName);
+        File targetFile = new File(repository.getRoot(), SRC_FILE_NAME);
         BufferedReader fileReader = new BufferedReader(new FileReader(targetFile));
         StringBuilder outputBuilder = new StringBuilder();
         String currentLine;
@@ -309,7 +306,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         fileOut.write(outputBuilder.toString().getBytes());
         fileOut.close();
 
-        repository.git("add", fileName);
+        repository.git("add", "helloWorld.java");
         repository.git("commit", "-m", "File update");
     }
 
