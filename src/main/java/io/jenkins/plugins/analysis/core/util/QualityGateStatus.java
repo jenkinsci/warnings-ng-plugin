@@ -58,16 +58,6 @@ public enum QualityGateStatus {
     }
 
     /**
-     * Sets the result of the specified run to the associated value of this quality gate status.
-     *
-     * @param run
-     *         the run to set the result for
-     */
-    public void setResult(final Run<?, ?> run) {
-        new QualityGateStatusHandler.SetBuildResultStatusHandler(run).handleStatus(this);
-    }
-
-    /**
      * Returns whether this status is worse than the specified status.
      *
      * @param other

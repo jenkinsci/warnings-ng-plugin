@@ -760,6 +760,11 @@
                 <classQualifiedName>io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor</classQualifiedName>
                 <justification>Symbol-based usage migrated transparently to RecordIssuesStep</justification>
               </item>
+              <item>
+                <code>java.method.removed</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.util.QualityGateStatus</classQualifiedName>
+                <justification>Not part of the plugin's public API</justification>
+              </item>
             </revapi.ignore>
           </analysisConfiguration>
         </configuration>
