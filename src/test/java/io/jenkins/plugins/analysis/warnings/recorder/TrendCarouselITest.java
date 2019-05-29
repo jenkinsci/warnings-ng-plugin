@@ -163,7 +163,7 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
             webPage.refresh();
         }
         catch (IOException e) {
-            throw new RuntimeException("WebPage refresh failed.");
+            throw new RuntimeException("WebPage refresh failed.", e);
         }
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
     }
@@ -182,7 +182,7 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
             webPage.refresh();
         }
         catch (IOException e) {
-            throw new RuntimeException("WebPage refresh failed.");
+            throw new RuntimeException("WebPage refresh failed.", e);
         }
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
     }
