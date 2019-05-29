@@ -8,6 +8,8 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
+import edu.hm.hafner.analysis.parser.GccParser;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -25,6 +27,10 @@ import hudson.util.VersionNumber;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.hamcrest.Matchers.*;
@@ -64,10 +70,10 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     public void shouldStartAgentAndVerifyJenkinsBug() {
         DumbSlave agent = createAgent();
-        WorkflowJob job = createPipeline();
-
+        assertWorkSpace(agent);
         assertThat(getJenkins().jenkins.isUseSecurity()).isTrue();
 
+        WorkflowJob job = createPipeline();
         copySingleFileToAgentWorkspace(agent, job, "Test.java", "Test.java");
         job.setDefinition(new CpsFlowDefinition("pipeline {\n"
                 + "    agent {label '" + SLAVE_LABEL + "'}\n"
@@ -95,9 +101,8 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     public void shouldRunMavenBuildOnDockerAgent() throws Exception {
         DumbSlave agent = createDockerAgent(javaDockerRule.get());
+        assertWorkSpace(agent);
 
-        assertThat(agent.getWorkspaceRoot()).isNotNull();
-        assertThat(agent.getWorkspaceRoot().getName()).isEqualTo("workspace");
         WorkflowJob job = createPipeline();
         copySingleFileToAgentWorkspace(agent, job, "Test.java", "src/main/java/com/mycompany/app/Test.java");
         copySingleFileToAgentWorkspace(agent, job, "TestPom.xml", "pom.xml");
@@ -110,11 +115,16 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
                 + "      }\n"
                 + "}", true));
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
-        Report report = result.getIssues();
+        AnalysisResult analysisResult = scheduleSuccessfulBuild(job);
+        Report report = analysisResult.getIssues();
 
-        assertThat(result).hasTotalSize(1);
-        assertThat(result).hasInfoMessages(
+        DetailsTab detailsTab = new DetailsTab(getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult));
+        IssuesTable issues = detailsTab.select(TabType.ISSUES);
+        assertThat(issues.getRows()).containsExactly(
+                new IssueRow("Test.java:8", "com.mycompany.app", "-", "-", "Normal", 1));
+
+        assertThat(analysisResult).hasTotalSize(1);
+        assertThat(analysisResult).hasInfoMessages(
                 "-> resolved module names for 1 issues",
                 "-> resolved package names of 1 affected files",
                 "-> 1 copied, 0 not in workspace, 0 not-found, 0 with I/O error");
@@ -134,9 +144,8 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     @Test
     public void shouldCompileJavaOnDockerAgent() throws Exception {
         DumbSlave agent = createDockerAgent(javaDockerRule.get());
+        assertWorkSpace(agent);
 
-        assertThat(agent.getWorkspaceRoot()).isNotNull();
-        assertThat(agent.getWorkspaceRoot().getName()).isEqualTo("workspace");
         WorkflowJob job = createPipeline();
         copySingleFileToAgentWorkspace(agent, job, "Test.java", "Test.java");
 
@@ -155,23 +164,18 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      * This test should run a make/gcc build on docker-container.
      */
     @Test
-    public void shouldRunMakeBuildOnDockerAgent() {
-        DumbSlave agent = createAgent();
+    public void shouldRunMakeBuildOnDockerAgent() throws Exception {
+        DumbSlave agent = createDockerAgent(javaDockerRule.get());
+        assertWorkSpace(agent);
+
         WorkflowJob job = createPipeline();
+        copySingleFileToAgentWorkspace(agent, job, "Test.c", "Test.c");
 
-        assertThat(agent.getWorkspaceRoot()).isNotNull();
-        assertThat(agent.getWorkspaceRoot().getName()).isEqualTo("workspace");
-
-        job.setDefinition(new CpsFlowDefinition("pipeline {\n"
-                + "    agent {label '" + SLAVE_LABEL + "'}\n"
-                + "    stages {\n"
-                + "        stage ('Create a fake warning') {\n"
-                + "            steps {\n"
-                + "                 echo 'Test.java:6: warning: [cast] redundant cast to String'\n"
-                + "                 recordIssues tool: java()\n"
-                + "            }\n"
-                + "        }\n"
-                + "    }\n"
+        job.setDefinition(new CpsFlowDefinition("node('" + SLAVE_LABEL + "') {\n"
+                + "     stage ('Build and Analysis') {\n"
+                + "         sh 'gcc Test.gcc'\n"
+                + "         recordIssues enabledForFailure: true, tool: java(), sourceCodeEncoding: 'UTF-8'\n"
+                + "      }\n"
                 + "}", true));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
@@ -196,5 +200,10 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         getJenkins().jenkins.addNode(dockerAgent);
         getJenkins().waitOnline(dockerAgent);
         return dockerAgent;
+    }
+
+    private void assertWorkSpace(final DumbSlave agent) {
+        assertThat(agent.getWorkspaceRoot()).isNotNull();
+        assertThat(agent.getWorkspaceRoot().getName()).isEqualTo("workspace");
     }
 }
