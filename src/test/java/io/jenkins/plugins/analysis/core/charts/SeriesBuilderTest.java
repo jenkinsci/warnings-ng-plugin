@@ -19,6 +19,7 @@ import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.analysis.core.util.TimeFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static java.util.Arrays.*;
@@ -156,6 +157,7 @@ class SeriesBuilderTest {
     void shouldCreateDataSet(@SuppressWarnings("unused") final String testName,
             final ResultTime time, final ChartModelConfiguration config,
             final List<AnalysisResult> runs, final List<List<Integer>> expected) {
+        TimeFacade.reset();
         SeriesBuilder seriesBuilder = new TestSeriesBuilder(time);
 
         LinesDataSet result = seriesBuilder.createDataSet(config, runs);

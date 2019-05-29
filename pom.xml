@@ -28,8 +28,8 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>5.0.2</analysis-model-api.version>
-    <analysis-model.version>5.0.2</analysis-model.version>
+    <analysis-model-api.version>5.1.0</analysis-model-api.version>
+    <analysis-model.version>5.1.0</analysis-model.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
@@ -191,6 +191,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
       <version>${commons.digester.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>asm</artifactId>
+          <groupId>asm</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -404,6 +410,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Timestamper plugin -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>timestamper</artifactId>
+      <version>1.9</version>
+      <scope>test</scope>
+    </dependency>
     <!-- Maven Project Type -->
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
@@ -739,6 +752,7 @@
           </dependency>
         </dependencies>
         <configuration>
+          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
@@ -749,38 +763,44 @@
                 <newType>edu.hm.hafner.analysis.IssueParser</newType>
                 <justification>The parser should not be visible.</justification>
               </item>
-            </revapi.ignore>
-            <revapi.ignore>
+              <item>
+                <code>java.method.removed</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.util.AffectedFilesResolver</classQualifiedName>
+                <methodName>copyFilesWithAnnotationsToBuildFolder</methodName>
+                <justification>Now method copies on the master.</justification>
+              </item>
               <item>
                 <regex>true</regex>
-                <code>java.missing.*</code>
-                <classQualifiedName>hudson.matrix.*</classQualifiedName>
-                <justification>Optional dependency</justification>
+                <code>.*</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
+                <justification>The tool is not part of API.</justification>
+              </item>
+            </revapi.ignore>
+            <!-- Always ignore Jenkins API -->
+            <revapi.ignore>
+              <item>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>hudson.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.jvnet.hudson.reactor.Reactor.Node</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>jenkins.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.remoting.Command</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.remoting.CommandTransport.CommandReceiver</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>hudson.model.FingerprintMap.FingerprintParams</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>org.kohsuke.stapler.AncestorImpl</classQualifiedName>
-                <justification>Not relevant</justification>
+                <code>.*</code>
+                <regex>true</regex>
+                <classQualifiedName>org.kohsuke.stapler.*</classQualifiedName>
+                <justification>Jenkins API</justification>
               </item>
               <item>
                 <code>java.class.nonPublicPartOfAPI</code>

@@ -143,10 +143,13 @@ If none of the built-in tools works in your project you have three ways to add a
 #### Export your issues into a supported format
 
 A simple way to get the analysis results of your tool into the Warnings plugin is to export the information into one
-of the already supported format. E.g., several tools export their issues into the CheckStyle or PMD format. If you
+of the already supported formats. E.g., several tools export their issues into the CheckStyle or PMD format. If you
 want to use all features of the Warnings Plugin it would be even better if you would export the information into the
-*native* [XML](../src/test/resources/io/jenkins/plugins/analysis/warnings/warnings-issues.xml) or JSON format. 
-These formats are already registered in the user interface and you can use them out-of-the-box. 
+*native* [XML](../src/test/resources/io/jenkins/plugins/analysis/warnings/warnings-issues.xml) or 
+[JSON](../src/test/resources/io/jenkins/plugins/analysis/warnings/issues.json) format. 
+These formats are already registered in the user interface and you can use them out-of-the-box. You can even provide
+issues in a simple log file that contains single lines of JSON issues, see 
+[example](../src/test/resources/io/jenkins/plugins/analysis/warnings/json-issues.log).
 
 #### Deploying a new tool using a custom plugin
 
