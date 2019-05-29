@@ -105,7 +105,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldRunMavenBuildOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(javaDockerRule.get(), SLAVE_LABEL);
+        DumbSlave agent = createDockerAgent(javaDockerRule.get());
         assertWorkSpace(agent);
         WorkflowJob job = createPipeline();
         copySingleFileToAgentWorkspace(agent, job, "Test.java", "src/main/java/com/mycompany/app/Test.java");
@@ -146,7 +146,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldCompileJavaOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(javaDockerRule.get(), SLAVE_LABEL);
+        DumbSlave agent = createDockerAgent(javaDockerRule.get());
         assertWorkSpace(agent);
 
         WorkflowJob job = createPipeline();
@@ -165,10 +165,13 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * This test should run make-build within docker-container.
+     *
+     * @throws Exception
+     *         throws Exception.
      */
     @Test
     public void shouldRunMakeBuildOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(gccDockerRule.get(), SLAVE_LABEL);
+        DumbSlave agent = createDockerAgent(gccDockerRule.get());
         assertWorkSpace(agent);
 
         WorkflowJob job = createPipeline();
@@ -198,8 +201,8 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         }
     }
 
-    private DumbSlave createDockerAgent(final DockerContainer container, final String label) throws Exception {
-        DumbSlave dockerAgent = new DumbSlave(label, "/home/test",
+    private DumbSlave createDockerAgent(final DockerContainer container) throws Exception {
+        DumbSlave dockerAgent = new DumbSlave(DockerITest.SLAVE_LABEL, "/home/test",
                 new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));
         getJenkins().jenkins.addNode(dockerAgent);
         getJenkins().waitOnline(dockerAgent);
