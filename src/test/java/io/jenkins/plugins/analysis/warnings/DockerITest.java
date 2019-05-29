@@ -46,12 +46,24 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     private static final String SLAVE_LABEL = "slave1";
 
+    /**
+     * Rule for java docker container.
+     */
     @Rule
     public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
 
+    /**
+     * Rule for gcc docker container.
+     */
     @Rule
     public DockerRule<GccContainer> gccDockerRule = new DockerRule<>(GccContainer.class);
 
+    /**
+     * Method which ensures docker version.
+     *
+     * @throws Exception
+     *         throws exception
+     */
     @BeforeClass
     public static void assumeThatWeAreRunningLinux() throws Exception {
         assumeTrue("This test is only for Unix", !Functions.isWindows());
