@@ -116,6 +116,66 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
 
     }
 
+    /**
+     * Verify git blames of warnings from different users.
+     */
+    @Test
+    public void gitBlameWithDifferentUsers() {
+        try {
+            sampleRepo.init();
+            sampleRepo.write("CentralDifferenceSolver.cpp", "1\n2\n3\n4\n5\n6");
+            sampleRepo.write("LCPcalc.cpp", "1\n2\n3\n4\n5\n6\n7");
+            sampleRepo.git("add", "CentralDifferenceSolver.cpp", "LCPcalc.cpp");
+            sampleRepo.git("commit", "--author=\"User1 <user1@git.git>\"", "--all", "--message=\"commit from user1\"");
+            sampleRepo.write("CentralDifferenceSolver.cpp", "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12");
+            sampleRepo.write("LCPcalc.cpp", "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13");
+            sampleRepo.git("add", "CentralDifferenceSolver.cpp", "LCPcalc.cpp");
+            sampleRepo.git("commit", "--author=\"User2 <user2@git.git>\"", "--all", "--message=\"commit from user2\"");
+        }
+        catch (Exception exception) {
+            throw new RuntimeException(exception);
+        }
+
+        GitSCMBuilder builder = new GitSCMBuilder(new SCMHead("master"), null, sampleRepo.fileUrl(), null);
+        GitSCM git = builder.build();
+
+        FreeStyleProject project = createFreeStyleProject();
+
+        try {
+            project.setScm(git);
+        }
+        catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
+        project.getBuildersList().add(new CreateFileBuilder("doxygen.log",
+                "Notice: Output directory `build/doxygen/doxygen' does not exist. I have created it for you.\n"
+                        + "CentralDifferenceSolver.cpp:4: Warning: reached end of file while inside a dot block!\n"
+                        + "CentralDifferenceSolver.cpp:11: Warning: reached end of file while inside a dot block!\n"
+                        + "The command that should end the block seems to be missing!\n"
+                        + " \n"
+                        + "LCPcalc.cpp:5: Warning: the name `lcp_lexicolemke.c' supplied as the second argument in the \\file statement is not an input file"));
+
+        enableWarnings(project, createTool(new Doxygen(), "doxygen.log"));
+
+        scheduleSuccessfulBuild(project);
+        AnalysisResult result = scheduleSuccessfulBuild(project);
+
+        Blames blames = result.getBlames();
+        String firstFile = result.getBlames().getFiles()
+                .stream().filter(name -> name.endsWith("CentralDifferenceSolver.cpp"))
+                .findFirst().orElseThrow(() -> new RuntimeException("CentralDifferenceSolver.cpp not found in blames"));
+        String secondFile = result.getBlames().getFiles()
+                .stream().filter(name -> name.endsWith("LCPcalc.cpp"))
+                .findFirst().orElseThrow(() -> new RuntimeException("LCPcalc.cpp not found in blames"));
+
+        assertThat(blames.get(firstFile).getName(4)).isEqualTo("User1");
+        assertThat(blames.get(firstFile).getEmail(4)).isEqualTo("user1@git.git");
+        assertThat(blames.get(firstFile).getName(11)).isEqualTo("User2");
+        assertThat(blames.get(firstFile).getEmail(11)).isEqualTo("user2@git.git");
+        assertThat(blames.get(secondFile).getName(5)).isEqualTo("User1");
+        assertThat(blames.get(secondFile).getEmail(5)).isEqualTo("user1@git.git");
+    }
+
     private void gitInitIssue57260() {
         try {
             sampleRepo.init();
