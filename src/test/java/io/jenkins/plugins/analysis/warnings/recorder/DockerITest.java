@@ -51,7 +51,9 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Check that we are running on linux and have a valid docker installation for these tests.
-     * @throws Exception if environment checks fail.
+     *
+     * @throws Exception
+     *         if environment checks fail.
      */
     @BeforeClass
     public static void assumeThatWeAreRunningLinux() throws Exception {
@@ -69,10 +71,13 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Creates a minimal maven project and builds it on the java slave.
-     * The created java warnings are collected and checked.
+     * Creates a minimal maven project and builds it on the java slave. The created java warnings are collected and
+     * checked.
+     *
      * @throws IOException
+     *         if creation of agent fails.
      * @throws InterruptedException
+     *         if agent execution fails.
      */
     @Test
     public void shouldDoMavenBuildOnSlave() throws IOException, InterruptedException {
@@ -103,13 +108,17 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         Issue foundIssue = result.getIssues().get(0);
         assertThat(foundIssue).hasBaseName("Hello.java");
         assertThat(foundIssue).hasLineStart(1);
-        assertThat(foundIssue).hasMessage("org.xml.sax.helpers.AttributeListImpl in org.xml.sax.helpers has been deprecated");
+        assertThat(foundIssue).hasMessage(
+                "org.xml.sax.helpers.AttributeListImpl in org.xml.sax.helpers has been deprecated");
     }
 
     /**
-     * Create a minimal C Project and build it. The created
+     * Create a minimal C Project and build it.
+     *
      * @throws IOException
+     *         if creation of agent fails.
      * @throws InterruptedException
+     *         if agent execution fails.
      */
     @Test
     public void shouldDoGCCBuildOnSlave() throws IOException, InterruptedException {
@@ -121,7 +130,9 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         createFileInAgentWorkspace(agent, project, "main.c", "int main(int _, void* __) {}");
         createFileInAgentWorkspace(agent, project, "makefile", "main: ; gcc -Wall -o main main.c");
 
-        project.setDefinition(new CpsFlowDefinition("node('docker') { stage('build') { sh \"make\" }\nrecordIssues tool: gcc() }", true));
+        project.setDefinition(
+                new CpsFlowDefinition("node('docker') { stage('build') { sh \"make\" }\nrecordIssues tool: gcc() }",
+                        true));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(result).hasTotalSize(1);
         Issue foundIssue = result.getIssues().get(0);
@@ -133,8 +144,9 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
+     * Creates the minimal pom.xml structure required for a java build.
      *
-     * @return
+     * @return a string with the xml content.
      */
     private String getMinimalPomXml() {
         return "<project>\n"
@@ -159,11 +171,15 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
+     * Creates a Agent which will run on the given container to execute jenkins jobs on.
      *
      * @param container
-     * @return
+     *         which will run the agent.
+     *
+     * @return the build slave
      */
-    private DumbSlave createAgentForContainer(SshdContainer container) {
+    @SuppressWarnings("CheckStyle")
+    private DumbSlave createAgentForContainer(final SshdContainer container) {
         try {
             DumbSlave agent = createAgent(container);
             getJenkins().jenkins.addNode(agent);
@@ -177,11 +193,16 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * 
+     * Create a Agent on given Container.
+     *
      * @param container
-     * @return
+     *         to run the agent.
+     *
+     * @return build Agent.
      * @throws FormException
+     *         if creation of agent failed.
      * @throws IOException
+     *         if creation of agent failed.
      */
     private DumbSlave createAgent(final DockerContainer container) throws FormException, IOException {
         return new DumbSlave("docker", "/home/test",
