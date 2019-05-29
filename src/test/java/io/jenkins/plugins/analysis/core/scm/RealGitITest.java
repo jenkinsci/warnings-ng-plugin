@@ -14,6 +14,7 @@ import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
 import hudson.model.Project;
+import hudson.model.Result;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
 import jenkins.plugins.git.GitSCMBuilder;
@@ -174,6 +175,19 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         gitInitTwoUser();
 
         FreeStyleProject project = createFreeStyleProject();
+        GitSCMBuilder builder = new GitSCMBuilder(new SCMHead("master"), null, sampleRepo.fileUrl(), null);
+        GitSCM git = builder.build();
+        setGitAtProject(project, builder.build());
+        project.getBuildersList().add(new CreateFileBuilder("doxygen.log",
+                "Notice: Output directory `build/doxygen/doxygen' does not exist. I have created it for you.\n"
+                        + "CentralDifferenceSolver.cpp:4: Warning: reached end of file while inside a dot block!\n"
+                        + "CentralDifferenceSolver.cpp:11: Warning: reached end of file while inside a dot block!\n"
+                        + "The command that should end the block seems to be missing!\n"
+                        + " \n"
+                        + "LCPcalc.cpp:5: Warning: the name `lcp_lexicolemke.c' supplied as the second argument in the \\file statement is not an input file"));
+        IssuesRecorder recorder =  enableWarnings(project, createTool(new Doxygen(), "doxygen.log"));
+        recorder.setBlameDisabled(false);
+        buildWithResult(project, Result.SUCCESS);
         AnalysisResult result = scheduleSuccessfulBuild(project);
         int buildNumber = result.getBuild().getNumber();
         String pluginId = result.getId();
