@@ -752,6 +752,8 @@
           </dependency>
         </dependencies>
         <configuration>
+          <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
+          <checkDependencies>false</checkDependencies>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
@@ -773,44 +775,6 @@
                 <code>.*</code>
                 <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
                 <justification>The tool is not part of API.</justification>
-              </item>
-            </revapi.ignore>
-            <!-- Always ignore Jenkins API -->
-            <revapi.ignore>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>hudson.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>jenkins.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>org.kohsuke.stapler.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>net.sf.json.AbstractJSON.WritingVisitor</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <regex>true</regex>
-                <classQualifiedName>com.fasterxml.jackson.databind.*</classQualifiedName>
-                <justification>Not relevant</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>
