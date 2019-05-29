@@ -15,6 +15,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerRule;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaContainer;
+import org.jenkinsci.test.acceptance.docker.fixtures.SshdContainer;
 import hudson.Functions;
 import hudson.Launcher;
 import hudson.model.Descriptor.FormException;
@@ -26,6 +27,7 @@ import hudson.util.VersionNumber;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.warnings.recorder.container.GccContainer;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.hamcrest.Matchers.*;
@@ -40,6 +42,12 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Rule
     public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
+
+    /**
+     * Gcc Container which can do make builds.
+     */
+    @Rule
+    public DockerRule<GccContainer> gccDockerRule = new DockerRule<>(GccContainer.class);
 
     /**
      * Check that we are running on linux and have a valid docker installation for these tests.
@@ -63,10 +71,13 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Creates a minimal maven project and builds it on the java slave.
      * The created java warnings are collected and checked.
+     * @throws IOException
+     * @throws InterruptedException
      */
     @Test
-    public void shouldDoMavenBuildOnSlave() {
-        DumbSlave agent = createAgent();
+    public void shouldDoMavenBuildOnSlave() throws IOException, InterruptedException {
+        JavaContainer javaContainer = javaDockerRule.get();
+        DumbSlave agent = createAgentForContainer(javaContainer);
 
         WorkflowJob project = createPipeline();
 
@@ -95,13 +106,36 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(foundIssue).hasMessage("org.xml.sax.helpers.AttributeListImpl in org.xml.sax.helpers has been deprecated");
     }
 
-
+    /**
+     * Create a minimal C Project and build it. The created
+     * @throws IOException
+     * @throws InterruptedException
+     */
     @Test
-    public void shouldStartAgent() {
-        DumbSlave agent = createAgent();
-        assertThat(agent.getWorkspaceRoot().toString()).isEqualTo("/home/test/workspace");
+    public void shouldDoGCCBuildOnSlave() throws IOException, InterruptedException {
+        GccContainer gccContainer = gccDockerRule.get();
+        DumbSlave agent = createAgentForContainer(gccContainer);
+
+        WorkflowJob project = createPipeline();
+
+        createFileInAgentWorkspace(agent, project, "main.c", "int main(int _, void* __) {}");
+        createFileInAgentWorkspace(agent, project, "makefile", "main: ; gcc -Wall -o main main.c");
+
+        project.setDefinition(new CpsFlowDefinition("node('docker') { stage('build') { sh \"make\" }\nrecordIssues tool: gcc() }", true));
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result).hasTotalSize(1);
+        Issue foundIssue = result.getIssues().get(0);
+        assertThat(foundIssue).hasBaseName("main.c");
+        assertThat(foundIssue).hasLineStart(1);
+        assertThat(foundIssue.getMessage()).startsWith("second argument of ‘main’ should be ‘char **’ [-Wmain]\n"
+                + " int main(int _, void* __) {}\n"
+                + "     ^~~~");
     }
 
+    /**
+     *
+     * @return
+     */
     private String getMinimalPomXml() {
         return "<project>\n"
                 + "<modelVersion>4.0.0</modelVersion>\n"
@@ -124,11 +158,14 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
                 + "</project>";
     }
 
-    private DumbSlave createAgent() {
+    /**
+     *
+     * @param container
+     * @return
+     */
+    private DumbSlave createAgentForContainer(SshdContainer container) {
         try {
-            JavaContainer javaContainer = javaDockerRule.get();
-
-            DumbSlave agent = createAgent(javaContainer);
+            DumbSlave agent = createAgent(container);
             getJenkins().jenkins.addNode(agent);
             getJenkins().waitOnline(agent);
 
@@ -137,9 +174,15 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         catch (Exception e) {
             throw new AssertionError(e);
         }
-
     }
 
+    /**
+     * 
+     * @param container
+     * @return
+     * @throws FormException
+     * @throws IOException
+     */
     private DumbSlave createAgent(final DockerContainer container) throws FormException, IOException {
         return new DumbSlave("docker", "/home/test",
                 new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));
