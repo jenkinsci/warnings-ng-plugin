@@ -33,12 +33,10 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
         String script = generator.generateScript();
 
         assertThat(script).isEqualTo("recordIssues(tools: [java()])");
-        assertThat(script).contains("recordIssues");
-        assertThat(script).contains("tools: [java()]");
     }
 
     /**
-     * Tests the default Configuration of recordIssues by setting them explitly.
+     * Tests the default configuration of recordIssues by setting them explicitly.
      */
     @Test
     public void defaultConfigurationExplicitTest() {
@@ -49,7 +47,6 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
                 .setAggregatingResults(false)
                 .setBlameDisabled(false)
                 .setEnabledForFailure(false)
-                //.setHealthReport(null,null,Severity.WARNING_LOW)  //default int not possible
                 .setIgnoreFailedBuilds(true)
                 .setIgnoreQualityGate(false)
                 .setPattern("", 1)
@@ -65,7 +62,7 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests the Configuration of recordIssues that differs most from the default configuration.
+     * Tests the configuration of recordIssues that differs most from the default configuration.
      */
     @Test
     public void antiDefaultConfigurationExplicitTest() {
@@ -121,7 +118,7 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests a Complete Test.
+     * Tests a complete Configuration.
      */
     @Test
     public void completeTest() {
