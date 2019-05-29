@@ -1,19 +1,19 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Set;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.util.PathUtil;
 
 import hudson.FilePath;
 import hudson.model.Run;
-import hudson.remoting.VirtualChannel;
 
 /**
  * Copies all affected files that are referenced in at least one of the issues to Jenkins build folder. These files can
@@ -82,46 +82,39 @@ public class AffectedFilesResolver {
      *         the issues
      * @param affectedFilesFolder
      *         directory to store the copied files in
-     * @param agentWorkspace
-     *         directory of the workspace in the agent, all source files must be part of this directory
+     * @param workspace
+     *         local directory of the workspace, all source files must be part of this directory
      *
      * @throws InterruptedException
      *         if the user cancels the processing
      */
-    public void copyAffectedFilesToBuildFolder(final Report report,
-            final FilePath affectedFilesFolder, final FilePath agentWorkspace) throws InterruptedException {
+    public void copyFilesWithAnnotationsToBuildFolder(final Report report,
+            final FilePath affectedFilesFolder, final File workspace)
+            throws InterruptedException {
         int copied = 0;
         int notFound = 0;
         int notInWorkspace = 0;
 
-        VirtualChannel channel = agentWorkspace.getChannel();
-        FilteredLog log = new FilteredLog(report,
+        FilteredLog log = new FilteredLog(report, 
                 "Can't copy some affected workspace files to Jenkins build folder:");
         Set<String> files = report.getFiles();
         files.remove("-");
         for (String file : files) {
-            FilePath remoteFile = new FilePath(channel, file);
-            try {
-                if (remoteFile.exists()) {
-                    if (isInWorkspace(remoteFile, agentWorkspace)) {
-                        try {
-                            copy(remoteFile, affectedFilesFolder);
-                            copied++;
-                        }
-                        catch (IOException exception) {
-                            log.logError("- '%s', IO exception has been thrown: %s", file, exception);
-                        }
+            if (exists(file)) {
+                if (isInWorkspace(file, workspace)) {
+                    try {
+                        copy(affectedFilesFolder, file);
+                        copied++;
                     }
-                    else {
-                        notInWorkspace++;
+                    catch (IOException exception) {
+                        log.logError("- '%s', IO exception has been thrown: %s", file, exception);
                     }
                 }
                 else {
-                    notFound++;
+                    notInWorkspace++;
                 }
             }
-            catch (IOException exception) {
-                log.logError("- '%s', IO exception has been thrown: %s", file, exception);
+            else {
                 notFound++;
             }
         }
@@ -147,12 +140,25 @@ public class AffectedFilesResolver {
      *
      * @return {@code true} if the file is in the workspace, {@code false} otherwise
      */
-    private boolean isInWorkspace(final FilePath fileName, final FilePath workspace) {
-        PathUtil pathUtil = new PathUtil();
-        String workspaceDirectory = pathUtil.getAbsolutePath(workspace.getRemote());
-        String sourceFile = pathUtil.getAbsolutePath(fileName.getRemote());
+    private boolean isInWorkspace(final String fileName, final File workspace) {
+        try {
+            Path workspaceDirectory = workspace.toPath().toRealPath().normalize();
+            Path sourceFile = Paths.get(fileName).toRealPath();
 
-        return sourceFile.startsWith(workspaceDirectory);
+            return sourceFile.startsWith(workspaceDirectory);
+        }
+        catch (IOException e) {
+            return false;
+        }
+    }
+
+    private boolean exists(final String file) {
+        try {
+            return Files.exists(Paths.get(file));
+        }
+        catch (InvalidPathException ignored) {
+            return false;
+        }
     }
 
     /**

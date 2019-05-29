@@ -5,8 +5,9 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.analysis.core.util.TimeFacade;
 
 /**
  * Determines whether a build result is too old in order to be considered for a trend graph.
@@ -14,6 +15,27 @@ import io.jenkins.plugins.analysis.core.util.TimeFacade;
  * @author Ullrich Hafner
  */
 class ResultTime {
+    private final LocalDate today;
+
+    /**
+     * Creates a new instance of {@link ResultTime}. The current date from the system clock in the default time-zone is
+     * used to initialize this instance.
+     */
+    ResultTime() {
+        this(LocalDate.now());
+    }
+
+    /**
+     * Creates a new instance of {@link ResultTime}.
+     *
+     * @param now
+     *         the date representing today
+     */
+    @VisibleForTesting
+    ResultTime(final LocalDate now) {
+        today = now;
+    }
+
     /**
      * Returns whether the specified build result is too old in order to be considered for the trend graph.
      *
@@ -29,8 +51,7 @@ class ResultTime {
     }
 
     private long computeDayDelta(final AnalysisBuildResult result) {
-        return Math.abs(ChronoUnit.DAYS.between(
-                toLocalDate(result.getBuild().getTimeInMillis()), TimeFacade.getInstance().getToday()));
+        return Math.abs(ChronoUnit.DAYS.between(toLocalDate(result.getBuild().getTimeInMillis()), today));
     }
 
     private LocalDate toLocalDate(final long timeInMillis) {

@@ -87,20 +87,11 @@ class IssuesScanner {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'", getAgentName(workspace),
                     sourceCodeEncoding);
 
-            result = workspace.act(new ReportPostProcessor(
-                    tool.getActualId(), report, sourceCodeEncoding.name(), blamer, filters));
-
-            copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()), workspace);
+            result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
+                    createAffectedFilesFolder(report), blamer, filters));
         }
         logger.log(result.getReport());
         return result;
-    }
-
-    private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder,
-            final FilePath workspace) throws InterruptedException {
-        report.logInfo("Copying affected files to Jenkins' build folder '%s'", affectedFilesFolder);
-
-        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, affectedFilesFolder, workspace);
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {
@@ -160,23 +151,26 @@ class IssuesScanner {
         private final String id;
         private final Report originalReport;
         private final String sourceCodeEncoding;
+        private final FilePath affectedFilesFolder;
         private final Blamer blamer;
         private final List<RegexpFilter> filters;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final Blamer blamer, final List<RegexpFilter> filters) {
+                final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters) {
             super();
 
             this.id = id;
             originalReport = report;
             this.sourceCodeEncoding = sourceCodeEncoding;
+            this.affectedFilesFolder = affectedFilesFolder;
             this.blamer = blamer;
             this.filters = filters;
         }
 
         @Override
-        public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) {
+        public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) throws InterruptedException {
             resolveAbsolutePaths(originalReport, workspace);
+            copyAffectedFiles(originalReport, workspace);
             resolveModuleNames(originalReport, workspace);
             resolvePackageNames(originalReport);
 
@@ -192,6 +186,12 @@ class IssuesScanner {
 
             AbsolutePathGenerator generator = new AbsolutePathGenerator();
             generator.run(report, workspace.toPath());
+        }
+
+        private void copyAffectedFiles(final Report report, final File workspace) throws InterruptedException {
+            report.logInfo("Copying affected files to Jenkins' build folder '%s'", affectedFilesFolder);
+
+            new AffectedFilesResolver().copyFilesWithAnnotationsToBuildFolder(report, affectedFilesFolder, workspace);
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {

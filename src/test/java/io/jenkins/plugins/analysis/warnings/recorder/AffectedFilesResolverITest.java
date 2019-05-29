@@ -15,6 +15,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import hudson.FilePath;
+import hudson.Functions;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -178,7 +179,12 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         String consoleLog = getConsoleLog(result);
         assertThat(consoleLog).contains("0 copied");
-        assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
+        if (Functions.isWindows()) { // On Windows a file without read permissions does not exist!
+            assertThat(consoleLog).contains("4 not-found", "0 with I/O error");
+        }
+        else {
+            assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
+        }
     }
 
     /**

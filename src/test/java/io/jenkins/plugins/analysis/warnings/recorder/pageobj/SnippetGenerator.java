@@ -77,4 +77,3 @@ public class SnippetGenerator extends FreestyleConfiguration {
         return select.getSelectedOptions().get(0).getText();
     }
 }
-

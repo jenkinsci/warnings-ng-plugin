@@ -1,6 +1,8 @@
 package io.jenkins.plugins.analysis.core.charts;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -18,7 +20,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.analysis.core.util.TimeFacade;
 
 import static java.util.stream.Collectors.*;
 
@@ -204,7 +205,9 @@ abstract class SeriesBuilder {
             final Map<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
         MutableListMultimap<LocalDate, Map<String, Integer>> valuesPerDate = FastListMultimap.newMultimap();
         for (AnalysisBuild build : valuesPerBuild.keySet()) {
-            LocalDate buildDate = TimeFacade.getInstance().getBuildDate(build);
+            LocalDate buildDate = Instant.ofEpochMilli(build.getTimeInMillis())
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate();
             valuesPerDate.put(buildDate, valuesPerBuild.get(build));
         }
         return valuesPerDate;

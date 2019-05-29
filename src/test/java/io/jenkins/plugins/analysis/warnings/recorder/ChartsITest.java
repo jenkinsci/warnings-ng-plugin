@@ -1,10 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.time.LocalDate;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 import org.junit.Test;
 
@@ -19,7 +16,6 @@ import hudson.model.Result;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
-import io.jenkins.plugins.analysis.core.util.TimeFacade;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel;
@@ -28,55 +24,31 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel.TrendChartType;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Provides tests for the charts shown on the details page.
  */
 public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
-    /** Tests if the New-Versus-Fixed trend chart with build number axis is correctly rendered after a series of builds. */
+    /** Tests if the New-Versus-Fixed trend chart is correctly rendered after a series of builds. */
     @Test
-    public void shouldShowNewVersusFixedTrendChartWithBuildDomain() {
+    public void shouldShowNewVersusFixedTrendChart() {
         FreeStyleProject project = createJob();
 
-        initializeTimeFacade();
-        List<AnalysisResult> buildResults = build3Times(project);
+        List<AnalysisResult> buildResults = new ArrayList<>();
 
-        verifyNewVersusFixedChart(project, buildResults, "build",
-                build -> buildResults.get(build).getBuild().getDisplayName());
-    }
+        // Create the initial workspace for comparison
+        createFileWithJavaWarnings(project, 1, 2);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-    /** Tests if the New-Versus-Fixed trend chart with build date axis is correctly rendered after a series of builds. */
-    @Test
-    public void shouldShowNewVersusFixedTrendChartWithDateDomain() {
-        FreeStyleProject project = createJob();
+        // Schedule a build which adds more warnings
+        createFileWithJavaWarnings(project, 1, 2, 3, 4);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        initializeTimeFacade();
-        List<AnalysisResult> buildResults = build3Times(project);
+        // Schedule a build which resolves some of the warnings
+        createFileWithJavaWarnings(project, 3);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        verifyNewVersusFixedChart(project, buildResults, "date",
-                build -> String.format("01-%02d", build + 1));
-    }
-
-    private void initializeTimeFacade() {
-        TimeFacade facade = mock(TimeFacade.class);
-        TimeFacade.setInstance(facade);
-        when(facade.getBuildDate(any()))
-                .thenReturn(january(1), january(2), january(3),
-                        january(1), january(2), january(3),
-                        january(1), january(2), january(3),
-                        january(1), january(2), january(3));
-        when(facade.getToday()).thenReturn(january(3));
-    }
-
-    private void verifyNewVersusFixedChart(final FreeStyleProject project, final List<AnalysisResult> buildResults,
-            final String axisName, final Function<Integer, String> xAxisNameFunction) {
-
-        HtmlPage page = getDetailsWebPage(project, buildResults.get(2));
-        page.executeJavaScript(String.format("window.localStorage.setItem('#trendBuildAxis', '%s');", axisName));
-        page = getDetailsWebPage(project, buildResults.get(2));
-
-        TrendCarousel carousel = new TrendCarousel(page);
+        TrendCarousel carousel = new TrendCarousel(getDetailsWebPage(project, buildResults.get(2)));
         assertThat(carousel.getChartTypes())
                 .containsExactly(TrendChartType.SEVERITIES, TrendChartType.TOOLS, TrendChartType.NEW_VERSUS_FIXED);
         assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
@@ -94,9 +66,8 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
 
         // Make sure each of our builds is listed on the x axis
         for (int build = 0; build < buildResults.size(); build++) {
-            assertThat(xAxisNames.get(build))
-                    .as("X-Axis label [%d]", build + 1)
-                    .isEqualTo(xAxisNameFunction.apply(build));
+            String buildName = buildResults.get(build).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
         }
 
         JSONArray allSeries = chartModel.getJSONArray("series");
@@ -113,9 +84,14 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(convertToIntArray(seriesFixedTrend.getJSONArray("data"))).isEqualTo(new int[] {0, 0, 3});
     }
 
-    private List<AnalysisResult> build3Times(final FreeStyleProject project) {
-        List<AnalysisResult> buildResults = new ArrayList<>();
+    /**
+     * Tests if the Tools trend chart is correctly rendered after a series of builds.
+     */
+    @Test
+    public void shouldShowToolsTrendChart() {
+        FreeStyleProject project = createJob();
 
+        List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparison
         createFileWithJavaWarnings(project, 1, 2);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
@@ -127,21 +103,6 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         // Schedule a build which resolves some of the warnings
         createFileWithJavaWarnings(project, 3);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
-        return buildResults;
-    }
-
-    private LocalDate january(final int dayOfMonth) {
-        return LocalDate.of(2010, Month.JANUARY, dayOfMonth);
-    }
-
-    /**
-     * Tests if the Tools trend chart is correctly rendered after a series of builds.
-     */
-    @Test
-    public void shouldShowToolsTrendChart() {
-        FreeStyleProject project = createJob();
-
-        List<AnalysisResult> buildResults = build3Times(project);
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
         JSONObject chartModel = charts.getToolsTrendChart();
@@ -330,7 +291,18 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldShowReferenceComparisonPieChart() {
         FreeStyleProject project = createJob();
 
-        List<AnalysisResult> buildResults = build3Times(project);
+        List<AnalysisResult> buildResults = new ArrayList<>();
+        // Create the initial workspace for comparison
+        createFileWithJavaWarnings(project, 1, 2);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which adds more warnings
+        createFileWithJavaWarnings(project, 1, 2, 3, 4);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
+
+        // Schedule a build which resolves some of the warnings
+        createFileWithJavaWarnings(project, 3);
+        buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
         JSONObject chartModel = charts.getReferenceComparisonPieChart();

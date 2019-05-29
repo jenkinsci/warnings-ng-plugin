@@ -9,7 +9,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.util.TimeFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -30,8 +29,7 @@ class ResultTimeTest {
     @SuppressFBWarnings("RV")
     void shouldNotEvaluateDayCountIfOptionIsDeactivated() {
         LocalDate today = LocalDate.now();
-        stubToday(today);
-        ResultTime time = new ResultTime();
+        ResultTime time = new ResultTime(today);
 
         ChartModelConfiguration configuration = createConfiguration(false);
 
@@ -39,37 +37,6 @@ class ResultTimeTest {
 
         assertThat(time.isResultTooOld(configuration, run)).as("Result date marked as too old").isFalse();
         verify(configuration, never()).getDayCount();
-    }
-
-    /**
-     * Verifies that the day count property is correctly evaluated if {@link ChartModelConfiguration#isDayCountDefined()} is
-     * enabled.
-     */
-    @Test
-    void shouldEvaluateDayCountIfOptionIsEnabled() {
-        LocalDate today = LocalDate.now();
-        stubToday(today);
-        ResultTime time = new ResultTime();
-
-        assertThatRunIsWithinDayCount(today, time);
-
-        assertThatRunIsWithinDayCount(today.minusDays(1), time);
-        assertThatRunIsWithinDayCount(today.minusDays(2), time);
-
-        assertThatRunIsOutsideOfDayCount(today.minusDays(3), time);
-        assertThatRunIsOutsideOfDayCount(today.minusDays(4), time);
-
-        assertThatRunIsWithinDayCount(today.plusDays(1), time);
-        assertThatRunIsWithinDayCount(today.plusDays(2), time);
-
-        assertThatRunIsOutsideOfDayCount(today.plusDays(3), time);
-        assertThatRunIsOutsideOfDayCount(today.plusDays(4), time);
-    }
-
-    private void stubToday(final LocalDate today) {
-        TimeFacade timeFacade = mock(TimeFacade.class);
-        when(timeFacade.getToday()).thenReturn(today);
-        TimeFacade.setInstance(timeFacade);
     }
 
     private AnalysisResult createRunAt(final LocalDate now) {
@@ -84,6 +51,30 @@ class ResultTimeTest {
         ChartModelConfiguration configuration = mock(ChartModelConfiguration.class);
         when(configuration.isDayCountDefined()).thenReturn(isDayCountDefined);
         return configuration;
+    }
+
+    /**
+     * Verifies that the day count property is correctly evaluated if {@link ChartModelConfiguration#isDayCountDefined()} is
+     * enabled.
+     */
+    @Test
+    void shouldEvaluateDayCountIfOptionIsEnabled() {
+        LocalDate today = LocalDate.now();
+        ResultTime time = new ResultTime(today);
+
+        assertThatRunIsWithinDayCount(today, time);
+
+        assertThatRunIsWithinDayCount(today.minusDays(1), time);
+        assertThatRunIsWithinDayCount(today.minusDays(2), time);
+
+        assertThatRunIsOutsideOfDayCount(today.minusDays(3), time);
+        assertThatRunIsOutsideOfDayCount(today.minusDays(4), time);
+
+        assertThatRunIsWithinDayCount(today.plusDays(1), time);
+        assertThatRunIsWithinDayCount(today.plusDays(2), time);
+
+        assertThatRunIsOutsideOfDayCount(today.plusDays(3), time);
+        assertThatRunIsOutsideOfDayCount(today.plusDays(4), time);
     }
 
     private void assertThatRunIsOutsideOfDayCount(final LocalDate runDate, final ResultTime time) {
