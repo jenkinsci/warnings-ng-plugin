@@ -222,15 +222,6 @@ public class FreestyleConfiguration extends PageObject {
      *
      * @param pattern
      *         Pattern to be set.
-     *
-     * @return this
-     */
-
-    /**
-     * Sets the report file pattern for given configured tool.
-     *
-     * @param pattern
-     *         Pattern to be set.
      * @param id
      *         Id of the Tool.
      *
