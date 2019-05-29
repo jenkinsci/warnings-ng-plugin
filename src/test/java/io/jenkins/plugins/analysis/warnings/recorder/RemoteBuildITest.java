@@ -31,13 +31,13 @@ public class RemoteBuildITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldRunBuildOnDumbSlave() {
 
-        Slave agent = createAgentWithEnabledSecurity("slave");
+        Slave agent = createAgentWithEnabledSecurity("agent_01");
 
         WorkflowJob project = createPipeline();
         createFileInAgentWorkspace(agent, project, "Hello.java", "public class Hello extends Old {}");
         createFileInAgentWorkspace(agent, project, "javac.txt", "[WARNING] Hello.java:[1,42] [deprecation] Something uses Old.class\n");
 
-        project.setDefinition(new CpsFlowDefinition("node('slave') {recordIssues tool: java(pattern: '**/*.txt')}", true));
+        project.setDefinition(new CpsFlowDefinition("node('agent_01') {recordIssues tool: java(pattern: '**/*.txt')}", true));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(result).hasTotalSize(1);
     }
