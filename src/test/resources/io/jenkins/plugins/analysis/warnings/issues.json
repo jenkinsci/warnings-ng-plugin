@@ -1,0 +1,84 @@
+{
+    "_class": "io.jenkins.plugins.analysis.core.restapi.ReportApi",
+    "issues": [
+        {
+            "fileName": "test-file.txt",
+            "lineRanges": [
+                {
+                    "start": 110,
+                    "end": 111
+                },
+                {
+                    "start": 120,
+                    "end": 121
+                }
+            ],
+            "directory": "directory",
+            "category": "category",
+            "type": "type",
+            "severity": "LOW",
+            "message": "message",
+            "description": "description",
+            "packageName": "packageName",
+            "moduleName": "moduleName",
+            "origin": "origin",
+            "reference": "reference",
+            "fingerprint": "9CED6585900DD3CFB97B914A3CEB0E79",
+            "additionalProperties": "additionalProperties",
+            "id": "e7011244-2dab-4a54-a27b-2d0697f8f813"
+        },
+        {
+            "fileName": "test.xml",
+            "severity": "ERROR",
+            "lineStart": 110,
+            "lineEnd": 111,
+            "columnStart": 210,
+            "columnEnd": 220,
+            "message": "some message",
+            "description": "some description"
+        },
+        {
+            "fileName": "test.txt",
+            "lineRanges": [
+                {
+                    "start": 110
+                },
+                {
+                    "end": 320
+                },
+                {}
+            ],
+            "severity": "HIGH",
+            "message": "an \"important\" message",
+            "description": "an \"important\" description"
+        },
+        {
+            "fileName": "some.properties",
+            "severity": "NORMAL",
+            "lineStart": 20,
+            "other":true,
+            "additional": "stuff"
+        },
+        {
+            "fileName": "file.xml",
+            "lineRanges": [
+                {
+                    "start": 11,
+                    "end": 12,
+                    "other": 10,
+                    "additional": "stuff"
+                },
+                {
+                    "s": 11,
+                    "e": 12,
+                    "start": 21,
+                    "end": 22
+                }
+            ]
+        },
+        "string",
+        true,
+        42
+    ],
+    "size": 5
+}

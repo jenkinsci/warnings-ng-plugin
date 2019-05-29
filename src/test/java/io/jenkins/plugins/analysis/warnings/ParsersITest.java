@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
-import org.junit.Assume;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Integration tests of all parsers of the warnings plug-in in pipelines.
@@ -69,10 +69,28 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    /** Runs the native parser on a file that contains 9 issues.. */
+    @Test
+    public void shouldReadNativeFormats() {
+        shouldFindIssuesOfTool(9 + 5 + 5, new WarningsPlugin(), "warnings-issues.xml", "issues.json", "json-issues.log");
+    }
+
+    /** Runs the native parser on a file that contains 9 issues.. */
+    @Test
+    public void shouldReadNativeXmlFormat() {
+        shouldFindIssuesOfTool(9, new WarningsPlugin(), "warnings-issues.xml");
+    }
+
+    /** Runs the native parser on a file that contains 5 issues.. */
+    @Test
+    public void shouldReadNativeJsonFormat() {
+        shouldFindIssuesOfTool(5, new WarningsPlugin(), "issues.json");
+    }
+
     /** Runs the native parser on a file that contains 8 issues.. */
     @Test
-    public void shouldReadNativeFormat() {
-        shouldFindIssuesOfTool(9, new WarningsPlugin(), "warnings-issues.xml");
+    public void shouldReadNativeJsonLogFormat() {
+        shouldFindIssuesOfTool(5, new WarningsPlugin(), "json-issues.log");
     }
 
     /** Verifies that a broken file does not fail. */
@@ -511,8 +529,6 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Gendarme parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllGendarmeIssues() {
-        Assume.assumeFalse("FIXME: check why this does not work on Windows", isWindows());
-
         shouldFindIssuesOfTool(3, new Gendarme(), "Gendarme.xml");
     }
 
@@ -755,12 +771,15 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         try {
-            WorkflowJob job = createPipelineWithWorkspaceFiles(fileNames);
-            job.setDefinition(createPipelineScriptWithScanAndPublishSteps(tool));
+            WorkflowJob job = createPipeline();
+            copyMultipleFilesToWorkspace(job, fileNames);
+            job.setDefinition(asStage(String.format(
+                    "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')",
+                    tool.getSymbolName(), createPatternFor(fileNames))));
 
             AnalysisResult result = scheduleSuccessfulBuild(job);
 
-            assertThat(result.getTotalSize()).isEqualTo(expectedSizeOfIssues);
+            assertThat(result).hasTotalSize(expectedSizeOfIssues);
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 
             Report report = result.getIssues();
@@ -772,5 +791,9 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         catch (Exception exception) {
             throw new AssertionError(exception);
         }
+    }
+
+    private String createPatternFor(final String... fileNames) {
+        return Arrays.stream(fileNames).map(s -> "**/" + s).collect(Collectors.joining(", "));
     }
 }
