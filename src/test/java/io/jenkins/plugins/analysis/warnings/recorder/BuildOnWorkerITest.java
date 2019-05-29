@@ -25,7 +25,7 @@ import hudson.tasks.Shell;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.Gcc4;
+import io.jenkins.plugins.analysis.warnings.Gcc3;
 import io.jenkins.plugins.analysis.warnings.MavenConsole;
 
 import static org.assertj.core.api.Assertions.*;
@@ -38,11 +38,14 @@ import static org.assertj.core.api.Assertions.*;
 public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
-     * Rules for the used Docker image.
+     * Rules for the used Java Docker image.
      */
     @ClassRule
     public static final DockerClassRule<JavaContainer> JAVA_DOCKER = new DockerClassRule<>(JavaContainer.class);
 
+    /**
+     * Rules for the used Gcc Docker image.
+     */
     @ClassRule
     public static final DockerClassRule<GccContainer> GCC_DOCKER = new DockerClassRule<>(GccContainer.class);
 
@@ -64,12 +67,18 @@ public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
         buildMavenProjectOnWorker(worker);
     }
 
+    /**
+     * Builds a make/gcc project on a dump slave..
+     */
     @Test
     public void buildMakeOnDumpSlave() {
         DumbSlave worker = setupDumpSlave();
         buildMakeProjectOnWorker(worker);
     }
 
+    /**
+     * Builds a make/gcc project in a docker container.
+     */
     @Test
     public void buildMakeOnDocker() {
         DumbSlave worker = setupDockerContainer(GCC_DOCKER);
@@ -92,10 +101,11 @@ public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToAgentWorkspace(worker, project, "pom.xml", "pom.xml");
         enableWarnings(project, createTool(new MavenConsole(), ""));
 
-        buildSuccessfully(project);
+        scheduleSuccessfulBuild(project);
 
-        getAnalysisResults(Objects.requireNonNull(project.getLastBuild()));
-
+        List<AnalysisResult> result = getAnalysisResults(Objects.requireNonNull(project.getLastBuild()));
+        assertThat(result.size()).isEqualTo(1);
+        assertThat(result.get(0).getTotalSize()).isEqualTo(0);
         assertThat(Objects.requireNonNull(project.getLastBuild().getBuiltOn()).getLabelString()).isEqualTo(
                 worker.getLabelString());
     }
@@ -110,16 +120,16 @@ public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
         }
         buildSuccessfully(project);
 
-
         project.getBuildersList().add(new Shell("make"));
         copySingleFileToAgentWorkspace(worker, project, "make-gcc/Makefile", "Makefile");
         copySingleFileToAgentWorkspace(worker, project, "make-gcc/main.c", "main.c");
-        enableWarnings(project, createTool(new Gcc4(), ""));
+        enableWarnings(project, createTool(new Gcc3(), ""));
 
         buildSuccessfully(project);
 
-        List<AnalysisResult> result = getAnalysisResults(project.getLastBuild());
-        //assertThat(result.get(0).getTotalSize()).isEqualTo(2);
+        List<AnalysisResult> results = getAnalysisResults(Objects.requireNonNull(project.getLastBuild()));
+        assertThat(results.size()).isEqualTo(1);
+        assertThat(results.get(0).getTotalSize()).isEqualTo(0);
         assertThat(Objects.requireNonNull(project.getLastBuild().getBuiltOn()).getLabelString()).isEqualTo(
                 worker.getLabelString());
     }
@@ -154,12 +164,14 @@ public class BuildOnWorkerITest extends IntegrationTestWithJenkinsPerSuite {
         return worker;
     }
 
+    /**
+     * Docker Container which supplies make and gcc.
+     */
     @DockerFixture(
             id = "gcc",
             ports = {22, 8080}
     )
     public static class GccContainer extends JavaContainer {
-        public GccContainer() {
-        }
+
     }
 }
