@@ -1,14 +1,11 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.CreateFileBuilder;
 import org.jvnet.hudson.test.Issue;
-
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -24,8 +21,6 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Doxygen;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -50,6 +45,7 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
 
     private static final String USER_EMAIL_1 = "user1@git.git";
     private static final String USER_EMAIL_2 = "user2@git.git";
+
     /**
      * Validates issue JENKINS-57260 with freestyle projects.
      */
@@ -165,7 +161,6 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(blames.get(secondFile).getEmail(5)).isEqualTo(USER_EMAIL_1);
     }
 
-    
     private void gitInitIssue57260() {
         try {
             sampleRepo.init();
@@ -179,18 +174,19 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
-
     private void gitInitTwoUser() {
         try {
             sampleRepo.init();
             sampleRepo.write(FILE_NAME_1, "1\n2\n3\n4\n5\n6");
             sampleRepo.write(FILE_NAME_2, "1\n2\n3\n4\n5\n6\n7");
             sampleRepo.git("add", FILE_NAME_1, FILE_NAME_2);
-            sampleRepo.git("commit", "--author=\"" + USER_NAME_1 + " <" + USER_EMAIL_1 + ">\"", "--all", "--message=\"commit from user1\"");
+            sampleRepo.git("commit", "--author=\"" + USER_NAME_1 + " <" + USER_EMAIL_1 + ">\"", "--all",
+                    "--message=\"commit from user1\"");
             sampleRepo.write(FILE_NAME_1, "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12");
             sampleRepo.write(FILE_NAME_2, "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13");
             sampleRepo.git("add", FILE_NAME_1, FILE_NAME_2);
-            sampleRepo.git("commit", "--author=\"" + USER_NAME_2 + " <" + USER_EMAIL_2 + ">\"", "--all", "--message=\"commit from user2\"");
+            sampleRepo.git("commit", "--author=\"" + USER_NAME_2 + " <" + USER_EMAIL_2 + ">\"", "--all",
+                    "--message=\"commit from user2\"");
         }
         catch (Exception exception) {
             throw new RuntimeException(exception);
