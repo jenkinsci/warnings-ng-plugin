@@ -8,8 +8,6 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
-import edu.hm.hafner.analysis.parser.GccParser;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -21,6 +19,8 @@ import hudson.Launcher;
 import hudson.model.Label;
 import hudson.model.Result;
 import hudson.plugins.sshslaves.SSHLauncher;
+import hudson.security.FullControlOnceLoggedInAuthorizationStrategy;
+import hudson.security.HudsonPrivateSecurityRealm;
 import hudson.slaves.DumbSlave;
 import hudson.util.StreamTaskListener;
 import hudson.util.VersionNumber;
@@ -49,6 +49,9 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     @Rule
     public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
 
+    @Rule
+    public DockerRule<GccContainer> gccDockerRule = new DockerRule<>(GccContainer.class);
+
     @BeforeClass
     public static void assumeThatWeAreRunningLinux() throws Exception {
         assumeTrue("This test is only for Unix", !Functions.isWindows());
@@ -69,9 +72,11 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldStartAgentAndVerifyJenkinsBug() {
+        enableSecurity();
+        assertThat(getJenkins().jenkins.isUseSecurity()).isTrue();
+
         DumbSlave agent = createAgent();
         assertWorkSpace(agent);
-        assertThat(getJenkins().jenkins.isUseSecurity()).isTrue();
 
         WorkflowJob job = createPipeline();
         copySingleFileToAgentWorkspace(agent, job, "Test.java", "Test.java");
@@ -100,9 +105,8 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldRunMavenBuildOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(javaDockerRule.get());
+        DumbSlave agent = createDockerAgent(javaDockerRule.get(), SLAVE_LABEL);
         assertWorkSpace(agent);
-
         WorkflowJob job = createPipeline();
         copySingleFileToAgentWorkspace(agent, job, "Test.java", "src/main/java/com/mycompany/app/Test.java");
         copySingleFileToAgentWorkspace(agent, job, "TestPom.xml", "pom.xml");
@@ -126,8 +130,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(analysisResult).hasTotalSize(1);
         assertThat(analysisResult).hasInfoMessages(
                 "-> resolved module names for 1 issues",
-                "-> resolved package names of 1 affected files",
-                "-> 1 copied, 0 not in workspace, 0 not-found, 0 with I/O error");
+                "-> resolved package names of 1 affected files");
         assertThat(report).hasSize(1);
         assertThat(report.get(0).getMessage()).isEqualTo("redundant cast to java.lang.String");
         assertThat(report.getFiles()).hasSize(1)
@@ -143,7 +146,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldCompileJavaOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(javaDockerRule.get());
+        DumbSlave agent = createDockerAgent(javaDockerRule.get(), SLAVE_LABEL);
         assertWorkSpace(agent);
 
         WorkflowJob job = createPipeline();
@@ -161,24 +164,26 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * This test should run a make/gcc build on docker-container.
+     * This test should run make-build within docker-container.
      */
     @Test
     public void shouldRunMakeBuildOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(javaDockerRule.get());
+        DumbSlave agent = createDockerAgent(gccDockerRule.get(), SLAVE_LABEL);
         assertWorkSpace(agent);
 
         WorkflowJob job = createPipeline();
         copySingleFileToAgentWorkspace(agent, job, "Test.c", "Test.c");
+        copySingleFileToAgentWorkspace(agent, job, "TestMakefile", "Makefile");
 
         job.setDefinition(new CpsFlowDefinition("node('" + SLAVE_LABEL + "') {\n"
                 + "     stage ('Build and Analysis') {\n"
-                + "         sh 'gcc Test.gcc'\n"
-                + "         recordIssues enabledForFailure: true, tool: java(), sourceCodeEncoding: 'UTF-8'\n"
+                + "         sh 'make > build.log 2>&1'\n"
+                + "         recordIssues enabledForFailure: true, tool: gcc(pattern: 'build.log')\n"
                 + "      }\n"
                 + "}", true));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(result).hasTotalSize(1);
     }
 
     private DumbSlave createAgent() {
@@ -191,11 +196,10 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         catch (Exception e) {
             throw new AssertionError(e);
         }
-
     }
 
-    private DumbSlave createDockerAgent(final DockerContainer container) throws Exception {
-        DumbSlave dockerAgent = new DumbSlave(SLAVE_LABEL, "/home/test",
+    private DumbSlave createDockerAgent(final DockerContainer container, final String label) throws Exception {
+        DumbSlave dockerAgent = new DumbSlave(label, "/home/test",
                 new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));
         getJenkins().jenkins.addNode(dockerAgent);
         getJenkins().waitOnline(dockerAgent);
@@ -205,5 +209,18 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     private void assertWorkSpace(final DumbSlave agent) {
         assertThat(agent.getWorkspaceRoot()).isNotNull();
         assertThat(agent.getWorkspaceRoot().getName()).isEqualTo("workspace");
+    }
+
+    private void enableSecurity() {
+        try {
+            HudsonPrivateSecurityRealm securityRealm = new HudsonPrivateSecurityRealm(false, false, null);
+            securityRealm.createAccount("admin", "admin");
+            getJenkins().jenkins.setSecurityRealm(securityRealm);
+            getJenkins().jenkins.setAuthorizationStrategy(new FullControlOnceLoggedInAuthorizationStrategy());
+            getJenkins().jenkins.save();
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
     }
 }
