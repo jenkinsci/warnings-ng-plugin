@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.output.TeeOutputStream;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -32,7 +33,6 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTe
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.*;
-import static sun.text.normalizer.Utility.*;
 
 /**
  * Integration test with docker and dumb slave.
@@ -40,7 +40,6 @@ import static sun.text.normalizer.Utility.*;
  * @author Tanja Roithmeier, Matthias Herpers
  */
 public class DockerITest extends IntegrationTestWithJenkinsPerTest {
-
     /**
      * The docker rule.
      */
@@ -51,7 +50,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      * Verifies that operating system is unix and docker is installed.
      */
     @BeforeClass
-    public static void unixAndDocker() {
+    public static void assumeThatUnixAndDocker() {
         assumeTrue("This test is only for Unix", File.pathSeparatorChar == ':');
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
@@ -62,10 +61,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
                             .stderr(System.err)
                             .join(), is(0));
         }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
-        catch (InterruptedException e) {
+        catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
         }
         assumeThat("Docker must be at least 1.13.0 for this test (uses --init)",
@@ -86,26 +82,19 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldBuildMavenOnDumbSlaveWithEnabledSecurity() {
-        DumbSlave slave = createDumbSlave();
-
         HudsonPrivateSecurityRealm securityRealm = new HudsonPrivateSecurityRealm(false, false, null);
         try {
             securityRealm.createAccount("admin", "admin");
+
+            getJenkins().jenkins.setSecurityRealm(securityRealm);
+            getJenkins().jenkins.setAuthorizationStrategy(new FullControlOnceLoggedInAuthorizationStrategy());
+
+            getJenkins().jenkins.getInjector().getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false);
         }
         catch (IOException e) {
             throw new AssertionError(e);
         }
-
-        getJenkins().jenkins.setSecurityRealm(securityRealm);
-        getJenkins().jenkins.setAuthorizationStrategy(new FullControlOnceLoggedInAuthorizationStrategy());
-
-        getJenkins().jenkins.getInjector().getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false);
-        try {
-            getJenkins().jenkins.save();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
+        DumbSlave slave = createDumbSlave();
         buildMavenProject(slave);
     }
 
@@ -121,6 +110,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Builds a make project on a docker container.
      */
+    @Ignore
     @Test
     public void shouldBuildMakeOnDocker() {
         DumbSlave slave = createGccDockerSlave();
@@ -155,7 +145,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         catch (IOException e) {
             throw new AssertionError(e);
         }
-        addScriptStep(project, escape("make"));
+        addScriptStep(project, "make");
         copySingleFileToAgentWorkspace(slave, project, "dockerTestClass.c", "TestClass.c");
         copySingleFileToAgentWorkspace(slave, project, "dockerTestmakefile", "makefile");
         enableWarnings(project, createTool(new Cmake(), ""));
