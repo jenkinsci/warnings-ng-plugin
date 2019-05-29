@@ -10,17 +10,17 @@ import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
-import hudson.model.Label;
 import hudson.model.Result;
 import hudson.plugins.git.GitSCM;
-import hudson.security.HudsonPrivateSecurityRealm;
+import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
+import jenkins.plugins.git.GitSCMBuilder;
 import jenkins.plugins.git.GitSampleRepoRule;
+import jenkins.scm.api.SCMHead;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -38,15 +38,20 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * The git repo rule used to create and use the git repository.
      */
-     @ClassRule
-     public static GitSampleRepoRule repository1 = new GitSampleRepoRule();
+    @ClassRule
+    public static GitSampleRepoRule repository = new GitSampleRepoRule();
+
 
     /**
-     * The git repo rule used to create and use the git repository.
+     * Test method setup.
      */
-     @ClassRule
-     public static GitSampleRepoRule repository2 = new GitSampleRepoRule();
+    @BeforeEach
+    public void testMethodSetup() {
+        // Create a new repository for each test, to avoid unwanted side effects.
+        // TODO: This could be used to setup the project itself too
+        repository = new GitSampleRepoRule();
 
+    }
 
     /**
      * Creates a java file with commits by two different users and checks if the details in the source control table
@@ -64,11 +69,12 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         java.setPattern("**/*.txt");
         enableWarnings(project, java);
 
-        createRepositoryInProject(repository1, project);
-        appendTextToFileInRepository(repository1, fileName, "public class HelloWorld {\n", "Hans Hamburg", "hans@hamburg.com");
-        createJavaWarningInRepository(repository1, fileName, 1, "HelloWorld method opened");
-        appendTextToFileInRepository(repository1, fileName, "}", "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(repository1, fileName, 2, "HelloWorld method closed");
+        createRepositoryInProject(repository, project);
+        appendTextToFileInRepository(repository, fileName, "public class HelloWorld {\n", "Hans Hamburg",
+                "hans@hamburg.com");
+        createJavaWarningInRepository(repository, fileName, 1, "HelloWorld method opened");
+        appendTextToFileInRepository(repository, fileName, "}", "Peter Petersburg", "peter@petersburg.com");
+        createJavaWarningInRepository(repository, fileName, 2, "HelloWorld method closed");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(analysisResult).hasTotalSize(2);
@@ -107,22 +113,22 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         java.setPattern("**/*.txt");
         enableWarnings(project, java);
 
-        createRepositoryInProject(repository2, project);
-        appendTextToFileInRepository(repository2, fileName, "public class HelloWorld {\nprintln(':)');\n}",
+        createRepositoryInProject(repository, project);
+        appendTextToFileInRepository(repository, fileName, "public class HelloWorld {\nprintln(':)');\n}",
                 "Hans Hamburg", "hans@hamburg.com");
-        createJavaWarningInRepository(repository2, fileName, 1, "HelloWorld method opened");
+        createJavaWarningInRepository(repository, fileName, 1, "HelloWorld method opened");
 
         // Pretend that the initial commit triggered the pipeline
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Now change a line in the file which creates a new warning
-        replaceLineInRepository(repository2, fileName, 2, "error(':(')",
+        replaceLineInRepository(repository, fileName, 2, "error(':(')",
                 "Peter Petersburg", "peter@petersburg.com");
-        createJavaWarningInRepository(repository2, fileName, 2, "Error method called");
+        createJavaWarningInRepository(repository, fileName, 2, "Error method called");
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Change the line again, updating once again the "owner" of the error.
-        replaceLineInRepository(repository2, fileName, 2, "error('other msg')",
+        replaceLineInRepository(repository, fileName, 2, "error('other msg')",
                 "August Augsburg", "august@augsburg.com");
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -143,6 +149,50 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":2");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
                 "Error method called");
+    }
+
+    /**
+     * This tests the behaviour of [JENKINS-57260].
+     */
+    @Test
+    public void shouldGitBlameForOutOfTreeSources() throws Exception {
+        final String fileName = "helloWorld.java";
+        final FreeStyleProject project = createFreeStyleProject();
+        Java java = new Java();
+        java.setPattern("**/*.txt");
+        enableWarnings(project, java);
+
+        // Copied code to init repo
+        repository.init();
+        repository.git("checkout", "master");
+        GitSCMBuilder builder = new GitSCMBuilder(new SCMHead("master"), null, repository.fileUrl(), null)
+                .withExtension(new RelativeTargetDirectory("src"));
+        project.setScm(builder.build());
+
+        appendTextToFileInRepository(repository, fileName, "public class HelloWorld {\n", "Hans Hamburg",
+                "hans@hamburg.com");
+        createJavaWarningInRepository(repository, fileName, 1, "HelloWorld method opened");
+        appendTextToFileInRepository(repository, fileName, "}", "Peter Petersburg", "peter@petersburg.com");
+        createJavaWarningInRepository(repository, fileName, 2, "HelloWorld method closed");
+
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(analysisResult).hasTotalSize(2);
+
+        HtmlPage detailsPage = getDetailsWebPage(project, analysisResult);
+        SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
+
+        List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
+        assertThat(sourceControlRows.size()).isEqualTo(2);
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("Hans Hamburg");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("hans@hamburg.com");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":1");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "HelloWorld method opened");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo("Peter Petersburg");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("peter@petersburg.com");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":2");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "HelloWorld method closed");
     }
 
     /*
@@ -182,7 +232,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
             throws Exception {
         repository.init();
         repository.git("checkout", "master");
-        project.setScm(new GitSCM("file://" + repository.getRoot()));
+        project.setScm(new GitSCM(repository.fileUrl()));
     }
 
     /**
