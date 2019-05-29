@@ -81,6 +81,32 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
                 .containsEntry("Eclipse ECJ", 8);
     }
 
+    /**
+     * Dashboard Portlet should show job results when a tool is configured after first build..
+     */
+    @Test
+    public void showJobResultsWhenAToolIsConfiguredAfterFirstBuild() {
+        FreeStyleProject project1 = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml", "eclipse.txt");
+        enableEclipseWarnings(project1);
+
+        Dashboard dashboard = configureDashboard("showJobResultsWhenAToolIsConfiguredAfterFirstBuild", project1);
+        buildWithResult(project1, Result.SUCCESS);
+
+        DashboardTable pageObject = loadDashboardTable(dashboard);
+        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(1)
+                .containsEntry("Eclipse ECJ", 8);
+
+        enableCheckStyleWarnings(project1);
+        buildWithResult(project1, Result.SUCCESS);
+
+        pageObject = loadDashboardTable(dashboard);
+        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(2)
+                .containsEntry("CheckStyle", 7)
+                .containsEntry("Eclipse ECJ", 8);
+    }
+
+
+
     private DashboardTable loadDashboardTable(final Dashboard dashboard) {
         DashboardTable result;
         try {
