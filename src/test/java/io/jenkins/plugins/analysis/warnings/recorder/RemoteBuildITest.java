@@ -6,21 +6,23 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Slave;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.Eclipse;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Tests if Remote Jobs can successfully record Issues.
  */
-public class RemoteBuildITest  extends IntegrationTestWithJenkinsPerSuite {
+public class RemoteBuildITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Tests the basic functionality of running a pipeline job on a slave.
@@ -44,8 +46,7 @@ public class RemoteBuildITest  extends IntegrationTestWithJenkinsPerSuite {
      * Tests that the results are shown on the web page.
      */
     @Test
-    public void shouldShowDumbSlaveResultsOnWebPage() {
-
+    public void shouldShowDumbSlaveResultInDetailsTab() {
         Slave agent = createAgentWithEnabledSecurity("slave");
 
         WorkflowJob project = createPipeline();
@@ -57,24 +58,12 @@ public class RemoteBuildITest  extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        HtmlPage detailsPage = getDetailsWebPage(project, result);
-        IssuesTable table = new IssuesTable(detailsPage);
-        assertThat(table.getRows()).hasSize(1);
-    }
+        DetailsTab details = new DetailsTab(getWebPage(JavaScriptSupport.JS_ENABLED, result));
 
-    /**
-     * Get the details web page of a recent build.
-     *
-     * @param project
-     *         of the build used for web request
-     * @param result
-     *         of the most recent build to show the charts
-     *
-     * @return loaded web page which contains the charts
-     */
-    private HtmlPage getDetailsWebPage(final WorkflowJob project, final AnalysisResult result) {
-        int buildNumber = result.getBuild().getNumber();
-        String pluginId = "java";
-        return getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
+        IssuesTable issues = details.select(TabType.ISSUES);
+        assertThat(issues.getRows()).hasSize(1);
+
+        SourceCodeView actualJavaContent = issues.getRow(1).click(IssueRow.FILE);
+        assertThat(actualJavaContent.getIssueMessage()).isEqualTo("Something uses Old.class");
     }
 }
