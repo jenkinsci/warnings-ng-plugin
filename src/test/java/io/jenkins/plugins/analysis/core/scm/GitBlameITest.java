@@ -83,48 +83,53 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldShowGitBlameWarningWithDisabledDefaultCheckout() throws Exception {
         gitRepo.init();
         appendTextToFileInScm(gitRepo, "Hello.java", "class Hello {}", "John Doe", "John@localhost");
+        appendTextToFileInScm(gitRepo, "Hello.cpp", "class Hello {}", "Jane Doe", "Jane@localhost");
 
         final String pipeline = "pipeline {\n"
-                + " agent any\n"
-                + " options {\n"
-                + "     skipDefaultCheckout()\n"
-                + " }\n"
-                + " stages {\n"
-                + "     stage('Prepare') {\n"
-                + "         steps {\n"
-                + "             dir('src') {\n"
-                + "                 checkout scm\n"
-                + "                 sh 'ls -ahl'\n"
-                + "             }\n"
-                + "         }\n"
-                + "     }\n"
-                + "     stage('Doxygen') {\n"
-                + "         steps {\n"
-                + "             dir('build/doxygen') {\n"
-                + "                 sh 'mkdir doxygen'\n"
-                + "                 sh 'echo \"src/Hello.java:1: Error: No Javadoc for Class\" > doxygen/doxygen.log'\n"
-                + "             }\n"
-                + "         recordIssues(aggregatingResults: true, enabledForFailure: true, tools: [ doxygen(name: 'Doxygen', pattern: 'build/doxygen/doxygen/doxygen.log') ] )\n"
-                + "         }\n"
-                + "     }\n"
-                + " }\n"
-                + "}";
+                + "agent any\n"
+                + "options{\n"
+                + "skipDefaultCheckout()\n"
+                + "}\n"
+                + "stages{\n"
+                + "stage('Prepare') {\n"
+                + "  steps {\n"
+                + "    dir('src') {\n"
+                + "      checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: '"
+                + gitRepo.fileUrl() + "']]])\n"
+                + "    }\n"
+                + "  }\n"
+                + "}\n"
+                + "stage('Doxygen') {\n"
+                + "  steps {\n"
+                + "    dir('build/doxygen') {\n"
+                + "      writeFile file: 'doxygen/doxygen.log', text: '\"Notice: Output directory doc/doxygen/framework does not exist. I have created it for you.\\nsrc/Hello.java:1: Warning: reached end of file while inside a dot block!\\nThe command that should end the block seems to be missing!\\nsrc/Hello.cpp:1: Warning: the name lcp_lexicolemke.c supplied as the second argument in the file statement is not an input file\"'\n"
+                + "    }\n"
+                + "    recordIssues(aggregatingResults: true, enabledForFailure: true, tools: [ doxygen(name: 'Doxygen', pattern: 'build/doxygen/doxygen/doxygen.log') ] )\n"
+                + "  }\n"
+                + "}\n"
+                + "}}";
 
         WorkflowJob project = createPipeline();
         appendTextToFileInScm(gitRepo, "Pipeline.txt", pipeline, "Pipeline", "root@localhost");
         project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Pipeline.txt"));
         AnalysisResult analysisResult = scheduleSuccessfulBuild(project);
-        assertThat(analysisResult).hasTotalSize(1);
+        assertThat(analysisResult).hasTotalSize(2);
 
-        //HtmlPage detailsPage = getDetailsWebPage(project, analysisResult);
-        //SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
+        HtmlPage detailsPage = getDetailsWebPage(project, analysisResult);
+        SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
 
-        //List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
-        //assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("John Doe");
-        //assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("John@localhost");
-        //assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo("Hello.java:1");
-        //assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
-        //        "No Javadoc for Class");
+        List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo("John Doe");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("John@localhost");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo("Hello.java:1");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "reached end of file while inside a dot block! The command that should end the block seems to be missing!");
+
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("Jane Doe");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("Jane@localhost");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo("Hello.cpp:1");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+                "the name lcp_lexicolemke.c supplied as the second argument in the file statement is not an input file\"");
     }
 
     /**
