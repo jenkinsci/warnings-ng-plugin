@@ -60,6 +60,7 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
      *         When git interaction fails.
      */
     @Before
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void init() throws Exception {
         repository.init();
         repository.git("checkout", BRANCH);
@@ -96,7 +97,6 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void testBlameSingleUser() throws Exception {
         String file = "deprecated.txt";
-        String commit = "init deprecated";
         addFileToGit(USER_1, EMAIL_1, "@Deprecated \n public void test () { }\n", file, "init deprecated");
 
         FreeStyleProject job = createFreeStyleProject();
@@ -264,7 +264,7 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Initializes the git repository with files to recreate the Issue 57260
+     * Initializes the git repository with files to recreate the Issue 57260.
      *
      * @throws Exception
      *         When any git command fails
