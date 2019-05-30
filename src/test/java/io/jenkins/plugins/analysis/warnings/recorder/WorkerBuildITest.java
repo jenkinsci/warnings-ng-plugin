@@ -10,6 +10,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.jenkinsci.test.acceptance.docker.DockerClassRule;
+import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerFixture;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaContainer;
 import org.jenkinsci.test.acceptance.docker.fixtures.SshdContainer;
@@ -39,7 +40,7 @@ import static org.assertj.core.api.Assertions.*;
  */
 abstract class WorkerBuildITest extends IntegrationTestWithJenkinsPerSuite {
 
-    void buildMavenProjectOnWorker(final Slave worker) {
+    private FreeStyleProject createFreeStyleProjectWithWorker(final Slave worker) {
         FreeStyleProject project = createFreeStyleProject();
         try {
             project.setAssignedNode(worker);
@@ -48,6 +49,12 @@ abstract class WorkerBuildITest extends IntegrationTestWithJenkinsPerSuite {
             throw new RuntimeException(exception);
         }
         buildSuccessfully(project);
+
+        return project;
+    }
+
+    void buildMavenOnWorker(final Slave worker) {
+        FreeStyleProject project = createFreeStyleProjectWithWorker(worker);
 
         project.getBuildersList().add(new Maven("verify", null));
         copySingleFileToAgentWorkspace(worker, project, "affected-files/Main.java",
@@ -63,15 +70,8 @@ abstract class WorkerBuildITest extends IntegrationTestWithJenkinsPerSuite {
                 worker.getLabelString());
     }
 
-    void buildMakeProjectOnWorker(final Slave worker) {
-        FreeStyleProject project = createFreeStyleProject();
-        try {
-            project.setAssignedNode(worker);
-        }
-        catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
-        buildSuccessfully(project);
+    void buildMakeOnWorker(final Slave worker) {
+        FreeStyleProject project = createFreeStyleProjectWithWorker(worker);
 
         project.getBuildersList().add(new Shell("make"));
         copySingleFileToAgentWorkspace(worker, project, "make-gcc/Makefile", "Makefile");
@@ -86,16 +86,20 @@ abstract class WorkerBuildITest extends IntegrationTestWithJenkinsPerSuite {
                 worker.getLabelString());
     }
 
-    DumbSlave setupDumpSlave() {
+    //createSlave could throw exception of type Exception, therefore it is necessary to catch it
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    DumbSlave createDumbSlave() {
         try {
             return JENKINS_PER_SUITE.createSlave();
         }
-        catch (Exception exception) {
-            throw new RuntimeException(exception);
+        catch (Exception e) {
+            throw new RuntimeException("Error while creating dumb slave.", e);
         }
     }
 
-    <T extends SshdContainer> DumbSlave setupDockerContainer(final DockerClassRule<T> docker) {
+    //waitOnline could throw exception of type Exception, therefore it is necessary to catch it
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    <T extends SshdContainer> DumbSlave setUpDocker(final DockerClassRule<T> docker) {
         DumbSlave worker;
         try {
             T container = docker.create();
@@ -104,27 +108,12 @@ abstract class WorkerBuildITest extends IntegrationTestWithJenkinsPerSuite {
                             "-Dfile.encoding=ISO-8859-1"));
             worker.setNodeProperties(Collections.singletonList(new EnvironmentVariablesNodeProperty(
                     new Entry("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64/jre"))));
-
-            worker = new DumbSlave("docker", "/home/test", new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", "-Dfile.encoding=ISO-8859-1"));
-            worker.setNodeProperties(Collections.singletonList(new EnvironmentVariablesNodeProperty(
-                    new Entry("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64/jre"))));
             getJenkins().jenkins.addNode(worker);
             getJenkins().waitOnline(worker);
         }
         catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error while setting up docker.", e);
         }
         return worker;
-    }
-
-    /**
-     * Docker Container which supplies make and gcc.
-     */
-    @DockerFixture(
-            id = "gcc",
-            ports = {22, 8080}
-    )
-    public static class DockerContainerGcc extends JavaContainer {
-
     }
 }
