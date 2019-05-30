@@ -35,6 +35,8 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JAVA_FILE = "java2Warnings.txt";
     private static final String JAVA_FILE2 = "java-start.txt";
     private static final String JAVA_PATTERN = "**/*.txt";
+    private static final String TOOL_ID = "hm-edu1";
+    private static final String TOOL_ID2 = "hm-edu2";
 
     /**
      * Test that the same tool can be used twice with different configuration.
@@ -45,11 +47,8 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
         copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
 
-        final String toolId = "hm-edu1";
-        final String toolId2 = "hm-edu2";
-
-        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, toolId, false, 1, 9);
-        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, toolId2, false, 1, 3);
+        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, TOOL_ID, false, 1, 9);
+        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, false, 1, 3);
 
         project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
                 constructConditionalPublisher(publisher),
@@ -60,8 +59,8 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(analysisResult.isSuccessful()).isEqualTo(true);
         HealthReport healthReport = project.getBuildHealth();
         assertThat(healthReport.getScore()).isEqualTo(0);
-        checkDetailsViewForIssues(project, analysisResult, toolId, 2);
-        checkDetailsViewForIssues(project, analysisResult, toolId2, 4);
+        checkDetailsViewForIssues(project, analysisResult, TOOL_ID, 2);
+        checkDetailsViewForIssues(project, analysisResult, TOOL_ID2, 4);
     }
 
     /**
@@ -73,11 +72,8 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
         copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
 
-        final String toolId = "hm-edu1";
-        final String toolId2 = "hm-edu2";
-
-        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, toolId, true);
-        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, toolId2, true);
+        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, TOOL_ID, true);
+        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, true);
 
         project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
                 constructConditionalPublisher(publisher),
@@ -87,7 +83,7 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult analysisResult = scheduleSuccessfulBuild(project);
         assertThat(analysisResult.isSuccessful()).isEqualTo(true);
         //is there a bug with the aggregation?
-        checkDetailsViewForIssues(project, analysisResult, toolId, 6);
+        checkDetailsViewForIssues(project, analysisResult, TOOL_ID, 6);
     }
 
     private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id,
