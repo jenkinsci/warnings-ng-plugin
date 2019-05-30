@@ -4,6 +4,8 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import org.jenkinsci.test.acceptance.docker.DockerClassRule;
+import org.jenkinsci.test.acceptance.docker.DockerFixture;
+import org.jenkinsci.test.acceptance.docker.fixtures.SshdContainer;
 import hudson.slaves.DumbSlave;
 
 /**
@@ -17,15 +19,14 @@ public class WorkerMakeGccBuild extends WorkerBuildITest {
      * Rules for the used Gcc Docker image.
      */
     @ClassRule
-    public static final DockerClassRule<DockerContainerGcc> DOCKER_GCC = new DockerClassRule<>(DockerContainerGcc.class);
+    public static final DockerClassRule<GccContainer> DOCKER_GCC = new DockerClassRule<>(GccContainer.class);
 
     /**
-     * Builds a make/gcc project on a dump slave..
+     * Builds a make/gcc project on a dump slave.
      */
     @Test
     public void buildMakeOnDumpSlave() {
-        DumbSlave worker = setupDumpSlave();
-        buildMakeProjectOnWorker(worker);
+        buildMakeOnWorker(createDumbSlave());
     }
 
     /**
@@ -33,8 +34,6 @@ public class WorkerMakeGccBuild extends WorkerBuildITest {
      */
     @Test
     public void buildMakeOnDocker() {
-        DumbSlave worker = setupDockerContainer(DOCKER_GCC);
-        buildMakeProjectOnWorker(worker);
+        buildMakeOnWorker(setUpDocker(DOCKER_GCC));
     }
-
 }
