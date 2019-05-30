@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.PathUtil;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
@@ -14,8 +15,7 @@ import hudson.FilePath;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
-import static io.jenkins.plugins.analysis.core.model.AnalysisResultAssert.assertThat;
-import static org.assertj.core.api.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Integration test for the use of the warnings-ng plugin together with the timestamper plugin.
@@ -46,11 +46,14 @@ public class TimestamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasNoErrorMessages();
 
         Issue issue = result.getIssues().get(0);
-        assertThat(getAbsolutePath(issue)).isEqualTo(getWorkspace(project).child("Test.java"));
-        assertThat(issue.getLineStart()).isEqualTo(39);
-        assertThat(issue.getLineEnd()).isEqualTo(39);
-        assertThat(issue.getMessage()).isEqualTo("Test Warning");
-        assertThat(issue.getSeverity()).isEqualTo(Severity.WARNING_NORMAL);
+        assertThat(issue).hasFileName(getWorkspacePath(project, "Test.java"));
+        assertThat(issue).hasLineStart(39);
+        assertThat(issue).hasMessage("Test Warning");
+        assertThat(issue).hasSeverity(Severity.WARNING_NORMAL);
+    }
+
+    private String getWorkspacePath(final WorkflowJob project, final String fileName) {
+        return new PathUtil().getAbsolutePath(getWorkspace(project).child(fileName).getRemote());
     }
 
     /**
@@ -75,11 +78,10 @@ public class TimestamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasNoErrorMessages();
 
         Issue issue = result.getIssues().get(0);
-        assertThat(getAbsolutePath(issue)).isEqualTo(getWorkspace(project).child("test.c"));
-        assertThat(issue.getLineStart()).isEqualTo(1);
-        assertThat(issue.getLineEnd()).isEqualTo(1);
-        assertThat(issue.getMessage()).isEqualTo("This is an error.");
-        assertThat(issue.getSeverity()).isEqualTo(Severity.WARNING_HIGH);
+        assertThat(issue).hasFileName(getWorkspacePath(project, "test.c"));
+        assertThat(issue).hasLineStart(1);
+        assertThat(issue).hasMessage("This is an error.");
+        assertThat(issue).hasSeverity(Severity.WARNING_HIGH);
     }
 
     private FilePath getAbsolutePath(final Issue issue) {
