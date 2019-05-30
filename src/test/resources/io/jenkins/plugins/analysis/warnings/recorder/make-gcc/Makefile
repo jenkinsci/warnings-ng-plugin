@@ -1,5 +1,5 @@
 FLAGS=-O1
-SRCFILES=hello.c
+SRCFILES=main.c
 
  all:	intcalc
 
