@@ -322,6 +322,6 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private void appendTextToFile(final File path, final String fileName, final String text) throws IOException {
         Path file = new File(path, fileName).toPath();
-        Files.write(file, text.getBytes(), StandardOpenOption.APPEND);
+        Files.write(file, text.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
     }
 }
