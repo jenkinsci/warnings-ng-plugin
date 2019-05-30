@@ -1,11 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import org.junit.Rule;
@@ -140,7 +139,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldGitBlameForOutOfTreeSources() throws Exception {
-        final String fileName = "helloWorld.java";
+        String fileName = "helloWorld.java";
         final FreeStyleProject project = createJavaWarningsFreestyleProject();
 
         // Copied code to init repo
@@ -285,26 +284,24 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
         repository.git("config", "user.name", user);
         repository.git("config", "user.email", email);
 
-        File targetFile = new File(repository.getRoot(), SRC_FILE_NAME);
-        BufferedReader fileReader = new BufferedReader(new FileReader(targetFile));
+        Path targetFile = new File(repository.getRoot(), SRC_FILE_NAME).toPath();
+        List<String> lines = Files.readAllLines(targetFile);
         StringBuilder outputBuilder = new StringBuilder();
-        String currentLine;
+
         int currentLineNum = 1; // Lines start at index 1
 
-        while ((currentLine = fileReader.readLine()) != null) {
-            if (lineToReplace == currentLineNum++) {
+        for (String currentLine: lines) {
+            if (lineToReplace == currentLineNum) {
                 outputBuilder.append(text);
             }
             else {
                 outputBuilder.append(currentLine);
             }
             outputBuilder.append('\n');
+            currentLineNum++;
         }
-        fileReader.close();
 
-        FileOutputStream fileOut = new FileOutputStream(targetFile);
-        fileOut.write(outputBuilder.toString().getBytes());
-        fileOut.close();
+        Files.write(targetFile, outputBuilder.toString().getBytes());
 
         repository.git("add", "helloWorld.java");
         repository.git("commit", "-m", "File update");
@@ -324,9 +321,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      *         if the file can not be opened or writing fails.
      */
     private void appendTextToFile(final File path, final String fileName, final String text) throws IOException {
-        File file = new File(path, fileName);
-        FileWriter fileWriter = new FileWriter(file, true);
-        fileWriter.write(text);
-        fileWriter.close();
+        Path file = new File(path, fileName).toPath();
+        Files.write(file, text.getBytes(), StandardOpenOption.APPEND);
     }
 }

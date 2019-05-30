@@ -51,20 +51,22 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Check that we are running on linux and have a valid docker installation for these tests.
-     *
-     * @throws Exception
-     *         if environment checks fail.
      */
     @BeforeClass
-    public static void assumeThatWeAreRunningLinux() throws Exception {
+    public static void assumeThatWeAreRunningLinux() {
         assumeTrue("This test is only for Unix", !Functions.isWindows());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        assumeThat("`docker version` could be run", new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
-                .cmds("docker", "version", "--format", "{{.Client.Version}}")
-                .stdout(new TeeOutputStream(baos, System.err))
-                .stderr(System.err)
-                .join(), is(0));
+        try {
+            assumeThat("`docker version` could be run", new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
+                    .cmds("docker", "version", "--format", "{{.Client.Version}}")
+                    .stdout(new TeeOutputStream(baos, System.err))
+                    .stderr(System.err)
+                    .join(), is(0));
+        }
+        catch (IOException | InterruptedException e) {
+            throw new AssertionError(e);
+        }
 
         assumeThat("Docker must be at least 1.13.0 for this test (uses --init)",
                 new VersionNumber(baos.toString().trim()), greaterThanOrEqualTo(new VersionNumber("1.13.0")));
