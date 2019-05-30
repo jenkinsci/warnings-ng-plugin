@@ -15,26 +15,24 @@ import hudson.slaves.DumbSlave;
  */
 public class WorkerMavenBuild extends WorkerBuildITest {
     /**
-     * Rules for the used Java Docker image.
+     * Docker java image rules.
      */
     @ClassRule
     public static final DockerClassRule<JavaContainer> DOCKER_JAVA = new DockerClassRule<>(JavaContainer.class);
 
     /**
-     * Builds a maven project on a dump slave..
+     * Build maven project on worker.
      */
     @Test
-    public void buildMavenOnDumpSlave() {
-        DumbSlave worker = setupDumpSlave();
-        buildMavenProjectOnWorker(worker);
+    public void buildMavenOnWorker() {
+        buildMavenOnWorker(createDumbSlave());
     }
 
     /**
-     * Builds a maven project in a docker container.
+     * Build maven project in docker container.
      */
     @Test
     public void buildMavenOnDocker() {
-        DumbSlave worker = setupDockerContainer(DOCKER_JAVA);
-        buildMavenProjectOnWorker(worker);
+        buildMavenOnWorker(setUpDocker(DOCKER_JAVA));
     }
 }
