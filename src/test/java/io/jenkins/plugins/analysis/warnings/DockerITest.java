@@ -26,9 +26,15 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class DockerITest extends IntegrationTestWithJenkinsPerSuite {
 
+    /**
+     * Docker container supporting jenkins agents and gcc/make projects.
+     */
     @Rule
     public DockerRule<GccMakeContainer> gccDockerRule = new DockerRule<>(GccMakeContainer.class);
 
+    /**
+     * Docker container supporting jenkins agents and java projects.
+     */
     @Rule
     public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
 
@@ -39,6 +45,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerSuite {
      *         When slave creation or waiting for node start fails.
      */
     @Test
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void checkRunningInJavaContainerDocker() throws Exception {
         DumbSlave agent = createAgent(javaDockerRule.get());
         WorkflowJob job = createPipeline();
@@ -72,6 +79,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerSuite {
      *         When slave creation or waiting for node start fails.
      */
     @Test
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     public void shouldRecordWithGccAndMake() throws Exception {
         DumbSlave agent = createAgent(gccDockerRule.get());
 
@@ -114,6 +122,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerSuite {
      * @throws Exception
      *         When slave creation or waiting for node start fails.
      */
+    @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     private DumbSlave createAgent(final DockerContainer container) throws Exception {
         DumbSlave node = new DumbSlave("docker", "/home/test",
                 new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));

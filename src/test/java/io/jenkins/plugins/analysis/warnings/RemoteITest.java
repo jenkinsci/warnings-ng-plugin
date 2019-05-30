@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.IOException;
-
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
@@ -9,7 +7,6 @@ import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Result;
 import hudson.model.Slave;
-import jenkins.security.s2m.AdminWhitelistRule;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
@@ -44,7 +41,7 @@ public class RemoteITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Lets a pipeline run on an agents and check if the details tab work still correctly
+     * Lets a pipeline run on an agents and check if the details tab work still correctly.
      */
     @Test
     public void detailsTabShouldWorkCorrectly() {
@@ -57,19 +54,14 @@ public class RemoteITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Lets a pipeline run on an agent who has to copy an file with issues back to the master with set security realm.
+     * Activated security is assured with {@link #initAgentAndProject(String)} using {@link
+     * #createAgentWithEnabledSecurity(String)}.
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-56007">Issue 56007</a>
-     * @throws IOException when persisting Jenkins config fails.
      */
     @Test
     @Issue("JENKINS-56007")
-    public void shouldCopyFilesToMasterWithSecurity() throws IOException {
-        // Enable Security and Master Access Control
-        getJenkins().getInstance().setSecurityRealm(getJenkins().createDummySecurityRealm());
-        getJenkins().getInstance().getInjector().getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false);
-        getJenkins().jenkins.save();
-        assertThat(getJenkins().getInstance().isUseSecurity()).isTrue();
-
+    public void shouldCopyFilesToMasterWithSecurity() {
         WorkflowJob job = initAgentAndProject("OpenTasks.txt");
 
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
@@ -90,7 +82,7 @@ public class RemoteITest extends IntegrationTestWithJenkinsPerTest {
      * @return Created pipeline
      */
     private WorkflowJob initAgentAndProject(final String file) {
-        Slave agent = createAgent("restricted-agent");
+        Slave agent = createAgentWithEnabledSecurity("restricted-agent");
         WorkflowJob job = createPipeline();
         job.setDefinition(new CpsFlowDefinition("pipeline {\n"
                 + "    agent { label 'restricted-agent' }\n"
