@@ -6,18 +6,17 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
+import hudson.model.Item;
 import hudson.model.Result;
 import hudson.plugins.git.GitSCM;
-import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
-import jenkins.plugins.git.GitSCMBuilder;
 import jenkins.plugins.git.GitSampleRepoRule;
-import jenkins.scm.api.SCMHead;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -27,11 +26,26 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
+/**
+ * Integration test for GitBlamer.
+ *
+ * @author Andreas Neumeier
+ * @author Tobias Redl
+ */
 public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
 
+    /**
+     * Git repository used for Testing.
+     */
     @Rule
     public GitSampleRepoRule gitRepo = new GitSampleRepoRule();
 
+    /**
+     * Test if Source Control Table contains a git blame issue when a simple Java syntax error occurs.
+     *
+     * @throws Exception
+     *         If the git commands used are failing.
+     */
     @Test
     public void shouldShowOneGitBlameWarning() throws Exception {
         final String fileName = "Hello.java";
@@ -59,9 +73,67 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Creates a Java FreestyleProject which checks out a newly created git repository and is capable of parsing Java warnings.
+     * Checks if git blame issues are generated properly if default checkout is disabled.
+     *
+     * @throws Exception
+     *         If the git commands used are failing.
+     */
+    @Issue("JENKINS-57260")
+    @Test
+    public void shouldShowGitBlameWarningWithDisabledDefaultCheckout() throws Exception {
+        gitRepo.init();
+        appendTextToFileInScm(gitRepo, "Hello.java", "class Hello {}", "John Doe", "John@localhost");
+
+        final String pipeline = "pipeline {\n"
+                + " agent any\n"
+                + " options {\n"
+                + "     skipDefaultCheckout()\n"
+                + " }\n"
+                + " stages {\n"
+                + "     stage('Prepare') {\n"
+                + "         steps {\n"
+                + "             dir('src') {\n"
+                + "                 checkout scm\n"
+                + "                 sh 'ls -ahl'\n"
+                + "             }\n"
+                + "         }\n"
+                + "     }\n"
+                + "     stage('Doxygen') {\n"
+                + "         steps {\n"
+                + "             dir('build/doxygen') {\n"
+                + "                 sh 'mkdir doxygen'\n"
+                + "                 sh 'echo \"src/Hello.java:1: Error: No Javadoc for Class\" > doxygen/doxygen.log'\n"
+                + "             }\n"
+                + "         recordIssues(aggregatingResults: true, enabledForFailure: true, tools: [ doxygen(name: 'Doxygen', pattern: 'build/doxygen/doxygen/doxygen.log') ] )\n"
+                + "         }\n"
+                + "     }\n"
+                + " }\n"
+                + "}";
+
+        WorkflowJob project = createPipeline();
+        appendTextToFileInScm(gitRepo, "Pipeline.txt", pipeline, "Pipeline", "root@localhost");
+        project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Pipeline.txt"));
+        AnalysisResult analysisResult = scheduleSuccessfulBuild(project);
+        assertThat(analysisResult).hasTotalSize(1);
+
+        //HtmlPage detailsPage = getDetailsWebPage(project, analysisResult);
+        //SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
+
+        //List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
+        //assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("John Doe");
+        //assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("John@localhost");
+        //assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo("Hello.java:1");
+        //assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
+        //        "No Javadoc for Class");
+    }
+
+    /**
+     * Creates a Java FreestyleProject which checks out a newly created git repository and is capable of parsing Java
+     * warnings.
+     *
      * @return A Java Freestyle project.
-     * @throws Exception If git commands fail to execute.
+     * @throws Exception
+     *         If git commands fail to execute.
      */
     private FreeStyleProject createScmJavaFreestyleProject()
             throws Exception {
@@ -78,11 +150,18 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Writes an Java warning into a given repository.
-     * @param repository The repository containing the error.
-     * @param javaFile The file containing an error.
-     * @param lineNumber The line containing the error.
-     * @param warningText The javac error message.
-     * @throws Exception If git commands used to commit the warning are failing.
+     *
+     * @param repository
+     *         The repository containing the error.
+     * @param javaFile
+     *         The file containing an error.
+     * @param lineNumber
+     *         The line containing the error.
+     * @param warningText
+     *         The javac error message.
+     *
+     * @throws Exception
+     *         If git commands used to commit the warning are failing.
      */
     private void saveJavaWarningToScm(final GitSampleRepoRule repository, final String javaFile,
             final int lineNumber, final String warningText) throws Exception {
@@ -93,11 +172,15 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Returns the details page of a job.
-     * @param project The project containing the job.
-     * @param result The result to use.
+     *
+     * @param project
+     *         The project containing the job.
+     * @param result
+     *         The result to use.
+     *
      * @return The web page containing build details.
      */
-    private HtmlPage getDetailsWebPage(final FreeStyleProject project, final AnalysisResult result) {
+    private HtmlPage getDetailsWebPage(final Item project, final AnalysisResult result) {
         int buildNumber = result.getBuild().getNumber();
         String pluginId = result.getId();
         return getWebPage(JavaScriptSupport.JS_ENABLED, project, String.format("%d/%s", buildNumber, pluginId));
@@ -105,12 +188,20 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Appends text to an file and adds the changes to the repository given.
-     * @param repository The repository to commit to.
-     * @param fileName The file to append to.
-     * @param text The text to append.
-     * @param user The user who commits the change.
-     * @param email The email of the user committing.
-     * @throws Exception If the git commands are failing.
+     *
+     * @param repository
+     *         The repository to commit to.
+     * @param fileName
+     *         The file to append to.
+     * @param text
+     *         The text to append.
+     * @param user
+     *         The user who commits the change.
+     * @param email
+     *         The email of the user committing.
+     *
+     * @throws Exception
+     *         If the git commands are failing.
      */
     private void appendTextToFileInScm(final GitSampleRepoRule repository, final String fileName, final String text,
             final String user, final String email) throws Exception {
