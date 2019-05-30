@@ -15,6 +15,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Item;
+import hudson.tasks.BuildStep;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -44,125 +45,90 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
         copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
 
-        Java java = new Java();
-        java.setPattern(JAVA_FILE);
-        java.setId("hm-edu1");
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(java);
-        publisher.setHealthy(1);
-        publisher.setUnhealthy(9);
-        publisher.setBlameDisabled(true);
+        final String toolId = "hm-edu1";
+        final String toolId2 = "hm-edu2";
 
-        Java java2 = new Java();
-        java2.setPattern(JAVA_PATTERN);
-        java2.setId("hm-edu2");
-        IssuesRecorder publisher2 = new IssuesRecorder();
-        publisher2.setTools(java2);
-        publisher2.setHealthy(1);
-        publisher2.setUnhealthy(3);
-        publisher2.setBlameDisabled(true);
+        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, toolId, false, 1, 9);
+        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, toolId2, false, 1, 3);
 
         project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
-                new ConditionalPublisher(
-                        new AlwaysRun(),
-                        Collections.singletonList(
-                                publisher
-                        ),
-                        new Run(),
-                        false,
-                        null,
-                        null,
-                        null
-                ),
-                new ConditionalPublisher(
-                        new AlwaysRun(),
-                        Collections.singletonList(
-                                publisher2
-                        ),
-                        new Run(),
-                        false,
-                        null,
-                        null,
-                        null
-                )
+                constructConditionalPublisher(publisher),
+                constructConditionalPublisher(publisher2)
         )));
 
         AnalysisResult analysisResult = scheduleSuccessfulBuild(project);
         assertThat(analysisResult.isSuccessful()).isEqualTo(true);
         HealthReport healthReport = project.getBuildHealth();
         assertThat(healthReport.getScore()).isEqualTo(0);
-        checkDetailsViewForIssues(project, analysisResult, java.getId(), 2);
-        checkDetailsViewForIssues(project, analysisResult, java2.getId(), 4);
+        checkDetailsViewForIssues(project, analysisResult, toolId, 2);
+        checkDetailsViewForIssues(project, analysisResult, toolId2, 4);
     }
 
     /**
-     * Test that the same tool can be used twice with different configuration.
+     * Test that the same tool can be used twice with different configuration and is aggregated afterwards.
      */
     @Test
-    public void shouldAnalyseJavaTwice2() {
+    public void shouldAnalyseJavaWithAggregation() {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
         copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
 
-        Java java = new Java();
-        java.setPattern(JAVA_FILE);
-        java.setId("hm-edu1");
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(java);
-        publisher.setHealthy(1);
-        publisher.setUnhealthy(9);
-        publisher.setBlameDisabled(true);
+        final String toolId = "hm-edu1";
+        final String toolId2 = "hm-edu2";
 
-        Java java2 = new Java();
-        java2.setPattern(JAVA_PATTERN);
-        java2.setId("hm-edu2");
-        IssuesRecorder publisher2 = new IssuesRecorder();
-        publisher2.setTools(java2);
-        publisher2.setHealthy(1);
-        publisher2.setUnhealthy(3);
-        publisher2.setBlameDisabled(true);
+        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, toolId, true);
+        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, toolId2, true);
 
         project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
-                new ConditionalPublisher(
-                        new AlwaysRun(),
-                        Collections.singletonList(
-                                publisher
-                        ),
-                        new Run(),
-                        true,
-                        null,
-                        null,
-                        null
-                ),
-                new ConditionalPublisher(
-                        new AlwaysRun(),
-                        Collections.singletonList(
-                                publisher2
-                        ),
-                        new Run(),
-                        true,
-                        null,
-                        null,
-                        null
-                )
+                constructConditionalPublisher(publisher),
+                constructConditionalPublisher(publisher2)
         )));
 
         AnalysisResult analysisResult = scheduleSuccessfulBuild(project);
         assertThat(analysisResult.isSuccessful()).isEqualTo(true);
-        HealthReport healthReport = project.getBuildHealth();
-        assertThat(healthReport.getScore()).isEqualTo(0);
-        checkDetailsViewForIssues(project, analysisResult, java.getId(), 2);
-        checkDetailsViewForIssues(project, analysisResult, java2.getId(), 4);
+        //is there a bug with the aggregation?
+        checkDetailsViewForIssues(project, analysisResult, toolId, 6);
     }
 
-    /**
-     * Checks if the Issue Table contains the given amount of issues.
-     * @param project
-     * @param analysisResult
-     * @param publisherId
-     * @param warnings
-     */
-    private void checkDetailsViewForIssues(final Item project, final AnalysisResult analysisResult, final String publisherId, final int warnings) {
+    private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id,
+            final boolean setAggregation) {
+        return constructJavaIssuesRecorder(patter, id, setAggregation, 0, 0);
+    }
+
+    private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id,
+            final boolean setAggregation,
+            final int healthy, final int unhealthy) {
+        Java java = new Java();
+        java.setPattern(patter);
+        java.setId(id);
+        IssuesRecorder publisher = new IssuesRecorder();
+        publisher.setTools(java);
+        if (healthy != 0 && unhealthy != 0) {
+            publisher.setHealthy(healthy);
+            publisher.setUnhealthy(unhealthy);
+        }
+        publisher.setBlameDisabled(true);
+        publisher.setAggregatingResults(setAggregation);
+
+        return publisher;
+    }
+
+    private ConditionalPublisher constructConditionalPublisher(final BuildStep publisher) {
+        return new ConditionalPublisher(
+                new AlwaysRun(),
+                Collections.singletonList(
+                        publisher
+                ),
+                new Run(),
+                false,
+                null,
+                null,
+                null
+        );
+    }
+
+    private void checkDetailsViewForIssues(final Item project, final AnalysisResult analysisResult,
+            final String publisherId, final int warnings) {
         HtmlPage detailsPage = getDetailsWebPage(project, analysisResult, publisherId);
         IssuesTable issuesTable = new IssuesTable(detailsPage);
         List<IssueRow> issuesTableRows = issuesTable.getRows();
@@ -170,18 +136,7 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(issuesTableRows.size()).isEqualTo(warnings);
     }
 
-
-    /**
-     * Returns the details page of a job.
-     *
-     * @param project
-     *         The project containing the job.
-     * @param result
-     *         The result to use.
-     *
-     * @return The web page containing build details.
-     */
-    private HtmlPage getDetailsWebPage(final Item project, final AnalysisResult result, String publisherId) {
+    private HtmlPage getDetailsWebPage(final Item project, final AnalysisResult result, final String publisherId) {
         int buildNumber = result.getBuild().getNumber();
         return getWebPage(JavaScriptSupport.JS_ENABLED, project, String.format("%d/%s", buildNumber, publisherId));
     }
