@@ -10,6 +10,7 @@ import org.jvnet.hudson.test.Issue;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
@@ -94,8 +95,7 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
                 + "stage('Prepare') {\n"
                 + "  steps {\n"
                 + "    dir('src') {\n"
-                + "      checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: '"
-                + gitRepo.fileUrl() + "']]])\n"
+                + "      checkout scm\n"
                 + "    }\n"
                 + "  }\n"
                 + "}\n"
