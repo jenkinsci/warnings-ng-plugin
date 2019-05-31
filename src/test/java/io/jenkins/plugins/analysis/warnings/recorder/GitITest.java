@@ -45,11 +45,11 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * Creates a java file with commits by two different users and checks if the details in the source control table
      * table reflects the information of the commits.
      *
-     * @throws Exception
-     *         on exception in the git plugin.
+     * @throws IOException
+     *         if file writes fail.
      */
     @Test
-    public void shouldGetCommitDetailsForWarnings() throws Exception {
+    public void shouldGetCommitDetailsForWarnings()  throws IOException {
         final FreeStyleProject project = createJavaWarningsFreestyleProject();
 
         createRepositoryInProject(project);
@@ -84,11 +84,11 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * table reflects the information of the commits. The commits override the same lines multiple times, the details
      * should only display the most recent author.
      *
-     * @throws Exception
-     *         on exception in the git plugin.
+     * @throws IOException
+     *         if file writes fail.
      */
     @Test
-    public void shouldGetCommitDetailsWithOverwritingCommits() throws Exception {
+    public void shouldGetCommitDetailsWithOverwritingCommits() throws IOException {
         final FreeStyleProject project = createJavaWarningsFreestyleProject();
 
         createRepositoryInProject(project);
@@ -134,17 +134,17 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * This tests the behaviour of [JENKINS-57260].
      *
-     * @throws Exception
-     *         if git commands fail to execute.
+     * @throws IOException
+     *         if file writes fail.
      */
     @Test
-    public void shouldGitBlameForOutOfTreeSources() throws Exception {
+    public void shouldGitBlameForOutOfTreeSources() throws IOException {
         String fileName = "helloWorld.java";
         final FreeStyleProject project = createJavaWarningsFreestyleProject();
 
         // Copied code to init repo
-        repository.init();
-        repository.git("checkout", "master");
+        initGitRepository();
+        doGitCommand("checkout", "master");
         GitSCMBuilder builder = new GitSCMBuilder(new SCMHead("master"), null, repository.fileUrl(), null)
                 .withExtension(new RelativeTargetDirectory("src"));
         project.setScm(builder.build());
@@ -193,15 +193,17 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      *
      * @param project
      *         The project to add the git repository to.
-     *
-     * @throws Exception
-     *         on exception in the git plugin.
      */
-    private void createRepositoryInProject(final FreeStyleProject project)
-            throws Exception {
-        repository.init();
-        repository.git("checkout", "master");
-        project.setScm(new GitSCM(repository.fileUrl()));
+    @SuppressWarnings("IllegalCatch") // Exception is thrown by git tool
+    private void createRepositoryInProject(final FreeStyleProject project) {
+        try {
+            repository.init();
+            doGitCommand("checkout", "master");
+            project.setScm(new GitSCM(repository.fileUrl()));
+        }
+        catch (Exception initException) {
+            throw new AssertionError("Unable to initialize a repository in project", initException);
+        }
     }
 
     /**
@@ -212,8 +214,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @param warningText
      *         The message the created warning will contain.
      */
-    private void createJavaWarningInRepository(final int lineNumber, final String warningText)
-            throws Exception {
+    private void createJavaWarningInRepository(final int lineNumber, final String warningText) throws IOException {
         String warningsFile = "javac_warnings.txt";
         String warning = String.format("[WARNING] %s:[%d,42] [deprecation] %s\n", SRC_FILE_NAME, lineNumber,
                 warningText);
@@ -248,19 +249,18 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @param email
      *         The email in the commit message.
      *
-     * @throws Exception
-     *         on exception in the git plugin.
+     * @throws IOException
+     *         writing to file failed.
      */
     private void appendTextToFileInRepository(final String fileName,
-            final String text, final String user, final String email)
-            throws Exception {
-        repository.git("config", "user.name", user);
-        repository.git("config", "user.email", email);
+            final String text, final String user, final String email) throws IOException {
+        doGitCommand("config", "user.name", user);
+        doGitCommand("config", "user.email", email);
 
         appendTextToFile(repository.getRoot(), fileName, text);
 
-        repository.git("add", fileName);
-        repository.git("commit", "-m", "Adding to " + fileName, fileName);
+        doGitCommand("add", fileName);
+        doGitCommand("commit", "-m", "Adding to " + fileName, fileName);
     }
 
     /**
@@ -275,14 +275,13 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
      * @param email
      *         The email in the commit message.
      *
-     * @throws Exception
-     *         if one or more git command fails.
+     * @throws IOException
+     *         if the file is not able to be written to.
      */
     private void replaceLineInRepository(final int lineToReplace, final String text, final String user,
-            final String email)
-            throws Exception {
-        repository.git("config", "user.name", user);
-        repository.git("config", "user.email", email);
+            final String email) throws IOException {
+        doGitCommand("config", "user.name", user);
+        doGitCommand("config", "user.email", email);
 
         Path targetFile = new File(repository.getRoot(), SRC_FILE_NAME).toPath();
         List<String> lines = Files.readAllLines(targetFile);
@@ -303,8 +302,8 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
         Files.write(targetFile, outputBuilder.toString().getBytes());
 
-        repository.git("add", "helloWorld.java");
-        repository.git("commit", "-m", "File update");
+        doGitCommand("add", "helloWorld.java");
+        doGitCommand("commit", "-m", "File update");
     }
 
     /**
@@ -323,5 +322,34 @@ public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     private void appendTextToFile(final File path, final String fileName, final String text) throws IOException {
         Path file = new File(path, fileName).toPath();
         Files.write(file, text.getBytes(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
+
+    /**
+     * Initializes the Git Repository.
+     * Handles all possible Exceptions with Assertion Errors.
+     */
+    @SuppressWarnings("IllegalCatch") // Exception is thrown by git tool
+    private void initGitRepository() {
+        try {
+            repository.init();
+        }
+        catch (Exception gitException) {
+            throw new AssertionError("Git initialization of repository failed", gitException);
+        }
+    }
+
+    /**
+     * Executes a git command on the test repository.
+     * Handles all possible Exceptions with Assertion Errors.
+     * @param cmds to be executed on the repository.
+     */
+    @SuppressWarnings("IllegalCatch") // Exception is thrown by git tool
+    private void doGitCommand(final String... cmds) {
+        try {
+            repository.git(cmds);
+        }
+        catch (Exception gitException) {
+            throw new AssertionError("Git command on repository failed", gitException);
+        }
     }
 }

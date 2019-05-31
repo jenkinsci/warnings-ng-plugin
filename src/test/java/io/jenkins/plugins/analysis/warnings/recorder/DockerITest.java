@@ -43,13 +43,10 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Creates a minimal maven project and builds it on the java slave. The created java warnings are collected and
      * checked.
-     *
-     * @throws Exception
-     *         if creation of agent fails.
      */
     @Test
-    public void shouldDoMavenBuildOnSlave() throws Exception {
-        JavaContainer javaContainer = javaDockerRule.get();
+    public void shouldDoMavenBuildOnSlave() {
+        JavaContainer javaContainer = retrieveContainer(javaDockerRule);
         DumbSlave agent = createAgentForContainer(javaContainer);
 
         WorkflowJob project = createPipeline();
@@ -82,13 +79,10 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Create a minimal C Project and build it.
-     *
-     * @throws Exception
-     *         if creation of agent fails.
      */
     @Test
-    public void shouldDoGCCBuildOnSlave() throws Exception {
-        GccContainer gccContainer = gccDockerRule.get();
+    public void shouldDoGCCBuildOnSlave() {
+        GccContainer gccContainer = retrieveContainer(gccDockerRule);
         DumbSlave agent = createAgentForContainer(gccContainer);
 
         WorkflowJob project = createPipeline();
@@ -137,19 +131,45 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
+     * Savely retrieve the container created by a Rule Object. Throws a Assertion error if retrieving fails.
+     *
+     * @param dockerRule
+     *         from which the container will be retrieved
+     * @param <T>
+     *         Class of the resulting container.
+     *
+     * @return A Docker Container Object.
+     */
+    private <T extends DockerContainer> T retrieveContainer(final DockerRule<T> dockerRule) {
+        T container;
+        try {
+            container = dockerRule.get();
+        }
+        catch (IOException | InterruptedException dockerException) {
+            throw new AssertionError("Unable to retrieve Docker container", dockerException);
+        }
+        return container;
+    }
+
+    /**
      * Creates a Agent which will run on the given container to execute jenkins jobs on.
      *
      * @param container
      *         which will run the agent.
      *
      * @return the build slave
-     * @throws Exception
-     *         If an error occurs when the Jenkins node is created.
      */
-    private DumbSlave createAgentForContainer(final SshdContainer container) throws Exception {
-        DumbSlave agent = createAgent(container);
-        getJenkins().jenkins.addNode(agent);
-        getJenkins().waitOnline(agent);
+    @SuppressWarnings("IllegalCatch") // Exception is thrown by used test tool
+    private DumbSlave createAgentForContainer(final SshdContainer container) {
+        DumbSlave agent = null;
+        try {
+            agent = createAgent(container);
+            getJenkins().jenkins.addNode(agent);
+            getJenkins().waitOnline(agent);
+        }
+        catch (Exception creationError) {
+            throw new AssertionError("Creation of Agent failed", creationError);
+        }
 
         return agent;
     }
