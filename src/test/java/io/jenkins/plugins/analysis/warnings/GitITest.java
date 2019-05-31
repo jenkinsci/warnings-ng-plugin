@@ -9,6 +9,8 @@ import org.jvnet.hudson.test.Issue;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.plugins.git.GitSCM;
@@ -19,7 +21,6 @@ import jenkins.scm.api.SCMHead;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
@@ -192,6 +193,37 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(controlRows).hasSize(1);
         validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1, TEST_CLASS_FILE_NAME);
 
+    }
+
+    @Test
+    //FIXME: enable blaming does not work
+    /**
+     * Alternative test with pipeline for bug JENKINS-57260
+     */
+    public void shouldBlameOutOfTreeBuildsWithPipeLine() throws Exception {
+        setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
+        writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
+        writeAndCommitFile("Jenkinsfile",
+                "node {\n"
+                        + "     agent 'any'\n"
+                        + "     stage ('Checkout and Analysis') {\n"
+                        + "         dir('src') {\n"
+                        + "             checkout scm\n"
+                        + "         }\n"
+                        + "     }\n"
+                        + "     stage (' Analysis') {\n"
+                        + "         dir('build') {\n"
+                        + "             sh 'echo \"src/Test.java:6: warning: [cast] redundant cast to String\" >Warnings.txt'\n"
+                        + "         }\n"
+                        + "         recordIssues(tool: java(pattern: 'build/Warnings.txt'), blameDisabled: false)\n"
+                        + "     }\n"
+                        + " }",
+                "add jenkinsfile");
+
+        WorkflowJob job = createPipeline();
+        job.setDefinition(new CpsScmFlowDefinition(new GitSCM(repository.toString()), "Jenkinsfile"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
     }
 
     private FreeStyleProject initFreeStyleProject() throws Exception {
