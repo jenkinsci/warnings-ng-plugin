@@ -215,7 +215,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createPipeline();
         copySingleFileToAgentWorkspace(agent, job, "Test.c", "Test.c");
 
-        job.setDefinition(new CpsFlowDefinition("node('gcc') {\n"
+        job.setDefinition(new CpsFlowDefinition("node('" + SLAVE_LABEL + "') {\n"
                 + "     stage ('Build and Analysis') {\n"
                 + "         sh 'gcc Test.c'\n"
                 + "         recordIssues enabledForFailure: true, tool: gcc()\n"
