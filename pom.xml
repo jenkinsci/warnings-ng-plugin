@@ -12,7 +12,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>5.1.0-SNAPSHOT</version>
+  <version>5.2.0-SNAPSHOT</version>
   <url>https://wiki.jenkins.io/x/1YTeCQ</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -243,8 +243,8 @@
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
-      <version>${jackson-databind.version}</version>
       <artifactId>jackson-databind</artifactId>
+      <version>${jackson-databind.version}</version>
     </dependency>
 
     <!-- Required Jenkins Plug-in Dependencies -->
@@ -409,7 +409,6 @@
       <version>1.8</version>
       <scope>test</scope>
     </dependency>
-
     <!-- Timestamper plugin -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -752,7 +751,6 @@
           </dependency>
         </dependencies>
         <configuration>
-          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
@@ -774,6 +772,11 @@
                 <code>.*</code>
                 <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
                 <justification>The tool is not part of API.</justification>
+              </item>
+              <item>
+                <code>java.method.removed</code>
+                <methodName>doResetReference</methodName>
+                <justification>See SECURITY-1391.</justification>
               </item>
             </revapi.ignore>
             <!-- Always ignore Jenkins API -->
