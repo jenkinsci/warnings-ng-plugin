@@ -20,6 +20,7 @@ import jenkins.scm.api.SCMHead;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
 
@@ -31,7 +32,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Colin Kaschel
  * @author Nils Engelbrecht
  */
-public class GitITest extends IntegrationTestWithJenkinsPerSuite {
+public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Git rule for itest.
