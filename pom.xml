@@ -751,6 +751,7 @@
           </dependency>
         </dependencies>
         <configuration>
+          <skip>true</skip>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
