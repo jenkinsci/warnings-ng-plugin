@@ -19,15 +19,19 @@ import hudson.slaves.DumbSlave;
 import hudson.util.StreamTaskListener;
 import hudson.util.VersionNumber;
 
+import io.jenkins.plugins.analysis.core.testutil.GccDockerContainer;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.*;
 
-public class DockerContainerITest extends IntegrationTestWithJenkinsPerTest {
+public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
     @Rule
     public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
+    @Rule
+    public DockerRule<GccDockerContainer> gccDockerRule = new DockerRule<>(GccDockerContainer.class);
 
     @BeforeClass
     public static void assumeThatWeAreRunningLinux() throws Exception {
@@ -45,17 +49,17 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     @Test
-    public void shouldStartAgent() {
-        DumbSlave agent = createAgent();
+    public void shouldStartAgent() throws IOException, InterruptedException {
+        DumbSlave agent = createDockerContainerAgent(javaDockerRule.get());
 
         assertThat(agent.getWorkspaceRoot().getName()).isEqualTo("/home/test/workspace");
     }
 
-    private DumbSlave createAgent() {
+    private DumbSlave createDockerContainerAgent(final DockerContainer dockerContainer) {
         try {
-            JavaContainer javaContainer = javaDockerRule.get();
+            DumbSlave agent = new DumbSlave("docker", "/home/test",
+                    new SSHLauncher(dockerContainer.ipBound(22), dockerContainer.port(22), "test", "test", "", ""));
 
-            DumbSlave agent = createAgent(javaContainer);
             getJenkins().jenkins.addNode(agent);
             getJenkins().waitOnline(agent);
 
@@ -64,11 +68,5 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerTest {
         catch (Exception e) {
             throw new AssertionError(e);
         }
-
-    }
-
-    private DumbSlave createAgent(final DockerContainer container) throws FormException, IOException {
-        return new DumbSlave("docker", "/home/test",
-                new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));
     }
 }
