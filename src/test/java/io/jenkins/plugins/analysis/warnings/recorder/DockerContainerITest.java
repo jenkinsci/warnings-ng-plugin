@@ -44,8 +44,10 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Build a maven project on a docker container agent.
      *
-     * @throws IOException When the node assignment of the agent fails.
-     * @throws InterruptedException If the creation of the docker container fails.
+     * @throws IOException
+     *         When the node assignment of the agent fails.
+     * @throws InterruptedException
+     *         If the creation of the docker container fails.
      */
     @Test
     public void shouldBuildMavenOnAgent() throws IOException, InterruptedException {
@@ -73,8 +75,10 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Runs a make file to compile a cpp file on a docker container agent.
      *
-     * @throws IOException When the node assignment of the agent fails.
-     * @throws InterruptedException If the creation of the docker container fails.
+     * @throws IOException
+     *         When the node assignment of the agent fails.
+     * @throws InterruptedException
+     *         If the creation of the docker container fails.
      */
     @Test
     public void shouldBuildMakefileOnAgent() throws IOException, InterruptedException {

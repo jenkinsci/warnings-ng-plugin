@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
@@ -25,6 +26,9 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 /**
  * Integration Test for the git blame functionality.
+ *
+ * @author Andreas Reiser
+ * @author Andreas Moser
  */
 public class BlameITest extends IntegrationTestWithJenkinsPerTest {
 
@@ -41,6 +45,9 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
     @Rule
     public GitSampleRepoRule gitRepo = new GitSampleRepoRule();
 
+    /**
+     * Tests if git blame work correctly in a simple project with one issue.
+     */
     @Test
     public void shouldBlameOneIssueInSimpleProject() {
 
@@ -73,6 +80,44 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
                         ERROR_MAIL, testCommit, 1));
     }
 
+    /**
+     * Tests if git blame work correctly if a user changes the content of a file.
+     */
+    @Test
+    public void shouldBlameCorrectUserAfterChangingFile() {
+        initRepository();
+        createAndCommitFile("File.java", "public class Test {}");
+        changeUser(ALERT_AUTHOR, ALERT_MAIL);
+        createAndCommitFile("File.java", "public class Test2 {}");
+        final String testCommit = getHead();
+
+        createAndCommitFile("Jenkinsfile", "node {\n"
+                + "  stage ('Checkout') {\n"
+                + "    checkout scm\n"
+                + "  }\n"
+                + "  stage ('Build and Analysis') {"
+                + "    echo '[javac] File.java:1: warning: Test Warning'\n"
+                + "    recordIssues tools: [java()]\n"
+                + "  }\n"
+                + "}");
+
+        WorkflowJob project = createPipeline();
+        project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(project);
+        assertBlameCount(result, 1, 1);
+
+        SourceControlTable table = getSourceControlTable(result);
+
+        assertThat(table.getRows()).hasSize(1);
+        assertThat(table.getRows()).containsExactly(
+                new SourceControlRow("Test Warning", "File.java:1", ALERT_AUTHOR,
+                        ALERT_MAIL, testCommit, 1));
+    }
+
+    /**
+     * Tests if git blame works correctly with multiple users and commits.
+     */
     @Test
     public void shouldBlameThreeIssuesInMultiCommitProject() {
 
@@ -114,6 +159,7 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Test if blaming works on a build out of tree. See JENKINS-57260.
      */
+    @Issue("JENKINS-57260")
     @Test
     public void shouldBlameWithBuildOutOfTree() {
         initRepository();
@@ -160,12 +206,13 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
                         ERROR_MAIL, commit, 1));
     }
 
+    @SuppressWarnings("IllegalCatch")
     private String getHead() {
         try {
             return gitRepo.head();
         }
         catch (Exception e) {
-            throw new IllegalStateException("Unexpected IOException", e);
+            throw new IllegalStateException("Unexpected Exception", e);
         }
     }
 
@@ -189,8 +236,8 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
                         "-> blamed authors of issues in " + numberOfFiles + " files");
     }
 
+    @SuppressWarnings("IllegalCatch")
     private void initRepository() throws IllegalStateException {
-
         try {
             gitRepo.init();
             changeUser(ERROR_AUTHOR, ERROR_MAIL);
@@ -200,6 +247,7 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
         }
     }
 
+    @SuppressWarnings("IllegalCatch")
     private void changeUser(final String name, final String mail) throws IllegalStateException {
         try {
             gitRepo.git("config", "user.name", name);
@@ -234,6 +282,7 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
         return commits;
     }
 
+    @SuppressWarnings("IllegalCatch")
     private void createAndCommitFile(final String fileName, final String content) throws IllegalStateException {
         try {
             gitRepo.write(fileName, content);
