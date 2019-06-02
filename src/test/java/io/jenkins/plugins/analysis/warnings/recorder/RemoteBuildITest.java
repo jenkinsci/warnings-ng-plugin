@@ -4,28 +4,39 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Slave;
-import hudson.slaves.DumbSlave;
 import hudson.tasks.Maven;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.MavenConsole;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
+/**
+ * Tests remote builds on a dump slave agent.
+ *
+ * @author Andreas Reiser
+ * @author Andreas Moser
+ */
 public class RemoteBuildITest extends IntegrationTestWithJenkinsPerSuite {
 
+    /**
+     * Build a maven project on a dump slave.
+     */
     @Test
-    public void shouldBuildEmptyMavenProjectOnRemoteAgent() throws IOException {
+    public void shouldBuildEmptyMavenProjectOnRemoteAgent() {
         String remoteAgentLabel = "remoteAgent";
         Slave remoteAgent = createAgent(remoteAgentLabel);
         FreeStyleProject project = createFreeStyleProject();
-        project.setAssignedNode(remoteAgent);
+        try {
+            project.setAssignedNode(remoteAgent);
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
 
         createFileInAgentWorkspace(remoteAgent, project, "pom.xml", "    <project>\n"
                 + "      <modelVersion>4.0.0</modelVersion>\n"
@@ -47,5 +58,4 @@ public class RemoteBuildITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasTotalSize(1);
         assertThat(lastBuild.getBuiltOn().getLabelString()).isEqualTo(remoteAgentLabel);
     }
-
 }
