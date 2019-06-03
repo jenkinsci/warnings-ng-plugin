@@ -155,6 +155,11 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 .hasSeverity(Severity.WARNING_HIGH);
     }
 
+    /**
+     * Parses a colored console log that also contains console notes. Verifies that the console notes will be removed
+     * before the color codes. Output is from ATH test case
+     * {@code WarningsNextGenerationPluginTest#should_show_maven_warnings_in_maven_project}.
+     */
     @Test
     public void shouldRemoveConsoleLogNotesBeforeRemovingColorCodes() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("ath-colored.log");
