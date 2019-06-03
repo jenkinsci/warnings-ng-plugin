@@ -1,0 +1,17 @@
+jobs:
+  - script: >
+      freeStyleJob('freestyle-analysis-model') {
+          publishers {
+              recordIssues {
+                  tool {
+                      spotBugs {
+                           id('bugs')
+                           name('SpotBugs Warnungen')
+                           pattern('**/spotbugsXml.xml')
+                           reportEncoding('UTF-8')
+                           useRankAsPriority(true)
+                     }
+                  }
+              }
+          }
+      };
