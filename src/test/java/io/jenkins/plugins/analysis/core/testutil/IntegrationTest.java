@@ -36,6 +36,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import edu.hm.hafner.util.ResourceTest;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.flow.FlowDefinition;
@@ -114,6 +115,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected abstract WebClient getWebClient(JavaScriptSupport javaScriptSupport);
 
+    @SuppressFBWarnings(value = "LG", justification = "Setting the logger here helps to clean up the console log for tests")
     static WebClient create(final JenkinsRule jenkins, final boolean isJavaScriptEnabled) {
         WebClient webClient = jenkins.createWebClient();
         webClient.setCssErrorHandler(new SilentCssErrorHandler());
