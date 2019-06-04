@@ -171,12 +171,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(result).hasTotalSize(2);
         assertThat(result.getIssues().get(0))
-                .hasLineStart(28)
-                .hasLineEnd(28 + 7)
                 .hasSeverity(Severity.WARNING_NORMAL);
         assertThat(result.getIssues().get(1))
-                .hasLineStart(43)
-                .hasLineEnd(43)
                 .hasDescription("<pre><code>Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!</code></pre>")
                 .hasSeverity(Severity.WARNING_NORMAL);
     }
