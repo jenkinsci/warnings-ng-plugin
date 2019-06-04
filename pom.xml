@@ -104,6 +104,14 @@
     </license>
   </licenses>
 
+  <developers>
+    <developer>
+      <name>Ullrich Hafner</name>
+      <id>uhafner</id>
+      <email>ullrich.hafner@gmail.com</email>
+    </developer>
+  </developers>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
