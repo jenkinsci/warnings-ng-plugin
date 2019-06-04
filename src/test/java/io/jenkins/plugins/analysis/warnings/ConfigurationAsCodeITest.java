@@ -85,7 +85,7 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
 
     private void configureJenkins(final String fileName) {
         try {
-            ConfigurationAsCode.get().configure(getResourceAsFile(fileName).toString());
+            ConfigurationAsCode.get().configure(getResourceAsFile(fileName).toUri().toString());
         }
         catch (ConfiguratorException e) {
             throw new AssertionError(e);
