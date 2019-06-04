@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.File;
-
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -10,7 +8,6 @@ import edu.hm.hafner.util.PathUtil;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import hudson.FilePath;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -82,10 +79,6 @@ public class TimestamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(issue).hasLineStart(1);
         assertThat(issue).hasMessage("This is an error.");
         assertThat(issue).hasSeverity(Severity.WARNING_HIGH);
-    }
-
-    private FilePath getAbsolutePath(final Issue issue) {
-        return new FilePath(new File(issue.getFileName()));
     }
 }
 
