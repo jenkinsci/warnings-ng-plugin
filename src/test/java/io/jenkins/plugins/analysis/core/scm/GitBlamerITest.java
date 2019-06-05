@@ -34,6 +34,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Fabian Janker
  * @author Andreas Pabst
  */
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
