@@ -262,11 +262,14 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     /**
-     * Workaround for Stapler bug: JavaScript method in target object is not found.
+     * Empty method as workaround for Stapler bug: JavaScript method in target object is not found.
+     *
+     * @return unused string (since Firefox requires that Ajax calls return something)
      */
     @JavaScriptMethod
     @SuppressWarnings("unused")
-    public void resetReference() {
-        // Workaround for Stapler bug that does not find JavaScript proxy methods in target object IssueDetail
+    public String resetReference() {
+        // Empty method as workaround for Stapler bug that does not find JavaScript proxy methods in target object IssueDetail
+        return "{}";
     }
 }

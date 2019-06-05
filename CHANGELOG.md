@@ -17,6 +17,7 @@ Added a parser for MentorGraphcis Modelsim/Questa.
 ### Fixed 
 - [JENKINS-56007](https://issues.jenkins-ci.org/browse/JENKINS-56007): Obtain the affected files in a process on the 
 master (rather than pushing them from the agent to the master) so that master - agent security will not block the copy process. 
+- Fix resetting of reference build in Firefox.
 
 ## [5.1.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.0.0...warnings-ng-5.1.0) - 2019-5-31
 

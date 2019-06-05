@@ -13,9 +13,10 @@
 
     if (button) {
         button.addEventListener('click', async _ => {
-                hoverNotification("${%resetting.notification(it.id)}", button.parentNode);
+                hoverNotification("${%resetting.notification(it.id)}",
+                    document.getElementById("${it.id}-resetReference").parentNode);
                 var proxy = <st:bind value="${it}"/>;
-                proxy.resetReference(function (t) {
+                proxy.resetReference(function () {
                         document.getElementById("${it.id}-resetReference").remove();
                 });
         });
