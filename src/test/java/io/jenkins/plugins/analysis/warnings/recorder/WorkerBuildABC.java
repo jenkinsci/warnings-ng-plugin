@@ -28,7 +28,7 @@ abstract class WorkerBuildABC extends IntegrationTestWithJenkinsPerSuite {
             project.setAssignedNode(worker);
         }
         catch (IOException exception) {
-            throw new RuntimeException(exception);
+            throw new AssertionError(exception);
         }
         buildSuccessfully(project);
 

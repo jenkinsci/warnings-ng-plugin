@@ -11,9 +11,4 @@ import org.jenkinsci.test.acceptance.docker.fixtures.SshdContainer;
         ports = {22, 8080}
 )
 public class GccContainer extends SshdContainer {
-    /**
-     * Default constructor to get no warning.
-     */
-    public GccContainer() {
-    }
 }
