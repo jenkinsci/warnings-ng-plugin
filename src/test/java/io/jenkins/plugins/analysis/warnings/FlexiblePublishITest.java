@@ -12,14 +12,18 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Item;
 import hudson.tasks.BuildStep;
 
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 
@@ -35,14 +39,14 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JAVA_FILE = "java2Warnings.txt";
     private static final String JAVA_FILE2 = "java-start.txt";
     private static final String JAVA_PATTERN = "**/*.txt";
-    private static final String TOOL_ID = "hm-edu1";
-    private static final String TOOL_ID2 = "hm-edu2";
+    private static final String TOOL_ID = "sampleId1";
+    private static final String TOOL_ID2 = "sampleId2";
 
     /**
      * Test that the same tool can be used twice with different configuration.
      */
     @Test
-    public void shouldAnalyseJavaTwice() {
+    public void shouldAnalyseJavaTwiceWithHealthReport() {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
         copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
@@ -55,12 +59,17 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
                 constructConditionalPublisher(publisher2)
         )));
 
-        AnalysisResult analysisResult = scheduleSuccessfulBuild(project);
-        assertThat(analysisResult.isSuccessful()).isEqualTo(true);
-        HealthReport healthReport = project.getBuildHealth();
-        assertThat(healthReport.getScore()).isEqualTo(0);
-        checkDetailsViewForIssues(project, analysisResult, TOOL_ID, 2);
-        checkDetailsViewForIssues(project, analysisResult, TOOL_ID2, 4);
+        hudson.model.Run<?, ?> run = buildSuccessfully(project);
+        List<AnalysisResult> results = getAnalysisResults(run);
+        assertThat(results).hasSize(2);
+        assertThat(results.get(0).getId()).isEqualTo(TOOL_ID);
+        assertThat(results.get(1).getId()).isEqualTo(TOOL_ID2);
+        List<HealthReport> healthReports = project.getBuildHealthReports();
+        assertThat(healthReports.get(0).getScore()).isEqualTo(0);
+        assertThat(healthReports.get(1).getScore()).isEqualTo(80);
+        assertThat(healthReports.get(2).getScore()).isEqualTo(100);
+        checkDetailsViewForIssues(project, results.get(0), results.get(0).getId(), 2);
+        checkDetailsViewForIssues(project, results.get(1), results.get(1).getId(), 4);
     }
 
     /**
@@ -80,10 +89,13 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
                 constructConditionalPublisher(publisher2)
         )));
 
-        AnalysisResult analysisResult = scheduleSuccessfulBuild(project);
-        assertThat(analysisResult.isSuccessful()).isEqualTo(true);
-        //is there a bug with the aggregation?
-        checkDetailsViewForIssues(project, analysisResult, TOOL_ID, 6);
+        hudson.model.Run<?, ?> run = buildSuccessfully(project);
+        List<AnalysisResult> results = getAnalysisResults(run);
+        assertThat(results).hasSize(2);
+        assertThat(results.get(0).getId()).isEqualTo(TOOL_ID);
+        assertThat(results.get(1).getId()).isEqualTo(TOOL_ID2);
+        checkDetailsViewForIssues(project, results.get(0), results.get(0).getId(), 2);
+        checkDetailsViewForIssues(project, results.get(1), results.get(1).getId(), 4);
     }
 
     private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id,
@@ -126,7 +138,8 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     private void checkDetailsViewForIssues(final Item project, final AnalysisResult analysisResult,
             final String publisherId, final int warnings) {
         HtmlPage detailsPage = getDetailsWebPage(project, analysisResult, publisherId);
-        IssuesTable issuesTable = new IssuesTable(detailsPage);
+        DetailsTab detailsTab = new DetailsTab(detailsPage);
+        IssuesTable issuesTable = detailsTab.select(TabType.ISSUES);
         List<IssueRow> issuesTableRows = issuesTable.getRows();
 
         assertThat(issuesTableRows.size()).isEqualTo(warnings);
