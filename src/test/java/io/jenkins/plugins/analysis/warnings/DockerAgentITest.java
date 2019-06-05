@@ -22,12 +22,9 @@ import hudson.slaves.DumbSlave;
 import hudson.util.StreamTaskListener;
 import hudson.util.VersionNumber;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisResultAssert.*;
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.*;
 
 /**
@@ -36,6 +33,7 @@ import static org.junit.Assume.*;
  * @author Fabian Janker
  * @author Andreas Pabst
  */
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class DockerAgentITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
@@ -60,13 +58,13 @@ public class DockerAgentITest extends IntegrationTestWithJenkinsPerTest {
     public static void unixAndDocker() throws Exception {
         assumeTrue("This test is only for Unix", File.pathSeparatorChar == ':');
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        assumeThat("`docker version` could be run", new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
+        assumeTrue("`docker version` could be run", new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
                 .cmds("docker", "version", "--format", "{{.Client.Version}}")
                 .stdout(new TeeOutputStream(baos, System.err))
                 .stderr(System.err)
-                .join(), is(0));
-        assumeThat("Docker must be at least 1.13.0 for this test (uses --init)",
-                new VersionNumber(baos.toString().trim()), greaterThanOrEqualTo(new VersionNumber("1.13.0")));
+                .join() == 0);
+        assumeTrue("Docker must be at least 1.13.0 for this test (uses --init)",
+                new VersionNumber(baos.toString().trim()).isNewerThan(new VersionNumber("1.13.0")));
     }
 
     /**
@@ -108,8 +106,7 @@ public class DockerAgentITest extends IntegrationTestWithJenkinsPerTest {
                 + "}", true));
 
         Run run = buildSuccessfully(project);
-        run.getActions(ResultAction.class).forEach(action -> {
-            AnalysisResult result = action.getResult();
+        getAnalysisResults(run).forEach(result -> {
             assertThat(result).hasNoErrorMessages();
             assertThat(result).hasTotalSize(3);
         });
