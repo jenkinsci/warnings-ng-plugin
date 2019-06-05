@@ -49,7 +49,6 @@ public class WorkerMavenBuildITest extends WorkerBuildABC {
 
     private void buildMavenOnWorker(final Slave worker) {
         FreeStyleProject project = createFreeStyleProjectWithWorker(worker);
-
         project.getBuildersList().add(new Maven("verify", null));
         copySingleFileToAgentWorkspace(worker, project, "affected-files/Main.java",
                 "src/main/java/hm/edu/hafner/analysis/Main.java");

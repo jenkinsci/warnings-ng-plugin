@@ -50,7 +50,6 @@ public class WorkerMakeGccBuildITest extends WorkerBuildABC {
 
     private void buildMakeOnWorker(final Slave worker) {
         FreeStyleProject project = createFreeStyleProjectWithWorker(worker);
-
         project.getBuildersList().add(new Shell("make"));
         copySingleFileToAgentWorkspace(worker, project, "gcc-src/Makefile", "Makefile");
         copySingleFileToAgentWorkspace(worker, project, "gcc-src/main.c", "main.c");

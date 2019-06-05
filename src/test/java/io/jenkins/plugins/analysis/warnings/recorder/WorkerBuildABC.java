@@ -63,6 +63,7 @@ abstract class WorkerBuildABC extends IntegrationTestWithJenkinsPerSuite {
         catch (Exception e) {
             throw new RuntimeException("Error while setting up docker.", e);
         }
+
         return worker;
     }
 }
