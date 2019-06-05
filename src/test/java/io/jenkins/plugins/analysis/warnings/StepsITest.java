@@ -155,6 +155,28 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 .hasSeverity(Severity.WARNING_HIGH);
     }
 
+    /**
+     * Parses a colored console log that also contains console notes. Verifies that the console notes will be removed
+     * before the color codes. Output is from ATH test case
+     * {@code WarningsNextGenerationPluginTest#should_show_maven_warnings_in_maven_project}.
+     */
+    @Test
+    public void shouldRemoveConsoleLogNotesBeforeRemovingColorCodes() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("ath-colored.log");
+        job.setDefinition(asStage(
+                createCatStep("*.txt"),
+                "recordIssues tool: mavenConsole()"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result).hasTotalSize(2);
+        assertThat(result.getIssues().get(0))
+                .hasSeverity(Severity.WARNING_NORMAL);
+        assertThat(result.getIssues().get(1))
+                .hasDescription("<pre><code>Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!</code></pre>")
+                .hasSeverity(Severity.WARNING_NORMAL);
+    }
+
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
     public void shouldFindAllJavaIssuesIfConsoleIsAnnotatedWithTimeStamps() {

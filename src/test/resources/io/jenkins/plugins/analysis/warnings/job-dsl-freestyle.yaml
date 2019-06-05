@@ -1,0 +1,14 @@
+jobs:
+  - script: >
+      freeStyleJob('freestyle-analysis-model') {
+          publishers {
+              recordIssues {
+                  aggregatingResults(true)
+                  tools {
+                      java {
+                         reportEncoding('UTF-8')
+                      }
+                  }
+              }
+          }
+      };

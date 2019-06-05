@@ -13,7 +13,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>5.1.0-SNAPSHOT</version>
+  <version>5.2.0-SNAPSHOT</version>
   <url>https://wiki.jenkins.io/x/1YTeCQ</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -29,8 +29,8 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>5.1.0</analysis-model-api.version>
-    <analysis-model.version>5.1.0</analysis-model.version>
+    <analysis-model-api.version>5.1.1</analysis-model-api.version>
+    <analysis-model.version>5.1.1</analysis-model.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
@@ -63,7 +63,7 @@
     <git-plugin.version>3.9.1</git-plugin.version>
     <workflow-step.version>2.19</workflow-step.version>
     <workflow-job.version>2.32</workflow-job.version>
-    <structs.version>1.17</structs.version>
+    <structs.version>1.19</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
     <script-security.version>1.58</script-security.version>
@@ -104,6 +104,14 @@
       <comments>All source code is under the MIT license.</comments>
     </license>
   </licenses>
+
+  <developers>
+    <developer>
+      <name>Ullrich Hafner</name>
+      <id>uhafner</id>
+      <email>ullrich.hafner@gmail.com</email>
+    </developer>
+  </developers>
 
   <dependencyManagement>
     <dependencies>
@@ -244,8 +252,8 @@
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
-      <version>${jackson-databind.version}</version>
       <artifactId>jackson-databind</artifactId>
+      <version>${jackson-databind.version}</version>
     </dependency>
 
     <!-- Required Jenkins Plug-in Dependencies -->
@@ -415,7 +423,6 @@
       <version>1.8</version>
       <scope>test</scope>
     </dependency>
-
     <!-- Timestamper plugin -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -430,11 +437,17 @@
       <version>${jenkins-maven-plugin.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>job-dsl</artifactId>
+      <version>1.74</version>
+      <scope>test</scope>
+    </dependency>
     <!-- Configuration as Code -->
     <dependency>
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>
-      <version>1.0</version>
+      <version>1.18</version>
       <scope>test</scope>
     </dependency>
     <!-- Groovy -->
@@ -758,7 +771,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
+          <skip>true</skip>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
@@ -780,6 +793,11 @@
                 <code>.*</code>
                 <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
                 <justification>The tool is not part of API.</justification>
+              </item>
+              <item>
+                <code>java.method.removed</code>
+                <methodName>doResetReference</methodName>
+                <justification>See SECURITY-1391.</justification>
               </item>
             </revapi.ignore>
             <!-- Always ignore Jenkins API -->

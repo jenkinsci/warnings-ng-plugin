@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Set;
 
 import edu.hm.hafner.analysis.FilteredLog;
@@ -106,7 +105,7 @@ public class AffectedFilesResolver {
                 if (remoteFile.exists()) {
                     if (isInWorkspace(remoteFile, agentWorkspace)) {
                         try {
-                            copy(affectedFilesFolder, file);
+                            copy(remoteFile, affectedFilesFolder);
                             copied++;
                         }
                         catch (IOException exception) {
@@ -132,10 +131,9 @@ public class AffectedFilesResolver {
         log.logSummary();
     }
 
-    private void copy(final FilePath affectedFilesFolder, final String file) throws IOException, InterruptedException {
-        FilePath remoteBuildFolderCopy = affectedFilesFolder.child(getTempName(file));
-        FilePath localSourceFile = new FilePath(Paths.get(file).toFile());
-        localSourceFile.copyTo(remoteBuildFolderCopy);
+    private void copy(final FilePath remoteFile, final FilePath affectedFilesFolder) throws IOException, InterruptedException {
+        FilePath buildFolderCopy = affectedFilesFolder.child(getTempName(remoteFile.getRemote()));
+        remoteFile.copyTo(buildFolderCopy);
     }
 
     /**

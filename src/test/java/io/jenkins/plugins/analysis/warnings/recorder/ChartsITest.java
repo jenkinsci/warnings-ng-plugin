@@ -429,7 +429,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
      */
     private String createJavaWarning(final int lineNumber) {
         return String.format(
-                "[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
+                "[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated%n",
                 lineNumber);
     }
 
@@ -443,12 +443,12 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
      */
     private String createJavaError(final int lineNumber) {
         return String.format(
-                "[ERROR] C:\\Path\\SourceFile.java:[%d,42] cannot access TestTool.TestToolDescriptor class file for TestToolDescriptor not found\n",
+                "[ERROR] C:\\Path\\SourceFile.java:[%d,42] cannot access TestTool.TestToolDescriptor class file for TestToolDescriptor not found%n",
                 lineNumber);
     }
 
     /**
-     * Converts a jsonArray containg integer values into a regular int array. This is used to better compare JsonArrays
+     * Converts a jsonArray containing integer values into a regular int array. This is used to better compare JsonArrays
      * to expected values.
      *
      * @param jsonArray
