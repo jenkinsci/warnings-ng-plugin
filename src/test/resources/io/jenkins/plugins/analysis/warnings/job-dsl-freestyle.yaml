@@ -6,6 +6,8 @@ jobs:
                   aggregatingResults(true)
                   tools {
                       java {
+                        id('java-id')
+                        name('java-name')
                          reportEncoding('UTF-8')
                       }
                   }
