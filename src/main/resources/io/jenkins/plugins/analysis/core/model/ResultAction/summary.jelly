@@ -1,11 +1,25 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:issues="/issues" xmlns:st="jelly:stapler">
 
   <issues:fontawesome-css/>
   <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
   <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">
-    <j:out value="${it.summary}" />
+    <j:out value="${it.summary}"/>
   </t:summary>
+
+  <script>
+    var button = document.getElementById("${it.id}-resetReference");
+
+    if (button) {
+        button.addEventListener('click', async _ => {
+                hoverNotification("${%resetting.notification(it.id)}", button.parentNode);
+                var proxy = <st:bind value="${it}"/>;
+                proxy.resetReference(function (t) {
+                        document.getElementById("${it.id}-resetReference").remove();
+                });
+        });
+    }
+  </script>
 
 </j:jelly>

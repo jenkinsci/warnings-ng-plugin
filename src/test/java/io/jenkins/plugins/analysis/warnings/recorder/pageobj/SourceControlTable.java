@@ -16,6 +16,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -54,10 +56,7 @@ public class SourceControlTable extends PageObject {
         scmPaginate = page.getElementById("scm_paginate");
         scmFilter = page.getElementById("scm_filter");
 
-        DomElement scm = page.getElementById("scm");
-        assertThat(scm).isInstanceOf(HtmlTable.class);
-
-        HtmlTable table = (HtmlTable) scm;
+        HtmlTable table = getHtmlTable(page);
         List<HtmlTableRow> tableHeaderRows = table.getHeader().getRows();
         assertThat(tableHeaderRows).hasSize(1);
 
@@ -79,6 +78,14 @@ public class SourceControlTable extends PageObject {
             List<HtmlTableCell> rowCells = row.getCells();
             rows.add(new SourceControlRow(rowCells, columnNames));
         }
+    }
+
+    @SuppressFBWarnings("BC")
+    private HtmlTable getHtmlTable(final HtmlPage page) {
+        DomElement scm = page.getElementById("scm");
+        assertThat(scm).isInstanceOf(HtmlTable.class);
+
+        return (HtmlTable) scm;
     }
 
     public String getInfo() {
