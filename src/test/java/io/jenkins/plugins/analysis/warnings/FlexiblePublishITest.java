@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -12,12 +13,16 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Item;
 import hudson.tasks.BuildStep;
 
+import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
+import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -73,16 +78,48 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Test that the same tool can be used twice with different configuration and is aggregated afterwards.
+     * Test that the same tool can be used twice with different configuration and aggregation, but is not aggregated
+     * afterwards.
      */
     @Test
-    public void shouldAnalyseJavaWithAggregation() {
+    public void shouldAnalyseJavaTwiceWithAggregationNotAggregated() {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
         copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
 
         IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, TOOL_ID, true);
         IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, true);
+
+        project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
+                constructConditionalPublisher(publisher),
+                constructConditionalPublisher(publisher2)
+        )));
+
+        hudson.model.Run<?, ?> run = buildSuccessfully(project);
+        List<AnalysisResult> results = getAnalysisResults(run);
+        assertThat(results).hasSize(2);
+        assertThat(results.get(0).getId()).isEqualTo(TOOL_ID);
+        assertThat(results.get(1).getId()).isEqualTo(TOOL_ID2);
+        checkDetailsViewForIssues(project, results.get(0), results.get(0).getId(), 2);
+        checkDetailsViewForIssues(project, results.get(1), results.get(1).getId(), 4);
+    }
+
+    /**
+     * Test that two java issue recorder can run with different configuration (one with issue filter, one without).
+     */
+    @Test
+    public void shouldAnalyseJavaTwiceWithOneIssueFilter() {
+        FreeStyleProject project = createFreeStyleProject();
+        copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
+        copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
+
+        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID, false);
+
+        RegexpFilter filter = new ExcludeFile(".*File.java");
+        List<RegexpFilter> filterList = new ArrayList<>();
+        filterList.add(filter);
+        publisher.setFilters(filterList);
+        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, false);
 
         project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
                 constructConditionalPublisher(publisher),
