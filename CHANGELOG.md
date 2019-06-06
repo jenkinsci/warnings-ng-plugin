@@ -17,6 +17,22 @@ Added a parser for MentorGraphcis Modelsim/Questa.
 ### Fixed 
 - [JENKINS-56007](https://issues.jenkins-ci.org/browse/JENKINS-56007): Obtain the affected files in a process on the 
 master (rather than pushing them from the agent to the master) so that master - agent security will not block the copy process. 
+- Fix resetting of reference build in Firefox.
+
+## [5.1.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.0.0...warnings-ng-5.1.0) - 2019-5-31
+
+### Fixed 
+
+- Persisted XSS vulnerability in Warnings Next Generation Plugin (SECURITY-1373 / CVE-2019-10325): 
+Plugin rendered the name of a custom warnings parser unescaped on Jenkins web pages. 
+This allowed attackers with Job/Configure permission to define a custom parser whose name included HTML and JavaScript, 
+resulting in a persisted cross-site scripting vulnerability. Plugin now properly escapes custom warnings parser names.
+
+- CSRF vulnerability in Warnings Next Generation Plugin (SECURITY-1391 / CVE-2019-10326): 
+Plugin did not require that requests sent to the endpoint used to reset warning counts use POST. This resulted in a 
+cross-site request forgery vulnerability that allows attackers to reset warning counts for future builds.
+Plugin now requires that these requests be sent via POST.
+
 
 ## [5.0.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-4.0.0...warnings-ng-5.0.0) - 2019-5-7
 

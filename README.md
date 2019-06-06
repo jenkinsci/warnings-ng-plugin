@@ -8,7 +8,7 @@
 [![GitHub pull requests](https://img.shields.io/github/issues-pr/jenkinsci/warnings-ng-plugin.svg)](https://github.com/jenkinsci/warnings-ng-plugin/pulls)
 
 The Jenkins Next Generation Warnings plugin collects compiler warnings or issues reported by static analysis tools and 
-visualizes the results. It has built-in support for almost one hundred [report formats](SUPPORTED-FORMATS.md). 
+visualizes the results. It has built-in support for more than hundred [report formats](SUPPORTED-FORMATS.md). 
 Among the problems it can detect:
 - errors from your compiler (C, C#, Java, etc.)
 - warnings from a static analysis tool (CheckStyle, StyleCop, SpotBugs, etc.)
