@@ -230,19 +230,16 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     private DumbSlave createDockerAgent(final DockerRule rule) {
         try {
-            return createDockerAgentByContainer(rule.get());
+            DockerContainer container = rule.get();
+            DumbSlave dockerAgent = new DumbSlave(DockerITest.SLAVE_LABEL, "/home/test",
+                    new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));
+            getJenkins().jenkins.addNode(dockerAgent);
+            getJenkins().waitOnline(dockerAgent);
+            return dockerAgent;
         }
         catch (Exception e) {
             throw new AssertionError(e);
         }
-    }
-
-    private DumbSlave createDockerAgentByContainer(final DockerContainer container) throws Exception {
-        DumbSlave dockerAgent = new DumbSlave(DockerITest.SLAVE_LABEL, "/home/test",
-                new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));
-        getJenkins().jenkins.addNode(dockerAgent);
-        getJenkins().waitOnline(dockerAgent);
-        return dockerAgent;
     }
 
     private void assertWorkSpace(final DumbSlave agent) {
