@@ -32,7 +32,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Matthias Herpers
  * @author Tanja Roithmeier
  */
-@SuppressWarnings("PMD.AvoidCatchingGenericException")
+@SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class GitITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String FIRST_JAVA = "First.java";
     private static final String FIRST_COMMIT = "public class First{\n"
