@@ -58,6 +58,8 @@ public class JobDSLITest extends IntegrationTestWithJenkinsPerTest {
         List<Tool> tools = recorder.getTools();
         assertThat(tools).hasSize(2);
         assertThat(tools.get(0)).isInstanceOf(Java.class);
+
+        assertThat(result.getOutstandingIssues()).hasSize(2);
     }
 
     private void configureJenkins(final String fileName) {
