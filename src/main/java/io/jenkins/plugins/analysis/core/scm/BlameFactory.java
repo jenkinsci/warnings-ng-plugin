@@ -58,6 +58,7 @@ public final class BlameFactory {
         return new NullBlamer();
     }
 
+    @SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
     private static SCM getScm(final Run<?, ?> run) {
         Job<?, ?> job = run.getParent();
         if (run instanceof AbstractBuild) {
