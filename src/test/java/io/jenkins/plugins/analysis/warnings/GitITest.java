@@ -7,6 +7,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
+import com.gargoylesoftware.htmlunit.ElementNotFoundException;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
@@ -229,7 +230,16 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
         job.setDefinition(new CpsScmFlowDefinition(new GitSCM(repository.toString()), "Jenkinsfile"));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
-        List<SourceControlRow> controlRows = getSourceControlRows(job, result);
+
+        List<SourceControlRow> controlRows;
+        try {
+            controlRows = getSourceControlRows(job, result);
+        }
+        catch (ElementNotFoundException e) {
+            throw new AssertionError(e);
+        }
+
+        assertThat(controlRows).isNotNull();
         assertThat(controlRows).hasSize(1);
         validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1);
     }
