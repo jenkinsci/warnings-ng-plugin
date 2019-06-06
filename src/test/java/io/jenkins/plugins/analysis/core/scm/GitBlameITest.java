@@ -112,6 +112,7 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
         WorkflowJob project = createPipeline();
         appendTextToFileInScm(gitRepo, "Pipeline.txt", pipeline, "Pipeline", "root@localhost");
         project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Pipeline.txt"));
+        scheduleSuccessfulBuild(project);
         AnalysisResult analysisResult = scheduleSuccessfulBuild(project);
         assertThat(analysisResult).hasTotalSize(2);
 
