@@ -25,8 +25,7 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void defaultConfigurationTest() {
         WorkflowJob job = createPipeline();
-        FreestyleConfiguration config = new SnippetGenerator(
-                getWebPage(JavaScriptSupport.JS_ENABLED, job, "pipeline-syntax/"))
+        FreestyleConfiguration config = createSnippetGenerator(job)
                 .selectRecordIssues().setTool("Java");
 
         SnippetGenerator generator = (SnippetGenerator) config;
@@ -41,8 +40,7 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void defaultConfigurationExplicitTest() {
         WorkflowJob job = createPipeline();
-        FreestyleConfiguration config = new SnippetGenerator(
-                getWebPage(JavaScriptSupport.JS_ENABLED, job, "pipeline-syntax/"))
+        FreestyleConfiguration config = createSnippetGenerator(job)
                 .selectRecordIssues().setTool("Java")
                 .setAggregatingResults(false)
                 .setBlameDisabled(false)
@@ -57,8 +55,6 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
         String script = generator.generateScript();
 
         assertThat(script).isEqualTo("recordIssues(tools: [java()])");
-        assertThat(script).contains("recordIssues");
-        assertThat(script).contains("tools: [java()]");
     }
 
     /**
@@ -67,8 +63,7 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void antiDefaultConfigurationExplicitTest() {
         WorkflowJob job = createPipeline();
-        FreestyleConfiguration config = new SnippetGenerator(
-                getWebPage(JavaScriptSupport.JS_ENABLED, job, "pipeline-syntax/"))
+        FreestyleConfiguration config = createSnippetGenerator(job)
                 .selectRecordIssues().setTool("Java")
                 .setAggregatingResults(true)
                 .setBlameDisabled(true)
@@ -103,18 +98,14 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void configureHealthReportTest() {
         WorkflowJob job = createPipeline();
-        FreestyleConfiguration config = new SnippetGenerator(
-                getWebPage(JavaScriptSupport.JS_ENABLED, job, "pipeline-syntax/"))
+        FreestyleConfiguration config = createSnippetGenerator(job)
                 .selectRecordIssues().setTool("Java")
                 .setHealthReport(1, 9, Severity.WARNING_LOW);
 
         SnippetGenerator generator = (SnippetGenerator) config;
         String script = generator.generateScript();
 
-        assertThat(script).contains("recordIssues");
-        assertThat(script).contains("tools: [java()]");
-        assertThat(script).contains("healthy: 1");
-        assertThat(script).contains("unhealthy: 9");
+        assertThat(script).isEqualTo("recordIssues healthy: 1, tools: [java()], unhealthy: 9");
     }
 
     /**
@@ -123,8 +114,7 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void completeTest() {
         WorkflowJob job = createPipeline();
-        FreestyleConfiguration config = new SnippetGenerator(
-                getWebPage(JavaScriptSupport.JS_ENABLED, job, "pipeline-syntax/"))
+        FreestyleConfiguration config = createSnippetGenerator(job)
                 .selectRecordIssues().setTool("Java")
                 .setAggregatingResults(true)
                 .setBlameDisabled(true)
@@ -155,5 +145,11 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(script).contains("minimumSeverity: 'HIGH'");
         assertThat(script).contains("tools: [java(");
         assertThat(script).contains(")]");
+    }
+
+
+
+    private SnippetGenerator createSnippetGenerator(WorkflowJob job){
+        return new SnippetGenerator( getWebPage(JavaScriptSupport.JS_ENABLED, job, "pipeline-syntax/"));
     }
 }
