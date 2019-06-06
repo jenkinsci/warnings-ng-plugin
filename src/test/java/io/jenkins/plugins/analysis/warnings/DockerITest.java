@@ -33,7 +33,6 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.*;
 
 /**
@@ -42,6 +41,7 @@ import static org.junit.Assume.*;
  * @author Colin Kashel
  * @author Nils Engelbrecht
  */
+@SuppressWarnings({"illegalcatch", "classDataAbstractionCoupling"})
 public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     private static final String SLAVE_LABEL = "slave1";
@@ -69,14 +69,14 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         assumeTrue("This test is only for Unix", !Functions.isWindows());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        assumeThat("`docker version` could be run", new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
+        assertThat(new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
                 .cmds("docker", "version", "--format", "{{.Client.Version}}")
                 .stdout(new TeeOutputStream(baos, System.err))
                 .stderr(System.err)
-                .join(), is(0));
+                .join()).as("`docker version` could be run").isEqualTo(0);
 
-        assumeThat("Docker must be at least 1.13.0 for this test (uses --init)",
-                new VersionNumber(baos.toString().trim()), greaterThanOrEqualTo(new VersionNumber("1.13.0")));
+        assumeFalse("Docker must be at least 1.13.0 for this test (uses --init)",
+                new VersionNumber(baos.toString().trim()).isOlderThan(new VersionNumber("1.13.0")));
     }
 
     /**

@@ -33,6 +33,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Colin Kaschel
  * @author Nils Engelbrecht
  */
+@SuppressWarnings("illegalcatch")
 public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
@@ -76,6 +77,12 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
     private static final String GIT_USER_NAME_2 = "GitUser 2";
     private static final String GIT_USER_EMAIL_2 = "gituser2@email.com";
 
+    /**
+     * Always initialize git before.
+     *
+     * @throws Exception
+     *         exception
+     */
     @Before
     public void initGit() throws Exception {
         repository.init();
@@ -83,6 +90,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Should blame the committer who wrote the line that causes the Issue.
+     *
+     * @throws Exception
+     *         exception
      */
     @Test
     public void shouldBlameOneCommitter() throws Exception {
@@ -96,7 +106,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
         List<SourceControlRow> controlRows = getSourceControlRows(project, result);
         assertThat(controlRows).hasSize(1);
-        validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1, TEST_CLASS_FILE_NAME);
+        validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1);
     }
 
     /**
@@ -121,8 +131,8 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
         List<SourceControlRow> controlRows = getSourceControlRows(project, result);
         assertThat(controlRows).hasSize(2);
-        validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1, TEST_CLASS_FILE_NAME);
-        validateRow(controlRows.get(1), GIT_USER_NAME_2, GIT_USER_EMAIL_2, TEST_CLASS_FILE_NAME);
+        validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1);
+        validateRow(controlRows.get(1), GIT_USER_NAME_2, GIT_USER_EMAIL_2);
     }
 
     /**
@@ -156,7 +166,7 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
         List<SourceControlRow> controlRows = getSourceControlRows(project, result);
         assertThat(controlRows).hasSize(1);
-        validateRow(controlRows.get(0), GIT_USER_NAME_2, GIT_USER_EMAIL_2, TEST_CLASS_FILE_NAME);
+        validateRow(controlRows.get(0), GIT_USER_NAME_2, GIT_USER_EMAIL_2);
     }
 
     /**
@@ -167,7 +177,6 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     @Issue("JENKINS-57260")
-    //FIXME not able to reproduce bug JENKINS-57260
     public void shouldBlameOutOfTreeBuildsWithFreeStyleProject() throws Exception {
         setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
         writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
@@ -191,15 +200,16 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
         List<SourceControlRow> controlRows = getSourceControlRows(project, result);
         assertThat(controlRows).hasSize(1);
-        validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1, TEST_CLASS_FILE_NAME);
-
+        validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1);
     }
 
-    @Test
-    //FIXME: enable blaming does not work
     /**
-     * Alternative test with pipeline for bug JENKINS-57260
+     * Alternative test with pipeline for bug JENKINS-57260.
+     *
+     * @throws Exception
+     *         exception
      */
+    @Test
     public void shouldBlameOutOfTreeBuildsWithPipeLine() throws Exception {
         setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
         writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
@@ -244,10 +254,10 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
         return new SourceControlTable(page).getRows();
     }
 
-    private void validateRow(final SourceControlRow row, final String name, final String email, final String fileName) {
+    private void validateRow(final SourceControlRow row, final String name, final String email) {
         assertThat(row.getValue(SourceControlRow.AUTHOR)).isEqualTo(name);
         assertThat(row.getValue(SourceControlRow.EMAIL)).isEqualTo(email);
-        assertThat(row.getValue(SourceControlRow.FILE)).contains(fileName);
+        assertThat(row.getValue(SourceControlRow.FILE)).contains(GitITest.TEST_CLASS_FILE_NAME);
     }
 
     private void setGitUser(final String userName, final String userEmail) throws Exception {
@@ -261,5 +271,4 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
         repository.git("add", fileName);
         repository.git("commit", "-m", commitMsg);
     }
-
 }
