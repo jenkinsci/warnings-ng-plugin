@@ -35,6 +35,7 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Michael Schmid, Raphael Furch
  */
+@SuppressWarnings("IllegalCatch")
 public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
@@ -154,10 +155,10 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         Blames blames = result.getBlames();
         String firstFile = result.getBlames().getFiles()
                 .stream().filter(name -> name.endsWith(FILE_NAME_1))
-                .findFirst().orElseThrow(() -> new RuntimeException("CentralDifferenceSolver.cpp not found in blames"));
+                .findFirst().orElseThrow(() -> new AssertionError("CentralDifferenceSolver.cpp not found in blames"));
         String secondFile = result.getBlames().getFiles()
                 .stream().filter(name -> name.endsWith(FILE_NAME_2))
-                .findFirst().orElseThrow(() -> new RuntimeException("LCPcalc.cpp not found in blames"));
+                .findFirst().orElseThrow(() -> new AssertionError("LCPcalc.cpp not found in blames"));
 
         assertThat(blames.get(firstFile).getName(4)).isEqualTo(USER_NAME_1);
         assertThat(blames.get(firstFile).getEmail(4)).isEqualTo(USER_EMAIL_1);
@@ -220,7 +221,7 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
             sampleRepo.git("commit", "--all", "--message=init");
         }
         catch (Exception exception) {
-            throw new RuntimeException(exception);
+            throw new AssertionError(exception);
         }
     }
 
@@ -230,16 +231,16 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
             sampleRepo.write(FILE_NAME_1, "1\n2\n3\n4\n5\n6");
             sampleRepo.write(FILE_NAME_2, "1\n2\n3\n4\n5\n6\n7");
             sampleRepo.git("add", FILE_NAME_1, FILE_NAME_2);
-            sampleRepo.git("commit", "--author=\"" + USER_NAME_1 + " <" + USER_EMAIL_1 + ">\"", "--all",
-                    "--message=\"commit from user1\"");
+            sampleRepo.git("commit", "--author=\"" + USER_NAME_1 + "<" + USER_EMAIL_1 + ">\"",
+                    "--message=\"commit_from_user1\"");
             sampleRepo.write(FILE_NAME_1, "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12");
             sampleRepo.write(FILE_NAME_2, "1\n2\n3\n4\n5\n6\n7\n8\n9\n10\n11\n12\n13");
             sampleRepo.git("add", FILE_NAME_1, FILE_NAME_2);
-            sampleRepo.git("commit", "--author=\"" + USER_NAME_2 + " <" + USER_EMAIL_2 + ">\"", "--all",
-                    "--message=\"commit from user2\"");
+            sampleRepo.git("commit", "--author=\"" + USER_NAME_2 + "<" + USER_EMAIL_2 + ">\"",
+                    "--message=\"commit_from_user2\"");
         }
         catch (Exception exception) {
-            throw new RuntimeException(exception);
+            throw new AssertionError(exception);
         }
     }
 
@@ -248,7 +249,7 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
             project.setScm(git);
         }
         catch (IOException exception) {
-            throw new RuntimeException(exception);
+            throw new AssertionError(exception);
         }
     }
 }
