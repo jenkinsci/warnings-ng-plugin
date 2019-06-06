@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.*;
  * Tests for the Git-Plugin.
  *
  * @author Matthias Herpers
- * @author Tanja Roithmeier
+ * @author Tanja Roithmeiergi
  */
 public class GitITest extends IntegrationTestWithJenkinsPerSuite {
 
