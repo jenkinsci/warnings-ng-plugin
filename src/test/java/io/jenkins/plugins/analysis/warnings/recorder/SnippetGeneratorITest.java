@@ -147,9 +147,12 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(script).contains(")]");
     }
 
-
-
-    private SnippetGenerator createSnippetGenerator(WorkflowJob job){
-        return new SnippetGenerator( getWebPage(JavaScriptSupport.JS_ENABLED, job, "pipeline-syntax/"));
+    /**
+     * Creates a SnippetGenerator.
+     * @param job for the SnippetGenerator.
+     * @return the SnippetGenerator.
+     */
+    private SnippetGenerator createSnippetGenerator(final WorkflowJob job) {
+        return new SnippetGenerator(getWebPage(JavaScriptSupport.JS_ENABLED, job, "pipeline-syntax/"));
     }
 }
