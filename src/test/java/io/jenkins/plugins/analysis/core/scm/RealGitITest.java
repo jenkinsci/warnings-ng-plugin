@@ -225,6 +225,9 @@ public class RealGitITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
+    /**
+     * TODO: Builds on windows fail when spaces are in commit messages or author parameters with quotes. It seems that the quotes are removed on windows.
+     */
     private void gitInitTwoUser() {
         try {
             sampleRepo.init();
