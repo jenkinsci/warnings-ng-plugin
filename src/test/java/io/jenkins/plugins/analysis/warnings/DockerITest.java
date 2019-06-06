@@ -60,20 +60,22 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Method which ensures docker version.
-     *
-     * @throws Exception
-     *         throws exception
      */
     @BeforeClass
-    public static void assumeThatWeAreRunningLinux() throws Exception {
+    public static void assumeThatWeAreRunningLinux() {
         assumeTrue("This test is only for Unix", !Functions.isWindows());
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        assertThat(new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
-                .cmds("docker", "version", "--format", "{{.Client.Version}}")
-                .stdout(new TeeOutputStream(baos, System.err))
-                .stderr(System.err)
-                .join()).as("`docker version` could be run").isEqualTo(0);
+        try {
+            assertThat(new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
+                    .cmds("docker", "version", "--format", "{{.Client.Version}}")
+                    .stdout(new TeeOutputStream(baos, System.err))
+                    .stderr(System.err)
+                    .join()).as("`docker version` could be run").isEqualTo(0);
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
 
         assumeFalse("Docker must be at least 1.13.0 for this test (uses --init)",
                 new VersionNumber(baos.toString().trim()).isOlderThan(new VersionNumber("1.13.0")));
@@ -111,13 +113,10 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * This test should run a maven build within a docker-container.
-     *
-     * @throws Exception
-     *         throws Exception.
      */
     @Test
-    public void shouldRunMavenBuildOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(javaDockerRule.get());
+    public void shouldRunMavenBuildOnDockerAgent() {
+        DumbSlave agent = createDockerAgent(javaDockerRule);
         assertWorkSpace(agent);
         WorkflowJob job = createPipeline();
         copySingleFileToAgentWorkspace(agent, job, "Test.java", "src/main/java/com/mycompany/app/Test.java");
@@ -152,13 +151,10 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * This test should compile a java-file within a docker-container.
-     *
-     * @throws Exception
-     *         throws Exception.
      */
     @Test
-    public void shouldCompileJavaOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(javaDockerRule.get());
+    public void shouldCompileJavaOnDockerAgent() {
+        DumbSlave agent = createDockerAgent(javaDockerRule);
         assertWorkSpace(agent);
 
         WorkflowJob job = createPipeline();
@@ -177,13 +173,10 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * This test should run make-build within docker-container.
-     *
-     * @throws Exception
-     *         throws Exception.
      */
     @Test
-    public void shouldRunMakeBuildOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(gccDockerRule.get());
+    public void shouldRunMakeBuildOnDockerAgent() {
+        DumbSlave agent = createDockerAgent(gccDockerRule);
         assertWorkSpace(agent);
 
         WorkflowJob job = createPipeline();
@@ -203,13 +196,10 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * This test should compile via gcc on docker-container.
-     *
-     * @throws Exception
-     *         throws Exception.
      */
     @Test
-    public void shouldCompileGccOnDockerAgent() throws Exception {
-        DumbSlave agent = createDockerAgent(gccDockerRule.get());
+    public void shouldCompileGccOnDockerAgent() {
+        DumbSlave agent = createDockerAgent(gccDockerRule);
         assertWorkSpace(agent);
 
         WorkflowJob job = createPipeline();
@@ -238,7 +228,16 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         }
     }
 
-    private DumbSlave createDockerAgent(final DockerContainer container) throws Exception {
+    private DumbSlave createDockerAgent(final DockerRule rule) {
+        try {
+            return createDockerAgentByContainer(rule.get());
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    private DumbSlave createDockerAgentByContainer(final DockerContainer container) throws Exception {
         DumbSlave dockerAgent = new DumbSlave(DockerITest.SLAVE_LABEL, "/home/test",
                 new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));
         getJenkins().jenkins.addNode(dockerAgent);

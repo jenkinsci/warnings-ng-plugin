@@ -12,6 +12,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
+import hudson.model.Item;
 import hudson.model.Result;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
@@ -79,23 +80,23 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Always initialize git before.
-     *
-     * @throws Exception
-     *         exception
      */
     @Before
-    public void initGit() throws Exception {
-        repository.init();
+    @SuppressWarnings("illegalcatch")
+    public void initGit() {
+        try {
+            repository.init();
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**
      * Should blame the committer who wrote the line that causes the Issue.
-     *
-     * @throws Exception
-     *         exception
      */
     @Test
-    public void shouldBlameOneCommitter() throws Exception {
+    public void shouldBlameOneCommitter() {
         setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
 
         writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
@@ -111,12 +112,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Should blame the correct committer who wrote the line that causes the Issue.
-     *
-     * @throws Exception
-     *         throws exception.
      */
     @Test
-    public void shouldBlameTwoCommitter() throws Exception {
+    public void shouldBlameTwoCommitter() {
         setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
         writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
 
@@ -137,12 +135,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Should blame the committer who changed the line at last which caused an Issue.
-     *
-     * @throws Exception
-     *         throws exception.
      */
     @Test
-    public void shouldBlameCorrectCommitterAfterChangingLine() throws Exception {
+    public void shouldBlameCorrectCommitterAfterChangingLine() {
         setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
         writeAndCommitFile(TEST_CLASS_FILE_NAME,
                 "public class Test {\n"
@@ -170,26 +165,28 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Should test the ability of blaming when build is out of git tree.
-     *
-     * @throws Exception
-     *         throws exception.
+     * Should test the ability of blaming when build is out of git tree with freestyle-project.
      */
     @Test
-    @Issue("JENKINS-57260")
-    public void shouldBlameOutOfTreeBuildsWithFreeStyleProject() throws Exception {
+    public void shouldBlameOutOfTreeBuildsWithFreeStyleProject() {
         setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
         writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
 
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, "JavaWarnings.txt", "JavaWarnings.txt");
-        project.setScm(new GitSCMBuilder(
-                new SCMHead("master"),
-                null,
-                repository.toString(),
-                null)
-                .withExtension(new RelativeTargetDirectory("src"))
-                .build());
+
+        try {
+            project.setScm(new GitSCMBuilder(
+                    new SCMHead("master"),
+                    null,
+                    repository.toString(),
+                    null)
+                    .withExtension(new RelativeTargetDirectory("src"))
+                    .build());
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
 
         Java java = new Java();
         java.setPattern("JavaWarnings.txt");
@@ -204,13 +201,11 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Alternative test with pipeline for bug JENKINS-57260.
-     *
-     * @throws Exception
-     *         exception
+     * Test should verify bug JENKINS-57260.
      */
     @Test
-    public void shouldBlameOutOfTreeBuildsWithPipeLine() throws Exception {
+    @Issue("JENKINS-57260")
+    public void shouldBlameOutOfTreeBuildsWithPipeLine() {
         setGitUser(GIT_USER_NAME_1, GIT_USER_EMAIL_1);
         writeAndCommitFile(TEST_CLASS_FILE_NAME, TEST_CLASS_FILE_CONTENT_1, "Add Test.java");
         writeAndCommitFile("Jenkinsfile",
@@ -234,11 +229,20 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
         job.setDefinition(new CpsScmFlowDefinition(new GitSCM(repository.toString()), "Jenkinsfile"));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
+        List<SourceControlRow> controlRows = getSourceControlRows(job, result);
+        assertThat(controlRows).hasSize(1);
+        validateRow(controlRows.get(0), GIT_USER_NAME_1, GIT_USER_EMAIL_1);
     }
 
-    private FreeStyleProject initFreeStyleProject() throws Exception {
+    private FreeStyleProject initFreeStyleProject() {
         FreeStyleProject project = createFreeStyleProject();
-        project.setScm(new GitSCM(repository.toString()));
+
+        try {
+            project.setScm(new GitSCM(repository.toString()));
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
 
         Java java = new Java();
         java.setPattern(WARNINGS_FILE_NAME);
@@ -247,9 +251,9 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
         return project;
     }
 
-    private List<SourceControlRow> getSourceControlRows(final FreeStyleProject project, final AnalysisResult result) {
+    private List<SourceControlRow> getSourceControlRows(final Item job, final AnalysisResult result) {
         HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED,
-                project,
+                job,
                 result.getBuild().getNumber() + "/" + result.getId());
         return new SourceControlTable(page).getRows();
     }
@@ -260,15 +264,25 @@ public class GitITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(row.getValue(SourceControlRow.FILE)).contains(GitITest.TEST_CLASS_FILE_NAME);
     }
 
-    private void setGitUser(final String userName, final String userEmail) throws Exception {
-        repository.git("config", "user.name", userName);
-        repository.git("config", "user.email", userEmail);
+    private void setGitUser(final String userName, final String userEmail) {
+        try {
+            repository.git("config", "user.name", userName);
+            repository.git("config", "user.email", userEmail);
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
+
     }
 
-    private void writeAndCommitFile(final String fileName, final String content, final String commitMsg)
-            throws Exception {
-        repository.write(fileName, content);
-        repository.git("add", fileName);
-        repository.git("commit", "-m", commitMsg);
+    private void writeAndCommitFile(final String fileName, final String content, final String commitMsg) {
+        try {
+            repository.write(fileName, content);
+            repository.git("add", fileName);
+            repository.git("commit", "-m", commitMsg);
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
     }
 }
