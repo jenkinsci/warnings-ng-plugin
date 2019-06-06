@@ -30,9 +30,12 @@ import jenkins.security.s2m.AdminWhitelistRule;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.model.AnalysisResultAssert.*;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.*;
+
+
+
 
 /**
  * Integration test with docker and dumb slave.
