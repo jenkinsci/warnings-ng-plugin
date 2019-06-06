@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.apache.commons.io.output.TeeOutputStream;
+
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -17,6 +17,7 @@ import hudson.Launcher;
 import hudson.model.FreeStyleProject;
 import hudson.model.Slave;
 import hudson.plugins.sshslaves.SSHLauncher;
+import hudson.remoting.TeeOutputStream;
 import hudson.security.FullControlOnceLoggedInAuthorizationStrategy;
 import hudson.security.HudsonPrivateSecurityRealm;
 import hudson.slaves.DumbSlave;
@@ -31,7 +32,6 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisResultAssert.*;
-import static org.hamcrest.Matchers.*;
 import static org.junit.Assume.*;
 
 
@@ -57,18 +57,18 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         assumeTrue("This test is only for Unix", File.pathSeparatorChar == ':');
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         try {
-            assumeThat("`docker version` could be run",
+            assumeTrue("`docker version` could be run",
                     new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
                             .cmds("docker", "version", "--format", "{{.Client.Version}}")
                             .stdout(new TeeOutputStream(baos, System.err))
                             .stderr(System.err)
-                            .join(), is(0));
+                            .join() == 0);
         }
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
         }
-        assumeThat("Docker must be at least 1.13.0 for this test (uses --init)",
-                new VersionNumber(baos.toString().trim()), greaterThanOrEqualTo(new VersionNumber("1.13.0")));
+        assumeTrue("Docker must be at least 1.13.0 for this test (uses --init)",
+                new VersionNumber(baos.toString().trim()).isNewerThan(new VersionNumber("1.13.0")));
     }
 
     /**
