@@ -42,7 +42,7 @@ abstract class WorkerBuildABC extends IntegrationTestWithJenkinsPerSuite {
             return JENKINS_PER_SUITE.createSlave();
         }
         catch (Exception e) {
-            throw new RuntimeException("Error while creating dumb slave.", e);
+            throw new AssertionError("Error while creating dumb slave.", e);
         }
     }
 
@@ -61,7 +61,7 @@ abstract class WorkerBuildABC extends IntegrationTestWithJenkinsPerSuite {
             getJenkins().waitOnline(worker);
         }
         catch (Exception e) {
-            throw new RuntimeException("Error while setting up docker.", e);
+            throw new AssertionError("Error while setting up docker.", e);
         }
 
         return worker;
