@@ -302,6 +302,12 @@
       <optional>true</optional>
     </dependency>
     <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>git-forensics</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>dashboard-view</artifactId>
       <version>${dashboard-view.version}</version>
