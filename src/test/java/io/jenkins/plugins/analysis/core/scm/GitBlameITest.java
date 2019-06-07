@@ -1,7 +1,8 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.junit.Rule;
@@ -25,6 +26,7 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static java.nio.file.StandardOpenOption.*;
 
 /**
  * Integration test for GitBlamer.
@@ -181,8 +183,11 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
             repository.git("config", "user.email", email);
 
             File file = new File(repository.getRoot(), fileName);
-            try (FileWriter fileWriter = new FileWriter(file, true)) {
-                fileWriter.write(text);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            try (OutputStream outputStream = Files.newOutputStream(file.toPath(), APPEND)) {
+                outputStream.write(text.getBytes());
             }
 
             repository.git("add", fileName);
