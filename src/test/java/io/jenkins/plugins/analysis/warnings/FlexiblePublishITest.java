@@ -56,8 +56,8 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
         copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
 
-        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, TOOL_ID, false, 1, 9);
-        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, false, 1, 3);
+        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, TOOL_ID, 1, 9);
+        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, 1, 3);
 
         project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
                 constructConditionalPublisher(publisher),
@@ -78,33 +78,6 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Test that the same tool can be used twice with different configuration and aggregation, but is not aggregated
-     * afterwards.
-     */
-    @Test
-    public void shouldAnalyseJavaTwiceWithAggregationNotAggregated() {
-        FreeStyleProject project = createFreeStyleProject();
-        copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
-        copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
-
-        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, TOOL_ID, true);
-        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, true);
-
-        project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
-                constructConditionalPublisher(publisher),
-                constructConditionalPublisher(publisher2)
-        )));
-
-        hudson.model.Run<?, ?> run = buildSuccessfully(project);
-        List<AnalysisResult> results = getAnalysisResults(run);
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).getId()).isEqualTo(TOOL_ID);
-        assertThat(results.get(1).getId()).isEqualTo(TOOL_ID2);
-        checkDetailsViewForIssues(project, results.get(0), results.get(0).getId(), 2);
-        checkDetailsViewForIssues(project, results.get(1), results.get(1).getId(), 4);
-    }
-
-    /**
      * Test that two java issue recorder can run with different configuration (one with issue filter, one without).
      */
     @Test
@@ -113,13 +86,13 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
         copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
 
-        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID, false);
+        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID);
 
         RegexpFilter filter = new ExcludeFile(".*File.java");
         List<RegexpFilter> filterList = new ArrayList<>();
         filterList.add(filter);
         publisher.setFilters(filterList);
-        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, false);
+        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2);
 
         project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
                 constructConditionalPublisher(publisher),
@@ -135,13 +108,11 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         checkDetailsViewForIssues(project, results.get(1), results.get(1).getId(), 4);
     }
 
-    private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id,
-            final boolean setAggregation) {
-        return constructJavaIssuesRecorder(patter, id, setAggregation, 0, 0);
+    private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id) {
+        return constructJavaIssuesRecorder(patter, id, 0, 0);
     }
 
     private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id,
-            final boolean setAggregation,
             final int healthy, final int unhealthy) {
         Java java = new Java();
         java.setPattern(patter);
@@ -153,7 +124,6 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
             publisher.setUnhealthy(unhealthy);
         }
         publisher.setBlameDisabled(true);
-        publisher.setAggregatingResults(setAggregation);
 
         return publisher;
     }
