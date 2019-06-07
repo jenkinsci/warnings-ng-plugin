@@ -10,7 +10,6 @@ import org.jvnet.hudson.test.Issue;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
@@ -34,6 +33,13 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Tobias Redl
  */
 public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
+    private static final String JAVA_FILE = "Hello.java";
+    private static final String CPP_FILE = "Hello.cpp";
+    private static final String USER_1_EMAIL = "John@localhost";
+    private static final String USER_1_AUTHOR = "John Doe";
+    private static final String USER_2_EMAIL = "Jane@localhost";
+    private static final String USER_2_AUTHOR = "Jane Doe";
+    private static final String JAVA_WARNING = "Unexpected end of File";
 
     /**
      * Git repository used for Testing.
@@ -43,21 +49,16 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Test if Source Control Table contains a git blame issue when a simple Java syntax error occurs.
-     *
-     * @throws Exception
-     *         If the git commands used are failing.
      */
     @Test
-    public void shouldShowOneGitBlameWarning() throws Exception {
-        final String fileName = "Hello.java";
-
+    public void shouldShowOneGitBlameWarning() {
         FreeStyleProject project = createScmJavaFreestyleProject();
-        appendTextToFileInScm(gitRepo, fileName, "public class HelloWorld {\n"
+        appendTextToFileInScm(gitRepo, JAVA_FILE, "public class HelloWorld {\n"
                 + "       public static void main (String[] args) {\n"
                 + "             System.out.println(\"Hello World!\");\n"
-                + "       }}", "John Doe", "John@localhost");
-        appendTextToFileInScm(gitRepo, fileName, "{", "Jane Doe", "Jane@localhost");
-        saveJavaWarningToScm(gitRepo, fileName, 4, "Unexpected end of File");
+                + "       }}", USER_1_AUTHOR, USER_1_EMAIL);
+        appendTextToFileInScm(gitRepo, JAVA_FILE, "{", USER_2_AUTHOR, USER_2_EMAIL);
+        saveJavaWarningToScm(gitRepo, JAVA_FILE, 4, JAVA_WARNING);
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(analysisResult).hasTotalSize(1);
@@ -66,25 +67,28 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
         SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
 
         List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("Jane Doe");
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("Jane@localhost");
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(fileName + ":4");
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
-                "Unexpected end of File");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_2_AUTHOR);
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_2_EMAIL);
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(JAVA_FILE + ":4");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(JAVA_WARNING);
     }
 
     /**
      * Checks if git blame issues are generated properly if default checkout is disabled.
-     *
-     * @throws Exception
-     *         If the git commands used are failing.
      */
     @Issue("JENKINS-57260")
     @Test
-    public void shouldShowGitBlameWarningWithDisabledDefaultCheckout() throws Exception {
-        gitRepo.init();
-        appendTextToFileInScm(gitRepo, "Hello.java", "class Hello {}", "John Doe", "John@localhost");
-        appendTextToFileInScm(gitRepo, "Hello.cpp", "class Hello {}", "Jane Doe", "Jane@localhost");
+    //gitRepo.init() throws exception of type Exception, therefore it is necessary to catch it
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    public void shouldShowGitBlameWarningWithDisabledDefaultCheckout() {
+        try {
+            gitRepo.init();
+        }
+        catch (Exception e) {
+            throw new AssertionError("Error while initialize git repository.", e);
+        }
+        appendTextToFileInScm(gitRepo, JAVA_FILE, "class Hello {}", USER_1_AUTHOR, USER_1_EMAIL);
+        appendTextToFileInScm(gitRepo, CPP_FILE, "class Hello {}", USER_2_AUTHOR, USER_2_EMAIL);
 
         final String pipeline = "pipeline {\n"
                 + "agent any\n"
@@ -114,112 +118,78 @@ public class GitBlameITest extends IntegrationTestWithJenkinsPerSuite {
         project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Pipeline.txt"));
         scheduleSuccessfulBuild(project);
         AnalysisResult analysisResult = scheduleSuccessfulBuild(project);
+
+        assertThat(analysisResult.getErrorMessages()).doesNotContain(
+                "Can't determine head commit using 'git rev-parse'. Skipping blame.");
         assertThat(analysisResult).hasTotalSize(2);
 
         HtmlPage detailsPage = getDetailsWebPage(project, analysisResult);
         SourceControlTable sourceControlTable = new SourceControlTable(detailsPage);
 
         List<SourceControlRow> sourceControlRows = sourceControlTable.getRows();
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo("John Doe");
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo("John@localhost");
-        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo("Hello.java:1");
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_1_AUTHOR);
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_1_EMAIL);
+        assertThat(sourceControlRows.get(1).getValue(SourceControlRow.FILE)).isEqualTo(JAVA_FILE + ":1");
         assertThat(sourceControlRows.get(1).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
                 "reached end of file while inside a dot block! The command that should end the block seems to be missing!");
 
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo("Jane Doe");
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo("Jane@localhost");
-        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo("Hello.cpp:1");
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.AUTHOR)).isEqualTo(USER_2_AUTHOR);
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.EMAIL)).isEqualTo(USER_2_EMAIL);
+        assertThat(sourceControlRows.get(0).getValue(SourceControlRow.FILE)).isEqualTo(CPP_FILE + ":1");
         assertThat(sourceControlRows.get(0).getValue(SourceControlRow.DETAILS_CONTENT)).isEqualTo(
                 "the name lcp_lexicolemke.c supplied as the second argument in the file statement is not an input file\"");
     }
 
-    /**
-     * Creates a Java FreestyleProject which checks out a newly created git repository and is capable of parsing Java
-     * warnings.
-     *
-     * @return A Java Freestyle project.
-     * @throws Exception
-     *         If git commands fail to execute.
-     */
-    private FreeStyleProject createScmJavaFreestyleProject()
-            throws Exception {
+    //gitRepo methods throw exceptions of type Exception, therefore it is necessary to catch them
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    private FreeStyleProject createScmJavaFreestyleProject() {
         FreeStyleProject project = createFreeStyleProject();
         Java java = new Java();
         java.setPattern("**/*.txt");
         enableWarnings(project, java);
 
-        gitRepo.init();
-        gitRepo.git("checkout", "master");
-        project.setScm(new GitSCM(gitRepo.fileUrl()));
+        try {
+            gitRepo.init();
+            gitRepo.git("checkout", "master");
+            project.setScm(new GitSCM(gitRepo.fileUrl()));
+        }
+        catch (Exception e) {
+            throw new AssertionError("Error while setting up new git repository.", e);
+        }
         return project;
     }
 
-    /**
-     * Writes an Java warning into a given repository.
-     *
-     * @param repository
-     *         The repository containing the error.
-     * @param javaFile
-     *         The file containing an error.
-     * @param lineNumber
-     *         The line containing the error.
-     * @param warningText
-     *         The javac error message.
-     *
-     * @throws Exception
-     *         If git commands used to commit the warning are failing.
-     */
     private void saveJavaWarningToScm(final GitSampleRepoRule repository, final String javaFile,
-            final int lineNumber, final String warningText) throws Exception {
+            final int lineNumber, final String warningText) {
         String warningsFile = "warnings.txt";
         String warning = String.format("[WARNING] %s:[%d,0] %s\n", javaFile, lineNumber, warningText);
-        appendTextToFileInScm(repository, warningsFile, warning, "John Doe", "John@localhost");
+        appendTextToFileInScm(repository, warningsFile, warning, USER_1_AUTHOR, USER_1_EMAIL);
     }
 
-    /**
-     * Returns the details page of a job.
-     *
-     * @param project
-     *         The project containing the job.
-     * @param result
-     *         The result to use.
-     *
-     * @return The web page containing build details.
-     */
     private HtmlPage getDetailsWebPage(final Item project, final AnalysisResult result) {
         int buildNumber = result.getBuild().getNumber();
         String pluginId = result.getId();
         return getWebPage(JavaScriptSupport.JS_ENABLED, project, String.format("%d/%s", buildNumber, pluginId));
     }
 
-    /**
-     * Appends text to an file and adds the changes to the repository given.
-     *
-     * @param repository
-     *         The repository to commit to.
-     * @param fileName
-     *         The file to append to.
-     * @param text
-     *         The text to append.
-     * @param user
-     *         The user who commits the change.
-     * @param email
-     *         The email of the user committing.
-     *
-     * @throws Exception
-     *         If the git commands are failing.
-     */
+    //repository.git throws exception of type Exception, therefore it is necessary to catch it
+    @SuppressWarnings("checkstyle:IllegalCatch")
     private void appendTextToFileInScm(final GitSampleRepoRule repository, final String fileName, final String text,
-            final String user, final String email) throws Exception {
-        repository.git("config", "user.name", user);
-        repository.git("config", "user.email", email);
+            final String user, final String email) {
+        try {
+            repository.git("config", "user.name", user);
+            repository.git("config", "user.email", email);
 
-        File file = new File(repository.getRoot(), fileName);
-        try (FileWriter fileWriter = new FileWriter(file, true)) {
-            fileWriter.write(text);
+            File file = new File(repository.getRoot(), fileName);
+            try (FileWriter fileWriter = new FileWriter(file, true)) {
+                fileWriter.write(text);
+            }
+
+            repository.git("add", fileName);
+            repository.git("commit", "-m", String.format("\"Appended code to %s\"", fileName));
         }
-
-        repository.git("add", fileName);
-        repository.git("commit", "-m", String.format("\"Appended code to %s\"", fileName));
+        catch (Exception e) {
+            throw new AssertionError("Error while committing to repository.", e);
+        }
     }
 }
