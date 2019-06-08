@@ -1,17 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
-import hudson.model.Project;
 
 /**
  * Page Object for a table that shows the warning summary of selected builds.
@@ -34,7 +29,7 @@ public class DashboardTable {
                 .stream()
                 .filter(domElement -> domElement.asText().startsWith("Static analysis issues per tool and job"))
                 .flatMap(domElement -> domElement.getElementsByTagName("table").stream())
-                .map(domElement -> Arrays.asList(domElement.asText().split("\n")))
+                .map(domElement -> Arrays.asList(domElement.asText().split(System.lineSeparator())))
                 .findFirst()
                 .orElseThrow(
                         () -> new RuntimeException("The Static analysis issues per tool and job couldn't be load"));
@@ -68,19 +63,6 @@ public class DashboardTable {
         return valuePluginMapping;
     }
 
-    /**
-     * Gets Warnings count for a specified job and plugin.
-     *
-     * @param job
-     *         job name
-     * @param plugin
-     *         plugin name
-     *
-     * @return warnings count
-     */
-    public Optional<Integer> getWarningCount(final String job, final String plugin) {
-        return Optional.ofNullable(this.getWarningCounts(job).getOrDefault(plugin, null));
-    }
 
     /**
      * Gets Warnings counts for a specified job.
@@ -92,6 +74,18 @@ public class DashboardTable {
      */
     public Map<String, Integer> getWarningCounts(final String job) {
         return getListEntries().get(job);
+    }
+
+    /**
+     * Gets the result if a specified job is on the dashboard.
+     *
+     * @param job
+     *         job name
+     *
+     * @return result if the job is on the dashboard
+     */
+    public boolean containsJob(final String job) {
+        return getListEntries().containsKey(job);
     }
 
     private Map<String, Map<String, Integer>> getListEntries() {

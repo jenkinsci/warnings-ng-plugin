@@ -18,83 +18,83 @@ import hudson.model.Project;
 import hudson.model.Result;
 import hudson.plugins.view.dashboard.Dashboard;
 
-import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.MavenConsole;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DashboardTable;
 
 import static org.assertj.core.api.Assertions.*;
 
+/**
+ * Integration tests for the dashboard portlet table.
+ *
+ * @author Michael Schmid, Raphael Furch
+ */
 public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
-
+    /**
+     * Dashboard Portlet should show the recorded warning count of two tools.
+     */
     @Test
-    public void dashboardShouldShowJobResultsAccordingTheirPluginConfiguration() {
+    public void showJobResultsAccordingTheirPluginConfiguration() {
         FreeStyleProject project1 = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml",
                 "eclipse.txt");
         enableEclipseWarnings(project1);
         enableCheckStyleWarnings(project1);
+        enableGenericWarnings(project1, createTool(new MavenConsole(), ""));
 
         FreeStyleProject project2 = createFreeStyleProjectWithWorkspaceFiles("checkstyle-healthReport.xml");
         enableCheckStyleWarnings(project2);
 
-        Dashboard dashboard = configureDashboard("dashboardShouldShowJobResultsAccordingTheirPluginConfiguration", project1, project2);
+        Dashboard dashboard = configureDashboard("showJobResultsAccordingTheirPluginConfiguration", project1, project2);
 
         buildWithResult(project1, Result.SUCCESS);
         buildWithResult(project2, Result.SUCCESS);
 
-        assertDashboard(dashboard);
-
         DashboardTable pageObject = loadDashboardTable(dashboard);
-        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(2)
+        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(3)
                 .containsEntry("CheckStyle", 7)
-                .containsEntry("Eclipse ECJ", 8);
+                .containsEntry("Eclipse ECJ", 8)
+                .containsEntry("Maven", 0);
         assertThat(pageObject.getWarningCounts(project2.getName())).hasSize(1)
                 .containsEntry("CheckStyle", 6);
     }
 
+    /**
+     * Dashboard Portlet should show the recorded warning count of the latest build.
+     */
     @Test
-    public void dashboardShouldShowJobResultsOfTheLastBuild() {
-        FreeStyleProject project1 = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml", "eclipse.txt");
-        enableEclipseWarnings(project1);
-        enableCheckStyleWarnings(project1);
+    public void showJobResultsOfTheLastBuild() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml", "eclipse.txt");
+        enableEclipseWarnings(project);
+        enableCheckStyleWarnings(project);
 
+        Dashboard dashboard = configureDashboard("showJobResultsOfTheLastBuild", project);
+        buildWithResult(project, Result.SUCCESS);
 
-        FreeStyleProject project2 = createFreeStyleProjectWithWorkspaceFiles("checkstyle-healthReport.xml");
-        enableCheckStyleWarnings(project2);
-
-        Dashboard dashboard = configureDashboard("dashboardShouldShowJobResultsOfTheLastBuild", project1, project2);
-
-        buildWithResult(project1, Result.SUCCESS);
-        buildWithResult(project2, Result.SUCCESS);
-
-        assertDashboard(dashboard);
         DashboardTable pageObject = loadDashboardTable(dashboard);
-        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(2)
+        assertThat(pageObject.getWarningCounts(project.getName())).hasSize(2)
                 .containsEntry("CheckStyle", 7)
                 .containsEntry("Eclipse ECJ", 8);
-        assertThat(pageObject.getWarningCounts(project2.getName())).hasSize(1)
-                .containsEntry("CheckStyle", 6);
 
-        copySingleFileToWorkspace(project1, "checkstyle-healthReport.xml", "checkstyle-filtering-issues.txt");
-        buildWithResult(project1, Result.SUCCESS);
+        copySingleFileToWorkspace(project, "checkstyle-healthReport.xml", "checkstyle-filtering-issues.txt");
+        buildWithResult(project, Result.SUCCESS);
 
-        assertDashboard(dashboard);
         pageObject = loadDashboardTable(dashboard);
-        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(2)
+        assertThat(pageObject.getWarningCounts(project.getName())).hasSize(2)
                 .containsEntry("CheckStyle", 6)
                 .containsEntry("Eclipse ECJ", 8);
     }
 
+    /**
+     * Dashboard Portlet should show job results when a tool is configured after first build.
+     */
     @Test
-    public void dashboardShouldShowJobResultsWhenAToolIsConfiguredAfterFirstBuild() {
+    public void showJobResultsWhenAToolIsConfiguredAfterFirstBuild() {
         FreeStyleProject project1 = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml", "eclipse.txt");
         enableEclipseWarnings(project1);
 
-        Dashboard dashboard = configureDashboard("dashboardShouldShowJobResultsWhenAToolIsConfiguredAfterFirstBuild", project1);
+        Dashboard dashboard = configureDashboard("showJobResultsWhenAToolIsConfiguredAfterFirstBuild", project1);
         buildWithResult(project1, Result.SUCCESS);
 
-
-        assertDashboard(dashboard);
         DashboardTable pageObject = loadDashboardTable(dashboard);
         assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(1)
                 .containsEntry("Eclipse ECJ", 8);
@@ -102,31 +102,49 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
         enableCheckStyleWarnings(project1);
         buildWithResult(project1, Result.SUCCESS);
 
-        assertDashboard(dashboard);
         pageObject = loadDashboardTable(dashboard);
         assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(2)
                 .containsEntry("CheckStyle", 7)
                 .containsEntry("Eclipse ECJ", 8);
     }
 
-    private void assertDashboard(final Dashboard dashboard) {
-        DashboardTable dashboardTable = loadDashboardTable(dashboard);
-        dashboard.getJobs().stream()
-                .filter(j -> j instanceof Project<?, ?>)
-                .map(j -> (Project<?, ?>)j).forEach(project -> {
-                    getAnalysisResults(project.getLastBuild()).forEach(result -> {
-                        Tool tool = project.getPublishersList().stream()
-                                .filter(p -> p instanceof IssuesRecorder)
-                                .map(p -> (IssuesRecorder)p)
-                                .flatMap(i -> i.getTools().stream())
-                                .filter(t -> t.getActualId().equals(result.getId()))
-                                .findFirst().orElseThrow(() -> new RuntimeException("The Tool id of result was't in the project configuration"));
+    /**
+     * Dashboard Portlet should hide clean jobs, when hideCleanJobs is true.
+     */
+    @Test
+    public void hideJobResultsWhenAJobIsClean() {
+        FreeStyleProject project1 = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml",
+                "eclipse.txt");
+        enableEclipseWarnings(project1);
+        enableCheckStyleWarnings(project1);
 
-                        assertThat(dashboardTable.getWarningCount(project.getName(), tool.getActualName())).isPresent().contains(result.getTotalSize());
-                    });
-        });
+        FreeStyleProject project2 = createFreeStyleProject();
+        enableCheckStyleWarnings(project2);
+        enableGenericWarnings(project2, createTool(new MavenConsole(), ""));
 
+        Dashboard dashboard = configureDashboard("hideJobResultsWhenAJobIsClean", false, project1, project2);
+        Dashboard dashboardHideCleanJobs = configureDashboard("hideJobResultsWhenAJobIsCleanHideCleanJobs",
+                true, project1, project2);
+
+        buildWithResult(project1, Result.SUCCESS);
+        buildWithResult(project2, Result.SUCCESS);
+
+        DashboardTable pageObject = loadDashboardTable(dashboard);
+        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(2)
+                .containsEntry("CheckStyle", 7)
+                .containsEntry("Eclipse ECJ", 8);
+        assertThat(pageObject.getWarningCounts(project2.getName())).hasSize(2)
+                .containsEntry("CheckStyle", 0)
+                .containsEntry("Maven", 0);
+
+        DashboardTable pageObjectHideCleanJobs = loadDashboardTable(dashboardHideCleanJobs);
+        assertThat(pageObjectHideCleanJobs.getWarningCounts(project1.getName())).hasSize(2)
+                .containsEntry("CheckStyle", 7)
+                .containsEntry("Eclipse ECJ", 8);
+        assertThat(pageObjectHideCleanJobs.containsJob(project2.getName())).isFalse();
     }
+
+
 
     private DashboardTable loadDashboardTable(final Dashboard dashboard) {
         DashboardTable result;
@@ -134,19 +152,23 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
             result = new DashboardTable(getWebClient(JavaScriptSupport.JS_DISABLED).getPage(dashboard));
         }
         catch (SAXException | IOException exception) {
-            throw new RuntimeException(exception);
+            throw new AssertionError(exception);
         }
         return result;
     }
 
     private Dashboard configureDashboard(final String name, final Project... projects) {
+        return configureDashboard(name, false, projects);
+    }
+
+    private Dashboard configureDashboard(final String name, final boolean hideCleanJobs, final Project... projects) {
         Dashboard dashboardView = new Dashboard(name);
 
         try {
             getJenkins().getInstance().addView(dashboardView);
         }
         catch (IOException exception) {
-            throw new RuntimeException("Dashboard configuration failed", exception);
+            throw new AssertionError("Dashboard configuration failed", exception);
         }
 
         WebRequest request;
@@ -156,9 +178,10 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
                     HttpMethod.POST);
         }
         catch (MalformedURLException exception) {
-            throw new RuntimeException(exception);
+            throw new AssertionError(exception);
         }
 
+        String hideCleanJobsString = hideCleanJobs ? "true" : "false";
         String postCommand = "name=" + name
                 + "&description="
                 + "&statusFilter="
@@ -195,7 +218,7 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
                 + "%22io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn%22%2C+%22%24class%22%3A+"
                 + "%22io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn%22%7D%5D%2C+%22includeStdJobList"
                 + "%22%3A+false%2C+%22topPortlet%22%3A+%7B%22name%22%3A+%22Static+analysis+issues+per+tool+and+job"
-                + "%22%2C+%22hideCleanJobs%22%3A+false%2C+%22showIcons%22%3A+false%2C+%22selectTools%22%3A+false%2C+"
+                + "%22%2C+%22hideCleanJobs%22%3A+" + hideCleanJobsString + "%2C+%22showIcons%22%3A+false%2C+%22selectTools%22%3A+false%2C+"
                 + "%22tools%22%3A+%7B%22id%22%3A+%22%22%7D%2C+%22stapler-class%22%3A+"
                 + "%22io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet%22%2C+%22%24class%22%3A+"
                 + "%22io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet%22%7D%2C+%22core%3Aapply%22%3A+"
@@ -203,12 +226,11 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
                 + "&Submit=OK";
         request.setRequestBody(postCommand);
 
-
         try {
             getWebClient(JavaScriptSupport.JS_DISABLED).getPage(request);
         }
         catch (IOException exception) {
-            throw new RuntimeException("The setup of the IssuesTablePortlet failed" + exception);
+            throw new AssertionError("The setup of the IssuesTablePortlet failed", exception);
         }
 
         Arrays.stream(projects).forEach(project -> {
@@ -216,12 +238,11 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
                 dashboardView.doAddJobToView(project.getName());
             }
             catch (ServletException | IOException exception) {
-                throw new RuntimeException("The project " + project.getName() + " couldn't be added to the dashboard",
+                throw new AssertionError("The project " + project.getName() + " couldn't be added to the dashboard",
                         exception);
             }
         });
 
         return dashboardView;
-
     }
 }
