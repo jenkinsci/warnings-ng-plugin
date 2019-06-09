@@ -50,12 +50,21 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
         buildWithResult(project2, Result.SUCCESS);
 
         DashboardTable pageObject = loadDashboardTable(dashboard);
-        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(3)
+        assertThat(pageObject.getWarningCounts(project1)).hasSize(3)
                 .containsEntry("CheckStyle", 7)
                 .containsEntry("Eclipse ECJ", 8)
                 .containsEntry("Maven", 0);
-        assertThat(pageObject.getWarningCounts(project2.getName())).hasSize(1)
+        assertThat(pageObject.getWarningCounts(project2)).hasSize(1)
                 .containsEntry("CheckStyle", 6);
+
+        assertThat(pageObject.getDashboardTableEntry(project1).get("CheckStyle").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project1).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/eclipse");
+        assertThat(pageObject.getDashboardTableEntry(project1).get("Maven").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/maven-warnings");
+        assertThat(pageObject.getDashboardTableEntry(project2).get("CheckStyle").getUrl())
+                .endsWith("job/" + project2.getName() + "/1/checkstyle");
     }
 
     /**
@@ -71,17 +80,26 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
         buildWithResult(project, Result.SUCCESS);
 
         DashboardTable pageObject = loadDashboardTable(dashboard);
-        assertThat(pageObject.getWarningCounts(project.getName())).hasSize(2)
+        assertThat(pageObject.getWarningCounts(project)).hasSize(2)
                 .containsEntry("CheckStyle", 7)
                 .containsEntry("Eclipse ECJ", 8);
+        assertThat(pageObject.getDashboardTableEntry(project).get("CheckStyle").getUrl())
+                .endsWith("job/" + project.getName() + "/1/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project.getName() + "/1/eclipse");
 
         copySingleFileToWorkspace(project, "checkstyle-healthReport.xml", "checkstyle-filtering-issues.txt");
         buildWithResult(project, Result.SUCCESS);
 
         pageObject = loadDashboardTable(dashboard);
-        assertThat(pageObject.getWarningCounts(project.getName())).hasSize(2)
+        assertThat(pageObject.getWarningCounts(project)).hasSize(2)
                 .containsEntry("CheckStyle", 6)
                 .containsEntry("Eclipse ECJ", 8);
+        System.out.println(pageObject.getDashboardTableEntry(project).get("Eclipse ECJ").getUrl());
+        assertThat(pageObject.getDashboardTableEntry(project).get("CheckStyle").getUrl())
+                .endsWith("job/" + project.getName() + "/2/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project.getName() + "/2/eclipse");
     }
 
     /**
@@ -89,23 +107,30 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void showJobResultsWhenAToolIsConfiguredAfterFirstBuild() {
-        FreeStyleProject project1 = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml", "eclipse.txt");
-        enableEclipseWarnings(project1);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-filtering.xml", "eclipse.txt");
+        enableEclipseWarnings(project);
 
-        Dashboard dashboard = configureDashboard("showJobResultsWhenAToolIsConfiguredAfterFirstBuild", project1);
-        buildWithResult(project1, Result.SUCCESS);
+        Dashboard dashboard = configureDashboard("showJobResultsWhenAToolIsConfiguredAfterFirstBuild", project);
+        buildWithResult(project, Result.SUCCESS);
 
         DashboardTable pageObject = loadDashboardTable(dashboard);
-        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(1)
+        assertThat(pageObject.getWarningCounts(project)).hasSize(1)
                 .containsEntry("Eclipse ECJ", 8);
+        assertThat(pageObject.getDashboardTableEntry(project).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project.getName() + "/1/eclipse");
 
-        enableCheckStyleWarnings(project1);
-        buildWithResult(project1, Result.SUCCESS);
+        enableCheckStyleWarnings(project);
+        buildWithResult(project, Result.SUCCESS);
 
         pageObject = loadDashboardTable(dashboard);
-        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(2)
+        assertThat(pageObject.getWarningCounts(project)).hasSize(2)
                 .containsEntry("CheckStyle", 7)
                 .containsEntry("Eclipse ECJ", 8);
+
+        assertThat(pageObject.getDashboardTableEntry(project).get("CheckStyle").getUrl())
+                .endsWith("job/" + project.getName() + "/2/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project.getName() + "/2/eclipse");
     }
 
     /**
@@ -130,18 +155,32 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
         buildWithResult(project2, Result.SUCCESS);
 
         DashboardTable pageObject = loadDashboardTable(dashboard);
-        assertThat(pageObject.getWarningCounts(project1.getName())).hasSize(2)
+        assertThat(pageObject.getWarningCounts(project1)).hasSize(2)
                 .containsEntry("CheckStyle", 7)
                 .containsEntry("Eclipse ECJ", 8);
-        assertThat(pageObject.getWarningCounts(project2.getName())).hasSize(2)
+        assertThat(pageObject.getWarningCounts(project2)).hasSize(2)
                 .containsEntry("CheckStyle", 0)
                 .containsEntry("Maven", 0);
 
+        assertThat(pageObject.getDashboardTableEntry(project1).get("CheckStyle").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project1).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/eclipse");
+        assertThat(pageObject.getDashboardTableEntry(project2).get("CheckStyle").getUrl())
+                .endsWith("job/" + project2.getName() + "/1/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project2).get("Maven").getUrl())
+                .endsWith("job/" + project2.getName() + "/1/maven-warnings");
+
         DashboardTable pageObjectHideCleanJobs = loadDashboardTable(dashboardHideCleanJobs);
-        assertThat(pageObjectHideCleanJobs.getWarningCounts(project1.getName())).hasSize(2)
+        assertThat(pageObjectHideCleanJobs.getWarningCounts(project1)).hasSize(2)
                 .containsEntry("CheckStyle", 7)
                 .containsEntry("Eclipse ECJ", 8);
-        assertThat(pageObjectHideCleanJobs.containsJob(project2.getName())).isFalse();
+        assertThat(pageObjectHideCleanJobs.containsJob(project2)).isFalse();
+
+        assertThat(pageObject.getDashboardTableEntry(project1).get("CheckStyle").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project1).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/eclipse");
     }
 
 
