@@ -1,28 +1,21 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
-import java.nio.charset.CharsetEncoder;
-import java.util.List;
 
+import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
 
-import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.parser.pmd.PmdParser;
-
-import javaposse.jobdsl.dsl.helpers.publisher.TaskScannerContext;
-
-import hudson.FilePath;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
+import hudson.model.HealthReport;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TopLevelItem;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
@@ -154,11 +147,23 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
 
         TopLevelItem job = getJenkins().jenkins.getItem("freestyle-analysis-model");
 
+        copySingleFileToWorkspace(job, "cpd1Warning.xml", "target/cpd.xml");
+
         assertThat(job).isInstanceOf(FreeStyleProject.class);
         DescribableList<Publisher, Descriptor<Publisher>> publishers = ((FreeStyleProject) job).getPublishersList();
         assertThat(publishers).hasSize(1);
         Publisher publisher = publishers.get(0);
         assertThat(publisher).isInstanceOf(IssuesRecorder.class);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus((FreeStyleProject) job, Result.SUCCESS);
+
+        HealthReport healthReport = ((FreeStyleProject) job).getBuildHealth();
+        assertThat(healthReport.getScore()).isEqualTo(100);
+
+        assertThat(result.getTotalSize()).isEqualTo(2);
+        assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+
+        assertThat(result.getOutstandingIssues()).hasSize(2);
 
         IssuesRecorder recorder = (IssuesRecorder) publisher;
         List<Tool> tools = recorder.getTools();
