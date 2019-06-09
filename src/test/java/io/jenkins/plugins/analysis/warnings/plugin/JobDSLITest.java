@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.warnings.plugin;
 
 import java.util.List;
 
+import javax.print.attribute.standard.Severity;
+
 import org.junit.Test;
 
 import hudson.model.Descriptor;
@@ -32,29 +34,78 @@ public class JobDSLITest extends IntegrationTestWithJenkinsPerTest {
      * Creates a freestyle job from a YAML file and verifies that issue recorder finds warnings.
      */
     @Test
-    public void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorder() {
-        configureJenkins("../job-dsl-warnings-ng.yaml");
+    public void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithDefaultConfiguration() {
+        configureJenkins("../job-dsl-warnings-ng-default.yaml");
 
         TopLevelItem project = getJenkins().jenkins.getItem("dsl-freestyle-job");
-        copySingleFileToWorkspace(project, "../java2Warnings.txt", "java.txt");
 
         assertThat(project).isNotNull();
         assertThat(project).isInstanceOf(FreeStyleProject.class);
 
         DescribableList<Publisher, Descriptor<Publisher>> publishers = ((FreeStyleProject) project).getPublishersList();
         assertThat(publishers).hasSize(1);
+
         Publisher publisher = publishers.get(0);
         assertThat(publisher).isInstanceOf(IssuesRecorder.class);
-
-        AnalysisResult result = scheduleBuildAndAssertStatus((FreeStyleProject) project, Result.SUCCESS);
 
         HealthReport healthReport = ((FreeStyleProject) project).getBuildHealth();
         assertThat(healthReport.getScore()).isEqualTo(100);
 
-        assertThat(result.getTotalSize()).isEqualTo(2);
-        assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+        IssuesRecorder recorder = (IssuesRecorder) publisher;
+
+        assertThat(recorder.getAggregatingResults()).isFalse();
+        assertThat(recorder.getBlameDisabled()).isFalse();
+        assertThat(recorder.getEnabledForFailure()).isFalse();
+        assertThat(recorder.getHealthy()).isEqualTo(0);
+        assertThat(recorder.getId()).isNull();
+        assertThat(recorder.getIgnoreFailedBuilds()).isTrue();
+        assertThat(recorder.getIgnoreQualityGate()).isFalse();
+        assertThat(recorder.getMinimumSeverity()).isEqualTo("LOW");
+        assertThat(recorder.getName()).isNull();
+        assertThat(recorder.getQualityGates()).hasSize(0);
+        assertThat(recorder.getSourceCodeEncoding()).isEmpty();
+        assertThat(recorder.getUnhealthy()).isEqualTo(0);
+
+        List<Tool> tools = recorder.getTools();
+        assertThat(tools).hasSize(2);
+        assertThat(tools.get(0)).isInstanceOf(Java.class);
+    }
+
+    @Test
+    public void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithValuesSet() {
+        configureJenkins("../job-dsl-warnings-ng.yaml");
+
+        TopLevelItem project = getJenkins().jenkins.getItem("dsl-freestyle-job");
+
+        assertThat(project).isNotNull();
+        assertThat(project).isInstanceOf(FreeStyleProject.class);
+
+        DescribableList<Publisher, Descriptor<Publisher>> publishers = ((FreeStyleProject) project).getPublishersList();
+        assertThat(publishers).hasSize(1);
+
+        Publisher publisher = publishers.get(0);
+        assertThat(publisher).isInstanceOf(IssuesRecorder.class);
+
+
+        HealthReport healthReport = ((FreeStyleProject) project).getBuildHealth();
+        assertThat(healthReport.getScore()).isEqualTo(100);
 
         IssuesRecorder recorder = (IssuesRecorder) publisher;
+
+        assertThat(recorder.getAggregatingResults()).isTrue();
+        assertThat(recorder.getBlameDisabled()).isTrue();
+        assertThat(recorder.getEnabledForFailure()).isTrue();
+        assertThat(recorder.getHealthy()).isEqualTo(10);
+        assertThat(recorder.getId()).isEqualTo("test-id");
+        assertThat(recorder.getIgnoreFailedBuilds()).isFalse();
+        assertThat(recorder.getIgnoreQualityGate()).isTrue();
+        assertThat(recorder.getMinimumSeverity()).isEqualTo("ERROR");
+        assertThat(recorder.getName()).isEqualTo("test-name");
+        assertThat(recorder.getSourceCodeEncoding()).isEqualTo("UTF-8");
+        assertThat(recorder.getUnhealthy()).isEqualTo(50);
+        assertThat(recorder.getReferenceJobName()).isEqualTo("test-job");
+        assertThat(recorder.getQualityGates()).hasSize(1);
+
         List<Tool> tools = recorder.getTools();
         assertThat(tools).hasSize(2);
         assertThat(tools.get(0)).isInstanceOf(Java.class);

@@ -1,5 +1,8 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CharsetEncoder;
 import java.util.List;
 
 import org.junit.Ignore;
@@ -14,6 +17,7 @@ import javaposse.jobdsl.dsl.helpers.publisher.TaskScannerContext;
 import hudson.FilePath;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
+import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TopLevelItem;
 import hudson.tasks.Publisher;
@@ -85,13 +89,14 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
         assertThat(publishers).hasSize(1);
         Publisher publisher = publishers.get(0);
         assertThat(publisher).isInstanceOf(IssuesRecorder.class);
-
+        Java java = new Java();
         IssuesRecorder recorder = (IssuesRecorder) publisher;
         List<Tool> tools = recorder.getTools();
         assertThat(tools).hasSize(1);
         assertThat(tools.get(0)).isInstanceOf(CheckStyle.class);
         assertThat(tools.get(0).getId()).isEqualTo("checkstyle-id");
         assertThat(tools.get(0).getName()).isEqualTo("checkstyle-name");
+
     }
 
     /**
