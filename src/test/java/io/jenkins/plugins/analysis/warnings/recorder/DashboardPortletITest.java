@@ -95,7 +95,6 @@ public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(pageObject.getWarningCounts(project)).hasSize(2)
                 .containsEntry("CheckStyle", 6)
                 .containsEntry("Eclipse ECJ", 8);
-        System.out.println(pageObject.getDashboardTableEntry(project).get("Eclipse ECJ").getUrl());
         assertThat(pageObject.getDashboardTableEntry(project).get("CheckStyle").getUrl())
                 .endsWith("job/" + project.getName() + "/2/checkstyle");
         assertThat(pageObject.getDashboardTableEntry(project).get("Eclipse ECJ").getUrl())
