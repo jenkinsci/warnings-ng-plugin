@@ -3,11 +3,10 @@ package io.jenkins.plugins.analysis.warnings;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-
+import java.util.Collections;
+import java.util.Objects;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -22,6 +21,7 @@ import hudson.security.FullControlOnceLoggedInAuthorizationStrategy;
 import hudson.security.HudsonPrivateSecurityRealm;
 import hudson.slaves.DumbSlave;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
+import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
 import hudson.tasks.Maven;
 import hudson.util.StreamTaskListener;
 import hudson.util.VersionNumber;
@@ -34,20 +34,24 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTe
 import static io.jenkins.plugins.analysis.core.model.AnalysisResultAssert.*;
 import static org.junit.Assume.*;
 
-
-
-
 /**
  * Integration test with docker and dumb slave.
  *
  * @author Tanja Roithmeier, Matthias Herpers
  */
+@SuppressWarnings({"classFanOutComplexity", "classDataAbstractionCoupling", "illegalcatch"})
 public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     /**
-     * The docker rule.
+     * The docker rule for the java container.
      */
     @Rule
     public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
+
+    /**
+     * The docker rule for the gcc container.
+     */
+    @Rule
+    public DockerRule<GccContainer> gccDockerRule = new DockerRule<>(GccContainer.class);
 
     /**
      * Verifies that operating system is unix and docker is installed.
@@ -92,7 +96,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
             getJenkins().jenkins.setSecurityRealm(securityRealm);
             getJenkins().jenkins.setAuthorizationStrategy(new FullControlOnceLoggedInAuthorizationStrategy());
 
-            getJenkins().jenkins.getInjector().getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false);
+            Objects.requireNonNull(getJenkins().jenkins.getInjector()).getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false);
         }
         catch (IOException e) {
             throw new AssertionError(e);
@@ -113,7 +117,6 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Builds a make project on a docker container.
      */
-    @Ignore
     @Test
     public void shouldBuildMakeOnDocker() {
         DumbSlave slave = createGccDockerSlave();
@@ -148,10 +151,11 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         catch (IOException e) {
             throw new AssertionError(e);
         }
+
         addScriptStep(project, "make");
-        copySingleFileToAgentWorkspace(slave, project, "dockerTestClass.c", "TestClass.c");
+        copySingleFileToAgentWorkspace(slave, project, "dockerTestClass.c", "testClass.c");
         copySingleFileToAgentWorkspace(slave, project, "dockerTestmakefile", "makefile");
-        enableWarnings(project, createTool(new Cmake(), ""));
+        enableWarnings(project, createTool(new Gcc3(), ""));
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertThat(result).hasNoErrorMessages();
@@ -162,8 +166,8 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
             JavaContainer container = javaDockerRule.get();
             DumbSlave agent = new DumbSlave("docker", "/home/test",
                     new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));
-            agent.setNodeProperties(Arrays.asList(new EnvironmentVariablesNodeProperty(
-                    new EnvironmentVariablesNodeProperty.Entry("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64/jre"))));
+            agent.setNodeProperties(Collections.singletonList(new EnvironmentVariablesNodeProperty(
+                    new Entry("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64/jre"))));
             getJenkins().jenkins.addNode(agent);
             getJenkins().waitOnline(agent);
             return agent;
@@ -174,8 +178,17 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private DumbSlave createGccDockerSlave() {
-        //todo
-        return null;
+        try {
+            GccContainer container = gccDockerRule.get();
+            DumbSlave agent = new DumbSlave("docker", "/home/test",
+                    new SSHLauncher(container.ipBound(22), container.port(22), "test", "test", "", ""));
+            getJenkins().jenkins.addNode(agent);
+            getJenkins().waitOnline(agent);
+            return agent;
+        }
+        catch (Exception e) {
+            throw new AssertionError(e);
+        }
     }
 
     private DumbSlave createDumbSlave() {
