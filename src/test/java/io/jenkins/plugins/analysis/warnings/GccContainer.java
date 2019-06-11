@@ -12,9 +12,4 @@ import org.jenkinsci.test.acceptance.docker.fixtures.SshdContainer;
 )
 public class GccContainer extends SshdContainer {
 
-    /**
-     * The default constructor.
-     */
-    public GccContainer() {
-    }
 }
