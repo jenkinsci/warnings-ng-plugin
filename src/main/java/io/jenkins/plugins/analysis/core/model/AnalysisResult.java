@@ -34,12 +34,12 @@ import hudson.XmlFile;
 import hudson.model.Run;
 import hudson.util.XStream2;
 
-import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.forensics.blame.Blames;
 
 /**
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and

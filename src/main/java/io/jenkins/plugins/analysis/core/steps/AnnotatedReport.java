@@ -11,7 +11,7 @@ import com.google.errorprone.annotations.FormatMethod;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.forensics.blame.Blames;
 
 /**
  * A report of issues and the associated blame information, i.e. author and commit information of the SCM.

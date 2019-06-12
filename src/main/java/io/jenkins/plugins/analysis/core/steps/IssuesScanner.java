@@ -30,13 +30,14 @@ import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
+import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
-import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.forensics.blame.Blamer;
+import io.jenkins.plugins.forensics.blame.Blames;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
@@ -183,7 +184,8 @@ class IssuesScanner {
             Report filtered = filter(originalReport, filters, id);
 
             createFingerprints(filtered);
-            Blames blames = blamer.blame(filtered);
+
+            Blames blames = blamer.blame(new ReportLocations(filtered).toFileLocations());
             return new AnnotatedReport(id, filtered, blames);
         }
 

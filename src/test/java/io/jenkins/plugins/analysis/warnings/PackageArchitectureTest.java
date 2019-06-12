@@ -24,5 +24,5 @@ class PackageArchitectureTest {
     @ArchTest
     static final ArchRule ADHERES_TO_PACKAGE_DESIGN
             = classes().should(adhereToPlantUmlDiagram(PACKAGE_DESIGN,
-            consideringOnlyDependenciesInAnyPackage("io.jenkins..")));
+            consideringOnlyDependenciesInAnyPackage("io.jenkins.plugins.analysis..")));
 }

@@ -30,7 +30,8 @@
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>5.1.1</analysis-model-api.version>
     <analysis-model.version>5.1.1</analysis-model.version>
-
+    <forensics-api-plugin.version>0.1.0-SNAPSHOT</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.1.0-SNAPSHOT</git-forensics-plugin.version>
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -304,8 +305,13 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
+      <version>${git-forensics-plugin.version}</version>
       <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>forensics-api</artifactId>
+      <version>${forensics-api-plugin.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -315,6 +321,13 @@
     </dependency>
 
     <!-- Test Dependencies -->
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>forensics-api</artifactId>
+      <version>${forensics-api-plugin.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>

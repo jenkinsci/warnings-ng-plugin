@@ -28,11 +28,12 @@ import hudson.util.FormValidation;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.scm.BlameFactory;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
-import io.jenkins.plugins.analysis.core.scm.NullBlamer;
+import io.jenkins.plugins.analysis.core.scm.ScmResolver;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.forensics.blame.Blamer;
+import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
+import io.jenkins.plugins.forensics.blame.BlamerFactory;
 
 /**
  * Scan files or the console log for issues.
@@ -152,17 +153,17 @@ public class ScanForIssuesStep extends Step {
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()),
-                    createBlamer(workspace, listener));
+                    createBlamer());
 
             return issuesScanner.scan(getRun(), workspace, new LogHandler(listener, tool.getActualName()));
         }
 
-        private Blamer createBlamer(final FilePath workspace, final TaskListener listener)
+        private Blamer createBlamer()
                 throws IOException, InterruptedException {
             if (isBlameDisabled) {
                 return new NullBlamer();
             }
-            return BlameFactory.createBlamer(getRun(), workspace, listener);
+            return BlamerFactory.findBlamerFor(new ScmResolver().getScm(getRun()));
         }
     }
 

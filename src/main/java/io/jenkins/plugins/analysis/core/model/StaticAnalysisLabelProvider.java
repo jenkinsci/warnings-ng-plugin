@@ -17,10 +17,10 @@ import org.jvnet.localizer.Localizable;
 import hudson.model.BallColor;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
+import io.jenkins.plugins.forensics.blame.Blames;
 
 import static j2html.TagCreator.*;
 

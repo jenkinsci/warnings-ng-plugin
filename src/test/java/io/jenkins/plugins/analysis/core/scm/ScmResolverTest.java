@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.assertj.core.api.ObjectAssert;
 import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.gitclient.GitClient;
@@ -17,50 +18,37 @@ import hudson.model.TaskListener;
 import hudson.plugins.git.GitSCM;
 import hudson.plugins.git.extensions.GitSCMExtension;
 import hudson.plugins.git.extensions.GitSCMExtensionDescriptor;
+import hudson.scm.NullSCM;
+import hudson.scm.SCM;
 import hudson.util.DescribableList;
 import jenkins.triggers.SCMTriggerItem;
 
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
-
-import static io.jenkins.plugins.analysis.core.scm.BlamerAssert.*;
+import static io.jenkins.plugins.forensics.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests for {@link BlameFactory}.
+ * Tests for {@link ScmResolver}.
  *
  * @author Andreas Reiser
  */
-class BlameFactoryTest {
-    @Test
-    void shouldCreateNullBlamerOnMissingGitPlugin() {
-        enableGitPlugin(false);
-
-        assertThatBlamer(mock(Run.class)).isInstanceOf(NullBlamer.class);
-    }
-
+class ScmResolverTest {
     @Test
     void shouldCreateNullBlamerOnNullScm() {
-        enableGitPlugin(true);
-
-        assertThatBlamer(mock(Run.class)).isInstanceOf(NullBlamer.class);
+        assertThatScm(mock(Run.class)).isInstanceOf(NullSCM.class);
     }
 
     @Test
     void shouldCreateGitBlamerOnGitScm() {
-        enableGitPlugin(true);
-
         AbstractProject job = mock(AbstractProject.class);
         GitSCM gitScm = createGitStub();
         when(job.getScm()).thenReturn(gitScm);
 
         AbstractBuild build = createBuildFor(job);
-        assertThatBlamer(build).isInstanceOf(GitBlamer.class);
+        assertThatScm(build).isInstanceOf(GitSCM.class);
     }
 
     @Test
     void shouldCreateGitBlamerOnGitScmOnRoot() {
-        enableGitPlugin(true);
-
         AbstractProject job = mock(AbstractProject.class);
 
         AbstractProject root = mock(AbstractProject.class);
@@ -70,33 +58,29 @@ class BlameFactoryTest {
         when(job.getRootProject()).thenReturn(root);
 
         AbstractBuild build = createBuildFor(job);
-        assertThatBlamer(build).isInstanceOf(GitBlamer.class);
+        assertThatScm(build).isInstanceOf(GitSCM.class);
     }
 
     @Test
     @SuppressWarnings("unchecked")
     void shouldCreateGitBlamerForPipeline() {
-        enableGitPlugin(true);
-
         Job pipeline = mock(Job.class, withSettings().extraInterfaces(SCMTriggerItem.class));
 
         GitSCM gitScm = createGitStub();
         when(((SCMTriggerItem) pipeline).getSCMs()).thenReturn(asSingleton(gitScm));
 
         Run<?, ?> run = createRunFor(pipeline);
-        assertThatBlamer(run).isInstanceOf(GitBlamer.class);
+        assertThatScm(run).isInstanceOf(GitSCM.class);
     }
 
     @Test
     void shouldCreateNullBlamerForPipelineWithNoScm() {
-        enableGitPlugin(true);
-
         Job pipeline = mock(Job.class, withSettings().extraInterfaces(SCMTriggerItem.class));
 
         when(((SCMTriggerItem) pipeline).getSCMs()).thenReturn(new ArrayList<>());
 
         Run<?, ?> run = createRunFor(pipeline);
-        assertThatBlamer(run).isInstanceOf(NullBlamer.class);
+        assertThatScm(run).isInstanceOf(NullSCM.class);
     }
 
     private List asSingleton(final GitSCM gitScm) {
@@ -105,8 +89,6 @@ class BlameFactoryTest {
 
     @Test
     void shouldCreateNullBlamerIfNeitherProjectNorRootHaveScm() {
-        enableGitPlugin(true);
-
         AbstractProject job = mock(AbstractProject.class);
 
         AbstractProject root = mock(AbstractProject.class);
@@ -114,11 +96,11 @@ class BlameFactoryTest {
 
         AbstractBuild build = createBuildFor(job);
 
-        assertThatBlamer(build).isInstanceOf(NullBlamer.class);
+        assertThatScm(build).isInstanceOf(NullSCM.class);
     }
 
-    private BlamerAssert assertThatBlamer(final Run run) {
-        return assertThat(BlameFactory.createBlamer(run, null, TaskListener.NULL));
+    private ObjectAssert<SCM> assertThatScm(final Run run) {
+        return assertThat(new ScmResolver().getScm(run));
     }
 
     private Run<?, ?> createRunFor(final Job<?, ?> job) {
@@ -161,11 +143,5 @@ class BlameFactoryTest {
         catch (IOException | InterruptedException exception) {
             throw new AssertionError(exception);
         }
-    }
-
-    private void enableGitPlugin(final boolean gitInstalled) {
-        JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
-        when(jenkinsFacade.isPluginInstalled("git")).thenReturn(gitInstalled);
-        BlameFactory.setJenkinsFacade(jenkinsFacade);
     }
 }
