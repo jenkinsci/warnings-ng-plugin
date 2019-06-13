@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Severity;
@@ -17,6 +18,7 @@ import static edu.hm.hafner.analysis.assertj.Assertions.*;
  *
  * @author Matthias Herpers
  */
+@Ignore("TODO: investigate how the runtime of those tests could be improved")
 public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
