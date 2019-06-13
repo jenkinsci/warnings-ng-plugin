@@ -47,12 +47,10 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        // Assert that the injected env vars where available during the build
         EnvVars envVars = capture.getEnvVars();
         assertThat(envVars.get("HELLO_WORLD")).isEqualTo("hello_test");
         assertThat(envVars.get("MY_ENV_VAR")).isEqualTo("42");
 
-        // Assert that the injectedEnvVars.txt was successfully created
         FreeStyleBuild lastBuild = project.getLastBuild();
         assertThat(lastBuild).isNotNull();
         Path envFile = Paths.get(lastBuild.getRootDir().getPath(), "injectedEnvVars.txt");
@@ -73,13 +71,11 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
         injectEnvironmentVariables(project, "HELLO_WORLD=hello_test", "FILE_EXT=txt");
 
-        // Create one file which matches the pattern and once which should not match
         createFileWithJavaWarnings("javac.txt", project, 1, 2, 3);
         createFileWithJavaWarnings("javac.csv", project, 1, 2);
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        // Assert that the expected amount of warnings were found with the pattern
         assertThat(analysisResult).hasTotalSize(3);
         analysisResult.getInfoMessages().contains("-> found 1 file");
     }
@@ -95,7 +91,6 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
         injectEnvironmentVariables(project, "FILE_PATTERN=${FILE_NAME}.${FILE_EXT}", "FILE_NAME=*_javac",
                 "FILE_EXT=txt");
 
-        // Create one file which matches the pattern and once which should not match
         createFileWithJavaWarnings("A_javac.txt", project, 1, 2);
         createFileWithJavaWarnings("B_javac.txt", project, 3, 4);
         createFileWithJavaWarnings("C_javac.csv", project, 11, 12, 13);
@@ -104,7 +99,6 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        // Assert that the expected amount of warnings were found with the pattern
         assertThat(analysisResult).hasTotalSize(4);
         analysisResult.getInfoMessages().contains("-> found 2 files");
     }
