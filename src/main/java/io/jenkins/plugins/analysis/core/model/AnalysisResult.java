@@ -279,7 +279,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return new XmlFile(new XStream2(), new File(getOwner().getRootDir(), id + "-blames.xml"));
     }
 
-    private Blames readBlames() {
+    Blames readBlames() {
         Blames blames = readXml(Blames.class, getBlamesFile(), new Blames());
         blamesReference = new WeakReference<>(blames);
         return blames;
