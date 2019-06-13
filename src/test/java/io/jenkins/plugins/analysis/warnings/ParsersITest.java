@@ -737,6 +737,11 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(2 + 1 + 1 + 2, new Java(), "javac.txt", "gradle.java.log", "ant-javac.txt", "hpi.txt");
     }
 
+    @Test
+    public void shouldFindAllKotlinIssues(){
+        shouldFindIssuesOfTool(2,new Kotlin(),"kotlin.txt");
+    }
+
     /** Runs the CssLint parser on an output file that contains 51 issues. */
     @Test
     public void shouldFindAllCssLintIssues() {
