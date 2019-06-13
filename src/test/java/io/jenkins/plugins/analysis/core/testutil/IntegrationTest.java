@@ -30,14 +30,13 @@ import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import edu.hm.hafner.util.ResourceTest;
-import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.flow.FlowDefinition;
@@ -62,6 +61,7 @@ import hudson.tasks.Publisher;
 import hudson.tasks.Shell;
 import hudson.util.DescribableList;
 import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
+import jenkins.security.s2m.AdminWhitelistRule;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
@@ -115,6 +115,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected abstract WebClient getWebClient(JavaScriptSupport javaScriptSupport);
 
+    @SuppressFBWarnings(value = "LG", justification = "Setting the logger here helps to clean up the console log for tests")
     static WebClient create(final JenkinsRule jenkins, final boolean isJavaScriptEnabled) {
         WebClient webClient = jenkins.createWebClient();
         webClient.setCssErrorHandler(new SilentCssErrorHandler());
@@ -278,7 +279,7 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Creates a {@link DumbSlave agent} with the specified label.
+     * Creates an {@link DumbSlave agent} with the specified label.
      *
      * @param label
      *         the label of the agent
@@ -291,6 +292,32 @@ public abstract class IntegrationTest extends ResourceTest {
             return getJenkins().createOnlineSlave(new LabelAtom(label));
         }
         catch (Exception e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Creates an {@link DumbSlave agent} with the specified label. Master - agent security will be enabled.
+     *
+     * @param label
+     *         the label of the agent
+     *
+     * @return the agent
+     */
+    protected Slave createAgentWithEnabledSecurity(final String label) {
+        try {
+            Slave agent = createAgent(label);
+
+            FilePath child = getJenkins().getInstance().getRootPath().child("secrets/filepath-filters.d/30-default.conf");
+            child.delete();
+            child.write("", "ISO_8859_1");
+
+            Objects.requireNonNull(getJenkins().jenkins.getInjector())
+                    .getInstance(AdminWhitelistRule.class).setMasterKillSwitch(false);
+            getJenkins().jenkins.save();
+            return agent;
+        }
+        catch (IOException | InterruptedException e) {
             throw new AssertionError(e);
         }
     }
@@ -310,10 +337,39 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected void copySingleFileToAgentWorkspace(final Slave agent, final TopLevelItem job,
             final String from, final String to) {
-        FilePath workspace = agent.getWorkspaceFor(job);
-        assertThat(workspace).isNotNull();
+        FilePath workspace = getAgentWorkspace(agent, job);
 
         copySingleFileToWorkspace(workspace, from, to);
+    }
+
+    private FilePath getAgentWorkspace(final Slave agent, final TopLevelItem job) {
+        FilePath workspace = agent.getWorkspaceFor(job);
+        assertThat(workspace).isNotNull();
+        return workspace;
+    }
+
+    /**
+     * Creates the specified file with the given content to the workspace of the specified agent.
+     *
+     * @param agent
+     *         the agent to get the workspace for
+     * @param job
+     *         the job to get the workspace for
+     * @param fileName
+     *         the file name
+     * @param content
+     *         the content to write
+     */
+    protected void createFileInAgentWorkspace(final Slave agent, final TopLevelItem job, final String fileName,
+            final String content) {
+        try {
+            FilePath workspace = getAgentWorkspace(agent, job);
+            FilePath child = workspace.child(fileName);
+            child.copyFrom(new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
+        }
+        catch (IOException | InterruptedException e) {
+            throw new AssertionError(e);
+        }
     }
 
     /**

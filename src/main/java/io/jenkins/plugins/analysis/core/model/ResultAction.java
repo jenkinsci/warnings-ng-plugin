@@ -11,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.StaplerProxy;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
@@ -133,7 +134,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     public String getAbsoluteUrl() {
-        return this.getOwner().getAbsoluteUrl();
+        return getOwner().getAbsoluteUrl();
     }
 
     @Override
@@ -258,5 +259,17 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     @Override
     public Object getTarget() {
         return new IssuesDetail(owner, result, getLabelProvider(), healthDescriptor, Charset.forName(charset));
+    }
+
+    /**
+     * Empty method as workaround for Stapler bug: JavaScript method in target object is not found.
+     *
+     * @return unused string (since Firefox requires that Ajax calls return something)
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused")
+    public String resetReference() {
+        // Empty method as workaround for Stapler bug that does not find JavaScript proxy methods in target object IssueDetail
+        return "{}";
     }
 }
