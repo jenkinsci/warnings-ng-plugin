@@ -9,14 +9,12 @@ import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
- * Provides a parser and customized messages for PEP8 Python style guide.
+ * Provides a parser and customized messages for Kotlin errors and warnings.
  *
  * @author Sladyn Nunes
  */
-
 public class Kotlin extends ReportScanningTool {
-
-    private static final long  serialVersionUID = 00; // To be added
+    private static final long  serialVersionUID = 2618843071479627178L; // To be added
     private static final String ID = "kotlin";
 
     /** Creates a new instance of {@link Kotlin}. */
@@ -43,7 +41,7 @@ public class Kotlin extends ReportScanningTool {
         @NonNull
         @Override
         public String getDisplayName() {
-            return Messages.Warnings_JavaParser_ParserName();
+            return Messages.Warnings_Kotlin_ParserName();
         }
     }
 }
