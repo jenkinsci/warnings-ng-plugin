@@ -43,7 +43,7 @@ import io.jenkins.plugins.forensics.blame.Blames;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final long serialVersionUID = 1110545450292087475L;
 
