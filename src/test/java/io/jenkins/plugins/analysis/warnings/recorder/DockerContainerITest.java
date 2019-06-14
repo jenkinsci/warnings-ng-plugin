@@ -9,7 +9,6 @@ import org.junit.Test;
 import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerRule;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaContainer;
-import hudson.console.AnnotatedLargeText;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.plugins.sshslaves.SSHLauncher;
@@ -65,8 +64,6 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
 
         FreeStyleBuild lastBuild = project.getLastBuild();
         AnalysisResult result = getAnalysisResult(lastBuild);
-
-        AnnotatedLargeText logText = lastBuild.getLogText();
 
         assertThat(result).hasTotalSize(2);
         assertThat(lastBuild.getBuiltOn().getLabelString()).isEqualTo(agent.getLabelString());
@@ -132,34 +129,31 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      * @return A simple make file.
      */
     private String getSampleMavenFile() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("    <project>\n")
-                .append("      <modelVersion>4.0.0</modelVersion>\n")
-                .append("      <groupId>test</groupId>\n")
-                .append("      <artifactId>testArtifact</artifactId>\n")
-                .append("      <version>1</version>\n")
-                .append("      <properties>\n")
-                .append("         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n")
-                .append("      </properties>\n")
-                .append("      <build>\n")
-                .append("         <sourceDirectory>src/main/java</sourceDirectory>\n")
-                .append("         <plugins>\n")
-                .append("           <plugin>\n")
-                .append("               <groupId>org.apache.maven.plugins</groupId>\n")
-                .append("               <artifactId>maven-compiler-plugin</artifactId>\n")
-                .append("               <version>3.6.1</version>\n")
-                .append("               <configuration>\n")
-                .append("                   <source>1.8</source>\n")
-                .append("                   <target>1.8</target>\n")
-                .append("                   <compilerArgument>-Xlint:all</compilerArgument>\n")
-                .append("                   <showWarnings>true</showWarnings>\n")
-                .append("               </configuration>\n")
-                .append("           </plugin>\n")
-                .append("         </plugins>\n")
-                .append("      </build>\n")
-                .append("    </project>");
-
-        return builder.toString();
+        return "    <project>\n"
+                + "      <modelVersion>4.0.0</modelVersion>\n"
+                + "      <groupId>test</groupId>\n"
+                + "      <artifactId>testArtifact</artifactId>\n"
+                + "      <version>1</version>\n"
+                + "      <properties>\n"
+                + "         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\n"
+                + "      </properties>\n"
+                + "      <build>\n"
+                + "         <sourceDirectory>src/main/java</sourceDirectory>\n"
+                + "         <plugins>\n"
+                + "           <plugin>\n"
+                + "               <groupId>org.apache.maven.plugins</groupId>\n"
+                + "               <artifactId>maven-compiler-plugin</artifactId>\n"
+                + "               <version>3.6.1</version>\n"
+                + "               <configuration>\n"
+                + "                   <source>1.8</source>\n"
+                + "                   <target>1.8</target>\n"
+                + "                   <compilerArgument>-Xlint:all</compilerArgument>\n"
+                + "                   <showWarnings>true</showWarnings>\n"
+                + "               </configuration>\n"
+                + "           </plugin>\n"
+                + "         </plugins>\n"
+                + "      </build>\n"
+                + "    </project>";
     }
 
     /**
@@ -168,14 +162,11 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      * @return A simple make file.
      */
     private String getSampleMakefileFile() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("prog: test.o\n")
-                .append("\tgcc -o prog test.o\n")
-                .append("\n")
-                .append("test.o: test.cpp\n")
-                .append("\tgcc -c -Wall -Wextra -O2 test.cpp\n");
-
-        return builder.toString();
+        return "prog: test.o\n"
+                + "\tgcc -o prog test.o\n"
+                + "\n"
+                + "test.o: test.cpp\n"
+                + "\tgcc -c -Wall -Wextra -O2 test.cpp\n";
     }
 
     /**
@@ -184,16 +175,13 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      * @return A sample java file.
      */
     private String getSampleJavaFile() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("import java.util.ArrayList;\n")
-                .append("public class Test {\n")
-                .append("   public static void main(String[] args){\n")
-                .append("      ArrayList<String> list = new ArrayList();\n")
-                .append("      System.out.println(\"This is a test message\");\n")
-                .append("   }\n")
-                .append("}\n");
-
-        return builder.toString();
+        return "import java.util.ArrayList;\n"
+                + "public class Test {\n"
+                + "   public static void main(String[] args){\n"
+                + "      ArrayList<String> list = new ArrayList();\n"
+                + "      System.out.println(\"This is a test message\");\n"
+                + "   }\n"
+                + "}\n";
     }
 
     /**
@@ -202,13 +190,10 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      * @return A sample cpp file.
      */
     private String getSampleCppFile() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("int main()\n")
-                .append("{\n")
-                .append("    float f = 1;\n")
-                .append("    return 0;\n")
-                .append("}\n");
-
-        return builder.toString();
+        return "int main()\n"
+                + "{\n"
+                + "    float f = 1;\n"
+                + "    return 0;\n"
+                + "}\n";
     }
 }

@@ -75,12 +75,13 @@ public final class BlameFactory {
             if (!scms.isEmpty()) {
                 return scms.iterator().next(); // TODO: what should we do if more than one SCM has been used
             }
-            else if (job instanceof WorkflowJob) {
-                FlowDefinition definition = ((WorkflowJob) job).getDefinition();
-                if (definition instanceof CpsScmFlowDefinition) {
-                    return ((CpsScmFlowDefinition) definition).getScm();
-                }
+        }
+        if (job instanceof WorkflowJob) {
+            FlowDefinition definition = ((WorkflowJob) job).getDefinition();
+            if (definition instanceof CpsScmFlowDefinition) {
+                return ((CpsScmFlowDefinition) definition).getScm();
             }
+
         }
         return new NullSCM();
     }

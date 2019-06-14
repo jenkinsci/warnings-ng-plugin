@@ -212,7 +212,7 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
             return gitRepo.head();
         }
         catch (Exception e) {
-            throw new IllegalStateException("Unexpected Exception", e);
+            throw new AssertionError(e);
         }
     }
 
@@ -243,7 +243,7 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
             changeUser(ERROR_AUTHOR, ERROR_MAIL);
         }
         catch (Exception e) {
-            throw new IllegalStateException("Unexpected IOException", e);
+            throw new AssertionError(e);
         }
     }
 
@@ -254,7 +254,7 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
             gitRepo.git("config", "user.email", mail);
         }
         catch (Exception e) {
-            throw new IllegalStateException("Unexpected IOException", e);
+            throw new AssertionError(e);
         }
     }
 
@@ -290,7 +290,7 @@ public class BlameITest extends IntegrationTestWithJenkinsPerTest {
             gitRepo.git("commit", "--message=" + fileName + " created");
         }
         catch (Exception e) {
-            throw new IllegalStateException("Unexpected IOException", e);
+            throw new AssertionError(e);
         }
     }
 }
