@@ -1,19 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.plugins;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-
 import org.junit.Test;
 import org.jvnet.hudson.test.CaptureEnvironmentBuilder;
 
 import org.jenkinsci.plugins.envinject.EnvInjectBuildWrapper;
 import org.jenkinsci.plugins.envinject.EnvInjectJobPropertyInfo;
-import hudson.EnvVars;
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
@@ -21,48 +12,14 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * This class tests the compatibility between the warnings-ng and the EnvInject plugins. It makes sure the basic
- * functionality of the envinject plugin works and that its features can be used to inject values into patterns.
+ * functionality of the EnvInject plugin works and that its features can be used to inject values into patterns.
  */
 public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
-
-    /**
-     * Tests that the build still runs successfully and captures all warnings if used in combination with the envinject
-     * plugin. In addition check if the variables where successfully injected.
-     *
-     * @throws IOException
-     *         if environment injection failed to create its artifact.
-     */
-    @Test
-    public void shouldRunWithEnvPlugin() throws IOException {
-        FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.txt");
-
-        createFileWithJavaWarnings("javac.txt", project, 1, 2);
-
-        CaptureEnvironmentBuilder capture = injectEnvironmentVariables(project, "HELLO_WORLD=hello_test",
-                "MY_ENV_VAR=42");
-
-        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        EnvVars envVars = capture.getEnvVars();
-        assertThat(envVars.get("HELLO_WORLD")).isEqualTo("hello_test");
-        assertThat(envVars.get("MY_ENV_VAR")).isEqualTo("42");
-
-        FreeStyleBuild lastBuild = project.getLastBuild();
-        assertThat(lastBuild).isNotNull();
-        Path envFile = Paths.get(lastBuild.getRootDir().getPath(), "injectedEnvVars.txt");
-        List<String> lines = Files.readAllLines(envFile, Charset.forName("ISO-8859-1"));
-
-        assertThat(lines.contains("HELLO_WORLD=hello_test"));
-        assertThat(lines.contains("MY_ENV_VAR=42"));
-
-        assertThat(analysisResult).hasTotalSize(2);
-    }
-
-    /**
+   /**
      * Make sure that a file pattern containing environment variables correctly matches the expected files.
      */
     @Test
@@ -77,7 +34,9 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(analysisResult).hasTotalSize(3);
-        analysisResult.getInfoMessages().contains("-> found 1 file");
+        assertThat(analysisResult.getInfoMessages()).contains(String.format(
+                "Searching for all files in '%s' that match the pattern '**/*.txt'", getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages()).contains("-> found 1 file");
     }
 
     /**
@@ -100,13 +59,19 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(analysisResult).hasTotalSize(4);
-        analysisResult.getInfoMessages().contains("-> found 2 files");
+        assertThat(analysisResult.getInfoMessages()).contains(String.format(
+                "Searching for all files in '%s' that match the pattern '*_javac.txt'", getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages()).contains("-> found 2 files");
     }
 
     /**
      * Inject Environment variables into a given project and return a capture object.
-     * @param project The project to inject the environment variables into.
-     * @param properties The environment variables in format variable=value.
+     *
+     * @param project
+     *         The project to inject the environment variables into.
+     * @param properties
+     *         The environment variables in format variable=value.
+     *
      * @return A capture object that can be used to retrieve the variables that where available during build.
      */
     private CaptureEnvironmentBuilder injectEnvironmentVariables(final FreeStyleProject project,
@@ -130,7 +95,10 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Create a Freestyle Project with enabled Java warnings.
-     * @param pattern The pattern that is set for the warning files.
+     *
+     * @param pattern
+     *         The pattern that is set for the warning files.
+     *
      * @return The created Freestyle Project.
      */
     private FreeStyleProject createJavaWarningsFreestyleProject(final String pattern) {
