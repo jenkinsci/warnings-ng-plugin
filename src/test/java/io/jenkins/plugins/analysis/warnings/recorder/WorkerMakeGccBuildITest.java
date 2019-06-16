@@ -33,22 +33,11 @@ public class WorkerMakeGccBuildITest extends WorkerBuildABC {
     public static final DockerClassRule<GccContainer> DOCKER_GCC = new DockerClassRule<>(GccContainer.class);
 
     /**
-     * Build gcc make project worker.
-     */
-    @Test
-    public void buildMakeOnDumpSlave() {
-        buildMakeOnWorker(createDumbSlave());
-    }
-
-    /**
      * Build gcc make project in docker container.
      */
     @Test
-    public void buildMakeOnDocker() {
-        buildMakeOnWorker(setUpDocker(DOCKER_GCC));
-    }
-
-    private void buildMakeOnWorker(final Slave worker) {
+    public void buildMakeOnDockerContainer() {
+        final Slave worker = setUpDocker(DOCKER_GCC);
         FreeStyleProject project = createFreeStyleProjectWithWorker(worker);
         project.getBuildersList().add(new Shell("make"));
         copySingleFileToAgentWorkspace(worker, project, "gcc-src/Makefile", "Makefile");

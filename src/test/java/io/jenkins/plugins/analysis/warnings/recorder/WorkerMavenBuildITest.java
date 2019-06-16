@@ -35,7 +35,7 @@ public class WorkerMavenBuildITest extends WorkerBuildABC {
      * Build maven project on worker.
      */
     @Test
-    public void buildMavenOnWorker() {
+    public void buildMavenOnDumpSlave() {
         buildMavenOnWorker(createDumbSlave());
     }
 
@@ -43,7 +43,7 @@ public class WorkerMavenBuildITest extends WorkerBuildABC {
      * Build maven project in docker container.
      */
     @Test
-    public void buildMavenOnDocker() {
+    public void buildMavenOnDockerContainer() {
         buildMavenOnWorker(setUpDocker(DOCKER_JAVA));
     }
 
