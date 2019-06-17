@@ -13,9 +13,6 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
-
-import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Item;
@@ -23,7 +20,6 @@ import hudson.tasks.BuildStep;
 
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -41,8 +37,8 @@ import static org.assertj.core.api.Assertions.*;
  * @author Andreas Neumeier
  */
 public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
-    private static final String JAVA_FILE = "java2Warnings.txt";
-    private static final String JAVA_FILE2 = "java-start.txt";
+    private static final String JAVA_FILE_2_WARNINGS = "java2Warnings.txt";
+    private static final String JAVA_FILE_2_WARNINGS_2 = "java-start.txt";
     private static final String JAVA_PATTERN = "**/*.txt";
     private static final String TOOL_ID = "sampleId1";
     private static final String TOOL_ID2 = "sampleId2";
@@ -52,29 +48,13 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldAnalyseJavaTwiceWithHealthReport() {
-        FreeStyleProject project = createFreeStyleProject();
-        copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
-        copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
+        FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher();
 
-        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_FILE, TOOL_ID, 1, 9);
-        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, 1, 3);
-
-        project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
-                constructConditionalPublisher(publisher),
-                constructConditionalPublisher(publisher2)
-        )));
-
-        hudson.model.Run<?, ?> run = buildSuccessfully(project);
-        List<AnalysisResult> results = getAnalysisResults(run);
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).getId()).isEqualTo(TOOL_ID);
-        assertThat(results.get(1).getId()).isEqualTo(TOOL_ID2);
+        buildProjectAndAssertResults(project);
         List<HealthReport> healthReports = project.getBuildHealthReports();
         assertThat(healthReports.get(0).getScore()).isEqualTo(0);
         assertThat(healthReports.get(1).getScore()).isEqualTo(80);
         assertThat(healthReports.get(2).getScore()).isEqualTo(100);
-        checkDetailsViewForIssues(project, results.get(0), results.get(0).getId(), 2);
-        checkDetailsViewForIssues(project, results.get(1), results.get(1).getId(), 4);
     }
 
     /**
@@ -82,23 +62,23 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldAnalyseJavaTwiceWithOneIssueFilter() {
-        FreeStyleProject project = createFreeStyleProject();
-        copySingleFileToWorkspace(project, JAVA_FILE, JAVA_FILE);
-        copySingleFileToWorkspace(project, JAVA_FILE2, JAVA_FILE2);
+        FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher();
+        FlexiblePublisher flex = (FlexiblePublisher) project.getPublishersList().get(0);
+        IssuesRecorder publisher1 = (IssuesRecorder) flex.getPublishers().get(0).getPublisherList().get(0);
 
-        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID);
+        publisher1.setFilters(createFileExcludeFilter(".*File.java"));
 
-        RegexpFilter filter = new ExcludeFile(".*File.java");
+        buildProjectAndAssertResults(project);
+    }
+
+    private List<RegexpFilter> createFileExcludeFilter(final String pattern) {
+        RegexpFilter filter = new ExcludeFile(pattern);
         List<RegexpFilter> filterList = new ArrayList<>();
         filterList.add(filter);
-        publisher.setFilters(filterList);
-        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2);
+        return filterList;
+    }
 
-        project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
-                constructConditionalPublisher(publisher),
-                constructConditionalPublisher(publisher2)
-        )));
-
+    private void buildProjectAndAssertResults(final FreeStyleProject project) {
         hudson.model.Run<?, ?> run = buildSuccessfully(project);
         List<AnalysisResult> results = getAnalysisResults(run);
         assertThat(results).hasSize(2);
@@ -106,6 +86,21 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(results.get(1).getId()).isEqualTo(TOOL_ID2);
         checkDetailsViewForIssues(project, results.get(0), results.get(0).getId(), 2);
         checkDetailsViewForIssues(project, results.get(1), results.get(1).getId(), 4);
+    }
+
+    private FreeStyleProject setUpFreeStyleProjectWithFlexiblePublisher() {
+        FreeStyleProject project = createFreeStyleProject();
+        copySingleFileToWorkspace(project, JAVA_FILE_2_WARNINGS, JAVA_FILE_2_WARNINGS);
+        copySingleFileToWorkspace(project, JAVA_FILE_2_WARNINGS_2, JAVA_FILE_2_WARNINGS_2);
+
+        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID);
+        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2);
+
+        project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
+                constructConditionalPublisher(publisher),
+                constructConditionalPublisher(publisher2)
+        )));
+        return project;
     }
 
     private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id) {

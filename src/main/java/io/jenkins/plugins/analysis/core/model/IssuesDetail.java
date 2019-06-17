@@ -280,6 +280,19 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
+     * Resets the quality gate for the owner of this view.
+     *
+     * @return unused string (since Firefox requires that Ajax calls return something)
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public String resetReference() {
+        RESET_QUALITY_GATE_COMMAND.execute(owner, labelProvider.getId());
+
+        return "{}";
+    }
+
+    /**
      * Returns the UI model for an ECharts doughnut chart that shows the severities.
      *
      * @return the UI model as JSON
@@ -508,25 +521,6 @@ public class IssuesDetail implements ModelObject {
     @Override
     public String getDisplayName() {
         return displayName;
-    }
-
-    /**
-     * Resets the quality gate for the owner of this view. Redirects to the top level page afterwards.
-     *
-     * @param request
-     *         Stapler request
-     * @param response
-     *         Stapler response
-     */
-    public void doResetReference(final StaplerRequest request, final StaplerResponse response) {
-        RESET_QUALITY_GATE_COMMAND.execute(owner, labelProvider.getId());
-
-        try {
-            response.sendRedirect2("../");
-        }
-        catch (IOException ignore) {
-            // ignore
-        }
     }
 
     /**
