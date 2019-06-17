@@ -742,7 +742,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllKotlinIssues() {
-        shouldFindIssuesOfTool(4, new Kotlin(), "kotlin.txt");
+        shouldFindIssuesOfTool(1, new Kotlin(), "kotlin.txt");
     }
 
     /**
