@@ -3,12 +3,14 @@ package io.jenkins.plugins.analysis.warnings;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.JavacParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.jenkinsci.Symbol;
 import hudson.Extension;
+
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import org.jenkinsci.Symbol;
-import org.kohsuke.stapler.DataBoundConstructor;
 
 /**
  * Provides a parser and customized messages for Kotlin errors and warnings.
@@ -16,7 +18,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Sladyn Nunes
  */
 public class Kotlin extends ReportScanningTool {
-    private static final long serialVersionUID = 2618843071479627178L; // To be added
+    private static final long serialVersionUID = -8933886588477373744L;
     private static final String ID = "kotlin";
 
     /**

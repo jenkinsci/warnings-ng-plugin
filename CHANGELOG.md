@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 Added a generic JSON parser that reads all properties of the internal `Issue` object.
 - [PR#57](https://github.com/jenkinsci/warnings-ng-plugin/pull/57):
 Added a parser for MentorGraphcis Modelsim/Questa.
-- [PR#111](https://github.com/jenkinsci/warnings-ng-plugin/pull/111):
+- [JENKINS-57245](https://issues.jenkins-ci.org/browse/JENKINS-57245), [PR#111](https://github.com/jenkinsci/warnings-ng-plugin/pull/111):
   Added a Kotlin Parser.
 
 ### Fixed 
