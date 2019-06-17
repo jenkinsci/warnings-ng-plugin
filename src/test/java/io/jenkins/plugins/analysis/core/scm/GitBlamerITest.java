@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.scm;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.CreateFileBuilder;
@@ -240,7 +241,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      * @throws Exception
      *         if there is a problem with the git repository
      */
-    @Issue("JENKINS-57260")
+    @Issue("JENKINS-57260") @Ignore("Until JENKINS-57260 has been fixed")
     @Test
     public void shouldBlameWithBuildOutOfTree() throws Exception {
         gitRepo.init();
