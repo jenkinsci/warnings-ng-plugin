@@ -14,10 +14,12 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * @author Sladyn Nunes
  */
 public class Kotlin extends ReportScanningTool {
-    private static final long  serialVersionUID = 2618843071479627178L; // To be added
+    private static final long serialVersionUID = 2618843071479627178L; // To be added
     private static final String ID = "kotlin";
 
-    /** Creates a new instance of {@link Kotlin}. */
+    /**
+     * Creates a new instance of {@link Kotlin}.
+     */
     @DataBoundConstructor
     public Kotlin() {
         super();
@@ -29,11 +31,15 @@ public class Kotlin extends ReportScanningTool {
         return new JavacParser();
     }
 
-    /** Descriptor for this static analysis tool. */
+    /**
+     * Descriptor for this static analysis tool.
+     */
     @Symbol("kotlin")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
-        /** Creates the descriptor instance. */
+        /**
+         * Creates the descriptor instance.
+         */
         public Descriptor() {
             super(ID);
         }
