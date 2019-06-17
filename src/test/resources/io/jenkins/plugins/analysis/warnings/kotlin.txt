@@ -42,4 +42,4 @@
 [INFO] Total time:  3.100 s
 [INFO] Finished at: 2019-06-12T21:47:44+02:00
 [INFO] ------------------------------------------------------------------------
-~/D/g/kotlin-maven-hello-world (master|✚1) $ 
+~/D/g/kotlin-maven-hello-world (master|✚1) $
