@@ -281,11 +281,15 @@ public class IssuesDetail implements ModelObject {
 
     /**
      * Resets the quality gate for the owner of this view.
+     *
+     * @return unused string (since Firefox requires that Ajax calls return something)
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public void resetReference() {
+    public String resetReference() {
         RESET_QUALITY_GATE_COMMAND.execute(owner, labelProvider.getId());
+
+        return "{}";
     }
 
     /**

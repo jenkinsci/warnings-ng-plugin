@@ -4,6 +4,9 @@ import java.util.Collection;
 
 import edu.hm.hafner.util.VisibleForTesting;
 
+import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
+import org.jenkinsci.plugins.workflow.flow.FlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.FilePath;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
@@ -55,6 +58,7 @@ public final class BlameFactory {
         return new NullBlamer();
     }
 
+    @SuppressWarnings("PMD.AvoidDeeplyNestedIfStmts")
     private static SCM getScm(final Run<?, ?> run) {
         Job<?, ?> job = run.getParent();
         if (run instanceof AbstractBuild) {
@@ -71,6 +75,12 @@ public final class BlameFactory {
             Collection<? extends SCM> scms = ((SCMTriggerItem) job).getSCMs();
             if (!scms.isEmpty()) {
                 return scms.iterator().next(); // TODO: what should we do if more than one SCM has been used
+            }
+            else if (job instanceof WorkflowJob) {
+                FlowDefinition definition = ((WorkflowJob) job).getDefinition();
+                if (definition instanceof CpsScmFlowDefinition) {
+                    return ((CpsScmFlowDefinition) definition).getScm();
+                }
             }
         }
         return new NullSCM();
