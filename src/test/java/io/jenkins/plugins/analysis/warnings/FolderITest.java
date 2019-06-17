@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.junit.Test;
-import org.jvnet.hudson.test.recipes.WithPlugin;
 
 import com.cloudbees.hudson.plugins.folder.Folder;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -42,7 +41,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when creating jobs fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testSingleFolderSummaryBox() throws IOException {
         Folder folder = getJenkins().createProject(Folder.class, "singleSummary");
         FreeStyleProject project = folder.createProject(FreeStyleProject.class, "project");
@@ -56,7 +54,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when creating jobs fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testDoubleFolderSummaryBox() throws IOException {
         Folder folder = getJenkins().createProject(Folder.class, "doubleSummary");
         Folder folder2 = folder.createProject(Folder.class, "doubleSummary");
@@ -128,7 +125,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when creating jobs fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testSingleFolderSeverityDistribution() throws IOException {
         FreeStyleProject project = singleFolderJob("singleseverity", "javac.txt");
 
@@ -142,7 +138,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when creating jobs fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testDoubleFolderSeverityDistribution() throws IOException {
         FreeStyleProject project = doubleFolderJob("doubleseverity", "javac.txt");
 
@@ -187,7 +182,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when creating jobs fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testSingleFolderReferenceComparison() throws IOException {
         FreeStyleProject project = singleFolderJob("singlereference", "javac.txt");
 
@@ -201,7 +195,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when creating jobs fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testDoubleFolderReferenceComparison() throws IOException {
         FreeStyleProject project = doubleFolderJob("doublereference", "javac.txt");
 
@@ -246,7 +239,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when creating jobs fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testSingleFolderToolTrend() throws IOException {
         FreeStyleProject project = singleFolderJob("singletooltrend", "javac.txt");
 
@@ -260,7 +252,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when creating jobs fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testDoubleFolderToolTrend() throws IOException {
         FreeStyleProject project = doubleFolderJob("doubletooltrend", "javac.txt");
 
@@ -293,7 +284,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when folder creation fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testSingleFolderProjectPath() throws IOException {
         FreeStyleProject project = singleFolderJob("singlePath", "javac.txt");
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -310,7 +300,6 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
      *         when folder creation fails.
      */
     @Test
-    @WithPlugin("cloudbees-folder")
     public void testMultipleFolderProjectPath() throws IOException {
         FreeStyleProject project = doubleFolderJob("doublePath", "javac.txt");
         AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
