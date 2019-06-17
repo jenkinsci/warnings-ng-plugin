@@ -66,6 +66,7 @@
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
     <script-security.version>1.58</script-security.version>
+    <folder-plugin.version>6.1.2</folder-plugin.version>
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
@@ -127,7 +128,7 @@
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
-        <version>2.9.5</version>
+        <version>2.9.9</version>
       </dependency>
       <dependency>
         <groupId>org.jenkins-ci</groupId>
@@ -409,7 +410,13 @@
     </dependency>
 
     <!-- Integration Test Dependencies -->
-
+    <!-- EnvInject Plugin Dependency -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>envinject</artifactId>
+      <version>2.1.6</version>
+      <scope>test</scope>
+    </dependency>
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -491,6 +498,13 @@
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>cloudbees-folder</artifactId>
+      <version>${folder-plugin.version}</version>
+      <scope>test</scope>
+    </dependency>
+
 
     <!-- GitSampleRepoRule -->
     <dependency>
@@ -525,6 +539,18 @@
       <artifactId>pipeline-model-definition</artifactId>
       <version>1.2</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-api</artifactId>
+      <version>2.33</version>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <version>2.67</version>
+      <scope>compile</scope>
     </dependency>
 
   </dependencies>

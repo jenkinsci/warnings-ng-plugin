@@ -11,6 +11,7 @@ public class NullBlamer implements Blamer {
     private static final long serialVersionUID = -338286497290046470L;
     /** A message that explains that no blaming information will be collected. **/
     static final String BLAMING_SKIPPED = "Skipping blaming as requested in the job configuration";
+    // FIXME: there are several reasons for skipping the blame
 
     @Override
     public Blames blame(final Report report) {
