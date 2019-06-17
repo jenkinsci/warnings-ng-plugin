@@ -122,3 +122,12 @@ At the time of writing:
 
 The icons were downloaded from the official robot framework visual identity github page and were resized.  No other
 modifications were made.
+
+
+------------------------------------------------------------------------------
+
+License for Kotlin Icons
+
+The kotlin logo has been referenced from https://kotlinlang.org/docs/reference/faq.html#where-can-i-get-an-hd-kotlin-logo
+The link to  https://www.jetbrains.com has been provided as a license agreement.
+No modifications to the icon were made except the scale has been brought down to 48x48.

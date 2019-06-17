@@ -738,7 +738,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs the Kotlin parser on several output files that contain 4 issues.
+     * Runs the Kotlin parser on several output files that contain 1 issues.
      */
     @Test
     public void shouldFindAllKotlinIssues() {

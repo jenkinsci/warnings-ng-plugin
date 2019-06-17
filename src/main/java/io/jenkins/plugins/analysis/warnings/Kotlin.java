@@ -4,7 +4,9 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.JavacParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -48,6 +50,11 @@ public class Kotlin extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Kotlin_ParserName();
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new IconLabelProvider(getId(), getDisplayName());
         }
     }
 }
