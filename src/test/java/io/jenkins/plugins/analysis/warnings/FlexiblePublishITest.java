@@ -52,9 +52,8 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
 
         buildProjectAndAssertResults(project);
         List<HealthReport> healthReports = project.getBuildHealthReports();
-        assertThat(healthReports.get(0).getScore()).isEqualTo(0);
-        assertThat(healthReports.get(1).getScore()).isEqualTo(80);
-        assertThat(healthReports.get(2).getScore()).isEqualTo(100);
+        assertThat(healthReports.size()).isEqualTo(3);
+        assertThat(healthReports.stream().map(HealthReport::getScore).max(Integer::compareTo)).isEqualTo(100);
     }
 
     /**
