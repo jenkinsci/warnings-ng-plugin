@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.io.IOException;
-
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -14,8 +12,8 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel.TrendChartType;
 
+import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel.TrendChartType.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -26,37 +24,29 @@ import static org.assertj.core.api.Assertions.*;
  */
 
 public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
-
-    private HtmlPage webPage;
-
-    /**
-     * Test that the three trend charts are shown in right order and the selected chart is remembered after a refresh.
-     */
+    /** Test that the three trend charts are shown in right order. */
     @Test
-    public void shouldShowTrendChartsInRightOrderAndRememberAfterRefresh() {
+    public void shouldShowTrendChartsInRightOrder() {
         TrendCarousel carousel = setUpTrendChartTest(false);
 
-        assertThat(carousel.getChartTypes().size()).isEqualTo(3);
+        assertThat(carousel.getChartTypes())
+                .hasSize(3)
+                .containsExactly(SEVERITIES, TOOLS, NEW_VERSUS_FIXED);
 
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
         carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
+        assertThat(carousel.getActiveChartType()).isEqualTo(TOOLS);
         carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
-
-        refreshWebPageAndAssertTrendChartType(carousel, TrendChartType.NEW_VERSUS_FIXED);
-
+        assertThat(carousel.getActiveChartType()).isEqualTo(NEW_VERSUS_FIXED);
         carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
 
         carousel.previous();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
+        assertThat(carousel.getActiveChartType()).isEqualTo(NEW_VERSUS_FIXED);
         carousel.previous();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
+        assertThat(carousel.getActiveChartType()).isEqualTo(TOOLS);
         carousel.previous();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
-
-        refreshWebPageAndAssertTrendChartType(carousel, TrendChartType.SEVERITIES);
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
     }
 
     /**
@@ -66,41 +56,44 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldShowOnlyOneOfFourChartsAsActive() {
         TrendCarousel carousel = setUpTrendChartTest(true);
 
+        assertThat(carousel.getChartTypes())
+                .hasSize(4)
+                .containsExactly(SEVERITIES, TOOLS, NEW_VERSUS_FIXED, HEALTH);
         assertThat(carousel.getChartTypes().size()).isEqualTo(4);
 
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
         carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
+        assertThat(carousel.getActiveChartType()).isEqualTo(TOOLS);
         carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
+        assertThat(carousel.getActiveChartType()).isEqualTo(NEW_VERSUS_FIXED);
         carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.HEALTH);
-
-        refreshWebPageAndAssertTrendChartType(carousel, TrendChartType.HEALTH);
-
+        assertThat(carousel.getActiveChartType()).isEqualTo(HEALTH);
         carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
 
         carousel.previous();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.HEALTH);
+        assertThat(carousel.getActiveChartType()).isEqualTo(HEALTH);
         carousel.previous();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
+        assertThat(carousel.getActiveChartType()).isEqualTo(NEW_VERSUS_FIXED);
         carousel.previous();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
+        assertThat(carousel.getActiveChartType()).isEqualTo(TOOLS);
         carousel.previous();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
-
-        refreshWebPageAndAssertTrendChartType(carousel, TrendChartType.SEVERITIES);
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
     }
 
-    private void refreshWebPageAndAssertTrendChartType(final TrendCarousel carousel, final TrendChartType type) {
-        try {
-            webPage.refresh();
-        }
-        catch (IOException e) {
-            throw new AssertionError("WebPage refresh failed.", e);
-        }
-        assertThat(carousel.getActiveChartType()).isEqualTo(type);
+    /**
+     * Test that the three trend charts are shown in right order and the selected chart is remembered after a refresh.
+     */
+    @Test
+    public void shouldRememberAfterRefresh() {
+        TrendCarousel carousel = setUpTrendChartTest(false);
+
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
+        carousel.next();
+        assertThat(carousel.getActiveChartType()).isEqualTo(TOOLS);
+
+        carousel.refresh();
+        assertThat(carousel.getActiveChartType()).isEqualTo(TOOLS);
     }
 
     private TrendCarousel setUpTrendChartTest(final boolean hasHealthReport) {
@@ -120,15 +113,9 @@ public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
 
         int buildNumber = analysisResult.getBuild().getNumber();
         String pluginId = analysisResult.getId();
-        webPage = getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
 
-        //use this workaround to start with default trend chart
-        //sadly webPage.executeJavaScript("window.localStorage.clear();"); is not enough
-        TrendCarousel carousel = new TrendCarousel(webPage);
-        while (!carousel.getActiveChartType().equals(TrendChartType.SEVERITIES)) {
-            carousel.next();
-        }
+        HtmlPage webPage = getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
 
-        return carousel;
+        return new TrendCarousel(webPage);
     }
 }
