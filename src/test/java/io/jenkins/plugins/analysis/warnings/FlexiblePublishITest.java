@@ -48,12 +48,12 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldAnalyseJavaTwiceWithHealthReport() {
-        FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher();
+        FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher(true);
 
         buildProjectAndAssertResults(project);
         List<HealthReport> healthReports = project.getBuildHealthReports();
         assertThat(healthReports.size()).isEqualTo(3);
-        assertThat(healthReports.stream().map(HealthReport::getScore).max(Integer::compareTo)).isEqualTo(100);
+        assertThat(healthReports.stream().map(HealthReport::getScore).max(Integer::compareTo).get()).isEqualTo(100);
     }
 
     /**
@@ -61,7 +61,7 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldAnalyseJavaTwiceWithOneIssueFilter() {
-        FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher();
+        FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher(false);
         FlexiblePublisher flex = (FlexiblePublisher) project.getPublishersList().get(0);
         IssuesRecorder publisher1 = (IssuesRecorder) flex.getPublishers().get(0).getPublisherList().get(0);
 
@@ -87,13 +87,17 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         checkDetailsViewForIssues(project, results.get(1), results.get(1).getId(), 4);
     }
 
-    private FreeStyleProject setUpFreeStyleProjectWithFlexiblePublisher() {
+    private FreeStyleProject setUpFreeStyleProjectWithFlexiblePublisher(final boolean health) {
         FreeStyleProject project = createFreeStyleProject();
         copySingleFileToWorkspace(project, JAVA_FILE_2_WARNINGS, JAVA_FILE_2_WARNINGS);
         copySingleFileToWorkspace(project, JAVA_FILE_2_WARNINGS_2, JAVA_FILE_2_WARNINGS_2);
 
         IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID);
         IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2);
+        if (health) {
+            publisher = constructJavaIssuesRecorder(JAVA_FILE_2_WARNINGS, TOOL_ID, 1, 9);
+            publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, 1, 3);
+        }
 
         project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
                 constructConditionalPublisher(publisher),
