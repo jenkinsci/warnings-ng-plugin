@@ -410,6 +410,11 @@
     </dependency>
 
     <!-- Integration Test Dependencies -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>flexible-publish</artifactId>
+      <version>0.15.2</version>
+    </dependency>
     <!-- EnvInject Plugin Dependency -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
