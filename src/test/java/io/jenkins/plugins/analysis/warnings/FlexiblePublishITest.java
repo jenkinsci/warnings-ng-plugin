@@ -24,9 +24,6 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -69,12 +66,12 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult checkStyleResult = results.get(0);
         assertThat(checkStyleResult).hasId(checkStyle.getActualId());
         assertThat(checkStyleResult).hasQualityGateStatus(QualityGateStatus.FAILED);
-        checkDetailsViewForIssues(checkStyleResult, 6);
+        assertThat(checkStyleResult).hasTotalSize(6);
 
         AnalysisResult javaResult = results.get(1);
         assertThat(javaResult).hasId(java.getActualId());
         assertThat(javaResult).hasQualityGateStatus(QualityGateStatus.WARNING);
-        checkDetailsViewForIssues(javaResult, 2);
+        assertThat(javaResult).hasTotalSize(2);
 
         checkStyleRecorder.setFilters(createFileExcludeFilter("\\.java$"));
 
@@ -109,13 +106,5 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
                 null,
                 null
         );
-    }
-
-    private void checkDetailsViewForIssues(final AnalysisResult analysisResult, final int numberOfWarnings) {
-        DetailsTab detailsTab = new DetailsTab(getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult));
-
-        IssuesTable issuesTable = detailsTab.select(TabType.ISSUES);
-
-        assertThat(issuesTable.getRows().size()).isEqualTo(numberOfWarnings);
     }
 }
