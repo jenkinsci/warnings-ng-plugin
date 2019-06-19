@@ -11,11 +11,8 @@ import org.jenkins_ci.plugins.run_condition.BuildStepRunner.Run;
 import org.jenkins_ci.plugins.run_condition.core.AlwaysRun;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import hudson.model.FreeStyleProject;
-import hudson.model.HealthReport;
-import hudson.model.Item;
+import hudson.model.Result;
 import hudson.tasks.BuildStep;
 
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
@@ -23,12 +20,15 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Test the flexible publish plugin in combination with the warnings-ng-plugin.
@@ -37,50 +37,59 @@ import static org.assertj.core.api.Assertions.*;
  * @author Andreas Neumeier
  */
 public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
-    private static final String JAVA_FILE_2_WARNINGS = "java2Warnings.txt";
-    private static final String JAVA_FILE_2_WARNINGS_2 = "java-start.txt";
-    private static final String JAVA_PATTERN = "**/*.txt";
-    private static final String TOOL_ID = "sampleId1";
-    private static final String TOOL_ID2 = "sampleId2";
+    private static final String JAVA_WARNINGS = "java-start.txt";
+    private static final String CHECKSTYLE_WARNINGS = "checkstyle.xml";
 
-    /**
-     * Test that the same tool can be used twice with different configuration.
-     */
+    /** Test that different tools can be configured with different settings. */
     @Test
-    public void shouldAnalyseJavaTwiceWithHealthReport() {
-        FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher(true);
+    public void shouldAnalyseTwoToolsWithDifferentSettings() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CHECKSTYLE_WARNINGS, JAVA_WARNINGS);
 
-        buildProjectAndAssertResults(project);
+        CheckStyle checkStyle = new CheckStyle();
+        checkStyle.setPattern("**/checkstyle*");
+        IssuesRecorder checkStyleRecorder = new IssuesRecorder();
+        checkStyleRecorder.setTool(checkStyle);
+        checkStyleRecorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
-        boolean find4warnings = false;
-        boolean find2warnings = false;
-        for (HealthReport healthReport : project.getBuildHealthReports()) {
-            if (healthReport.getDescription().contains("4 warnings")) {
-                assertThat(healthReport.getScore()).isEqualTo(0);
-                find4warnings = true;
-            }
-            else if (healthReport.getDescription().contains("2 warnings")) {
-                assertThat(healthReport.getScore()).isEqualTo(80);
-                find2warnings = true;
-            }
-        }
-        assertThat(find4warnings).isTrue();
-        assertThat(find2warnings).isTrue();
-    }
+        Java java = new Java();
+        java.setPattern("**/java*");
+        IssuesRecorder javaRecorder = new IssuesRecorder();
+        javaRecorder.setTool(java);
+        javaRecorder.setEnabledForFailure(true);
+        javaRecorder.addQualityGate(2, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
 
-    /**
-     * Test that two java issue recorder can run with different configuration (one with issue filter, one without).
-     */
-    @Test
-    public void shouldAnalyseJavaTwiceWithOneIssueFilter() {
-        FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher(false);
+        project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
+                constructConditionalPublisher(checkStyleRecorder),
+                constructConditionalPublisher(javaRecorder)
+        )));
 
-        FlexiblePublisher flex = (FlexiblePublisher) project.getPublishersList().get(0);
-        IssuesRecorder recorder = (IssuesRecorder) flex.getPublishers().get(0).getPublisherList().get(0);
+        List<AnalysisResult> results = getAnalysisResults(buildWithResult(project, Result.FAILURE));
+        assertThat(results).hasSize(2);
 
-        recorder.setFilters(createFileExcludeFilter(".*File.java"));
+        AnalysisResult checkStyleResult = results.get(0);
+        assertThat(checkStyleResult).hasId(checkStyle.getActualId());
+        assertThat(checkStyleResult).hasQualityGateStatus(QualityGateStatus.FAILED);
+        checkDetailsViewForIssues(checkStyleResult, 6);
 
-        buildProjectAndAssertResults(project);
+        AnalysisResult javaResult = results.get(1);
+        assertThat(javaResult).hasId(java.getActualId());
+        assertThat(javaResult).hasQualityGateStatus(QualityGateStatus.WARNING);
+        checkDetailsViewForIssues(javaResult, 2);
+
+        checkStyleRecorder.setFilters(createFileExcludeFilter("\\.java$"));
+
+        results = getAnalysisResults(buildWithResult(project, Result.UNSTABLE));
+        assertThat(results).hasSize(2);
+
+        checkStyleResult = results.get(0);
+        assertThat(checkStyleResult).hasId(checkStyle.getActualId());
+        assertThat(checkStyleResult).hasQualityGateStatus(QualityGateStatus.PASSED);
+        assertThat(checkStyleResult).hasTotalSize(0);
+
+        javaResult = results.get(1);
+        assertThat(javaResult).hasId(java.getActualId());
+        assertThat(javaResult).hasQualityGateStatus(QualityGateStatus.WARNING);
+        assertThat(javaResult).hasTotalSize(2);
     }
 
     private List<RegexpFilter> createFileExcludeFilter(final String pattern) {
@@ -90,61 +99,10 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         return filterList;
     }
 
-    private void buildProjectAndAssertResults(final FreeStyleProject project) {
-        hudson.model.Run<?, ?> run = buildSuccessfully(project);
-        List<AnalysisResult> results = getAnalysisResults(run);
-        assertThat(results).hasSize(2);
-        assertThat(results.get(0).getId()).isEqualTo(TOOL_ID);
-        assertThat(results.get(1).getId()).isEqualTo(TOOL_ID2);
-        checkDetailsViewForIssues(project, results.get(0), results.get(0).getId(), 2);
-        checkDetailsViewForIssues(project, results.get(1), results.get(1).getId(), 4);
-    }
-
-    private FreeStyleProject setUpFreeStyleProjectWithFlexiblePublisher(final boolean health) {
-        FreeStyleProject project = createFreeStyleProject();
-        copySingleFileToWorkspace(project, JAVA_FILE_2_WARNINGS, JAVA_FILE_2_WARNINGS);
-        copySingleFileToWorkspace(project, JAVA_FILE_2_WARNINGS_2, JAVA_FILE_2_WARNINGS_2);
-
-        IssuesRecorder publisher = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID);
-        IssuesRecorder publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2);
-        if (health) {
-            publisher = constructJavaIssuesRecorder(JAVA_FILE_2_WARNINGS, TOOL_ID, 1, 9);
-            publisher2 = constructJavaIssuesRecorder(JAVA_PATTERN, TOOL_ID2, 1, 3);
-        }
-
-        project.getPublishersList().add(new FlexiblePublisher(Arrays.asList(
-                constructConditionalPublisher(publisher),
-                constructConditionalPublisher(publisher2)
-        )));
-        return project;
-    }
-
-    private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id) {
-        return constructJavaIssuesRecorder(patter, id, 0, 0);
-    }
-
-    private IssuesRecorder constructJavaIssuesRecorder(final String patter, final String id,
-            final int healthy, final int unhealthy) {
-        Java java = new Java();
-        java.setPattern(patter);
-        java.setId(id);
-        IssuesRecorder publisher = new IssuesRecorder();
-        publisher.setTools(java);
-        if (healthy != 0 && unhealthy != 0) {
-            publisher.setHealthy(healthy);
-            publisher.setUnhealthy(unhealthy);
-        }
-        publisher.setBlameDisabled(true);
-
-        return publisher;
-    }
-
     private ConditionalPublisher constructConditionalPublisher(final BuildStep publisher) {
         return new ConditionalPublisher(
                 new AlwaysRun(),
-                Collections.singletonList(
-                        publisher
-                ),
+                Collections.singletonList(publisher),
                 new Run(),
                 false,
                 null,
@@ -153,18 +111,11 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         );
     }
 
-    private void checkDetailsViewForIssues(final Item project, final AnalysisResult analysisResult,
-            final String publisherId, final int warnings) {
-        HtmlPage detailsPage = getDetailsWebPage(project, analysisResult, publisherId);
-        DetailsTab detailsTab = new DetailsTab(detailsPage);
+    private void checkDetailsViewForIssues(final AnalysisResult analysisResult, final int numberOfWarnings) {
+        DetailsTab detailsTab = new DetailsTab(getWebPage(JavaScriptSupport.JS_ENABLED, analysisResult));
+
         IssuesTable issuesTable = detailsTab.select(TabType.ISSUES);
-        List<IssueRow> issuesTableRows = issuesTable.getRows();
 
-        assertThat(issuesTableRows.size()).isEqualTo(warnings);
-    }
-
-    private HtmlPage getDetailsWebPage(final Item project, final AnalysisResult result, final String publisherId) {
-        int buildNumber = result.getBuild().getNumber();
-        return getWebPage(JavaScriptSupport.JS_ENABLED, project, String.format("%d/%s", buildNumber, publisherId));
+        assertThat(issuesTable.getRows().size()).isEqualTo(numberOfWarnings);
     }
 }
