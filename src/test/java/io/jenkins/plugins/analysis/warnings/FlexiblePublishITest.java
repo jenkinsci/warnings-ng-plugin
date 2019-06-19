@@ -51,9 +51,21 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher(true);
 
         buildProjectAndAssertResults(project);
-        List<HealthReport> healthReports = project.getBuildHealthReports();
-        assertThat(healthReports.size()).isEqualTo(3);
-        assertThat(healthReports.stream().map(HealthReport::getScore).max(Integer::compareTo).get()).isEqualTo(100);
+
+        boolean find4warnings = false;
+        boolean find2warnings = false;
+        for (HealthReport healthReport : project.getBuildHealthReports()) {
+            if (healthReport.getDescription().contains("4 warnings")) {
+                assertThat(healthReport.getScore()).isEqualTo(0);
+                find4warnings = true;
+            }
+            else if (healthReport.getDescription().contains("2 warnings")) {
+                assertThat(healthReport.getScore()).isEqualTo(80);
+                find2warnings = true;
+            }
+        }
+        assertThat(find4warnings).isTrue();
+        assertThat(find2warnings).isTrue();
     }
 
     /**
@@ -62,10 +74,11 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldAnalyseJavaTwiceWithOneIssueFilter() {
         FreeStyleProject project = setUpFreeStyleProjectWithFlexiblePublisher(false);
-        FlexiblePublisher flex = (FlexiblePublisher) project.getPublishersList().get(0);
-        IssuesRecorder publisher1 = (IssuesRecorder) flex.getPublishers().get(0).getPublisherList().get(0);
 
-        publisher1.setFilters(createFileExcludeFilter(".*File.java"));
+        FlexiblePublisher flex = (FlexiblePublisher) project.getPublishersList().get(0);
+        IssuesRecorder recorder = (IssuesRecorder) flex.getPublishers().get(0).getPublisherList().get(0);
+
+        recorder.setFilters(createFileExcludeFilter(".*File.java"));
 
         buildProjectAndAssertResults(project);
     }
