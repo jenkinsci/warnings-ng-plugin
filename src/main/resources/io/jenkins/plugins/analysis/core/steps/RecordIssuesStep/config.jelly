@@ -1,0 +1,25 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form">
+
+  <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+
+  <f:entry title="${%title.tool}" >
+    <div id="tools">
+      <f:repeatableProperty minimum="1" field="toolProxies" add="${%Add Tool}" />
+    </div>
+  </f:entry>
+
+  <f:entry title="${%title.aggregatingResults}" description="${%description.aggregatingResults}" field="aggregatingResults">
+    <f:checkbox />
+  </f:entry>
+
+  <f:entry title="${%title.enabledForFailure}" description="${%description.enabledForFailure}" field="enabledForFailure">
+    <f:checkbox />
+  </f:entry>
+
+  <f:advanced>
+    <i:scan-parameters/>
+    <i:publish-parameters/>
+  </f:advanced>
+
+</j:jelly>

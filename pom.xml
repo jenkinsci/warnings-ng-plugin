@@ -4,8 +4,8 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.42</version>
-    <relativePath />
+    <version>3.43</version>
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -23,7 +23,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Override properties defined in parent POM -->
-    <jenkins.version>2.121.1</jenkins.version>
+    <jenkins.version>2.138.4</jenkins.version>
     <java.level>8</java.level>
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
@@ -60,6 +60,7 @@
     <matrix-project.version>1.13</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>3.9.1</git-plugin.version>
+    <workflow-api.version>2.34</workflow-api.version>
     <workflow-step.version>2.19</workflow-step.version>
     <workflow-job.version>2.32</workflow-job.version>
     <structs.version>1.19</structs.version>
@@ -261,6 +262,17 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>script-security</artifactId>
       <version>${script-security.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-api</artifactId>
+      <version>${workflow-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <version>2.67</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -529,12 +541,6 @@
     <!-- Declarative Pipeline -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-api</artifactId>
-      <version>2.33</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-support</artifactId>
       <version>3.2</version>
       <scope>test</scope>
@@ -544,18 +550,6 @@
       <artifactId>pipeline-model-definition</artifactId>
       <version>1.2</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-api</artifactId>
-      <version>2.33</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-cps</artifactId>
-      <version>2.67</version>
-      <scope>compile</scope>
     </dependency>
 
   </dependencies>
@@ -796,7 +790,9 @@
           </dependency>
         </dependencies>
         <configuration>
-          <skip>true</skip>
+          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
+          <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
+          <checkDependencies>false</checkDependencies>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
@@ -815,52 +811,24 @@
               </item>
               <item>
                 <regex>true</regex>
-                <code>.*</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
-                <justification>The tool is not part of API.</justification>
+                <code>java.missing.*</code>
+                <justification>Dependencies are not being checked, so they are reported as missing</justification>
+              </item>
+              <item>
+                <code>java.annotation.removed</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor</classQualifiedName>
+                <justification>Symbol-based usage migrated transparently to RecordIssuesStep</justification>
               </item>
               <item>
                 <code>java.method.removed</code>
-                <methodName>doResetReference</methodName>
-                <justification>See SECURITY-1391.</justification>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.util.QualityGateStatus</classQualifiedName>
+                <justification>Not part of the plugin's public API</justification>
               </item>
-            </revapi.ignore>
-            <!-- Always ignore Jenkins API -->
-            <revapi.ignore>
               <item>
+                <regex>true</regex>
                 <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>hudson.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>jenkins.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>org.kohsuke.stapler.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>net.sf.json.AbstractJSON.WritingVisitor</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <regex>true</regex>
-                <classQualifiedName>com.fasterxml.jackson.databind.*</classQualifiedName>
-                <justification>Not relevant</justification>
+                <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
+                <justification>The tool is not part of API.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>
