@@ -801,10 +801,12 @@ public abstract class IntegrationTest extends ResourceTest {
 
             ResultAction action = getResultAction(run);
 
+            System.out.println("---------------------------------- Console Log ---------------------------------");
+            System.out.println(JenkinsRule.getLog(run));
             System.out.println("------------------------------------- Infos ------------------------------------");
-            System.out.println(action.getResult().getInfoMessages());
+            action.getResult().getInfoMessages().forEach(System.out::println);
             System.out.println("------------------------------------ Errors ------------------------------------");
-            System.out.println(action.getResult().getErrorMessages());
+            action.getResult().getErrorMessages().forEach(System.out::println);
             System.out.println("--------------------------------------------------------------------------------");
 
             return action.getResult();
