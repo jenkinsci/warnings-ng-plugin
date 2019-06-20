@@ -83,6 +83,13 @@ public final class BlameFactory {
                 }
             }
         }
+        if (job instanceof WorkflowJob) {
+            FlowDefinition definition = ((WorkflowJob) job).getDefinition();
+            if (definition instanceof CpsScmFlowDefinition) {
+                return ((CpsScmFlowDefinition) definition).getScm();
+            }
+
+        }
         return new NullSCM();
     }
 
