@@ -9,7 +9,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
@@ -18,7 +18,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * This class tests the compatibility between the warnings-ng and the EnvInject plugins. It makes sure the basic
  * functionality of the EnvInject plugin works and that its features can be used to inject values into patterns.
  */
-public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerTest {
+public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerSuite {
    /**
      * Make sure that a file pattern containing environment variables correctly matches the expected files.
      */

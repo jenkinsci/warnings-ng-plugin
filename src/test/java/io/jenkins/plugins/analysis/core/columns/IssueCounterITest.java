@@ -23,7 +23,6 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  * Integration Test for the Issue counter column.
  */
 public class IssueCounterITest extends IntegrationTestWithJenkinsPerTest {
-
     private static final String ISSUE_ELEMENT_ID = "issues-total";
     private static final String JAVAC_ONE_WARNING = "javac_1_warning.txt";
     private static final String JAVAC_PYTHON_WARNINGS = "javac_python_3_issues.txt";
