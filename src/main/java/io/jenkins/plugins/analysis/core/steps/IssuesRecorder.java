@@ -16,6 +16,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -72,7 +73,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateStatusHandler;
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
-public class IssuesRecorder extends Recorder implements SimpleBuildStep {
+public class IssuesRecorder extends Recorder implements SimpleBuildStep { // FIXME: can we remove SimpleBuildStep
     static final String NO_REFERENCE_JOB = "-";
 
     private List<Tool> analysisTools = new ArrayList<>();
@@ -1040,7 +1041,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /**
      * Descriptor for this step: defines the context and the UI elements.
      */
-    @Extension
+    @Extension @Symbol("recordFreeStyleIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         /** Retain backward compatibility. */
