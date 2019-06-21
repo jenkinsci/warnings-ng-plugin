@@ -167,7 +167,7 @@
 
   <dependencies>
 
-    <!-- Project Dependencies -->
+    <!-- Project Library Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
@@ -413,7 +413,6 @@
       <version>2.2</version>
       <scope>test</scope>
     </dependency>
-    <!-- XML Unit -->
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
@@ -421,19 +420,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Integration Test Dependencies -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>flexible-publish</artifactId>
-      <version>0.15.2</version>
-    </dependency>
-    <!-- EnvInject Plugin Dependency -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>envinject</artifactId>
-      <version>2.1.6</version>
-      <scope>test</scope>
-    </dependency>
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -441,14 +427,26 @@
       <version>1.8</version>
       <scope>test</scope>
     </dependency>
-    <!-- Timestamper plugin -->
+
+    <!-- Jenkins Plug-in Dependencies required for integration tests -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>flexible-publish</artifactId>
+      <version>0.15.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>envinject</artifactId>
+      <version>2.1.6</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>timestamper</artifactId>
       <version>1.9</version>
       <scope>test</scope>
     </dependency>
-    <!-- Maven Project Type -->
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
@@ -461,13 +459,19 @@
       <version>1.74</version>
       <scope>test</scope>
     </dependency>
-    <!-- Configuration as Code -->
     <dependency>
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>
       <version>1.18</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>cloudbees-folder</artifactId>
+      <version>${folder-plugin.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <!-- stage -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -508,13 +512,6 @@
       <version>1.2</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>cloudbees-folder</artifactId>
-      <version>${folder-plugin.version}</version>
-      <scope>test</scope>
-    </dependency>
-
 
     <!-- GitSampleRepoRule -->
     <dependency>
@@ -529,6 +526,7 @@
       <artifactId>scm-api</artifactId>
       <version>2.2.7</version>
       <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
 
     <!-- Declarative Pipeline -->
