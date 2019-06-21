@@ -40,6 +40,8 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatusHandler;
 
@@ -64,19 +66,27 @@ public class RecordIssuesStep extends Step implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private List<Tool> analysisTools = new ArrayList<>();
+
     private String sourceCodeEncoding = StringUtils.EMPTY;
+
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
     private String referenceJobName;
+
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
+
     private List<RegexpFilter> filters = new ArrayList<>();
+
     private boolean isEnabledForFailure;
     private boolean isAggregatingResults;
+
     private boolean isBlameDisabled;
+
     private String id;
     private String name;
+
     private List<QualityGate> qualityGates = new ArrayList<>();
 
     /**
@@ -85,6 +95,8 @@ public class RecordIssuesStep extends Step implements Serializable {
     @DataBoundConstructor
     public RecordIssuesStep() {
         super();
+
+        // empty constructor required for Stapler
     }
 
     /**
@@ -109,7 +121,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param result
      *         determines whether the quality gate is a warning or failure
      */
-    public void addQualityGate(final int size, final QualityGate.QualityGateType type, final QualityGate.QualityGateResult result) {
+    public void addQualityGate(final int size, final QualityGateType type, final QualityGateResult result) {
         qualityGates.add(new QualityGate(size, type, result));
     }
 
@@ -438,7 +450,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     @Override
-    public StepExecution start(final StepContext context) throws Exception {
+    public StepExecution start(final StepContext context) {
         return new Execution(context, this);
     }
 
