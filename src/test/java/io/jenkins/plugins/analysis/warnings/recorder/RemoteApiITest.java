@@ -134,7 +134,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
         IssuesRecorder recorder = enableWarnings(project, createCheckstyle("**/checkstyle1*"));
         buildWithResult(project, Result.SUCCESS);
-        recorder.setTool(createCheckstyle("**/checkstyle2*"));
+        recorder.setTools(createCheckstyle("**/checkstyle2*"));
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
 
         assertThatRemoteApiEquals(build, "/checkstyle/all/api/xml", "all-issues.xml");

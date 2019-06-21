@@ -456,7 +456,7 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     private IssuesRecorder enableAndConfigureCheckstyle(final AbstractProject<?, ?> job,
             final Consumer<IssuesRecorder> configuration) {
         IssuesRecorder item = new IssuesRecorder();
-        item.setTool(createTool(new CheckStyle(), "**/*issues.txt"));
+        item.setTools(createTool(new CheckStyle(), "**/*issues.txt"));
         job.getPublishersList().add(item);
         configuration.accept(item);
         return item;

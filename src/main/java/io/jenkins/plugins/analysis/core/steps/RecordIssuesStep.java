@@ -224,13 +224,23 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @see #setTools(List)
      */
     public void setTools(final Tool tool, final Tool... additionalTools) {
-        IssuesRecorder.ensureThatToolIsValid(tool);
+        ensureThatToolIsValid(tool);
         for (Tool additionalTool : additionalTools) {
-            IssuesRecorder.ensureThatToolIsValid(additionalTool);
+            ensureThatToolIsValid(additionalTool);
         }
         analysisTools = new ArrayList<>();
         analysisTools.add(tool);
         Collections.addAll(analysisTools, additionalTools);
+    }
+
+    private static void ensureThatToolIsValid(final Tool tool) {
+        if (tool == null) {
+            throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
+                    + "definition that is also a symbol in another plugin. "
+                    + ("Additionally check if your step is called 'checkStyle' and not 'checkstyle', "
+                    + "since 'checkstyle' is a reserved keyword in the CheckStyle plugin!")
+                    + "If not please create a new bug report in Jenkins issue tracker.");
+        }
     }
 
     /**
@@ -250,7 +260,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      */
     @DataBoundSetter
     public void setTool(final Tool tool) {
-        IssuesRecorder.ensureThatToolIsValid(tool);
+        ensureThatToolIsValid(tool);
 
         analysisTools = Collections.singletonList(tool);
     }

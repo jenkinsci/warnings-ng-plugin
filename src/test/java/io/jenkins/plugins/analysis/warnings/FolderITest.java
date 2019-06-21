@@ -83,7 +83,7 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
         // Second build
         Java java2 = new Java();
         java2.setPattern("**/javac-second-build.txt");
-        recorder.setTool(java2);
+        recorder.setTools(java2);
         AnalysisResult secondResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         verifyJavaSummaryBox(secondResult,

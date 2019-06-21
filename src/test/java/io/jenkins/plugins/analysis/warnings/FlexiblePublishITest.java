@@ -45,13 +45,13 @@ public class FlexiblePublishITest extends IntegrationTestWithJenkinsPerSuite {
         CheckStyle checkStyle = new CheckStyle();
         checkStyle.setPattern("**/checkstyle*");
         IssuesRecorder checkStyleRecorder = new IssuesRecorder();
-        checkStyleRecorder.setTool(checkStyle);
+        checkStyleRecorder.setTools(checkStyle);
         checkStyleRecorder.addQualityGate(6, QualityGateType.TOTAL, QualityGateResult.FAILURE);
 
         Java java = new Java();
         java.setPattern("**/java*");
         IssuesRecorder javaRecorder = new IssuesRecorder();
-        javaRecorder.setTool(java);
+        javaRecorder.setTools(java);
         javaRecorder.setEnabledForFailure(true);
         javaRecorder.addQualityGate(2, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
 

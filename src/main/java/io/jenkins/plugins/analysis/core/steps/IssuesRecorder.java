@@ -96,7 +96,6 @@ public class IssuesRecorder extends Recorder {
 
     private boolean isBlameDisabled;
 
-    // FIXME: is id and name still required?
     private String id;
     private String name;
 
@@ -222,7 +221,6 @@ public class IssuesRecorder extends Recorder {
      *         the static analysis tools (wrapped as {@link ToolProxy})
      *
      * @see #setTools(List)
-     * @see #setTool(Tool)
      * @deprecated this method is only intended to be called by the UI
      */
     @DataBoundSetter
@@ -236,8 +234,6 @@ public class IssuesRecorder extends Recorder {
      *
      * @param tools
      *         the static analysis tools
-     *
-     * @see #setTool(Tool)
      */
     @DataBoundSetter
     public void setTools(final List<Tool> tools) {
@@ -252,15 +248,9 @@ public class IssuesRecorder extends Recorder {
      * @param additionalTools
      *         additional static analysis tools (might be empty)
      *
-     * @see #setTool(Tool)
      * @see #setTools(List)
      */
     public void setTools(final Tool tool, final Tool... additionalTools) {
-        // FIXME: remove ensure
-        ensureThatToolIsValid(tool);
-        for (Tool additionalTool : additionalTools) {
-            ensureThatToolIsValid(additionalTool);
-        }
         analysisTools = new ArrayList<>();
         analysisTools.add(tool);
         Collections.addAll(analysisTools, additionalTools);
@@ -273,41 +263,6 @@ public class IssuesRecorder extends Recorder {
      */
     public List<Tool> getTools() {
         return new ArrayList<>(analysisTools);
-    }
-
-    /**
-     * Sets the static analysis tool that will scan files and create issues.
-     *
-     * @param tool
-     *         the static analysis tool
-     */
-    // FIXME: remove
-    @DataBoundSetter
-    public void setTool(final Tool tool) {
-        ensureThatToolIsValid(tool);
-
-        analysisTools = Collections.singletonList(tool);
-    }
-
-    static void ensureThatToolIsValid(final Tool tool) {
-        if (tool == null) {
-            throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
-                    + "definition that is also a symbol in another plugin. "
-                    + ("Additionally check if your step is called 'checkStyle' and not 'checkstyle', "
-                    + "since 'checkstyle' is a reserved keyword in the CheckStyle plugin!")
-                    + "If not please create a new bug report in Jenkins issue tracker.");
-        }
-    }
-
-    /**
-     * Always returns {@code null}. Note: this method is required for Jenkins data binding.
-     *
-     * @return {@code null}
-     */
-    // FIXME: remove
-    @Nullable
-    public Tool getTool() {
-        return null;
     }
 
     @Nullable
@@ -540,9 +495,6 @@ public class IssuesRecorder extends Recorder {
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final QualityGateStatusHandler statusHandler)
             throws IOException, InterruptedException {
-        for (Tool tool : getTools()) {
-            ensureThatToolIsValid(tool);
-        }
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, "analysis"));
             for (Tool tool : analysisTools) {
