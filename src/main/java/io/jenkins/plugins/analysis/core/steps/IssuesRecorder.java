@@ -42,7 +42,7 @@ import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.scm.ScmResolver;
+import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -50,9 +50,6 @@ import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.forensics.blame.Blamer;
-import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
-import io.jenkins.plugins.forensics.blame.BlamerFactory;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -569,16 +566,10 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
-        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(),
-                getSourceCodeCharset(), new FilePath(run.getRootDir()), blame(run));
-        return issuesScanner.scan(run, workspace, new LogHandler(listener, tool.getActualName()));
-    }
+        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(), workspace, run,
+                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
-    private Blamer blame(final Run<?, ?> run) {
-        if (isBlameDisabled) {
-            return new NullBlamer();
-        }
-        return BlamerFactory.findBlamerFor(new ScmResolver().getScm(run));
+        return issuesScanner.scan();
     }
 
     private Charset getSourceCodeCharset() {

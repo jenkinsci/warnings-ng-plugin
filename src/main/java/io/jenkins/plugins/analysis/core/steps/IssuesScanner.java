@@ -26,18 +26,23 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.scm.ScmResolver;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.forensics.blame.Blamer;
+import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
+import io.jenkins.plugins.forensics.blame.BlamerFactory;
 import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.util.FilteredLog;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
@@ -48,34 +53,45 @@ import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
  */
 @SuppressWarnings("PMD.ExcessiveImports")
 class IssuesScanner {
+    private final FilePath workspace;
+    private final Run<?, ?> run;
     private final FilePath jenkinsRootDir;
     private final Charset sourceCodeEncoding;
     private final Tool tool;
     private final List<RegexpFilter> filters;
-    private final Blamer blamer;
+    private final TaskListener listener;
+    private final BlameMode blameMode;
+
+    enum BlameMode {
+        ENABLED, DISABLED
+    }
 
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters,
-            final Charset sourceCodeEncoding, final FilePath jenkinsRootDir, final Blamer blamer) {
+            final Charset sourceCodeEncoding, final FilePath workspace, final Run<?, ?> run,
+            final FilePath jenkinsRootDir, final TaskListener listener, final BlameMode blameMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
+        this.workspace = workspace;
+        this.run = run;
         this.jenkinsRootDir = jenkinsRootDir;
-        this.blamer = blamer;
+        this.listener = listener;
+        this.blameMode = blameMode;
     }
 
-    public AnnotatedReport scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger)
-            throws IOException, InterruptedException {
+    public AnnotatedReport scan() throws IOException, InterruptedException {
+        LogHandler logger = new LogHandler(listener, tool.getName());
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
         if (tool.getDescriptor().isPostProcessingEnabled()) {
-            return postProcess(report, workspace, logger);
+            return postProcess(report, logger);
         }
         else {
             return new AnnotatedReport(tool.getActualId(), filter(report, filters, tool.getActualId()));
         }
     }
 
-    private AnnotatedReport postProcess(final Report report, final FilePath workspace, final LogHandler logger)
+    private AnnotatedReport postProcess(final Report report, final LogHandler logger)
             throws IOException, InterruptedException {
         AnnotatedReport result;
         if (report.isEmpty()) {
@@ -89,12 +105,19 @@ class IssuesScanner {
                     sourceCodeEncoding);
 
             result = workspace.act(new ReportPostProcessor(
-                    tool.getActualId(), report, sourceCodeEncoding.name(), blamer, filters));
+                    tool.getActualId(), report, sourceCodeEncoding.name(), createBlamer(), filters));
 
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()), workspace);
         }
         logger.log(result.getReport());
         return result;
+    }
+
+    private Blamer createBlamer() {
+        if (blameMode == BlameMode.DISABLED) {
+            return new NullBlamer();
+        }
+        return BlamerFactory.findBlamerFor(new ScmResolver().getScm(run), run, workspace, listener, new FilteredLog("Bla"));
     }
 
     private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder,
