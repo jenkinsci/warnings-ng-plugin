@@ -22,8 +22,10 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.init.InitMilestone;
 import hudson.init.Initializer;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -34,7 +36,6 @@ import hudson.tasks.Recorder;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.tasks.SimpleBuildStep;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -73,7 +74,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateStatusHandler;
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
-public class IssuesRecorder extends Recorder implements SimpleBuildStep { // FIXME: can we remove SimpleBuildStep
+public class IssuesRecorder extends Recorder {
     static final String NO_REFERENCE_JOB = "-";
 
     private List<Tool> analysisTools = new ArrayList<>();
@@ -95,6 +96,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep { // FIX
 
     private boolean isBlameDisabled;
 
+    // FIXME: is id and name still required?
     private String id;
     private String name;
 
@@ -254,6 +256,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep { // FIX
      * @see #setTools(List)
      */
     public void setTools(final Tool tool, final Tool... additionalTools) {
+        // FIXME: remove ensure
         ensureThatToolIsValid(tool);
         for (Tool additionalTool : additionalTools) {
             ensureThatToolIsValid(additionalTool);
@@ -278,6 +281,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep { // FIX
      * @param tool
      *         the static analysis tool
      */
+    // FIXME: remove
     @DataBoundSetter
     public void setTool(final Tool tool) {
         ensureThatToolIsValid(tool);
@@ -300,6 +304,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep { // FIX
      *
      * @return {@code null}
      */
+    // FIXME: remove
     @Nullable
     public Tool getTool() {
         return null;
@@ -320,8 +325,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep { // FIX
     public void setSourceCodeEncoding(final String sourceCodeEncoding) {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
-
-    /* -------------------------------------------------------------------------------------------------------------- */
 
     /**
      * Returns whether the results for each configured static analysis result should be aggregated into a single result
@@ -502,10 +505,15 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep { // FIX
     }
 
     @Override
-    public void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
-            @NonNull final Launcher launcher, @NonNull final TaskListener listener)
+    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
             throws InterruptedException, IOException {
-        perform(run, workspace, listener, new QualityGateStatusHandler.SetBuildResultStatusHandler(run));
+        FilePath workspace = build.getWorkspace();
+        if (workspace == null) {
+            throw new IOException("No workspace found for " + build);
+        }
+        perform(build, workspace, listener, new QualityGateStatusHandler.SetBuildResultStatusHandler(build));
+
+        return true;
     }
 
     /**
