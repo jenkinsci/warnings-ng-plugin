@@ -82,7 +82,6 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
         assertThat(publishers).hasSize(1);
         Publisher publisher = publishers.get(0);
         assertThat(publisher).isInstanceOf(IssuesRecorder.class);
-        Java java = new Java();
         IssuesRecorder recorder = (IssuesRecorder) publisher;
         List<Tool> tools = recorder.getTools();
         assertThat(tools).hasSize(1);
