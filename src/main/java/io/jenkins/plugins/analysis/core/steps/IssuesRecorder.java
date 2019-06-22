@@ -99,6 +99,8 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
+    private boolean failOnErrors = false;
+
     /**
      * Creates a new instance of {@link IssuesRecorder}.
      */
@@ -126,6 +128,22 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
             }
         }
         return this;
+    }
+
+    /**
+     * Sets the value of the boolean according to the user
+     *
+     */
+    @DataBoundSetter
+    public void setFailOnErrors() {
+        this.failOnErrors = true;
+    }
+
+    /**
+     *Gets the value of failonErrors
+     */
+    public boolean getFailOnErrors() {
+        return failOnErrors;
     }
 
     /**

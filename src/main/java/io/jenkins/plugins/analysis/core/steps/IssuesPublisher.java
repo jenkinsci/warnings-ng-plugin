@@ -48,12 +48,14 @@ class IssuesPublisher {
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
+    private final IssuesRecorder issuesRecorder;
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
-            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger) {
+            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger
+    ,final IssuesRecorder issuesRecorder) {
         this.report = report;
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -64,6 +66,7 @@ class IssuesPublisher {
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
+        this.issuesRecorder = issuesRecorder;
     }
 
     private String getId() {
@@ -84,6 +87,10 @@ class IssuesPublisher {
                 report.getSizeOfOrigin());
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                 result.getTotalSize(), result.getNewSize(), result.getFixedSize());
+
+        if(issuesRecorder.getFailOnErrors() && report.getReport().hasErrors()) {
+            // ADD CODE TO FAIL BUILD
+        }
 
         ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding);
         run.addAction(action);
