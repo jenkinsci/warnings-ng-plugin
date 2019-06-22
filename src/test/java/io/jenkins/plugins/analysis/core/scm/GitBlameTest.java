@@ -1,23 +1,141 @@
 package io.jenkins.plugins.analysis.core.scm;
 
-import org.junit.ClassRule;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.CreateFileBuilder;
+import org.jvnet.hudson.test.Issue;
 
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import hudson.model.FreeStyleProject;
+import hudson.model.Result;
+import hudson.plugins.git.GitSCM;
 import jenkins.plugins.git.GitSampleRepoRule;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.warnings.Java;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
- * Tests the Git Blame Functionality.
+ * Tests for the Git Blame Functionality.
  *
  * @author Artem Polovyi
  */
 public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
-    @ClassRule
-    public static GitSampleRepoRule repository = new GitSampleRepoRule();
+    private static final String FILE = "Test.java";
+    private static final String WARNING_01 = "[WARNING] Test.java:[1,0] [deprecation] 1 something has been deprecated\n";
+    private static final String WARNING_02 = "[WARNING] Test.java:[2,0] [deprecation] 2 something has been deprecated\n";
 
-    @Test
-    public void shouldCreateBlameWarning() {
+    private static final String CONTENT_01 = "public class First{\n int i; \n}";
+
+    private static final String COMMIT_MESSAGE_01 = "first commit";
+    private static final String COMMIT_MESSAGE_02 = "second commit";
+
+    private static final String USER_01 = "user01";
+    private static final String USER_02 = "user02";
+
+    private static final String EMAIL_01 = "user01@mail.com";
+    private static final String EMAIL_02 = "user02@mail.com";
+
+    /**
+     * Git repository class for test cases.
+     */
+    @Rule
+    public GitSampleRepoRule repository = new GitSampleRepoRule();
+
+    /**
+     * Initializes the git repository.
+     *
+     * @throws Exception
+     *         when git initialization fails.
+     */
+    @Before
+    public void initRepository() throws Exception {
+        repository.init();
     }
 
+    /**
+     * Makes sure blame does not shown if there is no warning to blame user for.
+     *
+     * @throws Exception
+     *         when a problem in git repository occurs.
+     */
+    @Test
+    public void shouldNotBlame() throws Exception {
+        createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+
+        FreeStyleProject project = createFreeStyleProject();
+        project.setScm(new GitSCM(repository.fileUrl()));
+
+        enableGenericWarnings(project, new Java());
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result.getBlames().isEmpty());
+    }
+
+    /**
+     * Blame should work in builds out of three. Verifies the issue JENKINS-57260.
+     * (Fails since the issue haven't been fixed yet)
+     *
+     * @throws Exception
+     *         when a problem in git repository occurs.
+     */
+    @Issue("JENKINS-57260")
+    @Test
+    public void shouldBlameInOutOfTreeBuilds() throws Exception {
+        createAndCommitFileByUser(FILE, WARNING_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+        createAndCommitFileByUser(FILE, WARNING_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
+
+        WorkflowJob job = createPipeline();
+        job.setDefinition(new CpsFlowDefinition("pipeline {\n"
+                + "agent any\n"
+                + "options{\n"
+                + "skipDefaultCheckout()\n"
+                + "}\n"
+                + "stages{\n"
+                + "stage('Prepare') {\n"
+                + "  steps {\n"
+                + "    dir('src') {\n"
+                + "      checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: '"
+                + repository.fileUrl() + "']]])\n"
+                + "    }\n"
+                + "  }\n"
+                + "}\n"
+                + "stage('Doxygen') {\n"
+                + "  steps {\n"
+                + "    dir('build/doxygen/doxygen') {\n"
+                + "      writeFile file: 'doxygen.log', text:'''src/Test.java:4: Warning: some warning.'''\n"
+                + "    }\n"
+                + "    recordIssues(aggregatingResults: true, enabledForFailure: true, tools: [ doxygen(name: 'Doxygen', pattern: 'build/doxygen/doxygen/doxygen.log') ] )\n"
+                + "  }\n"
+                + "}\n"
+                + "}}", false));
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+
+        assertThat(result.getErrorMessages()).doesNotContain(
+                "Can't determine head commit using 'git rev-parse'. Skipping blame.");
+    }
+
+    private void createAndCommitFileByUser(
+            final String file,
+            final String content,
+            final String commitMessage,
+            final String name,
+            final String email) throws Exception {
+        repository.git("config", "user.name", name);
+        repository.git("config", "user.email", email);
+        repository.write(file, content);
+        repository.git("add", file);
+        repository.git("commit", "-m", commitMessage);
+    }
+
+    private void verifyBlamer(final BlameRequest request, final int line, final String user,
+            final String email) {
+        assertThat(request.getName(line)).isEqualTo(user);
+        assertThat(request.getEmail(line)).isEqualTo(email);
+    }
 }
