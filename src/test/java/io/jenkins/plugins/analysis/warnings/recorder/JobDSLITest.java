@@ -1,20 +1,16 @@
-package io.jenkins.plugins.analysis.warnings.plugin;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.util.List;
-
-import javax.print.attribute.standard.Severity;
 
 import org.junit.Test;
 
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
-import hudson.model.Result;
 import hudson.model.TopLevelItem;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
@@ -28,6 +24,7 @@ import static org.assertj.core.api.Assertions.*;
  * Tests the DSL Plugin.
  *
  * @author Artem Polovyi
+ * @author Lorenz Munsch
  */
 public class JobDSLITest extends IntegrationTestWithJenkinsPerTest {
     /**
@@ -71,6 +68,9 @@ public class JobDSLITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(tools.get(0)).isInstanceOf(Java.class);
     }
 
+    /**
+     * Creates a freestyle job from a YAML file and verifies that all fields in issue recorder are set correct.
+     */
     @Test
     public void shouldCreateFreestyleJobUsingJobDslAndVerifyIssueRecorderWithValuesSet() {
         configureJenkins("../job-dsl-warnings-ng.yaml");
@@ -85,7 +85,6 @@ public class JobDSLITest extends IntegrationTestWithJenkinsPerTest {
 
         Publisher publisher = publishers.get(0);
         assertThat(publisher).isInstanceOf(IssuesRecorder.class);
-
 
         HealthReport healthReport = ((FreeStyleProject) project).getBuildHealth();
         assertThat(healthReport.getScore()).isEqualTo(100);
@@ -112,6 +111,12 @@ public class JobDSLITest extends IntegrationTestWithJenkinsPerTest {
 
     }
 
+    /**
+     * Helper method to get jenkins configuration file.
+     *
+     * @param fileName
+     *         file with configuration.
+     */
     private void configureJenkins(final String fileName) {
         try {
             ConfigurationAsCode.get().configure(getResourceAsFile(fileName).toUri().toString());
