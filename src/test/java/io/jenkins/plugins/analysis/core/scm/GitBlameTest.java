@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.scm;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.CreateFileBuilder;
 import org.jvnet.hudson.test.Issue;
 
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
@@ -25,10 +26,12 @@ import static org.assertj.core.api.Assertions.*;
  */
 public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
     private static final String FILE = "Test.java";
+    private static final String JAVA_WARNING_FILE = "issues.txt";
     private static final String WARNING_01 = "[WARNING] Test.java:[1,0] [deprecation] 1 something has been deprecated\n";
     private static final String WARNING_02 = "[WARNING] Test.java:[2,0] [deprecation] 2 something has been deprecated\n";
 
     private static final String CONTENT_01 = "public class First{\n int i; \n}";
+    private static final String CONTENT_02 = "public class First{\n int j; \n}";
 
     private static final String COMMIT_MESSAGE_01 = "first commit";
     private static final String COMMIT_MESSAGE_02 = "second commit";
@@ -38,7 +41,6 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
 
     private static final String EMAIL_01 = "user01@mail.com";
     private static final String EMAIL_02 = "user02@mail.com";
-
     /**
      * Git repository class for test cases.
      */
@@ -73,6 +75,62 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(result.getBlames().isEmpty());
+    }
+
+    /**
+     * Tests blame functionality for single commiter with a warning.
+     *
+     * @throws Exception
+     *         when a problem in git repository occurs.
+     */
+    @Test
+    public void shouldBlameSingleUser() throws Exception {
+        createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+
+        FreeStyleProject project = createFreeStyleProject();
+        project.setScm(new GitSCM(repository.fileUrl()));
+        project.getBuildersList().add(new CreateFileBuilder(FILE, WARNING_01));
+
+        enableGenericWarnings(project, new Java());
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result.getBlames().getFiles().size()).isEqualTo(1);
+        assertThat(result.getBlames().getFiles().iterator().next()).contains(FILE);
+        assertThat(result.getBlames().getRequests()).hasSize(1);
+        verifyBlamer(result.getBlames().getRequests().iterator().next(), 1, USER_01, EMAIL_01);
+    }
+
+    /**
+     * Tests blame functionality for two commiters with several warning.
+     *
+     * @throws Exception
+     *         when a problem in git repository occurs.
+     */
+    @Test
+    public void shouldBlameMultipleUsers() throws Exception {
+        createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+        createAndCommitFileByUser(FILE, CONTENT_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
+
+        FreeStyleProject project = createFreeStyleProject();
+        project.setScm(new GitSCM(repository.fileUrl()));
+        project.getBuildersList().add(new CreateFileBuilder(JAVA_WARNING_FILE, WARNING_01 + WARNING_02));
+
+        enableGenericWarnings(project, new Java());
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        assertThat(result.getBlames().getFiles().size()).isEqualTo(1);
+        assertThat(result.getBlames().getFiles().iterator().next()).contains(FILE);
+
+        assertThat(result.getBlames().getRequests()).hasSize(1);
+        BlameRequest blameRequest = result.getBlames().getRequests().iterator().next();
+        verifyBlamer(blameRequest, 1, USER_01, EMAIL_01);
+        verifyBlamer(blameRequest, 2, USER_02, EMAIL_02);
+    }
+
+    private void verifyBlamer(final BlameRequest request, final int line, final String user,
+            final String email) {
+        assertThat(request.getName(line)).isEqualTo(user);
+        assertThat(request.getEmail(line)).isEqualTo(email);
     }
 
     /**
