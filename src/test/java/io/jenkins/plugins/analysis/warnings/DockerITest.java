@@ -53,25 +53,25 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     @Rule
     public DockerRule<GccContainer> gccDockerRule = new DockerRule<>(GccContainer.class);
 
-    /**
-     * Check that it is executed on linux.
-     *
-     * @throws Exception if there was a problem with creating Java agent.
-     */
-    @BeforeClass
-    public static void assumeThatWeAreRunningLinux() throws Exception {
-        assumeTrue("This test is only for Unix", !Functions.isWindows());
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        assumeThat("`docker version` could be run", new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
-                .cmds("docker", "version", "--format", "{{.Client.Version}}")
-                .stdout(new TeeOutputStream(baos, System.err))
-                .stderr(System.err)
-                .join(), is(0));
-
-        assumeThat("Docker must be at least 1.13.0 for this test (uses --init)",
-                new VersionNumber(baos.toString().trim()), greaterThanOrEqualTo(new VersionNumber("1.13.0")));
-    }
+//    /**
+//     * Check that it is executed on linux.
+//     *
+//     * @throws Exception if there was a problem with creating Java agent.
+//     */
+//    @BeforeClass
+//    public static void assumeThatWeAreRunningLinux() throws Exception {
+//        assumeTrue("This test is only for Unix", !Functions.isWindows());
+//
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        assumeThat("`docker version` could be run", new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
+//                .cmds("docker", "version", "--format", "{{.Client.Version}}")
+//                .stdout(new TeeOutputStream(baos, System.err))
+//                .stderr(System.err)
+//                .join(), is(0));
+//
+//        assumeThat("Docker must be at least 1.13.0 for this test (uses --init)",
+//                new VersionNumber(baos.toString().trim()), greaterThanOrEqualTo(new VersionNumber("1.13.0")));
+//    }
 
     /**
      * Integrationstest Aufgabe 2. Building with Java Files.
