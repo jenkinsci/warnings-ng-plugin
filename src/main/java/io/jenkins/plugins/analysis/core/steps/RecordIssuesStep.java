@@ -39,11 +39,12 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatusHandler;
+import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 
 /**
  * Pipeline step that scans report files or the console log for issues. Stores the created
@@ -495,7 +496,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());
 
-            QualityGateStatusHandler statusHandler = new QualityGateStatusHandler.PipelineStatusHandler(getRun(),
+            StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
 
             FilePath workspace = getWorkspace();

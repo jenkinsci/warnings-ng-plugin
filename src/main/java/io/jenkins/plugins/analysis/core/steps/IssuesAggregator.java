@@ -17,7 +17,7 @@ import hudson.model.BuildListener;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatusHandler;
+import io.jenkins.plugins.analysis.core.util.RunResultHandler;
 
 /**
  * Aggregates the {@link AnalysisResult}s of all {@link ResultAction}s of several {@link MatrixRun}s into {@link
@@ -93,7 +93,7 @@ public class IssuesAggregator extends MatrixAggregator {
         for (Entry<String, List<AnnotatedReport>> reportsPerId : results.entrySet()) {
             AnnotatedReport aggregatedReport = new AnnotatedReport(reportsPerId.getKey(), reportsPerId.getValue());
             recorder.publishResult(build, listener, Messages.Tool_Default_Name(), aggregatedReport, StringUtils.EMPTY,
-                    new QualityGateStatusHandler.SetBuildResultStatusHandler(build));
+                    new RunResultHandler(build));
         }
         return true;
     }

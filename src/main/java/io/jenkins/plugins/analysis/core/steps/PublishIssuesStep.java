@@ -35,11 +35,12 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.QualityGateStatusHandler;
+import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 
 /**
  * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
@@ -571,7 +572,7 @@ public class PublishIssuesStep extends Step {
             }
             report.addAll(reports);
 
-            QualityGateStatusHandler statusHandler = new QualityGateStatusHandler.PipelineStatusHandler(getRun(),
+            StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,

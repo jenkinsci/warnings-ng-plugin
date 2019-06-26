@@ -608,7 +608,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
-        assertThat(warningAction.getMessage()).isEqualTo("Some quality gates have been missed: overall result is WARNING");
+        assertThat(warningAction.getMessage()).isEqualTo("Some quality gates have been missed: overall result is UNSTABLE");
     }
 
     /**
@@ -629,7 +629,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
-        assertThat(warningAction.getMessage()).isEqualTo("Some quality gates have been missed: overall result is WARNING");
+        assertThat(warningAction.getMessage()).isEqualTo("Some quality gates have been missed: overall result is UNSTABLE");
     }
 
     /**
