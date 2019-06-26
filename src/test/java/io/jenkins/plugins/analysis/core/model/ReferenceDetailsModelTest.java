@@ -57,7 +57,7 @@ class ReferenceDetailsModelTest extends AbstractDetailsModelTest {
 
         Blames blames = mock(Blames.class);
         when(blames.contains(issue.getFileName())).thenReturn(true);
-        when(blames.get(issue.getFileName())).thenReturn(blameRequest);
+        when(blames.getBlame(issue.getFileName())).thenReturn(blameRequest);
 
         ReferenceDetailsModel model = createModel(blames);
 

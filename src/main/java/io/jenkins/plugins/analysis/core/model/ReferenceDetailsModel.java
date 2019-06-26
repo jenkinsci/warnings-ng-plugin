@@ -66,7 +66,7 @@ class ReferenceDetailsModel extends DetailsTableModel {
         columns.add(formatFileName(issue));
         columns.add(formatAge(issue));
         if (blames.contains(issue.getFileName())) {
-            FileBlame blameRequest = blames.get(issue.getFileName());
+            FileBlame blameRequest = blames.getBlame(issue.getFileName());
             int line = issue.getLineStart();
             columns.add(blameRequest.getName(line));
             columns.add(blameRequest.getEmail(line));

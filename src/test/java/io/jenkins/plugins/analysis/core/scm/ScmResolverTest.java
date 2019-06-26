@@ -23,7 +23,7 @@ import hudson.scm.SCM;
 import hudson.util.DescribableList;
 import jenkins.triggers.SCMTriggerItem;
 
-import static io.jenkins.plugins.forensics.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**

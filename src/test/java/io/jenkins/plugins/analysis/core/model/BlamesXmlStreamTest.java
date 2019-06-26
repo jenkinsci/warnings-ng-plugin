@@ -44,7 +44,7 @@ class BlamesXmlStreamTest extends ResourceTest {
     }
 
     private void assertThatBlamesAreCorrect(final Blames blames) {
-        assertThat(blames).hasFiles(REPORT, FILTERED_LOG);
+        assertThat(blames.getFiles()).contains(REPORT, FILTERED_LOG);
 
         FileBlame report = new FileBlame(REPORT_SRC);
         report.setCommit(768, "11d9cdf38bd029d970705b1151aef910cd873044");
@@ -57,7 +57,7 @@ class BlamesXmlStreamTest extends ResourceTest {
         report.setName(101, "Ulli Hafner");
         report.setEmail(101, "ullrich.hafner@gmail.com");
 
-        assertThat(blames).hasFileBlames(report);
+        assertThat(blames.getBlame(REPORT)).isEqualTo(report);
     }
 
     private Path createTempFile() {

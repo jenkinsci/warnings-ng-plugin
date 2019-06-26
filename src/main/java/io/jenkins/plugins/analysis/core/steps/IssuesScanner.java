@@ -41,7 +41,7 @@ import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.forensics.blame.Blamer;
 import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
 import io.jenkins.plugins.forensics.blame.BlamerFactory;
-import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.blame.FileLocations;
 import io.jenkins.plugins.forensics.util.FilteredLog;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
@@ -101,8 +101,8 @@ class IssuesScanner {
             }
         }
         else {
-            report.logInfo("Post processing issues on '%s' with source code encoding '%s'", getAgentName(workspace),
-                    sourceCodeEncoding);
+            report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
+                    getAgentName(workspace), sourceCodeEncoding);
 
             result = workspace.act(new ReportPostProcessor(
                     tool.getActualId(), report, sourceCodeEncoding.name(), createBlamer(), filters));
@@ -208,8 +208,9 @@ class IssuesScanner {
 
             createFingerprints(filtered);
 
-            Blames blames = blamer.blame(new ReportLocations(filtered).toFileLocations());
-            return new AnnotatedReport(id, filtered, blames);
+            FileLocations fileLocations = new ReportLocations().toFileLocations(workspace.getPath(), filtered,
+                    new FileLocations());
+            return new AnnotatedReport(id, filtered, blamer.blame(fileLocations));
         }
 
         private void resolveAbsolutePaths(final Report report, final File workspace) {
