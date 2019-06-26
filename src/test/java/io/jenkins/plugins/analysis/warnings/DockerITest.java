@@ -1,13 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.io.output.TeeOutputStream;
-import org.junit.BeforeClass;
+
 import org.junit.Rule;
 import org.junit.Test;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
@@ -16,28 +15,18 @@ import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerRule;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaContainer;
 import hudson.FilePath;
-import hudson.Functions;
-import hudson.Launcher;
 import hudson.model.Descriptor.FormException;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.plugins.sshslaves.SSHLauncher;
 import hudson.slaves.DumbSlave;
-import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.tasks.Shell;
-import hudson.util.StreamTaskListener;
-import hudson.util.VersionNumber;
 import hudson.tasks.Maven;
-
 import jenkins.security.s2m.AdminWhitelistRule;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
-
-
 import static org.assertj.core.api.Assertions.*;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assume.*;
+
 
 public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
@@ -72,11 +61,16 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Integrationstest Aufgabe 2. Building with Java Files.
      *
-     * @throws Exception if there was a problem with creating Java agent.
      */
     @Test
-    public void shouldBuildJavaFileOnDumbSlave() throws Exception {
-        DumbSlave slave = jenkinsPerTest.createOnlineSlave();
+    public void shouldBuildJavaFileOnDumbSlave() {
+        DumbSlave slave = null;
+        try {
+            slave = jenkinsPerTest.createOnlineSlave();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         FreeStyleProject project = createFreeStyleProject();
         try {
@@ -96,12 +90,17 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Integrationstest Aufgabe 2. Build with makefile
-     * @throws Exception
+     * Integrationstest Aufgabe 2. Build with makefile.
      */
     @Test
-    public void shouldBuildCFileOnDumbSlave() throws Exception {
-        DumbSlave worker = jenkinsPerTest.createOnlineSlave();
+    public void shouldBuildCFileOnDumbSlave() {
+        DumbSlave worker = null;
+        try {
+            worker = jenkinsPerTest.createOnlineSlave();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
         FreeStyleProject project = createFreeStyleProject();
         try {
             project.setAssignedNode(worker);
@@ -125,11 +124,19 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Integrationstest Aufgabe 2. Building with Security enabled.
      *
-     * @throws Exception if there was a problem with creating Java agent.
      */
     @Test
-    public void shouldBuildJavaFileOnDumbSlaveWithSecurityEnabled() throws Exception {
-        DumbSlave slave = createDumbSlaveWithEnabledSecurity();
+    public void shouldBuildJavaFileOnDumbSlaveWithSecurityEnabled() {
+        DumbSlave slave = null;
+        try {
+            slave = createDumbSlaveWithEnabledSecurity();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         FreeStyleProject project = createFreeStyleProject();
         try {
             project.setAssignedNode(slave);
@@ -151,10 +158,16 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      * Class for building DumbSlave with Enabled Security.
      *
      * @return DumbSlave with enabled Security.
-     * @throws Exception if there was a problem with creating Java agent.
+     * @throws Exception if there is a problem with security.
      */
-    public DumbSlave createDumbSlaveWithEnabledSecurity() throws Exception {
-        DumbSlave agent = jenkinsPerTest.createOnlineSlave();
+    public DumbSlave createDumbSlaveWithEnabledSecurity() throws IOException, InterruptedException {
+        DumbSlave agent = null;
+        try {
+            agent = jenkinsPerTest.createOnlineSlave();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         FilePath child = getJenkins().getInstance().getRootPath().child("secrets/filepath-filters.d/30-default.conf");
         child.delete();
@@ -167,7 +180,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Creates Java Agent
+     * Creates Java Agent.
      */
     @Test
     public void shouldStartAgent() {
@@ -222,10 +235,9 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Integrationstest Aufgabe 3.    Build with makefile and GccContainer
-     * @throws Exception
      */
     @Test
-    public void shouldBuildGccFileWithContainer() throws Exception {
+    public void shouldBuildGccFileWithContainer()  {
         DumbSlave worker = createGccAgent();
         FreeStyleProject project = createFreeStyleProject();
         try {
