@@ -53,11 +53,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     @Rule
     public DockerRule<GccContainer> gccDockerRule = new DockerRule<>(GccContainer.class);
 
-//    /**
-//     * Check that it is executed on linux.
-//     *
-//     * @throws Exception if there was a problem with creating Java agent.
-//     */
+
 //    @BeforeClass
 //    public static void assumeThatWeAreRunningLinux() throws Exception {
 //        assumeTrue("This test is only for Unix", !Functions.isWindows());
