@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.scm;
 
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -50,23 +52,31 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Initializes the git repository.
      *
-     * @throws Exception
-     *         when git initialization fails.
      */
     @Before
-    public void initRepository() throws Exception {
-        repository.init();
+    public void initRepository() {
+        try {
+            repository.init();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
      * Makes sure blame does not shown if there is no warning to blame user for.
      *
-     * @throws Exception
-     *         when a problem in git repository occurs.
+     * @throws IOException
+     *         when adding a SCM failed.
      */
     @Test
-    public void shouldNotBlame() throws Exception {
-        createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+    public void shouldNotBlameTest() throws IOException {
+        try {
+            createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(repository.fileUrl()));
@@ -80,12 +90,17 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Tests blame functionality for single commiter with a warning.
      *
-     * @throws Exception
-     *         when a problem in git repository occurs.
+     * @throws IOException
+     *         when adding a SCM failed.
      */
     @Test
-    public void shouldBlameSingleUser() throws Exception {
-        createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+    public void shouldBlameSingleUserTest() throws IOException {
+        try {
+            createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
 
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(repository.fileUrl()));
@@ -103,13 +118,19 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Tests blame functionality for two commiters with several warning.
      *
-     * @throws Exception
-     *         when a problem in git repository occurs.
+     * @throws IOException
+     *         when adding a SCM failed.
      */
     @Test
-    public void shouldBlameMultipleUsers() throws Exception {
-        createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
-        createAndCommitFileByUser(FILE, CONTENT_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
+    public void shouldBlameMultipleUsersTest() throws IOException {
+        try {
+            createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+            createAndCommitFileByUser(FILE, CONTENT_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(repository.fileUrl()));
@@ -137,14 +158,18 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
      * Blame should work in builds out of three. Verifies the issue JENKINS-57260.
      * (Fails since the issue haven't been fixed yet)
      *
-     * @throws Exception
-     *         when a problem in git repository occurs.
      */
     @Issue("JENKINS-57260")
     @Test
-    public void shouldBlameInOutOfTreeBuilds() throws Exception {
-        createAndCommitFileByUser(FILE, WARNING_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
-        createAndCommitFileByUser(FILE, WARNING_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
+    public void shouldBlameInOutOfTreeBuilds()  {
+        try {
+            createAndCommitFileByUser(FILE, WARNING_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+            createAndCommitFileByUser(FILE, WARNING_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         WorkflowJob job = createPipeline();
         job.setDefinition(new CpsFlowDefinition("pipeline {\n"
