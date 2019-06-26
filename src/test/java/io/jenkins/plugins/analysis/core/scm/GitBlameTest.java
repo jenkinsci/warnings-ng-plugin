@@ -71,12 +71,8 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldNotBlameTest() throws IOException {
-        try {
-            createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+
+        createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
 
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(repository.fileUrl()));
@@ -95,13 +91,7 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldBlameSingleUserTest() throws IOException {
-        try {
-            createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(repository.fileUrl()));
         project.getBuildersList().add(new CreateFileBuilder(FILE, WARNING_01));
@@ -123,14 +113,8 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldBlameMultipleUsersTest() throws IOException {
-        try {
-            createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
-            createAndCommitFileByUser(FILE, CONTENT_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
+        createAndCommitFileByUser(FILE, CONTENT_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+        createAndCommitFileByUser(FILE, CONTENT_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
 
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(repository.fileUrl()));
@@ -162,15 +146,8 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
     @Issue("JENKINS-57260")
     @Test
     public void shouldBlameInOutOfTreeBuilds()  {
-        try {
-            createAndCommitFileByUser(FILE, WARNING_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
-            createAndCommitFileByUser(FILE, WARNING_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+        createAndCommitFileByUser(FILE, WARNING_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
+        createAndCommitFileByUser(FILE, WARNING_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
         WorkflowJob job = createPipeline();
         job.setDefinition(new CpsFlowDefinition("pipeline {\n"
                 + "agent any\n"
@@ -208,11 +185,17 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
             final String content,
             final String commitMessage,
             final String name,
-            final String email) throws Exception {
-        repository.git("config", "user.name", name);
-        repository.git("config", "user.email", email);
-        repository.write(file, content);
-        repository.git("add", file);
-        repository.git("commit", "-m", commitMessage);
+            final String email) {
+        try {
+            repository.git("config", "user.name", name);
+            repository.git("config", "user.email", email);
+            repository.write(file, content);
+            repository.git("add", file);
+            repository.git("commit", "-m", commitMessage);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 }
