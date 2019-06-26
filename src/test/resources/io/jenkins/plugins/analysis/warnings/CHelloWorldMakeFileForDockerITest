@@ -1,0 +1,5 @@
+CHelloWorldForDockerITest: CHelloWorldForDockerITest.o
+	gcc -o CHelloWorldForDockerITest CHelloWorldForDockerITest.o
+
+CHelloWorldForDockerITest.o: CHelloWorldForDockerITest.c
+	gcc -c CHelloWorldForDockerITest.c
