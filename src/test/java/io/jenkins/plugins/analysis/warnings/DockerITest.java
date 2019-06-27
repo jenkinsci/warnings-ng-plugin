@@ -37,13 +37,13 @@ import static org.assertj.core.api.Assertions.*;
 public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
-     * Java Docker Rule
+     * Java Docker Rule.
      */
     @Rule
     public DockerRule<JavaContainer> javaDockerRule = new DockerRule<>(JavaContainer.class);
 
     /**
-     * Gcc Docker Rule
+     * Gcc Docker Rule.
      */
     @Rule
     public DockerRule<GccContainer> gccDockerRule = new DockerRule<>(GccContainer.class);
@@ -67,13 +67,14 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      * Integrationstest Aufgabe 2. Building with Java Files.
      */
     @Test
+    @SuppressWarnings("illegalcatch")
     public void shouldBuildJavaFileOnDumbSlave() {
         DumbSlave slave;
         try {
             slave = jenkinsPerTest.createOnlineSlave();
         }
         catch (Exception e) {
-            throw new Error("Docker Test Error: " + e);
+            throw new AssertionError("Docker Test Error: " + e);
         }
 
         FreeStyleProject project = createFreeStyleProject();
@@ -105,7 +106,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
             worker = jenkinsPerTest.createOnlineSlave();
         }
         catch (Exception e) {
-            throw new Error("Docker Test Error: " + e);
+            throw new AssertionError("Docker Test Error: " + e);
         }
         FreeStyleProject project = createFreeStyleProject();
         try {
@@ -138,7 +139,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
             slave = createDumbSlaveWithEnabledSecurity();
         }
         catch (Exception e) {
-            throw new Error("Docker Test Error: " + e);
+            throw new AssertionError("Docker Test Error: " + e);
         }
         FreeStyleProject project = createFreeStyleProject();
         try {
@@ -165,14 +166,14 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      * @throws Exception
      *         if there is a problem with security.
      */
-    @SuppressWarnings("illegalcatch")
+    @SuppressWarnings({"illegalcatch", "PMD.SignatureDeclareThrowsException"})
     private DumbSlave createDumbSlaveWithEnabledSecurity() throws Exception {
-        DumbSlave agent = null;
+        DumbSlave agent;
         try {
             agent = jenkinsPerTest.createOnlineSlave();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            throw new AssertionError(e);
         }
 
         FilePath child = getJenkins().getInstance().getRootPath().child("secrets/filepath-filters.d/30-default.conf");
