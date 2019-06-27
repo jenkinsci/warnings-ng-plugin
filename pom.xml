@@ -4,8 +4,8 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.42</version>
-    <relativePath />
+    <version>3.43</version>
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -23,7 +23,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Override properties defined in parent POM -->
-    <jenkins.version>2.121.1</jenkins.version>
+    <jenkins.version>2.138.4</jenkins.version>
     <java.level>8</java.level>
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
@@ -60,12 +60,15 @@
     <matrix-project.version>1.13</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>3.9.1</git-plugin.version>
+    <workflow-api.version>2.34</workflow-api.version>
+    <workflow-cps.version>2.67</workflow-cps.version>
     <workflow-step.version>2.19</workflow-step.version>
     <workflow-job.version>2.32</workflow-job.version>
     <structs.version>1.19</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
     <script-security.version>1.58</script-security.version>
+    <folder-plugin.version>6.1.2</folder-plugin.version>
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
@@ -127,7 +130,7 @@
       <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
-        <version>2.9.5</version>
+        <version>2.9.9</version>
       </dependency>
       <dependency>
         <groupId>org.jenkins-ci</groupId>
@@ -164,7 +167,7 @@
 
   <dependencies>
 
-    <!-- Project Dependencies -->
+    <!-- Project Library Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
@@ -260,6 +263,16 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>script-security</artifactId>
       <version>${script-security.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-api</artifactId>
+      <version>${workflow-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins.workflow</groupId>
+      <artifactId>workflow-cps</artifactId>
+      <version>${workflow-cps.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -400,15 +413,12 @@
       <version>2.2</version>
       <scope>test</scope>
     </dependency>
-    <!-- XML Unit -->
     <dependency>
       <groupId>xmlunit</groupId>
       <artifactId>xmlunit</artifactId>
       <version>${xmlunit.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- Integration Test Dependencies -->
 
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
     <dependency>
@@ -417,14 +427,26 @@
       <version>1.8</version>
       <scope>test</scope>
     </dependency>
-    <!-- Timestamper plugin -->
+
+    <!-- Jenkins Plug-in Dependencies required for integration tests -->
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>flexible-publish</artifactId>
+      <version>0.15.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>envinject</artifactId>
+      <version>2.1.6</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>timestamper</artifactId>
       <version>1.9</version>
       <scope>test</scope>
     </dependency>
-    <!-- Maven Project Type -->
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
@@ -437,20 +459,19 @@
       <version>1.74</version>
       <scope>test</scope>
     </dependency>
-    <!-- Configuration as Code -->
     <dependency>
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>
       <version>1.18</version>
       <scope>test</scope>
     </dependency>
-    <!-- Groovy -->
     <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-cps</artifactId>
-      <version>2.67</version>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>cloudbees-folder</artifactId>
+      <version>${folder-plugin.version}</version>
       <scope>test</scope>
     </dependency>
+
     <!-- stage -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -505,15 +526,10 @@
       <artifactId>scm-api</artifactId>
       <version>2.2.7</version>
       <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
 
     <!-- Declarative Pipeline -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins.workflow</groupId>
-      <artifactId>workflow-api</artifactId>
-      <version>2.33</version>
-      <scope>test</scope>
-    </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-support</artifactId>
@@ -765,7 +781,9 @@
           </dependency>
         </dependencies>
         <configuration>
-          <skip>true</skip>
+          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
+          <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
+          <checkDependencies>false</checkDependencies>
           <analysisConfiguration>
             <revapi.semver.ignore>
               <enabled>true</enabled>
@@ -784,52 +802,24 @@
               </item>
               <item>
                 <regex>true</regex>
-                <code>.*</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
-                <justification>The tool is not part of API.</justification>
+                <code>java.missing.*</code>
+                <justification>Dependencies are not being checked, so they are reported as missing</justification>
+              </item>
+              <item>
+                <code>java.annotation.removed</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor</classQualifiedName>
+                <justification>Symbol-based usage migrated transparently to RecordIssuesStep</justification>
               </item>
               <item>
                 <code>java.method.removed</code>
-                <methodName>doResetReference</methodName>
-                <justification>See SECURITY-1391.</justification>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.util.QualityGateStatus</classQualifiedName>
+                <justification>Not part of the plugin's public API</justification>
               </item>
-            </revapi.ignore>
-            <!-- Always ignore Jenkins API -->
-            <revapi.ignore>
               <item>
+                <regex>true</regex>
                 <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>hudson.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>jenkins.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>org.jvnet.hudson.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>.*</code>
-                <regex>true</regex>
-                <classQualifiedName>org.kohsuke.stapler.*</classQualifiedName>
-                <justification>Jenkins API</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <classQualifiedName>net.sf.json.AbstractJSON.WritingVisitor</classQualifiedName>
-                <justification>Not relevant</justification>
-              </item>
-              <item>
-                <code>java.class.nonPublicPartOfAPI</code>
-                <regex>true</regex>
-                <classQualifiedName>com.fasterxml.jackson.databind.*</classQualifiedName>
-                <justification>Not relevant</justification>
+                <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
+                <justification>The tool is not part of API.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>

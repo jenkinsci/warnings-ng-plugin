@@ -43,7 +43,7 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
         IssuesRecorder publisher = new IssuesRecorder();
         Gcc4 tool = new Gcc4();
         tool.setPattern("**/*.txt");
-        publisher.setTool(tool);
+        publisher.setTools(tool);
         project.getPublishersList().add(publisher);
 
         AxisList axis = new AxisList();
