@@ -53,6 +53,7 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
      * Initializes the git repository.
      */
     @Before
+    @SuppressWarnings("illegalcatch")
     public void initRepository() {
         try {
             repository.init();
@@ -178,6 +179,7 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
                 "Can't determine head commit using 'git rev-parse'. Skipping blame.");
     }
 
+    @SuppressWarnings("illegalcatch")
     private void createAndCommitFileByUser(
             final String file,
             final String content,
