@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.ObjectAssert;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.gitclient.GitClient;
@@ -77,15 +77,29 @@ class ScmResolverTest {
         assertThatScm(run).isInstanceOf(GitSCM.class);
     }
 
-    @Test @Disabled("Verify if this can be stubbed")
-    void shouldCreateGitBlamerForPipelineWithFlowNode() {
-        WorkflowJob pipeline = new WorkflowJob(mock(ItemGroup.class), "stub");
-        CpsScmFlowDefinition flowDefinition = mock(CpsScmFlowDefinition.class);
-        pipeline.setDefinition(flowDefinition);
-        when(flowDefinition.getScm()).thenReturn(createGitStub());
+    @Test
+    void shouldCreateGitBlamerForPipelineWithFlowNode() throws IOException {
+        WorkflowJob pipeline = createPipeline();
+        pipeline.setDefinition(createCpsFlowDefinition());
 
         Run<?, ?> run = createRunFor(pipeline);
         assertThatScm(run).isInstanceOf(GitSCM.class);
+    }
+
+    private CpsScmFlowDefinition createCpsFlowDefinition() {
+        CpsScmFlowDefinition flowDefinition = mock(CpsScmFlowDefinition.class);
+        GitSCM git = createGitStub();
+        when(flowDefinition.getScm()).thenReturn(git);
+        return flowDefinition;
+    }
+
+    @SuppressWarnings("unchecked")
+    private WorkflowJob createPipeline() throws IOException {
+        ItemGroup group = mock(ItemGroup.class);
+        WorkflowJob pipeline = new WorkflowJob(group, "stub");
+        when(group.getRootDirFor(any())).thenReturn(Files.createTempFile("", "").toFile());
+        when(group.getFullName()).thenReturn("bla");
+        return pipeline;
     }
 
     @Test
