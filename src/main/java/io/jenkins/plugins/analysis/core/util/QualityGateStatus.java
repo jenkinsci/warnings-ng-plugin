@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.util;
 
 import hudson.model.BallColor;
 import hudson.model.Result;
-import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator.FormattedLogger;
 
@@ -49,15 +48,12 @@ public enum QualityGateStatus {
     }
 
     /**
-     * Sets the result of the specified run to the associated value of this quality gate status.
+     * Returns the associated {@link Result}.
      *
-     * @param run
-     *         the run to set the result for
+     * @return the associated {@link Result}
      */
-    public void setResult(final Run<?, ?> run) {
-        if (!isSuccessful()) {
-            run.setResult(result);
-        }
+    public Result getResult() {
+        return result;
     }
 
     /**

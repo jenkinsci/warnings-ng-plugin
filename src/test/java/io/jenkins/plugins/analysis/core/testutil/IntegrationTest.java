@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -801,10 +803,15 @@ public abstract class IntegrationTest extends ResourceTest {
 
             ResultAction action = getResultAction(run);
 
+            System.out.println("---------------------------------- Console Log ---------------------------------");
+            System.out.println("---------------------------------- Console Log ---------------------------------");
+            try (Reader reader = run.getLogReader()) {
+                new BufferedReader(reader).lines().forEach(System.out::println);
+            }
             System.out.println("------------------------------------- Infos ------------------------------------");
-            System.out.println(action.getResult().getInfoMessages());
+            action.getResult().getInfoMessages().forEach(System.out::println);
             System.out.println("------------------------------------ Errors ------------------------------------");
-            System.out.println(action.getResult().getErrorMessages());
+            action.getResult().getErrorMessages().forEach(System.out::println);
             System.out.println("--------------------------------------------------------------------------------");
 
             return action.getResult();

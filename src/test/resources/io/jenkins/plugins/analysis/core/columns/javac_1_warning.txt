@@ -1,0 +1,1 @@
+[WARNING] C:\File.java:[40,36] [deprecation] something has been deprecated

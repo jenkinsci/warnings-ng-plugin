@@ -6,12 +6,16 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.ObjectAssert;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.gitclient.GitClient;
+import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.EnvVars;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
+import hudson.model.ItemGroup;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -68,6 +72,17 @@ class ScmResolverTest {
 
         GitSCM gitScm = createGitStub();
         when(((SCMTriggerItem) pipeline).getSCMs()).thenReturn(asSingleton(gitScm));
+
+        Run<?, ?> run = createRunFor(pipeline);
+        assertThatScm(run).isInstanceOf(GitSCM.class);
+    }
+
+    @Test @Ignore("Verify if this can be stubbed")
+    void shouldCreateGitBlamerForPipelineWithFlowNode() {
+        WorkflowJob pipeline = new WorkflowJob(mock(ItemGroup.class), "stub");
+        CpsScmFlowDefinition flowDefinition = mock(CpsScmFlowDefinition.class);
+        pipeline.setDefinition(flowDefinition);
+        when(flowDefinition.getScm()).thenReturn(createGitStub());
 
         Run<?, ?> run = createRunFor(pipeline);
         assertThatScm(run).isInstanceOf(GitSCM.class);

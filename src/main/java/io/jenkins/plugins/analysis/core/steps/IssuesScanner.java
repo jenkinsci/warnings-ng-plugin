@@ -28,6 +28,7 @@ import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
+import hudson.scm.SCM;
 import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
@@ -41,6 +42,7 @@ import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.forensics.blame.Blamer;
 import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
 import io.jenkins.plugins.forensics.blame.BlamerFactory;
+import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileLocations;
 import io.jenkins.plugins.forensics.util.FilteredLog;
 
@@ -80,7 +82,7 @@ class IssuesScanner {
     }
 
     public AnnotatedReport scan() throws IOException, InterruptedException {
-        LogHandler logger = new LogHandler(listener, tool.getName());
+        LogHandler logger = new LogHandler(listener, tool.getActualName());
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
         if (tool.getDescriptor().isPostProcessingEnabled()) {
@@ -104,20 +106,28 @@ class IssuesScanner {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
                     getAgentName(workspace), sourceCodeEncoding);
 
+            Blamer blamer;
+            if (blameMode == BlameMode.DISABLED) {
+                blamer = new NullBlamer();
+            }
+            else {
+                SCM scm = new ScmResolver().getScm(run);
+                FilteredLog log = new FilteredLog("Errors while determining a supported blamer for the SCM "
+                        + scm.getDescriptor().getDisplayName());
+                blamer = BlamerFactory.findBlamerFor(scm, run, workspace, listener, log);
+                log.logSummary();
+                log.getInfoMessages().forEach(report::logInfo);
+                log.getErrorMessages().forEach(report::logError);
+
+            }
             result = workspace.act(new ReportPostProcessor(
-                    tool.getActualId(), report, sourceCodeEncoding.name(), createBlamer(), filters));
+                    tool.getActualId(), report, sourceCodeEncoding.name(),
+                    blamer, filters));
 
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()), workspace);
         }
         logger.log(result.getReport());
         return result;
-    }
-
-    private Blamer createBlamer() {
-        if (blameMode == BlameMode.DISABLED) {
-            return new NullBlamer();
-        }
-        return BlamerFactory.findBlamerFor(new ScmResolver().getScm(run), run, workspace, listener, new FilteredLog("Bla"));
     }
 
     private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder,
@@ -208,9 +218,17 @@ class IssuesScanner {
 
             createFingerprints(filtered);
 
-            FileLocations fileLocations = new ReportLocations().toFileLocations(workspace.getPath(), filtered,
-                    new FileLocations());
-            return new AnnotatedReport(id, filtered, blamer.blame(fileLocations));
+            FileLocations fileLocations = new ReportLocations().toFileLocations(
+                    workspace.getPath(), filtered, new FileLocations());
+            fileLocations.logSummary();
+            fileLocations.getInfoMessages().forEach(filtered::logInfo);
+            fileLocations.getErrorMessages().forEach(filtered::logError);
+            Blames blames = blamer.blame(fileLocations);
+            blames.logSummary();
+            blames.getInfoMessages().forEach(filtered::logInfo);
+            blames.getErrorMessages().forEach(filtered::logError);
+
+            return new AnnotatedReport(id, filtered, blames);
         }
 
         private void resolveAbsolutePaths(final Report report, final File workspace) {

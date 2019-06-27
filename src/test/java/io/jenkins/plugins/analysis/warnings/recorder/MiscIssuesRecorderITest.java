@@ -315,7 +315,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(baselineSummary.getItems()).isEmpty();
 
         // Second build: actual result
-        recorder.setTool(createEclipse("eclipse_5_Warnings-issues.txt"));
+        recorder.setTools(createEclipse("eclipse_5_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(0);
@@ -347,7 +347,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Second build: actual result
-        recorder.setTool(createEclipse("eclipse_8_Warnings-issues.txt"));
+        recorder.setTools(createEclipse("eclipse_8_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(3);
@@ -372,7 +372,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Second build: actual result
-        recorder.setTool(eclipse);
+        recorder.setTools(eclipse);
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(0);
@@ -398,7 +398,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         // Second build: actual result
-        recorder.setTool(createEclipse("eclipse_4_Warnings-issues.txt"));
+        recorder.setTools(createEclipse("eclipse_4_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(2);
@@ -433,7 +433,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         verifyBaselineDetails(baseline);
 
-        recorder.setTool(createTool(new CheckStyle(), "**/checkstyle2*"));
+        recorder.setTools(createTool(new CheckStyle(), "**/checkstyle2*"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(3);

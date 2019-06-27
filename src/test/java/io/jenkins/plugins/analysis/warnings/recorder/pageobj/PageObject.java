@@ -35,4 +35,13 @@ abstract class PageObject {
             throw new AssertionError(e);
         }
     }
+
+    public void refresh() {
+        try {
+            getPage().refresh();
+        }
+        catch (IOException e) {
+            throw new AssertionError("WebPage refresh failed.", e);
+        }
+    }
 }
