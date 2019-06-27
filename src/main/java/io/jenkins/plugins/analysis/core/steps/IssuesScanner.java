@@ -227,7 +227,13 @@ class IssuesScanner {
             blames.logSummary();
             blames.getInfoMessages().forEach(filtered::logInfo);
             blames.getErrorMessages().forEach(filtered::logError);
-
+            filtered.logInfo("---------------------");
+            fileLocations.getAbsolutePaths().forEach(filtered::logInfo);
+            fileLocations.getRelativePaths().forEach(filtered::logInfo);
+            filtered.logInfo("---------------------");
+            filtered.logInfo("---------------------");
+            blames.getFiles().forEach(filtered::logInfo);
+            filtered.logInfo("---------------------");
             return new AnnotatedReport(id, filtered, blames);
         }
 

@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.ObjectAssert;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.plugins.gitclient.GitClient;
@@ -77,7 +77,7 @@ class ScmResolverTest {
         assertThatScm(run).isInstanceOf(GitSCM.class);
     }
 
-    @Test @Ignore("Verify if this can be stubbed")
+    @Test @Disabled("Verify if this can be stubbed")
     void shouldCreateGitBlamerForPipelineWithFlowNode() {
         WorkflowJob pipeline = new WorkflowJob(mock(ItemGroup.class), "stub");
         CpsScmFlowDefinition flowDefinition = mock(CpsScmFlowDefinition.class);
