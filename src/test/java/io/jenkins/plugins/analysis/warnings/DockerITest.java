@@ -1,16 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-
 import org.junit.Rule;
 import org.junit.Test;
-import hudson.slaves.EnvironmentVariablesNodeProperty;
-import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
+
 import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerRule;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaContainer;
@@ -20,14 +17,23 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.plugins.sshslaves.SSHLauncher;
 import hudson.slaves.DumbSlave;
-import hudson.tasks.Shell;
+import hudson.slaves.EnvironmentVariablesNodeProperty;
+import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
 import hudson.tasks.Maven;
+import hudson.tasks.Shell;
 import jenkins.security.s2m.AdminWhitelistRule;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+
 import static org.assertj.core.api.Assertions.*;
 
-
+/**
+ * Docker integrations tests.
+ *
+ * @author Artem Polovyi
+ * @author Lorenz Munsch
+ */
 public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
@@ -41,7 +47,6 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Rule
     public DockerRule<GccContainer> gccDockerRule = new DockerRule<>(GccContainer.class);
-
 
 //    @BeforeClass
 //    public static void assumeThatWeAreRunningLinux() throws Exception {
@@ -60,22 +65,22 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Integrationstest Aufgabe 2. Building with Java Files.
-     *
      */
     @Test
     public void shouldBuildJavaFileOnDumbSlave() {
-        DumbSlave slave = null;
+        DumbSlave slave;
         try {
             slave = jenkinsPerTest.createOnlineSlave();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            throw new Error("Docker Test Error: " + e);
         }
 
         FreeStyleProject project = createFreeStyleProject();
         try {
             project.setAssignedNode(slave);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new AssertionError(e);
         }
 
@@ -93,13 +98,14 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      * Integrationstest Aufgabe 2. Build with makefile.
      */
     @Test
+    @SuppressWarnings("illegalcatch")
     public void shouldBuildCFileOnDumbSlave() {
-        DumbSlave worker = null;
+        DumbSlave worker;
         try {
             worker = jenkinsPerTest.createOnlineSlave();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            throw new Error("Docker Test Error: " + e);
         }
         FreeStyleProject project = createFreeStyleProject();
         try {
@@ -123,24 +129,22 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Integrationstest Aufgabe 2. Building with Security enabled.
-     *
      */
     @Test
+    @SuppressWarnings("illegalcatch")
     public void shouldBuildJavaFileOnDumbSlaveWithSecurityEnabled() {
-        DumbSlave slave = null;
+        DumbSlave slave;
         try {
             slave = createDumbSlaveWithEnabledSecurity();
         }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
+        catch (Exception e) {
+            throw new Error("Docker Test Error: " + e);
         }
         FreeStyleProject project = createFreeStyleProject();
         try {
             project.setAssignedNode(slave);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new AssertionError(e);
         }
 
@@ -158,9 +162,11 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
      * Class for building DumbSlave with Enabled Security.
      *
      * @return DumbSlave with enabled Security.
-     * @throws Exception if there is a problem with security.
+     * @throws Exception
+     *         if there is a problem with security.
      */
-    public DumbSlave createDumbSlaveWithEnabledSecurity() throws IOException, InterruptedException {
+    @SuppressWarnings("illegalcatch")
+    private DumbSlave createDumbSlaveWithEnabledSecurity() throws Exception {
         DumbSlave agent = null;
         try {
             agent = jenkinsPerTest.createOnlineSlave();
@@ -186,11 +192,11 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldStartAgent() {
         DumbSlave agent = createJavaAgent();
 
-        assertThat(agent.getWorkspaceRoot().getName()).isEqualTo("workspace");
+        assertThat(Objects.requireNonNull(agent.getWorkspaceRoot()).getName()).isEqualTo("workspace");
     }
 
-    /*
-     * Integrationstest Aufgabe 3., Building With Java Container
+    /**
+     * Integrationstest Aufgabe 3., Building With Java Container.
      */
     @Test
     public void shouldBuildJavaProjectWithContainer() {
@@ -199,7 +205,8 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createFreeStyleProject();
         try {
             project.setAssignedNode(agent);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             throw new AssertionError(e);
         }
 
@@ -213,6 +220,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result).isNotNull();
     }
 
+    @SuppressWarnings("illegalcatch")
     private DumbSlave createJavaAgent() {
         try {
             JavaContainer javaContainer = javaDockerRule.get();
@@ -227,17 +235,18 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
             getJenkins().waitOnline(agent);
 
             return agent;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             throw new AssertionError(e);
         }
 
     }
 
     /**
-     * Integrationstest Aufgabe 3.    Build with makefile and GccContainer
+     * Integrationstest Aufgabe 3. Build with makefile and GccContainer.
      */
     @Test
-    public void shouldBuildGccFileWithContainer()  {
+    public void shouldBuildGccFileWithContainer() {
         DumbSlave worker = createGccAgent();
         FreeStyleProject project = createFreeStyleProject();
         try {
@@ -259,6 +268,7 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result).isNotNull();
     }
 
+    @SuppressWarnings("illegalcatch")
     private DumbSlave createGccAgent() {
         try {
             GccContainer gccContainer = gccDockerRule.get();
