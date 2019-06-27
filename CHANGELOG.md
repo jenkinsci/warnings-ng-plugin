@@ -7,6 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.0.0...master)
 
 ### Added 
+- [JENKINS-39203](https://issues.jenkins-ci.org/browse/JENKINS-39203),
+  [PR#58](https://github.com/jenkinsci/warnings-ng-plugin/pull/58): Mark only the failed stage as unstable if a quality gate
+  is failed. Other stages will not be affected anymore.
 - [JENKINS-57098](https://issues.jenkins-ci.org/browse/JENKINS-57098),
 [PR#177](https://github.com/jenkinsci/analysis-model/pull/177),
 [PR#168](https://github.com/jenkinsci/analysis-model/pull/168): 
@@ -16,7 +19,7 @@ Added a parser for MentorGraphcis Modelsim/Questa.
 - [JENKINS-57245](https://issues.jenkins-ci.org/browse/JENKINS-57245), [PR#111](https://github.com/jenkinsci/warnings-ng-plugin/pull/111):
   Added a Kotlin Parser.
 
-### Fixed 
+### Fixed
 - [JENKINS-56007](https://issues.jenkins-ci.org/browse/JENKINS-56007): Obtain the affected files in a process on the 
 master (rather than pushing them from the agent to the master) so that master - agent security will not block the copy process. 
 - Fix resetting of reference build in Firefox.

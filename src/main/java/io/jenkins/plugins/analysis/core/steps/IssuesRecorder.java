@@ -1002,7 +1002,7 @@ public class IssuesRecorder extends Recorder {
     /**
      * Descriptor for this step: defines the context and the UI elements.
      */
-    @Extension @Symbol("recordFreeStyleIssues")
+    @Extension @Symbol("recordIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         /** Retain backward compatibility. */
