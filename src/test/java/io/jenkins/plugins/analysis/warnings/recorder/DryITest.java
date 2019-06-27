@@ -25,7 +25,6 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
-import io.jenkins.plugins.analysis.warnings.Simian;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable.DuplicationRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
@@ -70,23 +69,6 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         setHighThresholdAndCheckPriority(2, "High", cpd, project);
         setHighThresholdAndCheckPriority(5, "Normal", cpd, project);
         setNormalThresholdAndCheckPriority(4, "Low", cpd, project);
-    }
-
-    /**
-     * Verifies that the priority of the duplicate code warnings are changed corresponding to the defined thresholds for
-     * simian warnings.
-     */
-
-    @Test
-    public void shouldConfigureSeverityThresholdsInJobConfigurationForSimian() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(SIMIAN_REPORT);
-        Simian simian = new Simian();
-        simian.setNormalThreshold(1);
-        enableGenericWarnings(project, simian);
-
-        setHighThresholdAndCheckPriority(2, "High", simian, project);
-        setHighThresholdAndCheckPriority(6, "Normal", simian, project);
-        setNormalThresholdAndCheckPriority(5, "Low", simian, project);
     }
 
     /**

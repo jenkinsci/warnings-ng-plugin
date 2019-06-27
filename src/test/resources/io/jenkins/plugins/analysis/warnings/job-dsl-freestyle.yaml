@@ -2,7 +2,7 @@ jobs:
   - script: >
       freeStyleJob('freestyle-analysis-model') {
           publishers {
-              recordIssues {
+              recordFreeStyleIssues {
                   aggregatingResults(true)
                   tools {
                       java {
