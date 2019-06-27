@@ -51,7 +51,6 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Initializes the git repository.
-     *
      */
     @Before
     public void initRepository() {
@@ -59,7 +58,7 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
             repository.init();
         }
         catch (Exception e) {
-            e.printStackTrace();
+            throw new Error("Could not initiate git repository.");
         }
     }
 
@@ -139,13 +138,12 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Blame should work in builds out of three. Verifies the issue JENKINS-57260.
-     * (Fails since the issue haven't been fixed yet)
-     *
+     * Blame should work in builds out of three. Verifies the issue JENKINS-57260. (Fails since the issue haven't been
+     * fixed yet)
      */
     @Issue("JENKINS-57260")
     @Test
-    public void shouldBlameInOutOfTreeBuilds()  {
+    public void shouldBlameInOutOfTreeBuilds() {
         createAndCommitFileByUser(FILE, WARNING_01, COMMIT_MESSAGE_01, USER_01, EMAIL_01);
         createAndCommitFileByUser(FILE, WARNING_02, COMMIT_MESSAGE_02, USER_02, EMAIL_02);
         WorkflowJob job = createPipeline();
@@ -194,7 +192,7 @@ public class GitBlameTest extends IntegrationTestWithJenkinsPerTest {
             repository.git("commit", "-m", commitMessage);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            throw new Error("Could not create or commit file.");
         }
 
     }
