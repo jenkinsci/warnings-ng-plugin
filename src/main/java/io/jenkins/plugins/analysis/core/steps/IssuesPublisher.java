@@ -28,6 +28,8 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.core.util.StageResultHandler;
+
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
@@ -49,6 +51,7 @@ class IssuesPublisher {
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
+    private final StageResultHandler stageResultHandler;
     private final boolean failOnErrors;
 
     @SuppressWarnings("ParameterNumber")
@@ -56,7 +59,8 @@ class IssuesPublisher {
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
-                    final boolean failOnErrors) {
+                    final StageResultHandler stageResultHandler, final boolean failOnErrors) {
+
         this.report = report;
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -68,6 +72,7 @@ class IssuesPublisher {
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
         this.failOnErrors = failOnErrors;
+        this.stageResultHandler = stageResultHandler;
     }
 
     private String getId() {
