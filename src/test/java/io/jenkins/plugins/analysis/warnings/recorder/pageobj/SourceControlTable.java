@@ -50,7 +50,7 @@ public class SourceControlTable extends PageObject {
 
         HtmlPage page = getPage();
         HtmlAnchor content = page.getAnchorByHref("#scmContent");
-        clickOnLink(content);
+        clickOnElement(content);
 
         scmInfo = page.getElementById("scm_info");
         scmPaginate = page.getElementById("scm_paginate");
@@ -110,6 +110,7 @@ public class SourceControlTable extends PageObject {
         try {
             HtmlTextInput search = (HtmlTextInput) scmFilter.getElementsByTagName("input").get(0);
             search.type(term);
+
             load();
         }
         catch (IOException exception) {
@@ -127,23 +128,11 @@ public class SourceControlTable extends PageObject {
         DomNodeList<HtmlElement> pages = scmPaginate.getElementsByTagName("a");
 
         if (pages.size() >= pageNumber) {
-            clickOnLink(pages.get(pageNumber - 1));
-            load();
-        }
-    }
+            HtmlElement pageButton = pages.get(pageNumber - 1);
+            clickOnElement(pageButton);
+            pageButton.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
 
-    /**
-     * Clicks a link.
-     *
-     * @param element
-     *         a {@link DomElement} which will trigger the redirection to a new page.
-     */
-    private void clickOnLink(final DomElement element) {
-        try {
-            element.click();
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
+            load();
         }
     }
 

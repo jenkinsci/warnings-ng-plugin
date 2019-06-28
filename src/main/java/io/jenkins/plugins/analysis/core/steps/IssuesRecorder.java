@@ -1,3 +1,4 @@
+
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
@@ -22,8 +23,10 @@ import hudson.FilePath;
 import hudson.Launcher;
 import hudson.init.InitMilestone;
 import hudson.init.Initializer;
+import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
+import hudson.model.BuildListener;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -34,7 +37,6 @@ import hudson.tasks.Recorder;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
-import jenkins.tasks.SimpleBuildStep;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -52,6 +54,8 @@ import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
+import io.jenkins.plugins.analysis.core.util.RunResultHandler;
+import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -72,8 +76,8 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
-public class IssuesRecorder extends Recorder  {
-    private static final String NO_REFERENCE_JOB = "-";
+public class IssuesRecorder extends Recorder {
+    static final String NO_REFERENCE_JOB = "-";
 
     private List<Tool> analysisTools = new ArrayList<>();
 
@@ -98,8 +102,6 @@ public class IssuesRecorder extends Recorder  {
     private String name;
 
     private List<QualityGate> qualityGates = new ArrayList<>();
-
-
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -129,7 +131,6 @@ public class IssuesRecorder extends Recorder  {
         }
         return this;
     }
-
 
     /**
      * Defines the optional list of quality gates.
@@ -222,7 +223,6 @@ public class IssuesRecorder extends Recorder  {
      *         the static analysis tools (wrapped as {@link ToolProxy})
      *
      * @see #setTools(List)
-     * @see #setTool(Tool)
      * @deprecated this method is only intended to be called by the UI
      */
     @DataBoundSetter
@@ -236,8 +236,6 @@ public class IssuesRecorder extends Recorder  {
      *
      * @param tools
      *         the static analysis tools
-     *
-     * @see #setTool(Tool)
      */
     @DataBoundSetter
     public void setTools(final List<Tool> tools) {
@@ -252,14 +250,9 @@ public class IssuesRecorder extends Recorder  {
      * @param additionalTools
      *         additional static analysis tools (might be empty)
      *
-     * @see #setTool(Tool)
      * @see #setTools(List)
      */
     public void setTools(final Tool tool, final Tool... additionalTools) {
-        ensureThatToolIsValid(tool);
-        for (Tool additionalTool : additionalTools) {
-            ensureThatToolIsValid(additionalTool);
-        }
         analysisTools = new ArrayList<>();
         analysisTools.add(tool);
         Collections.addAll(analysisTools, additionalTools);
@@ -272,39 +265,6 @@ public class IssuesRecorder extends Recorder  {
      */
     public List<Tool> getTools() {
         return new ArrayList<>(analysisTools);
-    }
-
-    /**
-     * Sets the static analysis tool that will scan files and create issues.
-     *
-     * @param tool
-     *         the static analysis tool
-     */
-    @DataBoundSetter
-    public void setTool(final Tool tool) {
-        ensureThatToolIsValid(tool);
-
-        analysisTools = Collections.singletonList(tool);
-    }
-
-    private void ensureThatToolIsValid(final Tool tool) {
-        if (tool == null) {
-            throw new IllegalArgumentException("No valid tool defined! You probably used a symbol in the tools "
-                    + "definition that is also a symbol in another plugin. "
-                    + ("Additionally check if your step is called 'checkStyle' and not 'checkstyle', "
-                    + "since 'checkstyle' is a reserved keyword in the CheckStyle plugin!")
-                    + "If not please create a new bug report in Jenkins issue tracker.");
-        }
-    }
-
-    /**
-     * Always returns {@code null}. Note: this method is required for Jenkins data binding.
-     *
-     * @return {@code null}
-     */
-    @Nullable
-    public Tool getTool() {
-        return null;
     }
 
     @Nullable
@@ -322,8 +282,6 @@ public class IssuesRecorder extends Recorder  {
     public void setSourceCodeEncoding(final String sourceCodeEncoding) {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
-
-    /* -------------------------------------------------------------------------------------------------------------- */
 
     /**
      * Returns whether the results for each configured static analysis result should be aggregated into a single result
@@ -503,13 +461,30 @@ public class IssuesRecorder extends Recorder  {
         return (Descriptor) super.getDescriptor();
     }
 
+    
+    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener,
+                           final Boolean failOnError)
+            throws InterruptedException, IOException {
+        FilePath workspace = build.getWorkspace();
+        if (workspace == null) {
+            throw new IOException("No workspace found for " + build);
+        }
+        perform(build, workspace, listener, new RunResultHandler(build), failOnError);
 
-    public void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
-            @NonNull final Launcher launcher, @NonNull final TaskListener listener, @NonNull final boolean failOnErrors)
+        return true;
+    }
+
+    /**
+     * Executes the build step. Used from {@link RecordIssuesStep} to provide a {@link StageResultHandler}
+     * that has Pipeline-specific behavior.
+     */
+    void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
+                 @NonNull final TaskListener listener, @NonNull final StageResultHandler statusHandler,
+                 @NonNull final boolean failOnError)
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            record(run, workspace, listener, failOnErrors);
+            record(run, workspace, listener, statusHandler, failOnError);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -521,18 +496,16 @@ public class IssuesRecorder extends Recorder  {
         return analysisTools.stream().map(Tool::getActualName).collect(Collectors.joining());
     }
 
-    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener, final boolean failOnErrors)
+    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+                        final StageResultHandler statusHandler, final Boolean failOnError)
             throws IOException, InterruptedException {
-        for (Tool tool : getTools()) {
-            ensureThatToolIsValid(tool);
-        }
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, "analysis"));
             for (Tool tool : analysisTools) {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
-            publishResult(run, listener, toolName, totalIssues, toolName, failOnErrors);
+            publishResult(run, listener, toolName, totalIssues, toolName, statusHandler, failOnError);
         }
         else {
             for (Tool tool : analysisTools) {
@@ -546,7 +519,7 @@ public class IssuesRecorder extends Recorder  {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
                             name, id);
                 }
-                publishResult(run, listener, tool.getActualName(), report, getReportName(tool), failOnErrors);
+                publishResult(run, listener, tool.getActualName(), report, getReportName(tool), statusHandler, failOnError);
             }
         }
     }
@@ -570,7 +543,7 @@ public class IssuesRecorder extends Recorder  {
     }
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final Tool tool) throws IOException, InterruptedException {
+                                         final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(),
                 getSourceCodeCharset(), new FilePath(run.getRootDir()), blame(run, workspace, listener));
         return issuesScanner.scan(run, workspace, new LogHandler(listener, tool.getActualName()));
@@ -608,7 +581,8 @@ public class IssuesRecorder extends Recorder  {
      */
     @SuppressWarnings("deprecation")
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-            final AnnotatedReport report, final String reportName, final boolean failOnErrors) {
+                       final AnnotatedReport report, final String reportName, final StageResultHandler statusHandler,
+                       final boolean failOnError) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         if (qualityGates.isEmpty()) {
             qualityGates.addAll(QualityGate.map(thresholds));
@@ -617,7 +591,7 @@ public class IssuesRecorder extends Recorder  {
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
-                new LogHandler(listener, loggerName, report.getReport()), failOnErrors);
+                new LogHandler(listener, loggerName, report.getReport()), statusHandler,failOnError);
         publisher.attachAction();
     }
 
@@ -1032,8 +1006,7 @@ public class IssuesRecorder extends Recorder  {
     /**
      * Descriptor for this step: defines the context and the UI elements.
      */
-    @Extension
-    @Symbol("recordIssues")
+    @Extension @Symbol("recordIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         /** Retain backward compatibility. */

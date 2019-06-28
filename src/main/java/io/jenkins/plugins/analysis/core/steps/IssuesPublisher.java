@@ -18,18 +18,17 @@ import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluat
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
-import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.model.History;
 import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
 import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
-
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
@@ -54,12 +53,13 @@ class IssuesPublisher {
     private final StageResultHandler stageResultHandler;
     private final boolean failOnErrors;
 
+
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
-                    final StageResultHandler stageResultHandler, final boolean failOnErrors) {
+            final StageResultHandler stageResultHandler, final boolean failOnErrors) {
 
         this.report = report;
         this.run = run;
@@ -157,7 +157,10 @@ class IssuesPublisher {
             else {
                 filtered.logInfo("-> Some quality gates have been missed: overall result is %s", qualityGateStatus);
             }
-            qualityGateStatus.setResult(run);
+            if (!qualityGateStatus.isSuccessful()) {
+                stageResultHandler.setResult(qualityGateStatus.getResult(),
+                        "Some quality gates have been missed: overall result is " + qualityGateStatus.getResult());
+            }
         }
         else {
             filtered.logInfo("No quality gates have been set - skipping");
@@ -193,5 +196,4 @@ class IssuesPublisher {
         }
         return qualityGateEvaluationMode;
     }
-
 }
