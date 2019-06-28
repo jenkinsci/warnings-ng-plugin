@@ -28,13 +28,11 @@ import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
-import hudson.scm.SCM;
 import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.scm.ScmResolver;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
@@ -111,10 +109,9 @@ class IssuesScanner {
                 blamer = new NullBlamer();
             }
             else {
-                SCM scm = new ScmResolver().getScm(run);
-                FilteredLog log = new FilteredLog("Errors while determining a supported blamer for the SCM "
-                        + scm.getDescriptor().getDisplayName());
-                blamer = BlamerFactory.findBlamerFor(scm, run, workspace, listener, log);
+                FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
+                        + run.getFullDisplayName());
+                blamer = BlamerFactory.findBlamerFor(run, workspace, listener, log);
                 log.logSummary();
                 log.getInfoMessages().forEach(report::logInfo);
                 log.getErrorMessages().forEach(report::logError);
