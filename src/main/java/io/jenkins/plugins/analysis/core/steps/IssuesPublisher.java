@@ -92,6 +92,7 @@ class IssuesPublisher {
         if(failOnErrors && report.getReport().hasErrors()) {
             stageResultHandler.setResult(Result.FAILURE,
                     "Some errors have been logged during recording of issues");
+            
         }
 
         ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding);
