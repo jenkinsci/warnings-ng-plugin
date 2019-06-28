@@ -49,7 +49,7 @@ class IssuesPublisher {
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
-    private boolean failOnErrors = false;
+    private final boolean failOnErrors;
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
