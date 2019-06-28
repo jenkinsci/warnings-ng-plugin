@@ -509,7 +509,7 @@ public class IssuesRecorder extends Recorder  {
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            record(run, workspace, listener,failOnErrors);
+            record(run, workspace, listener, failOnErrors);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -521,7 +521,7 @@ public class IssuesRecorder extends Recorder  {
         return analysisTools.stream().map(Tool::getActualName).collect(Collectors.joining());
     }
 
-    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener, boolean failOnErrors)
+    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener, final boolean failOnErrors)
             throws IOException, InterruptedException {
         for (Tool tool : getTools()) {
             ensureThatToolIsValid(tool);
