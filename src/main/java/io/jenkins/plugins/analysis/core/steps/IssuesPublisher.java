@@ -55,8 +55,8 @@ class IssuesPublisher {
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
-            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger
-            , final boolean failOnErrors) {
+            final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
+                    final boolean failOnErrors) {
         this.report = report;
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -92,7 +92,7 @@ class IssuesPublisher {
         if(failOnErrors && report.getReport().hasErrors()) {
             stageResultHandler.setResult(Result.FAILURE,
                     "Some errors have been logged during recording of issues");
-            
+
         }
 
         ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding);

@@ -72,7 +72,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
-public class IssuesRecorder extends Recorder implements SimpleBuildStep {
+public class IssuesRecorder extends Recorder  {
     private static final String NO_REFERENCE_JOB = "-";
 
     private List<Tool> analysisTools = new ArrayList<>();
@@ -99,7 +99,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
-    private boolean failOnErrors = false;
+
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -130,21 +130,6 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return this;
     }
 
-    /**
-     * Sets the value of the boolean according to the user
-     *
-     */
-    @DataBoundSetter
-    public void setFailOnErrors() {
-        this.failOnErrors = true;
-    }
-
-    /**
-     *Gets the value of failonErrors
-     */
-    public boolean isFailOnErrors() {
-        return failOnErrors;
-    }
 
     /**
      * Defines the optional list of quality gates.
@@ -518,13 +503,13 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return (Descriptor) super.getDescriptor();
     }
 
-    @Override
+
     public void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
-            @NonNull final Launcher launcher, @NonNull final TaskListener listener)
+            @NonNull final Launcher launcher, @NonNull final TaskListener listener, boolean failOnErrors)
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            record(run, workspace, listener);
+            record(run, workspace, listener,failOnErrors);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -536,7 +521,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         return analysisTools.stream().map(Tool::getActualName).collect(Collectors.joining());
     }
 
-    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener)
+    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,boolean failOnErrors)
             throws IOException, InterruptedException {
         for (Tool tool : getTools()) {
             ensureThatToolIsValid(tool);
@@ -547,7 +532,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
-            publishResult(run, listener, toolName, totalIssues, toolName);
+            publishResult(run, listener, toolName, totalIssues, toolName, failOnErrors);
         }
         else {
             for (Tool tool : analysisTools) {
@@ -561,7 +546,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
                             name, id);
                 }
-                publishResult(run, listener, tool.getActualName(), report, getReportName(tool));
+                publishResult(run, listener, tool.getActualName(), report, getReportName(tool), failOnErrors);
             }
         }
     }
@@ -623,7 +608,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
      */
     @SuppressWarnings("deprecation")
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-            final AnnotatedReport report, final String reportName) {
+            final AnnotatedReport report, final String reportName,final boolean failOnErrors) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         if (qualityGates.isEmpty()) {
             qualityGates.addAll(QualityGate.map(thresholds));
