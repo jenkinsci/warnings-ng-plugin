@@ -8,6 +8,7 @@ import java.util.Optional;
 import edu.hm.hafner.analysis.Report;
 
 import hudson.model.Job;
+import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AggregationAction;
@@ -48,14 +49,14 @@ class IssuesPublisher {
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
-    private final IssuesRecorder issuesRecorder;
+    private boolean failOnErrors = false;
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger
-    ,final IssuesRecorder issuesRecorder) {
+            , final boolean failOnErrors) {
         this.report = report;
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -66,7 +67,7 @@ class IssuesPublisher {
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
-        this.issuesRecorder = issuesRecorder;
+        this.failOnErrors = failOnErrors;
     }
 
     private String getId() {
@@ -88,8 +89,9 @@ class IssuesPublisher {
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                 result.getTotalSize(), result.getNewSize(), result.getFixedSize());
 
-        if(issuesRecorder.getFailOnErrors() && report.getReport().hasErrors()) {
-            // ADD CODE TO FAIL BUILD
+        if(failOnErrors && report.getReport().hasErrors()) {
+            stageResultHandler.setResult(Result.FAILURE,
+                    "Some errors have been logged during recording of issues");
         }
 
         ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding);

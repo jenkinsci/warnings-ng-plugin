@@ -142,7 +142,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
     /**
      *Gets the value of failonErrors
      */
-    public boolean getFailOnErrors() {
+    public boolean isFailOnErrors() {
         return failOnErrors;
     }
 
@@ -632,7 +632,7 @@ public class IssuesRecorder extends Recorder implements SimpleBuildStep {
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
-                new LogHandler(listener, loggerName, report.getReport()));
+                new LogHandler(listener, loggerName, report.getReport()),failOnErrors);
         publisher.attachAction();
     }
 
