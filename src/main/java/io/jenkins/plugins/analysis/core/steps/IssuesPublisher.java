@@ -89,7 +89,7 @@ class IssuesPublisher {
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                 result.getTotalSize(), result.getNewSize(), result.getFixedSize());
 
-        if(failOnErrors && report.getReport().hasErrors()) {
+        if (failOnErrors && report.getReport().hasErrors()) {
             stageResultHandler.setResult(Result.FAILURE,
                     "Some errors have been logged during recording of issues");
 

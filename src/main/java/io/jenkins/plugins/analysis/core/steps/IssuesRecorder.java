@@ -505,7 +505,7 @@ public class IssuesRecorder extends Recorder  {
 
 
     public void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
-            @NonNull final Launcher launcher, @NonNull final TaskListener listener, boolean failOnErrors)
+            @NonNull final Launcher launcher, @NonNull final TaskListener listener, @NonNull final boolean failOnErrors)
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
@@ -521,7 +521,7 @@ public class IssuesRecorder extends Recorder  {
         return analysisTools.stream().map(Tool::getActualName).collect(Collectors.joining());
     }
 
-    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,boolean failOnErrors)
+    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener, boolean failOnErrors)
             throws IOException, InterruptedException {
         for (Tool tool : getTools()) {
             ensureThatToolIsValid(tool);
@@ -608,7 +608,7 @@ public class IssuesRecorder extends Recorder  {
      */
     @SuppressWarnings("deprecation")
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-            final AnnotatedReport report, final String reportName,final boolean failOnErrors) {
+            final AnnotatedReport report, final String reportName, final boolean failOnErrors) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         if (qualityGates.isEmpty()) {
             qualityGates.addAll(QualityGate.map(thresholds));
@@ -617,7 +617,7 @@ public class IssuesRecorder extends Recorder  {
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
-                new LogHandler(listener, loggerName, report.getReport()),failOnErrors);
+                new LogHandler(listener, loggerName, report.getReport()), failOnErrors);
         publisher.attachAction();
     }
 
