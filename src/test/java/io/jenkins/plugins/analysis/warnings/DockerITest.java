@@ -1,10 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -12,21 +14,29 @@ import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerRule;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaContainer;
 import hudson.FilePath;
+import hudson.Functions;
+import hudson.Launcher;
 import hudson.model.Descriptor.FormException;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.plugins.sshslaves.SSHLauncher;
+import hudson.remoting.TeeOutputStream;
 import hudson.slaves.DumbSlave;
 import hudson.slaves.EnvironmentVariablesNodeProperty;
 import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
 import hudson.tasks.Maven;
 import hudson.tasks.Shell;
+import hudson.util.StreamTaskListener;
+import hudson.util.VersionNumber;
 import jenkins.security.s2m.AdminWhitelistRule;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.hamcrest.core.Is.*;
+import static org.hamcrest.number.OrderingComparison.*;
+import static org.junit.Assume.*;
 
 /**
  * Docker integrations tests.
@@ -48,20 +58,20 @@ public class DockerITest extends IntegrationTestWithJenkinsPerTest {
     @Rule
     public DockerRule<GccContainer> gccDockerRule = new DockerRule<>(GccContainer.class);
 
-//    @BeforeClass
-//    public static void assumeThatWeAreRunningLinux() throws Exception {
-//        assumeTrue("This test is only for Unix", !Functions.isWindows());
-//
-//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//        assumeThat("`docker version` could be run", new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
-//                .cmds("docker", "version", "--format", "{{.Client.Version}}")
-//                .stdout(new TeeOutputStream(baos, System.err))
-//                .stderr(System.err)
-//                .join(), is(0));
-//
-//        assumeThat("Docker must be at least 1.13.0 for this test (uses --init)",
-//                new VersionNumber(baos.toString().trim()), greaterThanOrEqualTo(new VersionNumber("1.13.0")));
-//    }
+    @BeforeClass
+    public static void assumeThatWeAreRunningLinux() throws Exception {
+        assumeTrue("This test is only for Unix", !Functions.isWindows());
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        assertThat(new Launcher.LocalLauncher(StreamTaskListener.fromStderr()).launch()
+                .cmds("docker", "version", "--format", "{{.Client.Version}}")
+                .stdout(new TeeOutputStream(baos, System.err))
+                .stderr(System.err)
+                .join()).as("`docker version` could be run").isEqualTo(0);
+
+        assumeFalse("Docker must be at least 1.13.0 for this test (uses --init)",
+                new VersionNumber(baos.toString().trim()).isOlderThan(new VersionNumber("1.13.0")));
+    }
 
     /**
      * Integrationstest Aufgabe 2. Building with Java Files.
