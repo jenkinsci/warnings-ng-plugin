@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.2.0...master)
 
+## [5.2.1](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.2.0...warnings-ng-5.2.1) - 2019-7-1
+
+### Fixed
+- [JENKINS-58253](https://issues.jenkins-ci.org/browse/JENKINS-58253): Restored deprecated quality gate 
+properties so that old scripts will still work.
+
 ## [5.2.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.1.0...warnings-ng-5.2.0) - 2019-6-27
 
 ### Added 

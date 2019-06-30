@@ -273,6 +273,54 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         buildWithResult(job, Result.FAILURE);
     }
 
+    /** Runs the JavaDoc parser and enforces quality gates. */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-58253")
+    public void shouldSupportDeprecatedAttributesinRecord() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt");
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
+                        + "unstableTotalAll: 6"));
+        buildWithResult(job, Result.UNSTABLE);
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
+                        + "failedTotalAll: 6"));
+        buildWithResult(job, Result.FAILURE);
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
+                        + "unstableTotalNormal: 6"));
+        buildWithResult(job, Result.UNSTABLE);
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), "
+                        + "failedTotalNormal: 6"));
+        buildWithResult(job, Result.FAILURE);
+    }
+
+    /** Runs the JavaDoc parser and enforces quality gates. */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-58253")
+    public void shouldSupportDeprecatedAttributesInPublish() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt");
+
+        job.setDefinition(asStage(createScanForIssuesStep(new JavaDoc(), "java"),
+                "publishIssues issues:[java], unstableTotalAll: 6"));
+        buildWithResult(job, Result.UNSTABLE);
+
+        job.setDefinition(asStage(createScanForIssuesStep(new JavaDoc(), "java"),
+                "publishIssues issues:[java], failedTotalAll: 6"));
+        buildWithResult(job, Result.FAILURE);
+
+        job.setDefinition(asStage(createScanForIssuesStep(new JavaDoc(), "java"),
+                "publishIssues issues:[java], unstableTotalNormal: 6"));
+        buildWithResult(job, Result.UNSTABLE);
+
+        job.setDefinition(asStage(createScanForIssuesStep(new JavaDoc(), "java"),
+                "publishIssues issues:[java], failedTotalNormal: 6"));
+        buildWithResult(job, Result.FAILURE);
+    }
+
     /**
      * Runs the all Java parsers on three output files: the build should report issues of all tools. The results should
      * be aggregated into a new action with the specified ID. Since no name is given the default name is used.
