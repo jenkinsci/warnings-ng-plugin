@@ -57,6 +57,7 @@ public class PublishIssuesStep extends Step {
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored
     private String referenceJobName = StringUtils.EMPTY;
+    private boolean failOnError = false; // by default, it should not fail on error
 
     private int healthy;
     private int unhealthy;
@@ -123,6 +124,26 @@ public class PublishIssuesStep extends Step {
     public String getName() {
         return name;
     }
+
+
+    /**
+     * Determines whether to fail the build on error.This is set in the UI.
+     * the default value is assumed as false if not specified.
+     *
+     * @param failOnError
+     *        the boolean required to fail the build on error.
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setFailOnError(final boolean failOnError) {
+        this.failOnError = failOnError;
+    }
+
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
+    public boolean getFailOnError() {
+        return failOnError;
+    }
+
 
     /**
      * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
@@ -526,6 +547,7 @@ public class PublishIssuesStep extends Step {
         private final String name;
         private final String referenceJobName;
         private final List<AnnotatedReport> reports;
+        private final boolean failOnError;
 
         /**
          * Creates a new instance of the step execution object.
@@ -546,6 +568,7 @@ public class PublishIssuesStep extends Step {
 
             ignoreQualityGate = step.getIgnoreQualityGate();
             ignoreFailedBuilds = step.getIgnoreFailedBuilds();
+            failOnError = step.getFailOnError();
             referenceJobName = step.getReferenceJobName();
             sourceCodeEncoding = step.getSourceCodeEncoding();
             healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
@@ -576,7 +599,7 @@ public class PublishIssuesStep extends Step {
                     getContext().get(FlowNode.class));
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
-                    getCharset(sourceCodeEncoding), getLogger(report), statusHandler);
+                    getCharset(sourceCodeEncoding), getLogger(report), statusHandler,failOnError);
             return publisher.attachAction();
         }
 

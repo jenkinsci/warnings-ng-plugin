@@ -86,6 +86,7 @@ public class IssuesRecorder extends Recorder {
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
     private String referenceJobName;
+    private boolean failOnError = false;
 
     private int healthy;
     private int unhealthy;
@@ -103,6 +104,7 @@ public class IssuesRecorder extends Recorder {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
+    private IssuesPublisher issuesPublisher;
     /**
      * Creates a new instance of {@link IssuesRecorder}.
      */
@@ -316,6 +318,25 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
+     * Determines whether to fail the build on error.This is set in the UI.
+     * the default value is assumed as false if not specified.
+     *
+     * @param failOnError
+     *        the boolean required to fail the build on error.
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setFailOnError(final boolean failOnError) {
+        this.failOnError = failOnError;
+    }
+
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getFailOnError() {
+        return failOnError;
+    }
+
+
+    /**
      * Returns whether recording should be enabled for failed builds as well.
      *
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
@@ -461,14 +482,14 @@ public class IssuesRecorder extends Recorder {
         return (Descriptor) super.getDescriptor();
     }
 
-    
-    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener,
-                           final Boolean failOnError)
+    @Override
+    public boolean perform(final AbstractBuild<?, ?> build, final Launcher launcher, final BuildListener listener)
             throws InterruptedException, IOException {
         FilePath workspace = build.getWorkspace();
         if (workspace == null) {
             throw new IOException("No workspace found for " + build);
         }
+
         perform(build, workspace, listener, new RunResultHandler(build), failOnError);
 
         return true;

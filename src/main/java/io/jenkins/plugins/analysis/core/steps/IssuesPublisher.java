@@ -71,13 +71,15 @@ class IssuesPublisher {
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
-        this.failOnErrors = failOnErrors;
         this.stageResultHandler = stageResultHandler;
+        this.failOnErrors = failOnErrors;
+
     }
 
     private String getId() {
         return report.getId();
     }
+
 
     /**
      * Creates a new {@link AnalysisResult} and attaches the result in a {@link ResultAction} that is registered with
