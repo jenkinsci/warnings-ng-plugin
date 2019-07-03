@@ -43,7 +43,6 @@ node ('linux') {
             recordIssues enabledForFailure: true, tool: taskScanner(includePattern:'**/*.java', excludePattern:'target/**/*', highTags:'FIXME', normalTags:'TODO'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
             jacoco()
 
-            sh 'bash <(curl -s https://codecov.io/bash)'
         }
     }
 }
