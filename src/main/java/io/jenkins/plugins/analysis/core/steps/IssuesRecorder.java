@@ -525,7 +525,7 @@ public class IssuesRecorder extends Recorder {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
-            publishResult(run, listener, toolName, totalIssues, toolName, statusHandler, failOnError);
+            publishResult(run, listener, toolName, totalIssues, toolName, statusHandler);
         }
         else {
             for (Tool tool : analysisTools) {
@@ -539,7 +539,7 @@ public class IssuesRecorder extends Recorder {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
                             name, id);
                 }
-                publishResult(run, listener, tool.getActualName(), report, getReportName(tool), statusHandler, failOnError);
+                publishResult(run, listener, tool.getActualName(), report, getReportName(tool), statusHandler);
             }
         }
     }
