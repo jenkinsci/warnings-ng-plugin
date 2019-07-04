@@ -524,7 +524,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
             FilePath workspace = getWorkspace();
             workspace.mkdirs();
-            recorder.perform(getRun(), workspace, getTaskListener(), statusHandler,step.getFailOnError());
+            recorder.perform(getRun(), workspace, getTaskListener(), statusHandler);
             return null;
         }
 
