@@ -104,6 +104,7 @@ public class IssuesRecorder extends Recorder {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
+
     /**
      * Creates a new instance of {@link IssuesRecorder}.
      */
@@ -499,8 +500,7 @@ public class IssuesRecorder extends Recorder {
      * that has Pipeline-specific behavior.
      */
     void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
-                 @NonNull final TaskListener listener, @NonNull final StageResultHandler statusHandler,
-                 @NonNull final boolean failOnError)
+                 @NonNull final TaskListener listener, @NonNull final StageResultHandler statusHandler)
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
