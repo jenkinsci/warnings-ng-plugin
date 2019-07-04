@@ -104,7 +104,6 @@ public class IssuesRecorder extends Recorder {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
-    private IssuesPublisher issuesPublisher;
     /**
      * Creates a new instance of {@link IssuesRecorder}.
      */
@@ -518,7 +517,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-                        final StageResultHandler statusHandler, final Boolean failOnError)
+                        final StageResultHandler statusHandler, boolean failOnError)
             throws IOException, InterruptedException {
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, "analysis"));
@@ -612,7 +611,7 @@ public class IssuesRecorder extends Recorder {
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
-                new LogHandler(listener, loggerName, report.getReport()), statusHandler,failOnError);
+                new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
         publisher.attachAction();
     }
 

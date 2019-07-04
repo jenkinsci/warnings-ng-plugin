@@ -599,7 +599,7 @@ public class PublishIssuesStep extends Step {
                     getContext().get(FlowNode.class));
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report, healthDescriptor, qualityGate,
                     name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
-                    getCharset(sourceCodeEncoding), getLogger(report), statusHandler,failOnError);
+                    getCharset(sourceCodeEncoding), getLogger(report), statusHandler, failOnError);
             return publisher.attachAction();
         }
 
