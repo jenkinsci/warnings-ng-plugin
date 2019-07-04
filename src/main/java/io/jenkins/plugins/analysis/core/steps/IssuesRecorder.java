@@ -601,8 +601,7 @@ public class IssuesRecorder extends Recorder {
      */
     @SuppressWarnings("deprecation")
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-                       final AnnotatedReport report, final String reportName, final StageResultHandler statusHandler,
-                       final boolean failOnError) {
+                       final AnnotatedReport report, final String reportName, final StageResultHandler statusHandler) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         if (qualityGates.isEmpty()) {
             qualityGates.addAll(QualityGate.map(thresholds));
