@@ -9,9 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [5.3.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.2.0...warnings-ng-5.3.0) - 2019-7-4
 
 ### Added 
-- [JENKINS-57098](https://issues.jenkins-ci.org/browse/JENKINS-55051),
+
+- [JENKINS-55051](https://issues.jenkins-ci.org/browse/JENKINS-55051),
 [PR#116](https://github.com/jenkinsci/warnings-ng-plugin/pull/116): 
-Added DScanner parser.
+Added DScanner parser
 
 ## [5.2.1](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.2.0...warnings-ng-5.2.1) - 2019-7-1
 
