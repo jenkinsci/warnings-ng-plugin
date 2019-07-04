@@ -1,0 +1,40 @@
+{
+  "issues": [
+    {
+      "key": "dscanner.style.long_line",
+      "fileName": ".\\source\\runtime\\internal\\api.d",
+      "line": 24,
+      "column": 121,
+      "message": "Line is longer than 120 characters"
+    },
+    {
+      "key": "dscanner.bugs.logic_operator_operands",
+      "fileName": ".\\source\\runtime\\internal\\api.d",
+      "line": 33,
+      "column": 1,
+      "message": "logic operator operands"
+    },
+    {
+      "key": "dscanner.trust_too_much",
+      "fileName": ".\\source\\runtime\\internal\\api.d",
+      "line": 34,
+      "column": 1,
+      "message": "trust too much"
+    },
+    {
+      "key": "dscanner.suspicious.unused_variable",
+      "fileName": ".\\source\\runtime\\internal\\api2.d",
+      "line": 314,
+      "column": 16,
+      "message": "Variable library is never used."
+    }
+  ],
+  "interfaceCount": 36,
+  "classCount": 236,
+  "functionCount": 1355,
+  "templateCount": 0,
+  "structCount": 57,
+  "statementCount": 6845,
+  "lineOfCodeCount": 9755,
+  "undocumentedPublicSymbols": 0
+}

@@ -448,6 +448,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new CodeAnalysis(), "codeanalysis.txt");
     }
 
+    /** Runs the DScanner parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllDScannerIssues() {
+        shouldFindIssuesOfTool(4, new DScanner(), "dscanner-report.json");
+    }
+
     /** Runs the GoLint parser on an output file that contains 7 issues. */
     @Test
     public void shouldFindAllGoLintIssues() {

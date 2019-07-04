@@ -5,6 +5,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.2.0...master)
+- [JENKINS-57098](https://issues.jenkins-ci.org/browse/JENKINS-55051)
+[PR#116](https://github.com/jenkinsci/warnings-ng-plugin/pull/116): 
+Added DScanner parser
 
 ## [5.2.1](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.2.0...warnings-ng-5.2.1) - 2019-7-1
 
