@@ -17,6 +17,11 @@
     <f:checkbox />
   </f:entry>
 
+   <f:entry title="${%title.failBuildOnError}" description="${%description.failBuildOnError}" field="failBuildOnError">
+      <f:checkbox />
+    </f:entry>
+
+
   <f:advanced>
     <i:scan-parameters/>
     <i:publish-parameters/>

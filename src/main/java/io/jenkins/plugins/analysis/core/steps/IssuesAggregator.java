@@ -93,7 +93,7 @@ public class IssuesAggregator extends MatrixAggregator {
         for (Entry<String, List<AnnotatedReport>> reportsPerId : results.entrySet()) {
             AnnotatedReport aggregatedReport = new AnnotatedReport(reportsPerId.getKey(), reportsPerId.getValue());
             recorder.publishResult(build, listener, Messages.Tool_Default_Name(), aggregatedReport, StringUtils.EMPTY,
-                    new RunResultHandler(build));
+                    new RunResultHandler(build),recorder.getFailOnError());
         }
         return true;
     }
