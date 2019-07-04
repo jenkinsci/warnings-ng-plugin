@@ -490,7 +490,7 @@ public class IssuesRecorder extends Recorder {
             throw new IOException("No workspace found for " + build);
         }
 
-        perform(build, workspace, listener, new RunResultHandler(build), failOnError);
+        perform(build, workspace, listener, new RunResultHandler(build));
 
         return true;
     }
@@ -504,7 +504,7 @@ public class IssuesRecorder extends Recorder {
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            record(run, workspace, listener, statusHandler, failOnError);
+            record(run, workspace, listener, statusHandler);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -517,7 +517,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-                        final StageResultHandler statusHandler, boolean failOnError)
+                        final StageResultHandler statusHandler)
             throws IOException, InterruptedException {
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, "analysis"));
