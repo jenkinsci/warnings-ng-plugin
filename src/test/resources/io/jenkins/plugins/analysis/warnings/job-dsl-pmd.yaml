@@ -1,0 +1,16 @@
+jobs:
+      - script: >
+              freeStyleJob('freestyle-analysis-model') {
+                  publishers {
+                      recordIssues {
+                          aggregatingResults(true)
+                          tools {
+                              pmdParser {
+                                  id('pmd-id')
+                                  name('pmd-name')
+                                 reportEncoding('UTF-8')
+                              }
+                          }
+                      }
+                  }
+              };

@@ -1,0 +1,22 @@
+jobs:
+  - script: >
+      freeStyleJob('dsl-freestyle-job') {
+          publishers {
+              recordIssues {
+                  tools {
+                      java {
+                        id('java')
+                        name('Java')
+                        pattern('java.txt')
+                        reportEncoding('UTF-8')
+                      }
+                      javaDoc {
+                        id('javadoc')
+                        name('JavaDoc')
+                        pattern('java.txt')
+                        reportEncoding('UTF-8')
+                    }
+                  }
+              }
+        }
+      };
