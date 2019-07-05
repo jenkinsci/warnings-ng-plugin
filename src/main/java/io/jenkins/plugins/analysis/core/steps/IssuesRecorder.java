@@ -517,7 +517,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-                        final StageResultHandler statusHandler)
+            final StageResultHandler statusHandler)
             throws IOException, InterruptedException {
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, "analysis"));
@@ -563,7 +563,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-                                         final Tool tool) throws IOException, InterruptedException {
+            final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(),
                 getSourceCodeCharset(), new FilePath(run.getRootDir()), blame(run, workspace, listener));
         return issuesScanner.scan(run, workspace, new LogHandler(listener, tool.getActualName()));
@@ -601,7 +601,7 @@ public class IssuesRecorder extends Recorder {
      */
     @SuppressWarnings("deprecation")
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
-                       final AnnotatedReport report, final String reportName, final StageResultHandler statusHandler) {
+            final AnnotatedReport report, final String reportName, final StageResultHandler statusHandler) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         if (qualityGates.isEmpty()) {
             qualityGates.addAll(QualityGate.map(thresholds));
