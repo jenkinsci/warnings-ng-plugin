@@ -757,7 +757,7 @@ The token has an optional parameter `tool` that could be used to select a partic
 Examples:
 
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
-- `${ANALYSIS_ISSUES_COUNT, tool='checkstyle'}`: expands to the total number of **CheckStyle** issues
+- `${ANALYSIS_ISSUES_COUNT, tool="checkstyle"}`: expands to the total number of **CheckStyle** issues
 
 ## Transition from the static analysis suite
 
