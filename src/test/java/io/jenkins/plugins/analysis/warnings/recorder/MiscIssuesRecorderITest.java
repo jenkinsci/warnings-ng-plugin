@@ -234,10 +234,10 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     /**
-     * Should Fail the build
+     * This test is used to check if the build fails when the setFailOnError has been set to true.
      */
     @Test
-    public void shouldFailBuildWhenFailBuildOnErrorsIsSet(){
+    public void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
         FreeStyleProject job = createFreeStyleProject();
         enableEclipseWarnings(job);
 
@@ -245,8 +245,11 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 .setFailOnError(true)
                 .save();
 
-        Run<?, ?> build = buildWithResult(job, Result.FAILURE);
-        System.out.println(build.getResult());
+        FreestyleConfiguration saved = new FreestyleConfiguration(
+                getWebPage(JavaScriptSupport.JS_DISABLED, job, "configure"));
+
+        assertThat(saved.isFailOnError()).isTrue();
+        scheduleBuildAndAssertStatus(job, Result.FAILURE);
     }
 
     /**

@@ -5,7 +5,7 @@
     Provides all required input fields to publish issues.
   </st:documentation>
 
-  <f:entry title="${%title.failBuildOnError}" description="${%description.failBuildOnError}" field="failBuildOnError">
+  <f:entry title="${%title.failOnError}" description="${%description.failOnError}" field="failOnError">
       <f:checkbox />
   </f:entry>
 
