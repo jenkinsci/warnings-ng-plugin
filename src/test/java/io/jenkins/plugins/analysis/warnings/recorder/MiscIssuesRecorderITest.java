@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.*;
+import javaposse.jobdsl.dsl.jobs.FreeStyleJob;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
@@ -30,16 +32,12 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SummaryBox;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.eclipse.jetty.webapp.MetaDataComplete.True;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -233,6 +231,22 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getSizePerOrigin()).containsExactly(entry("checkstyle", 0), entry("pmd", 0));
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+    }
+
+    /**
+     * Should Fail the build
+     */
+    @Test
+    public void shouldFailBuildWhenFailBuildOnErrorsIsSet(){
+        FreeStyleProject job = createFreeStyleProject();
+        enableEclipseWarnings(job);
+
+        new FreestyleConfiguration(getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"))
+                .setFailOnError(true)
+                .save();
+
+        Run<?, ?> build = buildWithResult(job, Result.FAILURE);
+        System.out.println(build.getResult());
     }
 
     /**
