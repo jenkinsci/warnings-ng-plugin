@@ -1,12 +1,10 @@
 language: java
 jdk: oraclejdk8
 install : true
-script: mvn -B -V clean jacoco:prepare-agent verify jacoco:report -DskipITs -Djenkins.test.timeout=1000
+script: mvn -B -V clean verify -Djenkins.test.timeout=1000
 cache:
   directories:
     - $HOME/.m2
-after_success:
-- bash <(curl -s https://codecov.io/bash)
 notifications:
   webhooks:
     urls:

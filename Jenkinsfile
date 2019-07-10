@@ -24,7 +24,7 @@ node ('linux') {
                 writeFile file: settingsXml, text: libraryResource('settings-azure.xml')
                 mavenOptions += "-s $settingsXml"
             }
-            mavenOptions += "clean verify jacoco:prepare-agent test jacoco:report -Djenkins.test.timeout=1000"
+            mavenOptions += "clean verify jacoco:prepare-agent test integration-test jacoco:report -Djenkins.test.timeout=1000"
             command = "mvn ${mavenOptions.join(' ')}"
             env << "PATH+MAVEN=${tool 'mvn'}/bin"
 
@@ -42,6 +42,7 @@ node ('linux') {
             recordIssues enabledForFailure: true, tool: spotBugs(pattern: 'target/spotbugsXml.xml'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
             recordIssues enabledForFailure: true, tool: taskScanner(includePattern:'**/*.java', excludePattern:'target/**/*', highTags:'FIXME', normalTags:'TODO'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
             jacoco()
+            sh "curl -s https://codecov.io/bash | bash -s - -t c4071f73-a222-43ff-a41b-a6c8c118e242"
         }
     }
 }

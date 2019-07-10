@@ -4,7 +4,7 @@
     <option name="configuration">
       <map>
         <entry key="active-configuration" value="LOCAL_FILE:$PROJECT_DIR$/etc/checkstyle-configuration.xml:Ullrich Hafner's CheckStyle Configuration" />
-        <entry key="checkstyle-version" value="8.14" />
+        <entry key="checkstyle-version" value="8.20" />
         <entry key="copy-libs" value="false" />
         <entry key="location-0" value="BUNDLED:(bundled):Sun Checks" />
         <entry key="location-1" value="BUNDLED:(bundled):Google Checks" />

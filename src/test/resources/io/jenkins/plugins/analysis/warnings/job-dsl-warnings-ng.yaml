@@ -1,0 +1,41 @@
+jobs:
+  - script: >
+      freeStyleJob('dsl-freestyle-job') {
+          publishers {
+              recordIssues {
+                    aggregatingResults(true)
+                    blameDisabled(true)
+                    enabledForFailure(true)
+                    healthy(10)
+                    ignoreFailedBuilds(false)
+                    ignoreQualityGate(true)
+                    id('test-id')
+                    name('test-name')
+                    minimumSeverity('ERROR')
+                    sourceCodeEncoding('UTF-8')
+                    unhealthy(50)
+                    referenceJobName('test-job')
+                    qualityGates {
+                        qualityGate {
+                            threshold(10)
+                            type('TOTAL')
+                            unstable(true)
+                        }
+                    }
+                    tools {
+                      java {
+                        id('java')
+                        name('Java')
+                        pattern('java.txt')
+                        reportEncoding('UTF-8')
+                      }
+                      javaDoc {
+                        id('javadoc')
+                        name('JavaDoc')
+                        pattern('java.txt')
+                        reportEncoding('UTF-8')
+                    }
+                  }
+              }
+        }
+      };

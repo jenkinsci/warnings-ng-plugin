@@ -1,0 +1,19 @@
+jobs:
+      - script: >
+              freeStyleJob('freestyle-analysis-model') {
+                  publishers {
+                      recordIssues {
+                          aggregatingResults(true)
+                          tools {
+                              taskScanner {
+                                  id('taskScanner-id')
+                                  name('taskScanner-name')
+                                  highTags('FIXME')
+                                  normalTags('TODO')
+                                  includePattern('**/*.java')
+                                  excludePattern('target/**/*')
+                              }
+                          }
+                      }
+                  }
+              };

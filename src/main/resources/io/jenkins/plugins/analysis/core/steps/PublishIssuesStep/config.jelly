@@ -6,10 +6,10 @@
   <f:block>
     This step is only intended for users who want to control scanning and publishing of issues in detail with the 
     Warnings Next Generation Plugin. Typically, you can scan and publish issues using the simple step 
-    <b>Record compiler warnings and static analysis results</b>. If the default behavior is not sufficient you can 
-    combine the two individual sub-steps
-    <b>Scan files or the console log for warnings or issues</b> and
-    <b>Publish issues created by a static analysis scan</b> individually.
+    <b>recordIssues: Record compiler warnings and static analysis results</b>.
+    If the default behavior is not sufficient you can combine the two individual sub-steps
+    <b>scanForIssues: Scan files or the console log for warnings or issues</b> and
+    <b>publishIssues: Publish issues created by a static analysis scan</b> individually.
   </f:block>
   
   <f:entry title="${%title.id}" description="${%description.id}" field="id">
