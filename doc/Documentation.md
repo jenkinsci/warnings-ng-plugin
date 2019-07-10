@@ -40,7 +40,8 @@ main build page. From there you can also dive into the details:
      * [Tool selection](#tool-selection)
      * [Creating support for a custom tool](#creating-support-for-a-custom-tool)
         * [Deploying a new tool using a custom plugin](#deploying-a-new-tool-using-a-custom-plugin)
-        * [Creating a new tool in the user interface](#creating-a-new-tool-in-the-user-interface)
+        * [Creating a new tool using a Groovy parser](#creating-a-new-tool-using-a-groovy-parser)
+            * [Creating a Groovy parser programmatically](#creating-a-groovy-parser-programmatically)
         * [Using the defined tool](#using-the-defined-tool)
      * [Setting the source code file encoding](#setting-the-source-code-file-encoding)
      * [Control the selection of the reference build (baseline)](#control-the-selection-of-the-reference-build-baseline)
@@ -156,7 +157,7 @@ issues in a simple log file that contains single lines of JSON issues, see
 The most flexible way is to define a new tool by writing a Java class that will be deployed in your own small 
 Jenkins plugin, see document ["Providing support for a custom static analysis tool"](Custom-Plugin.md) for details. 
 
-#### Creating a new tool in the user interface
+#### Creating a new tool using a Groovy parser
 
 If the format of your log messages is quite simple then you can define support for your tool by creating a simple 
 tool configuration in Jenkins' user interface. Due to security reasons (Groovy scripts can compromise your master) 
@@ -166,6 +167,25 @@ match the report format. If the expression matches, then a Groovy script will be
 text into an issue instance. Here is an example of such a Groovy based parser:
 
 ![groovy parser](images/groovy-parser.png)  
+
+##### Creating a Groovy parser programmatically
+
+The Groovy based parser can also be created using a Groovy script from within a pipeline, a Jenkins startup script or the script console.
+
+```groovy
+def config = io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration.getInstance()
+
+if(!config.contains('pep8-groovy')){
+    def newParser = new io.jenkins.plugins.analysis.warnings.groovy.GroovyParser(
+        'pep8-groovy', 
+        'Pep8 Groovy Parser', 
+        "(.*):(\d+):(\d+): (\D\d*) (.*)", 
+        'return builder.setFileName(matcher.group(1)).setCategory(matcher.group(4)).setMessage(matcher.group(5)).buildOptional()', 
+        "optparse.py:69:11: E401 multiple imports on one line"
+    )
+    config.setParsers(config.getParsers().plus(newParser))
+}
+```
 
 #### Using the defined tool
 
