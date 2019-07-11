@@ -240,6 +240,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     public void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
         FreeStyleProject job = createFreeStyleProject();
         enableEclipseWarnings(job);
+        scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
         new FreestyleConfiguration(getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"))
                 .setFailOnError(true)
@@ -249,6 +250,10 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 getWebPage(JavaScriptSupport.JS_DISABLED, job, "configure"));
 
         assertThat(saved.isFailOnError()).isTrue();
+        Run<?, ?> build = buildWithResult(job, Result.FAILURE);
+        AnalysisResult result = getAnalysisResult(build);
+        System.out.println("This is the error message");
+        System.out.println(result.getErrorMessages());
         scheduleBuildAndAssertStatus(job, Result.FAILURE);
     }
 
