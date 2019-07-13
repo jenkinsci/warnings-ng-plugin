@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.2.0...master)
 
+### Added 
+
+- [JENKINS-58056](https://issues.jenkins-ci.org/browse/JENKINS-58056),
+  [PR#113](https://github.com/jenkinsci/warnings-ng-plugin/pull/113): Added option to fail a build if errors have been 
+  reported during the execution of the issues recording step.
+  
 ## [5.3.0](https://github.com/jenkinsci/warnings-ng-plugin/compare/warnings-ng-5.2.0...warnings-ng-5.3.0) - 2019-7-4
 
 ### Added 
