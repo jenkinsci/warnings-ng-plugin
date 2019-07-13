@@ -10,7 +10,7 @@ public class RunResultHandler implements StageResultHandler {
     private final Run<?, ?> run;
 
     /**
-     * Creates a new instance of {@link io.jenkins.plugins.analysis.core.util.RunResultHandler}.
+     * Creates a new instance of {@link RunResultHandler}.
      *
      * @param run
      *         the run to set the result for

@@ -164,6 +164,11 @@
         <artifactId>commons-lang3</artifactId>
         <version>${commons.lang.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>ssh-credentials</artifactId>
+        <version>1.13</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -308,12 +313,6 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>token-macro</artifactId>
       <version>${token-macro.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>git</artifactId>
-      <version>${git-plugin.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
