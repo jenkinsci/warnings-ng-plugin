@@ -25,9 +25,8 @@ class ReportLocationsTest {
     @Test
     void shouldConvertEmptyReport() {
         Report report = new Report();
-        FileLocations empty = createLocations();
 
-        new ReportLocations().toFileLocations(report, empty);
+        FileLocations empty = new ReportLocations(createFileSystemStub()).toFileLocations(report, WORKSPACE);
 
         assertThat(empty.getRelativePaths()).isEmpty();
     }
@@ -40,9 +39,7 @@ class ReportLocationsTest {
         builder.setDirectory(WORKSPACE);
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
 
-        FileLocations singleLine = createLocations();
-
-        new ReportLocations().toFileLocations(report, singleLine);
+        FileLocations singleLine = new ReportLocations(createFileSystemStub()).toFileLocations(report, WORKSPACE);
 
         assertThat(singleLine.getRelativePaths()).containsExactly(TXT_FILE);
         assertThat(singleLine.getLines(TXT_FILE)).containsExactly(1);
@@ -57,9 +54,7 @@ class ReportLocationsTest {
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
         report.add(builder.setFileName(TXT_FILE).setLineStart(5).build());
 
-        FileLocations twoLines = createLocations();
-
-        new ReportLocations().toFileLocations(report, twoLines);
+        FileLocations twoLines = new ReportLocations(createFileSystemStub()).toFileLocations(report, WORKSPACE);
 
         assertThat(twoLines.getRelativePaths()).containsExactly(TXT_FILE);
         assertThat(twoLines.getLines(TXT_FILE)).containsExactly(1, 5);
@@ -74,18 +69,16 @@ class ReportLocationsTest {
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
         report.add(builder.setFileName(JAVA_FILE).setLineStart(10).build());
 
-        FileLocations twoFiles = createLocations();
-
-        new ReportLocations().toFileLocations(report, twoFiles);
+        FileLocations twoFiles = new ReportLocations(createFileSystemStub()).toFileLocations(report, WORKSPACE);
 
         assertThat(twoFiles.getRelativePaths()).containsExactlyInAnyOrder(TXT_FILE, JAVA_FILE);
         assertThat(twoFiles.getLines(TXT_FILE)).containsExactly(1);
         assertThat(twoFiles.getLines(JAVA_FILE)).containsExactly(10);
     }
 
-    private FileLocations createLocations() {
+    private FileSystem createFileSystemStub() {
         FileSystem fileSystem = mock(FileSystem.class);
         when(fileSystem.resolveAbsolutePath(anyString(), any())).thenReturn(WORKSPACE);
-        return new FileLocations(WORKSPACE, fileSystem);
+        return fileSystem;
     }
 }

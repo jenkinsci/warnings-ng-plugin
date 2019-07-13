@@ -215,8 +215,7 @@ class IssuesScanner {
 
             createFingerprints(filtered);
 
-            FileLocations fileLocations = new FileLocations(workspace.getPath());
-            new ReportLocations().toFileLocations(filtered, fileLocations);
+            FileLocations fileLocations = new ReportLocations().toFileLocations(filtered, workspace.getPath());
             fileLocations.logSummary();
             fileLocations.getInfoMessages().forEach(filtered::logInfo);
             fileLocations.getErrorMessages().forEach(filtered::logError);
