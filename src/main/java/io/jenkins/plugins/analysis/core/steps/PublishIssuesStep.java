@@ -125,13 +125,12 @@ public class PublishIssuesStep extends Step {
         return name;
     }
 
-
     /**
-     * Determines whether to fail the build on error.This is set in the UI.
-     * the default value is assumed as false if not specified.
+     * Determines whether to fail the build on errors during the step of recording issues.
      *
      * @param failOnError
-     *        the boolean required to fail the build on error.
+     *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
+     *         the UI
      */
     @DataBoundSetter
     @SuppressWarnings("unused") // Used by Stapler
@@ -143,7 +142,6 @@ public class PublishIssuesStep extends Step {
     public boolean getFailOnError() {
         return failOnError;
     }
-
 
     /**
      * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
@@ -275,7 +273,8 @@ public class PublishIssuesStep extends Step {
     /**
      * Defines the optional list of quality gates.
      *
-     * @param qualityGates the quality gates
+     * @param qualityGates
+     *         the quality gates
      */
     @DataBoundSetter
     @SuppressWarnings("unused") // Used by Stapler
@@ -308,7 +307,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -333,7 +333,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -358,7 +359,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -383,7 +385,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -408,7 +411,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -433,7 +437,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -458,7 +463,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -483,7 +489,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -508,7 +515,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -533,7 +541,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -558,7 +567,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -583,7 +593,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -608,7 +619,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -633,7 +645,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -658,7 +671,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -683,7 +697,8 @@ public class PublishIssuesStep extends Step {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -701,7 +716,7 @@ public class PublishIssuesStep extends Step {
     public int getFailedNewLow() {
         return 0;
     }
-    
+
     @Override
     public StepExecution start(final StepContext stepContext) {
         return new Execution(stepContext, this);

@@ -13,7 +13,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Page object for a configuration of the post build step "Record compiler warnings and static analysis results".
@@ -110,11 +109,12 @@ public class FreestyleConfiguration extends PageObject {
     }
 
     /**
-     * Determines whether to fail the build on error.This is set in the UI.
-     * the default value is assumed as false if not specified.
+     * Determines whether to fail the build on errors during the step of recording issues.
      *
      * @param failOnError
-     *        the boolean required to fail the build on error.
+     *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
+     *         the UI
+     *
      * @return this
      */
     public FreestyleConfiguration setFailOnError(final boolean failOnError) {
@@ -122,10 +122,9 @@ public class FreestyleConfiguration extends PageObject {
         return this;
     }
 
-    public boolean isFailOnError() {
+    public boolean mustFailOnError() {
         return isChecked(FAIL_ON_ERROR);
     }
-
 
     public boolean isBlameDisabled() {
         return isChecked(BLAME_DISABLED);

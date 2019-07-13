@@ -318,11 +318,11 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Determines whether to fail the build on error.This is set in the UI.
-     * the default value is assumed as false if not specified.
+     * Determines whether to fail the build on errors during the step of recording issues.
      *
      * @param failOnError
-     *        the boolean required to fail the build on error.
+     *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
+     *         the UI
      */
     @DataBoundSetter
     @SuppressWarnings("unused") // Used by Stapler
@@ -330,11 +330,10 @@ public class IssuesRecorder extends Recorder {
         this.failOnError = failOnError;
     }
 
-    @SuppressWarnings("PMD.BooleanGetMethodName")
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "unused"})
     public boolean getFailOnError() {
         return failOnError;
     }
-
 
     /**
      * Returns whether recording should be enabled for failed builds as well.
@@ -499,9 +498,8 @@ public class IssuesRecorder extends Recorder {
      * Executes the build step. Used from {@link RecordIssuesStep} to provide a {@link StageResultHandler}
      * that has Pipeline-specific behavior.
      */
-    void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
-                 @NonNull final TaskListener listener, @NonNull final StageResultHandler statusHandler)
-            throws InterruptedException, IOException {
+    void perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+            final StageResultHandler statusHandler) throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
             record(run, workspace, listener, statusHandler);
