@@ -8,6 +8,7 @@ import java.util.Optional;
 import edu.hm.hafner.analysis.Report;
 
 import hudson.model.Job;
+import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AggregationAction;
@@ -50,13 +51,16 @@ class IssuesPublisher {
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
     private final StageResultHandler stageResultHandler;
+    private final boolean failOnErrors;
+
 
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
             final String name, final String referenceJobName, final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
-            final StageResultHandler stageResultHandler) {
+            final StageResultHandler stageResultHandler, final boolean failOnErrors) {
+
         this.report = report;
         this.run = run;
         this.healthDescriptor = healthDescriptor;
@@ -68,11 +72,14 @@ class IssuesPublisher {
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
         this.stageResultHandler = stageResultHandler;
+        this.failOnErrors = failOnErrors;
+
     }
 
     private String getId() {
         return report.getId();
     }
+
 
     /**
      * Creates a new {@link AnalysisResult} and attaches the result in a {@link ResultAction} that is registered with
@@ -88,6 +95,12 @@ class IssuesPublisher {
                 report.getSizeOfOrigin());
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                 result.getTotalSize(), result.getNewSize(), result.getFixedSize());
+
+        if (failOnErrors && report.getReport().hasErrors()) {
+            logger.log("Failing build because analysis result contains errors");
+            stageResultHandler.setResult(Result.FAILURE,
+                    "Some errors have been logged during recording of issues");
+        }
 
         ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding);
         run.addAction(action);

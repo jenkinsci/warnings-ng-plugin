@@ -90,6 +90,8 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
+    private boolean failOnError;
+
     /**
      * Creates a new instance of {@link RecordIssuesStep}.
      */
@@ -777,6 +779,26 @@ public class RecordIssuesStep extends Step implements Serializable {
         return ignoreFailedBuilds;
     }
 
+
+    /**
+     * Determines whether to fail the build on error.This is set in the UI.
+     * the default value is assumed as false if not specified.
+     *
+     * @param failOnError
+     *        the boolean required to fail the build on error.
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setFailOnError(final boolean failOnError) {
+        this.failOnError = failOnError;
+    }
+
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
+    public boolean getFailOnError() {
+        return failOnError;
+    }
+
+
     /**
      * Sets the reference job to get the results for the issue difference computation.
      *
@@ -895,6 +917,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setId(step.getId());
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());
+            recorder.setFailOnError(step.getFailOnError());
 
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));

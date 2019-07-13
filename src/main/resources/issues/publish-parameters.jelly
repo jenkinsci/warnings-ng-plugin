@@ -5,6 +5,10 @@
     Provides all required input fields to publish issues.
   </st:documentation>
 
+  <f:entry title="${%title.failOnError}" description="${%description.failOnError}" field="failOnError">
+      <f:checkbox />
+  </f:entry>
+
   <i:hr title="${%Reference Analysis Results}"/>
 
   <f:entry title="${%title.ignoreQualityGate}" description="${%description.ignoreQualityGate}"

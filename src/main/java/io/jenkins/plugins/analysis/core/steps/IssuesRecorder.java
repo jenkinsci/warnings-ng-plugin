@@ -1,3 +1,4 @@
+
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
@@ -85,6 +86,7 @@ public class IssuesRecorder extends Recorder {
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
     private String referenceJobName;
+    private boolean failOnError = false;
 
     private int healthy;
     private int unhealthy;
@@ -101,6 +103,7 @@ public class IssuesRecorder extends Recorder {
     private String name;
 
     private List<QualityGate> qualityGates = new ArrayList<>();
+
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -315,6 +318,25 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
+     * Determines whether to fail the build on error.This is set in the UI.
+     * the default value is assumed as false if not specified.
+     *
+     * @param failOnError
+     *        the boolean required to fail the build on error.
+     */
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setFailOnError(final boolean failOnError) {
+        this.failOnError = failOnError;
+    }
+
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getFailOnError() {
+        return failOnError;
+    }
+
+
+    /**
      * Returns whether recording should be enabled for failed builds as well.
      *
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
@@ -467,6 +489,7 @@ public class IssuesRecorder extends Recorder {
         if (workspace == null) {
             throw new IOException("No workspace found for " + build);
         }
+
         perform(build, workspace, listener, new RunResultHandler(build));
 
         return true;
@@ -477,7 +500,7 @@ public class IssuesRecorder extends Recorder {
      * that has Pipeline-specific behavior.
      */
     void perform(@NonNull final Run<?, ?> run, @NonNull final FilePath workspace,
-            @NonNull final TaskListener listener, @NonNull final StageResultHandler statusHandler)
+                 @NonNull final TaskListener listener, @NonNull final StageResultHandler statusHandler)
             throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
@@ -587,7 +610,7 @@ public class IssuesRecorder extends Recorder {
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
-                new LogHandler(listener, loggerName, report.getReport()), statusHandler);
+                new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
         publisher.attachAction();
     }
 

@@ -13,6 +13,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.kohsuke.stapler.DataBoundSetter;
 
 /**
  * Page object for a configuration of the post build step "Record compiler warnings and static analysis results".
@@ -25,6 +26,7 @@ public class FreestyleConfiguration extends PageObject {
     private static final String IGNORE_QUALITY_GATE = "_.ignoreQualityGate";
     private static final String IGNORE_FAILED_BUILDS = "_.ignoreFailedBuilds";
     private static final String REFERENCE_JOB_NAME = "_.referenceJobName";
+    private static final String FAIL_ON_ERROR = "_.failOnError";
 
     private static final String HEALTHY = "_.healthy";
     private static final String UNHEALTHY = "_.unhealthy";
@@ -106,6 +108,24 @@ public class FreestyleConfiguration extends PageObject {
 
         return this;
     }
+
+    /**
+     * Determines whether to fail the build on error.This is set in the UI.
+     * the default value is assumed as false if not specified.
+     *
+     * @param failOnError
+     *        the boolean required to fail the build on error.
+     * @return this
+     */
+    public FreestyleConfiguration setFailOnError(final boolean failOnError) {
+        setChecked(FAIL_ON_ERROR, failOnError);
+        return this;
+    }
+
+    public boolean isFailOnError() {
+        return isChecked(FAIL_ON_ERROR);
+    }
+
 
     public boolean isBlameDisabled() {
         return isChecked(BLAME_DISABLED);
