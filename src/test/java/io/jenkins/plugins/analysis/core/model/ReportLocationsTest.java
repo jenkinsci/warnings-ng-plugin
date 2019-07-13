@@ -23,41 +23,69 @@ class ReportLocationsTest {
     private static final String WORKSPACE = "/workspace";
 
     @Test
-    void shouldConvertReport() {
-        FileSystem fileSystem = mock(FileSystem.class);
-        when(fileSystem.resolveAbsolutePath(anyString(), any())).thenReturn(WORKSPACE);
-
+    void shouldConvertEmptyReport() {
         Report report = new Report();
+        FileLocations empty = createLocations();
 
-        ReportLocations reportLocations = new ReportLocations();
-        assertThat(reportLocations.toFileLocations(WORKSPACE, report, createFileLocations()).getRelativePaths()).isEmpty();
+        new ReportLocations().toFileLocations(report, empty);
+
+        assertThat(empty.getRelativePaths()).isEmpty();
+    }
+
+    @Test
+    void shouldConvertReportWithOneWarning() {
+        Report report = new Report();
 
         IssueBuilder builder = new IssueBuilder();
         builder.setDirectory(WORKSPACE);
-
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
 
-        FileLocations fileLocations = reportLocations.toFileLocations(WORKSPACE, report, createFileLocations());
-        assertThat(fileLocations.getRelativePaths()).containsExactly(TXT_FILE);
-        assertThat(fileLocations.getLines(TXT_FILE)).containsExactly(1);
+        FileLocations singleLine = createLocations();
 
-        report.add(builder.setFileName(TXT_FILE).setLineStart(5).build());
-        fileLocations = reportLocations.toFileLocations(WORKSPACE, report, createFileLocations());
-        assertThat(fileLocations.getRelativePaths()).containsExactly(TXT_FILE);
-        assertThat(fileLocations.getLines(TXT_FILE)).containsExactly(1, 5);
+        new ReportLocations().toFileLocations(report, singleLine);
 
-        report.add(builder.setFileName(JAVA_FILE).setLineStart(10).build());
-        fileLocations = reportLocations.toFileLocations(WORKSPACE, report, createFileLocations());
-        assertThat(fileLocations.getRelativePaths()).containsExactlyInAnyOrder(TXT_FILE, JAVA_FILE);
-        assertThat(fileLocations.getLines(TXT_FILE)).containsExactly(1, 5);
-        assertThat(fileLocations.getLines(JAVA_FILE)).containsExactly(10);
+        assertThat(singleLine.getRelativePaths()).containsExactly(TXT_FILE);
+        assertThat(singleLine.getLines(TXT_FILE)).containsExactly(1);
     }
 
-    private FileLocations createFileLocations() {
+    @Test
+    void shouldConvertReportWithTwoLinesInOneFile() {
+        Report report = new Report();
+
+        IssueBuilder builder = new IssueBuilder();
+        builder.setDirectory(WORKSPACE);
+        report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
+        report.add(builder.setFileName(TXT_FILE).setLineStart(5).build());
+
+        FileLocations twoLines = createLocations();
+
+        new ReportLocations().toFileLocations(report, twoLines);
+
+        assertThat(twoLines.getRelativePaths()).containsExactly(TXT_FILE);
+        assertThat(twoLines.getLines(TXT_FILE)).containsExactly(1, 5);
+    }
+
+    @Test
+    void shouldConvertReport() {
+        Report report = new Report();
+
+        IssueBuilder builder = new IssueBuilder();
+        builder.setDirectory(WORKSPACE);
+        report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
+        report.add(builder.setFileName(JAVA_FILE).setLineStart(10).build());
+
+        FileLocations twoFiles = createLocations();
+
+        new ReportLocations().toFileLocations(report, twoFiles);
+
+        assertThat(twoFiles.getRelativePaths()).containsExactlyInAnyOrder(TXT_FILE, JAVA_FILE);
+        assertThat(twoFiles.getLines(TXT_FILE)).containsExactly(1);
+        assertThat(twoFiles.getLines(JAVA_FILE)).containsExactly(10);
+    }
+
+    private FileLocations createLocations() {
         FileSystem fileSystem = mock(FileSystem.class);
         when(fileSystem.resolveAbsolutePath(anyString(), any())).thenReturn(WORKSPACE);
-        FileLocations locations = new FileLocations();
-        locations.setFileSystem(fileSystem);
-        return locations;
+        return new FileLocations(WORKSPACE, fileSystem);
     }
 }

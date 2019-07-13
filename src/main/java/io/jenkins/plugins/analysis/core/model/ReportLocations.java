@@ -13,18 +13,12 @@ public class ReportLocations {
     /**
      * Returns the affected file locations in the report.
      *
-     * @param workspace
-     *         the workspace that contains the affected files
      * @param report
      *         the report to get the affected files from
-     *
      * @param fileLocations
-     * @return the file locations
+     *         the fileLocations that will be filled with the affected lines
      */
-    public FileLocations toFileLocations(final String workspace, final Report report,
-            final FileLocations fileLocations) {
-        fileLocations.setWorkspace(workspace);
+    public void toFileLocations(final Report report, final FileLocations fileLocations) {
         report.stream().forEach(i -> fileLocations.addLine(i.getFileName(), i.getLineStart()));
-        return fileLocations;
     }
 }
