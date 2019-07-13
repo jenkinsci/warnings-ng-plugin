@@ -97,9 +97,9 @@ class IssuesPublisher {
                 result.getTotalSize(), result.getNewSize(), result.getFixedSize());
 
         if (failOnErrors && report.getReport().hasErrors()) {
+            logger.log("Failing build because analysis result contains errors");
             stageResultHandler.setResult(Result.FAILURE,
                     "Some errors have been logged during recording of issues");
-
         }
 
         ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding);

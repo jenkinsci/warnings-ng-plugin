@@ -252,8 +252,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(saved.isFailOnError()).isTrue();
         Run<?, ?> build = buildWithResult(job, Result.FAILURE);
         AnalysisResult result = getAnalysisResult(build);
-        System.out.println("This is the error message");
-        System.out.println(result.getErrorMessages());
+        assertThat(getConsoleLog(result)).contains("Failing build because analysis result contains errors");
         scheduleBuildAndAssertStatus(job, Result.FAILURE);
     }
 
