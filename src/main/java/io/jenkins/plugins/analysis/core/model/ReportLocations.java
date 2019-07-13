@@ -32,7 +32,7 @@ public class ReportLocations {
      * @param report
      *         the report to get the affected files from
      * @param workspace
-     *         the workspace to get the Git repository from
+     *         the workspace to get the SCM repository from
      *
      * @return the affected file locations
      */
