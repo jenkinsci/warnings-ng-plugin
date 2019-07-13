@@ -275,7 +275,23 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
     /** Runs the JavaDoc parser and enforces quality gates. */
     @Test @org.jvnet.hudson.test.Issue("JENKINS-58253")
-    public void shouldSupportDeprecatedAttributesinRecord() {
+    public void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
+        WorkflowJob job = createPipeline();
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')"));
+
+        scheduleSuccessfulBuild(job);
+
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8'), failOnError: true"));
+
+        scheduleBuildAndAssertStatus(job, Result.FAILURE);
+    }
+
+    /** Runs the JavaDoc parser and enforces quality gates. */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-58253")
+    public void shouldSupportDeprecatedAttributesInRecord() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt");
 
         job.setDefinition(asStage(
@@ -645,7 +661,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-39203">Issue 39203</a>
      */
-    @Test
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-39203")
     public void publishIssuesShouldMarkStepWithWarningAction() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
@@ -666,7 +682,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-39203">Issue 39203</a>
      */
-    @Test
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-39203")
     public void recordIssuesShouldMarkStepWithWarningAction() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("javac.txt");
         job.setDefinition(asStage("recordIssues(tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8'),"

@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.*;
-import javaposse.jobdsl.dsl.jobs.FreeStyleJob;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
@@ -32,12 +30,16 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SummaryBox;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.eclipse.jetty.webapp.MetaDataComplete.True;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -234,26 +236,20 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     /**
-     * This test is used to check if the build fails when the setFailOnError has been set to true.
+     * Verifies that a report that contains errors (since the report pattern does not find some files),
+     * will fail the build if the property {@link IssuesRecorder#setFailOnError(boolean)} is enabled.
      */
-    @Test
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-58056")
     public void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
         FreeStyleProject job = createFreeStyleProject();
-        enableEclipseWarnings(job);
+        IssuesRecorder recorder = enableEclipseWarnings(job);
         scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
-        new FreestyleConfiguration(getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"))
-                .setFailOnError(true)
-                .save();
+        recorder.setFailOnError(true);
 
-        FreestyleConfiguration saved = new FreestyleConfiguration(
-                getWebPage(JavaScriptSupport.JS_DISABLED, job, "configure"));
-
-        assertThat(saved.isFailOnError()).isTrue();
-        Run<?, ?> build = buildWithResult(job, Result.FAILURE);
-        AnalysisResult result = getAnalysisResult(build);
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
+        assertThat(result).hasErrorMessages("No files found for pattern '**/*issues.txt'. Configuration error?");
         assertThat(getConsoleLog(result)).contains("Failing build because analysis result contains errors");
-        scheduleBuildAndAssertStatus(job, Result.FAILURE);
     }
 
     /**

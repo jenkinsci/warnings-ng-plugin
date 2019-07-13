@@ -5,6 +5,7 @@ import org.junit.Test;
 import edu.hm.hafner.analysis.Severity;
 
 import hudson.model.FreeStyleProject;
+import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -39,6 +40,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
                 .setEnabledForFailure(true)
                 .setIgnoreQualityGate(true)
                 .setIgnoreFailedBuilds(true)
+                .setFailOnError(true)
                 .setReferenceJobName(REFERENCE)
                 .setHealthReport(1, 9, Severity.WARNING_HIGH)
                 .setPattern(PATTERN)
@@ -53,13 +55,16 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         assertThat(saved.isEnabledForFailure()).isTrue();
         assertThat(saved.canIgnoreQualityGate()).isTrue();
         assertThat(saved.canIgnoreFailedBuilds()).isTrue();
+        assertThat(saved.mustFailOnError()).isTrue();
         assertThat(saved.getReferenceJobName()).isEqualTo(REFERENCE);
         assertThat(saved.getHealthy()).isEqualTo("1");
         assertThat(saved.getUnhealthy()).isEqualTo("9");
         assertThat(saved.getMinimumSeverity()).isEqualTo(Severity.WARNING_HIGH);
         assertThat(saved.getPattern()).isEqualTo(PATTERN);
 
-        AnalysisResult result = scheduleSuccessfulBuild(job);
+        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.FAILURE);
+        assertThat(getConsoleLog(result)).contains("Failing build because analysis result contains errors");
+
         assertThat(result).hasInfoMessages(
                 "Ignoring 'aggregatingResults' and ID 'null' since only a single tool is defined.",
                 "No valid reference build found that meets the criteria (NO_JOB_FAILURE - IGNORE_QUALITY_GATE)",
@@ -79,6 +84,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
                 .setEnabledForFailure(false)
                 .setIgnoreQualityGate(false)
                 .setIgnoreFailedBuilds(false)
+                .setFailOnError(false)
                 .save();
 
         FreestyleConfiguration inverted = new FreestyleConfiguration(
@@ -89,5 +95,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         assertThat(inverted.isEnabledForFailure()).isFalse();
         assertThat(inverted.canIgnoreQualityGate()).isFalse();
         assertThat(inverted.canIgnoreFailedBuilds()).isFalse();
+
+        scheduleSuccessfulBuild(job);
     }
 }
