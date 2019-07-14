@@ -14,5 +14,5 @@ public interface StageResultHandler {
      * @param message
      *         a message that describes the cause for the result
      */
-    void setResult(Result result, final String message);
+    void setResult(Result result, String message);
 }

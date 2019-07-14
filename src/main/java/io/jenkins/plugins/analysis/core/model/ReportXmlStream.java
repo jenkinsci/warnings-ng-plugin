@@ -22,16 +22,26 @@ import hudson.util.RobustCollectionConverter;
 import hudson.util.XStream2;
 
 /**
- * Provides an {@link XStream} with predefined converters and aliases for {@link Issue} instances.
+ * Reads {@link Issue issues} from an XML file.
  *
  * @author Ullrich Hafner
  */
-public class IssueStream {
+ class ReportXmlStream extends AbstractXmlStream<Report> {
+    ReportXmlStream() {
+        super(Report.class);
+    }
+
+    @Override
+    Report createDefaultValue() {
+        return new Report();
+    }
+
     /**
      * Creates a new {@link XStream2} to serialize {@link Issue} instances.
      *
      * @return the stream
      */
+    @Override
     XStream2 createStream() {
         XStream2 xStream2 = new XStream2();
         xStream2.registerConverter(new LineRangeListConverter(xStream2));

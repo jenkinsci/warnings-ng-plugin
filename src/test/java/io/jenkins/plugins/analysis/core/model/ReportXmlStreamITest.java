@@ -12,20 +12,21 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.LineRange;
 import edu.hm.hafner.analysis.LineRangeList;
-import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.ResourceTest;
-import static java.util.Collections.*;
-import static org.assertj.core.api.Assertions.*;
 
 import hudson.util.XStream2;
 
+import static java.util.Collections.*;
+import static org.assertj.core.api.Assertions.*;
+
 /**
- * Tests the class {@link IssueStream}.
+ * Tests the class {@link ReportXmlStream}.
  *
  * @author Ullrich Hafner
  */
-public class IssueStreamITest extends ResourceTest {
+public class ReportXmlStreamITest extends ResourceTest {
     private static final int LINE_START = 1;
     private static final int LINE_END = 2;
     private static final int COLUMN_START = 3;
@@ -55,22 +56,22 @@ public class IssueStreamITest extends ResourceTest {
      */
     @Test @SuppressWarnings("PMD.SystemPrintln")
     public void shouldSerializeReportWithXStream() throws IOException {
-        XStream2 stream = new IssueStream().createStream();
+        XStream2 stream = new ReportXmlStream().createStream();
 
         byte[] bytes = asBytes(createReport(), stream);
 
         System.out.print(new String(bytes));
 
-        assertThatReportCanBerRestoredFrom(stream, bytes);
+        assertThatReportCanBeRestoredFrom(stream, bytes);
     }
 
-    private void assertThatReportCanBerRestoredFrom(final XStream2 stream, final byte[] bytes) {
+    private void assertThatReportCanBeRestoredFrom(final XStream2 stream, final byte[] bytes) {
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(bytes)) {
             Object issue = stream.fromXML(inputStream);
 
             assertThat(issue).isInstanceOf(Report.class);
 
-            String xml = new String(asBytes(createReport(), new IssueStream().createStream()));
+            String xml = new String(asBytes(createReport(), new ReportXmlStream().createStream()));
 
             assertThat(issue).as(xml).isEqualTo(createReport());
         }
@@ -94,7 +95,7 @@ public class IssueStreamITest extends ResourceTest {
      */
     @Test @SuppressWarnings("PMD.SystemPrintln")
     public void shouldSerializeIssueWithXStream() throws IOException {
-        XStream2 stream = new IssueStream().createStream();
+        XStream2 stream = new ReportXmlStream().createStream();
 
         byte[] bytes = asBytes(createFilledIssue(MESSAGE), stream);
         System.out.print(new String(bytes));
@@ -129,8 +130,7 @@ public class IssueStreamITest extends ResourceTest {
      */
     @Test
     public void shouldReadIssueFromOldXmlSerialization() {
-        IssueStream model = new IssueStream();
-        XStream2 stream = model.createStream();
+        XStream2 stream = new ReportXmlStream().createStream();
 
         byte[] restored = readAllBytes("issue.xml");
 
@@ -143,7 +143,7 @@ public class IssueStreamITest extends ResourceTest {
 
             assertThat(issue).isInstanceOf(Issue.class);
 
-            String xml = new String(asBytes(createFilledIssue(MESSAGE), new IssueStream().createStream()));
+            String xml = new String(asBytes(createFilledIssue(MESSAGE), new ReportXmlStream().createStream()));
 
             assertThat(issue).as(xml).isEqualTo(createFilledIssue(MESSAGE));
         }

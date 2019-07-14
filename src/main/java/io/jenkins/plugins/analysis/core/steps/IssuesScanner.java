@@ -26,17 +26,23 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import hudson.FilePath;
 import hudson.model.Computer;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
+import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
-import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.forensics.blame.Blamer;
+import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
+import io.jenkins.plugins.forensics.blame.BlamerFactory;
+import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.blame.FileLocations;
+import io.jenkins.plugins.forensics.util.FilteredLog;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
@@ -47,34 +53,45 @@ import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
  */
 @SuppressWarnings("PMD.ExcessiveImports")
 class IssuesScanner {
+    private final FilePath workspace;
+    private final Run<?, ?> run;
     private final FilePath jenkinsRootDir;
     private final Charset sourceCodeEncoding;
     private final Tool tool;
     private final List<RegexpFilter> filters;
-    private final Blamer blamer;
+    private final TaskListener listener;
+    private final BlameMode blameMode;
+
+    enum BlameMode {
+        ENABLED, DISABLED
+    }
 
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters,
-            final Charset sourceCodeEncoding, final FilePath jenkinsRootDir, final Blamer blamer) {
+            final Charset sourceCodeEncoding, final FilePath workspace, final Run<?, ?> run,
+            final FilePath jenkinsRootDir, final TaskListener listener, final BlameMode blameMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
+        this.workspace = workspace;
+        this.run = run;
         this.jenkinsRootDir = jenkinsRootDir;
-        this.blamer = blamer;
+        this.listener = listener;
+        this.blameMode = blameMode;
     }
 
-    public AnnotatedReport scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger)
-            throws IOException, InterruptedException {
+    public AnnotatedReport scan() throws IOException, InterruptedException {
+        LogHandler logger = new LogHandler(listener, tool.getActualName());
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
         if (tool.getDescriptor().isPostProcessingEnabled()) {
-            return postProcess(report, workspace, logger);
+            return postProcess(report, logger);
         }
         else {
             return new AnnotatedReport(tool.getActualId(), filter(report, filters, tool.getActualId()));
         }
     }
 
-    private AnnotatedReport postProcess(final Report report, final FilePath workspace, final LogHandler logger)
+    private AnnotatedReport postProcess(final Report report, final LogHandler logger)
             throws IOException, InterruptedException {
         AnnotatedReport result;
         if (report.isEmpty()) {
@@ -84,11 +101,25 @@ class IssuesScanner {
             }
         }
         else {
-            report.logInfo("Post processing issues on '%s' with source code encoding '%s'", getAgentName(workspace),
-                    sourceCodeEncoding);
+            report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
+                    getAgentName(workspace), sourceCodeEncoding);
 
+            Blamer blamer;
+            if (blameMode == BlameMode.DISABLED) {
+                blamer = new NullBlamer();
+            }
+            else {
+                FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
+                        + run.getFullDisplayName());
+                blamer = BlamerFactory.findBlamerFor(run, workspace, listener, log);
+                log.logSummary();
+                log.getInfoMessages().forEach(report::logInfo);
+                log.getErrorMessages().forEach(report::logError);
+
+            }
             result = workspace.act(new ReportPostProcessor(
-                    tool.getActualId(), report, sourceCodeEncoding.name(), blamer, filters));
+                    tool.getActualId(), report, sourceCodeEncoding.name(),
+                    blamer, filters));
 
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()), workspace);
         }
@@ -183,7 +214,22 @@ class IssuesScanner {
             Report filtered = filter(originalReport, filters, id);
 
             createFingerprints(filtered);
-            Blames blames = blamer.blame(filtered);
+
+            FileLocations fileLocations = new ReportLocations().toFileLocations(filtered, workspace.getPath());
+            fileLocations.logSummary();
+            fileLocations.getInfoMessages().forEach(filtered::logInfo);
+            fileLocations.getErrorMessages().forEach(filtered::logError);
+            Blames blames = blamer.blame(fileLocations);
+            blames.logSummary();
+            blames.getInfoMessages().forEach(filtered::logInfo);
+            blames.getErrorMessages().forEach(filtered::logError);
+            filtered.logInfo("---------------------");
+            fileLocations.getAbsolutePaths().forEach(filtered::logInfo);
+            fileLocations.getRelativePaths().forEach(filtered::logInfo);
+            filtered.logInfo("---------------------");
+            filtered.logInfo("---------------------");
+            blames.getFiles().forEach(filtered::logInfo);
+            filtered.logInfo("---------------------");
             return new AnnotatedReport(id, filtered, blames);
         }
 

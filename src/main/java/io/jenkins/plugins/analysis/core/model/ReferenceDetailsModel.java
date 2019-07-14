@@ -7,8 +7,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import io.jenkins.plugins.analysis.core.scm.BlameRequest;
-import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.blame.FileBlame;
 
 /**
  * Provides the model for the source control details table. The model consists of the following parts:
@@ -66,7 +66,7 @@ class ReferenceDetailsModel extends DetailsTableModel {
         columns.add(formatFileName(issue));
         columns.add(formatAge(issue));
         if (blames.contains(issue.getFileName())) {
-            BlameRequest blameRequest = blames.get(issue.getFileName());
+            FileBlame blameRequest = blames.getBlame(issue.getFileName());
             int line = issue.getLineStart();
             columns.add(blameRequest.getName(line));
             columns.add(blameRequest.getEmail(line));

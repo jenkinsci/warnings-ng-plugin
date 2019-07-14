@@ -37,7 +37,6 @@ import static org.assertj.core.api.Assertions.*;
  */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
-
     /**
      * Rule for a git repository.
      */
@@ -302,8 +301,8 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResultAssert.assertThat(result).hasTotalSize(numberOfIssues);
         AnalysisResultAssert.assertThat(result)
                 .hasInfoMessages(
-                        "Created blame requests for " + numberOfFiles
-                                + " files - invoking Git blame on agent for each of the requests",
+                        "Invoking Git blamer to create author and commit information for " + numberOfFiles
+                                + " affected files",
                         "-> blamed authors of issues in " + numberOfFiles + " files");
     }
 

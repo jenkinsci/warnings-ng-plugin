@@ -44,9 +44,7 @@ import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.scm.BlameFactory;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
-import io.jenkins.plugins.analysis.core.scm.NullBlamer;
+import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -562,16 +560,10 @@ public class IssuesRecorder extends Recorder {
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
-        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(),
-                getSourceCodeCharset(), new FilePath(run.getRootDir()), blame(run, workspace, listener));
-        return issuesScanner.scan(run, workspace, new LogHandler(listener, tool.getActualName()));
-    }
+        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(), workspace, run,
+                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
-    private Blamer blame(final Run<?, ?> run, final FilePath workspace, final TaskListener listener) {
-        if (isBlameDisabled) {
-            return new NullBlamer();
-        }
-        return BlameFactory.createBlamer(run, workspace, listener);
+        return issuesScanner.scan();
     }
 
     private Charset getSourceCodeCharset() {

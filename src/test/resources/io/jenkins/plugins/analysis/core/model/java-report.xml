@@ -1,0 +1,179 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<analysisReport plugin="analysis-model-api@5.1.1">
+  <elements class="linked-hash-set">
+    <issue>
+      <category>ConstructorLeaksThis</category>
+      <type>-</type>
+      <severity>NORMAL</severity>
+      <message>Constructors should not pass the &apos;this&apos; reference out in method invocations, since the object may not be fully constructed.</message>
+      <lineStart>83</lineStart>
+      <lineEnd>83</lineEnd>
+      <columnStart>44</columnStart>
+      <columnEnd>44</columnEnd>
+      <lineRanges/>
+      <id>5ce72949-7dea-45e1-81e0-216a63784168</id>
+      <description></description>
+      <reference>23</reference>
+      <origin>java</origin>
+      <moduleName>Static Analysis Model and Parsers</moduleName>
+      <packageName>edu.hm.hafner.analysis</packageName>
+      <fileName>/var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/Report.java</fileName>
+      <fingerprint>80C3F57B38248EC7695EF8BDFCA9F7A9</fingerprint>
+    </issue>
+    <issue>
+      <category>ConstructorLeaksThis</category>
+      <type>-</type>
+      <severity reference="../../issue/severity"/>
+      <message>Constructors should not pass the &apos;this&apos; reference out in method invocations, since the object may not be fully constructed.</message>
+      <lineStart>101</lineStart>
+      <lineEnd>101</lineEnd>
+      <columnStart>44</columnStart>
+      <columnEnd>44</columnEnd>
+      <lineRanges/>
+      <id>7af67e32-27f5-40c7-bc15-0eabd9409739</id>
+      <description></description>
+      <reference>23</reference>
+      <origin>java</origin>
+      <moduleName>Static Analysis Model and Parsers</moduleName>
+      <packageName>edu.hm.hafner.analysis</packageName>
+      <fileName>/var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/Report.java</fileName>
+      <fingerprint>80C3F57B38248EC7695EF8BDFCA9F7A9</fingerprint>
+    </issue>
+    <issue>
+      <category>NoFunctionalReturnType</category>
+      <type>-</type>
+      <severity reference="../../issue/severity"/>
+      <message>Instead of returning a functional type, return the actual type that the returned function would return and use lambdas at use site.</message>
+      <lineStart>768</lineStart>
+      <lineEnd>768</lineEnd>
+      <columnStart>33</columnStart>
+      <columnEnd>33</columnEnd>
+      <lineRanges/>
+      <id>0a06882e-d694-46a8-8451-ddc6d26e31b4</id>
+      <description></description>
+      <reference>23</reference>
+      <origin>java</origin>
+      <moduleName>Static Analysis Model and Parsers</moduleName>
+      <packageName>edu.hm.hafner.analysis</packageName>
+      <fileName>/var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/Report.java</fileName>
+      <fingerprint>A2C78C189E3C711B518C516CEE8420A9</fingerprint>
+    </issue>
+    <issue>
+      <category>FormatStringAnnotation</category>
+      <type>-</type>
+      <severity reference="../../issue/severity"/>
+      <message>Format strings must be compile time constants or parameters annotated @FormatString: s</message>
+      <lineStart>112</lineStart>
+      <lineEnd>112</lineEnd>
+      <columnStart>107</columnStart>
+      <columnEnd>107</columnEnd>
+      <lineRanges/>
+      <id>3146ce22-e0a3-4856-a441-1aadcf8371c4</id>
+      <description></description>
+      <reference>23</reference>
+      <origin>java</origin>
+      <moduleName>Static Analysis Model and Parsers</moduleName>
+      <packageName>edu.hm.hafner.analysis</packageName>
+      <fileName>/var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/FilteredLog.java</fileName>
+      <fingerprint>C9C4D746E0CB5F3A7214EBF624E73A06</fingerprint>
+    </issue>
+    <issue>
+      <category>NullAway</category>
+      <type>-</type>
+      <severity reference="../../issue/severity"/>
+      <message>passing @Nullable parameter &apos;fileName&apos; where @NonNull is required</message>
+      <lineStart>86</lineStart>
+      <lineEnd>86</lineEnd>
+      <columnStart>74</columnStart>
+      <columnEnd>74</columnEnd>
+      <lineRanges/>
+      <id>ed55fa32-e3aa-44fa-aac9-3ff86f00c6ab</id>
+      <description></description>
+      <reference>23</reference>
+      <origin>java</origin>
+      <moduleName>Static Analysis Model and Parsers</moduleName>
+      <packageName>edu.hm.hafner.analysis</packageName>
+      <fileName>/var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/IssueBuilder.java</fileName>
+      <fingerprint>860D107A2F82C20B8A8C7F3130CF69B1</fingerprint>
+    </issue>
+    <issue>
+      <category>NoFunctionalReturnType</category>
+      <type>-</type>
+      <severity reference="../../issue/severity"/>
+      <message>Instead of returning a functional type, return the actual type that the returned function would return and use lambdas at use site.</message>
+      <lineStart>65</lineStart>
+      <lineEnd>65</lineEnd>
+      <columnStart>38</columnStart>
+      <columnEnd>38</columnEnd>
+      <lineRanges/>
+      <id>50d5bc6f-3083-431f-b925-56c1a46b1454</id>
+      <description></description>
+      <reference>23</reference>
+      <origin>java</origin>
+      <moduleName>Static Analysis Model and Parsers</moduleName>
+      <packageName>edu.hm.hafner.analysis</packageName>
+      <fileName>/var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/PackageNameResolver.java</fileName>
+      <fingerprint>E33AC3BF8D9FCA6BA0960D5071EFE7A0</fingerprint>
+    </issue>
+    <issue>
+      <category>NullAway</category>
+      <type>-</type>
+      <severity reference="../../issue/severity"/>
+      <message>passing @Nullable parameter &apos;directory&apos; where @NonNull is required</message>
+      <lineStart>94</lineStart>
+      <lineEnd>94</lineEnd>
+      <columnStart>36</columnStart>
+      <columnEnd>36</columnEnd>
+      <lineRanges/>
+      <id>2c81e22a-fdd9-4983-a3d0-b55bf40d2852</id>
+      <description></description>
+      <reference>23</reference>
+      <origin>java</origin>
+      <moduleName>Static Analysis Model and Parsers</moduleName>
+      <packageName>edu.hm.hafner.util</packageName>
+      <fileName>/var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/util/PathUtil.java</fileName>
+      <fingerprint>A62846B07E7336BA21E56DBA8B82F514</fingerprint>
+    </issue>
+    <issue>
+      <category>NullAway</category>
+      <type>-</type>
+      <severity reference="../../issue/severity"/>
+      <message>dereferenced expression otherMiddleChild.getParent() is @Nullable</message>
+      <lineStart>43</lineStart>
+      <lineEnd>43</lineEnd>
+      <columnStart>48</columnStart>
+      <columnEnd>48</columnEnd>
+      <lineRanges/>
+      <id>4b798f17-dbf0-49a0-85d7-51daf511dff3</id>
+      <description></description>
+      <reference>23</reference>
+      <origin>java</origin>
+      <moduleName>Static Analysis Model and Parsers</moduleName>
+      <packageName>edu.hm.hafner.util</packageName>
+      <fileName>/var/data/workspace/pipeline-analysis-model/src/test/java/edu/hm/hafner/util/TreeStringBuilderTest.java</fileName>
+      <fingerprint>FF92B2A715221B54378ABA685824185B</fingerprint>
+    </issue>
+    <issue>
+      <category>NullAway</category>
+      <type>-</type>
+      <severity reference="../../issue/severity"/>
+      <message>passing @Nullable parameter &apos;publisher.getAdditionalProperties()&apos; where @NonNull is required</message>
+      <lineStart>71</lineStart>
+      <lineEnd>71</lineEnd>
+      <columnStart>53</columnStart>
+      <columnEnd>53</columnEnd>
+      <lineRanges/>
+      <id>5eabaf57-e137-4adb-86ac-4aa45ff8d8b5</id>
+      <description></description>
+      <reference>23</reference>
+      <origin>java</origin>
+      <moduleName>Static Analysis Model and Parsers</moduleName>
+      <packageName>edu.hm.hafner.analysis.parser.dry.dupfinder</packageName>
+      <fileName>/var/data/workspace/pipeline-analysis-model/src/test/java/edu/hm/hafner/analysis/parser/dry/dupfinder/DupFinderParserTest.java</fileName>
+      <fingerprint>1B26DD94EC903826825282D97225878B</fingerprint>
+    </issue>
+  </elements>
+  <infoMessages/>
+  <errorMessages/>
+  <duplicatesSize>0</duplicatesSize>
+</analysisReport>

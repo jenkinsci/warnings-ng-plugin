@@ -28,10 +28,7 @@ import hudson.util.FormValidation;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.scm.BlameFactory;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
-import io.jenkins.plugins.analysis.core.scm.NullBlamer;
-import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 
 /**
@@ -136,7 +133,7 @@ public class ScanForIssuesStep extends Step {
          * @param step
          *         the actual step to execute
          */
-        protected Execution(@NonNull final StepContext context, final ScanForIssuesStep step) {
+        Execution(@NonNull final StepContext context, final ScanForIssuesStep step) {
             super(context);
 
             tool = step.getTool();
@@ -151,18 +148,10 @@ public class ScanForIssuesStep extends Step {
             TaskListener listener = getTaskListener();
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
-                    getCharset(sourceCodeEncoding), new FilePath(getRun().getRootDir()),
-                    createBlamer(workspace, listener));
+                    getCharset(sourceCodeEncoding), workspace, getRun(), new FilePath(getRun().getRootDir()), listener,
+                    isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
-            return issuesScanner.scan(getRun(), workspace, new LogHandler(listener, tool.getActualName()));
-        }
-
-        private Blamer createBlamer(final FilePath workspace, final TaskListener listener)
-                throws IOException, InterruptedException {
-            if (isBlameDisabled) {
-                return new NullBlamer();
-            }
-            return BlameFactory.createBlamer(getRun(), workspace, listener);
+            return issuesScanner.scan();
         }
     }
 

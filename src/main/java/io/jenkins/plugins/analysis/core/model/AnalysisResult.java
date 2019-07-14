@@ -1,9 +1,8 @@
 package io.jenkins.plugins.analysis.core.model; // NOPMD
 
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.lang.ref.WeakReference;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,8 +12,6 @@ import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,16 +27,14 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import hudson.XmlFile;
 import hudson.model.Run;
-import hudson.util.XStream2;
 
-import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.forensics.blame.Blames;
 
 /**
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and
@@ -48,11 +43,10 @@ import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final long serialVersionUID = 1110545450292087475L;
 
-    private static final Logger LOGGER = Logger.getLogger(AnalysisResult.class.getName());
     private static final Pattern ISSUES_FILE_NAME = Pattern.compile("issues.xml", Pattern.LITERAL);
     private static final int NO_BUILD = -1;
     private static final String NO_REFERENCE = StringUtils.EMPTY;
@@ -265,46 +259,16 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     private void serializeBlames(final Blames blames) {
-        try {
-            getBlamesFile().write(blames);
-        }
-        catch (IOException exception) {
-            LOGGER.log(Level.SEVERE,
-                    String.format("Failed to serialize SCM blame information for results %s in build %s.",
-                            id, owner), exception);
-        }
+        new BlamesXmlStream().write(getBlamesPath(), blames);
     }
 
-    private XmlFile getBlamesFile() {
-        return new XmlFile(new XStream2(), new File(getOwner().getRootDir(), id + "-blames.xml"));
+    private Path getBlamesPath() {
+        return getOwner().getRootDir().toPath().resolve(id + "-blames.xml");
     }
-
     private Blames readBlames() {
-        Blames blames = readXml(Blames.class, getBlamesFile(), new Blames());
+        Blames blames = new BlamesXmlStream().read(getBlamesPath());
         blamesReference = new WeakReference<>(blames);
         return blames;
-    }
-
-    private <T> T readXml(final Class<T> type, final XmlFile dataFile, final T defaultValue) {
-        try {
-            Object deserialized = dataFile.read();
-
-            if (type.isInstance(deserialized)) {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "Loaded data file " + dataFile + " for run " + getOwner());
-                }
-                return type.cast(deserialized);
-            }
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + deserialized);
-            }
-        }
-        catch (IOException exception) {
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
-            }
-        }
-        return defaultValue; // fallback
     }
 
     private Map<Severity, Integer> getSizePerSeverity(final Report report) {
@@ -342,39 +306,23 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return Lists.immutable.withAll(messages);
     }
 
-    /**
-     * Returns the serialization file for the fixed warnings.
-     *
-     * @param suffix
-     *         suffix of the file
-     *
-     * @return the serialization file.
-     */
-    private XmlFile getDataFile(final String suffix) {
-        return new XmlFile(new IssueStream().createStream(), new File(getOwner().getRootDir(),
-                ISSUES_FILE_NAME.matcher(getSerializationFileName())
-                        .replaceAll(Matcher.quoteReplacement(suffix + "-issues.xml"))));
-    }
-
     private String getSerializationFileName() {
         return id + "-issues.xml";
     }
 
-    private void serializeIssues(final Report outstandingIssues,
-            final Report newIssues, final Report fixedIssues) {
+    private void serializeIssues(final Report outstandingIssues, final Report newIssues, final Report fixedIssues) {
         serializeIssues(outstandingIssues, "outstanding");
         serializeIssues(newIssues, "new");
         serializeIssues(fixedIssues, "fixed");
     }
 
     private void serializeIssues(final Report report, final String suffix) {
-        try {
-            getDataFile(suffix).write(report);
-        }
-        catch (IOException exception) {
-            LOGGER.log(Level.SEVERE, String.format("Failed to serialize the %s issues of the build.", suffix),
-                    exception);
-        }
+        new ReportXmlStream().write(getReportPath(suffix), report);
+    }
+
+    private Path getReportPath(final String suffix) {
+        return getOwner().getRootDir().toPath().resolve(ISSUES_FILE_NAME.matcher(getSerializationFileName())
+                .replaceAll(Matcher.quoteReplacement(suffix + "-issues.xml")));
     }
 
     /**
@@ -466,8 +414,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
 
     private Report readIssues(final BiConsumer<AnalysisResult, WeakReference<Report>> setter,
             final String suffix) {
-        XmlFile dataFile = getDataFile(suffix);
-        Report report = readXml(Report.class, dataFile, new Report());
+        Report report = new ReportXmlStream().read(getReportPath(suffix));
         setter.accept(this, new WeakReference<>(report));
         return report;
     }

@@ -11,8 +11,8 @@ import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
-import io.jenkins.plugins.analysis.core.scm.BlameRequest;
-import io.jenkins.plugins.analysis.core.scm.Blames;
+import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.blame.FileBlame;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -50,14 +50,14 @@ class ReferenceDetailsModelTest extends AbstractDetailsModelTest {
         Issue issue = createIssue(1);
         report.add(issue);
 
-        BlameRequest blameRequest = mock(BlameRequest.class);
+        FileBlame blameRequest = mock(FileBlame.class);
         when(blameRequest.getCommit(issue.getLineStart())).thenReturn(COMMIT);
         when(blameRequest.getEmail(issue.getLineStart())).thenReturn(EMAIL);
         when(blameRequest.getName(issue.getLineStart())).thenReturn(NAME);
 
         Blames blames = mock(Blames.class);
         when(blames.contains(issue.getFileName())).thenReturn(true);
-        when(blames.get(issue.getFileName())).thenReturn(blameRequest);
+        when(blames.getBlame(issue.getFileName())).thenReturn(blameRequest);
 
         ReferenceDetailsModel model = createModel(blames);
 
