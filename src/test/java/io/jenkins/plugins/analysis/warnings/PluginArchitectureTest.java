@@ -12,6 +12,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.tngtech.archunit.base.DescribedPredicate;
 import com.tngtech.archunit.core.domain.JavaCall;
 import com.tngtech.archunit.core.domain.JavaModifier;
+import com.tngtech.archunit.core.domain.properties.CanBeAnnotated;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -105,9 +106,14 @@ class PluginArchitectureTest {
 
         @Override
         public boolean apply(final JavaCall<?> input) {
-            return input.getTarget().isAnnotatedWith(VisibleForTesting.class)
+            return isVisibleForTesting(input.getTarget())
                     && !input.getOriginOwner().equals(input.getTargetOwner())
-                    && !input.getOrigin().isAnnotatedWith(VisibleForTesting.class);
+                    && !isVisibleForTesting(input.getOrigin());
+        }
+
+        private boolean isVisibleForTesting(final CanBeAnnotated target) {
+            return target.isAnnotatedWith(VisibleForTesting.class)
+                    || target.isAnnotatedWith(edu.hm.hafner.util.VisibleForTesting.class);
         }
     }
 

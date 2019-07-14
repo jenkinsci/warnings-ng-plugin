@@ -26,7 +26,7 @@ class ReportLocationsTest {
     void shouldConvertEmptyReport() {
         Report report = new Report();
 
-        FileLocations empty = new ReportLocations(createFileSystemStub()).toFileLocations(report, WORKSPACE);
+        FileLocations empty = new ReportLocations().toFileLocations(report, WORKSPACE, createFileSystemStub());
 
         assertThat(empty.getRelativePaths()).isEmpty();
     }
@@ -39,7 +39,7 @@ class ReportLocationsTest {
         builder.setDirectory(WORKSPACE);
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
 
-        FileLocations singleLine = new ReportLocations(createFileSystemStub()).toFileLocations(report, WORKSPACE);
+        FileLocations singleLine = new ReportLocations().toFileLocations(report, WORKSPACE, createFileSystemStub());
 
         assertThat(singleLine.getRelativePaths()).containsExactly(TXT_FILE);
         assertThat(singleLine.getLines(TXT_FILE)).containsExactly(1);
@@ -54,7 +54,7 @@ class ReportLocationsTest {
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
         report.add(builder.setFileName(TXT_FILE).setLineStart(5).build());
 
-        FileLocations twoLines = new ReportLocations(createFileSystemStub()).toFileLocations(report, WORKSPACE);
+        FileLocations twoLines = new ReportLocations().toFileLocations(report, WORKSPACE, createFileSystemStub());
 
         assertThat(twoLines.getRelativePaths()).containsExactly(TXT_FILE);
         assertThat(twoLines.getLines(TXT_FILE)).containsExactly(1, 5);
@@ -69,7 +69,7 @@ class ReportLocationsTest {
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
         report.add(builder.setFileName(JAVA_FILE).setLineStart(10).build());
 
-        FileLocations twoFiles = new ReportLocations(createFileSystemStub()).toFileLocations(report, WORKSPACE);
+        FileLocations twoFiles = new ReportLocations().toFileLocations(report, WORKSPACE, createFileSystemStub());
 
         assertThat(twoFiles.getRelativePaths()).containsExactlyInAnyOrder(TXT_FILE, JAVA_FILE);
         assertThat(twoFiles.getLines(TXT_FILE)).containsExactly(1);

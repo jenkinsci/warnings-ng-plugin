@@ -12,20 +12,6 @@ import io.jenkins.plugins.forensics.blame.FileLocations.FileSystem;
  * @author Ullrich Hafner
  */
 public class ReportLocations {
-    private final FileSystem fileSystem;
-
-    /**
-     * Creates a new instance of {@link ReportLocations}.
-     */
-    public ReportLocations() {
-        this(new FileSystem());
-    }
-
-    @VisibleForTesting
-    ReportLocations(final FileSystem fileSystem) {
-        this.fileSystem = fileSystem;
-    }
-
     /**
      * Returns the affected file locations in the report.
      *
@@ -37,6 +23,11 @@ public class ReportLocations {
      * @return the affected file locations
      */
     public FileLocations toFileLocations(final Report report, final String workspace) {
+        return toFileLocations(report, workspace, new FileSystem());
+    }
+
+    @VisibleForTesting
+    FileLocations toFileLocations(final Report report, final String workspace, final FileSystem fileSystem) {
         FileLocations fileLocations = new FileLocations(workspace, fileSystem);
         report.stream().forEach(i -> fileLocations.addLine(i.getFileName(), i.getLineStart()));
         return fileLocations;
