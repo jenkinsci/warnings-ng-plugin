@@ -23,6 +23,7 @@ public class PVSStudio extends ReportScanningTool {
     private static final long serialVersionUID = -1114828406964963020L;
     private static final String ID = "pvs-studio"; // history chart title
 
+    /** Creates a new instance of {@link PVSStudio}. */
     @DataBoundConstructor
     public PVSStudio() {
         super();
@@ -34,6 +35,7 @@ public class PVSStudio extends ReportScanningTool {
         return new PVSStudioParser();
     }
 
+    /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends IconLabelProvider {
 
         LabelProvider(final String id, final String name, final String iconName) {
