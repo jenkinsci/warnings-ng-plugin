@@ -67,6 +67,15 @@ class IssuesSizeTokenMacroTest {
         assertThat(macro.evaluate(run, null, null)).isEqualTo("0");
     }
 
+    @Test
+    void checkTotalNumberOfIssues() {
+        IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
+        /**
+         * Assert that the total number of issues is equal to a particular number eg 5;
+         */
+        assertThat(macro.IssueTokenType.getTotalSize,5);
+    }
+
     private AbstractBuild<?, ?> createBuildWithTwoActions() {
         AbstractBuild<?, ?> run = mock(AbstractBuild.class);
         List<ResultAction> actions = new ArrayList<>();
@@ -92,4 +101,10 @@ class IssuesSizeTokenMacroTest {
         when(action.getResult()).thenReturn(result);
         return action;
     }
+
+
+
+
+
+
 }
