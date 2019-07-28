@@ -65,7 +65,7 @@
     <workflow-api.version>2.34</workflow-api.version>
     <workflow-cps.version>2.67</workflow-cps.version>
     <workflow-step.version>2.19</workflow-step.version>
-    <workflow-job.version>2.32</workflow-job.version>
+    <workflow-job.version>2.33</workflow-job.version>
     <structs.version>1.19</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
