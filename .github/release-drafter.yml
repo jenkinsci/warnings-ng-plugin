@@ -1,3 +1,30 @@
 _extends: .github
 tag-template: analysis-model-$NEXT_MINOR_VERSION
-name-template: Analysis Model $NEXT_PATCH_VERSION
+name-template: Analysis Model $NEXT_PATCH_VERSION 🎁
+version-template: $MAJOR.$MINOR.$PATCH
+
+categories:
+  - title: 🚨 Removed
+    label: removed
+  - title: ⚠️ Deprecated
+    label: deprecated
+  - title: 🚀 New features and improvements
+    labels:
+      - enhancement
+      - feature
+  - title: 🐛 Bug Fixes
+    labels:
+      - bug
+      - fix
+      - bugfix
+      - regression
+  - title: 📖 Documentation updates
+    label: documentation
+  - title: 📦 Dependency updates
+    label: dependencies
+  - title: 🔧 Internal changes
+    label: internal
+  - title: 🚦 Tests
+    labels:
+      - test
+      - tests
