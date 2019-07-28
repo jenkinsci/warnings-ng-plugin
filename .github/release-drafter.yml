@@ -1,0 +1,3 @@
+_extends: .github
+tag-template: analysis-model-$NEXT_MINOR_VERSION
+name-template: Analysis Model $NEXT_PATCH_VERSION
