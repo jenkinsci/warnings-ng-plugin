@@ -46,7 +46,7 @@
     <jackson-databind.version>2.9.9</jackson-databind.version>
 
     <!-- Test Library Dependencies Versions -->
-    <junit.version>5.4.1</junit.version>
+    <junit.version>5.5.1</junit.version>
     <junit-platform-launcher.version>1.4.1</junit-platform-launcher.version>
     <mockito.version>2.27.0</mockito.version>
     <assertj.version>3.12.2</assertj.version>
