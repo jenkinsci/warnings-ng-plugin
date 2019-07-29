@@ -1,4 +1,4 @@
-node ('linux') {
+node ('maven') {
     timeout(200) {
         stage ('Linux Checkout') {
             checkout scm
