@@ -74,6 +74,7 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static org.assertj.core.api.Assumptions.*;
 
 /**
  * Base class for integration tests in Jenkins.
@@ -310,7 +311,9 @@ public abstract class IntegrationTest extends ResourceTest {
         try {
             Slave agent = createAgent(label);
 
-            FilePath child = getJenkins().getInstance().getRootPath().child("secrets/filepath-filters.d/30-default.conf");
+            FilePath child = getJenkins().getInstance()
+                    .getRootPath()
+                    .child("secrets/filepath-filters.d/30-default.conf");
             child.delete();
             child.write("", "ISO_8859_1");
 
@@ -1082,7 +1085,9 @@ public abstract class IntegrationTest extends ResourceTest {
         }
         else {
             assertThat(nonReadableFile.setReadable(false, false)).isTrue();
-            // assertThat(nonReadableFile.canRead()).as("File should not be readable").isFalse();
+            assumeThat(nonReadableFile.canRead())
+                    .as("File ´%s´ could not be made unreadable (OS configuration problem?)", absolutePath)
+                    .isTrue();
         }
     }
 
