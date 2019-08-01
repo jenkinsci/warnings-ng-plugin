@@ -1087,7 +1087,7 @@ public abstract class IntegrationTest extends ResourceTest {
             assertThat(nonReadableFile.setReadable(false, false)).isTrue();
             assumeThat(nonReadableFile.canRead())
                     .as("File ´%s´ could not be made unreadable (OS configuration problem?)", absolutePath)
-                    .isTrue();
+                    .isFalse();
         }
     }
 
