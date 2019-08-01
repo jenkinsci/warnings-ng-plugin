@@ -38,7 +38,7 @@
     <commons.io.version>2.6</commons.io.version>
     <commons.digester.version>3.2</commons.digester.version>
     <commons.text.version>1.6</commons.text.version>
-    <eclipse-collections.version>9.2.0</eclipse-collections.version>
+    <eclipse-collections.version>10.0.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
