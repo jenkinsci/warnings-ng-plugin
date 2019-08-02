@@ -76,7 +76,7 @@
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    <pmd.version>6.14.0</pmd.version>
+    <pmd.version>6.17.0</pmd.version>
     <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
     <checkstyle.version>8.23</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.12.1</spotbugs-maven-plugin.version>
