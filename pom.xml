@@ -37,7 +37,7 @@
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
     <commons.digester.version>3.2</commons.digester.version>
-    <commons.text.version>1.6</commons.text.version>
+    <commons.text.version>1.7</commons.text.version>
     <eclipse-collections.version>10.0.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
