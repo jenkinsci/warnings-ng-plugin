@@ -44,6 +44,7 @@
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
     <json.version>20180813</json.version>
     <jackson-databind.version>2.9.9</jackson-databind.version>
+    <slf4j-nop.version>1.7.26</slf4j-nop.version>
 
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.5.1</junit.version>
@@ -180,6 +181,11 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
       <version>${analysis-model-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-nop</artifactId>
+      <version>${slf4j-nop.version}</version>
     </dependency>
     <dependency>
       <groupId>com.github.spotbugs</groupId>
