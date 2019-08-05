@@ -33,6 +33,8 @@ import jenkins.MasterToSlaveFileCallable;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.scm.Blamer;
+import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
@@ -193,9 +195,11 @@ class IssuesScanner {
         private final String sourceCodeEncoding;
         private final Blamer blamer;
         private final List<RegexpFilter> filters;
+        private final GsWorker gsWorker;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final Blamer blamer, final List<RegexpFilter> filters) {
+                final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters,
+                final GsWorker gsWorker) {
             super();
 
             this.id = id;
@@ -203,6 +207,7 @@ class IssuesScanner {
             this.sourceCodeEncoding = sourceCodeEncoding;
             this.blamer = blamer;
             this.filters = filters;
+            this.gsWorker = gsWorker;
         }
 
         @Override

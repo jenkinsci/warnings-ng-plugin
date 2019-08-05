@@ -21,7 +21,8 @@
      * Create data table instances for the detail tables.
      */
     showTable('#issues');
-    showTable('#scm');
+    showTable('#scmBlames');
+    showTable('#scmProperties');
 
     /**
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.

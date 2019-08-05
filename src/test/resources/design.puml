@@ -17,6 +17,7 @@ skinparam component {
 [Columns] <<..core.columns>>
 [Rest API] <<..core.restapi>>
 [SCM] <<..core.scm>>
+[SCM Properties] <<..core.scm.analyzer>>
 [Tokens] <<..core.tokens>>
 [Utilities] <<..core.util>> <<..api>>
 
@@ -46,5 +47,7 @@ skinparam component {
 [Rest API] --> [Utilities]
 [Filter] --> [Utilities]
 [SCM] --> [Utilities]
+
+[SCM] --> [SCM Properties]
 
 @enduml

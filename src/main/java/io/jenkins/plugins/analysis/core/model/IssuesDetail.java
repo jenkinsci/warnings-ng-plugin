@@ -232,12 +232,21 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
+     * Returns the model for the details table that shows the SCM blames.
+     *
+     * @return the table model
+     */
+    public DetailsTableModel getScmBlamesModel() {
+        return labelProvider.getScmBlamesModel(owner, getUrl(), result.getBlames());
+    }
+
+    /**
      * Returns the model for the details table.
      *
      * @return the table model
      */
-    public DetailsTableModel getScmModel() {
-        return labelProvider.getScmModel(owner, getUrl(), result.getBlames());
+    public DetailsTableModel getScmPropertiesModel() {
+        return labelProvider.getScmPropertiesModel(owner, getUrl(), result.getGsResults());
     }
 
     private String toJsonArray(final List<List<String>> rows) {
@@ -272,8 +281,14 @@ public class IssuesDetail implements ModelObject {
         if ("#issues".equals(id)) {
             rows = getIssuesModel().getContent(getIssues());
         }
+        else if ("#scmBlames".equals(id)) {
+            rows = getScmBlamesModel().getContent(getIssues());
+        }
+        else if ("#scmProperties".equals(id)) {
+            rows = getScmPropertiesModel().getContent(getIssues());
+        }
         else {
-            rows = getScmModel().getContent(getIssues());
+            throw new NoSuchElementException("No such table model: " + id);
         }
 
         return toJsonArray(rows);

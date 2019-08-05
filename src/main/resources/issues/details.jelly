@@ -32,9 +32,12 @@
               </li>
               <j:if test="${!it.isBlameDisabled()}">
                 <li class="nav-item">
-                  <a class="nav-link" role="tab" data-toggle="tab" href="#scmContent">Source Control</a>
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#scmBlamesContent">SCM Blames</a>
                 </li>
               </j:if>
+              <li class="nav-item">
+                <a class="nav-link" role="tab" data-toggle="tab" href="#scmPropertiesContent">SCM Properties</a>
+              </li>
             </j:if>
 
           </ul>
@@ -54,8 +57,9 @@
             <j:if test="${i.isNotEmpty()}">
               <issues:table tableId="issues" issues="${i}" model="${it.issuesModel}"/>
               <j:if test="${!it.isBlameDisabled()}">
-                <issues:table tableId="scm" issues="${i}" model="${it.scmModel}"/>
+                <issues:table tableId="scmBlames" issues="${i}" model="${it.scmBlamesModel}"/>
               </j:if>
+              <issues:table tableId="scmProperties" issues="${i}" model="${it.scmPropertiesModel}"/>
             </j:if>
 
           </div>

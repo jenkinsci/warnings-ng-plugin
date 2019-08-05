@@ -63,8 +63,7 @@ import io.jenkins.plugins.analysis.core.util.StageResultHandler;
  * Additional features:
  * <ul>
  * <li>It provides a {@link QualityGateEvaluator} that is checked after each run. If the quality gate is not passed,
- * then the
- * build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
+ * then the build will be set to {@link Result#UNSTABLE} or {@link Result#FAILURE}, depending on the configuration
  * properties.</li>
  * <li>It provides thresholds for the build health that could be adjusted in the configuration screen.
  * These values are used by the {@link HealthReportBuilder} to compute the health and the health trend graph.
@@ -84,6 +83,7 @@ public class IssuesRecorder extends Recorder {
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
     private String referenceJobName;
+
     private boolean failOnError = false;
 
     private int healthy;

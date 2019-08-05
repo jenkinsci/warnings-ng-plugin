@@ -17,6 +17,7 @@ import org.jvnet.localizer.Localizable;
 import hudson.model.BallColor;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
@@ -117,6 +118,22 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
             final String url, final Blames blames) {
         return new ReferenceDetailsModel(getAgeBuilder(build, url),
                 getFileNameRenderer(build), this, blames);
+    }
+
+    /**
+     * Returns the model for the details table.
+     *
+     * @param build
+     *         the build of the results
+     * @param url
+     *         the URL of the results
+     *
+     * @return the table model
+     */
+    public DetailsTableModel getScmPropertiesModel(final Run<?, ?> build,
+            final String url, final GsResults gsResults) {
+        return new ScmPropertiesDetailsModel(getAgeBuilder(build, url),
+                getFileNameRenderer(build), this, gsResults);
     }
 
     /**
