@@ -44,7 +44,7 @@
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
     <json.version>20180813</json.version>
     <jackson-databind.version>2.9.9</jackson-databind.version>
-    <slf4j-nop.version>1.7.26</slf4j-nop.version>
+    <slf4j.version>1.7.26</slf4j.version>
 
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.5.1</junit.version>
@@ -171,6 +171,12 @@
         <artifactId>ssh-credentials</artifactId>
         <version>1.13</version>
       </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j.version}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -185,7 +191,7 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
-      <version>${slf4j-nop.version}</version>
+      <version>${slf4j.version}</version>
     </dependency>
     <dependency>
       <groupId>com.github.spotbugs</groupId>
