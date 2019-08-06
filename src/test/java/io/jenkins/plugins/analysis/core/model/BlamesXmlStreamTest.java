@@ -68,5 +68,4 @@ class BlamesXmlStreamTest extends ResourceTest {
             throw new AssertionError(exception);
         }
     }
-
 }

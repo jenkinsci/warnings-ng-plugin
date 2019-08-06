@@ -237,7 +237,7 @@ public class IssuesDetail implements ModelObject {
      * @return the table model
      */
     public DetailsTableModel getScmBlamesModel() {
-        return labelProvider.getScmBlamesModel(owner, getUrl(), result.getBlames());
+        return labelProvider.getScmModel(owner, getUrl(), result.getBlames());
     }
 
     /**
@@ -246,7 +246,7 @@ public class IssuesDetail implements ModelObject {
      * @return the table model
      */
     public DetailsTableModel getScmPropertiesModel() {
-        return labelProvider.getScmPropertiesModel(owner, getUrl(), result.getGsResults());
+        return labelProvider.getForensicsModel(owner, getUrl(), result.getRepositoryStatistics());
     }
 
     private String toJsonArray(final List<List<String>> rows) {

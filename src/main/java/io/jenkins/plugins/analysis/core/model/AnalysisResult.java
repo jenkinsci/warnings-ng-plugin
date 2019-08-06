@@ -29,14 +29,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.scm.Blames;
-import io.jenkins.plugins.analysis.core.scm.GsResults;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 /**
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and
@@ -93,8 +92,9 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     @Nullable
     private transient WeakReference<Blames> blamesReference;
 
+    /** Statistics for all files. Provides a mapping of file names to SCM statistics like #authors, #commits, etc. */
     @Nullable
-    private transient WeakReference<GsResults> gsResultsReference;
+    private transient WeakReference<RepositoryStatistics> repositoryStatistics;
 
     /** Determines since which build we have zero warnings. */
     private int noIssuesSinceBuild;
@@ -114,6 +114,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the issues of this result
      * @param blames
      *         author and commit information for all issues
+     * @param statistics
+     *         repository statistics for all issues
      * @param qualityGateStatus
      *         the quality gate status
      * @param sizePerOrigin
@@ -122,10 +124,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the analysis result of the previous run
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final GsResults gsResults, final QualityGateStatus qualityGateStatus,
+            final RepositoryStatistics statistics, final QualityGateStatus qualityGateStatus,
             final Map<String, Integer> sizePerOrigin,
             final AnalysisResult previousResult) {
-        this(owner, id, report, blames, gsResults, qualityGateStatus, sizePerOrigin, true);
+        this(owner, id, report, blames, statistics, qualityGateStatus, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             if (previousResult.noIssuesSinceBuild == NO_BUILD) {
@@ -163,15 +165,17 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the issues of this result
      * @param blames
      *         author and commit information for all issues
+     * @param statistics
+     *         repository statistics for all issues
      * @param qualityGateStatus
      *         the quality gate status
      * @param sizePerOrigin
      *         the number of issues per origin
      */
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
-            final GsResults gsResults, final QualityGateStatus qualityGateStatus,
+            final RepositoryStatistics statistics, final QualityGateStatus qualityGateStatus,
             final Map<String, Integer> sizePerOrigin) {
-        this(owner, id, report, blames, gsResults, qualityGateStatus, sizePerOrigin, true);
+        this(owner, id, report, blames, statistics, qualityGateStatus, sizePerOrigin, true);
 
         if (report.isEmpty()) {
             noIssuesSinceBuild = owner.getNumber();
@@ -198,6 +202,8 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         the issues of this result
      * @param blames
      *         author and commit information for all issues
+     * @param statistics
+     *         source code repository statistics for all issues
      * @param qualityGateStatus
      *         the quality gate status
      * @param sizePerOrigin
@@ -207,7 +213,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @VisibleForTesting
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
-            final Blames blames, final GsResults gsResults,
+            final Blames blames, final RepositoryStatistics statistics,
             final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin,
             final boolean canSerialize) {
         this.owner = owner;
@@ -239,12 +245,12 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         this.qualityGateStatus = qualityGateStatus;
 
         blamesReference = new WeakReference<>(blames);
-        gsResultsReference = new WeakReference<>(gsResults);
+        repositoryStatistics = new WeakReference<>(statistics);
 
         if (canSerialize) {
             serializeIssues(outstandingIssues, newIssues, fixedIssues);
             serializeBlames(blames);
-            serializeGsResults(gsResults);
+            serializeStatistics(statistics);
         }
     }
 
@@ -270,15 +276,20 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         }
     }
 
-    public GsResults getGsResults() {
+    /**
+     * Returns the repository statistics for the report.
+     *
+     * @return the blames
+     */
+    public RepositoryStatistics getRepositoryStatistics() {
         lock.lock();
         try {
-            if (gsResultsReference == null) {
-                return readGsResults();
+            if (repositoryStatistics == null) {
+                return readStatistics();
             }
-            GsResults result = gsResultsReference.get();
+            RepositoryStatistics result = repositoryStatistics.get();
             if (result == null) {
-                return readGsResults();
+                return readStatistics();
             }
             return result;
         }
@@ -299,6 +310,20 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         Blames blames = new BlamesXmlStream().read(getBlamesPath());
         blamesReference = new WeakReference<>(blames);
         return blames;
+    }
+
+    private void serializeStatistics(final RepositoryStatistics statistics) {
+        new RepositoryStatisticsXmlStream().write(getStatisticsPath(), statistics);
+    }
+
+    private Path getStatisticsPath() {
+        return getOwner().getRootDir().toPath().resolve(id + "-forensics.xml");
+    }
+
+    private RepositoryStatistics readStatistics() {
+        RepositoryStatistics statistics = new RepositoryStatisticsXmlStream().read(getStatisticsPath());
+        repositoryStatistics = new WeakReference<>(statistics);
+        return statistics;
     }
 
     private Map<Severity, Integer> getSizePerSeverity(final Report report) {

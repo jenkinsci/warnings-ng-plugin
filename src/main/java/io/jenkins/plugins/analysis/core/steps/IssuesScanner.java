@@ -33,8 +33,6 @@ import jenkins.MasterToSlaveFileCallable;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.scm.Blamer;
-import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
@@ -44,6 +42,9 @@ import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
 import io.jenkins.plugins.forensics.blame.BlamerFactory;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileLocations;
+import io.jenkins.plugins.forensics.miner.MinerFactory;
+import io.jenkins.plugins.forensics.miner.RepositoryMiner;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.forensics.util.FilteredLog;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
@@ -119,9 +120,12 @@ class IssuesScanner {
                 log.getErrorMessages().forEach(report::logError);
 
             }
+            FilteredLog log = new FilteredLog("Errors while mining source code repository for "
+                    + run.getFullDisplayName());
+            RepositoryMiner miner = MinerFactory.findMinerFor(run, workspace, listener, log);
             result = workspace.act(new ReportPostProcessor(
                     tool.getActualId(), report, sourceCodeEncoding.name(),
-                    blamer, filters));
+                    blamer, miner, filters));
 
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()), workspace);
         }
@@ -194,12 +198,11 @@ class IssuesScanner {
         private final Report originalReport;
         private final String sourceCodeEncoding;
         private final Blamer blamer;
+        private final RepositoryMiner miner;
         private final List<RegexpFilter> filters;
-        private final GsWorker gsWorker;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final FilePath affectedFilesFolder, final Blamer blamer, final List<RegexpFilter> filters,
-                final GsWorker gsWorker) {
+                final Blamer blamer, final RepositoryMiner miner, final List<RegexpFilter> filters) {
             super();
 
             this.id = id;
@@ -207,11 +210,11 @@ class IssuesScanner {
             this.sourceCodeEncoding = sourceCodeEncoding;
             this.blamer = blamer;
             this.filters = filters;
-            this.gsWorker = gsWorker;
+            this.miner = miner;
         }
 
         @Override
-        public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) {
+        public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) throws InterruptedException {
             resolveAbsolutePaths(originalReport, workspace);
             resolveModuleNames(originalReport, workspace);
             resolvePackageNames(originalReport);
@@ -224,18 +227,18 @@ class IssuesScanner {
             fileLocations.logSummary();
             fileLocations.getInfoMessages().forEach(filtered::logInfo);
             fileLocations.getErrorMessages().forEach(filtered::logError);
+
             Blames blames = blamer.blame(fileLocations);
             blames.logSummary();
             blames.getInfoMessages().forEach(filtered::logInfo);
             blames.getErrorMessages().forEach(filtered::logError);
-            filtered.logInfo("---------------------");
-            fileLocations.getAbsolutePaths().forEach(filtered::logInfo);
-            fileLocations.getRelativePaths().forEach(filtered::logInfo);
-            filtered.logInfo("---------------------");
-            filtered.logInfo("---------------------");
-            blames.getFiles().forEach(filtered::logInfo);
-            filtered.logInfo("---------------------");
-            return new AnnotatedReport(id, filtered, blames);
+
+            RepositoryStatistics statistics = miner.mine(fileLocations.getRelativePaths());
+            statistics.logSummary();
+            statistics.getInfoMessages().forEach(filtered::logInfo);
+            statistics.getErrorMessages().forEach(filtered::logError);
+
+            return new AnnotatedReport(id, filtered, blames, statistics);
         }
 
         private void resolveAbsolutePaths(final Report report, final File workspace) {

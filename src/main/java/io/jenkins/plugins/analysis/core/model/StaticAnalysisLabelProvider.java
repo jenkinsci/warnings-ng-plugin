@@ -17,11 +17,11 @@ import org.jvnet.localizer.Localizable;
 import hudson.model.BallColor;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.scm.Blames;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 import static j2html.TagCreator.*;
 
@@ -130,10 +130,10 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *
      * @return the table model
      */
-    public DetailsTableModel getScmPropertiesModel(final Run<?, ?> build,
-            final String url, final GsResults gsResults) {
+    public DetailsTableModel getForensicsModel(final Run<?, ?> build,
+            final String url, final RepositoryStatistics statistics) {
         return new ScmPropertiesDetailsModel(getAgeBuilder(build, url),
-                getFileNameRenderer(build), this, gsResults);
+                getFileNameRenderer(build), this, statistics);
     }
 
     /**

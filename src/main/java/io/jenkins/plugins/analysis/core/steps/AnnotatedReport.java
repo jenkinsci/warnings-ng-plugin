@@ -12,6 +12,7 @@ import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 /**
  * A report of issues and the associated blame information, i.e. author and commit information of the SCM.
@@ -24,7 +25,8 @@ public final class AnnotatedReport implements Serializable {
     private final String id;
     private final Report aggregatedReport = new Report();
     private final Blames aggregatedBlames = new Blames();
-    private final GsResults aggregatedGsResults = new GsResults();
+    private final RepositoryStatistics aggregatedRepositoryStatistics = new RepositoryStatistics();
+
     private final Map<String, Integer> sizeOfOrigin = new HashMap<>();
 
     /**
@@ -46,7 +48,7 @@ public final class AnnotatedReport implements Serializable {
      *         report with issues
      */
     public AnnotatedReport(@Nullable final String id, final Report report) {
-        this(id, report, new Blames(), new GsResults());
+        this(id, report, new Blames(), new RepositoryStatistics());
     }
 
     /**
@@ -57,12 +59,15 @@ public final class AnnotatedReport implements Serializable {
      * @param report
      *         report with issues
      * @param blames
-     *         author and commit information
+     *         author and commit information for affected files
+     * @param statistics
+     *         repository statistics for affected files
      */
-    public AnnotatedReport(@Nullable final String id, final Report report, final Blames blames, final GsResults gsResults) {
+    public AnnotatedReport(@Nullable final String id, final Report report, final Blames blames,
+            final RepositoryStatistics statistics) {
         this(id);
 
-        addReport(id, report, blames, gsResults);
+        addReport(id, report, blames, statistics);
     }
 
     /**
@@ -91,25 +96,30 @@ public final class AnnotatedReport implements Serializable {
     }
 
     /**
+     * Returns the aggregated report.
+     *
+     * @return the aggregated report
+     */
+    public Report getReport() {
+        return aggregatedReport;
+    }
+
+    /**
      * Returns the aggregated blames for all reports.
      *
-     * @return the blames
+     * @return the aggregated blames
      */
     public Blames getBlames() {
         return aggregatedBlames;
     }
 
     /**
-     * Returns the aggregated report.
+     * Returns the aggregated statistics for all reports.
      *
-     * @return the blames
+     * @return the aggregated statistics
      */
-    public Report getReport() {
-        return aggregatedReport;
-    }
-
-    public GsResults getGsResults() {
-        return aggregatedGsResults;
+    public RepositoryStatistics getStatistics() {
+        return aggregatedRepositoryStatistics;
     }
 
     /**
@@ -170,7 +180,7 @@ public final class AnnotatedReport implements Serializable {
      *         the ID to use when adding the report
      */
     public void add(final AnnotatedReport other, final String actualId) {
-        addReport(actualId, other.getReport(), other.getBlames(), other.getGsResults());
+        addReport(actualId, other.getReport(), other.getBlames(), other.getStatistics());
     }
 
     /**
@@ -185,10 +195,11 @@ public final class AnnotatedReport implements Serializable {
         add(other, getId());
     }
 
-    private void addReport(final String actualId, final Report report, final Blames blames, final GsResults gsResults) {
+    private void addReport(final String actualId, final Report report, final Blames blames,
+            final RepositoryStatistics statistics) {
         aggregatedReport.addAll(report);
         sizeOfOrigin.merge(actualId, report.size(), Integer::sum);
         aggregatedBlames.addAll(blames);
-        aggregatedGsResults.addAll(gsResults);
+        aggregatedRepositoryStatistics.addAll(statistics);
     }
 }

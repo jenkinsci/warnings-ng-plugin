@@ -29,6 +29,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
@@ -53,7 +54,6 @@ class IssuesPublisher {
     private final StageResultHandler stageResultHandler;
     private final boolean failOnErrors;
 
-
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
@@ -73,7 +73,6 @@ class IssuesPublisher {
         this.logger = logger;
         this.stageResultHandler = stageResultHandler;
         this.failOnErrors = failOnErrors;
-
     }
 
     private String getId() {
@@ -92,7 +91,7 @@ class IssuesPublisher {
 
         ResultSelector selector = ensureThatIdIsUnique();
         AnalysisResult result = createAnalysisResult(report.getReport(), selector, report.getBlames(),
-                report.getSizeOfOrigin());
+                report.getStatistics(), report.getSizeOfOrigin());
         logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                 result.getTotalSize(), result.getNewSize(), result.getFixedSize());
 
@@ -122,16 +121,17 @@ class IssuesPublisher {
 
     @SuppressWarnings("PMD.PrematureDeclaration")
     private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector,
-            final Blames blames, final Map<String, Integer> sizeOfOrigin) {
+            final Blames blames, final RepositoryStatistics statistics, final Map<String, Integer> sizeOfOrigin) {
         DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector, filtered), run.getNumber());
         QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
         reportHealth(filtered);
         logger.log(filtered);
         return new AnalysisHistory(run, selector).getResult()
-                .map(previous -> new AnalysisResult(run, getId(), deltaReport, blames, qualityGateStatus, sizeOfOrigin,
-                        previous))
+                .map(previous -> new AnalysisResult(run, getId(),
+                        deltaReport, blames, statistics, qualityGateStatus, sizeOfOrigin, previous))
                 .orElseGet(
-                        () -> new AnalysisResult(run, getId(), deltaReport, blames, qualityGateStatus, sizeOfOrigin));
+                        () -> new AnalysisResult(run, getId(),
+                                deltaReport, blames, statistics, qualityGateStatus, sizeOfOrigin));
     }
 
     private void reportHealth(final Report filtered) {

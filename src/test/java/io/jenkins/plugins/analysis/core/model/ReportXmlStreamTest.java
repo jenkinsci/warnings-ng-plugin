@@ -58,5 +58,4 @@ class ReportXmlStreamTest extends ResourceTest {
             throw new AssertionError(exception);
         }
     }
-
 }
