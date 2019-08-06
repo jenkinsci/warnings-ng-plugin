@@ -149,7 +149,7 @@
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>scm-api</artifactId>
-        <version>2.2.7</version>
+        <version>2.6.3</version>
       </dependency>
       <dependency>
         <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -561,7 +561,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>scm-api</artifactId>
-      <version>2.2.7</version>
+      <version>2.6.3</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
