@@ -16,7 +16,7 @@ import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import static io.jenkins.plugins.forensics.assertions.Assertions.*;
 
 /**
- * Integration test for GItMiner with a  git repository.
+ * Integration test for GitMiner with a  git repository.
  *
  * @author Fabian Janker
  * @author Andreas Pabst
