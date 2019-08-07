@@ -454,8 +454,8 @@ public class IssuesDetail implements ModelObject {
      * @return on {@code true} the SCM blames will be shown in the UI
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public boolean isBlameDisabled() {
-        return result.getBlames().isEmpty();
+    public boolean isBlameVisible() {
+        return !result.getBlames().isEmpty();
     }
 
     /**
@@ -464,8 +464,8 @@ public class IssuesDetail implements ModelObject {
      * @return on {@code true} the SCM forensics will be shown in the UI
      */
     @SuppressWarnings("unused") // Called by jelly view
-    public boolean isForensicsDisabled() {
-        return result.getForensics().isEmpty();
+    public boolean isForensicsVisible() {
+        return !result.getForensics().isEmpty();
     }
 
     /**
