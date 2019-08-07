@@ -59,7 +59,7 @@
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <token-macro.version>2.5</token-macro.version>
-    <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
+    <jenkins-maven-plugin.version>3.4</jenkins-maven-plugin.version>
     <matrix-project.version>1.13</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>3.9.1</git-plugin.version>
