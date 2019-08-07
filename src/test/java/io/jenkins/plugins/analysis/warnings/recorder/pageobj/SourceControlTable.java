@@ -27,6 +27,8 @@ import static org.assertj.core.api.Assertions.*;
  * @author Fabian Janker
  */
 public class SourceControlTable extends PageObject {
+    private static final String SCM_BLAMES_ID = "scmBlames";
+
     private DomElement scmInfo = null;
     private DomElement scmPaginate = null;
     private DomElement scmFilter = null;
@@ -49,12 +51,12 @@ public class SourceControlTable extends PageObject {
         rows = new ArrayList<>();
 
         HtmlPage page = getPage();
-        HtmlAnchor content = page.getAnchorByHref("#scmContent");
+        HtmlAnchor content = page.getAnchorByHref("#" + SCM_BLAMES_ID + "Content");
         clickOnElement(content);
 
-        scmInfo = page.getElementById("scm_info");
-        scmPaginate = page.getElementById("scm_paginate");
-        scmFilter = page.getElementById("scm_filter");
+        scmInfo = page.getElementById(SCM_BLAMES_ID + "_info");
+        scmPaginate = page.getElementById(SCM_BLAMES_ID + "_paginate");
+        scmFilter = page.getElementById(SCM_BLAMES_ID + "_filter");
 
         HtmlTable table = getHtmlTable(page);
         List<HtmlTableRow> tableHeaderRows = table.getHeader().getRows();
@@ -82,7 +84,7 @@ public class SourceControlTable extends PageObject {
 
     @SuppressFBWarnings("BC")
     private HtmlTable getHtmlTable(final HtmlPage page) {
-        DomElement scm = page.getElementById("scm");
+        DomElement scm = page.getElementById(SCM_BLAMES_ID);
         assertThat(scm).isInstanceOf(HtmlTable.class);
 
         return (HtmlTable) scm;

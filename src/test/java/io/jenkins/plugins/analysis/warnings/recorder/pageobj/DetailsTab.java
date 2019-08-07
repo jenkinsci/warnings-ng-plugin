@@ -127,7 +127,8 @@ public class DetailsTab extends PageObject {
         CATEGORIES("category"),
         TYPES("type"),
         ISSUES("issues"),
-        BLAMES("scm");
+        BLAMES("scmBlames"),
+        FORENSICS("scmProperties");
 
         private String property;
 
