@@ -22,7 +22,7 @@
      */
     showTable('#issues');
     showTable('#scmBlames');
-    showTable('#scmProperties');
+    showTable('#scmForensics');
 
     /**
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.

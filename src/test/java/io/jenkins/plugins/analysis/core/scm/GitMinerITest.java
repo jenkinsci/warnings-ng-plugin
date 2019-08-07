@@ -51,15 +51,16 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
                 + "  }\n"
                 + "}");
 
-        WorkflowJob project = createPipeline();
-        project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
+        WorkflowJob job = createPipeline();
+        job.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
 
-        AnalysisResult result = scheduleSuccessfulBuild(project);
-        RepositoryStatistics statistics = result.getRepositoryStatistics();
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        RepositoryStatistics statistics = result.getForensics();
         assertThat(statistics).isNotEmpty();
-        assertThat(statistics).hasFiles(FILE_NAME);
+        String absoluteFileName = getWorkspace(job).child(FILE_NAME).getRemote();
+        assertThat(statistics).hasFiles(absoluteFileName);
 
-        FileStatistics fileStatistics = statistics.get(FILE_NAME);
+        FileStatistics fileStatistics = statistics.get(absoluteFileName);
         assertThat(fileStatistics).hasNumberOfCommits(1);
         assertThat(fileStatistics).hasNumberOfAuthors(1);
         assertThat(fileStatistics).hasNumberOfAuthors(1);

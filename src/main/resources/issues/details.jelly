@@ -35,9 +35,11 @@
                   <a class="nav-link" role="tab" data-toggle="tab" href="#scmBlamesContent">SCM Blames</a>
                 </li>
               </j:if>
-              <li class="nav-item">
-                <a class="nav-link" role="tab" data-toggle="tab" href="#scmPropertiesContent">SCM Properties</a>
-              </li>
+              <j:if test="${!it.isForensicsDisabled()}">
+                <li class="nav-item">
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#scmForensicsContent">SCM Properties</a>
+                </li>
+                </j:if>
             </j:if>
 
           </ul>
@@ -59,7 +61,9 @@
               <j:if test="${!it.isBlameDisabled()}">
                 <issues:table tableId="scmBlames" issues="${i}" model="${it.scmBlamesModel}"/>
               </j:if>
-              <issues:table tableId="scmProperties" issues="${i}" model="${it.scmPropertiesModel}"/>
+              <j:if test="${!it.isForensicsDisabled()}">
+                <issues:table tableId="scmForensics" issues="${i}" model="${it.scmForensicsModel}"/>
+              </j:if>
             </j:if>
 
           </div>

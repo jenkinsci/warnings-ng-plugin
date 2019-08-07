@@ -246,7 +246,7 @@ public class IssuesDetail implements ModelObject {
      * @return the table model
      */
     public DetailsTableModel getScmPropertiesModel() {
-        return labelProvider.getForensicsModel(owner, getUrl(), result.getRepositoryStatistics());
+        return labelProvider.getForensicsModel(owner, getUrl(), result.getForensics());
     }
 
     private String toJsonArray(final List<List<String>> rows) {
@@ -284,7 +284,7 @@ public class IssuesDetail implements ModelObject {
         else if ("#scmBlames".equals(id)) {
             rows = getScmBlamesModel().getContent(getIssues());
         }
-        else if ("#scmProperties".equals(id)) {
+        else if ("#scmForensics".equals(id)) {
             rows = getScmPropertiesModel().getContent(getIssues());
         }
         else {
@@ -451,12 +451,21 @@ public class IssuesDetail implements ModelObject {
     /**
      * Returns whether author and commit information should be shown or not.
      *
-     * @return on {@code true} the SCM will be called to obtain author and commit information, on {@code false} author
-     *         and commit information are omitted
+     * @return on {@code true} the SCM blames will be shown in the UI
      */
     @SuppressWarnings("unused") // Called by jelly view
     public boolean isBlameDisabled() {
         return result.getBlames().isEmpty();
+    }
+
+    /**
+     * Returns whether SCM forensics will be shown or not.
+     *
+     * @return on {@code true} the SCM forensics will be shown in the UI
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public boolean isForensicsDisabled() {
+        return result.getForensics().isEmpty();
     }
 
     /**
