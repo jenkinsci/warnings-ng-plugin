@@ -1,7 +1,8 @@
-_extends: .github
-tag-template: analysis-model-$NEXT_MINOR_VERSION
-name-template: Analysis Model $NEXT_PATCH_VERSION 🎁
-version-template: $MAJOR.$MINOR.$PATCH
+tag-template: warnings-ng-plugin-$NEXT_PATCH_VERSION
+name-template: Warnings NG Plugin $NEXT_PATCH_VERSION 🎁
+
+template: |
+  $CHANGES
 
 categories:
   - title: 🚨 Removed
@@ -28,3 +29,7 @@ categories:
     labels:
       - test
       - tests
+
+replacers:
+  - search: '/\[*JENKINS-(\d+)\]*\s*-*\s*/g'
+    replace: '[JENKINS-$1](https://issues.jenkins-ci.org/browse/JENKINS-$1) - '
