@@ -1,9 +1,6 @@
 #!/bin/bash
 
-if [[ -z "$JENKINS_HOME" ]]; then
-    JENKINS_HOME=../docker/volumes/jenkins-home
-    echo "JENKINS_HOME is not defined, using $JENKINS_HOME"
-fi
+JENKINS_HOME=../docker/volumes/jenkins-home
 
 mvn install -DskipITs || { echo "Build failed"; exit 1; }
 
