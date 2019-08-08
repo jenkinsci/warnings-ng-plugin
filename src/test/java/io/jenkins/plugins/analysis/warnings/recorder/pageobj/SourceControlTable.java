@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Fabian Janker
  */
 public class SourceControlTable extends PageObject {
-    private static final String SCM_BLAMES_ID = "scmBlames";
+    private static final String SCM_BLAMES_ID = "blames";
 
     private DomElement scmInfo = null;
     private DomElement scmPaginate = null;

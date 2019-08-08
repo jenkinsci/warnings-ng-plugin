@@ -22,12 +22,12 @@ import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
  *
  * @author Ullrich Hafner
  */
-class ScmPropertiesDetailsModel extends DetailsTableModel {
+class ForensicsModel extends DetailsTableModel {
     static final String UNDEFINED = "-";
 
     private final RepositoryStatistics statistics;
 
-    ScmPropertiesDetailsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+    ForensicsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
             final DescriptionProvider descriptionProvider, final RepositoryStatistics statistics) {
         super(ageBuilder, fileNameRenderer, descriptionProvider);
 

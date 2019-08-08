@@ -21,8 +21,8 @@
      * Create data table instances for the detail tables.
      */
     showTable('#issues');
-    showTable('#scmBlames');
-    showTable('#scmForensics');
+    showTable('#blames');
+    showTable('#forensics');
 
     /**
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.

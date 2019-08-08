@@ -22,12 +22,12 @@ import io.jenkins.plugins.forensics.blame.FileBlame;
  *
  * @author Ullrich Hafner
  */
-class ReferenceDetailsModel extends DetailsTableModel {
+class BlamesModel extends DetailsTableModel {
     static final String UNDEFINED = "-";
 
     private final Blames blames;
 
-    ReferenceDetailsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+    BlamesModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
             final DescriptionProvider descriptionProvider, final Blames blames) {
         super(ageBuilder, fileNameRenderer, descriptionProvider);
 

@@ -32,12 +32,12 @@
               </li>
               <j:if test="${it.isBlameVisible()}">
                 <li class="nav-item">
-                  <a class="nav-link" role="tab" data-toggle="tab" href="#scmBlamesContent">SCM Blames</a>
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#blamesContent">SCM Blames</a>
                 </li>
               </j:if>
               <j:if test="${it.isForensicsVisible()}">
                 <li class="nav-item">
-                  <a class="nav-link" role="tab" data-toggle="tab" href="#scmForensicsContent">SCM Properties</a>
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#forensicsContent">SCM Forensics</a>
                 </li>
                 </j:if>
             </j:if>
@@ -59,10 +59,10 @@
             <j:if test="${i.isNotEmpty()}">
               <issues:table tableId="issues" issues="${i}" model="${it.issuesModel}"/>
               <j:if test="${it.isBlameVisible()}">
-                <issues:table tableId="scmBlames" issues="${i}" model="${it.scmBlamesModel}"/>
+                <issues:table tableId="blames" issues="${i}" model="${it.blamesModel}"/>
               </j:if>
-              <j:if test="${!it.isForensicsVisible()}">
-                <issues:table tableId="scmForensics" issues="${i}" model="${it.scmForensicsModel}"/>
+              <j:if test="${it.isForensicsVisible()}">
+                <issues:table tableId="forensics" issues="${i}" model="${it.forensicsModel}"/>
               </j:if>
             </j:if>
 

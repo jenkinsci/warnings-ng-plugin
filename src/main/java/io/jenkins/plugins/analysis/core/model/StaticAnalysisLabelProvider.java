@@ -103,7 +103,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Returns the model for the details table.
+     * Returns the model for the SCM blames table.
      *
      * @param build
      *         the build of the results
@@ -114,25 +114,27 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *
      * @return the table model
      */
-    public DetailsTableModel getScmModel(final Run<?, ?> build,
+    public DetailsTableModel getBlamesModel(final Run<?, ?> build,
             final String url, final Blames blames) {
-        return new ReferenceDetailsModel(getAgeBuilder(build, url),
+        return new BlamesModel(getAgeBuilder(build, url),
                 getFileNameRenderer(build), this, blames);
     }
 
     /**
-     * Returns the model for the details table.
+     * Returns the model for the SCM forensics table.
      *
      * @param build
      *         the build of the results
      * @param url
      *         the URL of the results
+     * @param statistics
+     *         the SCM statistics
      *
      * @return the table model
      */
     public DetailsTableModel getForensicsModel(final Run<?, ?> build,
             final String url, final RepositoryStatistics statistics) {
-        return new ScmPropertiesDetailsModel(getAgeBuilder(build, url),
+        return new ForensicsModel(getAgeBuilder(build, url),
                 getFileNameRenderer(build), this, statistics);
     }
 

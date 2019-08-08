@@ -236,8 +236,8 @@ public class IssuesDetail implements ModelObject {
      *
      * @return the table model
      */
-    public DetailsTableModel getScmBlamesModel() {
-        return labelProvider.getScmModel(owner, getUrl(), result.getBlames());
+    public DetailsTableModel getBlamesModel() {
+        return labelProvider.getBlamesModel(owner, getUrl(), result.getBlames());
     }
 
     /**
@@ -245,7 +245,7 @@ public class IssuesDetail implements ModelObject {
      *
      * @return the table model
      */
-    public DetailsTableModel getScmPropertiesModel() {
+    public DetailsTableModel getForensicsModel() {
         return labelProvider.getForensicsModel(owner, getUrl(), result.getForensics());
     }
 
@@ -281,11 +281,11 @@ public class IssuesDetail implements ModelObject {
         if ("#issues".equals(id)) {
             rows = getIssuesModel().getContent(getIssues());
         }
-        else if ("#scmBlames".equals(id)) {
-            rows = getScmBlamesModel().getContent(getIssues());
+        else if ("#blames".equals(id)) {
+            rows = getBlamesModel().getContent(getIssues());
         }
-        else if ("#scmForensics".equals(id)) {
-            rows = getScmPropertiesModel().getContent(getIssues());
+        else if ("#forensics".equals(id)) {
+            rows = getForensicsModel().getContent(getIssues());
         }
         else {
             throw new NoSuchElementException("No such table model: " + id);

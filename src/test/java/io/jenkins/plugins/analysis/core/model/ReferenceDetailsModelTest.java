@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link ReferenceDetailsModel}.
+ * Tests the class {@link BlamesModel}.
  *
  * @author Colin Kaschel
  */
@@ -37,7 +37,7 @@ class ReferenceDetailsModelTest extends AbstractDetailsModelTest {
         report.add(createIssue(2));
         Blames blames = mock(Blames.class);
 
-        ReferenceDetailsModel model = createModel(blames);
+        BlamesModel model = createModel(blames);
 
         assertThat(model.getHeaders(report)).hasSize(6);
         assertThat(model.getWidths(report)).hasSize(6);
@@ -59,7 +59,7 @@ class ReferenceDetailsModelTest extends AbstractDetailsModelTest {
         when(blames.contains(issue.getFileName())).thenReturn(true);
         when(blames.getBlame(issue.getFileName())).thenReturn(blameRequest);
 
-        ReferenceDetailsModel model = createModel(blames);
+        BlamesModel model = createModel(blames);
 
         List<List<String>> rows = model.getContent(report);
         assertThat(rows).hasSize(1);
@@ -86,7 +86,7 @@ class ReferenceDetailsModelTest extends AbstractDetailsModelTest {
 
         Blames blames = mock(Blames.class);
 
-        ReferenceDetailsModel model = createModel(blames);
+        BlamesModel model = createModel(blames);
 
         List<List<String>> rows = model.getContent(report);
         assertThat(rows).hasSize(1);
@@ -98,12 +98,12 @@ class ReferenceDetailsModelTest extends AbstractDetailsModelTest {
         assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(MESSAGE));
         assertThat(columns.get(1)).contains("file-1:15");
         assertThat(columns.get(2)).contains("1");
-        assertThat(columns.get(3)).contains(ReferenceDetailsModel.UNDEFINED);
-        assertThat(columns.get(4)).contains(ReferenceDetailsModel.UNDEFINED);
-        assertThat(columns.get(5)).contains(ReferenceDetailsModel.UNDEFINED);
+        assertThat(columns.get(3)).contains(BlamesModel.UNDEFINED);
+        assertThat(columns.get(4)).contains(BlamesModel.UNDEFINED);
+        assertThat(columns.get(5)).contains(BlamesModel.UNDEFINED);
     }
 
-    private ReferenceDetailsModel createModel(final Blames blames) {
+    private BlamesModel createModel(final Blames blames) {
         DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
         when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
@@ -111,6 +111,6 @@ class ReferenceDetailsModelTest extends AbstractDetailsModelTest {
         FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
         DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
 
-        return new ReferenceDetailsModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, blames);
+        return new BlamesModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, blames);
     }
 }

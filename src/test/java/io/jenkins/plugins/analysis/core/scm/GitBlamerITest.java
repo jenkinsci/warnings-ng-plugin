@@ -26,6 +26,7 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
 
+import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow.FILE;
 import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow.*;
 import static org.assertj.core.api.Assertions.*;
 
