@@ -30,7 +30,7 @@
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>5.3.0</analysis-model-api.version>
     <analysis-model.version>5.3.0</analysis-model.version>
-    <forensics-api-plugin.version>0.2.0</forensics-api-plugin.version>
+    <forensics-api-plugin.version>0.2.1</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.1.0</git-forensics-plugin.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
