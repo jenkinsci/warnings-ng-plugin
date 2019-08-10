@@ -279,7 +279,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     /**
      * Returns the repository statistics for the report.
      *
-     * @return the blames
+     * @return the statistics
      */
     public RepositoryStatistics getForensics() {
         lock.lock();

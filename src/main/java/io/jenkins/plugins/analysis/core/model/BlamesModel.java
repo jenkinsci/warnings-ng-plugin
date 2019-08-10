@@ -11,7 +11,8 @@ import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 
 /**
- * Provides the model for the source control details table. The model consists of the following parts:
+ * Provides the dynamic model for the details table that shows the source control blames. The model consists of the
+ * following parts:
  *
  * <ul>
  * <li>header name for each column</li>

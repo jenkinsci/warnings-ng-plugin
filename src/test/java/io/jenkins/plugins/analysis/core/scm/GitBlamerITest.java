@@ -21,31 +21,30 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.AnalysisResultAssert;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlTable;
+import io.jenkins.plugins.forensics.blame.Blamer;
 
-import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow.FILE;
-import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceControlRow.*;
+import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.FILE;
+import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * Integration test for GitBlamer with a mocked git repository.
+ * Tests the {@link Blamer GitBlamer} in several jobs that uses a real Git repository.
  *
  * @author Fabian Janker
  * @author Andreas Pabst
  */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
-    /**
-     * Rule for a git repository.
-     */
+    /** The Git repository for the test. */
     @Rule
     public GitSampleRepoRule gitRepo = new GitSampleRepoRule();
 
     /**
-     * Tests blaming one issue with a fake git repository. Test run from a pipeline script.
+     * Verifies that a pipeline with one issue will be correctly blamed.
      *
      * @throws Exception
      *         if there is a problem with the git repository
@@ -55,7 +54,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         gitRepo.init();
         createAndCommitFile("Test.java", "public class Test {}");
 
-        final String testCommit = gitRepo.head();
+        String testCommit = gitRepo.head();
 
         createAndCommitFile("Jenkinsfile", "node {\n"
                 + "  stage ('Checkout') {\n"
@@ -73,12 +72,12 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 1, 1);
 
-        SourceControlTable table = getSourceControlTable(result);
+        BlamesTable table = getSourceControlTable(result);
         assertOneIssue(testCommit, table);
     }
 
     /**
-     * Tests blaming one issue with a fake git repository. Test run with a freestyle job.
+     * Verifies that a freestyle job with one issue will be correctly blamed.
      *
      * @throws Exception
      *         if there is a problem with the git repository
@@ -88,7 +87,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         gitRepo.init();
         createAndCommitFile("Test.java", "public class Test {}");
 
-        final String testCommit = gitRepo.head();
+        String testCommit = gitRepo.head();
 
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(gitRepo.toString()));
@@ -102,7 +101,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 1, 1);
 
-        SourceControlTable table = getSourceControlTable(result);
+        BlamesTable table = getSourceControlTable(result);
         assertOneIssue(testCommit, table);
     }
 
@@ -142,7 +141,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 11, 3);
 
-        SourceControlTable table = getSourceControlTable(result);
+        BlamesTable table = getSourceControlTable(result);
         assertElevenIssues(commits, table);
     }
 
@@ -179,7 +178,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 11, 3);
 
-        SourceControlTable table = getSourceControlTable(result);
+        BlamesTable table = getSourceControlTable(result);
         assertElevenIssues(commits, table);
     }
 
@@ -219,19 +218,19 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 11, 3);
 
-        SourceControlTable table = getSourceControlTable(result);
+        BlamesTable table = getSourceControlTable(result);
         assertElevenIssues(commits, table);
 
         table.filter("LoremIpsum.java");
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 4 of 4 entries (filtered from 11 total entries)");
         assertThat(table.getRows()).containsExactly(
-                new SourceControlRow("Another Warning for Jenkins", "LoremIpsum.java:1", "John Doe", "john@doe",
+                new BlamesRow("Another Warning for Jenkins", "LoremIpsum.java:1", "John Doe", "john@doe",
                         commits.get("LoremIpsum"), 1),
-                new SourceControlRow("Another Warning for Jenkins", "LoremIpsum.java:2", "John Doe", "john@doe",
+                new BlamesRow("Another Warning for Jenkins", "LoremIpsum.java:2", "John Doe", "john@doe",
                         commits.get("LoremIpsum"), 1),
-                new SourceControlRow("Another Warning for Jenkins", "LoremIpsum.java:3", "John Doe", "john@doe",
+                new BlamesRow("Another Warning for Jenkins", "LoremIpsum.java:3", "John Doe", "john@doe",
                         commits.get("LoremIpsum"), 1),
-                new SourceControlRow("Another Warning for Jenkins", "LoremIpsum.java:4", "John Doe", "john@doe",
+                new BlamesRow("Another Warning for Jenkins", "LoremIpsum.java:4", "John Doe", "john@doe",
                         commits.get("LoremIpsum"), 1));
     }
 
@@ -280,15 +279,15 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 1, 1);
 
-        SourceControlTable table = getSourceControlTable(result);
+        BlamesTable table = getSourceControlTable(result);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
         assertThat(table.getRows()).hasSize(1);
         assertThat(table.getRows()).containsExactly(
-                new SourceControlRow("Unexpected character", "Test.h:1", "Git SampleRepoRule",
+                new BlamesRow("Unexpected character", "Test.h:1", "Git SampleRepoRule",
                         "gits@mplereporule", commit, 1));
     }
 
-    private SourceControlTable getSourceControlTable(final AnalysisResult result) {
+    private BlamesTable getSourceControlTable(final AnalysisResult result) {
         HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
         DetailsTab detailsTab = new DetailsTab(page);
@@ -307,46 +306,46 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                         "-> blamed authors of issues in " + numberOfFiles + " files");
     }
 
-    private void assertOneIssue(final String commit, final SourceControlTable table) {
+    private void assertOneIssue(final String commit, final BlamesTable table) {
         assertThat(table.getColumnNames())
                 .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
         assertThat(table.getRows()).hasSize(1);
         assertThat(table.getRows()).containsExactly(
-                new SourceControlRow("Test Warning for Jenkins", "Test.java:1", "Git SampleRepoRule",
+                new BlamesRow("Test Warning for Jenkins", "Test.java:1", "Git SampleRepoRule",
                         "gits@mplereporule", commit, 1));
     }
 
-    private void assertElevenIssues(final Map<String, String> commits, final SourceControlTable table) {
+    private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
         assertThat(table.getColumnNames())
                 .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 10 of 11 entries");
         assertThat(table.getRows()).containsExactly(
-                new SourceControlRow("Bobs Warning for Jenkins", "Bob.java:1", "Alice Miller", "alice@miller",
+                new BlamesRow("Bobs Warning for Jenkins", "Bob.java:1", "Alice Miller", "alice@miller",
                         commits.get("Bob"), 1),
-                new SourceControlRow("Bobs Warning for Jenkins", "Bob.java:2", "Alice Miller", "alice@miller",
+                new BlamesRow("Bobs Warning for Jenkins", "Bob.java:2", "Alice Miller", "alice@miller",
                         commits.get("Bob"), 1),
-                new SourceControlRow("Bobs Warning for Jenkins", "Bob.java:3", "Alice Miller", "alice@miller",
+                new BlamesRow("Bobs Warning for Jenkins", "Bob.java:3", "Alice Miller", "alice@miller",
                         commits.get("Bob"), 1),
-                new SourceControlRow("Another Warning for Jenkins", "LoremIpsum.java:1", "John Doe", "john@doe",
+                new BlamesRow("Another Warning for Jenkins", "LoremIpsum.java:1", "John Doe", "john@doe",
                         commits.get("LoremIpsum"), 1),
-                new SourceControlRow("Another Warning for Jenkins", "LoremIpsum.java:2", "John Doe", "john@doe",
+                new BlamesRow("Another Warning for Jenkins", "LoremIpsum.java:2", "John Doe", "john@doe",
                         commits.get("LoremIpsum"), 1),
-                new SourceControlRow("Another Warning for Jenkins", "LoremIpsum.java:3", "John Doe", "john@doe",
+                new BlamesRow("Another Warning for Jenkins", "LoremIpsum.java:3", "John Doe", "john@doe",
                         commits.get("LoremIpsum"), 1),
-                new SourceControlRow("Another Warning for Jenkins", "LoremIpsum.java:4", "John Doe", "john@doe",
+                new BlamesRow("Another Warning for Jenkins", "LoremIpsum.java:4", "John Doe", "john@doe",
                         commits.get("LoremIpsum"), 1),
-                new SourceControlRow("Test Warning for Jenkins", "Test.java:1", "Git SampleRepoRule",
+                new BlamesRow("Test Warning for Jenkins", "Test.java:1", "Git SampleRepoRule",
                         "gits@mplereporule", commits.get("Test"), 1),
-                new SourceControlRow("Test Warning for Jenkins", "Test.java:2", "Git SampleRepoRule",
+                new BlamesRow("Test Warning for Jenkins", "Test.java:2", "Git SampleRepoRule",
                         "gits@mplereporule", commits.get("Test"), 1),
-                new SourceControlRow("Test Warning for Jenkins", "Test.java:3", "Git SampleRepoRule",
+                new BlamesRow("Test Warning for Jenkins", "Test.java:3", "Git SampleRepoRule",
                         "gits@mplereporule", commits.get("Test"), 1));
 
         table.goToPage(2);
         assertThat(table.getInfo()).isEqualTo("Showing 11 to 11 of 11 entries");
         assertThat(table.getRows()).containsExactly(
-                new SourceControlRow("Test Warning for Jenkins", "Test.java:4", "Git SampleRepoRule",
+                new BlamesRow("Test Warning for Jenkins", "Test.java:4", "Git SampleRepoRule",
                         "gits@mplereporule", commits.get("Test"), 1)
         );
     }

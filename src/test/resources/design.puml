@@ -16,8 +16,6 @@ skinparam component {
 [Portlets] <<..core.portlets>>
 [Columns] <<..core.columns>>
 [Rest API] <<..core.restapi>>
-[SCM] <<..core.scm>>
-[SCM Properties] <<..core.scm.analyzer>>
 [Tokens] <<..core.tokens>>
 [Utilities] <<..core.util>> <<..api>>
 
@@ -26,7 +24,6 @@ skinparam component {
 
 [Steps] --> [Utilities]
 [Steps] --> [Model]
-[Steps] --> [SCM]
 [Steps] ---> [Filter]
 
 [Tokens] --> [Model]
@@ -40,14 +37,10 @@ skinparam component {
 
 [Model] --> [Utilities]
 [Model] --> [Charts]
-[Model] --> [SCM]
 [Model] --> [Rest API]
 
 [Charts] --> [Utilities]
 [Rest API] --> [Utilities]
 [Filter] --> [Utilities]
-[SCM] --> [Utilities]
-
-[SCM] --> [SCM Properties]
 
 @enduml

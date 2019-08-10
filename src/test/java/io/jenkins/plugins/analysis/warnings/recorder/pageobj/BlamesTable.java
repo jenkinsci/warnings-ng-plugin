@@ -26,14 +26,14 @@ import static org.assertj.core.api.Assertions.*;
  * @author Andreas Pabst
  * @author Fabian Janker
  */
-public class SourceControlTable extends PageObject {
+public class BlamesTable extends PageObject {
     private static final String SCM_BLAMES_ID = "blames";
 
     private DomElement scmInfo = null;
     private DomElement scmPaginate = null;
     private DomElement scmFilter = null;
 
-    private List<SourceControlRow> rows = new ArrayList<>();
+    private List<BlamesRow> rows = new ArrayList<>();
     private List<String> columnNames = new ArrayList<>();
 
     /**
@@ -42,7 +42,7 @@ public class SourceControlTable extends PageObject {
      * @param page
      *         the whole build details HtmlPage
      */
-    public SourceControlTable(final HtmlPage page) {
+    public BlamesTable(final HtmlPage page) {
         super(page);
         load();
     }
@@ -78,7 +78,7 @@ public class SourceControlTable extends PageObject {
 
         for (HtmlTableRow row : contentRows) {
             List<HtmlTableCell> rowCells = row.getCells();
-            rows.add(new SourceControlRow(rowCells, columnNames));
+            rows.add(new BlamesRow(rowCells, columnNames));
         }
     }
 
@@ -94,7 +94,7 @@ public class SourceControlTable extends PageObject {
         return scmInfo.getTextContent();
     }
 
-    public List<SourceControlRow> getRows() {
+    public List<BlamesRow> getRows() {
         return rows;
     }
 

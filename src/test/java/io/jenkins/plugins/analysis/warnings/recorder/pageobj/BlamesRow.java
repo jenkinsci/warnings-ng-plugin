@@ -8,15 +8,13 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 
-import edu.hm.hafner.util.VisibleForTesting;
-
 /**
  * Page Object for a row from the source control table.
  *
  * @author Fabian Janker
  * @author Andreas Pabst
  */
-public class SourceControlRow {
+public class BlamesRow {
     /**
      * Label for the details column.
      */
@@ -59,7 +57,7 @@ public class SourceControlRow {
      * @param columnNames
      *         the names of the visible columns
      */
-    public SourceControlRow(final List<HtmlTableCell> columnValues, final List<String> columnNames) {
+    public BlamesRow(final List<HtmlTableCell> columnValues, final List<String> columnNames) {
         for (int pos = 0; pos < columnNames.size(); pos++) {
             String key = columnNames.get(pos);
             HtmlTableCell cell = columnValues.get(pos);
@@ -92,7 +90,7 @@ public class SourceControlRow {
      * @param age
      *         the age
      */
-    public SourceControlRow(final String detailsContent, final String fileName, final String author, final String email,
+    public BlamesRow(final String detailsContent, final String fileName, final String author, final String email,
             final String commit,
             final int age) {
         put(DETAILS_CONTENT, detailsContent);
@@ -118,7 +116,7 @@ public class SourceControlRow {
             return false;
         }
 
-        SourceControlRow sourceControlRow = (SourceControlRow) o;
+        BlamesRow sourceControlRow = (BlamesRow) o;
 
         return valueByName.equals(sourceControlRow.valueByName);
     }

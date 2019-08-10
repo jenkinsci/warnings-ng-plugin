@@ -11,22 +11,21 @@ import jenkins.plugins.git.GitSampleRepoRule;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.forensics.miner.FileStatistics;
+import io.jenkins.plugins.forensics.miner.RepositoryMiner;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 import static io.jenkins.plugins.forensics.assertions.Assertions.*;
 
 /**
- * Integration test for GitMiner with a  git repository.
+ * Tests the {@link RepositoryMiner GitRepositoryMiner} in a pipeline that uses a real Git repository.
  *
- * @author Fabian Janker
- * @author Andreas Pabst
+ * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
     private static final String FILE_NAME = "Test.java";
-    /**
-     * Rule for a git repository.
-     */
+
+    /** The Git repository for the test. */
     @Rule
     public GitSampleRepoRule gitRepo = new GitSampleRepoRule();
 

@@ -11,7 +11,8 @@ import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 /**
- * Provides the model for the source control details table. The model consists of the following parts:
+ * Provides the dynamic model for the details table that shows the source control file statistics. The model consists of
+ * the following parts:
  *
  * <ul>
  * <li>header name for each column</li>
@@ -37,6 +38,7 @@ class ForensicsModel extends DetailsTableModel {
     @Override
     public List<Integer> getWidths(final Report report) {
         List<Integer> widths = new ArrayList<>();
+        widths.add(1);
         widths.add(1);
         widths.add(1);
         widths.add(1);

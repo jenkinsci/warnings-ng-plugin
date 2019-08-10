@@ -32,12 +32,12 @@
               </li>
               <j:if test="${it.isBlameVisible()}">
                 <li class="nav-item">
-                  <a class="nav-link" role="tab" data-toggle="tab" href="#blamesContent">SCM Blames</a>
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#blamesContent">${%SCM Blames}</a>
                 </li>
               </j:if>
               <j:if test="${it.isForensicsVisible()}">
                 <li class="nav-item">
-                  <a class="nav-link" role="tab" data-toggle="tab" href="#forensicsContent">SCM Forensics</a>
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#forensicsContent">${%SCM Forensics}</a>
                 </li>
                 </j:if>
             </j:if>

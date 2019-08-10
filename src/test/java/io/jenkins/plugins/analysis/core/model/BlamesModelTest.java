@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Colin Kaschel
  */
-class ReferenceDetailsModelTest extends AbstractDetailsModelTest {
+class BlamesModelTest extends AbstractDetailsModelTest {
     private static final String COMMIT = "commit";
     private static final String NAME = "name";
     private static final String EMAIL = "email";

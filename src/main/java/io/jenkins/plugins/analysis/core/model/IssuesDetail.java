@@ -223,7 +223,7 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the model for the details table.
+     * Returns the model for the details table that shows the overall list of issues.
      *
      * @return the table model
      */
@@ -241,7 +241,7 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the model for the details table.
+     * Returns the model for the details table that shows the SCM respository statistics.
      *
      * @return the table model
      */
