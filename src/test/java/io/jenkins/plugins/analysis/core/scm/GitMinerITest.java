@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.scm;
 
-import java.nio.file.Paths;
-
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -59,11 +57,7 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(job);
         RepositoryStatistics statistics = result.getForensics();
         assertThat(statistics).isNotEmpty();
-        String absoluteFileName = Paths.get(getWorkspace(job).child(FILE_NAME).getRemote())
-                .toAbsolutePath()
-                .toRealPath()
-                .toString()
-                .replace('\\', '/');
+        String absoluteFileName = getAbsolutePathOfWorkspaceFile(job, FILE_NAME);
         assertThat(statistics).hasFiles(absoluteFileName);
 
         FileStatistics fileStatistics = statistics.get(absoluteFileName);

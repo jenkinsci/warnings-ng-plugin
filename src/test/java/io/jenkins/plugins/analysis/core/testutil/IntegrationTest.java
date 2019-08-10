@@ -271,6 +271,29 @@ public abstract class IntegrationTest extends ResourceTest {
         return workspace;
     }
 
+    /**
+     * Returns the absolute path of the specified file.
+     *
+     * @param job
+     *         the job with the workspace that contains the file
+     * @param fileName
+     *         the file name
+     *
+     * @return the workspace
+     */
+    protected String getAbsolutePathOfWorkspaceFile(final TopLevelItem job, final String fileName) {
+        try {
+            return Paths.get(getWorkspace(job).child(fileName).getRemote())
+                    .toAbsolutePath()
+                    .toRealPath()
+                    .toString()
+                    .replace('\\', '/');
+        }
+        catch (IOException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     private void copySingleFileToWorkspace(final FilePath workspace, final String from, final String to) {
         try {
             workspace.child(to).copyFrom(asInputStream(from));
