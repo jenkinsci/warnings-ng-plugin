@@ -7,16 +7,18 @@ import net.sf.json.JSONObject;
 
 /**
  * Page Object for the charts in details views.
+ *
+ * @author Tobias Schaffner
+ * @author Sebastian Heunke
  */
 public class DetailsViewCharts {
-
     private final HtmlPage detailsViewWebPage;
 
     /**
      * Creates the Chart PageObject for the details view web page. E.g. {buildNr}/java
      *
      * @param detailsViewWebPage
-     *         The details view webpage to get the charts from.
+     *         the details view web page to get the charts from
      */
     public DetailsViewCharts(final HtmlPage detailsViewWebPage) {
         this.detailsViewWebPage = detailsViewWebPage;

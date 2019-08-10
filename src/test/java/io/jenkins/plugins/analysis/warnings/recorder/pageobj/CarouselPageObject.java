@@ -105,7 +105,7 @@ class CarouselPageObject extends PageObject {
         clickOnElement(anchor);
         waitForAjaxCall(activeId);
         activeId = getActiveCarouselItemId();
-        return getActive();
+        return getActiveChartModel();
     }
 
     /**
@@ -113,7 +113,7 @@ class CarouselPageObject extends PageObject {
      *
      * @return json object
      */
-    public JSONObject getActive() {
+    public JSONObject getActiveChartModel() {
         return new DetailsViewCharts(getPage()).getChartModel(activeId);
     }
 

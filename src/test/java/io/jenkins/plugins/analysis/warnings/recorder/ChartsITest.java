@@ -44,20 +44,30 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         initializeTimeFacade();
         List<AnalysisResult> buildResults = build3Times(project);
 
-        verifyNewVersusFixedChart(buildResults, "build",
-                build -> buildResults.get(build).getBuild().getDisplayName());
-    }
+        HtmlPage detailsPage = getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2));
 
-    /** Tests if the New-Versus-Fixed trend chart with build date axis is correctly rendered after a series of builds. */
-    @Test
-    public void shouldShowNewVersusFixedTrendChartWithDateDomain() {
-        FreeStyleProject project = createJob();
+        TrendCarousel carousel = new TrendCarousel(detailsPage);
+        assertThat(carousel.getChartTypes())
+                .containsExactly(TrendChartType.SEVERITIES, TrendChartType.TOOLS, TrendChartType.NEW_VERSUS_FIXED);
+        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
 
-        initializeTimeFacade();
-        List<AnalysisResult> buildResults = build3Times(project);
+        carousel.next();
+        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
 
-        verifyNewVersusFixedChart(buildResults, "date",
-                build -> String.format("01-%02d", build + 1));
+        carousel.next();
+        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
+
+        verifyNewVsFixedSeries(buildResults, build -> buildResults.get(build).getBuild().getDisplayName(), carousel);
+
+        detailsPage.executeJavaScript(String.format("window.localStorage.setItem('#trendBuildAxis', '%s');", "date"));
+        detailsPage = getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2));
+
+        carousel = new TrendCarousel(detailsPage);
+        verifyNewVsFixedSeries(buildResults, build -> String.format("01-%02d", build + 1), carousel);
+        detailsPage.executeJavaScript(String.format("window.localStorage.setItem('#trendBuildAxis', '%s');", "build"));
+
+        carousel.next();
+        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
     }
 
     private void initializeTimeFacade() {
@@ -71,24 +81,9 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         when(facade.getToday()).thenReturn(january(3));
     }
 
-    private void verifyNewVersusFixedChart(final List<AnalysisResult> buildResults,
-            final String axisName, final Function<Integer, String> xAxisNameFunction) {
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2));
-        page.executeJavaScript(String.format("window.localStorage.setItem('#trendBuildAxis', '%s');", axisName));
-        page = getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2));
-
-        TrendCarousel carousel = new TrendCarousel(page);
-        assertThat(carousel.getChartTypes())
-                .containsExactly(TrendChartType.SEVERITIES, TrendChartType.TOOLS, TrendChartType.NEW_VERSUS_FIXED);
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
-
-        carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
-
-        carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
-
-        JSONObject chartModel = carousel.getActive();
+    private void verifyNewVsFixedSeries(final List<AnalysisResult> buildResults,
+            final Function<Integer, String> xAxisNameFunction, final TrendCarousel carousel) {
+        JSONObject chartModel = carousel.getActiveChartModel();
 
         JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
@@ -295,7 +290,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
                 .containsExactly(PieChartType.SEVERITIES, PieChartType.TREND);
         assertThat(carousel.getActiveChartType()).isEqualTo(PieChartType.SEVERITIES);
 
-        JSONObject chartModel = carousel.getActive();
+        JSONObject chartModel = carousel.getActiveChartModel();
 
         JSONArray allSeries = chartModel.getJSONArray("series");
         assertThat(allSeries.size()).isEqualTo(1);
@@ -375,8 +370,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
      * @param linesWithWarning
      *         all lines in which a mocked warning should be placed
      */
-    private void createFileWithJavaWarnings(final FreeStyleProject project,
-            final int... linesWithWarning) {
+    private void createFileWithJavaWarnings(final FreeStyleProject project, final int... linesWithWarning) {
         StringBuilder warningText = new StringBuilder();
         for (int lineNumber : linesWithWarning) {
             warningText.append(createJavaWarning(lineNumber)).append("\n");
