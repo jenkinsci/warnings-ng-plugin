@@ -61,6 +61,7 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(statistics).isNotEmpty();
         String absoluteFileName = Paths.get(getWorkspace(job).child(FILE_NAME).getRemote())
                 .toAbsolutePath()
+                .toRealPath()
                 .toString()
                 .replace('\\', '/');
         assertThat(statistics).hasFiles(absoluteFileName);
