@@ -136,6 +136,10 @@ public class BlamesTable extends PageObject {
 
             load();
         }
+        else {
+            throw new IllegalArgumentException(
+                    "Page number " + pageNumber + " does not exist, size = " + pages.size());
+        }
     }
 
     @SuppressWarnings("PMD.SystemPrintln")

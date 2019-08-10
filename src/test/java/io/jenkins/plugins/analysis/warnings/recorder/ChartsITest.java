@@ -32,6 +32,8 @@ import static org.mockito.Mockito.*;
 
 /**
  * Provides tests for the charts shown on the details page.
+ *
+ * @author Sebastian Heunke
  */
 public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
     /** Tests if the New-Versus-Fixed trend chart with build number axis is correctly rendered after a series of builds. */
@@ -42,7 +44,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         initializeTimeFacade();
         List<AnalysisResult> buildResults = build3Times(project);
 
-        verifyNewVersusFixedChart(project, buildResults, "build",
+        verifyNewVersusFixedChart(buildResults, "build",
                 build -> buildResults.get(build).getBuild().getDisplayName());
     }
 
@@ -54,7 +56,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         initializeTimeFacade();
         List<AnalysisResult> buildResults = build3Times(project);
 
-        verifyNewVersusFixedChart(project, buildResults, "date",
+        verifyNewVersusFixedChart(buildResults, "date",
                 build -> String.format("01-%02d", build + 1));
     }
 
@@ -69,12 +71,11 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         when(facade.getToday()).thenReturn(january(3));
     }
 
-    private void verifyNewVersusFixedChart(final FreeStyleProject project, final List<AnalysisResult> buildResults,
+    private void verifyNewVersusFixedChart(final List<AnalysisResult> buildResults,
             final String axisName, final Function<Integer, String> xAxisNameFunction) {
-
-        HtmlPage page = getDetailsWebPage(project, buildResults.get(2));
+        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2));
         page.executeJavaScript(String.format("window.localStorage.setItem('#trendBuildAxis', '%s');", axisName));
-        page = getDetailsWebPage(project, buildResults.get(2));
+        page = getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2));
 
         TrendCarousel carousel = new TrendCarousel(page);
         assertThat(carousel.getChartTypes())
@@ -143,15 +144,15 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
 
         List<AnalysisResult> buildResults = build3Times(project);
 
-        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2)));
         JSONObject chartModel = charts.getToolsTrendChart();
 
         JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
         // Make sure each of our builds is listed on the x axis
-        for (int iResult = 0; iResult < buildResults.size(); iResult++) {
-            String buildName = buildResults.get(iResult).getBuild().getDisplayName();
-            assertThat(xAxisNames.get(iResult)).isEqualTo(buildName);
+        for (int build = 0; build < buildResults.size(); build++) {
+            String buildName = buildResults.get(build).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
         }
 
         JSONArray allSeries = chartModel.getJSONArray("series");
@@ -161,7 +162,6 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         JSONObject seriesNewTrend = allSeries.getJSONObject(0);
         assertThat(seriesNewTrend.getString("name")).isEqualTo(new Java().getActualId());
         assertThat(convertToIntArray(seriesNewTrend.getJSONArray("data"))).isEqualTo(new int[] {2, 4, 1});
-
     }
 
     /**
@@ -187,15 +187,15 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         createFileWithJavaErrors(project);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2)));
         JSONObject chartModel = charts.getSeveritiesTrendChart();
 
         JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
         // Make sure each of our builds is listed on the x axis
-        for (int iResult = 0; iResult < buildResults.size(); iResult++) {
-            String buildName = buildResults.get(iResult).getBuild().getDisplayName();
-            assertThat(xAxisNames.get(iResult)).isEqualTo(buildName);
+        for (int build = 0; build < buildResults.size(); build++) {
+            String buildName = buildResults.get(build).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
         }
 
         JSONArray allSeries = chartModel.getJSONArray("series");
@@ -237,15 +237,15 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         createFileWithJavaWarnings(project, 1);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2)));
         JSONObject chartModel = charts.getHealthTrendChart();
 
         JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
         // Make sure each of our builds is listed on the x axis
-        for (int iResult = 0; iResult < buildResults.size(); iResult++) {
-            String buildName = buildResults.get(iResult).getBuild().getDisplayName();
-            assertThat(xAxisNames.get(iResult)).isEqualTo(buildName);
+        for (int build = 0; build < buildResults.size(); build++) {
+            String buildName = buildResults.get(build).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
         }
 
         JSONArray allSeries = chartModel.getJSONArray("series");
@@ -290,7 +290,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         );
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        OverviewCarousel carousel = new OverviewCarousel(getDetailsWebPage(project, buildResults.get(1)));
+        OverviewCarousel carousel = new OverviewCarousel(getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(1)));
         assertThat(carousel.getChartTypes())
                 .containsExactly(PieChartType.SEVERITIES, PieChartType.TREND);
         assertThat(carousel.getActiveChartType()).isEqualTo(PieChartType.SEVERITIES);
@@ -332,7 +332,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
 
         List<AnalysisResult> buildResults = build3Times(project);
 
-        DetailsViewCharts charts = new DetailsViewCharts(getDetailsWebPage(project, buildResults.get(2)));
+        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2)));
         JSONObject chartModel = charts.getReferenceComparisonPieChart();
 
         JSONArray allSeries = chartModel.getJSONArray("series");
@@ -365,22 +365,6 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerTest {
         enableWarnings(project, java);
 
         return project;
-    }
-
-    /**
-     * Get the details web page of a recent build.
-     *
-     * @param project
-     *         of the build used for web request
-     * @param result
-     *         of the most recent build to show the charts
-     *
-     * @return loaded web page which contains the charts
-     */
-    private HtmlPage getDetailsWebPage(final FreeStyleProject project, final AnalysisResult result) {
-        int buildNumber = result.getBuild().getNumber();
-        String pluginId = result.getId();
-        return getWebPage(JavaScriptSupport.JS_ENABLED, project, buildNumber + "/" + pluginId);
     }
 
     /**
