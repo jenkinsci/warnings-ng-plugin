@@ -11,23 +11,21 @@ import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
-import io.jenkins.plugins.forensics.blame.Blames;
-import io.jenkins.plugins.forensics.blame.FileBlame;
+import io.jenkins.plugins.forensics.miner.FileStatistics;
+import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link BlamesModel}.
+ * Tests the class {@link ForensicsModel}.
  *
- * @author Colin Kaschel
+ * @author Ullrich Hafner
  */
-class BlamesModelTest extends AbstractDetailsModelTest {
-    private static final String COMMIT = "commit";
-    private static final String NAME = "name";
-    private static final String EMAIL = "email";
-    private static final int EXPECTED_COLUMNS_SIZE = 6;
+class ForensicsModelTest extends AbstractDetailsModelTest {
+    private static final int EXPECTED_COLUMNS_SIZE = 7;
+    private static final String FILE_NAME = "/path/to/file-1";
 
     @Test
     void shouldConvertIssueToArrayWithAllColumnsAndRows() {
@@ -36,9 +34,9 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         Report report = new Report();
         report.add(createIssue(1));
         report.add(createIssue(2));
-        Blames blames = mock(Blames.class);
+        RepositoryStatistics statistics = mock(RepositoryStatistics.class);
 
-        BlamesModel model = createModel(blames);
+        ForensicsModel model = createModel(statistics);
 
         assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
@@ -46,21 +44,25 @@ class BlamesModelTest extends AbstractDetailsModelTest {
     }
 
     @Test
-    void shouldShowIssueWithBlames() {
+    void shouldShowIssueWithForensics() {
         Report report = new Report();
         Issue issue = createIssue(1);
         report.add(issue);
 
-        FileBlame blameRequest = mock(FileBlame.class);
-        when(blameRequest.getCommit(issue.getLineStart())).thenReturn(COMMIT);
-        when(blameRequest.getEmail(issue.getLineStart())).thenReturn(EMAIL);
-        when(blameRequest.getName(issue.getLineStart())).thenReturn(NAME);
+        RepositoryStatistics statistics = mock(RepositoryStatistics.class);
 
-        Blames blames = mock(Blames.class);
-        when(blames.contains(issue.getFileName())).thenReturn(true);
-        when(blames.getBlame(issue.getFileName())).thenReturn(blameRequest);
+        FileStatistics fileStatistics = mock(FileStatistics.class);
+        when(fileStatistics.getNumberOfAuthors()).thenReturn(15);
+        when(fileStatistics.getNumberOfCommits()).thenReturn(20);
+        when(fileStatistics.getLastModifiedInDays()).thenReturn(25L);
+        when(fileStatistics.getAgeInDays()).thenReturn(30L);
 
-        BlamesModel model = createModel(blames);
+        when(statistics.get(FILE_NAME)).thenReturn(fileStatistics);
+        when(statistics.contains(FILE_NAME)).thenReturn(true);
+
+        // FIXME: use int
+
+        ForensicsModel model = createModel(statistics);
 
         List<List<String>> rows = model.getContent(report);
         assertThat(rows).hasSize(1);
@@ -72,22 +74,23 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(MESSAGE));
         assertThat(columns.get(1)).contains("file-1:15");
         assertThat(columns.get(2)).contains("1");
-        assertThat(columns.get(3)).contains(NAME);
-        assertThat(columns.get(4)).contains(EMAIL);
-        assertThat(columns.get(5)).contains(COMMIT);
+        assertThat(columns.get(3)).contains("15");
+        assertThat(columns.get(4)).contains("20");
+        assertThat(columns.get(5)).contains("25");
+        assertThat(columns.get(6)).contains("30");
     }
 
     @Test
-    void shouldShowIssueWithoutBlames() {
+    void shouldShowIssueWithoutForensics() {
         Locale.setDefault(Locale.ENGLISH);
 
         Report report = new Report();
         Issue issue = createIssue(1);
         report.add(issue);
 
-        Blames blames = mock(Blames.class);
+        RepositoryStatistics blames = mock(RepositoryStatistics.class);
 
-        BlamesModel model = createModel(blames);
+        ForensicsModel model = createModel(blames);
 
         List<List<String>> rows = model.getContent(report);
         assertThat(rows).hasSize(1);
@@ -102,9 +105,10 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         assertThat(columns.get(3)).contains(BlamesModel.UNDEFINED);
         assertThat(columns.get(4)).contains(BlamesModel.UNDEFINED);
         assertThat(columns.get(5)).contains(BlamesModel.UNDEFINED);
+        assertThat(columns.get(6)).contains(BlamesModel.UNDEFINED);
     }
 
-    private BlamesModel createModel(final Blames blames) {
+    private ForensicsModel createModel(final RepositoryStatistics statistics) {
         DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
         when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
@@ -112,6 +116,6 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
         DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
 
-        return new BlamesModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, blames);
+        return new ForensicsModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, statistics);
     }
 }

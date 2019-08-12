@@ -53,9 +53,9 @@ class BlamesModel extends DetailsTableModel {
         visibleColumns.add(Messages.Table_Column_Details());
         visibleColumns.add(Messages.Table_Column_File());
         visibleColumns.add(Messages.Table_Column_Age());
-        visibleColumns.add("Author");
-        visibleColumns.add("Email");
-        visibleColumns.add("Commit");
+        visibleColumns.add(Messages.Table_Column_Author());
+        visibleColumns.add(Messages.Table_Column_Email());
+        visibleColumns.add(Messages.Table_Column_Commit());
         return visibleColumns;
     }
 

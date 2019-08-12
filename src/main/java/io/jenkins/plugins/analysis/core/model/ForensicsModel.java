@@ -43,8 +43,8 @@ class ForensicsModel extends DetailsTableModel {
         widths.add(1);
         widths.add(1);
         widths.add(1);
-        widths.add(1);
-        widths.add(1);
+        widths.add(2);
+        widths.add(2);
         return widths;
     }
 
@@ -54,10 +54,10 @@ class ForensicsModel extends DetailsTableModel {
         visibleColumns.add(Messages.Table_Column_Details());
         visibleColumns.add(Messages.Table_Column_File());
         visibleColumns.add(Messages.Table_Column_Age());
-        visibleColumns.add("#Authors");
-        visibleColumns.add("#Changes");
-        visibleColumns.add("Last Modified");
-        visibleColumns.add("Added At");
+        visibleColumns.add(Messages.Table_Column_AuthorsSize());
+        visibleColumns.add(Messages.Table_Column_CommitsSize());
+        visibleColumns.add(Messages.Table_Column_LastCommit());
+        visibleColumns.add(Messages.Table_Column_AddedAt());
         return visibleColumns;
     }
 
