@@ -8,7 +8,7 @@ jobs:
                       java {
                         id('java-id')
                         name('java-name')
-                         reportEncoding('UTF-8')
+                        reportEncoding('UTF-8')
                       }
                   }
               }

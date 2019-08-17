@@ -3,7 +3,7 @@ jobs:
       freeStyleJob('freestyle-analysis-model') {
           publishers {
               recordIssues {
-                  tool {
+                  tools {
                       spotBugs {
                            id('bugs')
                            name('SpotBugs Warnungen')
