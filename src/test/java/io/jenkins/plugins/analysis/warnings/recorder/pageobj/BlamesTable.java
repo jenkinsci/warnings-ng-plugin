@@ -132,7 +132,10 @@ public class BlamesTable extends PageObject {
         if (pages.size() >= pageNumber) {
             HtmlElement pageButton = pages.get(pageNumber - 1);
             clickOnElement(pageButton);
-            pageButton.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
+            while (!scmPaginate.getElementsByTagName("a").get(pageNumber - 1).getEnclosingElement("li").getAttribute("class").contains("active")) {
+                System.out.println("Waiting for Ajax call to filter issues table ...");
+                pageButton.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
+            }
 
             load();
         }

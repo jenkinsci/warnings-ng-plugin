@@ -208,7 +208,8 @@
                 columnDefs: [{
                     targets: 0,         // First column contains details button
                     orderable: false
-                }]
+                }],
+                columns: JSON.parse(table.attr('data-columns-definition'))
             });
 
             // Add event listener for opening and closing details
@@ -236,7 +237,7 @@
                         (function ($) {
                             var table = $(id).DataTable();
                             var model = JSON.parse(t.responseObject());
-                            table.rows.add(model.data).draw();
+                            table.rows.add(model).draw();
                         })(jQuery);
                     });
                 }

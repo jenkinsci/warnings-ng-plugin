@@ -1,15 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
+import io.jenkins.plugins.analysis.core.model.ForensicsModel.ForensicsRow;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
@@ -29,8 +26,6 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
     @Test
     void shouldConvertIssueToArrayWithAllColumnsAndRows() {
-        Locale.setDefault(Locale.ENGLISH);
-
         Report report = new Report();
         report.add(createIssue(1));
         report.add(createIssue(2));
@@ -61,29 +56,22 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         when(statistics.contains(FILE_NAME)).thenReturn(true);
 
         // FIXME: use int
-
         ForensicsModel model = createModel(statistics);
 
-        List<List<String>> rows = model.getContent(report);
-        assertThat(rows).hasSize(1);
+        ForensicsRow expected = new ForensicsRow();
+        expected.setDescription(EXPECTED_DESCRIPTION);
+        expected.setFileName(String.format("<a href=\"source.%s/#15\">file-1:15</a>",  issue.getId().toString()));
+        expected.setAge("1");
+        expected.setAuthorsSize("15");
+        expected.setCommitsSize("20");
+        expected.setModifiedDays(25);
+        expected.setAddedDays(30);
 
-        List<String> columns = rows.get(0);
-        assertThat(columns).hasSize(EXPECTED_COLUMNS_SIZE);
-
-        assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(DESCRIPTION));
-        assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(MESSAGE));
-        assertThat(columns.get(1)).contains("file-1:15");
-        assertThat(columns.get(2)).contains("1");
-        assertThat(columns.get(3)).contains("15");
-        assertThat(columns.get(4)).contains("20");
-        assertThat(columns.get(5)).contains("25");
-        assertThat(columns.get(6)).contains("30");
+        assertThat(model.getRow(report, issue, "d")).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
     void shouldShowIssueWithoutForensics() {
-        Locale.setDefault(Locale.ENGLISH);
-
         Report report = new Report();
         Issue issue = createIssue(1);
         report.add(issue);
@@ -92,30 +80,26 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
         ForensicsModel model = createModel(blames);
 
-        List<List<String>> rows = model.getContent(report);
-        assertThat(rows).hasSize(1);
+        ForensicsRow expected = new ForensicsRow();
+        expected.setDescription(EXPECTED_DESCRIPTION);
+        expected.setFileName(String.format("<a href=\"source.%s/#15\">file-1:15</a>",  issue.getId().toString()));
+        expected.setAge("1");
+        expected.setAuthorsSize(BlamesModel.UNDEFINED);
+        expected.setCommitsSize(BlamesModel.UNDEFINED);
+        expected.setModifiedDays(0);
+        expected.setAddedDays(0);
 
-        List<String> columns = rows.get(0);
-        assertThat(columns).hasSize(EXPECTED_COLUMNS_SIZE);
-
-        assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(DESCRIPTION));
-        assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(MESSAGE));
-        assertThat(columns.get(1)).contains("file-1:15");
-        assertThat(columns.get(2)).contains("1");
-        assertThat(columns.get(3)).contains(BlamesModel.UNDEFINED);
-        assertThat(columns.get(4)).contains(BlamesModel.UNDEFINED);
-        assertThat(columns.get(5)).contains(BlamesModel.UNDEFINED);
-        assertThat(columns.get(6)).contains(BlamesModel.UNDEFINED);
+        assertThat(model.getRow(report, issue, "d")).usingRecursiveComparison().isEqualTo(expected);
     }
 
     private ForensicsModel createModel(final RepositoryStatistics statistics) {
         DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
-        when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
+        when(descriptionProvider.getDescription(any())).thenReturn(EXPECTED_DESCRIPTION);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
         FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
         DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
 
-        return new ForensicsModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, statistics);
+        return new ForensicsModel(ageBuilder, fileNameRenderer, issue -> EXPECTED_DESCRIPTION, statistics);
     }
 }

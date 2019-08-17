@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.List;
 import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
@@ -10,22 +9,26 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import io.jenkins.plugins.analysis.core.model.AbstractDetailsModelTest;
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
-import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryTableModel;
+import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel;
+import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.DuplicationRow;
+
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Tests the class {@link DryTableModel}.
+ * Tests the class {@link DryModel}.
  *
  * @author Ullrich Hafner
  */
-class DryTableModelTest {
+class DryTableModelTest extends AbstractDetailsModelTest {
     private static final String DESCRIPTION = "DESCRIPTION";
 
     @Test
@@ -57,17 +60,22 @@ class DryTableModelTest {
 
         assertThat(model.getHeaders(report)).hasSize(6);
         assertThat(model.getWidths(report)).hasSize(6);
-        List<List<String>> rows = model.getContent(report);
-        assertThat(rows).hasSize(2);
 
-        List<String> columns = rows.get(0);
-        assertThat(columns).hasSize(6);
-        assertThat(columns.get(0)).contains(DESCRIPTION);
-        assertThat(columns.get(1)).contains("file-1:10").contains(issue.getId().toString());
-        assertThat(columns.get(2)).isEqualTo("<a href=\"NORMAL\">Normal</a>");
-        assertThat(columns.get(3)).isEqualTo("15");
-        assertThat(columns.get(4)).contains("file-2:5").contains(duplicate.getId().toString());
-        assertThat(columns.get(5)).isEqualTo("1");
+        DuplicationRow expected = new DuplicationRow();
+        expected.setDescription("<div class=\"details-control\" data-description=\"d\"></div>");
+        expected.setFileName(getFileNameFor(issue, 1));
+        expected.setAge("1");
+        expected.setPackageName("<a href=\"packageName.45/\">-</a>");
+        expected.setDuplicatedIn(String.format("<ul><li>%s</li></ul>", getFileNameFor(duplicate, 2)));
+        expected.setLinesCount("15");
+        expected.setSeverity("<a href=\"NORMAL\">Normal</a>");
+
+        assertThat(model.getRow(report, issue, "d")).isEqualToComparingFieldByField(expected);
+    }
+
+    private String getFileNameFor(final Issue issue, final int index) {
+        return String.format("<a href=\"source.%s/#%d\">file-%d:%d</a>",  issue.getId().toString(),
+                issue.getLineStart(), index, issue.getLineStart());
     }
 
     private DetailsTableModel createModel() {
@@ -79,6 +87,6 @@ class DryTableModelTest {
 
         DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
 
-        return new DryTableModel(ageBuilder, fileNameRenderer, descriptionProvider);
+        return new DryModel(ageBuilder, fileNameRenderer, descriptionProvider);
     }
 }

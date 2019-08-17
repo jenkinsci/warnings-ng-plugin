@@ -30,13 +30,13 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
     public GitSampleRepoRule gitRepo = new GitSampleRepoRule();
 
     /**
-     * Tests blaming one issue with a fake git repository. Test run from a pipeline script.
+     * Shows the statistics of an actual git repository with a single file in a pipeline script.
      *
      * @throws Exception
      *         if there is a problem with the git repository
      */
     @Test
-    public void shouldBlameOneIssueWithPipeline() throws Exception {
+    public void shouldShowStatisticsOfOneIssue() throws Exception {
         gitRepo.init();
         createAndCommitFile(FILE_NAME, "public class Test {}");
 

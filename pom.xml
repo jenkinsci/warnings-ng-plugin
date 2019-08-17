@@ -45,6 +45,7 @@
     <json.version>20190722</json.version>
     <jackson-databind.version>2.9.9</jackson-databind.version>
     <slf4j.version>1.7.28</slf4j.version>
+    <prettytime.version>4.0.2.Final</prettytime.version>
 
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.5.1</junit.version>
@@ -187,6 +188,11 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
       <version>${analysis-model-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.ocpsoft.prettytime</groupId>
+      <artifactId>prettytime</artifactId>
+      <version>${prettytime.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

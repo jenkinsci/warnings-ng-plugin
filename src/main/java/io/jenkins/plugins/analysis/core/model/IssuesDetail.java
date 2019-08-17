@@ -12,9 +12,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
@@ -249,21 +246,9 @@ public class IssuesDetail implements ModelObject {
         return labelProvider.getForensicsModel(owner, getUrl(), result.getForensics());
     }
 
-    private String toJsonArray(final List<List<String>> rows) {
+    private String toJsonArray(final List<Object> rows) {
         JacksonFacade facade = new JacksonFacade();
-        ArrayNode dataValue = facade.createArray();
-
-        for (List<String> row : rows) {
-            ArrayNode rowArray = facade.createArray();
-            for (String column : row) {
-                rowArray.add(column);
-            }
-            dataValue.add(rowArray);
-        }
-
-        ObjectNode data = facade.createObject();
-        data.set("data", dataValue);
-        return data.toString();
+        return facade.toJson(rows);
     }
 
     /**
@@ -277,7 +262,7 @@ public class IssuesDetail implements ModelObject {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getTableModel(final String id) {
-        List<List<String>> rows;
+        List<Object> rows;
         if ("#issues".equals(id)) {
             rows = getIssuesModel().getContent(getIssues());
         }

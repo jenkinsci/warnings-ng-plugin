@@ -31,7 +31,7 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
-public class DetailsTableModel {
+public abstract class DetailsTableModel {
     private static final Sanitizer SANITIZER = new Sanitizer();
 
     private final AgeBuilder ageBuilder;
@@ -73,23 +73,10 @@ public class DetailsTableModel {
      * @return the table headers
      */
     @SuppressWarnings("unused") // called by Jelly view
-    public List<String> getHeaders(final Report report) {
-        List<String> visibleColumns = new ArrayList<>();
-        visibleColumns.add(Messages.Table_Column_Details());
-        visibleColumns.add(Messages.Table_Column_File());
-        if (report.hasPackages()) {
-            visibleColumns.add(Messages.Table_Column_Package());
-        }
-        if (report.hasCategories()) {
-            visibleColumns.add(Messages.Table_Column_Category());
-        }
-        if (report.hasTypes()) {
-            visibleColumns.add(Messages.Table_Column_Type());
-        }
-        visibleColumns.add(Messages.Table_Column_Severity());
-        visibleColumns.add(Messages.Table_Column_Age());
-        return visibleColumns;
-    }
+    public abstract List<String> getHeaders(Report report);
+
+    @SuppressWarnings("unused") // called by Jelly view
+    public abstract String getColumnsDefinition(Report report);
 
     /**
      * Returns the widths of the table headers of the report table.
@@ -100,23 +87,7 @@ public class DetailsTableModel {
      * @return the width of the table headers
      */
     @SuppressWarnings("unused") // called by Jelly view
-    public List<Integer> getWidths(final Report report) {
-        List<Integer> widths = new ArrayList<>();
-        widths.add(1);
-        widths.add(1);
-        if (report.hasPackages()) {
-            widths.add(2);
-        }
-        if (report.hasCategories()) {
-            widths.add(1);
-        }
-        if (report.hasTypes()) {
-            widths.add(1);
-        }
-        widths.add(1);
-        widths.add(1);
-        return widths;
-    }
+    public abstract List<Integer> getWidths(Report report);
 
     /**
      * Converts the specified set of issues into a table.
@@ -126,43 +97,15 @@ public class DetailsTableModel {
      *
      * @return the table as String
      */
-    public List<List<String>> getContent(final Report report) {
-        List<List<String>> rows = new ArrayList<>();
+    public List<Object> getContent(final Report report) {
+        List<Object> rows = new ArrayList<>();
         for (Issue issue : report) {
             rows.add(getRow(report, issue, descriptionProvider.getDescription(issue)));
         }
         return rows;
     }
 
-    /**
-     * Returns an JSON array that represents the columns of the issues table.
-     *
-     * @param report
-     *         the report to show in the table
-     * @param issue
-     *         the issue to get the column properties for
-     * @param description
-     *         description of the issue
-     *
-     * @return the columns of one row
-     */
-    protected List<String> getRow(final Report report, final Issue issue, final String description) {
-        List<String> columns = new ArrayList<>();
-        columns.add(formatDetails(issue, description));
-        columns.add(formatFileName(issue));
-        if (report.hasPackages()) {
-            columns.add(formatProperty("packageName", issue.getPackageName()));
-        }
-        if (report.hasCategories()) {
-            columns.add(formatProperty("category", issue.getCategory()));
-        }
-        if (report.hasTypes()) {
-            columns.add(formatProperty("type", issue.getType()));
-        }
-        columns.add(formatSeverity(issue.getSeverity()));
-        columns.add(formatAge(issue));
-        return columns;
-    }
+    public abstract Object getRow(Report report, Issue issue, String description);
 
     /**
      * Formats the text of the details column. The details column is not directly shown, it rather is a hidden element
