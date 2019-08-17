@@ -12,8 +12,11 @@ import static j2html.TagCreator.*;
 
 /**
  * Base class for tests of the details models.
+ *
+ * @author Ullrich Hafner
  */
-abstract class AbstractDetailsModelTest {
+public abstract class AbstractDetailsModelTest {
+    protected static final String EXPECTED_DESCRIPTION = "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;Hello message with &lt;a href=&quot;url&quot;&gt;link&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt; d\"></div>";
     static final String DESCRIPTION
             = join("Hello description with", a().withHref("url").withText("link")).render();
     static final String MESSAGE

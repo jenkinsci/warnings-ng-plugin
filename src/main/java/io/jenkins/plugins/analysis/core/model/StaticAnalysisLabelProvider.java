@@ -74,7 +74,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Returns the model for the details table.
+     * Returns the model for the issues details table.
      *
      * @param build
      *         the build of the results
@@ -84,22 +84,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the table model
      */
     public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url) {
-        return new DetailsTableModel(getAgeBuilder(build, url),
+        return new IssuesModel(getAgeBuilder(build, url),
                 getFileNameRenderer(build), this);
-    }
-
-    /**
-     * Creates a {@link DefaultAgeBuilder} for the specified run and url.
-     *
-     * @param owner
-     *         the run to get the age from
-     * @param url
-     *         the url to the results
-     *
-     * @return the age builder
-     */
-    protected DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
-        return new DefaultAgeBuilder(owner.getNumber(), url);
     }
 
     /**
@@ -114,8 +100,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *
      * @return the table model
      */
-    public DetailsTableModel getBlamesModel(final Run<?, ?> build,
-            final String url, final Blames blames) {
+    public DetailsTableModel getBlamesModel(final Run<?, ?> build, final String url, final Blames blames) {
         return new BlamesModel(getAgeBuilder(build, url),
                 getFileNameRenderer(build), this, blames);
     }
@@ -132,10 +117,24 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *
      * @return the table model
      */
-    public DetailsTableModel getForensicsModel(final Run<?, ?> build,
-            final String url, final RepositoryStatistics statistics) {
+    public DetailsTableModel getForensicsModel(final Run<?, ?> build, final String url,
+            final RepositoryStatistics statistics) {
         return new ForensicsModel(getAgeBuilder(build, url),
                 getFileNameRenderer(build), this, statistics);
+    }
+
+    /**
+     * Creates a {@link DefaultAgeBuilder} for the specified run and url.
+     *
+     * @param owner
+     *         the run to get the age from
+     * @param url
+     *         the url to the results
+     *
+     * @return the age builder
+     */
+    protected DefaultAgeBuilder getAgeBuilder(final Run<?, ?> owner, final String url) {
+        return new DefaultAgeBuilder(owner.getNumber(), url);
     }
 
     /**

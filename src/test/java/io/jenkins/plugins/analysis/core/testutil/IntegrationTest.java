@@ -8,6 +8,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -285,7 +286,7 @@ public abstract class IntegrationTest extends ResourceTest {
         try {
             return Paths.get(getWorkspace(job).child(fileName).getRemote())
                     .toAbsolutePath()
-                    .toRealPath()
+                    .toRealPath(LinkOption.NOFOLLOW_LINKS)
                     .toString()
                     .replace('\\', '/');
         }
