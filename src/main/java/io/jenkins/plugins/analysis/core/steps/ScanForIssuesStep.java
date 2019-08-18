@@ -29,6 +29,7 @@ import hudson.util.FormValidation;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
+import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 
 /**
@@ -40,6 +41,7 @@ public class ScanForIssuesStep extends Step {
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
     private boolean isBlameDisabled;
+    private boolean isForensicsDisabled;
 
     private List<RegexpFilter> filters = new ArrayList<>();
 
@@ -93,6 +95,21 @@ public class ScanForIssuesStep extends Step {
         isBlameDisabled = blameDisabled;
     }
 
+    /**
+     * Returns whether SCM forensics should be disabled.
+     *
+     * @return {@code true} if SCM forensics should be disabled
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getForensicsDisabled() {
+        return isForensicsDisabled;
+    }
+
+    @DataBoundSetter
+    public void setForensicsDisabled(final boolean forensicsDisabled) {
+        isForensicsDisabled = forensicsDisabled;
+    }
+
     @Nullable
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
@@ -123,6 +140,7 @@ public class ScanForIssuesStep extends Step {
         private final Tool tool;
         private final String sourceCodeEncoding;
         private final boolean isBlameDisabled;
+        private final boolean isForensicsDisabled;
         private final List<RegexpFilter> filters;
 
         /**
@@ -139,6 +157,7 @@ public class ScanForIssuesStep extends Step {
             tool = step.getTool();
             sourceCodeEncoding = step.getSourceCodeEncoding();
             isBlameDisabled = step.getBlameDisabled();
+            isForensicsDisabled = step.getForensicsDisabled();
             filters = step.getFilters();
         }
 
@@ -149,7 +168,8 @@ public class ScanForIssuesStep extends Step {
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), workspace, getRun(), new FilePath(getRun().getRootDir()), listener,
-                    isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
+                    isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
+                    isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
 
             return issuesScanner.scan();
         }

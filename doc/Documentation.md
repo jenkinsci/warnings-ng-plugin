@@ -534,8 +534,11 @@ child row within the table.
 
 ### Source code blames (for Git projects)
 
+:warning: This feature requires the installation of an additional plugin: 
+[Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
+
 If not disabled in the job configuration, the plugin will execute `git blame` to determine who is the responsible 
-'author' of an issue. In the corresponding *Source Control* view all issues will be listed with author name, email and
+'author' of an issue. In the corresponding *SCM Blames* view all issues will be listed with author name, email and
 commit ID. 
   
 ![source control overview](images/git.png) 
@@ -543,6 +546,26 @@ commit ID.
 In order to disable the blame feature, set the property `blameDisabled` to `true`, see the following example:
 ```
 recordIssues blameDisabled: true, tool: java([pattern: '*.log')
+```
+
+### Repository forensics (for Git projects)
+
+:warning: This feature requires the installation of an additional plugin: 
+[Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
+
+If not disabled in the job configuration, the plugin will mine the source code repository in the style of 
+*Code as a Crime Scene* (Adam Tornhill, November 2013) to determine statistics of the affected files.
+In the corresponding *SCM Forensics* view all issues will be listed with the following properties of the affected files:
+  - total number of commits
+  - total number of different authors
+  - creation time
+  - last modification time
+  
+![source control overview](images/forensics-view.png) 
+
+In order to disable the forensics feature, set the property `forensicsDisabled` to `true`, see the following example:
+```
+recordIssues forensicsDisabled: true, tool: java([pattern: '*.log')
 ```
 
 ### Source code view

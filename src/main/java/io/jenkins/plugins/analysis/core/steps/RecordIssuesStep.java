@@ -84,6 +84,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean isAggregatingResults;
 
     private boolean isBlameDisabled;
+    private boolean isForensicsDisabled;
 
     private String id;
     private String name;
@@ -727,6 +728,21 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns whether SCM forensics should be disabled.
+     *
+     * @return {@code true} if SCM forensics should be disabled
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getForensicsDisabled() {
+        return isForensicsDisabled;
+    }
+
+    @DataBoundSetter
+    public void setForensicsDisabled(final boolean forensicsDisabled) {
+        isForensicsDisabled = forensicsDisabled;
+    }
+
+    /**
      * Returns whether recording should be enabled for failed builds as well.
      *
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
@@ -912,6 +928,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setEnabledForFailure(step.getEnabledForFailure());
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.getBlameDisabled());
+            recorder.setForensicsDisabled(step.getForensicsDisabled());
             recorder.setId(step.getId());
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());

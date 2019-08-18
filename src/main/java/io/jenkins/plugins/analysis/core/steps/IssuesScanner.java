@@ -44,6 +44,7 @@ import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileLocations;
 import io.jenkins.plugins.forensics.miner.MinerFactory;
 import io.jenkins.plugins.forensics.miner.RepositoryMiner;
+import io.jenkins.plugins.forensics.miner.RepositoryMiner.NullMiner;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.forensics.util.FilteredLog;
 
@@ -64,14 +65,19 @@ class IssuesScanner {
     private final List<RegexpFilter> filters;
     private final TaskListener listener;
     private final BlameMode blameMode;
+    private final ForensicsMode forensicsMode;
 
     enum BlameMode {
         ENABLED, DISABLED
     }
 
-    IssuesScanner(final Tool tool, final List<RegexpFilter> filters,
-            final Charset sourceCodeEncoding, final FilePath workspace, final Run<?, ?> run,
-            final FilePath jenkinsRootDir, final TaskListener listener, final BlameMode blameMode) {
+    enum ForensicsMode {
+        ENABLED, DISABLED
+    }
+
+    IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
+            final FilePath workspace, final Run<?, ?> run, final FilePath jenkinsRootDir, final TaskListener listener,
+            final BlameMode blameMode, final ForensicsMode forensicsMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -80,6 +86,7 @@ class IssuesScanner {
         this.jenkinsRootDir = jenkinsRootDir;
         this.listener = listener;
         this.blameMode = blameMode;
+        this.forensicsMode = forensicsMode;
     }
 
     public AnnotatedReport scan() throws IOException, InterruptedException {
@@ -120,17 +127,24 @@ class IssuesScanner {
                 log.getErrorMessages().forEach(report::logError);
 
             }
-            FilteredLog log = new FilteredLog("Errors while mining source code repository for "
-                    + run.getFullDisplayName());
-            RepositoryMiner miner = MinerFactory.findMinerFor(run, workspace, listener, log);
             result = workspace.act(new ReportPostProcessor(
                     tool.getActualId(), report, sourceCodeEncoding.name(),
-                    blamer, miner, filters));
-
+                    blamer, createMiner(), filters));
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()), workspace);
         }
         logger.log(result.getReport());
         return result;
+    }
+
+    private RepositoryMiner createMiner() {
+        if (forensicsMode == ForensicsMode.ENABLED) {
+            FilteredLog log = new FilteredLog("Errors while mining source code repository for "
+                    + run.getFullDisplayName());
+            return MinerFactory.findMinerFor(run, workspace, listener, log);
+        }
+        else {
+            return new NullMiner();
+        }
     }
 
     private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder,
