@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")
+@SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractDetailsModelTest {
     static final String DESCRIPTION
             = join("Hello description with", a().withHref("url").withText("link")).render();
