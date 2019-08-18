@@ -75,6 +75,7 @@ class IssuesScanner {
         ENABLED, DISABLED
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
             final FilePath workspace, final Run<?, ?> run, final FilePath jenkinsRootDir, final TaskListener listener,
             final BlameMode blameMode, final ForensicsMode forensicsMode) {
