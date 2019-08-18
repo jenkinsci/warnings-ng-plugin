@@ -36,6 +36,6 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
 
         DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
 
-        return new TableRow(ageBuilder, fileNameRenderer, i -> DESCRIPTION, issue, "d");
+        return new TableRow(ageBuilder, fileNameRenderer, i -> DESCRIPTION, issue);
     }
 }

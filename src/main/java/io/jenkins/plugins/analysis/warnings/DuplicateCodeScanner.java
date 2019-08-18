@@ -323,9 +323,9 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        public DuplicationRow getRow(final Report report, final Issue issue, final String description) {
+        public DuplicationRow getRow(final Report report, final Issue issue) {
             DuplicationRow row = new DuplicationRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                    issue, description);
+                    issue);
             row.setPackageName(issue);
             row.setSeverity(issue);
             row.setLinesCount(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
@@ -353,8 +353,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
             private String duplicatedIn;
 
             DuplicationRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                    final DescriptionProvider descriptionProvider, final Issue issue, final String description) {
-                super(ageBuilder, fileNameRenderer, descriptionProvider, issue, description);
+                    final DescriptionProvider descriptionProvider, final Issue issue) {
+                super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
             }
 
             public String getPackageName() {

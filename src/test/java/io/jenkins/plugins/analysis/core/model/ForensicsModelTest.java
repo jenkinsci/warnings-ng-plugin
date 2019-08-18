@@ -88,7 +88,7 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         // FIXME: use int
         ForensicsModel model = createModel(statistics);
 
-        ForensicsRow actualRow = model.getRow(report, issue, "d");
+        ForensicsRow actualRow = model.getRow(report, issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasAuthorsSize("15")
@@ -109,12 +109,12 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
         ForensicsModel model = createModel(blames);
 
-        ForensicsRow actualRow = model.getRow(report, issue, "d");
+        ForensicsRow actualRow = model.getRow(report, issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
-//                .hasFileName(createExpectedFileName(issue))
                 .hasAge("1")
                 .hasAuthorsSize(ForensicsModel.UNDEFINED)
                 .hasCommitsSize(ForensicsModel.UNDEFINED);
+        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
 
         assertThat(actualRow.getModifiedDays()).hasSort("0");
         assertThat(actualRow.getAddedDays()).hasSort("0");
@@ -122,12 +122,12 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
     private ForensicsModel createModel(final RepositoryStatistics statistics) {
         DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
-        when(descriptionProvider.getDescription(any())).thenReturn(EXPECTED_DESCRIPTION);
+        when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
         FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
         DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
 
-        return new ForensicsModel(ageBuilder, fileNameRenderer, issue -> EXPECTED_DESCRIPTION, statistics);
+        return new ForensicsModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, statistics);
     }
 }

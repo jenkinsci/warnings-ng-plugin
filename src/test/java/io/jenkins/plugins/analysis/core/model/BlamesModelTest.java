@@ -73,7 +73,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         BlamesModel model = createModel(blames);
 
-        BlamesRow actualRow = model.getRow(report, issue, "d");
+        BlamesRow actualRow = model.getRow(report, issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(COMMIT)
@@ -92,7 +92,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         BlamesModel model = createModel(blames);
 
-        BlamesRow actualRow = model.getRow(report, issue, "d");
+        BlamesRow actualRow = model.getRow(report, issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(BlamesModel.UNDEFINED)
