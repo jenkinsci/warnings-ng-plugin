@@ -85,12 +85,10 @@ public class ForensicsModel extends DetailsTableModel {
     }
 
     @Override
-    public String getColumnsDefinition(final Report report) {
-        ColumnDefinitionBuilder builder = new ColumnDefinitionBuilder();
+    public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
         builder.add("description").add("fileName").add("age").add("authorsSize").add("commitsSize")
                 .add("modifiedDays", "num")
                 .add("addedDays", "num");
-        return builder.toString();
     }
 
     /**

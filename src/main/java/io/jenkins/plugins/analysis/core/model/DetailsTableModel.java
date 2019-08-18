@@ -83,10 +83,24 @@ public abstract class DetailsTableModel {
      *         the report to show
      *
      * @return the table headers
-     * @see ColumnDefinitionBuilder
      */
     @SuppressWarnings("unused") // called by Jelly view
-    public abstract String getColumnsDefinition(Report report);
+    public final String getColumnsDefinition(final Report report) {
+        ColumnDefinitionBuilder builder = new ColumnDefinitionBuilder();
+        configureColumns(builder, report);
+        return builder.toString();
+    }
+
+    /**
+     * Configures the columns of the report table.
+     *
+     * @param builder
+     *         the columns definition builder
+     * @param report
+     *         the report to show
+     */
+    @SuppressWarnings("unused") // called by Jelly view
+    protected abstract void configureColumns(ColumnDefinitionBuilder builder, Report report);
 
     /**
      * Returns the widths of the table headers of the report table.
