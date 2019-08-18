@@ -337,36 +337,23 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
         @Override
         public String getColumnsDefinition(final Report report) {
-            StringBuilder builder = new StringBuilder("[");
-            builder.append("{\"data\": \"description\"},");
-            builder.append("{\"data\": \"fileName\"},");
+            ColumnDefinitionBuilder builder = new ColumnDefinitionBuilder();
+            builder.add("description").add("fileName");
             if (report.hasPackages()) {
-                builder.append("{\"data\": \"packageName\"},");
+                builder.add("packageName");
             }
-            builder.append("{\"data\": \"severity\"},");
-            builder.append("{\"data\": \"linesCount\"},");
-            builder.append("{\"data\": \"duplicatedIn\"},");
-            builder.append("{\"data\": \"age\"}");
-            builder.append("]");
+            builder.add("severity").add("linesCount").add("duplicatedIn").add("age");
             return builder.toString();
         }
 
-        public static class DuplicationRow {
-            private String description;
-            private String fileName;
+        /**
+         * A table row that shows the properties of a code duplication.
+         */
+        public static class DuplicationRow extends TableRow {
             private String packageName;
             private String severity;
             private String linesCount;
             private String duplicatedIn;
-            private String age;
-
-            public String getDescription() {
-                return description;
-            }
-
-            public String getFileName() {
-                return fileName;
-            }
 
             public String getPackageName() {
                 return packageName;
@@ -382,22 +369,6 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
             public String getDuplicatedIn() {
                 return duplicatedIn;
-            }
-
-            public String getAge() {
-                return age;
-            }
-
-            void setDescription(final String description) {
-                this.description = description;
-            }
-
-            void setFileName(final String fileName) {
-                this.fileName = fileName;
-            }
-
-            void setAge(final String age) {
-                this.age = age;
             }
 
             void setPackageName(final String packageName) {

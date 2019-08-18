@@ -38,6 +38,14 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getColumnsDefinition(report)).isEqualTo("["
+                + "{\"data\": \"description\"},"
+                + "{\"data\": \"fileName\"},"
+                + "{\"data\": \"age\"},"
+                + "{\"data\": \"author\"},"
+                + "{\"data\": \"email\"},"
+                + "{\"data\": \"commit\"}"
+                + "]");
         assertThat(model.getContent(report)).hasSize(2);
     }
 

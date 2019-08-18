@@ -35,6 +35,29 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
         assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getColumnsDefinition(report)).isEqualTo("["
+                + "{\"data\": \"description\"},"
+                + "{\"data\": \"fileName\"},"
+                + "{\"data\": \"age\"},"
+                + "{\"data\": \"authorsSize\"},"
+                + "{\"data\": \"commitsSize\"},"
+                + "{"
+                + "  \"type\": \"num\","
+                + "  \"data\": \"modifiedDays\","
+                + "  \"render\": {"
+                + "     \"_\": \"display\","
+                + "     \"sort\": \"sort\""
+                + "  }"
+                + "},"
+                + "{"
+                + "  \"type\": \"num\","
+                + "  \"data\": \"addedDays\","
+                + "  \"render\": {"
+                + "     \"_\": \"display\","
+                + "     \"sort\": \"sort\""
+                + "  }"
+                + "}"
+                + "]");
         assertThat(model.getContent(report)).hasSize(2);
     }
 
