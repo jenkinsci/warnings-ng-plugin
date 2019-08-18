@@ -150,9 +150,9 @@ public abstract class DetailsTableModel {
     public static class TableRow {
         private static final Sanitizer SANITIZER = new Sanitizer();
 
-        private String description;
-        private DetailedColumnDefinition fileName;
-        private String age;
+        private final String description;
+        private final DetailedColumnDefinition fileName;
+        private final String age;
 
         /**
          * Creates a new {@link TableRow}.
@@ -241,7 +241,7 @@ public abstract class DetailsTableModel {
          *
          * @return safe HTML
          */
-        protected String render(final UnescapedText text) {
+        protected final String render(final UnescapedText text) {
             return SANITIZER.render(text);
         }
 
@@ -253,7 +253,7 @@ public abstract class DetailsTableModel {
          *
          * @return safe HTML
          */
-        protected String render(final String html) {
+        protected final String render(final String html) {
             return SANITIZER.render(html);
         }
 
