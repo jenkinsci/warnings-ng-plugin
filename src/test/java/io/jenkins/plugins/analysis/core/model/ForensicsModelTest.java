@@ -5,14 +5,11 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.ForensicsModel.ForensicsRow;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -121,13 +118,6 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
     }
 
     private ForensicsModel createModel(final RepositoryStatistics statistics) {
-        DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
-        when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
-        FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
-        DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
-
-        return new ForensicsModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, statistics);
+        return new ForensicsModel(createAgeBuilder(), createFileNameRenderer(), issue -> DESCRIPTION, statistics);
     }
 }

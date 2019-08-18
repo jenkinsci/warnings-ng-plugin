@@ -6,13 +6,10 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.BlamesModel.BlamesRow;
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -102,13 +99,6 @@ class BlamesModelTest extends AbstractDetailsModelTest {
     }
 
     private BlamesModel createModel(final Blames blames) {
-        DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
-        when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
-        FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
-        DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
-
-        return new BlamesModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, blames);
+        return new BlamesModel(createAgeBuilder(), createFileNameRenderer(), issue -> DESCRIPTION, blames);
     }
 }

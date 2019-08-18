@@ -11,16 +11,10 @@ import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.model.AbstractDetailsModelTest;
-import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.DuplicationRow;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link DryModel}.
@@ -93,14 +87,6 @@ class DryTableModelTest extends AbstractDetailsModelTest {
     }
 
     private DryModel createModel() {
-        DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
-        when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
-        FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
-
-        DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
-
-        return new DryModel(ageBuilder, fileNameRenderer, descriptionProvider);
+        return new DryModel(createAgeBuilder(), createFileNameRenderer(), issue -> DESCRIPTION);
     }
 }
