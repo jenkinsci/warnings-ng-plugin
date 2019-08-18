@@ -84,7 +84,7 @@ public class ForensicsModel extends DetailsTableModel {
 
     @Override
     public void configureColumns(final ColumnDefinitionBuilder builder, final Report report) {
-        builder.add("description").add("fileName").add("age").add("authorsSize").add("commitsSize")
+        builder.add("description").add("fileName", "string").add("age").add("authorsSize").add("commitsSize")
                 .add("modifiedDays", "num")
                 .add("addedDays", "num");
     }
@@ -129,7 +129,8 @@ public class ForensicsModel extends DetailsTableModel {
         }
 
         void setModifiedDays(final long modifiedDays) {
-            this.modifiedDays = new DetailedColumnDefinition(getElapsedTime(modifiedDays), String.valueOf(modifiedDays));
+            this.modifiedDays = new DetailedColumnDefinition(getElapsedTime(modifiedDays),
+                    String.valueOf(modifiedDays));
         }
 
         void setAddedDays(final long addedDays) {

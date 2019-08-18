@@ -335,7 +335,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
         @Override
         public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
-            builder.add("description").add("fileName");
+            builder.add("description").add("fileName", "string");
             if (report.hasPackages()) {
                 builder.add("packageName");
             }

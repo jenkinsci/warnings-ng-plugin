@@ -36,7 +36,14 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getColumnsDefinition(report)).isEqualTo("["
                 + "{\"data\": \"description\"},"
-                + "{\"data\": \"fileName\"},"
+                + "{"
+                + "  \"type\": \"string\","
+                + "  \"data\": \"fileName\","
+                + "  \"render\": {"
+                + "     \"_\": \"display\","
+                + "     \"sort\": \"sort\""
+                + "  }"
+                + "},"
                 + "{\"data\": \"packageName\"},"
                 + "{\"data\": \"category\"},"
                 + "{\"data\": \"type\"},"
@@ -45,12 +52,12 @@ class IssuesModelTest extends AbstractDetailsModelTest {
 
         IssuesRow actualRow = model.getRow(report, issue, "d");
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
-                .hasFileName(createExpectedFileName(issue))
                 .hasAge("1")
                 .hasPackageName(PACKAGE_NAME)
                 .hasCategory("<a href=\"category.1296530210/\">category-1</a>")
                 .hasType("<a href=\"type.-858804642/\">type-1</a>")
                 .hasSeverity("<a href=\"HIGH\">High</a>");
+        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
     }
 
     @Test

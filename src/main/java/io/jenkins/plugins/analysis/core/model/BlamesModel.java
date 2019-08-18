@@ -75,8 +75,8 @@ public class BlamesModel extends DetailsTableModel {
     }
 
     @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
-        builder.add("description").add("fileName").add("age").add("author").add("email").add("commit");
+    public void configureColumns(final ColumnDefinitionBuilder builder, final Report report) {
+        builder.add("description").add("fileName", "string").add("age").add("author").add("email").add("commit");
     }
 
     /**

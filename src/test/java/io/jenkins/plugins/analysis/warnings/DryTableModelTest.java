@@ -62,7 +62,14 @@ class DryTableModelTest extends AbstractDetailsModelTest {
         assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getColumnsDefinition(report)).isEqualTo("["
                 + "{\"data\": \"description\"},"
-                + "{\"data\": \"fileName\"},"
+                + "{"
+                + "  \"type\": \"string\","
+                + "  \"data\": \"fileName\","
+                + "  \"render\": {"
+                + "     \"_\": \"display\","
+                + "     \"sort\": \"sort\""
+                + "  }"
+                + "},"
                 + "{\"data\": \"severity\"},"
                 + "{\"data\": \"linesCount\"},"
                 + "{\"data\": \"duplicatedIn\"},"
@@ -70,8 +77,8 @@ class DryTableModelTest extends AbstractDetailsModelTest {
 
         DuplicationRow actualRow = model.getRow(report, issue, "d");
         assertThat(actualRow).hasDescription("<div class=\"details-control\" data-description=\"d\"></div>")
-                .hasFileName(getFileNameFor(issue, 1))
                 .hasAge("1");
+        assertThat(actualRow.getFileName()).hasDisplay(getFileNameFor(issue, 1)).hasSort("/path/to/file-1:0000010");
         assertThat(actualRow.getPackageName()).isEqualTo("<a href=\"packageName.45/\">-</a>");
         assertThat(actualRow.getDuplicatedIn()).isEqualTo(
                 String.format("<ul><li>%s</li></ul>", getFileNameFor(duplicate, 2)));
