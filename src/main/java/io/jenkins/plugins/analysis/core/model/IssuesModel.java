@@ -96,8 +96,7 @@ public class IssuesModel extends DetailsTableModel {
     }
 
     @Override
-    public String getColumnsDefinition(final Report report) {
-        ColumnDefinitionBuilder builder = new ColumnDefinitionBuilder();
+    public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
         builder.add("description").add("fileName");
         if (report.hasPackages()) {
             builder.add("packageName");
@@ -109,7 +108,6 @@ public class IssuesModel extends DetailsTableModel {
             builder.add("type");
         }
         builder.add("severity").add("age");
-        return builder.toString();
     }
 
     /**

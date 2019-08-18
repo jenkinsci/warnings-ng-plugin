@@ -336,14 +336,12 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        public String getColumnsDefinition(final Report report) {
-            ColumnDefinitionBuilder builder = new ColumnDefinitionBuilder();
+        public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
             builder.add("description").add("fileName");
             if (report.hasPackages()) {
                 builder.add("packageName");
             }
             builder.add("severity").add("linesCount").add("duplicatedIn").add("age");
-            return builder.toString();
         }
 
         /**
