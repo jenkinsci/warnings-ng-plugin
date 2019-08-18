@@ -555,7 +555,8 @@ recordIssues blameDisabled: true, tool: java([pattern: '*.log')
 [Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
 
 If not disabled in the job configuration, the plugin will mine the source code repository in the style of 
-*Code as a Crime Scene* (Adam Tornhill, November 2013) to determine statistics of the affected files.
+[Code as a Crime Scene](https://www.adamtornhill.com/articles/crimescene/codeascrimescene.htm) 
+(Adam Tornhill, November 2013) to determine statistics of the affected files.
 In the corresponding *SCM Forensics* view all issues will be listed with the following properties of the affected files:
   - total number of commits
   - total number of different authors
