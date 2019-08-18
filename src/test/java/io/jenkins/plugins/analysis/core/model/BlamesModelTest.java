@@ -40,7 +40,14 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getColumnsDefinition(report)).isEqualTo("["
                 + "{\"data\": \"description\"},"
-                + "{\"data\": \"fileName\"},"
+                + "{"
+                + "  \"type\": \"string\","
+                + "  \"data\": \"fileName\","
+                + "  \"render\": {"
+                + "     \"_\": \"display\","
+                + "     \"sort\": \"sort\""
+                + "  }"
+                + "},"
                 + "{\"data\": \"age\"},"
                 + "{\"data\": \"author\"},"
                 + "{\"data\": \"email\"},"
@@ -68,11 +75,11 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         BlamesRow actualRow = model.getRow(report, issue, "d");
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
-                .hasFileName(createExpectedFileName(issue))
                 .hasAge("1")
                 .hasCommit(COMMIT)
                 .hasAuthor(NAME)
                 .hasEmail(EMAIL);
+        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
     }
 
     @Test
@@ -87,11 +94,11 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         BlamesRow actualRow = model.getRow(report, issue, "d");
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
-                .hasFileName(createExpectedFileName(issue))
                 .hasAge("1")
                 .hasCommit(BlamesModel.UNDEFINED)
                 .hasAuthor(BlamesModel.UNDEFINED)
                 .hasEmail(BlamesModel.UNDEFINED);
+        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
     }
 
     private BlamesModel createModel(final Blames blames) {

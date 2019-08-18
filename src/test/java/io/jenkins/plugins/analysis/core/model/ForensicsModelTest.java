@@ -37,7 +37,14 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getColumnsDefinition(report)).isEqualTo("["
                 + "{\"data\": \"description\"},"
-                + "{\"data\": \"fileName\"},"
+                + "{"
+                + "  \"type\": \"string\","
+                + "  \"data\": \"fileName\","
+                + "  \"render\": {"
+                + "     \"_\": \"display\","
+                + "     \"sort\": \"sort\""
+                + "  }"
+                + "},"
                 + "{\"data\": \"age\"},"
                 + "{\"data\": \"authorsSize\"},"
                 + "{\"data\": \"commitsSize\"},"
@@ -83,10 +90,10 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
         ForensicsRow actualRow = model.getRow(report, issue, "d");
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
-                .hasFileName(createExpectedFileName(issue))
                 .hasAge("1")
                 .hasAuthorsSize("15")
                 .hasCommitsSize("20");
+        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
 
         assertThat(actualRow.getModifiedDays()).hasDisplay("4 weeks ago").hasSort("25");
         assertThat(actualRow.getAddedDays()).hasDisplay("1 month ago").hasSort("30");
@@ -104,7 +111,7 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
         ForensicsRow actualRow = model.getRow(report, issue, "d");
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
-                .hasFileName(createExpectedFileName(issue))
+//                .hasFileName(createExpectedFileName(issue))
                 .hasAge("1")
                 .hasAuthorsSize(ForensicsModel.UNDEFINED)
                 .hasCommitsSize(ForensicsModel.UNDEFINED);

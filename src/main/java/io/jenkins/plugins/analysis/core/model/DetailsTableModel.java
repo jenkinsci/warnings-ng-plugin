@@ -151,7 +151,7 @@ public abstract class DetailsTableModel {
         private static final Sanitizer SANITIZER = new Sanitizer();
 
         private String description;
-        private String fileName;
+        private DetailedColumnDefinition fileName;
         private String age;
 
         /**
@@ -172,9 +172,14 @@ public abstract class DetailsTableModel {
                 final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider, final Issue issue,
                 final String additionalDescription) {
-            setDescription(formatDetails(issue, additionalDescription));
-            setFileName(fileNameRenderer.renderAffectedFileLink(issue));
-            setAge(ageBuilder.apply(parseInt(issue.getReference())));
+            description = formatDetails(issue, additionalDescription);
+            age = ageBuilder.apply(parseInt(issue.getReference()));
+            fileName = createFileName(fileNameRenderer, issue);
+        }
+
+        private DetailedColumnDefinition createFileName(final FileNameRenderer fileNameRenderer, final Issue issue) {
+            return new DetailedColumnDefinition(fileNameRenderer.renderAffectedFileLink(issue),
+                    String.format("%s:%07d", issue.getFileName(), issue.getLineStart()));
         }
 
         /**
@@ -256,7 +261,7 @@ public abstract class DetailsTableModel {
             return description;
         }
 
-        public String getFileName() {
+        public DetailedColumnDefinition getFileName() {
             return fileName;
         }
 
@@ -264,17 +269,6 @@ public abstract class DetailsTableModel {
             return age;
         }
 
-        public void setDescription(final String description) {
-            this.description = description;
-        }
-
-        public void setFileName(final String fileName) {
-            this.fileName = fileName;
-        }
-
-        public void setAge(final String age) {
-            this.age = age;
-        }
     }
 
     /**
@@ -345,6 +339,8 @@ public abstract class DetailsTableModel {
          *         the entity property that should be used to display the column
          * @param sort
          *         the entity property that should be used to sort the column
+         *
+         * @see <a href="https://datatables.net/reference/option/columns.type">DataTables Column Types</a>
          */
         public DetailedColumnDefinition(final String display, final String sort) {
             this.display = display;
