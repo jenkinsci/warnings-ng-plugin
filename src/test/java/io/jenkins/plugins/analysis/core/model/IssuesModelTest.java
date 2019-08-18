@@ -11,7 +11,7 @@ import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -43,16 +43,14 @@ class IssuesModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"severity\"},"
                 + "{\"data\": \"age\"}]");
 
-        IssuesRow expected = new IssuesRow();
-        expected.setDescription(EXPECTED_DESCRIPTION);
-        expected.setFileName(String.format("<a href=\"source.%s/#15\">file-1:15</a>",  issue.getId().toString()));
-        expected.setAge("1");
-        expected.setPackageName(PACKAGE_NAME);
-        expected.setCategory("<a href=\"category.1296530210/\">category-1</a>");
-        expected.setType("<a href=\"type.-858804642/\">type-1</a>");
-        expected.setSeverity("<a href=\"HIGH\">High</a>");
-
-        assertThat(model.getRow(report, issue, "d")).isEqualToComparingFieldByField(expected);
+        IssuesRow actualRow = model.getRow(report, issue, "d");
+        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+                .hasFileName(createExpectedFileName(issue))
+                .hasAge("1")
+                .hasPackageName(PACKAGE_NAME)
+                .hasCategory("<a href=\"category.1296530210/\">category-1</a>")
+                .hasType("<a href=\"type.-858804642/\">type-1</a>")
+                .hasSeverity("<a href=\"HIGH\">High</a>");
     }
 
     @Test

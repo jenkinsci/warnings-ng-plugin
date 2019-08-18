@@ -11,7 +11,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.Defaul
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -66,15 +66,13 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         BlamesModel model = createModel(blames);
 
-        BlamesRow expected = new BlamesRow();
-        expected.setDescription(EXPECTED_DESCRIPTION);
-        expected.setFileName(String.format("<a href=\"source.%s/#15\">file-1:15</a>",  issue.getId().toString()));
-        expected.setAge("1");
-        expected.setCommit(COMMIT);
-        expected.setAuthor(NAME);
-        expected.setEmail(EMAIL);
-
-        assertThat(model.getRow(report, issue, "d")).isEqualToComparingFieldByField(expected);
+        BlamesRow actualRow = model.getRow(report, issue, "d");
+        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+                .hasFileName(createExpectedFileName(issue))
+                .hasAge("1")
+                .hasCommit(COMMIT)
+                .hasAuthor(NAME)
+                .hasEmail(EMAIL);
     }
 
     @Test
@@ -87,15 +85,13 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         BlamesModel model = createModel(blames);
 
-        BlamesRow expected = new BlamesRow();
-        expected.setDescription(EXPECTED_DESCRIPTION);
-        expected.setFileName(String.format("<a href=\"source.%s/#15\">file-1:15</a>",  issue.getId().toString()));
-        expected.setAge("1");
-        expected.setCommit(BlamesModel.UNDEFINED);
-        expected.setAuthor(BlamesModel.UNDEFINED);
-        expected.setEmail(BlamesModel.UNDEFINED);
-
-        assertThat(model.getRow(report, issue, "d")).isEqualToComparingFieldByField(expected);
+        BlamesRow actualRow = model.getRow(report, issue, "d");
+        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+                .hasFileName(createExpectedFileName(issue))
+                .hasAge("1")
+                .hasCommit(BlamesModel.UNDEFINED)
+                .hasAuthor(BlamesModel.UNDEFINED)
+                .hasEmail(BlamesModel.UNDEFINED);
     }
 
     private BlamesModel createModel(final Blames blames) {

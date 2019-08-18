@@ -64,10 +64,8 @@ public class ForensicsModel extends DetailsTableModel {
 
     @Override
     public ForensicsRow getRow(final Report report, final Issue issue, final String description) {
-        ForensicsRow row = new ForensicsRow();
-        row.setDescription(formatDetails(issue, description));
-        row.setFileName(formatFileName(issue));
-        row.setAge(formatAge(issue));
+        ForensicsRow row = new ForensicsRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+                issue, description);
         if (statistics.contains(issue.getFileName())) {
             FileStatistics result = statistics.get(issue.getFileName());
             row.setAuthorsSize(String.valueOf(result.getNumberOfAuthors()));
@@ -85,7 +83,7 @@ public class ForensicsModel extends DetailsTableModel {
     }
 
     @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
+    public void configureColumns(final ColumnDefinitionBuilder builder, final Report report) {
         builder.add("description").add("fileName").add("age").add("authorsSize").add("commitsSize")
                 .add("modifiedDays", "num")
                 .add("addedDays", "num");
@@ -94,11 +92,17 @@ public class ForensicsModel extends DetailsTableModel {
     /**
      * A table row that shows the source control statistics.
      */
+    @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
     public static class ForensicsRow extends TableRow {
         private String authorsSize;
         private String commitsSize;
         private DetailedColumnDefinition modifiedDays;
         private DetailedColumnDefinition addedDays;
+
+        ForensicsRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider, final Issue issue, final String description) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, description);
+        }
 
         public String getAuthorsSize() {
             return authorsSize;
@@ -125,15 +129,11 @@ public class ForensicsModel extends DetailsTableModel {
         }
 
         void setModifiedDays(final long modifiedDays) {
-            this.modifiedDays = new DetailedColumnDefinition();
-            this.modifiedDays.setSort(String.valueOf(modifiedDays));
-            this.modifiedDays.setDisplay(getElapsedTime(modifiedDays));
+            this.modifiedDays = new DetailedColumnDefinition(getElapsedTime(modifiedDays), String.valueOf(modifiedDays));
         }
 
         void setAddedDays(final long addedDays) {
-            this.addedDays = new DetailedColumnDefinition();
-            this.addedDays.setSort(String.valueOf(addedDays));
-            this.addedDays.setDisplay(getElapsedTime(addedDays));
+            this.addedDays = new DetailedColumnDefinition(getElapsedTime(addedDays), String.valueOf(addedDays));
         }
 
         private String getElapsedTime(final long days) {

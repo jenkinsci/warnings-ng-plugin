@@ -84,14 +84,12 @@ public class IssuesModel extends DetailsTableModel {
      */
     @Override
     public IssuesRow getRow(final Report report, final Issue issue, final String description) {
-        IssuesRow row = new IssuesRow();
-        row.setDescription(formatDetails(issue, description));
-        row.setFileName(formatFileName(issue));
-        row.setPackageName(formatProperty("packageName", issue.getPackageName()));
-        row.setCategory(formatProperty("category", issue.getCategory()));
-        row.setType(formatProperty("type", issue.getType()));
-        row.setSeverity(formatSeverity(issue.getSeverity()));
-        row.setAge(formatAge(issue));
+        IssuesRow row = new IssuesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+                issue, description);
+        row.setPackageName(issue);
+        row.setCategory(issue);
+        row.setType(issue);
+        row.setSeverity(issue);
         return row;
     }
 
@@ -113,11 +111,17 @@ public class IssuesModel extends DetailsTableModel {
     /**
      * A table row that shows the properties of an issue.
      */
+    @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
     public static class IssuesRow extends TableRow {
         private String packageName;
         private String category;
         private String type;
         private String severity;
+
+        IssuesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider, final Issue issue, final String description) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, description);
+        }
 
         public String getPackageName() {
             return packageName;
@@ -135,20 +139,20 @@ public class IssuesModel extends DetailsTableModel {
             return severity;
         }
 
-        void setPackageName(final String packageName) {
-            this.packageName = packageName;
+        void setPackageName(final Issue issue) {
+            packageName = formatProperty("packageName", issue.getPackageName());
         }
 
-        void setCategory(final String category) {
-            this.category = category;
+        void setCategory(final Issue issue) {
+            category = formatProperty("category", issue.getCategory());
         }
 
-        void setType(final String type) {
-            this.type = type;
+        void setType(final Issue issue) {
+            type = formatProperty("type", issue.getType());
         }
 
-        void setSeverity(final String severity) {
-            this.severity = severity;
+        void setSeverity(final Issue issue) {
+            severity = formatSeverity(issue.getSeverity());
         }
     }
 }
