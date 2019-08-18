@@ -27,17 +27,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBui
  * @author Ullrich Hafner
  */
 public class IssuesModel extends DetailsTableModel {
-    /**
-     * Creates a new instance of {@link IssuesModel}.
-     *
-     * @param ageBuilder
-     *         renders the age column
-     * @param fileNameRenderer
-     *         renders the file name column
-     * @param descriptionProvider
-     *         renders the description text
-     */
-    public IssuesModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+    IssuesModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
             final DescriptionProvider descriptionProvider) {
         super(ageBuilder, fileNameRenderer, descriptionProvider);
     }
@@ -107,40 +97,29 @@ public class IssuesModel extends DetailsTableModel {
 
     @Override
     public String getColumnsDefinition(final Report report) {
-        StringBuilder builder = new StringBuilder("[");
-        builder.append("{\"data\": \"description\"},");
-        builder.append("{\"data\": \"fileName\"},");
+        ColumnDefinitionBuilder builder = new ColumnDefinitionBuilder();
+        builder.add("description").add("fileName");
         if (report.hasPackages()) {
-            builder.append("{\"data\": \"packageName\"},");
+            builder.add("packageName");
         }
         if (report.hasCategories()) {
-            builder.append("{\"data\": \"category\"},");
+            builder.add("category");
         }
         if (report.hasTypes()) {
-            builder.append("{\"data\": \"type\"},");
+            builder.add("type");
         }
-        builder.append("{\"data\": \"severity\"},");
-        builder.append("{\"data\": \"age\"}");
-        builder.append("]");
+        builder.add("severity").add("age");
         return builder.toString();
     }
 
-    public static class IssuesRow {
-        private String description;
-        private String fileName;
+    /**
+     * A table row that shows the properties of an issue.
+     */
+    public static class IssuesRow extends TableRow {
         private String packageName;
         private String category;
         private String type;
         private String severity;
-        private String age;
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
 
         public String getPackageName() {
             return packageName;
@@ -156,22 +135,6 @@ public class IssuesModel extends DetailsTableModel {
 
         public String getSeverity() {
             return severity;
-        }
-
-        public String getAge() {
-            return age;
-        }
-
-        void setDescription(final String description) {
-            this.description = description;
-        }
-
-        void setFileName(final String fileName) {
-            this.fileName = fileName;
-        }
-
-        void setAge(final String age) {
-            this.age = age;
         }
 
         void setPackageName(final String packageName) {

@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
  */
 class IssuesModelTest extends AbstractDetailsModelTest {
     private static final String PACKAGE_NAME = "<a href=\"packageName.1802059882/\">package-1</a>";
+    private static final int EXPECTED_COLUMNS_SIZE = 7;
 
     @Test
     void shouldConvertIssuesToArrayWithAllColumns() {
@@ -31,8 +32,16 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         report.add(issue);
         report.add(createIssue(2));
 
-        assertThat(model.getHeaders(report)).hasSize(7);
-        assertThat(model.getWidths(report)).hasSize(7);
+        assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getColumnsDefinition(report)).isEqualTo("["
+                + "{\"data\": \"description\"},"
+                + "{\"data\": \"fileName\"},"
+                + "{\"data\": \"packageName\"},"
+                + "{\"data\": \"category\"},"
+                + "{\"data\": \"type\"},"
+                + "{\"data\": \"severity\"},"
+                + "{\"data\": \"age\"}]");
 
         IssuesRow expected = new IssuesRow();
         expected.setDescription(EXPECTED_DESCRIPTION);
@@ -67,8 +76,8 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         assertThat(model.getWidths(report)).hasSize(6);
 
         when(report.hasTypes()).thenReturn(true);
-        assertThat(model.getHeaders(report)).hasSize(7).contains("Package", "Category", "Type");
-        assertThat(model.getWidths(report)).hasSize(7);
+        assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE).contains("Package", "Category", "Type");
+        assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
     }
 
     private IssuesModel createModel() {

@@ -30,6 +30,7 @@ import static org.mockito.Mockito.*;
  */
 class DryTableModelTest extends AbstractDetailsModelTest {
     private static final String DESCRIPTION = "DESCRIPTION";
+    private static final int EXPECTED_COLUMNS_SIZE = 6;
 
     @Test
     @SuppressFBWarnings("DMI")
@@ -58,8 +59,15 @@ class DryTableModelTest extends AbstractDetailsModelTest {
         Report report = new Report();
         report.add(issue).add(duplicate);
 
-        assertThat(model.getHeaders(report)).hasSize(6);
-        assertThat(model.getWidths(report)).hasSize(6);
+        assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getColumnsDefinition(report)).isEqualTo("["
+                + "{\"data\": \"description\"},"
+                + "{\"data\": \"fileName\"},"
+                + "{\"data\": \"severity\"},"
+                + "{\"data\": \"linesCount\"},"
+                + "{\"data\": \"duplicatedIn\"},"
+                + "{\"data\": \"age\"}]");
 
         DuplicationRow expected = new DuplicationRow();
         expected.setDescription("<div class=\"details-control\" data-description=\"d\"></div>");

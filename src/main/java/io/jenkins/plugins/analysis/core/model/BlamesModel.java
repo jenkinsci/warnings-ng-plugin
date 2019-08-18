@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.hm.hafner.analysis.Issue;
@@ -14,7 +14,7 @@ import io.jenkins.plugins.forensics.blame.FileBlame;
  * Provides the dynamic model for the details table that shows the source control blames.
  *
  * <p>
- *     This blames model consists of the following columns:
+ * This blames model consists of the following columns:
  * </p>
  * <ul>
  * <li>issue details (message and description)</li>
@@ -40,27 +40,19 @@ public class BlamesModel extends DetailsTableModel {
     }
 
     @Override
-    public List<Integer> getWidths(final Report report) {
-        List<Integer> widths = new ArrayList<>();
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        return widths;
+    public List<String> getHeaders(final Report report) {
+        return Arrays.asList(
+                Messages.Table_Column_Details(),
+                Messages.Table_Column_File(),
+                Messages.Table_Column_Age(),
+                Messages.Table_Column_Author(),
+                Messages.Table_Column_Email(),
+                Messages.Table_Column_Commit());
     }
 
     @Override
-    public List<String> getHeaders(final Report report) {
-        List<String> visibleColumns = new ArrayList<>();
-        visibleColumns.add(Messages.Table_Column_Details());
-        visibleColumns.add(Messages.Table_Column_File());
-        visibleColumns.add(Messages.Table_Column_Age());
-        visibleColumns.add(Messages.Table_Column_Author());
-        visibleColumns.add(Messages.Table_Column_Email());
-        visibleColumns.add(Messages.Table_Column_Commit());
-        return visibleColumns;
+    public List<Integer> getWidths(final Report report) {
+        return Arrays.asList(1, 1, 1, 1, 1, 1);
     }
 
     @Override
@@ -86,36 +78,18 @@ public class BlamesModel extends DetailsTableModel {
 
     @Override
     public String getColumnsDefinition(final Report report) {
-        StringBuilder builder = new StringBuilder("[");
-        builder.append("{\"data\": \"description\"},");
-        builder.append("{\"data\": \"fileName\"},");
-        builder.append("{\"data\": \"age\"},");
-        builder.append("{\"data\": \"author\"},");
-        builder.append("{\"data\": \"email\"},");
-        builder.append("{\"data\": \"commit\"}");
-        builder.append("]");
+        ColumnDefinitionBuilder builder = new ColumnDefinitionBuilder();
+        builder.add("description").add("fileName").add("age").add("author").add("email").add("commit");
         return builder.toString();
     }
 
-    public static class BlamesRow {
-        private String description;
-        private String fileName;
-        private String age;
+    /**
+     * A table row that shows the source control blames.
+     */
+    public static class BlamesRow extends TableRow {
         private String author;
         private String email;
         private String commit;
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public String getAge() {
-            return age;
-        }
 
         public String getAuthor() {
             return author;
@@ -127,18 +101,6 @@ public class BlamesModel extends DetailsTableModel {
 
         public String getCommit() {
             return commit;
-        }
-
-        void setDescription(final String description) {
-            this.description = description;
-        }
-
-        void setFileName(final String fileName) {
-            this.fileName = fileName;
-        }
-
-        void setAge(final String age) {
-            this.age = age;
         }
 
         void setAuthor(final String author) {

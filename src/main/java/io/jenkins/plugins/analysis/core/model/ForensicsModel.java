@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -47,28 +47,19 @@ public class ForensicsModel extends DetailsTableModel {
 
     @Override
     public List<String> getHeaders(final Report report) {
-        List<String> visibleColumns = new ArrayList<>();
-        visibleColumns.add(Messages.Table_Column_Details());
-        visibleColumns.add(Messages.Table_Column_File());
-        visibleColumns.add(Messages.Table_Column_Age());
-        visibleColumns.add(Messages.Table_Column_AuthorsSize());
-        visibleColumns.add(Messages.Table_Column_CommitsSize());
-        visibleColumns.add(Messages.Table_Column_LastCommit());
-        visibleColumns.add(Messages.Table_Column_AddedAt());
-        return visibleColumns;
+        return Arrays.asList(
+                Messages.Table_Column_Details(),
+                Messages.Table_Column_File(),
+                Messages.Table_Column_Age(),
+                Messages.Table_Column_AuthorsSize(),
+                Messages.Table_Column_CommitsSize(),
+                Messages.Table_Column_LastCommit(),
+                Messages.Table_Column_AddedAt());
     }
 
     @Override
     public List<Integer> getWidths(final Report report) {
-        List<Integer> widths = new ArrayList<>();
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        widths.add(2);
-        widths.add(2);
-        return widths;
+        return Arrays.asList(1, 1, 1, 1, 1, 2, 2);
     }
 
     @Override
@@ -95,51 +86,21 @@ public class ForensicsModel extends DetailsTableModel {
 
     @Override
     public String getColumnsDefinition(final Report report) {
-        return "["
-                + "{\"data\": \"description\"},"
-                + "{\"data\": \"fileName\"},"
-                + "{\"data\": \"age\"},"
-                + "{\"data\": \"authorsSize\"},"
-                + "{\"data\": \"commitsSize\"},"
-                + "{"
-                + "    \"type\": \"num\","
-                + "    \"data\": \"addedDays\","
-                + "    \"render\": {"
-                + "        \"_\": \"display\","
-                + "        \"sort\": \"days\""
-                + "    }"
-                + "},"
-                + "{"
-                + "    \"type\": \"num\","
-                + "    \"data\": \"addedDays\","
-                + "    \"render\": {"
-                + "        \"_\": \"display\","
-                + "        \"sort\": \"days\""
-                + "    }"
-                + "}"
-                + "]";
+        ColumnDefinitionBuilder builder = new ColumnDefinitionBuilder();
+        builder.add("description").add("fileName").add("age").add("authorsSize").add("commitsSize")
+                .add("modifiedDays", "num")
+                .add("addedDays", "num");
+        return builder.toString();
     }
 
-    public static class ForensicsRow {
-        private String description;
-        private String fileName;
-        private String age;
+    /**
+     * A table row that shows the source control statistics.
+     */
+    public static class ForensicsRow extends TableRow {
         private String authorsSize;
         private String commitsSize;
-        private PrettyElapsedTime modifiedDays;
-        private PrettyElapsedTime addedDays;
-
-        public String getDescription() {
-            return description;
-        }
-
-        public String getFileName() {
-            return fileName;
-        }
-
-        public String getAge() {
-            return age;
-        }
+        private DetailedColumnDefinition modifiedDays;
+        private DetailedColumnDefinition addedDays;
 
         public String getAuthorsSize() {
             return authorsSize;
@@ -149,24 +110,12 @@ public class ForensicsModel extends DetailsTableModel {
             return commitsSize;
         }
 
-        public PrettyElapsedTime getModifiedDays() {
+        public DetailedColumnDefinition getModifiedDays() {
             return modifiedDays;
         }
 
-        public PrettyElapsedTime getAddedDays() {
+        public DetailedColumnDefinition getAddedDays() {
             return addedDays;
-        }
-
-        void setDescription(final String description) {
-            this.description = description;
-        }
-
-        void setFileName(final String fileName) {
-            this.fileName = fileName;
-        }
-
-        void setAge(final String age) {
-            this.age = age;
         }
 
         void setAuthorsSize(final String authorsSize) {
@@ -178,14 +127,14 @@ public class ForensicsModel extends DetailsTableModel {
         }
 
         void setModifiedDays(final long modifiedDays) {
-            this.modifiedDays = new PrettyElapsedTime();
-            this.modifiedDays.setDays(modifiedDays);
+            this.modifiedDays = new DetailedColumnDefinition();
+            this.modifiedDays.setSort(String.valueOf(modifiedDays));
             this.modifiedDays.setDisplay(getElapsedTime(modifiedDays));
         }
 
         void setAddedDays(final long addedDays) {
-            this.addedDays = new PrettyElapsedTime();
-            this.addedDays.setDays(addedDays);
+            this.addedDays = new DetailedColumnDefinition();
+            this.addedDays.setSort(String.valueOf(addedDays));
             this.addedDays.setDisplay(getElapsedTime(addedDays));
         }
 
@@ -193,27 +142,6 @@ public class ForensicsModel extends DetailsTableModel {
             PrettyTime prettyTime = new PrettyTime();
             return prettyTime.format(
                     Date.from(LocalDate.now().minusDays(days).atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        }
-    }
-
-    public static class PrettyElapsedTime {
-        private String display;
-        private long days;
-
-        public String getDisplay() {
-            return display;
-        }
-
-        void setDisplay(final String display) {
-            this.display = display;
-        }
-
-        public long getDays() {
-            return days;
-        }
-
-        void setDays(final long days) {
-            this.days = days;
         }
     }
 }

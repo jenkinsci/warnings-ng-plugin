@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -48,7 +49,7 @@ public abstract class DetailsTableModel {
      * @param descriptionProvider
      *         renders the description text
      */
-    public DetailsTableModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+    protected DetailsTableModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
             final DescriptionProvider descriptionProvider) {
         this.ageBuilder = ageBuilder;
         this.fileNameRenderer = fileNameRenderer;
@@ -75,6 +76,15 @@ public abstract class DetailsTableModel {
     @SuppressWarnings("unused") // called by Jelly view
     public abstract List<String> getHeaders(Report report);
 
+    /**
+     * Returns the column definitions of the report table.
+     *
+     * @param report
+     *         the report to show
+     *
+     * @return the table headers
+     * @see ColumnDefinitionBuilder
+     */
     @SuppressWarnings("unused") // called by Jelly view
     public abstract String getColumnsDefinition(Report report);
 
@@ -105,7 +115,19 @@ public abstract class DetailsTableModel {
         return rows;
     }
 
-    public abstract Object getRow(Report report, Issue issue, String description);
+    /**
+     * Returns a table row for the specified issue.
+     *
+     * @param report
+     *         the report to show
+     * @param issue
+     *         the issue to show in the row
+     * @param description
+     *         the additional description for the issue
+     *
+     * @return a table row for the issue
+     */
+    public abstract TableRow getRow(Report report, Issue issue, String description);
 
     /**
      * Formats the text of the details column. The details column is not directly shown, it rather is a hidden element
@@ -216,5 +238,116 @@ public abstract class DetailsTableModel {
      */
     protected String render(final String html) {
         return SANITIZER.render(html);
+    }
+
+    /**
+     * Base class for table rows. Contains columns that should be used by all tables.
+     */
+    public static class TableRow {
+        private String description;
+        private String fileName;
+        private String age;
+
+        public String getDescription() {
+            return description;
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public String getAge() {
+            return age;
+        }
+
+        public void setDescription(final String description) {
+            this.description = description;
+        }
+
+        public void setFileName(final String fileName) {
+            this.fileName = fileName;
+        }
+
+        public void setAge(final String age) {
+            this.age = age;
+        }
+    }
+
+    /**
+     * A JQuery DataTables column definition builder. Provides simple columns that extract a given entity property as
+     * column value or complex columns that provide different properties to sort and display a column.
+     */
+    public static class ColumnDefinitionBuilder {
+        private final StringJoiner columns = new StringJoiner(",", "[", "]");
+
+        /**
+         * Adds a new simple column that maps the specified property of the row entity to the column value.
+         *
+         * @param dataPropertyName
+         *         the property to extract from the entity, it will be shown as column value
+         *
+         * @return this
+         */
+        public ColumnDefinitionBuilder add(final String dataPropertyName) {
+            columns.add(String.format("{\"data\": \"%s\"}", dataPropertyName));
+
+            return this;
+        }
+
+        /**
+         * Adds a new complex column that maps the specified property of the row entity to the display and sort
+         * attributes of the column. The property {@code dataPropertyName} must be of type {@link
+         * DetailedColumnDefinition}.
+         *
+         * @param dataPropertyName
+         *         the property to extract from the entity, it will be shown as column value
+         * @param columnDataType
+         *         JQuery DataTables data type of the column
+         *
+         * @return this
+         * @see DetailedColumnDefinition
+         */
+        public ColumnDefinitionBuilder add(final String dataPropertyName, final String columnDataType) {
+            columns.add(String.format("{"
+                    + "  \"type\": \"%s\","
+                    + "  \"data\": \"%s\","
+                    + "  \"render\": {"
+                    + "     \"_\": \"display\","
+                    + "     \"sort\": \"sort\""
+                    + "  }"
+                    + "}", columnDataType, dataPropertyName));
+
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return columns.toString();
+        }
+    }
+
+    /**
+     * A column value attribute that provides a {@code display} and {@code sort} property so that a
+     * JQuery DataTables can use different properties to sort and display a column.
+     */
+    public static class DetailedColumnDefinition {
+        private String display;
+        private String sort;
+
+        public String getDisplay() {
+            return display;
+        }
+
+        void setDisplay(final String display) {
+            this.display = display;
+        }
+
+        public String getSort() {
+            return sort;
+        }
+
+        void setSort(final String sort) {
+            this.sort = sort;
+        }
     }
 }
