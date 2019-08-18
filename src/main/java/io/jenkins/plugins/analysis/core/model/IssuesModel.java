@@ -70,22 +70,9 @@ public class IssuesModel extends DetailsTableModel {
         return widths;
     }
 
-    /**
-     * Returns an JSON array that represents the columns of the issues table.
-     *
-     * @param report
-     *         the report to show in the table
-     * @param issue
-     *         the issue to get the column properties for
-     * @param description
-     *         description of the issue
-     *
-     * @return the columns of one row
-     */
     @Override
-    public IssuesRow getRow(final Report report, final Issue issue, final String description) {
-        IssuesRow row = new IssuesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                issue, description);
+    public IssuesRow getRow(final Report report, final Issue issue) {
+        IssuesRow row = new IssuesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue);
         row.setPackageName(issue);
         row.setCategory(issue);
         row.setType(issue);
@@ -119,8 +106,8 @@ public class IssuesModel extends DetailsTableModel {
         private String severity;
 
         IssuesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue, final String description) {
-            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, description);
+                final DescriptionProvider descriptionProvider, final Issue issue) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
         }
 
         public String getPackageName() {

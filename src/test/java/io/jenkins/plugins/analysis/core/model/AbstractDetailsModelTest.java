@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Locale;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeAll;
 
 import edu.hm.hafner.analysis.Issue;
@@ -17,11 +18,12 @@ import static j2html.TagCreator.*;
  */
 @SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")
 public abstract class AbstractDetailsModelTest {
-    static final String EXPECTED_DESCRIPTION = "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;Hello message with &lt;a href=&quot;url&quot;&gt;link&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt; d\"></div>";
     static final String DESCRIPTION
             = join("Hello description with", a().withHref("url").withText("link")).render();
     static final String MESSAGE
             = join("Hello message with", a().withHref("url").withText("link")).render();
+    static final String EXPECTED_DESCRIPTION = String.format("<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt; %s\"></div>",
+            StringEscapeUtils.escapeHtml4(MESSAGE), StringEscapeUtils.escapeHtml4(DESCRIPTION));
 
     private IssueBuilder createBuilder() {
         return new IssueBuilder().setMessage(MESSAGE);

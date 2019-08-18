@@ -124,7 +124,7 @@ public abstract class DetailsTableModel {
     public List<Object> getContent(final Report report) {
         List<Object> rows = new ArrayList<>();
         for (Issue issue : report) {
-            rows.add(getRow(report, issue, descriptionProvider.getDescription(issue)));
+            rows.add(getRow(report, issue));
         }
         return rows;
     }
@@ -136,12 +136,10 @@ public abstract class DetailsTableModel {
      *         the report to show
      * @param issue
      *         the issue to show in the row
-     * @param description
-     *         the additional description for the issue
      *
      * @return a table row for the issue
      */
-    public abstract TableRow getRow(Report report, Issue issue, String description);
+    public abstract TableRow getRow(Report report, Issue issue);
 
     /**
      * Base class for table rows. Contains columns that should be used by all tables.
@@ -165,14 +163,11 @@ public abstract class DetailsTableModel {
          *         renders the description text
          * @param issue
          *         the issue to show in the row
-         * @param additionalDescription
-         *         the additional description for the issue
          */
         protected TableRow(final AgeBuilder ageBuilder,
                 final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue,
-                final String additionalDescription) {
-            description = formatDetails(issue, additionalDescription);
+                final DescriptionProvider descriptionProvider, final Issue issue) {
+            description = formatDetails(issue, descriptionProvider.getDescription(issue));
             age = ageBuilder.apply(parseInt(issue.getReference()));
             fileName = createFileName(fileNameRenderer, issue);
         }

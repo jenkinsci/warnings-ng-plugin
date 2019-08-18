@@ -50,7 +50,7 @@ class IssuesModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"severity\"},"
                 + "{\"data\": \"age\"}]");
 
-        IssuesRow actualRow = model.getRow(report, issue, "d");
+        IssuesRow actualRow = model.getRow(report, issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasPackageName(PACKAGE_NAME)

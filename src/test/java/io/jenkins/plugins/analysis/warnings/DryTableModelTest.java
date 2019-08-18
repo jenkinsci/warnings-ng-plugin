@@ -75,8 +75,9 @@ class DryTableModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"duplicatedIn\"},"
                 + "{\"data\": \"age\"}]");
 
-        DuplicationRow actualRow = model.getRow(report, issue, "d");
-        assertThat(actualRow).hasDescription("<div class=\"details-control\" data-description=\"d\"></div>")
+        DuplicationRow actualRow = model.getRow(report, issue);
+        assertThat(actualRow)
+                .hasDescription("<div class=\"details-control\" data-description=\"" + DESCRIPTION + "\"></div>")
                 .hasAge("1");
         assertThat(actualRow.getFileName()).hasDisplay(getFileNameFor(issue, 1)).hasSort("/path/to/file-1:0000010");
         assertThat(actualRow.getPackageName()).isEqualTo("<a href=\"packageName.45/\">-</a>");

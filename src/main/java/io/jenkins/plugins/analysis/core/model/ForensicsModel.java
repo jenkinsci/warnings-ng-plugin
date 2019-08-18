@@ -63,9 +63,9 @@ public class ForensicsModel extends DetailsTableModel {
     }
 
     @Override
-    public ForensicsRow getRow(final Report report, final Issue issue, final String description) {
+    public ForensicsRow getRow(final Report report, final Issue issue) {
         ForensicsRow row = new ForensicsRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                issue, description);
+                issue);
         if (statistics.contains(issue.getFileName())) {
             FileStatistics result = statistics.get(issue.getFileName());
             row.setAuthorsSize(String.valueOf(result.getNumberOfAuthors()));
@@ -100,8 +100,8 @@ public class ForensicsModel extends DetailsTableModel {
         private DetailedColumnDefinition addedDays;
 
         ForensicsRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue, final String description) {
-            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, description);
+                final DescriptionProvider descriptionProvider, final Issue issue) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
         }
 
         public String getAuthorsSize() {
