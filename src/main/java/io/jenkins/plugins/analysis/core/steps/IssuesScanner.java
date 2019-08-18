@@ -116,6 +116,7 @@ class IssuesScanner {
 
             Blamer blamer;
             if (blameMode == BlameMode.DISABLED) {
+                report.logInfo("Skipping SCM blames as requested");
                 blamer = new NullBlamer();
             }
             else {
@@ -129,20 +130,22 @@ class IssuesScanner {
             }
             result = workspace.act(new ReportPostProcessor(
                     tool.getActualId(), report, sourceCodeEncoding.name(),
-                    blamer, createMiner(), filters));
+                    blamer, createMiner(report), filters));
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()), workspace);
         }
         logger.log(result.getReport());
         return result;
     }
 
-    private RepositoryMiner createMiner() {
+    private RepositoryMiner createMiner(final Report report) {
         if (forensicsMode == ForensicsMode.ENABLED) {
             FilteredLog log = new FilteredLog("Errors while mining source code repository for "
                     + run.getFullDisplayName());
             return MinerFactory.findMinerFor(run, workspace, listener, log);
         }
         else {
+            report.logInfo("Skipping SCM forensics as requested");
+
             return new NullMiner();
         }
     }

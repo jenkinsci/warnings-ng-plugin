@@ -37,7 +37,7 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldShowStatisticsOfOneIssue() throws Exception {
-        WorkflowJob job = buildPipeline("");
+        WorkflowJob job = createJob("");
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
         RepositoryStatistics statistics = result.getForensics();
@@ -54,21 +54,23 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Shows  statistics of an actual git repository with a single file in a pipeline script.
+     * Verifies that the repository miner can be disabled.
      *
      * @throws Exception
      *         if there is a problem with the git repository
      */
     @Test
-    public void shouldShowDisableStatistics() throws Exception {
-        WorkflowJob job = buildPipeline("forensicsDisabled: 'true', ");
+    public void shouldDisableMiner() throws Exception {
+        WorkflowJob job = createJob("forensicsDisabled: 'true', ");
+
         AnalysisResult result = scheduleSuccessfulBuild(job);
         RepositoryStatistics statistics = result.getForensics();
 
         assertThat(statistics).isEmpty();
+        assertThat(result.getInfoMessages()).contains("Skipping SCM forensics as requested");
     }
 
-    private WorkflowJob buildPipeline(final String disableForensicsParameter) throws Exception {
+    private WorkflowJob createJob(final String disableForensicsParameter) throws Exception {
         gitRepo.init();
         createAndCommitFile(FILE_NAME, "public class Test {}");
 
