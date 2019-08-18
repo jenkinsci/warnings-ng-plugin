@@ -11,7 +11,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.Defaul
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -81,16 +81,15 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         // FIXME: use int
         ForensicsModel model = createModel(statistics);
 
-        ForensicsRow expected = new ForensicsRow();
-        expected.setDescription(EXPECTED_DESCRIPTION);
-        expected.setFileName(String.format("<a href=\"source.%s/#15\">file-1:15</a>",  issue.getId().toString()));
-        expected.setAge("1");
-        expected.setAuthorsSize("15");
-        expected.setCommitsSize("20");
-        expected.setModifiedDays(25);
-        expected.setAddedDays(30);
+        ForensicsRow actualRow = model.getRow(report, issue, "d");
+        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+                .hasFileName(createExpectedFileName(issue))
+                .hasAge("1")
+                .hasAuthorsSize("15")
+                .hasCommitsSize("20");
 
-        assertThat(model.getRow(report, issue, "d")).usingRecursiveComparison().isEqualTo(expected);
+        assertThat(actualRow.getModifiedDays()).hasDisplay("4 weeks ago").hasSort("25");
+        assertThat(actualRow.getAddedDays()).hasDisplay("1 month ago").hasSort("30");
     }
 
     @Test
@@ -103,16 +102,15 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
         ForensicsModel model = createModel(blames);
 
-        ForensicsRow expected = new ForensicsRow();
-        expected.setDescription(EXPECTED_DESCRIPTION);
-        expected.setFileName(String.format("<a href=\"source.%s/#15\">file-1:15</a>",  issue.getId().toString()));
-        expected.setAge("1");
-        expected.setAuthorsSize(BlamesModel.UNDEFINED);
-        expected.setCommitsSize(BlamesModel.UNDEFINED);
-        expected.setModifiedDays(0);
-        expected.setAddedDays(0);
+        ForensicsRow actualRow = model.getRow(report, issue, "d");
+        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+                .hasFileName(createExpectedFileName(issue))
+                .hasAge("1")
+                .hasAuthorsSize(ForensicsModel.UNDEFINED)
+                .hasCommitsSize(ForensicsModel.UNDEFINED);
 
-        assertThat(model.getRow(report, issue, "d")).usingRecursiveComparison().isEqualTo(expected);
+        assertThat(actualRow.getModifiedDays()).hasSort("0");
+        assertThat(actualRow.getAddedDays()).hasSort("0");
     }
 
     private ForensicsModel createModel(final RepositoryStatistics statistics) {

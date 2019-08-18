@@ -324,12 +324,10 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
         @Override
         public DuplicationRow getRow(final Report report, final Issue issue, final String description) {
-            DuplicationRow row = new DuplicationRow();
-            row.setDescription(formatDetails(issue, description));
-            row.setFileName(formatFileName(issue));
-            row.setPackageName(formatProperty("packageName", issue.getPackageName()));
-            row.setSeverity(formatSeverity(issue.getSeverity()));
-            row.setAge(formatAge(issue));
+            DuplicationRow row = new DuplicationRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+                    issue, description);
+            row.setPackageName(issue);
+            row.setSeverity(issue);
             row.setLinesCount(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
             row.setDuplicatedIn(formatTargets(getFileNameRenderer(), issue));
             return row;
@@ -347,11 +345,17 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         /**
          * A table row that shows the properties of a code duplication.
          */
+        @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
         public static class DuplicationRow extends TableRow {
             private String packageName;
             private String severity;
             private String linesCount;
             private String duplicatedIn;
+
+            DuplicationRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+                    final DescriptionProvider descriptionProvider, final Issue issue, final String description) {
+                super(ageBuilder, fileNameRenderer, descriptionProvider, issue, description);
+            }
 
             public String getPackageName() {
                 return packageName;
@@ -369,8 +373,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
                 return duplicatedIn;
             }
 
-            void setPackageName(final String packageName) {
-                this.packageName = packageName;
+            void setPackageName(final Issue issue) {
+                packageName = formatProperty("packageName", issue.getPackageName());
             }
 
             void setLinesCount(final String linesCount) {
@@ -381,8 +385,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
                 this.duplicatedIn = duplicatedIn;
             }
 
-            void setSeverity(final String severity) {
-                this.severity = severity;
+            void setSeverity(final Issue issue) {
+                severity = formatSeverity(issue.getSeverity());
             }
         }
     }

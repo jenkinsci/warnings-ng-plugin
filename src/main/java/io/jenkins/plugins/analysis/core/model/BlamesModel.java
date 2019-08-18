@@ -57,10 +57,8 @@ public class BlamesModel extends DetailsTableModel {
 
     @Override
     public BlamesRow getRow(final Report report, final Issue issue, final String description) {
-        BlamesRow row = new BlamesRow();
-        row.setDescription(formatDetails(issue, description));
-        row.setFileName(formatFileName(issue));
-        row.setAge(formatAge(issue));
+        BlamesRow row = new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+                issue, description);
         if (blames.contains(issue.getFileName())) {
             FileBlame blameRequest = blames.getBlame(issue.getFileName());
             int line = issue.getLineStart();
@@ -84,10 +82,18 @@ public class BlamesModel extends DetailsTableModel {
     /**
      * A table row that shows the source control blames.
      */
+    @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
     public static class BlamesRow extends TableRow {
         private String author;
         private String email;
         private String commit;
+
+        BlamesRow(final AgeBuilder ageBuilder,
+                final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider, final Issue issue,
+                final String description) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, description);
+        }
 
         public String getAuthor() {
             return author;

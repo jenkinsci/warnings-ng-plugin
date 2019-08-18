@@ -12,14 +12,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.model.AbstractDetailsModelTest;
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
-import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.DuplicationRow;
 
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
@@ -37,7 +36,7 @@ class DryTableModelTest extends AbstractDetailsModelTest {
     void shouldConvertIssueToArrayOfColumns() {
         Locale.setDefault(Locale.ENGLISH);
 
-        DetailsTableModel model = createModel();
+        DryModel model = createModel();
 
         IssueBuilder builder = new IssueBuilder();
         builder.setReference("1");
@@ -69,16 +68,15 @@ class DryTableModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"duplicatedIn\"},"
                 + "{\"data\": \"age\"}]");
 
-        DuplicationRow expected = new DuplicationRow();
-        expected.setDescription("<div class=\"details-control\" data-description=\"d\"></div>");
-        expected.setFileName(getFileNameFor(issue, 1));
-        expected.setAge("1");
-        expected.setPackageName("<a href=\"packageName.45/\">-</a>");
-        expected.setDuplicatedIn(String.format("<ul><li>%s</li></ul>", getFileNameFor(duplicate, 2)));
-        expected.setLinesCount("15");
-        expected.setSeverity("<a href=\"NORMAL\">Normal</a>");
-
-        assertThat(model.getRow(report, issue, "d")).isEqualToComparingFieldByField(expected);
+        DuplicationRow actualRow = model.getRow(report, issue, "d");
+        assertThat(actualRow).hasDescription("<div class=\"details-control\" data-description=\"d\"></div>")
+                .hasFileName(getFileNameFor(issue, 1))
+                .hasAge("1");
+        assertThat(actualRow.getPackageName()).isEqualTo("<a href=\"packageName.45/\">-</a>");
+        assertThat(actualRow.getDuplicatedIn()).isEqualTo(
+                String.format("<ul><li>%s</li></ul>", getFileNameFor(duplicate, 2)));
+        assertThat(actualRow.getLinesCount()).isEqualTo("15");
+        assertThat(actualRow.getSeverity()).isEqualTo("<a href=\"NORMAL\">Normal</a>");
     }
 
     private String getFileNameFor(final Issue issue, final int index) {
@@ -86,7 +84,7 @@ class DryTableModelTest extends AbstractDetailsModelTest {
                 issue.getLineStart(), index, issue.getLineStart());
     }
 
-    private DetailsTableModel createModel() {
+    private DryModel createModel() {
         DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
         when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);

@@ -42,4 +42,16 @@ public abstract class AbstractDetailsModelTest {
     static void useEnglishLocale() {
         Locale.setDefault(Locale.ENGLISH);
     }
+
+    /**
+     * Creates a link to the affected file that is used in the file name column.
+     *
+     * @param issue
+     *         the issue
+     *
+     * @return the file name column
+     */
+    protected String createExpectedFileName(final Issue issue) {
+        return String.format("<a href=\"source.%s/#15\">file-1:15</a>", issue.getId().toString());
+    }
 }
