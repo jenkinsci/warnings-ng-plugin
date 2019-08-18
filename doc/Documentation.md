@@ -59,6 +59,7 @@ main build page. From there you can also dive into the details:
      * [Issues overview](#issues-overview)
      * [Issues details](#issues-details)
      * [Source code blames (for Git projects)](#source-code-blames-for-git-projects)
+     * [Repository forensics (for Git projects)](#repository-forensics-for-git-projects)
      * [Source code view](#source-code-view)
      * [Dashboard view support](#dashboard-view-support)
      * [Configuration as code support](#configuration-as-code-support)
