@@ -774,14 +774,18 @@ public class PublishIssuesStep extends Step {
             QualityGateEvaluator qualityGate = new QualityGateEvaluator();
             qualityGate.addAll(qualityGates);
 
-            AnnotatedReport report = new AnnotatedReport(StringUtils.defaultIfEmpty(id, reports.get(0).getId()));
+            AnnotatedReport report;
             if (reports.size() > 1) {
+                report = new AnnotatedReport(StringUtils.defaultIfEmpty(id, IssuesRecorder.DEFAULT_ID));
                 report.logInfo("Aggregating reports of:");
                 LabelProviderFactory factory = new LabelProviderFactory();
                 for (AnnotatedReport subReport : reports) {
                     StaticAnalysisLabelProvider labelProvider = factory.create(subReport.getId());
                     report.logInfo("-> %s", labelProvider.getToolTip(subReport.size()));
                 }
+            }
+            else {
+                report = new AnnotatedReport(StringUtils.defaultIfEmpty(id, reports.get(0).getId())); // use ID from single report
             }
             report.addAll(reports);
 

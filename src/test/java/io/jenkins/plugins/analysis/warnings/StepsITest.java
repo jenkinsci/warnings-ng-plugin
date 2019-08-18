@@ -232,7 +232,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldCombineIssuesOfSeveralFiles() {
         publishResultsWithIdAndName(
                 "publishIssues issues:[java, eclipse, javadoc]",
-                "java", "Java Warnings");
+                "analysis", "Static Analysis");
     }
 
     /** Runs the JavaDoc parser and uses a message filter to change the number of recorded warnings. */
