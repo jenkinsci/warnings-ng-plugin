@@ -15,8 +15,9 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.AbstractClassWithoutAnyMethod")
 public abstract class AbstractDetailsModelTest {
-    protected static final String EXPECTED_DESCRIPTION = "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;Hello message with &lt;a href=&quot;url&quot;&gt;link&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt; d\"></div>";
+    static final String EXPECTED_DESCRIPTION = "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;Hello message with &lt;a href=&quot;url&quot;&gt;link&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt; d\"></div>";
     static final String DESCRIPTION
             = join("Hello description with", a().withHref("url").withText("link")).render();
     static final String MESSAGE

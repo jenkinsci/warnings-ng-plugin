@@ -126,6 +126,7 @@ public class BlamesTable extends PageObject {
      * @param pageNumber
      *         The page number to go to. 1-based.
      */
+    @SuppressWarnings("PMD.SystemPrintln")
     public void goToPage(final int pageNumber) {
         DomNodeList<HtmlElement> pages = scmPaginate.getElementsByTagName("a");
 
