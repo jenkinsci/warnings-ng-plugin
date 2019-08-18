@@ -839,6 +839,7 @@ also no automatic conversion of results stored in the old format available.
 The following plugins have been integrated into this new version of the Warnings plugin:
 
 - Android-Lint Plugin
+- Analysis Collector Plugin
 - CheckStyle Plugin
 - CCM Plugin
 - Dry Plugin
