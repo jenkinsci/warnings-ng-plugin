@@ -75,6 +75,7 @@ import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder {
     static final String NO_REFERENCE_JOB = "-";
+    static final String DEFAULT_ID = "analysis";
 
     private List<Tool> analysisTools = new ArrayList<>();
 
@@ -516,7 +517,7 @@ public class IssuesRecorder extends Recorder {
             final StageResultHandler statusHandler)
             throws IOException, InterruptedException {
         if (isAggregatingResults && analysisTools.size() > 1) {
-            AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, "analysis"));
+            AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, DEFAULT_ID));
             for (Tool tool : analysisTools) {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
