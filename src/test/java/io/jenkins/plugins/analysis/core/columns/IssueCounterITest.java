@@ -4,14 +4,13 @@ import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
+import org.xml.sax.SAXException;
 
-import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomText;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
-import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
@@ -97,14 +96,10 @@ public class IssueCounterITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private HtmlPage getRootPage() {
-        WebClient webClient = getJenkins().createWebClient();
-        Jenkins jenkins = Jenkins.getInstanceOrNull();
-        assertThat(jenkins).isNotNull();
-
         try {
-            return webClient.getPage(jenkins.getRootUrlFromRequest());
+            return getWebClient(JavaScriptSupport.JS_ENABLED).goTo("");
         }
-        catch (IOException e) {
+        catch (SAXException | IOException e) {
             throw new AssertionError("Unexpected I/O Exception", e);
         }
     }
