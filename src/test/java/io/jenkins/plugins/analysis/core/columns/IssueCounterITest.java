@@ -97,16 +97,15 @@ public class IssueCounterITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private HtmlPage getRootPage() {
-
         WebClient webClient = getJenkins().createWebClient();
         Jenkins jenkins = Jenkins.getInstanceOrNull();
         assertThat(jenkins).isNotNull();
 
         try {
-            return webClient.getPage(jenkins.getRootUrl());
+            return webClient.getPage(jenkins.getRootUrlFromRequest());
         }
         catch (IOException e) {
-            throw new IllegalStateException("Unexpected I/O Exception", e);
+            throw new AssertionError("Unexpected I/O Exception", e);
         }
     }
 

@@ -12,8 +12,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  * @author Veronika Zwickenpflug
  */
 public class ConsoleLogView {
-    private List<String> messages = new ArrayList<>();
-    private List<String> markedMessages = new ArrayList<>();
+    private final List<String> messages = new ArrayList<>();
+    private final List<String> markedMessages = new ArrayList<>();
 
     /**
      * Creates a new instance of {@link ConsoleLogView}.

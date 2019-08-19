@@ -353,8 +353,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
-        try {
-            WebClient webClient = createWebClient(false);
+        try (WebClient webClient = createWebClient(false)) {
             WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
             HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
             assertThat(getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE)).isEmpty();
@@ -405,7 +404,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Override
     protected String createWorkspaceFileName(final String fileName) {
-        String[] genericFileNamesToKeep = new String[] {".cs", ".java"};
+        String[] genericFileNamesToKeep = {".cs", ".java"};
 
         List<Boolean> fileNamePrefixInList = Arrays.stream(genericFileNamesToKeep)
                 .map(fileName::endsWith)

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Report;
 
+import static io.jenkins.plugins.analysis.core.charts.Messages.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -17,14 +18,13 @@ import static org.mockito.Mockito.*;
 class NewVersusFixedPieChartTest {
     @Test
     void testCreate() {
-        int[] sizes = new int[] {2, 3, 4};
-        String[] names = new String[] {
-                Messages.New_Warnings_Short(), Messages.Outstanding_Warnings_Short(), Messages.Fixed_Warnings_Short()};
-        Palette[] colors = new Palette[] {Palette.RED, Palette.YELLOW, Palette.GREEN};
+        int[] sizes = {2, 3, 4};
+        String[] names = {New_Warnings_Short(), Outstanding_Warnings_Short(), Fixed_Warnings_Short()};
+        Palette[] colors = {Palette.RED, Palette.YELLOW, Palette.GREEN};
 
         NewVersusFixedPieChart chart = new NewVersusFixedPieChart();
 
-        PieChartModel model = chart.create(mockReport(sizes[0]), mockReport(sizes[1]), mockReport(sizes[2]));
+        PieChartModel model = chart.create(createReportStub(sizes[0]), createReportStub(sizes[1]), createReportStub(sizes[2]));
         List<PieData> data = model.getData();
         assertThat(model.getData().size()).isEqualTo(3);
         assertThat(model.getColors().size()).isEqualTo(3);
@@ -36,7 +36,7 @@ class NewVersusFixedPieChartTest {
         }
     }
 
-    private Report mockReport(final int size) {
+    private Report createReportStub(final int size) {
         Report report = mock(Report.class);
         when(report.size()).thenReturn(size);
         return report;

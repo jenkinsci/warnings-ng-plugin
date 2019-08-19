@@ -36,8 +36,8 @@ import static org.mockito.Mockito.*;
 class DetailFactoryTest {
     private static final Charset ENCODING = StandardCharsets.UTF_8;
     private static final Run RUN = mock(Run.class);
-    private static final String[] ERROR_MESSAGES = new String[]{"error", "messages"};
-    private static final String[] LOG_MESSAGES = new String[]{"log", "messages"};
+    private static final String[] ERROR_MESSAGES = {"error", "messages"};
+    private static final String[] LOG_MESSAGES = {"log", "messages"};
 
     private static final Report NO_ISSUES = new Report();
     private static final Report ALL_ISSUES = createReportWith(3, 2, 1, "all");

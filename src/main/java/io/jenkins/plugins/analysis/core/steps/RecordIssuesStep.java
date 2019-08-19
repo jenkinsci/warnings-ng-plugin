@@ -62,7 +62,7 @@ import io.jenkins.plugins.analysis.core.util.StageResultHandler;
  * </li>
  * </ul>
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields"})
 public class RecordIssuesStep extends Step implements Serializable {
     private static final long serialVersionUID = 1L;
 

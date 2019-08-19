@@ -29,12 +29,13 @@ class ConsoleDetailTest {
 
     @Test
     void shouldEscapeEntities() {
-        Stream<String> lines = Stream.of("<b>CheckStyle</b> <script>execute</script>");
-        ConsoleDetail consoleDetail = new ConsoleDetail(mock(Run.class), lines, 1, 2);
+        try (Stream<String> lines = Stream.of("<b>CheckStyle</b> <script>execute</script>")) {
+            ConsoleDetail consoleDetail = new ConsoleDetail(mock(Run.class), lines, 1, 2);
 
-        assertThat(consoleDetail.getSourceCode())
-                .doesNotContain("<b>CheckStyle</b> <script>execute</script>")
-                .contains("&lt;b&gt;CheckStyle&lt;/b&gt; &lt;script&gt;execute&lt;");
+            assertThat(consoleDetail.getSourceCode())
+                    .doesNotContain("<b>CheckStyle</b> <script>execute</script>")
+                    .contains("&lt;b&gt;CheckStyle&lt;/b&gt; &lt;script&gt;execute&lt;");
+        }
     }
 
     @Test

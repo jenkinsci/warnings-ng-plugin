@@ -78,6 +78,7 @@ public class DetailsTab extends PageObject {
         return (T) retrieveContent(tapType);
     }
 
+    @SuppressWarnings("PMD.CyclomaticComplexity")
     private Object retrieveContent(final TabType tabType) {
         switch (tabType) {
             case TOOLS:

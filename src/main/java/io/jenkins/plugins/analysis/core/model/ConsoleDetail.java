@@ -49,6 +49,7 @@ public class ConsoleDetail implements ModelObject {
         readConsole(consoleLog.skip(start - 1).limit(end - start + 1));
     }
 
+    @SuppressWarnings("PMD.ConsecutiveLiteralAppends")
     private void readConsole(final Stream<String> consoleLog) {
         StringBuilder console = new StringBuilder(1024);
 
