@@ -115,27 +115,31 @@ class IssuesScanner {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
                     getAgentName(workspace), sourceCodeEncoding);
 
-            Blamer blamer;
-            if (blameMode == BlameMode.DISABLED) {
-                report.logInfo("Skipping SCM blames as requested");
-                blamer = new NullBlamer();
-            }
-            else {
-                FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
-                        + run.getFullDisplayName());
-                blamer = BlamerFactory.findBlamerFor(run, workspace, listener, log);
-                log.logSummary();
-                log.getInfoMessages().forEach(report::logInfo);
-                log.getErrorMessages().forEach(report::logError);
-
-            }
             result = workspace.act(new ReportPostProcessor(
                     tool.getActualId(), report, sourceCodeEncoding.name(),
-                    blamer, createMiner(report), filters));
+                    createBlamer(report), createMiner(report), filters));
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()), workspace);
         }
         logger.log(result.getReport());
         return result;
+    }
+
+    private Blamer createBlamer(final Report report) {
+        Blamer blamer;
+        if (blameMode == BlameMode.DISABLED) {
+            report.logInfo("Skipping SCM blames as requested");
+            blamer = new NullBlamer();
+        }
+        else {
+            FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
+                    + run.getFullDisplayName());
+            blamer = BlamerFactory.findBlamerFor(run, workspace, listener, log);
+            log.logSummary();
+            log.getInfoMessages().forEach(report::logInfo);
+            log.getErrorMessages().forEach(report::logError);
+
+        }
+        return blamer;
     }
 
     private RepositoryMiner createMiner(final Report report) {
