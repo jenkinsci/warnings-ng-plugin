@@ -5,6 +5,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.junit.jupiter.api.Test;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.plugins.workflow.actions.WarningAction;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import hudson.model.Result;
@@ -27,11 +29,14 @@ class StageResultHandlerTest {
     }
 
     @Test
+    @SuppressWarnings("ConstantConditions")
+    @SuppressFBWarnings(value = "DP_DO_INSIDE_DO_PRIVILEGED",
+            justification = "Needed to keep `FlowNode.getPersistentAction` from failing. "
+                    + "We can't mock the method directly because it's final.")
     void pipelineHandlerShouldSetBuildResultAndAddWarningAction()
             throws IllegalAccessException, IllegalArgumentException, NoSuchFieldException {
         Run run = mock(Run.class);
         FlowNode flowNode = mock(FlowNode.class);
-        // Needed to keep `FlowNode.getPersistentAction` from failing. We can't mock the method directly because it's final.
         Field actions = FlowNode.class.getDeclaredField("actions");
         actions.setAccessible(true);
         actions.set(flowNode, new CopyOnWriteArrayList<>());

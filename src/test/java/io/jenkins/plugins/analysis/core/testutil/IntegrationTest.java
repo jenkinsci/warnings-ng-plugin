@@ -823,28 +823,30 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the created {@link AnalysisResult}
      */
-    @SuppressWarnings("illegalcatch")
     protected AnalysisResult scheduleSuccessfulBuild(final ParameterizedJob<?, ?> job) {
-        try {
-            Run<?, ?> run = buildSuccessfully(job);
+        Run<?, ?> run = buildSuccessfully(job);
 
-            ResultAction action = getResultAction(run);
+        ResultAction action = getResultAction(run);
 
-            System.out.println("---------------------------------- Console Log ---------------------------------");
-            System.out.println("---------------------------------- Console Log ---------------------------------");
-            try (Reader reader = run.getLogReader()) {
-                new BufferedReader(reader).lines().forEach(System.out::println);
+        System.out.println("---------------------------------- Console Log ---------------------------------");
+        logConsole(run);
+        System.out.println("------------------------------------- Infos ------------------------------------");
+        action.getResult().getInfoMessages().forEach(System.out::println);
+        System.out.println("------------------------------------ Errors ------------------------------------");
+        action.getResult().getErrorMessages().forEach(System.out::println);
+        System.out.println("--------------------------------------------------------------------------------");
+
+        return action.getResult();
+    }
+
+    private void logConsole(final Run<?, ?> run) {
+        try (Reader reader = run.getLogReader()) {
+            try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+                bufferedReader.lines().forEach(System.out::println);
             }
-            System.out.println("------------------------------------- Infos ------------------------------------");
-            action.getResult().getInfoMessages().forEach(System.out::println);
-            System.out.println("------------------------------------ Errors ------------------------------------");
-            action.getResult().getErrorMessages().forEach(System.out::println);
-            System.out.println("--------------------------------------------------------------------------------");
-
-            return action.getResult();
         }
-        catch (Exception e) {
-            throw new AssertionError(e);
+        catch (IOException exception) {
+            throw new AssertionError(exception);
         }
     }
 

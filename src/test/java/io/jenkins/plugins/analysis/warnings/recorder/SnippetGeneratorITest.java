@@ -10,7 +10,6 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.steps.RecordIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.FreestyleConfiguration;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SnippetGenerator;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
@@ -42,8 +41,8 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void defaultConfigurationExplicitTest() {
         WorkflowJob job = createPipeline();
-        FreestyleConfiguration config = createSnippetGenerator(job)
-                .selectRecordIssues().setTool("Java")
+        SnippetGenerator snippetGenerator = createSnippetGenerator(job);
+        snippetGenerator.selectRecordIssues().setTool("Java")
                 .setAggregatingResults(false)
                 .setBlameDisabled(false)
                 .setForensicsDisabled(false)
@@ -54,8 +53,7 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
                 .setReferenceJobName("")
                 .setSourceCodeEncoding("");
 
-        SnippetGenerator generator = (SnippetGenerator) config;
-        String script = generator.generateScript();
+        String script = snippetGenerator.generateScript();
 
         assertThat(script).isEqualTo("recordIssues(tools: [java()])");
     }
@@ -66,7 +64,8 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void antiDefaultConfigurationExplicitTest() {
         WorkflowJob job = createPipeline();
-        FreestyleConfiguration config = createSnippetGenerator(job)
+        SnippetGenerator snippetGenerator = createSnippetGenerator(job);
+        snippetGenerator
                 .selectRecordIssues().setTool("Java")
                 .setAggregatingResults(true)
                 .setBlameDisabled(true)
@@ -79,8 +78,7 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
                 .setReferenceJobName("someText")
                 .setSourceCodeEncoding("otherText");
 
-        SnippetGenerator generator = (SnippetGenerator) config;
-        String script = generator.generateScript();
+        String script = snippetGenerator.generateScript();
 
         assertThat(script).contains("recordIssues");
         assertThat(script).contains("aggregatingResults: true");
@@ -103,12 +101,11 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void configureHealthReportTest() {
         WorkflowJob job = createPipeline();
-        FreestyleConfiguration config = createSnippetGenerator(job)
-                .selectRecordIssues().setTool("Java")
+        SnippetGenerator snippetGenerator = createSnippetGenerator(job);
+        snippetGenerator.selectRecordIssues().setTool("Java")
                 .setHealthReport(1, 9, Severity.WARNING_LOW);
 
-        SnippetGenerator generator = (SnippetGenerator) config;
-        String script = generator.generateScript();
+        String script = snippetGenerator.generateScript();
 
         assertThat(script).isEqualTo("recordIssues healthy: 1, tools: [java()], unhealthy: 9");
     }
@@ -119,8 +116,8 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldHandleComplexConfiguration() {
         WorkflowJob job = createPipeline();
-        FreestyleConfiguration config = createSnippetGenerator(job)
-                .selectRecordIssues().setTool("Java")
+        SnippetGenerator snippetGenerator = createSnippetGenerator(job);
+        snippetGenerator.selectRecordIssues().setTool("Java")
                 .setAggregatingResults(true)
                 .setBlameDisabled(true)
                 .setForensicsDisabled(true)
@@ -132,8 +129,7 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
                 .setReferenceJobName("someText")
                 .setSourceCodeEncoding("otherText");
 
-        SnippetGenerator generator = (SnippetGenerator) config;
-        String script = generator.generateScript();
+        String script = snippetGenerator.generateScript();
 
         assertThat(script).contains("recordIssues");
         assertThat(script).contains("aggregatingResults: true");
