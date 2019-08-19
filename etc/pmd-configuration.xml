@@ -52,6 +52,7 @@
     <exclude name="LoosePackageCoupling"/>
     <exclude name="LawOfDemeter"/>
     <exclude name="TooManyMethods"/>
+    <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
     <exclude name="ExcessiveParameterList"/>
     <exclude name="ExcessiveMethodLength"/>
     <exclude name="UseObjectForClearerAPI"/>
@@ -90,5 +91,4 @@
   </rule>
   <rule ref="category/java/security.xml">
   </rule>
-  
 </ruleset>
