@@ -35,6 +35,7 @@ public class FreestyleConfiguration extends PageObject {
 
     private static final String PATTERN = "_.pattern";
     private static final String BLAME_DISABLED = "_.blameDisabled";
+    private static final String FORENSICS_DISABLED = "_.forensicsDisabled";
     private static final String ENABLED_FOR_FAILURE = "_.enabledForFailure";
     private static final String AGGREGATING_RESULTS = "_.aggregatingResults";
 
@@ -98,7 +99,7 @@ public class FreestyleConfiguration extends PageObject {
      * Determines whether SCM blaming is disabled.
      *
      * @param blameDisabled
-     *         {@code true} if SCM blaming should be disabled, {@code false} if blames should be collected in the SCM
+     *         {@code true} if SCM blaming should be disabled, {@code false} otherwise
      *
      * @return this
      */
@@ -106,6 +107,27 @@ public class FreestyleConfiguration extends PageObject {
         setChecked(BLAME_DISABLED, blameDisabled);
 
         return this;
+    }
+
+    public boolean isBlameDisabled() {
+        return isChecked(BLAME_DISABLED);
+    }
+
+    /**
+     * Determines whether SCM forensics is disabled.
+     *
+     * @param forensicsDisabled
+     *         {@code true} if SCM forensics should be disabled, {@code false} otherwise
+     * @return this
+     */
+    public FreestyleConfiguration setForensicsDisabled(final boolean forensicsDisabled) {
+        setChecked(FORENSICS_DISABLED, forensicsDisabled);
+
+        return this;
+    }
+
+    public boolean isForensicsDisabled() {
+        return isChecked(FORENSICS_DISABLED);
     }
 
     /**
@@ -124,10 +146,6 @@ public class FreestyleConfiguration extends PageObject {
 
     public boolean mustFailOnError() {
         return isChecked(FAIL_ON_ERROR);
-    }
-
-    public boolean isBlameDisabled() {
-        return isChecked(BLAME_DISABLED);
     }
 
     /**

@@ -5,6 +5,7 @@ jobs:
               recordIssues {
                     aggregatingResults(true)
                     blameDisabled(true)
+                    forensicsDisabled(true)
                     enabledForFailure(true)
                     healthy(10)
                     ignoreFailedBuilds(false)

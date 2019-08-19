@@ -21,12 +21,12 @@ import io.jenkins.plugins.casc.ConfiguratorException;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * Tests the DSL Plugin.
+ * Tests the Job DSL Plugin.
  *
  * @author Artem Polovyi
  * @author Lorenz Munsch
  */
-public class JobDSLITest extends IntegrationTestWithJenkinsPerTest {
+public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
     /**
      * Creates a freestyle job from a YAML file and verifies that issue recorder finds warnings.
      */
@@ -52,6 +52,7 @@ public class JobDSLITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(recorder.getAggregatingResults()).isFalse();
         assertThat(recorder.getBlameDisabled()).isFalse();
+        assertThat(recorder.getForensicsDisabled()).isFalse();
         assertThat(recorder.getEnabledForFailure()).isFalse();
         assertThat(recorder.getHealthy()).isEqualTo(0);
         assertThat(recorder.getId()).isNull();
@@ -93,6 +94,7 @@ public class JobDSLITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(recorder.getAggregatingResults()).isTrue();
         assertThat(recorder.getBlameDisabled()).isTrue();
+        assertThat(recorder.getForensicsDisabled()).isTrue();
         assertThat(recorder.getEnabledForFailure()).isTrue();
         assertThat(recorder.getHealthy()).isEqualTo(10);
         assertThat(recorder.getId()).isEqualTo("test-id");
