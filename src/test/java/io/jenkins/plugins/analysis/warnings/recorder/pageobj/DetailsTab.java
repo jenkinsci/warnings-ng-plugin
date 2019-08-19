@@ -93,8 +93,9 @@ public class DetailsTab extends PageObject {
                 return new IssuesTable(getPage());
             case BLAMES:
                 return new BlamesTable(getPage());
+            default:
+                throw new NoSuchElementException("No page object registered for %s", tabType);
         }
-        throw new NoSuchElementException("No page object registered for %s", tabType);
     }
 
     /**

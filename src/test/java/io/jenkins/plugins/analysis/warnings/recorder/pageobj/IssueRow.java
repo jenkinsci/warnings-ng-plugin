@@ -28,15 +28,15 @@ public class IssueRow {
     private final Map<IssueColumn, HtmlTableCell> cellsByColumn = new HashMap<>();
 
     /**
-     * Creates a new row based on the content of a list of three HTML cells.
+     * Creates a new row  based on a list of HTML cells and columns.
      *
      * @param columnValues
      *         the values given as {@link HtmlTableCell}
      * @param columns
-     *         the names of the visible columns
+     *         the visible columns
      */
     IssueRow(final List<HtmlTableCell> columnValues, final List<IssueColumn> columns) {
-        for (int pos = 1; pos < columns.size(); pos++) {
+        for (int pos = 1; pos < columns.size(); pos++) { // Details column is ignored
             IssueColumn key = columns.get(pos);
             HtmlTableCell cell = columnValues.get(pos);
             cellsByColumn.put(key, cell);

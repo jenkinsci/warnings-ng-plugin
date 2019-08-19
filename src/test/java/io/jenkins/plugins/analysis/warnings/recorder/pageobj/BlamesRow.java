@@ -16,61 +16,37 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
  */
 @SuppressWarnings("PMD.DataClass")
 public class BlamesRow {
-    /**
-     * Label for the details column.
-     */
-    public static final String DETAILS = "Details";
-    /**
-     * Label for the details content.
-     */
-    public static final String DETAILS_CONTENT = "DetailsContent";
-    /**
-     * Label for the file column.
-     */
-    public static final String FILE = "File";
-    /**
-     * Label for the age column.
-     */
-    public static final String AGE = "Age";
-    /**
-     * Label for the author column.
-     */
-    public static final String AUTHOR = "Author";
-    /**
-     * Label for the email column.
-     */
-    public static final String EMAIL = "Email";
-    /**
-     * Label for the commit column.
-     */
-    public static final String COMMIT = "Commit";
+    public enum BlamesColumn {
+        DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT
+    }
 
+    private static final String DETAILS_CONTENT = "DetailsContent";
     private static final String NOT_SET = "-";
 
-    private final Map<String, String> valueByName = new HashMap<>();
-    private final Map<String, HtmlTableCell> cellsByName = new HashMap<>();
+    private final Map<BlamesColumn, String> valueByColumn = new HashMap<>();
+    private final Map<BlamesColumn, HtmlTableCell> cellsByColumn = new HashMap<>();
 
     /**
-     * Creates a new row based on a list of HTML cells and column names.
+     * Creates a new row based on a list of HTML cells and columns.
      *
      * @param columnValues
      *         the values given as {@link HtmlTableCell}
-     * @param columnNames
-     *         the names of the visible columns
+     * @param columns
+     *         the visible columns
      */
-    public BlamesRow(final List<HtmlTableCell> columnValues, final List<String> columnNames) {
-        for (int pos = 0; pos < columnNames.size(); pos++) {
-            String key = columnNames.get(pos);
+     BlamesRow(final List<HtmlTableCell> columnValues, final List<BlamesColumn> columns) {
+        for (int pos = 0; pos < columns.size(); pos++) {
+            BlamesColumn key = columns.get(pos);
             HtmlTableCell cell = columnValues.get(pos);
-            cellsByName.put(key, cell);
-            if (DETAILS.equals(key)) {
+            cellsByColumn.put(key, cell);
+            if (BlamesColumn.DETAILS == key) {
                 String detailsContent = cell.getFirstElementChild().getAttributeDirect("data-description")
                         .replace("<p><strong>", "")
                         .replace("</strong></p>", "");
-                valueByName.put(DETAILS_CONTENT, detailsContent);
+                valueByColumn.put(BlamesColumn.DETAILS, detailsContent);
             }
             else {
-                valueByName.put(key, cell.getTextContent());
+                valueByColumn.put(key, cell.getTextContent());
             }
         }
     }
@@ -92,19 +68,18 @@ public class BlamesRow {
      *         the age
      */
     public BlamesRow(final String detailsContent, final String fileName, final String author, final String email,
-            final String commit,
-            final int age) {
-        put(DETAILS_CONTENT, detailsContent);
-        put(FILE, fileName);
-        put(AUTHOR, author);
-        put(EMAIL, email);
-        put(COMMIT, commit);
-        put(AGE, String.valueOf(age));
+            final String commit, final int age) {
+        put(BlamesColumn.DETAILS, detailsContent);
+        put(BlamesColumn.FILE, fileName);
+        put(BlamesColumn.AUTHOR, author);
+        put(BlamesColumn.EMAIL, email);
+        put(BlamesColumn.COMMIT, commit);
+        put(BlamesColumn.AGE, String.valueOf(age));
     }
 
-    private void put(final String key, final String value) {
+    private void put(final BlamesColumn key, final String value) {
         if (!NOT_SET.equals(value)) {
-            valueByName.put(key, value);
+            valueByColumn.put(key, value);
         }
     }
 
@@ -119,18 +94,18 @@ public class BlamesRow {
 
         BlamesRow sourceControlRow = (BlamesRow) o;
 
-        return valueByName.equals(sourceControlRow.valueByName);
+        return valueByColumn.equals(sourceControlRow.valueByColumn);
     }
 
     @Override
     public int hashCode() {
-        return valueByName.hashCode();
+        return valueByColumn.hashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("properties", valueByName)
+                .append("properties", valueByColumn)
                 .toString();
     }
 
@@ -143,11 +118,11 @@ public class BlamesRow {
      * @return the requested value
      */
     public String getValue(final String name) {
-        return valueByName.get(name);
+        return valueByColumn.get(name);
     }
 
-    public Map<String, HtmlTableCell> getCellsByName() {
-        return cellsByName;
+    public Map<BlamesColumn, HtmlTableCell> getCellsByColumn() {
+        return cellsByColumn;
     }
 
 }

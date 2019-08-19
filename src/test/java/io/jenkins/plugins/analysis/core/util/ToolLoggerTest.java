@@ -21,6 +21,7 @@ class ToolLoggerTest {
     private static final String SECOND_MESSAGE = "Two";
 
     @Test
+    @SuppressWarnings("PMD.CloseResource")
     void shouldLogSingleAndMultipleLines() {
         PrintStream printStream = mock(PrintStream.class);
         ToolLogger logger = new ToolLogger(printStream, TOOL_NAME);

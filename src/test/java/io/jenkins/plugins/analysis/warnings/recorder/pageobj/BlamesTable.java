@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
@@ -17,6 +19,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.BlamesColumn;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -34,16 +38,17 @@ public class BlamesTable extends PageObject {
     private DomElement scmFilter = null;
 
     private List<BlamesRow> rows = new ArrayList<>();
-    private List<String> columnNames = new ArrayList<>();
+    private List<BlamesColumn> columns = new ArrayList<>();
 
     /**
-     * Create a page object for the source control table in the details view.
+     * Creates a new instance of {@link BlamesTable}.
      *
      * @param page
-     *         the whole build details HtmlPage
+     *         the whole details Html page
      */
     public BlamesTable(final HtmlPage page) {
         super(page);
+
         load();
     }
 
@@ -63,11 +68,7 @@ public class BlamesTable extends PageObject {
         assertThat(tableHeaderRows).hasSize(1);
 
         HtmlTableRow header = tableHeaderRows.get(0);
-        columnNames = header
-                .getCells()
-                .stream()
-                .map(HtmlTableCell::getTextContent)
-                .collect(Collectors.toList());
+        columns = getHeaders(header);
 
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);
@@ -78,8 +79,16 @@ public class BlamesTable extends PageObject {
 
         for (HtmlTableRow row : contentRows) {
             List<HtmlTableCell> rowCells = row.getCells();
-            rows.add(new BlamesRow(rowCells, columnNames));
+            rows.add(new BlamesRow(rowCells, columns));
         }
+    }
+
+    private List<BlamesColumn> getHeaders(final HtmlTableRow header) {
+        return header.getCells().stream()
+                .map(HtmlTableCell::getTextContent)
+                .map(StringUtils::upperCase)
+                .map(BlamesColumn::valueOf)
+                .collect(Collectors.toList());
     }
 
     @SuppressFBWarnings("BC")
@@ -98,8 +107,8 @@ public class BlamesTable extends PageObject {
         return rows;
     }
 
-    public List<String> getColumnNames() {
-        return columnNames;
+    public List<BlamesColumn> getColumns() {
+        return columns;
     }
 
     /**

@@ -22,13 +22,12 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResultAssert;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.BlamesColumn;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
 import io.jenkins.plugins.forensics.blame.Blamer;
 
-import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.FILE;
-import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.*;
 import static io.jenkins.plugins.forensics.assertions.Assertions.*;
 
 /**
@@ -326,8 +325,9 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private void assertOneIssue(final String commit, final BlamesTable table) {
-        assertThat(table.getColumnNames())
-                .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT);
+        assertThat(table.getColumns())
+                .containsExactly(BlamesColumn.DETAILS, BlamesColumn.FILE, BlamesColumn.AGE, BlamesColumn.AUTHOR,
+                        BlamesColumn.EMAIL, BlamesColumn.COMMIT);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
         assertThat(table.getRows()).hasSize(1);
         assertThat(table.getRows()).containsExactly(
@@ -336,8 +336,9 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
-        assertThat(table.getColumnNames())
-                .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT);
+        assertThat(table.getColumns())
+                .containsExactly(BlamesColumn.DETAILS, BlamesColumn.FILE, BlamesColumn.AGE, BlamesColumn.AUTHOR,
+                        BlamesColumn.EMAIL, BlamesColumn.COMMIT);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 10 of 11 entries");
         assertThat(table.getRows()).containsExactly(
                 new BlamesRow("Bobs Warning for Jenkins", "Bob.java:1", "Alice Miller", "alice@miller",

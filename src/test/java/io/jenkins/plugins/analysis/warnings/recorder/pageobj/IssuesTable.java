@@ -66,12 +66,16 @@ public class IssuesTable extends PageObject {
         }
     }
 
+    public List<IssueRow> getRows() {
+        return rows;
+    }
+
     public List<IssueColumn> getColumns() {
         return columns;
     }
 
     @SuppressWarnings("PMD.SystemPrintln")
-    static void waitForAjaxCall(final HtmlTableBody body) {
+    private static void waitForAjaxCall(final HtmlTableBody body) {
         while ("Loading - please wait ...".equals(
                 body.getRows().get(0).getCells().get(0).getFirstChild().getTextContent())) {
             System.out.println("Waiting for Ajax call to populate issues table ...");
@@ -94,15 +98,6 @@ public class IssuesTable extends PageObject {
      */
     public String getTitle() {
         return title;
-    }
-
-    /**
-     * Returns the table rows.
-     *
-     * @return the rows
-     */
-    public List<IssueRow> getRows() {
-        return rows;
     }
 
     /**
