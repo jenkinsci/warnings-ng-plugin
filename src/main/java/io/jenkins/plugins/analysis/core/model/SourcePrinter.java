@@ -41,22 +41,22 @@ public class SourcePrinter {
      */
     public String render(final Stream<String> lines, final Issue issue, final String description,
             final String iconUrl) {
-        LookaheadStream stream = new LookaheadStream(lines);
+        try (LookaheadStream stream = new LookaheadStream(lines)) {
+            int start = issue.getLineStart();
+            int end = issue.getLineEnd();
 
-        int start = issue.getLineStart();
-        int end = issue.getLineEnd();
+            StringBuilder before = readBlockUntilLine(stream, start - 1);
+            StringBuilder marked = readBlockUntilLine(stream, end);
+            StringBuilder after = readBlockUntilLine(stream, Integer.MAX_VALUE);
 
-        StringBuilder before = readBlockUntilLine(stream, start - 1);
-        StringBuilder marked = readBlockUntilLine(stream, end);
-        StringBuilder after = readBlockUntilLine(stream, Integer.MAX_VALUE);
+            String language = selectLanguageClass(issue);
+            String code = asCode(before, language, "line-numbers")
+                    + asCode(marked, language, "highlight")
+                    + createInfoPanel(issue, description, start, iconUrl)
+                    + asCode(after, language);
 
-        String language = selectLanguageClass(issue);
-        String code = asCode(before, language, "line-numbers")
-                + asCode(marked, language, "highlight")
-                + createInfoPanel(issue, description, start, iconUrl)
-                + asCode(after, language);
-
-        return pre().with(new UnescapedText(code)).renderFormatted();
+            return pre().with(new UnescapedText(code)).renderFormatted();
+        }
     }
 
     private StringBuilder readBlockUntilLine(final LookaheadStream stream, final int end) {

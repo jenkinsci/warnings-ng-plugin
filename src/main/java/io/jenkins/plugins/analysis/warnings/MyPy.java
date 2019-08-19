@@ -45,10 +45,5 @@ public class MyPy extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Violations_MyPy();
         }
-
-        @Override
-        public String getUrl() {
-            return "http://mypy-lang.org";
-        }
     }
 }

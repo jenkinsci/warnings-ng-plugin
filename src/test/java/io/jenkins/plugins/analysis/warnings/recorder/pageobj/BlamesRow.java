@@ -14,6 +14,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
  * @author Fabian Janker
  * @author Andreas Pabst
  */
+@SuppressWarnings("PMD.DataClass")
 public class BlamesRow {
     /**
      * Label for the details column.

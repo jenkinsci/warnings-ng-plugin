@@ -37,21 +37,7 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldShowStatisticsOfOneIssue() throws Exception {
-        gitRepo.init();
-        createAndCommitFile(FILE_NAME, "public class Test {}");
-
-        createAndCommitFile("Jenkinsfile", "node {\n"
-                + "  stage ('Checkout') {\n"
-                + "    checkout scm\n"
-                + "  }\n"
-                + "  stage ('Build and Analysis') {"
-                + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
-                + "    recordIssues tools: [java()]\n"
-                + "  }\n"
-                + "}");
-
-        WorkflowJob job = createPipeline();
-        job.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
+        WorkflowJob job = createJob("");
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
         RepositoryStatistics statistics = result.getForensics();
@@ -65,6 +51,43 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(fileStatistics).hasNumberOfAuthors(1);
         assertThat(fileStatistics).hasAgeInDays(0);
         assertThat(fileStatistics).hasLastModifiedInDays(0);
+    }
+
+    /**
+     * Verifies that the repository miner can be disabled.
+     *
+     * @throws Exception
+     *         if there is a problem with the git repository
+     */
+    @Test
+    public void shouldDisableMiner() throws Exception {
+        WorkflowJob job = createJob("forensicsDisabled: 'true', ");
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        RepositoryStatistics statistics = result.getForensics();
+
+        assertThat(statistics).isEmpty();
+        assertThat(result.getInfoMessages()).contains("Skipping SCM forensics as requested");
+    }
+
+    private WorkflowJob createJob(final String disableForensicsParameter) throws Exception {
+        gitRepo.init();
+        createAndCommitFile(FILE_NAME, "public class Test {}");
+
+        createAndCommitFile("Jenkinsfile", "node {\n"
+                + "  stage ('Checkout') {\n"
+                + "    checkout scm\n"
+                + "  }\n"
+                + "  stage ('Build and Analysis') {"
+                + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
+                + "    recordIssues " + disableForensicsParameter + "tools: [java()]\n"
+                + "  }\n"
+                + "}");
+
+        WorkflowJob job = createPipeline();
+        job.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
+
+        return job;
     }
 
     private void createAndCommitFile(final String fileName, final String content) throws Exception {

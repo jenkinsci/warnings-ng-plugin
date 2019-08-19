@@ -45,6 +45,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
+import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -97,6 +98,7 @@ public class IssuesRecorder extends Recorder {
     private boolean isAggregatingResults;
 
     private boolean isBlameDisabled;
+    private boolean isForensicsDisabled;
 
     private String id;
     private String name;
@@ -314,6 +316,21 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
         isBlameDisabled = blameDisabled;
+    }
+
+    /**
+     * Returns whether SCM forensics should be disabled.
+     *
+     * @return {@code true} if SCM forensics should be disabled
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getForensicsDisabled() {
+        return isForensicsDisabled;
+    }
+
+    @DataBoundSetter
+    public void setForensicsDisabled(final boolean forensicsDisabled) {
+        isForensicsDisabled = forensicsDisabled;
     }
 
     /**
@@ -562,7 +579,8 @@ public class IssuesRecorder extends Recorder {
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(), workspace, run,
-                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
+                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
+                isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
 
         return issuesScanner.scan();
     }

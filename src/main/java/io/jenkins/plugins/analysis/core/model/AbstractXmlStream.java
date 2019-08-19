@@ -62,19 +62,14 @@ abstract class AbstractXmlStream<T> {
             Object restored = dataFile.read();
 
             if (type.isInstance(restored)) {
-                if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.log(Level.FINE, "Loaded data file " + dataFile);
-                }
+                LOGGER.log(Level.FINE, "Loaded data file " + dataFile);
+
                 return type.cast(restored);
             }
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + restored);
-            }
+            LOGGER.log(Level.SEVERE, "Failed to load " + dataFile + ", wrong type: " + restored);
         }
         catch (IOException exception) {
-            if (LOGGER.isLoggable(Level.SEVERE)) {
-                LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
-            }
+            LOGGER.log(Level.SEVERE, "Failed to load " + dataFile, exception);
         }
         return defaultValue; // fallback
     }

@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
-
 import java.util.List;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
@@ -10,7 +10,6 @@ import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.HealthReport;
 import hudson.model.Result;
-import hudson.model.Run;
 import hudson.model.TopLevelItem;
 import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
@@ -83,12 +82,12 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
         Publisher publisher = publishers.get(0);
         assertThat(publisher).isInstanceOf(IssuesRecorder.class);
         IssuesRecorder recorder = (IssuesRecorder) publisher;
+
         List<Tool> tools = recorder.getTools();
         assertThat(tools).hasSize(1);
         assertThat(tools.get(0)).isInstanceOf(CheckStyle.class);
         assertThat(tools.get(0).getId()).isEqualTo("checkstyle-id");
         assertThat(tools.get(0).getName()).isEqualTo("checkstyle-name");
-
     }
 
     /**

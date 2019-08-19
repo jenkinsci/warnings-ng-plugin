@@ -50,10 +50,5 @@ public class CssLint extends ReportScanningTool {
         public boolean canScanConsoleLog() {
             return false;
         }
-
-        @Override
-        public String getUrl() {
-            return "http://csslint.net/";
-        }
     }
 }

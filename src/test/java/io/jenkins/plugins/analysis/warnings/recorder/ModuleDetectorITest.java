@@ -106,7 +106,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousModulesDetectedForOsgiMavenAndAntInTheHtmlOutput() {
-        String[] workspaceFiles = new String[] {
+        String[] workspaceFiles = {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
@@ -135,7 +135,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousMavenModulesInTheHtmlOutput() {
-        String[] workspaceFiles = new String[] {
+        String[] workspaceFiles = {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml"};
@@ -156,7 +156,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousAntModulesInTheHtmlOutput() {
-        String[] workspaceFiles = new String[] {
+        String[] workspaceFiles = {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml"};
 
@@ -173,7 +173,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() {
-        String[] workspaceFiles = new String[] {
+        String[] workspaceFiles = {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
@@ -197,7 +197,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldRunMavenAntAndOsgiAndCheckCorrectExecutionSequence() {
-        String[] workspaceFiles = new String[] {
+        String[] workspaceFiles = {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
@@ -226,7 +226,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldVerifyTheModuleDetectionBehaviorForVariousMavenPomFiles() {
-        String[] workspaceFiles = new String[] {
+        String[] workspaceFiles = {
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
                 BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
@@ -252,7 +252,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldVerifyTheModuleDetectionBehaviorForVariousAntBuildFiles() {
-        String[] workspaceFiles = new String[] {
+        String[] workspaceFiles = {
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
                 BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m2/build.xml",
@@ -275,7 +275,7 @@ public class ModuleDetectorITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldVerifyTheModuleDetectionBehaviorForVariousOsgiMfFiles() {
-        String[] workspaceFiles = new String[] {
+        String[] workspaceFiles = {
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
                 BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",

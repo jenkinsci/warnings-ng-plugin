@@ -17,7 +17,7 @@ import hudson.model.Project;
  * @author Michael Schmid, Raphael Furch
  */
 public class DashboardTable {
-
+    private static final String EMPTY = "-";
     private final Map<String, Map<String, DashboardTableEntry>> table;
 
     /**
@@ -27,7 +27,6 @@ public class DashboardTable {
      *         the whole details HTML page
      */
     public DashboardTable(final HtmlPage page) {
-
         List<HtmlElement> rowElements = page.getElementsByTagName("table").stream()
                 .filter(dom -> dom.asText().startsWith("Static analysis issues per tool and job"))
                 .flatMap(dom -> dom.getElementsByTagName("table").stream().skip(1))
@@ -68,7 +67,7 @@ public class DashboardTable {
             final List<String> plugins) {
         Map<String, DashboardTableEntry> valuePluginMapping = new HashMap<>();
         for (int i = 1; i < warnings.size(); i++) {
-            if (!"-".equals(warnings.get(i).get(0))) {
+            if (!EMPTY.equals(warnings.get(i).get(0))) {
                 valuePluginMapping.put(plugins.get(i), new DashboardTableEntry(Integer.parseInt(warnings.get(i).get(0)), warnings.get(i).get(1)));
             }
         }

@@ -47,7 +47,7 @@ public class DetailFactory {
 
     @VisibleForTesting
     DetailFactory(final JenkinsFacade jenkinsFacade) {
-        this.jenkins = jenkinsFacade;
+        jenkins = jenkinsFacade;
     }
 
     /**
@@ -111,9 +111,10 @@ public class DetailFactory {
                     return new SourceDetail(owner, affectedFile, issue, description, icon);
                 }
                 catch (IOException e) {
-                    StringReader fallback = new StringReader(
-                            String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)));
-                    return new SourceDetail(owner, fallback, issue, description, icon);
+                    try (StringReader fallback = new StringReader(
+                            String.format("%s%n%s", ExceptionUtils.getMessage(e), ExceptionUtils.getStackTrace(e)))) {
+                        return new SourceDetail(owner, fallback, issue, description, icon);
+                    }
                 }
             }
         }

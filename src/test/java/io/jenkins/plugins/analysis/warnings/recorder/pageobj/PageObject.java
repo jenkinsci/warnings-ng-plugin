@@ -10,7 +10,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
  *
  * @author Ullrich Hafner
  */
-abstract class PageObject {
+class PageObject {
     private final HtmlPage page;
 
     /**

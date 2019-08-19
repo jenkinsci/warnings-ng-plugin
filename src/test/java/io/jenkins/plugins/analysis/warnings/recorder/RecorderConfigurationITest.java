@@ -37,6 +37,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
                 .setSourceCodeEncoding(ENCODING)
                 .setAggregatingResults(true)
                 .setBlameDisabled(true)
+                .setForensicsDisabled(true)
                 .setEnabledForFailure(true)
                 .setIgnoreQualityGate(true)
                 .setIgnoreFailedBuilds(true)
@@ -52,6 +53,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         assertThat(saved.getSourceCodeEncoding()).isEqualTo(ENCODING);
         assertThat(saved.isAggregatingResults()).isTrue();
         assertThat(saved.isBlameDisabled()).isTrue();
+        assertThat(saved.isForensicsDisabled()).isTrue();
         assertThat(saved.isEnabledForFailure()).isTrue();
         assertThat(saved.canIgnoreQualityGate()).isTrue();
         assertThat(saved.canIgnoreFailedBuilds()).isTrue();
@@ -81,6 +83,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         new FreestyleConfiguration(getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"))
                 .setAggregatingResults(false)
                 .setBlameDisabled(false)
+                .setForensicsDisabled(false)
                 .setEnabledForFailure(false)
                 .setIgnoreQualityGate(false)
                 .setIgnoreFailedBuilds(false)
@@ -92,6 +95,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
 
         assertThat(inverted.isAggregatingResults()).isFalse();
         assertThat(inverted.isBlameDisabled()).isFalse();
+        assertThat(inverted.isForensicsDisabled()).isFalse();
         assertThat(inverted.isEnabledForFailure()).isFalse();
         assertThat(inverted.canIgnoreQualityGate()).isFalse();
         assertThat(inverted.canIgnoreFailedBuilds()).isFalse();

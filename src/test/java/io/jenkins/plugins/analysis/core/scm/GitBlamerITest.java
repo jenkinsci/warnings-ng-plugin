@@ -29,7 +29,7 @@ import io.jenkins.plugins.forensics.blame.Blamer;
 
 import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.FILE;
 import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.*;
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.forensics.assertions.Assertions.*;
 
 /**
  * Tests the {@link Blamer GitBlamer} in several jobs that uses a real Git repository.
@@ -51,10 +51,33 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldBlameOneIssueWithPipeline() throws Exception {
-        gitRepo.init();
-        createAndCommitFile("Test.java", "public class Test {}");
+        WorkflowJob job = createJob("");
 
-        String testCommit = gitRepo.head();
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertSuccessfulBlame(result, 1, 1);
+
+        BlamesTable table = getSourceControlTable(result);
+        assertOneIssue(gitRepo.head(), table);
+    }
+
+    /**
+     * Verifies that the repository blamer can be disabled.
+     *
+     * @throws Exception
+     *         if there is a problem with the git repository
+     */
+    @Test
+    public void shouldDisableBlames() throws Exception {
+        WorkflowJob job = createJob("blameDisabled: 'true', ");
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result.getBlames()).isEmpty();
+        assertThat(result.getInfoMessages()).contains("Skipping SCM blames as requested");
+    }
+
+    private WorkflowJob createJob(final String disableBlamesParameter) throws Exception {
+        gitRepo.init();
 
         createAndCommitFile("Jenkinsfile", "node {\n"
                 + "  stage ('Checkout') {\n"
@@ -62,18 +85,14 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                 + "  }\n"
                 + "  stage ('Build and Analysis') {"
                 + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
-                + "    recordIssues tools: [java()]\n"
+                + "    recordIssues " + disableBlamesParameter + "tools: [java()]\n"
                 + "  }\n"
                 + "}");
+        createAndCommitFile("Test.java", "public class Test {}");
 
         WorkflowJob project = createPipeline();
         project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
-
-        AnalysisResult result = scheduleSuccessfulBuild(project);
-        assertSuccessfulBlame(result, 1, 1);
-
-        BlamesTable table = getSourceControlTable(result);
-        assertOneIssue(testCommit, table);
+        return project;
     }
 
     /**
@@ -183,13 +202,13 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Test filtering in the SourceControlTable.
+     * Test filtering in the {@link BlamesTable}.
      *
      * @throws Exception
      *         if there is a problem with the git repository
      */
     @Test
-    public void shouldFilter() throws Exception {
+    public void shouldFilterTable() throws Exception {
         Map<String, String> commits = createGitRepository();
 
         createAndCommitFile("Jenkinsfile", "node {\n"

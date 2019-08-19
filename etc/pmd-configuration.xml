@@ -4,12 +4,13 @@
          name="pmd-eclipse"
          xsi:schemaLocation="http://pmd.sourceforge.net/ruleset/2.0.0 http://pmd.sourceforge.net/ruleset_2_0_0.xsd">
   <description>Ullrich Hafner's PMD rules</description>
-  
+
   <rule ref="category/java/bestpractices.xml">
     <exclude name="JUnitTestContainsTooManyAsserts"/>
     <exclude name="JUnitTestsShouldIncludeAssert"/>
     <exclude name="JUnitAssertionsShouldIncludeMessage"/>
     <exclude name="UnusedImports"/>
+    <exclude name="GuardLogStatement"/>
     <exclude name="AccessorMethodGeneration"/>
   </rule>
   <rule ref="category/java/codestyle.xml">
@@ -51,6 +52,7 @@
     <exclude name="LoosePackageCoupling"/>
     <exclude name="LawOfDemeter"/>
     <exclude name="TooManyMethods"/>
+    <exclude name="ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
     <exclude name="ExcessiveParameterList"/>
     <exclude name="ExcessiveMethodLength"/>
     <exclude name="UseObjectForClearerAPI"/>
@@ -89,5 +91,4 @@
   </rule>
   <rule ref="category/java/security.xml">
   </rule>
-  
 </ruleset>

@@ -44,6 +44,7 @@ class CarouselPageObject extends PageObject {
         return ((HtmlDivision) carouselItemActive.getChildNodes().get(0)).getId();
     }
 
+    @SuppressWarnings("PMD.SystemPrintln")
     private void waitForAjaxCall(final String oldActive) {
         while (oldActive.equals(getActiveCarouselItemId())) {
             System.out.println("Waiting for Ajax call to finish carousel animation...");
