@@ -123,6 +123,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      * @param previousResult
      *         the analysis result of the previous run
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     public AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report, final Blames blames,
             final RepositoryStatistics statistics, final QualityGateStatus qualityGateStatus,
             final Map<String, Integer> sizePerOrigin,
@@ -212,6 +213,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *         determines whether the result should be persisted in the build folder
      */
     @VisibleForTesting
+    @SuppressWarnings("checkstyle:ParameterNumber")
     protected AnalysisResult(final Run<?, ?> owner, final String id, final DeltaReport report,
             final Blames blames, final RepositoryStatistics statistics,
             final QualityGateStatus qualityGateStatus, final Map<String, Integer> sizePerOrigin,

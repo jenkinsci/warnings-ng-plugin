@@ -10,7 +10,7 @@ import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
  *
  * @author Ullrich Hafner
  */
- class RepositoryStatisticsXmlStream extends AbstractXmlStream<RepositoryStatistics> {
+class RepositoryStatisticsXmlStream extends AbstractXmlStream<RepositoryStatistics> {
     RepositoryStatisticsXmlStream() {
         super(RepositoryStatistics.class);
     }

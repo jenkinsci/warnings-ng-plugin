@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -13,6 +15,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow.IssueColumn;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -24,7 +28,7 @@ import static org.assertj.core.api.Assertions.*;
 public class IssuesTable extends PageObject {
     private final String title;
     private final List<IssueRow> rows = new ArrayList<>();
-    private final List<String> columnNames;
+    private final List<IssueColumn> columns;
 
     /**
      * Creates a new instance of {@link IssuesTable}.
@@ -47,7 +51,7 @@ public class IssuesTable extends PageObject {
         assertThat(tableHeaderRows).hasSize(1);
 
         HtmlTableRow header = tableHeaderRows.get(0);
-        columnNames = getHeaders(header.getCells());
+        columns = getHeaders(header.getCells());
 
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);
@@ -58,12 +62,12 @@ public class IssuesTable extends PageObject {
 
         for (HtmlTableRow row : contentRows) {
             List<HtmlTableCell> rowCells = row.getCells();
-            rows.add(new IssueRow(rowCells, columnNames));
+            rows.add(new IssueRow(rowCells, columns));
         }
     }
 
-    public List<String> getColumnNames() {
-        return columnNames;
+    public List<IssueColumn> getColumns() {
+        return columns;
     }
 
     @SuppressWarnings("PMD.SystemPrintln")
@@ -75,8 +79,12 @@ public class IssuesTable extends PageObject {
         }
     }
 
-    private List<String> getHeaders(final List<HtmlTableCell> cells) {
-        return cells.stream().map(HtmlTableCell::getTextContent).collect(Collectors.toList());
+    private List<IssueColumn> getHeaders(final List<HtmlTableCell> cells) {
+        return cells.stream()
+                .map(HtmlTableCell::getTextContent)
+                .map(StringUtils::upperCase)
+                .map(IssueColumn::valueOf)
+                .collect(Collectors.toList());
     }
 
     /**

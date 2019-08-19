@@ -13,7 +13,7 @@ import edu.hm.hafner.util.VisibleForTesting;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ClassWithOnlyPrivateConstructorsShouldBeFinal", "checkstyle:FinalClass"})
+@SuppressWarnings("checkstyle:FinalClass")
 public class TimeFacade {
     private static TimeFacade instance = new TimeFacade();
 

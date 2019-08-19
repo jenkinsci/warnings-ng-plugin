@@ -19,33 +19,28 @@ import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.PageObject.*
  */
 // TODO: provide builder
 public class IssueRow {
-    public static final String DETAILS = "Details";
-    public static final String FILE = "File";
-    public static final String PACKAGE = "Package";
-    public static final String CATEGORY = "Category";
-    public static final String TYPE = "Type";
-    public static final String PRIORITY = "Severity";
-    public static final String AGE = "Age";
-
+    public enum IssueColumn {
+        DETAILS, FILE, PACKAGE, CATEGORY, TYPE, SEVERITY, AGE
+    }
     private static final String NOT_SET = "-";
 
-    private final Map<String, String> valueByName = new HashMap<>();
-    private final Map<String, HtmlTableCell> cellsByName = new HashMap<>();
+    private final Map<IssueColumn, String> valueByColumn = new HashMap<>();
+    private final Map<IssueColumn, HtmlTableCell> cellsByColumn = new HashMap<>();
 
     /**
      * Creates a new row based on the content of a list of three HTML cells.
      *
      * @param columnValues
      *         the values given as {@link HtmlTableCell}
-     * @param columnNames
+     * @param columns
      *         the names of the visible columns
      */
-    public IssueRow(final List<HtmlTableCell> columnValues, final List<String> columnNames) {
-        for (int pos = 1; pos < columnNames.size(); pos++) {
-            String key = columnNames.get(pos);
+    IssueRow(final List<HtmlTableCell> columnValues, final List<IssueColumn> columns) {
+        for (int pos = 1; pos < columns.size(); pos++) {
+            IssueColumn key = columns.get(pos);
             HtmlTableCell cell = columnValues.get(pos);
-            cellsByName.put(key, cell);
-            valueByName.put(key, cell.getTextContent());
+            cellsByColumn.put(key, cell);
+            valueByColumn.put(key, cell.getTextContent());
         }
     }
 
@@ -67,17 +62,17 @@ public class IssueRow {
      */
     public IssueRow(final String fileName, final String packageName, final String category, final String type,
             final String priority, final int age) {
-        put(FILE, fileName);
-        put(PACKAGE, packageName);
-        put(CATEGORY, category);
-        put(TYPE, type);
-        put(PRIORITY, priority);
-        put(AGE, String.valueOf(age));
+        put(IssueColumn.FILE, fileName);
+        put(IssueColumn.PACKAGE, packageName);
+        put(IssueColumn.CATEGORY, category);
+        put(IssueColumn.TYPE, type);
+        put(IssueColumn.SEVERITY, priority);
+        put(IssueColumn.AGE, String.valueOf(age));
     }
 
-    private void put(final String key, final String value) {
+    private void put(final IssueColumn key, final String value) {
         if (!NOT_SET.equals(value)) {
-            valueByName.put(key, value);
+            valueByColumn.put(key, value);
         }
     }
 
@@ -92,18 +87,18 @@ public class IssueRow {
 
         IssueRow issueRow = (IssueRow) o;
 
-        return valueByName.equals(issueRow.valueByName);
+        return valueByColumn.equals(issueRow.valueByColumn);
     }
 
     @Override
     public int hashCode() {
-        return valueByName.hashCode();
+        return valueByColumn.hashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("properties", valueByName)
+                .append("properties", valueByColumn)
                 .toString();
     }
 
@@ -115,18 +110,23 @@ public class IssueRow {
      *
      * @return {@code true} if the column contains a link, {@code false} if the column contains plain text
      */
-    public boolean hasLink(final String columnId) {
+    public boolean hasLink(final IssueColumn columnId) {
         return getLink(columnId) instanceof HtmlAnchor;
     }
 
-    private DomElement getLink(final String columnId) {
-        return cellsByName.get(columnId).getFirstElementChild();
+    private DomElement getLink(final IssueColumn columnId) {
+        return cellsByColumn.get(columnId).getFirstElementChild();
     }
 
-    public SourceCodeView click(final String columnId) {
-        assertThat(hasLink(columnId)).isTrue();
+    /**
+     * Opens the source code using the link of the {@link IssueColumn#FILE} column.
+     *
+     * @return the source code view
+     */
+    public SourceCodeView openSourceCode() {
+        assertThat(hasLink(IssueColumn.FILE)).isTrue();
 
-        HtmlPage htmlPage = clickOnElement(getLink(IssueRow.FILE));
+        HtmlPage htmlPage = clickOnElement(getLink(IssueColumn.FILE));
 
         return new SourceCodeView(htmlPage);
     }

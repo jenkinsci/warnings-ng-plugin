@@ -10,7 +10,7 @@ import io.jenkins.plugins.forensics.blame.FileBlame;
  *
  * @author Ullrich Hafner
  */
- class BlamesXmlStream extends AbstractXmlStream<Blames> {
+class BlamesXmlStream extends AbstractXmlStream<Blames> {
     BlamesXmlStream() {
         super(Blames.class);
     }

@@ -113,12 +113,12 @@ class IssuesScanner {
         }
         else {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
-                    getAgentName(workspace), sourceCodeEncoding);
+                    getAgentName(), sourceCodeEncoding);
 
             result = workspace.act(new ReportPostProcessor(
                     tool.getActualId(), report, sourceCodeEncoding.name(),
                     createBlamer(report), createMiner(report), filters));
-            copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()), workspace);
+            copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()));
         }
         logger.log(result.getReport());
         return result;
@@ -155,8 +155,8 @@ class IssuesScanner {
         }
     }
 
-    private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder,
-            final FilePath workspace) throws InterruptedException {
+    private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder)
+            throws InterruptedException {
         report.logInfo("Copying affected files to Jenkins' build folder '%s'", affectedFilesFolder);
 
         new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, affectedFilesFolder, workspace);
@@ -174,11 +174,11 @@ class IssuesScanner {
         return buildDirectory;
     }
 
-    private String getAgentName(final FilePath workspace) {
-        return StringUtils.defaultIfBlank(getComputerName(workspace), "Master");
+    private String getAgentName() {
+        return StringUtils.defaultIfBlank(getComputerName(), "Master");
     }
 
-    private String getComputerName(final FilePath workspace) {
+    private String getComputerName() {
         Computer computer = workspace.toComputer();
         if (computer != null) {
             return computer.getName();

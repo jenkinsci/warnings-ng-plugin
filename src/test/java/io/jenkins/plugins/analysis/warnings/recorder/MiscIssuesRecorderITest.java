@@ -33,6 +33,7 @@ import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow.IssueColumn;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
@@ -480,8 +481,9 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 new PropertyRow("RightCurlyCheck", 2, 100));
 
         IssuesTable issues = new IssuesTable(details);
-        assertThat(issues.getColumnNames()).containsExactly(
-                IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.TYPE, IssueRow.PRIORITY, IssueRow.AGE);
+        assertThat(issues.getColumns()).containsExactly(IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.CATEGORY,
+                IssueColumn.TYPE, IssueColumn.SEVERITY, IssueColumn.AGE);
+
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
                 new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "Error", 2),
@@ -512,8 +514,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         IssuesTable issues = detailsTab.select(TabType.ISSUES);
 
-        assertThat(issues.getColumnNames()).containsExactly(
-                IssueRow.DETAILS, IssueRow.FILE, IssueRow.CATEGORY, IssueRow.TYPE, IssueRow.PRIORITY, IssueRow.AGE);
+        assertThat(issues.getColumns()).containsExactly(IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.CATEGORY,
+                IssueColumn.TYPE, IssueColumn.SEVERITY, IssueColumn.AGE);
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
                 new IssueRow("CsharpNamespaceDetector.java:17", "-", "Design", "DesignForExtensionCheck", "Error", 1),

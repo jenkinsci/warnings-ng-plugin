@@ -28,6 +28,7 @@ import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow.IssueColumn;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
 
@@ -58,13 +59,13 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         IssueRow row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
         SourceCodeView sourceCodeView = new SourceCodeView(getSourceCodePage(result));
 
-        assertThat(row.hasLink(IssueRow.FILE)).isTrue();
+        assertThat(row.hasLink(IssueColumn.FILE)).isTrue();
         assertThat(sourceCodeView.getSourceCode()).isEqualToIgnoringWhitespace(readSourceCode(project));
 
         deleteAffectedFilesInBuildFolder(result);
 
         row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
-        assertThat(row.hasLink(IssueRow.FILE)).isFalse();
+        assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
     }
 
     /**
@@ -77,12 +78,12 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         IssueRow row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
-        assertThat(row.hasLink(IssueRow.FILE)).isTrue();
+        assertThat(row.hasLink(IssueColumn.FILE)).isTrue();
 
         makeAffectedFilesInBuildFolderUnreadable(result);
 
         row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
-        assertThat(row.hasLink(IssueRow.FILE)).isFalse();
+        assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
     }
 
     private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
@@ -205,13 +206,13 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         assertThat(getConsoleLog(result)).contains("0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
         IssuesTable issues = getIssuesTable(result);
-        assertThat(issues.getColumnNames()).containsExactly(
-                IssueRow.DETAILS, IssueRow.FILE, IssueRow.PRIORITY, IssueRow.AGE);
+        assertThat(issues.getColumns()).containsExactly(
+                IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.SEVERITY, IssueColumn.AGE);
         assertThat(issues.getRows()).containsExactly(
                 new IssueRow("config.xml:451", "-",
                         "-", "-", "Normal", 1));
         IssueRow row = issues.getRow(0);
-        assertThat(row.hasLink(IssueRow.FILE)).isFalse();
+        assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
     }
 
     private IssuesTable getIssuesTable(final AnalysisResult result) {

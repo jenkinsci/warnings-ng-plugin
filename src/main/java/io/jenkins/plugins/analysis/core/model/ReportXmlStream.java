@@ -26,7 +26,7 @@ import hudson.util.XStream2;
  *
  * @author Ullrich Hafner
  */
- class ReportXmlStream extends AbstractXmlStream<Report> {
+class ReportXmlStream extends AbstractXmlStream<Report> {
     ReportXmlStream() {
         super(Report.class);
     }
