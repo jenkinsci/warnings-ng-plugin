@@ -112,7 +112,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
         @Override
         public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url) {
-            return new DryTableModel(getAgeBuilder(build, url), getFileNameRenderer(build), this);
+            return new DryModel(getAgeBuilder(build, url), getFileNameRenderer(build), this);
         }
 
         static String formatTargets(final FileNameRenderer fileNameRenderer, final Issue issue) {
@@ -285,26 +285,11 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
     /**
      * Provides a table that contains the duplication references as well.
      */
-    static class DryTableModel extends DetailsTableModel {
-        DryTableModel(final AgeBuilder ageBuilder,
+    static class DryModel extends DetailsTableModel {
+        DryModel(final AgeBuilder ageBuilder,
                 final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider) {
             super(ageBuilder, fileNameRenderer, descriptionProvider);
-        }
-
-        @Override
-        public List<Integer> getWidths(final Report report) {
-            List<Integer> widths = new ArrayList<>();
-            widths.add(1);
-            widths.add(2);
-            if (report.hasPackages()) {
-                widths.add(2);
-            }
-            widths.add(1);
-            widths.add(1);
-            widths.add(3);
-            widths.add(1);
-            return widths;
         }
 
         @Override
@@ -323,18 +308,86 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        protected List<String> getRow(final Report report, final Issue issue, final String description) {
-            List<String> columns = new ArrayList<>();
-            columns.add(formatDetails(issue, description));
-            columns.add(formatFileName(issue));
+        public List<Integer> getWidths(final Report report) {
+            List<Integer> widths = new ArrayList<>();
+            widths.add(1);
+            widths.add(2);
             if (report.hasPackages()) {
-                columns.add(formatProperty("packageName", issue.getPackageName()));
+                widths.add(2);
             }
-            columns.add(formatSeverity(issue.getSeverity()));
-            columns.add(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
-            columns.add(formatTargets(getFileNameRenderer(), issue));
-            columns.add(formatAge(issue));
-            return columns;
+            widths.add(1);
+            widths.add(1);
+            widths.add(3);
+            widths.add(1);
+            return widths;
+        }
+
+        @Override
+        public DuplicationRow getRow(final Report report, final Issue issue) {
+            DuplicationRow row = new DuplicationRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+                    issue);
+            row.setPackageName(issue);
+            row.setSeverity(issue);
+            row.setLinesCount(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
+            row.setDuplicatedIn(formatTargets(getFileNameRenderer(), issue));
+            return row;
+        }
+
+        @Override
+        public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
+            builder.add("description").add("fileName", "string");
+            if (report.hasPackages()) {
+                builder.add("packageName");
+            }
+            builder.add("severity").add("linesCount").add("duplicatedIn").add("age");
+        }
+
+        /**
+         * A table row that shows the properties of a code duplication.
+         */
+        @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
+        public static class DuplicationRow extends TableRow {
+            private String packageName;
+            private String severity;
+            private String linesCount;
+            private String duplicatedIn;
+
+            DuplicationRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+                    final DescriptionProvider descriptionProvider, final Issue issue) {
+                super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
+            }
+
+            public String getPackageName() {
+                return packageName;
+            }
+
+            public String getSeverity() {
+                return severity;
+            }
+
+            public String getLinesCount() {
+                return linesCount;
+            }
+
+            public String getDuplicatedIn() {
+                return duplicatedIn;
+            }
+
+            void setPackageName(final Issue issue) {
+                packageName = formatProperty("packageName", issue.getPackageName());
+            }
+
+            void setLinesCount(final String linesCount) {
+                this.linesCount = linesCount;
+            }
+
+            void setDuplicatedIn(final String duplicatedIn) {
+                this.duplicatedIn = duplicatedIn;
+            }
+
+            void setSeverity(final Issue issue) {
+                severity = formatSeverity(issue.getSeverity());
+            }
         }
     }
 }

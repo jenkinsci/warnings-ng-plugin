@@ -139,7 +139,7 @@ public class EnvInjectPluginITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private String createJavaWarning(final int lineNumber) {
         return String.format(
-                "[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated\n",
+                "[WARNING] C:\\Path\\SourceFile.java:[%d,42] [deprecation] path.AClass in path has been deprecated%n",
                 lineNumber);
     }
 }

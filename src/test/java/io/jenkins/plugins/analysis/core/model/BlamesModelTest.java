@@ -1,21 +1,15 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.List;
-import java.util.Locale;
-
-import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+import io.jenkins.plugins.analysis.core.model.BlamesModel.BlamesRow;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -27,12 +21,11 @@ class BlamesModelTest extends AbstractDetailsModelTest {
     private static final String COMMIT = "commit";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
+
     private static final int EXPECTED_COLUMNS_SIZE = 6;
 
     @Test
     void shouldConvertIssueToArrayWithAllColumnsAndRows() {
-        Locale.setDefault(Locale.ENGLISH);
-
         Report report = new Report();
         report.add(createIssue(1));
         report.add(createIssue(2));
@@ -42,6 +35,21 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getColumnsDefinition(report)).isEqualTo("["
+                + "{\"data\": \"description\"},"
+                + "{"
+                + "  \"type\": \"string\","
+                + "  \"data\": \"fileName\","
+                + "  \"render\": {"
+                + "     \"_\": \"display\","
+                + "     \"sort\": \"sort\""
+                + "  }"
+                + "},"
+                + "{\"data\": \"age\"},"
+                + "{\"data\": \"author\"},"
+                + "{\"data\": \"email\"},"
+                + "{\"data\": \"commit\"}"
+                + "]");
         assertThat(model.getContent(report)).hasSize(2);
     }
 
@@ -62,25 +70,17 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         BlamesModel model = createModel(blames);
 
-        List<List<String>> rows = model.getContent(report);
-        assertThat(rows).hasSize(1);
-
-        List<String> columns = rows.get(0);
-        assertThat(columns).hasSize(EXPECTED_COLUMNS_SIZE);
-
-        assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(DESCRIPTION));
-        assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(MESSAGE));
-        assertThat(columns.get(1)).contains("file-1:15");
-        assertThat(columns.get(2)).contains("1");
-        assertThat(columns.get(3)).contains(NAME);
-        assertThat(columns.get(4)).contains(EMAIL);
-        assertThat(columns.get(5)).contains(COMMIT);
+        BlamesRow actualRow = model.getRow(report, issue);
+        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+                .hasAge("1")
+                .hasCommit(COMMIT)
+                .hasAuthor(NAME)
+                .hasEmail(EMAIL);
+        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
     }
 
     @Test
     void shouldShowIssueWithoutBlames() {
-        Locale.setDefault(Locale.ENGLISH);
-
         Report report = new Report();
         Issue issue = createIssue(1);
         report.add(issue);
@@ -89,29 +89,16 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         BlamesModel model = createModel(blames);
 
-        List<List<String>> rows = model.getContent(report);
-        assertThat(rows).hasSize(1);
-
-        List<String> columns = rows.get(0);
-        assertThat(columns).hasSize(EXPECTED_COLUMNS_SIZE);
-
-        assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(DESCRIPTION));
-        assertThat(columns.get(0)).contains(StringEscapeUtils.escapeHtml4(MESSAGE));
-        assertThat(columns.get(1)).contains("file-1:15");
-        assertThat(columns.get(2)).contains("1");
-        assertThat(columns.get(3)).contains(BlamesModel.UNDEFINED);
-        assertThat(columns.get(4)).contains(BlamesModel.UNDEFINED);
-        assertThat(columns.get(5)).contains(BlamesModel.UNDEFINED);
+        BlamesRow actualRow = model.getRow(report, issue);
+        assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
+                .hasAge("1")
+                .hasCommit(BlamesModel.UNDEFINED)
+                .hasAuthor(BlamesModel.UNDEFINED)
+                .hasEmail(BlamesModel.UNDEFINED);
+        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
     }
 
     private BlamesModel createModel(final Blames blames) {
-        DescriptionProvider descriptionProvider = mock(DescriptionProvider.class);
-        when(descriptionProvider.getDescription(any())).thenReturn(DESCRIPTION);
-        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
-        FileNameRenderer fileNameRenderer = new FileNameRenderer(buildFolder);
-        DefaultAgeBuilder ageBuilder = new DefaultAgeBuilder(1, "url");
-
-        return new BlamesModel(ageBuilder, fileNameRenderer, issue -> DESCRIPTION, blames);
+        return new BlamesModel(createAgeBuilder(), createFileNameRenderer(), issue -> DESCRIPTION, blames);
     }
 }

@@ -38,8 +38,8 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String FOLDER = "dry/";
-    private static final String SIMIAN_REPORT = FOLDER + "simian.xml";
     private static final String CPD_REPORT = FOLDER + "cpd.xml";
+    private static final int ROW_INDEX_OF_DUPLICATION_TO_INSPECT = 8;
 
     /**
      * Verifies that the right amount of duplicate code warnings are detected.
@@ -88,9 +88,9 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         DuplicationTable issues = getDuplicationTable(details);
         assertThat(issues.getRows()).hasSize(10); // paging of 10 is activated by default
         
-        assertSizeOfSeverity(issues, 2, 5); // HIGH
-        assertSizeOfSeverity(issues, 0, 9); // NORMAL
-        assertSizeOfSeverity(issues, 5, 6); // LOW
+        assertSizeOfSeverity(issues, 4, 5); // HIGH
+        assertSizeOfSeverity(issues, 3, 9); // NORMAL
+        assertSizeOfSeverity(issues, 0, 6); // LOW
     }
 
     private DuplicationTable getDuplicationTable(final HtmlPage details) {
@@ -146,16 +146,16 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(issues.getTitle()).isEqualTo("Issues");
         assertThat(issues.getRows()).containsExactly(
+                new DuplicationRow("Main.java:3", "-", "Low", 1, 1),
+                new DuplicationRow("Main.java:4", "-", "Low", 1, 1),
+                new DuplicationRow("Main.java:5", "-", "Low", 1, 1),
+                new DuplicationRow("Main.java:6", "-", "Low", 3, 1),
+                new DuplicationRow("Main.java:8", "-", "Low", 10, 1),
+                new DuplicationRow("Main.java:8", "-", "Low", 8, 1),
+                new DuplicationRow("Main.java:8", "-", "Low", 3, 1),
+                new DuplicationRow("Main.java:8", "-", "Low", 1, 1),
                 new DuplicationRow("Main.java:11", "-", "Low", 3, 1),
-                new DuplicationRow("Main.java:15", "-", "Low", 3, 1),
-                new DuplicationRow("Main.java:17", "-", "Low", 10, 1),
-                new DuplicationRow("Main.java:17", "-", "Low", 8, 1),
-                new DuplicationRow("Main.java:17", "-", "Low", 3, 1),
-                new DuplicationRow("Main.java:17", "-", "Low", 1, 1),
-                new DuplicationRow("Main.java:20", "-", "Low", 3, 1),
-                new DuplicationRow("Main.java:24", "-", "Low", 3, 1),
-                new DuplicationRow("Main.java:26", "-", "Low", 8, 1),
-                new DuplicationRow("Main.java:26", "-", "Low", 3, 1));
+                new DuplicationRow("Main.java:15", "-", "Low", 3, 1));
     }
 
     /**
@@ -171,8 +171,8 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
 
         List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
 
-        HtmlTableRow firstTableRow = tableRows.get(0);
-        List<HtmlTableCell> firstTableRowCells = firstTableRow.getCells();
+        HtmlTableRow rowToInspect = tableRows.get(ROW_INDEX_OF_DUPLICATION_TO_INSPECT);
+        List<HtmlTableCell> firstTableRowCells = rowToInspect.getCells();
         HtmlDivision divElement = getCellAs(firstTableRowCells, 0, HtmlDivision.class);
 
         assertThat(divElement.getAttribute("class")).isEqualTo("details-control");
@@ -312,7 +312,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      */
     private void checkPriorityOfFirstWarningInTable(final String expectedPriority, final FreeStyleProject project) {
         List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
-        HtmlTableRow firstRow = tableRows.get(0);
+        HtmlTableRow firstRow = tableRows.get(ROW_INDEX_OF_DUPLICATION_TO_INSPECT);
         List<HtmlTableCell> tableCells = firstRow.getCells();
 
         assertThat(tableCells.get(2).getTextContent()).isEqualTo(expectedPriority);

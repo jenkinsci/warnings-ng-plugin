@@ -126,13 +126,17 @@ public class BlamesTable extends PageObject {
      * @param pageNumber
      *         The page number to go to. 1-based.
      */
+    @SuppressWarnings("PMD.SystemPrintln")
     public void goToPage(final int pageNumber) {
         DomNodeList<HtmlElement> pages = scmPaginate.getElementsByTagName("a");
 
         if (pages.size() >= pageNumber) {
             HtmlElement pageButton = pages.get(pageNumber - 1);
             clickOnElement(pageButton);
-            pageButton.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
+            while (!scmPaginate.getElementsByTagName("a").get(pageNumber - 1).getEnclosingElement("li").getAttribute("class").contains("active")) {
+                System.out.println("Waiting for Ajax call to filter issues table ...");
+                pageButton.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
+            }
 
             load();
         }

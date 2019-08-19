@@ -44,6 +44,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     private static final String SOURCE_FILE = FOLDER + "/Main.java";
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
+    private static final int ROW_NUMBER_ACTUAL_FILE = 0;
 
     /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
@@ -54,7 +55,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        IssueRow row = getIssuesTableRow(result, 1);
+        IssueRow row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
         SourceCodeView sourceCodeView = new SourceCodeView(getSourceCodePage(result));
 
         assertThat(row.hasLink(IssueRow.FILE)).isTrue();
@@ -62,7 +63,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         deleteAffectedFilesInBuildFolder(result);
 
-        row = getIssuesTableRow(result, 1);
+        row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
         assertThat(row.hasLink(IssueRow.FILE)).isFalse();
     }
 
@@ -75,12 +76,12 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        IssueRow row = getIssuesTableRow(result, 1);
+        IssueRow row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
         assertThat(row.hasLink(IssueRow.FILE)).isTrue();
 
         makeAffectedFilesInBuildFolderUnreadable(result);
 
-        row = getIssuesTableRow(result, 1);
+        row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
         assertThat(row.hasLink(IssueRow.FILE)).isFalse();
     }
 

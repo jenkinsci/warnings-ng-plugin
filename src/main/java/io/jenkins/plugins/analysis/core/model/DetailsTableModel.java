@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -9,7 +10,6 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
-import j2html.tags.DomContent;
 import j2html.tags.UnescapedText;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
@@ -31,9 +31,7 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
-public class DetailsTableModel {
-    private static final Sanitizer SANITIZER = new Sanitizer();
-
+public abstract class DetailsTableModel {
     private final AgeBuilder ageBuilder;
     private final FileNameRenderer fileNameRenderer;
     private final DescriptionProvider descriptionProvider;
@@ -48,20 +46,23 @@ public class DetailsTableModel {
      * @param descriptionProvider
      *         renders the description text
      */
-    public DetailsTableModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+    protected DetailsTableModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
             final DescriptionProvider descriptionProvider) {
         this.ageBuilder = ageBuilder;
         this.fileNameRenderer = fileNameRenderer;
         this.descriptionProvider = descriptionProvider;
     }
 
-    /**
-     * Returns the file name renderer.
-     *
-     * @return the file name renderer
-     */
+    protected AgeBuilder getAgeBuilder() {
+        return ageBuilder;
+    }
+
     protected FileNameRenderer getFileNameRenderer() {
         return fileNameRenderer;
+    }
+
+    protected DescriptionProvider getDescriptionProvider() {
+        return descriptionProvider;
     }
 
     /**
@@ -73,23 +74,33 @@ public class DetailsTableModel {
      * @return the table headers
      */
     @SuppressWarnings("unused") // called by Jelly view
-    public List<String> getHeaders(final Report report) {
-        List<String> visibleColumns = new ArrayList<>();
-        visibleColumns.add(Messages.Table_Column_Details());
-        visibleColumns.add(Messages.Table_Column_File());
-        if (report.hasPackages()) {
-            visibleColumns.add(Messages.Table_Column_Package());
-        }
-        if (report.hasCategories()) {
-            visibleColumns.add(Messages.Table_Column_Category());
-        }
-        if (report.hasTypes()) {
-            visibleColumns.add(Messages.Table_Column_Type());
-        }
-        visibleColumns.add(Messages.Table_Column_Severity());
-        visibleColumns.add(Messages.Table_Column_Age());
-        return visibleColumns;
+    public abstract List<String> getHeaders(Report report);
+
+    /**
+     * Returns the column definitions of the report table.
+     *
+     * @param report
+     *         the report to show
+     *
+     * @return the table headers
+     */
+    @SuppressWarnings("unused") // called by Jelly view
+    public final String getColumnsDefinition(final Report report) {
+        ColumnDefinitionBuilder builder = new ColumnDefinitionBuilder();
+        configureColumns(builder, report);
+        return builder.toString();
     }
+
+    /**
+     * Configures the columns of the report table.
+     *
+     * @param builder
+     *         the columns definition builder
+     * @param report
+     *         the report to show
+     */
+    @SuppressWarnings("unused") // called by Jelly view
+    protected abstract void configureColumns(ColumnDefinitionBuilder builder, Report report);
 
     /**
      * Returns the widths of the table headers of the report table.
@@ -100,23 +111,7 @@ public class DetailsTableModel {
      * @return the width of the table headers
      */
     @SuppressWarnings("unused") // called by Jelly view
-    public List<Integer> getWidths(final Report report) {
-        List<Integer> widths = new ArrayList<>();
-        widths.add(1);
-        widths.add(1);
-        if (report.hasPackages()) {
-            widths.add(2);
-        }
-        if (report.hasCategories()) {
-            widths.add(1);
-        }
-        if (report.hasTypes()) {
-            widths.add(1);
-        }
-        widths.add(1);
-        widths.add(1);
-        return widths;
-    }
+    public abstract List<Integer> getWidths(Report report);
 
     /**
      * Converts the specified set of issues into a table.
@@ -126,152 +121,233 @@ public class DetailsTableModel {
      *
      * @return the table as String
      */
-    public List<List<String>> getContent(final Report report) {
-        List<List<String>> rows = new ArrayList<>();
+    public List<Object> getContent(final Report report) {
+        List<Object> rows = new ArrayList<>();
         for (Issue issue : report) {
-            rows.add(getRow(report, issue, descriptionProvider.getDescription(issue)));
+            rows.add(getRow(report, issue));
         }
         return rows;
     }
 
     /**
-     * Returns an JSON array that represents the columns of the issues table.
+     * Returns a table row for the specified issue.
      *
      * @param report
-     *         the report to show in the table
+     *         the report to show
      * @param issue
-     *         the issue to get the column properties for
-     * @param description
-     *         description of the issue
+     *         the issue to show in the row
      *
-     * @return the columns of one row
+     * @return a table row for the issue
      */
-    protected List<String> getRow(final Report report, final Issue issue, final String description) {
-        List<String> columns = new ArrayList<>();
-        columns.add(formatDetails(issue, description));
-        columns.add(formatFileName(issue));
-        if (report.hasPackages()) {
-            columns.add(formatProperty("packageName", issue.getPackageName()));
+    public abstract TableRow getRow(Report report, Issue issue);
+
+    /**
+     * Base class for table rows. Contains columns that should be used by all tables.
+     */
+    @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
+    public static class TableRow {
+        private static final Sanitizer SANITIZER = new Sanitizer();
+
+        private final String description;
+        private final DetailedColumnDefinition fileName;
+        private final String age;
+
+        /**
+         * Creates a new {@link TableRow}.
+         *
+         * @param ageBuilder
+         *         renders the age column
+         * @param fileNameRenderer
+         *         renders the file name column
+         * @param descriptionProvider
+         *         renders the description text
+         * @param issue
+         *         the issue to show in the row
+         */
+        protected TableRow(final AgeBuilder ageBuilder,
+                final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider, final Issue issue) {
+            description = formatDetails(issue, descriptionProvider.getDescription(issue));
+            age = ageBuilder.apply(parseInt(issue.getReference()));
+            fileName = createFileName(fileNameRenderer, issue);
         }
-        if (report.hasCategories()) {
-            columns.add(formatProperty("category", issue.getCategory()));
+
+        private DetailedColumnDefinition createFileName(final FileNameRenderer fileNameRenderer, final Issue issue) {
+            return new DetailedColumnDefinition(fileNameRenderer.renderAffectedFileLink(issue),
+                    String.format("%s:%07d", issue.getFileName(), issue.getLineStart()));
         }
-        if (report.hasTypes()) {
-            columns.add(formatProperty("type", issue.getType()));
+
+        /**
+         * Formats the text of the details column. The details column is not directly shown, it rather is a hidden
+         * element that is expanded if the corresponding button is selected. The actual text value is stored in the
+         * {@code data-description} attribute.
+         *
+         * @param issue
+         *         the issue in a table row
+         * @param additionalDescription
+         *         additional description of the issue
+         *
+         * @return the formatted column
+         */
+        private String formatDetails(final Issue issue, final String additionalDescription) {
+            UnescapedText details;
+            if (StringUtils.isBlank(issue.getMessage())) {
+                details = new UnescapedText(additionalDescription);
+            }
+            else {
+                details = join(p(strong().with(new UnescapedText(issue.getMessage()))), additionalDescription);
+            }
+            return div().withClass("details-control").attr("data-description", render(details)).render();
         }
-        columns.add(formatSeverity(issue.getSeverity()));
-        columns.add(formatAge(issue));
-        return columns;
-    }
 
-    /**
-     * Formats the text of the details column. The details column is not directly shown, it rather is a hidden element
-     * that is expanded if the corresponding button is selected. The actual text value is stored in the {@code
-     * data-description} attribute.
-     *
-     * @param issue
-     *         the issue in a table row
-     * @param description
-     *         description of the issue
-     *
-     * @return the formatted column
-     */
-    protected String formatDetails(final Issue issue, final String description) {
-        UnescapedText details;
-        if (StringUtils.isBlank(issue.getMessage())) {
-            details = new UnescapedText(description);
+        /**
+         * Formats the text of the severity column.
+         *
+         * @param severity
+         *         the severity of the issue
+         *
+         * @return the formatted column
+         */
+        protected String formatSeverity(final Severity severity) {
+            return String.format("<a href=\"%s\">%s</a>",
+                    severity.getName(), LocalizedSeverity.getLocalizedString(severity));
         }
-        else {
-            details = join(p(strong().with(new UnescapedText(issue.getMessage()))), description);
+
+        /**
+         * Formats the text of the specified property column. T he text actually is a link to the UI representation of
+         * the property.
+         *
+         * @param property
+         *         the property to format
+         * @param value
+         *         the value of the property
+         *
+         * @return the formatted column
+         */
+        protected String formatProperty(final String property, final String value) {
+            return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), render(value));
         }
-        return div().withClass("details-control").attr("data-description", render(details)).render();
+
+        /**
+         * Renders the specified HTML code. Removes unsafe HTML constructs.
+         *
+         * @param text
+         *         the HTML to render
+         *
+         * @return safe HTML
+         */
+        protected final String render(final UnescapedText text) {
+            return SANITIZER.render(text);
+        }
+
+        /**
+         * Renders the specified HTML code. Removes unsafe HTML constructs.
+         *
+         * @param html
+         *         the HTML to render
+         *
+         * @return safe HTML
+         */
+        protected final String render(final String html) {
+            return SANITIZER.render(html);
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public DetailedColumnDefinition getFileName() {
+            return fileName;
+        }
+
+        public String getAge() {
+            return age;
+        }
+
     }
 
     /**
-     * Formats the text of the age column. The age shows the number of builds a warning is reported.
-     *
-     * @param issue
-     *         the issue in a table row
-     *
-     * @return the formatted column
+     * A JQuery DataTables column definition builder. Provides simple columns that extract a given entity property as
+     * column value or complex columns that provide different properties to sort and display a column.
      */
-    protected String formatAge(final Issue issue) {
-        return ageBuilder.apply(parseInt(issue.getReference()));
+    public static class ColumnDefinitionBuilder {
+        private final StringJoiner columns = new StringJoiner(",", "[", "]");
+
+        /**
+         * Adds a new simple column that maps the specified property of the row entity to the column value.
+         *
+         * @param dataPropertyName
+         *         the property to extract from the entity, it will be shown as column value
+         *
+         * @return this
+         */
+        public ColumnDefinitionBuilder add(final String dataPropertyName) {
+            columns.add(String.format("{\"data\": \"%s\"}", dataPropertyName));
+
+            return this;
+        }
+
+        /**
+         * Adds a new complex column that maps the specified property of the row entity to the display and sort
+         * attributes of the column. The property {@code dataPropertyName} must be of type {@link
+         * DetailedColumnDefinition}.
+         *
+         * @param dataPropertyName
+         *         the property to extract from the entity, it will be shown as column value
+         * @param columnDataType
+         *         JQuery DataTables data type of the column
+         *
+         * @return this
+         * @see DetailedColumnDefinition
+         */
+        public ColumnDefinitionBuilder add(final String dataPropertyName, final String columnDataType) {
+            columns.add(String.format("{"
+                    + "  \"type\": \"%s\","
+                    + "  \"data\": \"%s\","
+                    + "  \"render\": {"
+                    + "     \"_\": \"display\","
+                    + "     \"sort\": \"sort\""
+                    + "  }"
+                    + "}", columnDataType, dataPropertyName));
+
+            return this;
+        }
+
+        @Override
+        public String toString() {
+            return columns.toString();
+        }
     }
 
     /**
-     * Formats the text of the severity column.
-     *
-     * @param severity
-     *         the severity of the issue
-     *
-     * @return the formatted column
+     * A column value attribute that provides a {@code display} and {@code sort} property so that a JQuery DataTables
+     * can use different properties to sort and display a column.
      */
-    protected String formatSeverity(final Severity severity) {
-        return String.format("<a href=\"%s\">%s</a>",
-                severity.getName(), LocalizedSeverity.getLocalizedString(severity));
-    }
+    public static class DetailedColumnDefinition {
+        private final String display;
+        private final String sort;
 
-    /**
-     * Formats the text of the specified property column. T he text actually is a link to the UI representation of the
-     * property.
-     *
-     * @param property
-     *         the property to format
-     * @param value
-     *         the value of the property
-     *
-     * @return the formatted column
-     */
-    protected String formatProperty(final String property, final String value) {
-        return String.format("<a href=\"%s.%d/\">%s</a>", property, value.hashCode(), render(value));
-    }
+        /**
+         * Creates a new {@link DetailedColumnDefinition}.
+         *
+         * @param display
+         *         the entity property that should be used to display the column
+         * @param sort
+         *         the entity property that should be used to sort the column
+         *
+         * @see <a href="https://datatables.net/reference/option/columns.type">DataTables Column Types</a>
+         */
+        public DetailedColumnDefinition(final String display, final String sort) {
+            this.display = display;
+            this.sort = sort;
+        }
 
-    /**
-     * Formats the text of the file name column. The text actually is a link to the UI representation of the file.
-     *
-     * @param issue
-     *         the issue to show the file name for
-     *
-     * @return the formatted file name
-     */
-    protected String formatFileName(final Issue issue) {
-        return fileNameRenderer.renderAffectedFileLink(issue);
-    }
+        public String getDisplay() {
+            return display;
+        }
 
-    /**
-     * Formats the text of the file name column. The text actually is a link to the UI representation of the file.
-     *
-     * @param issue
-     *         the issue to show the file name for
-     *
-     * @return the formatted file name
-     */
-    protected DomContent getFileNameLink(final Issue issue) {
-        return fileNameRenderer.createAffectedFileLink(issue);
-    }
-
-    /**
-     * Renders the specified HTML code. Removes unsafe HTML constructs.
-     *
-     * @param text
-     *         the HTML to render
-     *
-     * @return safe HTML
-     */
-    protected String render(final UnescapedText text) {
-        return SANITIZER.render(text);
-    }
-
-    /**
-     * Renders the specified HTML code. Removes unsafe HTML constructs.
-     *
-     * @param html
-     *         the HTML to render
-     *
-     * @return safe HTML
-     */
-    protected String render(final String html) {
-        return SANITIZER.render(html);
+        public String getSort() {
+            return sort;
+        }
     }
 }

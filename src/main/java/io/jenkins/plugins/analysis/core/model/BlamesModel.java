@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.hm.hafner.analysis.Issue;
@@ -11,19 +11,23 @@ import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 
 /**
- * Provides the dynamic model for the details table that shows the source control blames. The model consists of the
- * following parts:
+ * Provides the dynamic model for the details table that shows the source control blames.
  *
+ * <p>
+ * This blames model consists of the following columns:
+ * </p>
  * <ul>
- * <li>header name for each column</li>
- * <li>width for each column</li>
- * <li>content for each row</li>
- * <li>content for whole table</li>
+ * <li>issue details (message and description)</li>
+ * <li>file name</li>
+ * <li>age</li>
+ * <li>SCM blame author name</li>
+ * <li>SCM blame author email</li>
+ * <li>SCM blame commit ID</li>
  * </ul>
  *
  * @author Ullrich Hafner
  */
-class BlamesModel extends DetailsTableModel {
+public class BlamesModel extends DetailsTableModel {
     static final String UNDEFINED = "-";
 
     private final Blames blames;
@@ -36,47 +40,80 @@ class BlamesModel extends DetailsTableModel {
     }
 
     @Override
-    public List<Integer> getWidths(final Report report) {
-        List<Integer> widths = new ArrayList<>();
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        widths.add(1);
-        return widths;
-    }
-
-    @Override
     public List<String> getHeaders(final Report report) {
-        List<String> visibleColumns = new ArrayList<>();
-        visibleColumns.add(Messages.Table_Column_Details());
-        visibleColumns.add(Messages.Table_Column_File());
-        visibleColumns.add(Messages.Table_Column_Age());
-        visibleColumns.add(Messages.Table_Column_Author());
-        visibleColumns.add(Messages.Table_Column_Email());
-        visibleColumns.add(Messages.Table_Column_Commit());
-        return visibleColumns;
+        return Arrays.asList(
+                Messages.Table_Column_Details(),
+                Messages.Table_Column_File(),
+                Messages.Table_Column_Age(),
+                Messages.Table_Column_Author(),
+                Messages.Table_Column_Email(),
+                Messages.Table_Column_Commit());
     }
 
     @Override
-    protected List<String> getRow(final Report report, final Issue issue, final String description) {
-        List<String> columns = new ArrayList<>();
-        columns.add(formatDetails(issue, description));
-        columns.add(formatFileName(issue));
-        columns.add(formatAge(issue));
+    public List<Integer> getWidths(final Report report) {
+        return Arrays.asList(1, 1, 1, 1, 1, 1);
+    }
+
+    @Override
+    public BlamesRow getRow(final Report report, final Issue issue) {
+        BlamesRow row = new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue);
         if (blames.contains(issue.getFileName())) {
             FileBlame blameRequest = blames.getBlame(issue.getFileName());
             int line = issue.getLineStart();
-            columns.add(blameRequest.getName(line));
-            columns.add(blameRequest.getEmail(line));
-            columns.add(blameRequest.getCommit(line));
+            row.setAuthor(blameRequest.getName(line));
+            row.setEmail(blameRequest.getEmail(line));
+            row.setCommit(blameRequest.getCommit(line));
         }
         else {
-            columns.add(UNDEFINED);
-            columns.add(UNDEFINED);
-            columns.add(UNDEFINED);
+            row.setAuthor(UNDEFINED);
+            row.setEmail(UNDEFINED);
+            row.setCommit(UNDEFINED);
         }
-        return columns;
+        return row;
+    }
+
+    @Override
+    public void configureColumns(final ColumnDefinitionBuilder builder, final Report report) {
+        builder.add("description").add("fileName", "string").add("age").add("author").add("email").add("commit");
+    }
+
+    /**
+     * A table row that shows the source control blames.
+     */
+    @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
+    public static class BlamesRow extends TableRow {
+        private String author;
+        private String email;
+        private String commit;
+
+        BlamesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+                final DescriptionProvider descriptionProvider, final Issue issue) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
+        }
+
+        public String getAuthor() {
+            return author;
+        }
+
+        public String getEmail() {
+            return email;
+        }
+
+        public String getCommit() {
+            return commit;
+        }
+
+        void setAuthor(final String author) {
+            this.author = author;
+        }
+
+        void setEmail(final String email) {
+            this.email = email;
+        }
+
+        void setCommit(final String commit) {
+            this.commit = commit;
+        }
     }
 }
