@@ -6,13 +6,14 @@ import java.util.List;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomText;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.PyLint;
 
@@ -21,14 +22,14 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 /**
  * Integration Test for the Issue counter column.
  */
-public class IssueCounterITest extends IntegrationTestWithJenkinsPerTest {
+public class IssueCounterITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String ISSUE_ELEMENT_ID = "issues-total";
     private static final String JAVAC_ONE_WARNING = "javac_1_warning.txt";
     private static final String JAVAC_PYTHON_WARNINGS = "javac_python_3_issues.txt";
     private static final String RESULT_FILE_NAME = "build.log";
     private static final String LOG_FILE_PATTERN = "**/*.log";
     private static final String DASH = "-";
-    private static final String HEALTH_LINK_TEXT_XPATH = "//div/table/tbody/tr/td/a/text()";
+    private static final String HEALTH_LINK_TEXT_XPATH = "div/table/tbody/tr/td/a/text()";
     private static final String JAVA_TOOL_NAME = "Java";
     private static final String PYTHON_TOOL_NAME = "Pylint";
 
@@ -49,10 +50,11 @@ public class IssueCounterITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldShowIssueCounterEqualToSum() {
         createAndBuildProjectWithFile(JAVAC_PYTHON_WARNINGS);
 
-        assertThat(getIssueCount(getRootPage())).isEqualTo(3);
+        HtmlPage rootPage = getRootPage();
 
-        assertThat(getHoverCount(JAVA_TOOL_NAME)).isEqualTo(1);
-        assertThat(getHoverCount(PYTHON_TOOL_NAME)).isEqualTo(2);
+        assertThat(getIssueCount(rootPage)).isEqualTo(3);
+        assertThat(getHoverCount(JAVA_TOOL_NAME, rootPage)).isEqualTo(1);
+        assertThat(getHoverCount(PYTHON_TOOL_NAME, rootPage)).isEqualTo(2);
     }
 
     /**
@@ -77,7 +79,7 @@ public class IssueCounterITest extends IntegrationTestWithJenkinsPerTest {
 
         buildWithResult(project, Result.SUCCESS);
 
-        assertThat(getIssueString()).isEqualTo(DASH);
+        assertThat(getIssueString(getRootPage())).isEqualTo(DASH);
     }
 
     private void createAndBuildProjectWithFile(final String fileName) {
@@ -104,9 +106,8 @@ public class IssueCounterITest extends IntegrationTestWithJenkinsPerTest {
         }
     }
 
-    private int getHoverCount(final String toolName) {
-        List<DomText> text = getRootPage().getElementById(ISSUE_ELEMENT_ID)
-                .getByXPath(HEALTH_LINK_TEXT_XPATH);
+    private int getHoverCount(final String toolName, final HtmlPage rootPage) {
+        List<DomText> text = getColumn(rootPage).getByXPath(HEALTH_LINK_TEXT_XPATH);
         for (DomText content : text) {
             if (content.getWholeText().contains(toolName + " Warnings")) {
                 return Integer.parseInt(content.getParentNode().getParentNode().getNextSibling().getTextContent());
@@ -115,11 +116,16 @@ public class IssueCounterITest extends IntegrationTestWithJenkinsPerTest {
         return 0;
     }
 
-    private int getIssueCount(final HtmlPage rootPage) {
-        return Integer.parseInt(rootPage.getElementById(ISSUE_ELEMENT_ID).asText().replaceAll("\\s+", ""));
+    private DomElement getColumn(final HtmlPage rootPage) {
+        List<DomElement> elements = rootPage.getByXPath("//td[contains(@class, 'issues-total')]");
+        return elements.get(elements.size() - 1);
     }
 
-    private String getIssueString() {
-        return getRootPage().getElementById(ISSUE_ELEMENT_ID).asText().replaceAll("\\s+", "");
+    private int getIssueCount(final HtmlPage rootPage) {
+        return Integer.parseInt(getIssueString(rootPage));
+    }
+
+    private String getIssueString(final HtmlPage rootPage) {
+        return getColumn(rootPage).asText().replaceAll("\\s+", "");
     }
 }
