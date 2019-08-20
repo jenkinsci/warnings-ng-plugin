@@ -76,13 +76,12 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         FileStatistics fileStatistics = mock(FileStatistics.class);
         when(fileStatistics.getNumberOfAuthors()).thenReturn(15);
         when(fileStatistics.getNumberOfCommits()).thenReturn(20);
-        when(fileStatistics.getLastModifiedInDays()).thenReturn(25L);
-        when(fileStatistics.getAgeInDays()).thenReturn(30L);
+        when(fileStatistics.getLastModifiedInDays()).thenReturn(25);
+        when(fileStatistics.getAgeInDays()).thenReturn(30);
 
         when(statistics.get(FILE_NAME)).thenReturn(fileStatistics);
         when(statistics.contains(FILE_NAME)).thenReturn(true);
 
-        // FIXME: use int
         ForensicsModel model = createModel(statistics);
 
         ForensicsRow actualRow = model.getRow(report, issue);
