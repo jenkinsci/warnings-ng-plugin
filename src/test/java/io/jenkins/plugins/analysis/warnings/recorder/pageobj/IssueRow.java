@@ -31,35 +31,6 @@ public class IssueRow extends TableRow<IssueColumn> {
     }
 
     /**
-     * Creates a new row based on the specified properties.
-     *
-     * @param details
-     *         the issue details
-     * @param fileName
-     *         the file name
-     * @param packageName
-     *         the package name
-     * @param category
-     *         the category
-     * @param type
-     *         the type
-     * @param priority
-     *         the priority
-     * @param age
-     *         the age
-     */
-    public IssueRow(final String details, final String fileName, final String packageName, final String category,
-            final String type, final String priority, final int age) {
-        put(IssueColumn.DETAILS, details);
-        put(IssueColumn.FILE, fileName);
-        put(IssueColumn.PACKAGE, packageName);
-        put(IssueColumn.CATEGORY, category);
-        put(IssueColumn.TYPE, type);
-        put(IssueColumn.SEVERITY, priority);
-        put(IssueColumn.AGE, String.valueOf(age));
-    }
-
-    /**
      * Opens the source code using the link of the {@link IssueColumn#FILE} column.
      *
      * @return the source code view

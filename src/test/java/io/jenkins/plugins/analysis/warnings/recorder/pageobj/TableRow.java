@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
@@ -13,8 +11,10 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 /**
  * Base class for Page Objects that define a row from one of the issues tables.
  *
+ * @param <E>
+ *         enum type of the columns
+ *
  * @author Ullrich Hafner
- * @param <E> enum type of the columns
  */
 class TableRow<E> {
     private static final String NOT_SET = "-";
@@ -37,13 +37,6 @@ class TableRow<E> {
             cellsByColumn.put(key, cell);
             valueByColumn.put(key, getCellContent(pos, cell));
         }
-    }
-
-    /**
-     * Creates an empty row.
-     */
-    TableRow() {
-        // nothing to do
     }
 
     private String getCellContent(final int pos, final HtmlTableCell cell) {
@@ -95,33 +88,7 @@ class TableRow<E> {
         return cellsByColumn.get(column).getFirstElementChild();
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        TableRow sourceControlRow = (TableRow) o;
-
-        return valueByColumn.equals(sourceControlRow.valueByColumn);
-    }
-
-    @Override
-    public int hashCode() {
-        return valueByColumn.hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("properties", valueByColumn)
-                .toString();
-    }
-
-    public Map<E, String> getValueByColumn() {
+    public Map<E, String> getValuesByColumn() {
         return valueByColumn;
     }
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
@@ -208,10 +209,14 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         IssuesTable issues = getIssuesTable(result);
         assertThat(issues.getColumns()).containsExactly(
                 IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.SEVERITY, IssueColumn.AGE);
-        assertThat(issues.getRows()).containsExactly(
-                new IssueRow("foo defined but not used", "config.xml:451", "-",
-                        "-", "-", "Normal", 1));
-        IssueRow row = issues.getRow(0);
+        List<IssueRow> rows = issues.getRows();
+        assertThat(rows).hasSize(1);
+        IssueRow row = rows.get(0);
+        assertThat(row.getValuesByColumn()).contains(
+                entry(IssueColumn.DETAILS, "foo defined but not used"),
+                entry(IssueColumn.FILE, "config.xml:451"),
+                entry(IssueColumn.SEVERITY, "Normal"),
+                entry(IssueColumn.AGE, "1"));
         assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
     }
 

@@ -488,25 +488,25 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(issues.getTitle()).isEqualTo("Issues");
         List<IssueRow> rows = issues.getRows();
         assertThat(rows).hasSize(4);
-        assertThat(rows.get(0).getValueByColumn()).contains(
+        assertThat(rows.get(0).getValuesByColumn()).contains(
                 file("CsharpNamespaceDetector.java:22"),
                 category("Design"),
                 type("DesignForExtensionCheck"),
                 error(),
                 age("2"));
-        assertThat(rows.get(1).getValueByColumn()).contains(
+        assertThat(rows.get(1).getValuesByColumn()).contains(
                 file("CsharpNamespaceDetector.java:29"),
                 category("Sizes"),
                 type("LineLengthCheck"),
                 error(),
                 age("1"));
-        assertThat(rows.get(2).getValueByColumn()).contains(
+        assertThat(rows.get(2).getValuesByColumn()).contains(
                 file("CsharpNamespaceDetector.java:30"),
                 category("Blocks"),
                 type("RightCurlyCheck"),
                 error(),
                 age("1"));
-        assertThat(rows.get(3).getValueByColumn()).contains(
+        assertThat(rows.get(3).getValuesByColumn()).contains(
                 file("CsharpNamespaceDetector.java:37"),
                 category("Blocks"),
                 type("RightCurlyCheck"),
@@ -541,19 +541,19 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(issues.getTitle()).isEqualTo("Issues");
         List<IssueRow> rows = issues.getRows();
         assertThat(rows).hasSize(3);
-        assertThat(rows.get(0).getValueByColumn()).contains(
+        assertThat(rows.get(0).getValuesByColumn()).contains(
                 file("CsharpNamespaceDetector.java:17"),
                 category("Design"),
                 type("DesignForExtensionCheck"),
                 error(),
                 age("1"));
-        assertThat(rows.get(1).getValueByColumn()).contains(
+        assertThat(rows.get(1).getValuesByColumn()).contains(
                 file("CsharpNamespaceDetector.java:22"),
                 category("Design"),
                 type("DesignForExtensionCheck"),
                 error(),
                 age("1"));
-        assertThat(rows.get(2).getValueByColumn()).contains(
+        assertThat(rows.get(2).getValuesByColumn()).contains(
                 file("CsharpNamespaceDetector.java:42"),
                 category("Sizes"),
                 type("LineLengthCheck"),

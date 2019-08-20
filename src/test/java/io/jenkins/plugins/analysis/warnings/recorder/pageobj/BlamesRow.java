@@ -29,32 +29,4 @@ public class BlamesRow extends TableRow<BlamesColumn> {
     BlamesRow(final List<HtmlTableCell> columnValues, final List<BlamesColumn> columns) {
         super(columns, columnValues);
     }
-
-    /**
-     * Creates a new row based on the specified properties.
-     *
-     * @param detailsContent
-     *         details of the warning
-     * @param fileName
-     *         the file name
-     * @param author
-     *         the author
-     * @param email
-     *         the authors email
-     * @param commit
-     *         the commit hash
-     * @param age
-     *         the age
-     */
-    public BlamesRow(final String detailsContent, final String fileName, final String author, final String email,
-            final String commit, final int age) {
-        super();
-
-        put(BlamesColumn.DETAILS, detailsContent);
-        put(BlamesColumn.FILE, fileName);
-        put(BlamesColumn.AUTHOR, author);
-        put(BlamesColumn.EMAIL, email);
-        put(BlamesColumn.COMMIT, commit);
-        put(BlamesColumn.AGE, String.valueOf(age));
-    }
 }
