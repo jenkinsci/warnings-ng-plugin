@@ -33,6 +33,8 @@ public class IssueRow extends TableRow<IssueColumn> {
     /**
      * Creates a new row based on the specified properties.
      *
+     * @param details
+     *         the issue details
      * @param fileName
      *         the file name
      * @param packageName
@@ -46,8 +48,9 @@ public class IssueRow extends TableRow<IssueColumn> {
      * @param age
      *         the age
      */
-    public IssueRow(final String fileName, final String packageName, final String category, final String type,
-            final String priority, final int age) {
+    public IssueRow(final String details, final String fileName, final String packageName, final String category,
+            final String type, final String priority, final int age) {
+        put(IssueColumn.DETAILS, details);
         put(IssueColumn.FILE, fileName);
         put(IssueColumn.PACKAGE, packageName);
         put(IssueColumn.CATEGORY, category);

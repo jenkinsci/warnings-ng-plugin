@@ -10,8 +10,6 @@ import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 
-import edu.hm.hafner.util.Ensure;
-
 /**
  * Base class for Page Objects that define a row from one of the issues tables.
  *
@@ -94,8 +92,6 @@ class TableRow<E> {
      * @return the link of the column
      */
     DomElement getLink(final E column) {
-        Ensure.that(hasLink(column)).isTrue("There is no link in column cell %s", column);
-
         return cellsByColumn.get(column).getFirstElementChild();
     }
 
@@ -123,5 +119,9 @@ class TableRow<E> {
         return new ToStringBuilder(this)
                 .append("properties", valueByColumn)
                 .toString();
+    }
+
+    public Map<E, String> getValueByColumn() {
+        return valueByColumn;
     }
 }

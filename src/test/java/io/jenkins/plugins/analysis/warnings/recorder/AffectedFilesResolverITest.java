@@ -209,7 +209,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         assertThat(issues.getColumns()).containsExactly(
                 IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.SEVERITY, IssueColumn.AGE);
         assertThat(issues.getRows()).containsExactly(
-                new IssueRow("config.xml:451", "-",
+                new IssueRow("foo defined but not used", "config.xml:451", "-",
                         "-", "-", "Normal", 1));
         IssueRow row = issues.getRow(0);
         assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
