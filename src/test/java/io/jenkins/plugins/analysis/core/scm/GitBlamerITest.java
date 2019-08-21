@@ -40,11 +40,6 @@ import static io.jenkins.plugins.forensics.assertions.Assertions.*;
  */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
-    private static final String DETAILS = "Another Warning for Jenkins";
-    private static final String AUTHOR = "John Doe";
-    private static final String EMAIL = "john@doe";
-    private static final String FILE_NAME = "LoremIpsum";
-
     /** The Git repository for the test. */
     @Rule
     public GitSampleRepoRule gitRepo = new GitSampleRepoRule();
@@ -250,34 +245,10 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 4 of 4 entries (filtered from 11 total entries)");
         List<BlamesRow> rows = table.getRows();
         assertThat(rows).hasSize(4);
-        assertThat(rows.get(0).getValuesByColumn()).contains(
-                details(DETAILS),
-                file("LoremIpsum.java:1"),
-                author(AUTHOR),
-                email(EMAIL),
-                commit(commits.get(FILE_NAME)),
-                age("1"));
-        assertThat(rows.get(1).getValuesByColumn()).contains(
-                details(DETAILS),
-                file("LoremIpsum.java:2"),
-                author(AUTHOR),
-                email(EMAIL),
-                commit(commits.get(FILE_NAME)),
-                age("1"));
-        assertThat(rows.get(2).getValuesByColumn()).contains(
-                details(DETAILS),
-                file("LoremIpsum.java:3"),
-                author(AUTHOR),
-                email(EMAIL),
-                commit(commits.get(FILE_NAME)),
-                age("1"));
-        assertThat(rows.get(3).getValuesByColumn()).contains(
-                details(DETAILS),
-                file("LoremIpsum.java:4"),
-                author(AUTHOR),
-                email(EMAIL),
-                commit(commits.get(FILE_NAME)),
-                age("1"));
+        assertColumnsOfRowLoremIpsum(rows.get(0), 1, commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(rows.get(1), 2, commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(rows.get(2), 3, commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(rows.get(3), 4, commits.get("LoremIpsum"));
     }
 
     /**
@@ -364,12 +335,36 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
         List<BlamesRow> rows = table.getRows();
         assertThat(rows).hasSize(1);
-        assertThat(rows.get(0).getValuesByColumn()).contains(
+        assertColumnsOfTest(rows.get(0), commit, 1);
+    }
+
+    private void assertColumnsOfTest(final BlamesRow row, final String commit, final int lineNumber) {
+        assertThat(row.getValuesByColumn()).contains(
                 details("Test Warning for Jenkins"),
-                file("Test.java:1"),
+                file("Test.java:" + lineNumber),
                 author("Git SampleRepoRule"),
                 email("gits@mplereporule"),
                 commit(commit),
+                age("1"));
+    }
+
+    private void assertColumnsOfRowLoremIpsum(final BlamesRow row, final int lineNumber, final String commitId) {
+        assertThat(row.getValuesByColumn()).contains(
+                details("Another Warning for Jenkins"),
+                file("LoremIpsum.java:" + lineNumber),
+                author("John Doe"),
+                email("john@doe"),
+                commit(commitId),
+                age("1"));
+    }
+
+    private void assertColumnsOfRowBob(final BlamesRow row, final String commitId, final int lineNumber) {
+        assertThat(row.getValuesByColumn()).contains(
+                details("Bobs Warning for Jenkins"),
+                file("Bob.java:" + lineNumber),
+                author("Alice Miller"),
+                email("alice@miller"),
+                commit(commitId),
                 age("1"));
     }
 
@@ -380,89 +375,23 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 10 of 11 entries");
         List<BlamesRow> rows = table.getRows();
         assertThat(rows).hasSize(10);
-        assertThat(rows.get(0).getValuesByColumn()).contains(
-                details("Bobs Warning for Jenkins"),
-                file("Bob.java:1"),
-                author("Alice Miller"),
-                email("alice@miller"),
-                commit(commits.get("Bob")),
-                age("1"));
-        assertThat(rows.get(1).getValuesByColumn()).contains(
-                details("Bobs Warning for Jenkins"),
-                file("Bob.java:2"),
-                author("Alice Miller"),
-                email("alice@miller"),
-                commit(commits.get("Bob")),
-                age("1"));
-        assertThat(rows.get(2).getValuesByColumn()).contains(
-                details("Bobs Warning for Jenkins"),
-                file("Bob.java:3"),
-                author("Alice Miller"),
-                email("alice@miller"),
-                commit(commits.get("Bob")),
-                age("1"));
-        assertThat(rows.get(3).getValuesByColumn()).contains(
-                details(DETAILS),
-                file("LoremIpsum.java:1"),
-                author(AUTHOR),
-                email(EMAIL),
-                commit(commits.get(FILE_NAME)),
-                age("1"));
-        assertThat(rows.get(4).getValuesByColumn()).contains(
-                details(DETAILS),
-                file("LoremIpsum.java:2"),
-                author(AUTHOR),
-                email(EMAIL),
-                commit(commits.get(FILE_NAME)),
-                age("1"));
-        assertThat(rows.get(5).getValuesByColumn()).contains(
-                details(DETAILS),
-                file("LoremIpsum.java:3"),
-                author(AUTHOR),
-                email(EMAIL),
-                commit(commits.get(FILE_NAME)),
-                age("1"));
-        assertThat(rows.get(6).getValuesByColumn()).contains(
-                details(DETAILS),
-                file("LoremIpsum.java:4"),
-                author(AUTHOR),
-                email(EMAIL),
-                commit(commits.get(FILE_NAME)),
-                age("1"));
-        assertThat(rows.get(7).getValuesByColumn()).contains(
-                details("Test Warning for Jenkins"),
-                file("Test.java:1"),
-                author("Git SampleRepoRule"),
-                email("gits@mplereporule"),
-                commit(commits.get("Test")),
-                age("1"));
-        assertThat(rows.get(8).getValuesByColumn()).contains(
-                details("Test Warning for Jenkins"),
-                file("Test.java:2"),
-                author("Git SampleRepoRule"),
-                email("gits@mplereporule"),
-                commit(commits.get("Test")),
-                age("1"));
-        assertThat(rows.get(9).getValuesByColumn()).contains(
-                details("Test Warning for Jenkins"),
-                file("Test.java:3"),
-                author("Git SampleRepoRule"),
-                email("gits@mplereporule"),
-                commit(commits.get("Test")),
-                age("1"));
+        assertColumnsOfRowBob(rows.get(0), commits.get("Bob"), 1);
+        assertColumnsOfRowBob(rows.get(1), commits.get("Bob"), 2);
+        assertColumnsOfRowBob(rows.get(2), commits.get("Bob"), 3);
+        assertColumnsOfRowLoremIpsum(rows.get(3), 1, commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(rows.get(4), 2, commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(rows.get(5), 3, commits.get("LoremIpsum"));
+        assertColumnsOfRowLoremIpsum(rows.get(6), 4, commits.get("LoremIpsum"));
+        assertColumnsOfTest(rows.get(7), commits.get("Test"), 1);
+        assertColumnsOfTest(rows.get(8), commits.get("Test"), 2);
+        assertColumnsOfTest(rows.get(9), commits.get("Test"), 3);
 
         table.goToPage(2);
         assertThat(table.getInfo()).isEqualTo("Showing 11 to 11 of 11 entries");
 
         List<BlamesRow> secondPageRows = table.getRows();
         assertThat(secondPageRows).hasSize(1);
-        assertThat(secondPageRows.get(0).getValuesByColumn()).contains(
-                details("Test Warning for Jenkins"),
-                file("Test.java:4"),
-                author("Git SampleRepoRule"),
-                email("gits@mplereporule"),
-                commit(commits.get("Test")),
-                age("1"));
+        assertColumnsOfTest(secondPageRows.get(0), commits.get("Test"), 4);
     }
 
     private Map<String, String> createGitRepository() throws Exception {
@@ -529,5 +458,4 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     private MapEntry<BlamesColumn, String> file(final String file) {
         return entry(BlamesColumn.FILE, file);
     }
-
 }
