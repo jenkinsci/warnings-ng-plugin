@@ -1,0 +1,24 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Renders a file in the reference build as link if the file could be read by the current user. Otherwise a plain text
+    is rendered.
+    <st:attribute name="it" use="required" type="io.jenkins.plugins.analysis.core.model.IssuesDetail">
+      The view that provides the logic.
+    </st:attribute>
+    <st:attribute name="issue" use="required" type="edu.hm.hafner.analysis.Issue">
+      The issue to get the file information from.
+    </st:attribute>
+  </st:documentation>
+
+  <j:set var="displayName" value="${it.getFileDisplayName(issue)}:${issue.lineStart}"/>
+  <j:choose>
+    <j:when test="${it.canDisplayFile(issue)}">
+      <a href="${rootURL}/${it.referenceUrl}/source.${issue.id}/#${issue.lineStart}">${displayName}
+      </a>
+    </j:when>
+    <j:otherwise>${displayName}</j:otherwise>
+  </j:choose>
+
+</j:jelly>

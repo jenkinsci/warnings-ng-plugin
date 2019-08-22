@@ -17,62 +17,74 @@
       <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
       <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
       <script src="${resURL}/plugin/warnings-ng/js/libs/datatables.min.js"/>
-      
+
       <div class="fluid-container">
 
-        <h3>${it.displayName}</h3>
 
-        <table class="table table-responsive table-responsive-block table-hover table-striped" id="fixed">
-          <colgroup>
-            <col class="col-width-5"/>
-            <col class="col-width-1"/>
-            <col class="col-width-1"/>
-            <j:if test="${it.issues.hasCategories()}">
-              <col class="col-width-2"/>
-            </j:if>
-            <j:if test="${it.issues.hasTypes()}">
-              <col class="col-width-3"/>
-            </j:if>
-          </colgroup>
-          <thead>
-            <tr>
-              <th>${%File}</th>
-              <th>${%Line}</th>
-              <th>${%Severity}</th>
-              <j:if test="${it.issues.hasCategories()}">
-                <th>${%Category}</th>
-              </j:if>
-              <j:if test="${it.issues.hasTypes()}">
-                <th>${%Type}</th>
-              </j:if>
-            </tr>
-          </thead>
-          <tbody>
-            <j:forEach var="issue" items="${it.issues}">
-              <tr>
-                <td>${it.getFileDisplayName(issue)}</td>
-                <td>
-                  <j:choose>
-                    <j:when test="${issue.lineStart &lt; 1}">
-                      -
-                    </j:when>
-                    <j:otherwise>
-                      ${issue.lineStart}
-                    </j:otherwise>
-                  </j:choose>
-                </td>
-                <td>${it.getLocalizedSeverity(issue.severity)}</td>
+        <div class="card card-marg-bot">
+          <div data-role="page" class="card-body">
+
+            <h5 class="card-title">
+              ${it.displayName}
+              <i class="fa fa-award icon-right fa-2x" aria-hidden="true"/>
+            </h5>
+
+            <table class="table table-responsive table-responsive-block table-hover table-striped display" id="fixed">
+              <colgroup>
+                <col class="col-width-5"/>
+                <col class="col-width-1"/>
+                <col class="col-width-1"/>
                 <j:if test="${it.issues.hasCategories()}">
-                  <td>${issue.category}</td>
+                  <col class="col-width-2"/>
                 </j:if>
                 <j:if test="${it.issues.hasTypes()}">
-                  <td>${issue.type}</td>
+                  <col class="col-width-3"/>
                 </j:if>
-              </tr>
-            </j:forEach>
-          </tbody>
-        </table>
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>${%File}</th>
+                  <th>${%Line}</th>
+                  <th>${%Severity}</th>
+                  <j:if test="${it.issues.hasCategories()}">
+                    <th>${%Category}</th>
+                  </j:if>
+                  <j:if test="${it.issues.hasTypes()}">
+                    <th>${%Type}</th>
+                  </j:if>
+                </tr>
+              </thead>
+              <tbody>
+                <j:forEach var="issue" items="${it.issues}">
+                  <tr>
+                    <td><issues:fixedSourceLink issue="${issue}" it="${it}"/></td>
+                    <td>
+                      <j:choose>
+                        <j:when test="${issue.lineStart &lt; 1}">
+                          -
+                        </j:when>
+                        <j:otherwise>
+                          ${issue.lineStart}
+                        </j:otherwise>
+                      </j:choose>
+                    </td>
+                    <td>${it.getLocalizedSeverity(issue.severity)}</td>
+                    <j:if test="${it.issues.hasCategories()}">
+                      <td>${issue.category}</td>
+                    </j:if>
+                    <j:if test="${it.issues.hasTypes()}">
+                      <td>${issue.type}</td>
+                    </j:if>
+                  </tr>
+                </j:forEach>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
+      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
+      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/fixed-detail.js"/>
 
     </l:main-panel>
   </l:layout>

@@ -1,10 +1,15 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.nio.charset.Charset;
+import java.util.Optional;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 
 /**
  * Result object to visualize the fixed issues in a build.
@@ -35,6 +40,37 @@ public class FixedWarningsDetail extends IssuesDetail {
             final String url, final StaticAnalysisLabelProvider labelProvider, final Charset sourceEncoding) {
         super(owner, result, fixedIssues, NO_ISSUES, NO_ISSUES, fixedIssues, Messages.FixedIssues_View_Name(),
                 url, labelProvider, sourceEncoding);
+    }
+
+    /**
+     * Returns whether the affected file of the specified fixed issue can be shown in the UI.
+     *
+     * @param issue
+     *         the issue to get the affected file for
+     *
+     * @return {@code true} if the file could be shown, {@code false} otherwise
+     */
+    @Override
+    @SuppressWarnings("unused") // Called by jelly view
+    public boolean canDisplayFile(final Issue issue) {
+        Optional<Run<?, ?>> referenceBuild = getResult().getReferenceBuild();
+        return referenceBuild.filter(run -> ConsoleLogHandler.isInConsoleLog(issue.getFileName())
+                || AffectedFilesResolver.hasAffectedFile(run, issue)).isPresent();
+
+    }
+
+    /**
+     * Returns the URL to the results of the same type of issues (i.e. same ID) in the reference build.
+     * <p>
+     * If no reference build is found, then an empty string is returned.
+     *
+     * @return URL to the results of the reference build
+     */
+    public String getReferenceUrl() {
+        return getResult().getReferenceBuild()
+                .map(Run::getUrl)
+                .map(url -> url + getResult().getId())
+                .orElse("");
     }
 }
 
