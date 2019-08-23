@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
@@ -55,7 +54,7 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
     /**
      * Reads the YAML file with a freestyle job and verifies that the job has been created.
      */
-    @Test @Issue("JENKINS-57817") @Ignore("See https://issues.jenkins-ci.org/browse/JENKINS-57817")
+    @Test @Issue("JENKINS-57817")
     public void shouldFreestyleJobWithSpotBugsUsingJobDsl() {
         configureJenkins("job-dsl-spotbugs.yaml");
 
