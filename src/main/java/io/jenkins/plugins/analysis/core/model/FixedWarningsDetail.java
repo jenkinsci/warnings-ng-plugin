@@ -66,6 +66,7 @@ public class FixedWarningsDetail extends IssuesDetail {
      *
      * @return URL to the results of the reference build
      */
+    @SuppressWarnings("unused") // Called by jelly view
     public String getReferenceUrl() {
         return getResult().getReferenceBuild()
                 .map(Run::getUrl)
