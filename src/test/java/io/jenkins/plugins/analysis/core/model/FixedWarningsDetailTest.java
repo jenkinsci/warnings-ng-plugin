@@ -23,45 +23,47 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class FixedWarningsDetailTest {
+    private static final Issue ISSUE = new IssueBuilder().build();
+
     @Test
     void shouldNotDisplayFile() {
-        Report fixedIssues = new Report();
+        AnalysisResult result = createAnalysisResult();
 
-        Issue issue = new IssueBuilder().build();
-        fixedIssues.add(issue);
-
-        AnalysisResult result = mock(AnalysisResult.class);
-        FixedWarningsDetail detail = new FixedWarningsDetail(mock(Run.class), result, fixedIssues,
+        FixedWarningsDetail detail = new FixedWarningsDetail(mock(Run.class), result, new Report(),
                 "fixed", mock(StaticAnalysisLabelProvider.class), StandardCharsets.UTF_8);
 
-        assertThat(detail.canDisplayFile(issue)).isFalse();
+        // No reference build yet
+        assertThat(detail.canDisplayFile(ISSUE)).isFalse();
+        assertThat(detail.getReferenceUrl()).isEmpty();
 
-        Run<?, ?> referenceBuild = mock(Run.class);
-        when(referenceBuild.getRootDir()).thenReturn(new File(""));
+        // Reference build exists, but affected file does not exist
+        Run<?, ?> referenceBuild = createReferenceBuild();
         when(result.getReferenceBuild()).thenReturn(Optional.of(referenceBuild));
 
-        assertThat(detail.canDisplayFile(issue)).isFalse();
+        String expectedUrl = "/url/analysis";
+        assertThat(detail.getReferenceUrl()).isEqualTo(expectedUrl);
+        assertThat(detail.canDisplayFile(createIssue("file.txt"))).isFalse();
+
+        assertThat(detail.getReferenceUrl()).isEqualTo(expectedUrl);
+        assertThat(detail.canDisplayFile(createIssue(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID))).isTrue();
     }
 
-    @Test
-    void shouldDisplayFile() {
-        Report fixedIssues = new Report();
-
+    private Issue createIssue(final String fileName) {
         IssueBuilder builder = new IssueBuilder();
-        builder.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID);
-        Issue issue = builder.build();
-        fixedIssues.add(issue);
+        builder.setFileName(fileName);
+        return builder.build();
+    }
 
-        Run<?, ?> run = mock(Run.class);
-        AnalysisResult result = mock(AnalysisResult.class);
-
+    private Run<?, ?> createReferenceBuild() {
         Run<?, ?> referenceBuild = mock(Run.class);
+        when(referenceBuild.getUrl()).thenReturn("/url/");
         when(referenceBuild.getRootDir()).thenReturn(new File(""));
-        when(result.getReferenceBuild()).thenReturn(Optional.of(referenceBuild));
+        return referenceBuild;
+    }
 
-        FixedWarningsDetail detail = new FixedWarningsDetail(run, result, fixedIssues,
-                "fixed", mock(StaticAnalysisLabelProvider.class), StandardCharsets.UTF_8);
-
-        assertThat(detail.canDisplayFile(builder.build())).isTrue();
+    private AnalysisResult createAnalysisResult() {
+        AnalysisResult result = mock(AnalysisResult.class);
+        when(result.getId()).thenReturn("analysis");
+        return result;
     }
 }
