@@ -176,6 +176,10 @@ public class IssuesDetail implements ModelObject {
         errorMessages.addAll(result.getErrorMessages().castToList());
     }
 
+    AnalysisResult getResult() {
+        return result;
+    }
+
     /**
      * Returns the error messages of the static analysis run.
      *

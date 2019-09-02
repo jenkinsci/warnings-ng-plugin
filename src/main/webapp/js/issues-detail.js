@@ -7,7 +7,7 @@
     storeAndRestoreCarousel('trend-carousel');
 
     /**
-     * Create a data table instance for all tables that are marked with class "display".
+     * Create a data table instance for all tables that are marked with class "property-table".
      */
     $('table.property-table').DataTable({
         pagingType: 'numbers',  // Page number button only
