@@ -29,18 +29,8 @@
               <i class="fa fa-award icon-right fa-2x" aria-hidden="true"/>
             </h5>
 
-            <table class="table table-responsive table-responsive-block table-hover table-striped display" id="fixed">
-              <colgroup>
-                <col class="col-width-5"/>
-                <col class="col-width-1"/>
-                <col class="col-width-1"/>
-                <j:if test="${it.issues.hasCategories()}">
-                  <col class="col-width-2"/>
-                </j:if>
-                <j:if test="${it.issues.hasTypes()}">
-                  <col class="col-width-3"/>
-                </j:if>
-              </colgroup>
+            <div class="table-responsive">
+              <table class="table table-hover table-striped display" id="fixed">
               <thead>
                 <tr>
                   <th>${%File}</th>
@@ -77,6 +67,7 @@
                 </j:forEach>
               </tbody>
             </table>
+            </div>
           </div>
         </div>
 
