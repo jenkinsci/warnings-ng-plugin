@@ -26,7 +26,7 @@ class FixedWarningsDetailTest {
     private static final Issue ISSUE = new IssueBuilder().build();
 
     @Test
-    void shouldNotDisplayFile() {
+    void shouldDisplayFileOfFixedWarning() {
         AnalysisResult result = createAnalysisResult();
 
         FixedWarningsDetail detail = new FixedWarningsDetail(mock(Run.class), result, new Report(),
