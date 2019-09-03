@@ -35,16 +35,8 @@ public class PVSStudio extends ReportScanningTool {
         return new PVSStudioParser();
     }
 
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends IconLabelProvider {
-
-        LabelProvider(final String id, final String name, final String iconName) {
-            super(id, name, iconName);
-        }
-    }
-
     /** Descriptor for this static analysis tool. */
-    @Symbol("PVS-Studio")
+    @Symbol("PVSStudio")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
 
@@ -57,16 +49,21 @@ public class PVSStudio extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return "PVS-Studio";
-        } // title page
+        }
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new LabelProvider(ID, "PVS-Studio", "pvs");
+            return new IconLabelProvider(ID, "PVS-Studio", "pvs");
         }
 
         @Override
         public String getPattern() {
             return "**/**.plog";
+        }
+
+        @Override
+        public String getUrl() {
+            return "https://www.viva64.com/en/pvs-studio/";
         }
     }
 

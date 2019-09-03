@@ -777,6 +777,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(8, new DrMemory(), "drmemory.txt");
     }
 
+    /** Runs the PVS-Studio parser on an output file that contains 33 issues. */
+    @Test
+    public void shouldFindAllPVSStudioIssues() {
+        shouldFindIssuesOfTool(33, new PVSStudio(), "TestReport.plog");
+    }
+
     /** Runs the JavaC parser on an output file of the Eclipse compiler: the build should report no issues. */
     @Test
     public void shouldFindNoJavacIssuesInEclipseOutput() {
