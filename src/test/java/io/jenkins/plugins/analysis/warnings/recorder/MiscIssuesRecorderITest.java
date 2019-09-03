@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.assertj.core.data.MapEntry;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -485,11 +486,32 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 IssueColumn.TYPE, IssueColumn.SEVERITY, IssueColumn.AGE);
 
         assertThat(issues.getTitle()).isEqualTo("Issues");
-        assertThat(issues.getRows()).containsExactly(
-                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "Error", 2),
-                new IssueRow("CsharpNamespaceDetector.java:29", "-", "Sizes", "LineLengthCheck", "Error", 1),
-                new IssueRow("CsharpNamespaceDetector.java:30", "-", "Blocks", "RightCurlyCheck", "Error", 1),
-                new IssueRow("CsharpNamespaceDetector.java:37", "-", "Blocks", "RightCurlyCheck", "Error", 1));
+        List<IssueRow> rows = issues.getRows();
+        assertThat(rows).hasSize(4);
+        assertThat(rows.get(0).getValuesByColumn()).contains(
+                file("CsharpNamespaceDetector.java:22"),
+                category("Design"),
+                type("DesignForExtensionCheck"),
+                error(),
+                age("2"));
+        assertThat(rows.get(1).getValuesByColumn()).contains(
+                file("CsharpNamespaceDetector.java:29"),
+                category("Sizes"),
+                type("LineLengthCheck"),
+                error(),
+                age("1"));
+        assertThat(rows.get(2).getValuesByColumn()).contains(
+                file("CsharpNamespaceDetector.java:30"),
+                category("Blocks"),
+                type("RightCurlyCheck"),
+                error(),
+                age("1"));
+        assertThat(rows.get(3).getValuesByColumn()).contains(
+                file("CsharpNamespaceDetector.java:37"),
+                category("Blocks"),
+                type("RightCurlyCheck"),
+                error(),
+                age("1"));
     }
 
     private void verifyBaselineDetails(final AnalysisResult baseline) {
@@ -517,10 +539,46 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(issues.getColumns()).containsExactly(IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.CATEGORY,
                 IssueColumn.TYPE, IssueColumn.SEVERITY, IssueColumn.AGE);
         assertThat(issues.getTitle()).isEqualTo("Issues");
-        assertThat(issues.getRows()).containsExactly(
-                new IssueRow("CsharpNamespaceDetector.java:17", "-", "Design", "DesignForExtensionCheck", "Error", 1),
-                new IssueRow("CsharpNamespaceDetector.java:22", "-", "Design", "DesignForExtensionCheck", "Error", 1),
-                new IssueRow("CsharpNamespaceDetector.java:42", "-", "Sizes", "LineLengthCheck", "Error", 1));
+        List<IssueRow> rows = issues.getRows();
+        assertThat(rows).hasSize(3);
+        assertThat(rows.get(0).getValuesByColumn()).contains(
+                file("CsharpNamespaceDetector.java:17"),
+                category("Design"),
+                type("DesignForExtensionCheck"),
+                error(),
+                age("1"));
+        assertThat(rows.get(1).getValuesByColumn()).contains(
+                file("CsharpNamespaceDetector.java:22"),
+                category("Design"),
+                type("DesignForExtensionCheck"),
+                error(),
+                age("1"));
+        assertThat(rows.get(2).getValuesByColumn()).contains(
+                file("CsharpNamespaceDetector.java:42"),
+                category("Sizes"),
+                type("LineLengthCheck"),
+                error(),
+                age("1"));
+    }
+
+    private MapEntry<IssueColumn, String> age(final String age) {
+        return entry(IssueColumn.AGE, age);
+    }
+
+    private MapEntry<IssueColumn, String> error() {
+        return entry(IssueColumn.SEVERITY, "Error");
+    }
+
+    private MapEntry<IssueColumn, String> type(final String type) {
+        return entry(IssueColumn.TYPE, type);
+    }
+
+    private MapEntry<IssueColumn, String> category(final String category) {
+        return entry(IssueColumn.CATEGORY, category);
+    }
+
+    private MapEntry<IssueColumn, String> file(final String file) {
+        return entry(IssueColumn.FILE, file);
     }
 
     /**
