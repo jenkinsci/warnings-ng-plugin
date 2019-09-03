@@ -28,10 +28,10 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>5.3.0</analysis-model-api.version>
-    <analysis-model.version>5.3.0</analysis-model.version>
-    <forensics-api-plugin.version>0.4.0</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.3.0</git-forensics-plugin.version>
+    <analysis-model-api.version>6.0.1</analysis-model-api.version>
+    <analysis-model.version>6.0.1</analysis-model.version>
+    <forensics-api-plugin.version>0.4.1</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.3.1</git-forensics-plugin.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
