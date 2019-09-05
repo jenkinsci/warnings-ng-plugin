@@ -100,8 +100,12 @@ public class AnnotatedReport implements Serializable {
 
     private void addAllReports(final Iterable<AnnotatedReport> reports) {
         for (AnnotatedReport report : reports) {
-            add(report, report.getId());
+            addReport(report.getId(), report);
         }
+    }
+
+    private void addReport(final String reportId, final AnnotatedReport report) {
+        addReport(reportId, report.getReport(), report.getBlames(), report.getStatistics());
     }
 
     /**
@@ -196,7 +200,7 @@ public class AnnotatedReport implements Serializable {
      *         the ID to use when adding the report
      */
     public void add(final AnnotatedReport other, final String actualId) {
-        addReport(actualId, other.getReport(), other.getBlames(), other.getStatistics());
+        addReport(actualId, other);
     }
 
     /**
