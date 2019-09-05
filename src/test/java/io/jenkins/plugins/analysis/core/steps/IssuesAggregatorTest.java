@@ -1,9 +1,10 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.collections.api.RichIterable;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -44,7 +45,7 @@ class IssuesAggregatorTest {
         aggregator.endRun(build);
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_WINDOWS);
-        assertThat(aggregator.getResults()).isEmpty();
+        assertThat(aggregator.getResultsPerTool()).isEmpty();
     }
 
     @Test
@@ -56,11 +57,11 @@ class IssuesAggregatorTest {
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_WINDOWS);
 
-        Map<String, List<AnnotatedReport>> results = aggregator.getResults();
+        Map<String, RichIterable<AnnotatedReport>> results = aggregator.getResultsPerTool();
         assertThat(results).containsOnlyKeys(PMD);
 
         assertThat(results.get(PMD)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.get(0).getReport()).hasSize(1).contains(warning));
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
     }
 
     @Test @org.jvnet.hudson.test.Issue("JENKINS-59178")
@@ -74,13 +75,13 @@ class IssuesAggregatorTest {
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_WINDOWS, AXIS_UNIX);
 
-        Map<String, List<AnnotatedReport>> results = aggregator.getResults();
+        Map<String, RichIterable<AnnotatedReport>> results = aggregator.getResultsPerTool();
         assertThat(results).containsOnlyKeys(PMD, SPOTBUGS);
 
         assertThat(results.get(PMD)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.get(0).getReport()).hasSize(1).contains(warning));
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
         assertThat(results.get(SPOTBUGS)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.get(0).getReport()).hasSize(1).contains(bug));
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(bug));
     }
 
     @Test
@@ -93,13 +94,13 @@ class IssuesAggregatorTest {
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_UNIX);
 
-        Map<String, List<AnnotatedReport>> results = aggregator.getResults();
+        Map<String, RichIterable<AnnotatedReport>> results = aggregator.getResultsPerTool();
         assertThat(results).containsOnlyKeys(PMD, SPOTBUGS);
 
         assertThat(results.get(PMD)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.get(0).getReport()).hasSize(1).contains(warning));
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
         assertThat(results.get(SPOTBUGS)).hasSize(1)
-                .satisfies(reports -> assertThat(reports.get(0).getReport()).hasSize(1).contains(bug));
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(bug));
     }
 
     @Test
@@ -114,13 +115,14 @@ class IssuesAggregatorTest {
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_UNIX, AXIS_WINDOWS);
 
-        Map<String, List<AnnotatedReport>> results = aggregator.getResults();
+        Map<String, RichIterable<AnnotatedReport>> results = aggregator.getResultsPerTool();
         assertThat(results).containsOnlyKeys(PMD);
 
         assertThat(results.get(PMD)).hasSize(2)
                 .satisfies(reports -> {
-                    assertThat(reports.get(0).getReport()).hasSize(1).contains(unixWarning);
-                    assertThat(reports.get(1).getReport()).hasSize(1).contains(windowsWarning);
+                    Iterator<? extends AnnotatedReport> iterator = reports.iterator();
+                    assertThat(iterator.next().getReport()).hasSize(1).contains(unixWarning);
+                    assertThat(iterator.next().getReport()).hasSize(1).contains(windowsWarning);
                 });
     }
 

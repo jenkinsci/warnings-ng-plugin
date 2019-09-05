@@ -19,7 +19,7 @@ import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
  *
  * @author Ullrich Hafner
  */
-public final class AnnotatedReport implements Serializable {
+public class AnnotatedReport implements Serializable {
     private static final long serialVersionUID = -4797152016409014028L;
 
     private final String id;
@@ -81,6 +81,24 @@ public final class AnnotatedReport implements Serializable {
     public AnnotatedReport(@Nullable final String id, final List<AnnotatedReport> reports) {
         this(id);
 
+        addAllReports(reports);
+    }
+
+    /**
+     * Creates a new instance of {@link AnnotatedReport} as an aggregation of the specified reports.
+     *
+     * @param id
+     *         the ID of the report
+     * @param reports
+     *         the reports to aggregate
+     */
+    public AnnotatedReport(@Nullable final String id, final Iterable<AnnotatedReport> reports) {
+        this(id);
+
+        addAllReports(reports);
+    }
+
+    private void addAllReports(final Iterable<AnnotatedReport> reports) {
         for (AnnotatedReport report : reports) {
             add(report, report.getId());
         }
@@ -164,9 +182,7 @@ public final class AnnotatedReport implements Serializable {
      *         the reports to append
      */
     public void addAll(final Collection<AnnotatedReport> reports) {
-        for (AnnotatedReport report : reports) {
-            add(report, report.getId());
-        }
+        addAllReports(reports);
     }
 
     /**
