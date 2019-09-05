@@ -1,13 +1,16 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.collections.api.map.MutableMap;
+import org.eclipse.collections.api.RichIterable;
+import org.eclipse.collections.api.multimap.MutableMultimap;
 import org.eclipse.collections.impl.factory.Lists;
-import org.eclipse.collections.impl.factory.Maps;
+import org.eclipse.collections.impl.factory.Multimaps;
+
+import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -27,7 +30,7 @@ import io.jenkins.plugins.analysis.core.util.RunResultHandler;
  */
 public class IssuesAggregator extends MatrixAggregator {
     private final IssuesRecorder recorder;
-    private final MutableMap<String, List<AnnotatedReport>> results = Maps.mutable.empty();
+    private final MutableMultimap<String, AnnotatedReport> resultsPerTool = Multimaps.mutable.list.empty();
     private final List<String> names = Lists.mutable.empty();
 
     private final ReentrantLock aggregationTableLock = new ReentrantLock();
@@ -51,19 +54,25 @@ public class IssuesAggregator extends MatrixAggregator {
         this.recorder = recorder;
     }
 
+    @VisibleForTesting
+    List<String> getNames() {
+        return names;
+    }
+
+    @VisibleForTesting
+    Map<String, RichIterable<AnnotatedReport>> getResultsPerTool() {
+        return resultsPerTool.toMap();
+    }
+
     @Override
     public boolean endRun(final MatrixRun run) {
         aggregationTableLock.lock();
         try {
             names.add(run.getParent().getName());
             List<ResultAction> actions = run.getActions(ResultAction.class);
-            if (results.isEmpty()) {
-                initializeMap(actions);
+            for (ResultAction action : actions) {
+                resultsPerTool.put(action.getId(), createReport(action.getId(), action.getResult()));
             }
-            else {
-                updateMap(actions);
-            }
-            run.getWorkspace();
         }
         finally {
             aggregationTableLock.unlock();
@@ -71,30 +80,17 @@ public class IssuesAggregator extends MatrixAggregator {
         return true;
     }
 
-    private void initializeMap(final List<ResultAction> actions) {
-        for (ResultAction action : actions) {
-            results.put(action.getId(), Lists.mutable.of(createReport(action.getId(), action.getResult())));
-        }
-    }
-
     private AnnotatedReport createReport(final String id, final AnalysisResult result) {
         return new AnnotatedReport(id, result.getIssues(), result.getBlames(), result.getForensics());
     }
 
-    private void updateMap(final List<ResultAction> actions) {
-        for (ResultAction action : actions) {
-            List<AnnotatedReport> runs = results.get(action.getId());
-            runs.add(createReport(action.getId(), action.getResult()));
-        }
-    }
-
     @Override
     public boolean endBuild() {
-        for (Entry<String, List<AnnotatedReport>> reportsPerId : results.entrySet()) {
-            AnnotatedReport aggregatedReport = new AnnotatedReport(reportsPerId.getKey(), reportsPerId.getValue());
+        resultsPerTool.forEachKeyMultiValues((tool, reports) -> {
+            AnnotatedReport aggregatedReport = new AnnotatedReport(tool, reports);
             recorder.publishResult(build, listener, Messages.Tool_Default_Name(), aggregatedReport, StringUtils.EMPTY,
                     new RunResultHandler(build));
-        }
+        });
         return true;
     }
 }
