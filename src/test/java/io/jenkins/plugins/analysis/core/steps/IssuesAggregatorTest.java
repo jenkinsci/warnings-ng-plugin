@@ -38,7 +38,8 @@ class IssuesAggregatorTest {
 
     @Test
     void shouldHandleBuildWithoutActions() {
-        IssuesAggregator aggregator = createIssueAggregator();
+        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         MatrixRun build = createBuild(AXIS_WINDOWS);
 
@@ -46,11 +47,16 @@ class IssuesAggregatorTest {
 
         assertThat(aggregator.getNames()).containsExactly(AXIS_WINDOWS);
         assertThat(aggregator.getResultsPerTool()).isEmpty();
+
+        aggregator.endBuild();
+
+        verify(recorder, never()).publishResult(any(), any(), anyString(), any(), anyString(), any());
     }
 
     @Test
     void shouldCollectSingleResultForSingleAxis() {
-        IssuesAggregator aggregator = createIssueAggregator();
+        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         Issue warning = createIssue(PMD);
         aggregator.endRun(createBuild(AXIS_WINDOWS, createAction(warning)));
@@ -62,11 +68,16 @@ class IssuesAggregatorTest {
 
         assertThat(results.get(PMD)).hasSize(1)
                 .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
+
+        aggregator.endBuild();
+
+        verify(recorder).publishResult(any(), any(), anyString(), any(), anyString(), any());
     }
 
     @Test @org.jvnet.hudson.test.Issue("JENKINS-59178")
     void shouldCollectDifferentResultsForTwoAxes() {
-        IssuesAggregator aggregator = createIssueAggregator();
+        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         Issue warning = createIssue(PMD);
         aggregator.endRun(createBuild(AXIS_WINDOWS, createAction(warning)));
@@ -82,11 +93,16 @@ class IssuesAggregatorTest {
                 .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
         assertThat(results.get(SPOTBUGS)).hasSize(1)
                 .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(bug));
+
+        aggregator.endBuild();
+
+        verify(recorder, times(2)).publishResult(any(), any(), anyString(), any(), anyString(), any());
     }
 
     @Test
     void shouldCollectMultipleToolsOneAxis() {
-        IssuesAggregator aggregator = createIssueAggregator();
+        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         Issue warning = createIssue(PMD);
         Issue bug = createIssue(SPOTBUGS);
@@ -101,11 +117,16 @@ class IssuesAggregatorTest {
                 .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
         assertThat(results.get(SPOTBUGS)).hasSize(1)
                 .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(bug));
+
+        aggregator.endBuild();
+
+        verify(recorder, times(2)).publishResult(any(), any(), anyString(), any(), anyString(), any());
     }
 
     @Test
     void shouldCollectOneToolMultipleAxes() {
-        IssuesAggregator aggregator = createIssueAggregator();
+        IssuesRecorder recorder = mock(IssuesRecorder.class);
+        IssuesAggregator aggregator = createIssueAggregator(recorder);
 
         Issue unixWarning = createIssue(PMD);
         aggregator.endRun(createBuild(AXIS_UNIX, createAction(unixWarning)));
@@ -124,6 +145,10 @@ class IssuesAggregatorTest {
                     assertThat(iterator.next().getReport()).hasSize(1).contains(unixWarning);
                     assertThat(iterator.next().getReport()).hasSize(1).contains(windowsWarning);
                 });
+
+        aggregator.endBuild();
+
+        verify(recorder).publishResult(any(), any(), anyString(), any(), anyString(), any());
     }
 
     private Issue createIssue(final String pmd) {
@@ -138,9 +163,9 @@ class IssuesAggregatorTest {
         return build;
     }
 
-    private IssuesAggregator createIssueAggregator() {
+    private IssuesAggregator createIssueAggregator(final IssuesRecorder recorder) {
         return new IssuesAggregator(mock(MatrixBuild.class), mock(Launcher.class), mock(
-                BuildListener.class), mock(IssuesRecorder.class));
+                BuildListener.class), recorder);
     }
 
     private MatrixRun createBuild(final String axis, final ResultAction... actions) {
