@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -8,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.map.MutableMap;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
+
+import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -49,6 +52,16 @@ public class IssuesAggregator extends MatrixAggregator {
         super(build, launcher, listener);
 
         this.recorder = recorder;
+    }
+
+    @VisibleForTesting
+    List<String> getNames() {
+        return names;
+    }
+
+    @VisibleForTesting
+    Map<String, List<AnnotatedReport>> getResults() {
+        return results;
     }
 
     @Override
