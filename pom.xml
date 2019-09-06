@@ -74,6 +74,7 @@
     <script-security.version>1.58</script-security.version>
     <folder-plugin.version>6.1.2</folder-plugin.version>
     <credentials.version>2.1.14</credentials.version>
+    <httpcomponents-client.version>4.5.3-2.1</httpcomponents-client.version>
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
@@ -320,10 +321,17 @@
       <artifactId>antisamy-markup-formatter</artifactId>
       <version>${antisamy-markup-formatter.version}</version>
     </dependency>
+
+    <!-- AxivionSuite Dependencies -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
       <version>${credentials.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>apache-httpcomponents-client-4-api</artifactId>
+      <version>${httpcomponents-client.version}</version>
     </dependency>
 
     <!-- Optional Jenkins Plug-in Dependencies -->
@@ -337,12 +345,6 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>token-macro</artifactId>
       <version>${token-macro.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>git-forensics</artifactId>
-      <version>${git-forensics-plugin.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -363,6 +365,12 @@
       <artifactId>forensics-api</artifactId>
       <version>${forensics-api-plugin.version}</version>
       <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>git-forensics</artifactId>
+      <version>${git-forensics-plugin.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
