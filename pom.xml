@@ -341,12 +341,6 @@
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>git-forensics</artifactId>
-      <version>${git-forensics-plugin.version}</version>
-      <optional>true</optional>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
       <version>${forensics-api-plugin.version}</version>
     </dependency>
@@ -363,6 +357,12 @@
       <artifactId>forensics-api</artifactId>
       <version>${forensics-api-plugin.version}</version>
       <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>git-forensics</artifactId>
+      <version>${git-forensics-plugin.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
