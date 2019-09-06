@@ -159,6 +159,37 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 .hasSeverity(Severity.WARNING_HIGH);
     }
 
+    /** Runs the Clang parser on an output file that contains 1 issue. */
+    @Test
+    public void shouldFindAllGhsIssuesIfConsoleIsAnnotatedWithTimeStamps() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("issue59118.txt");
+        job.setDefinition(asStage(
+                createCatStep("*.txt"),
+                "def issues = scanForIssues tool: ghsMulti()",
+                PUBLISH_ISSUES_STEP));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result).hasTotalSize(2);
+        Report issues = result.getIssues();
+        assertThat(issues.get(0))
+                .hasLineStart(19)
+                .hasMessage("operands of logical && or || must be primary expressions\n"
+                        + "\n"
+                        + "  #if !defined(_STDARG_H) && !defined(_STDIO_H) && !defined(_GHS_WCHAR_H)")
+                .hasFileName("C:/Path/To/bar.h")
+                .hasCategory("#1729-D")
+                .hasSeverity(Severity.WARNING_NORMAL);
+        assertThat(issues.get(1))
+                .hasLineStart(491)
+                .hasMessage("operands of logical && or || must be primary expressions\n"
+                        + "\n"
+                        + "                      if(t_deltaInterval != t_u4Interval && t_deltaInterval != 0)")
+                .hasFileName("../../../../Sources/Foo/Bar/Test.c")
+                .hasCategory("#1729-D")
+                .hasSeverity(Severity.WARNING_NORMAL);
+    }
+
     /**
      * Parses a colored console log that also contains console notes. Verifies that the console notes will be removed
      * before the color codes. Output is from ATH test case
