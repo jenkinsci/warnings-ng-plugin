@@ -138,12 +138,13 @@ public class DeltaReport {
                 .setNewHighSize(newIssues.getSizeOf(WARNING_HIGH))
                 .setNewNormalSize(newIssues.getSizeOf(WARNING_NORMAL))
                 .setNewLowSize(newIssues.getSizeOf(WARNING_LOW));
-        builder.setDeltaSize(allIssues.size() - referenceIssues.size())
-                .setDeltaErrorSize(allIssues.getSizeOf(ERROR) - referenceIssues.getSizeOf(ERROR))
-                .setDeltaHighSize(allIssues.getSizeOf(WARNING_HIGH) - referenceIssues.getSizeOf(WARNING_HIGH))
-                .setDeltaNormalSize(allIssues.getSizeOf(WARNING_NORMAL) - referenceIssues.getSizeOf(WARNING_NORMAL))
-                .setDeltaLowSize(allIssues.getSizeOf(WARNING_LOW) - referenceIssues.getSizeOf(WARNING_LOW));
-
+        if (!referenceBuildId.isEmpty()) {
+            builder.setDeltaSize(allIssues.size() - referenceIssues.size())
+                    .setDeltaErrorSize(allIssues.getSizeOf(ERROR) - referenceIssues.getSizeOf(ERROR))
+                    .setDeltaHighSize(allIssues.getSizeOf(WARNING_HIGH) - referenceIssues.getSizeOf(WARNING_HIGH))
+                    .setDeltaNormalSize(allIssues.getSizeOf(WARNING_NORMAL) - referenceIssues.getSizeOf(WARNING_NORMAL))
+                    .setDeltaLowSize(allIssues.getSizeOf(WARNING_LOW) - referenceIssues.getSizeOf(WARNING_LOW));
+        }
         return builder.build();
     }
 }
