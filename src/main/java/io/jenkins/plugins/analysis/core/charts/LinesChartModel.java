@@ -22,6 +22,7 @@ import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 @SuppressWarnings("PMD.DataClass")
 public class LinesChartModel {
     private final List<String> xAxisLabels = new ArrayList<>();
+    private final List<Integer> buildNumbers = new ArrayList<>();
     private final List<LineSeries> series = new ArrayList<>();
     private String id;
 
@@ -53,21 +54,21 @@ public class LinesChartModel {
     /**
      * Adds the specified X axis labels to this model.
      *
-     * @param builds
+     * @param labels
      *         the X-axis labels of the model
      */
-    void addXAxisLabels(final List<String> builds) {
-        xAxisLabels.addAll(builds);
+    void setXAxisLabels(final List<String> labels) {
+        xAxisLabels.addAll(labels);
     }
 
     /**
-     * Adds the specified X axis label to this model.
+     * Adds the specified build numbers to this model.
      *
-     * @param build
-     *         the X-axis label of the model
+     * @param builds
+     *         the build numbers of the model
      */
-    void addXAxisLabel(final String build) {
-        xAxisLabels.add(0, build);
+    void setBuildNumbers(final List<Integer> builds) {
+        buildNumbers.addAll(builds);
     }
 
     /**
@@ -93,6 +94,10 @@ public class LinesChartModel {
     @JsonProperty("xAxisLabels")
     public List<String> getXAxisLabels() {
         return xAxisLabels;
+    }
+
+    public List<Integer> getBuildNumbers() {
+        return buildNumbers;
     }
 
     public List<LineSeries> getSeries() {

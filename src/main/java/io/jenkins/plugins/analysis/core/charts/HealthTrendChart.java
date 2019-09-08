@@ -31,7 +31,7 @@ public class HealthTrendChart implements TrendChart {
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
         LinesChartModel model = new LinesChartModel();
-        model.addXAxisLabels(dataSet.getXAxisLabels());
+        model.setXAxisLabels(dataSet.getXAxisLabels());
 
         if (healthDescriptor.isEnabled()) {
             LineSeries healthy = createSeries(Messages.Healthy_Name(), Palette.GREEN);

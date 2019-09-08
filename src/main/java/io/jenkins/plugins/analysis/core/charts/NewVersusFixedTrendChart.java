@@ -17,7 +17,7 @@ public class NewVersusFixedTrendChart implements TrendChart {
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
         LinesChartModel model = new LinesChartModel();
-        model.addXAxisLabels(dataSet.getXAxisLabels());
+        model.setXAxisLabels(dataSet.getXAxisLabels());
 
         LineSeries newSeries = getSeries(dataSet, Messages.New_Warnings_Short(), Palette.RED,
                 NewVersusFixedSeriesBuilder.NEW);

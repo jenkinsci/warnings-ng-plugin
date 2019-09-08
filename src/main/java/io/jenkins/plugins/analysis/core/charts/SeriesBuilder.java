@@ -128,7 +128,7 @@ abstract class SeriesBuilder {
             final SortedMap<AnalysisBuild, Map<String, Integer>> valuesPerBuild) {
         LinesDataSet model = new LinesDataSet();
         for (Entry<AnalysisBuild, Map<String, Integer>> series : valuesPerBuild.entrySet()) {
-            model.add(series.getKey().getDisplayName(), series.getValue());
+            model.add(series.getKey().getDisplayName(), series.getValue(), series.getKey().getNumber());
         }
         return model;
     }
