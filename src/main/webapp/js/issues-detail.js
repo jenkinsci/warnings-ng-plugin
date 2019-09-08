@@ -45,12 +45,10 @@
         }
     }
 
-    const tabToggle = 'a[data-toggle="tab"]';
-
     /**
      * Store the selected tab in browser's local storage.
      */
-    var tabToggleLink = $(tabToggle);
+    var tabToggleLink = $('a[data-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
         window.location.hash = e.target.hash;
         var activeTab = $(e.target).attr('href');
@@ -233,7 +231,7 @@
             });
 
             // Content is loaded on demand: if the active tab shows the table, then content is loaded using Ajax
-            var tabToggleLink = $(tabToggle);
+            var tabToggleLink = $('a[data-toggle="tab"]');
             tabToggleLink.on('show.bs.tab', function (e) {
                 var activeTab = $(e.target).attr('href');
                 if (activeTab === (id + 'Content') && dataTable.data().length === 0) {
