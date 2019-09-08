@@ -56,7 +56,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
 
     /**
      * Creates a filter that can be used to filter {@link ResultAction} instances for a given set
-     * of IDs.
+     * of tools.
      *
      * @param canSelectTools
      *         if {@code true} the selection of tools is done by selecting the corresponding IDs, otherwise all

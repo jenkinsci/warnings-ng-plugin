@@ -97,7 +97,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     /**
-     * Returns the build history for this job.
+     * Returns the build history for this action.
      *
      * @return the history
      */

@@ -50,7 +50,7 @@ public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Tests that the issue counter is displayed correctly with 1 issue.
      */
-    @Test @Issue("58420")
+    @Test @Issue("JENKINS-58420")
     public void shouldShowIssueCounterIfBuildFails() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(JAVAC_ONE_WARNING);
         project.getBuildersList().add(new FailureBuilder());
