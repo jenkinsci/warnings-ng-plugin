@@ -371,7 +371,7 @@ public abstract class IntegrationTest extends ResourceTest {
         copySingleFileToWorkspace(workspace, from, to);
     }
 
-    private FilePath getAgentWorkspace(final Slave agent, final TopLevelItem job) {
+    protected FilePath getAgentWorkspace(final Slave agent, final TopLevelItem job) {
         FilePath workspace = agent.getWorkspaceFor(job);
         assertThat(workspace).isNotNull();
         return workspace;
