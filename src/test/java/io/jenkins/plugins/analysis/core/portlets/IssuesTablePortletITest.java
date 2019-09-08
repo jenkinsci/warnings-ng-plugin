@@ -1,10 +1,9 @@
-package io.jenkins.plugins.analysis.warnings.recorder;
+package io.jenkins.plugins.analysis.core.portlets;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Arrays;
-
 import javax.servlet.ServletException;
 
 import org.junit.Test;
@@ -29,7 +28,7 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Michael Schmid, Raphael Furch
  */
-public class DashboardPortletITest extends IntegrationTestWithJenkinsPerSuite {
+public class IssuesTablePortletITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Dashboard Portlet should show the recorded warning count of two tools.
      */

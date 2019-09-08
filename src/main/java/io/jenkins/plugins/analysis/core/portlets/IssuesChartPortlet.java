@@ -130,7 +130,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
         List<Iterable<? extends AnalysisBuildResult>> histories = jobs.stream()
                 .map(job -> job.getActions(JobAction.class))
                 .flatMap(Collection::stream)
-                .filter(createToolFilter(selectTools, tools))
+                .filter(createJobActionFilter(selectTools, tools))
                 .map(JobAction::createBuildHistory).collect(Collectors.toList());
 
         return new JacksonFacade().toJson(

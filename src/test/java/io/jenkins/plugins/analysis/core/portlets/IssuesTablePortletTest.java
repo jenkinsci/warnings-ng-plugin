@@ -15,7 +15,7 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.assertj.core.util.Lists.*;
+import static org.assertj.core.util.Lists.list;
 import static org.mockito.Mockito.*;
 
 /**

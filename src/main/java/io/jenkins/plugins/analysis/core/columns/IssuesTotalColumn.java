@@ -1,9 +1,9 @@
 package io.jenkins.plugins.analysis.core.columns;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -18,11 +18,11 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import hudson.Extension;
 import hudson.model.Job;
+import hudson.model.Run;
 import hudson.views.ListViewColumn;
 import hudson.views.ListViewColumnDescriptor;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -121,11 +121,13 @@ public class IssuesTotalColumn extends ListViewColumn {
      */
     @SuppressWarnings("WeakerAccess") // called bv view
     public OptionalInt getTotal(final Job<?, ?> job) {
-        return job.getActions(JobAction.class).stream()
-                .filter(createToolFilter(selectTools, tools))
-                .map(JobAction::getLatestAction)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+        Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
+        if (lastCompletedBuild == null) {
+            return OptionalInt.empty();
+        }
+
+        return lastCompletedBuild.getActions(ResultAction.class).stream()
+                .filter(createResultActionFilter(selectTools, tools))
                 .map(ResultAction::getResult)
                 .mapToInt(AnalysisResult::getTotalSize)
                 .reduce(Integer::sum);
@@ -141,11 +143,13 @@ public class IssuesTotalColumn extends ListViewColumn {
      */
     @SuppressWarnings("WeakerAccess") // called bv view
     public List<AnalysisResultDescription> getDetails(final Job<?, ?> job) {
-        return job.getActions(JobAction.class).stream()
-                .filter(createToolFilter(selectTools, tools))
-                .map(JobAction::getLatestAction)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+        Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
+        if (lastCompletedBuild == null) {
+            return Collections.emptyList();
+        }
+
+        return lastCompletedBuild.getActions(ResultAction.class).stream()
+                .filter(createResultActionFilter(selectTools, tools))
                 .map(result -> new AnalysisResultDescription(result, getLabelProviderFactory()))
                 .collect(Collectors.toList());
     }
@@ -159,9 +163,14 @@ public class IssuesTotalColumn extends ListViewColumn {
      * @return the URL to the results, if this column renders the results of a unique tool, empty string otherwise
      */
     public String getUrl(final Job<?, ?> job) {
-        Set<String> actualIds = job.getActions(JobAction.class)
+        Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
+        if (lastCompletedBuild == null) {
+            return StringUtils.EMPTY;
+        }
+
+        Set<String> actualIds = lastCompletedBuild.getActions(ResultAction.class)
                 .stream()
-                .map(JobAction::getId)
+                .map(ResultAction::getId)
                 .collect(Collectors.toSet());
 
         String[] selectedIds = getIds(tools);

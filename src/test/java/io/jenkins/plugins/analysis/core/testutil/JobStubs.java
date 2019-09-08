@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.core.testutil;
 
-import java.util.Optional;
-
 import org.eclipse.collections.impl.factory.Lists;
 
 import hudson.model.Job;
+import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.JobAction;
@@ -73,10 +72,13 @@ public final class JobStubs {
      *
      * @return the job stub
      */
-    public static Job createJobWithActions(final JobAction... actions) {
+    public static Job createJobWithActions(final ResultAction... actions) {
         Job job = mock(Job.class);
 
-        when(job.getActions(JobAction.class)).thenReturn(Lists.fixedSize.of(actions));
+        Run<?, ?> build = mock(Run.class);
+        when(build.getActions(ResultAction.class)).thenReturn(Lists.fixedSize.of(actions));
+
+        when(job.getLastCompletedBuild()).thenReturn(build);
 
         return job;
     }
@@ -98,7 +100,7 @@ public final class JobStubs {
     }
 
     /**
-     * Creates a stub for a static analysis {@link JobAction}.
+     * Creates a stub for a static analysis {@link ResultAction}.
      *
      * @param id
      *         the ID of the static analysis tool
@@ -107,14 +109,10 @@ public final class JobStubs {
      * @param size
      *         the total number of issues for the tool
      *
-     * @return the {@link JobAction} stub
+     * @return the {@link ResultAction} stub
      */
-    public static JobAction createAction(final int size, final String id, final String name) {
-        JobAction jobAction = mock(JobAction.class);
-
+    public static ResultAction createAction(final int size, final String id, final String name) {
         ResultAction resultAction = mock(ResultAction.class);
-        when(jobAction.getLatestAction()).thenReturn(Optional.of(resultAction));
-        when(jobAction.getId()).thenReturn(id);
 
         AnalysisResult result = mock(AnalysisResult.class);
         when(result.getTotalSize()).thenReturn(size);
@@ -124,8 +122,7 @@ public final class JobStubs {
         when(resultAction.getName()).thenReturn(name);
         when(resultAction.getRelativeUrl()).thenReturn(url(id));
         when(resultAction.getUrlName()).thenReturn(id);
-
-        return jobAction;
+        return resultAction;
     }
 
     /**
