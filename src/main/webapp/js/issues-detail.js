@@ -1,3 +1,4 @@
+/* global jQuery, view */
 (function ($) {
     if ($('#severities-chart').length) {
         initializePieCharts();
@@ -10,7 +11,7 @@
      * Create a data table instance for all tables that are marked with class "property-table".
      */
     $('table.property-table').DataTable({
-        pagingType: 'numbers',  // Page number button only
+        pagingType: 'numbers', // Page number button only
         columnDefs: [{
             targets: 'no-sort', // Columns with class 'no-sort' are not orderable
             orderable: false
@@ -44,10 +45,12 @@
         }
     }
 
+    const tabToggle = 'a[data-toggle="tab"]';
+
     /**
      * Store the selected tab in browser's local storage.
      */
-    var tabToggleLink = $('a[data-toggle="tab"]');
+    var tabToggleLink = $(tabToggle);
     tabToggleLink.on('show.bs.tab', function (e) {
         window.location.hash = e.target.hash;
         var activeTab = $(e.target).attr('href');
@@ -81,7 +84,8 @@
             var order = [orderBy, orderDirection];
             try {
                 dataTable.order(order).draw();
-            } catch (ignore) { // TODO: find a way to determine the number of columns here
+            }
+            catch (ignore) { // TODO: find a way to determine the number of columns here
                 dataTable.order([[1, 'asc']]).draw();
             }
         }
@@ -99,14 +103,14 @@
      * Activate tooltips.
      */
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip()
+        $('[data-toggle="tooltip"]').tooltip();
     });
 
     /**
      * Initializes the pie chart. There are two different variants: on small screens we have a carousel that
      * switches between the two charts. On large screens both pie charts are drawn side-by-side.
      */
-    function initializePieCharts() {
+    function initializePieCharts () {
         /**
          * Creates a doughnut chart that shows the number of issues per severity.
          * Requires that DOM <div> elements exist with the IDs '#severities-chart', '#single-severities-chart'.
@@ -114,7 +118,6 @@
         view.getSeverityModel(function (severityModel) {
             $('#severities-chart').renderPieChart(severityModel.responseJSON, true); // small screens
             $('#single-severities-chart').renderPieChart(severityModel.responseJSON, false); // large screens
-
         });
         /**
          * Creates a doughnut chart that shows the number of new, fixed and outstanding issues.
@@ -132,7 +135,7 @@
      * Redraws the trend charts. Reads the last selected X-Axis type from the browser local storage and
      * redraws the trend charts.
      */
-    function redrawTrendCharts() {
+    function redrawTrendCharts () {
         var isBuildOnXAxis = !(localStorage.getItem('#trendBuildAxis') === 'date');
 
         /**
@@ -176,11 +179,11 @@
      *
      * @param {String} carouselId - ID of the carousel
      */
-    function storeAndRestoreCarousel(carouselId) {
+    function storeAndRestoreCarousel (carouselId) {
         var carousel = $('#' + carouselId);
         carousel.on('slid.bs.carousel', function (e) {
             localStorage.setItem(carouselId, e.to);
-            var chart = $(e.relatedTarget).find(">:first-child").data('chart');
+            var chart = $(e.relatedTarget).find('>:first-child').data('chart');
             chart.resize();
         });
         var activeCarousel = localStorage.getItem(carouselId);
@@ -194,19 +197,19 @@
      *
      * @param {String} id - the ID of the table
      */
-    function showTable(id) {
-        // Create a data table instance for the issues table. 
+    function showTable (id) {
         var table = $(id);
         if (table.length) {
+            // Create a data table instance for the issues table.
             var dataTable = table.DataTable({
                 language: {
-                    emptyTable: "Loading - please wait ..."
+                    emptyTable: 'Loading - please wait ...'
                 },
                 deferRender: true,
-                pagingType: 'numbers',  // Page number button only
+                pagingType: 'numbers', // Page number button only
                 order: [[1, 'asc']],
                 columnDefs: [{
-                    targets: 0,         // First column contains details button
+                    targets: 0, // First column contains details button
                     orderable: false
                 }],
                 columns: JSON.parse(table.attr('data-columns-definition'))
@@ -221,7 +224,8 @@
                     // This row is already open - close it
                     row.child.hide();
                     tr.removeClass('shown');
-                } else {
+                }
+                else {
                     // Open this row
                     row.child($(this).data('description')).show();
                     tr.addClass('shown');
@@ -229,7 +233,7 @@
             });
 
             // Content is loaded on demand: if the active tab shows the table, then content is loaded using Ajax
-            var tabToggleLink = $('a[data-toggle="tab"]');
+            var tabToggleLink = $(tabToggle);
             tabToggleLink.on('show.bs.tab', function (e) {
                 var activeTab = $(e.target).attr('href');
                 if (activeTab === (id + 'Content') && dataTable.data().length === 0) {
@@ -245,4 +249,3 @@
         }
     }
 })(jQuery);
-

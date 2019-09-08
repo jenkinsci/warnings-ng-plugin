@@ -1,3 +1,4 @@
+/* global echarts */
 /**
  * Renders a trend chart in the specified div using ECharts.
  *
@@ -5,7 +6,7 @@
  * @param {String} model - the line chart model
  * @param {String} urlName - the URL to the results, if empty or unset then clicking on the chart is disabled
  */
-function renderTrendChart(chartDivId, model, urlName) {
+function renderTrendChart (chartDivId, model, urlName) { // eslint-disable-line no-unused-vars
     var chartModel = JSON.parse(model);
     var chartPlaceHolder = document.getElementById(chartDivId);
     var currentSelection; // the tooltip formatter will change this value while hoovering
@@ -40,7 +41,7 @@ function renderTrendChart(chartDivId, model, urlName) {
                     text += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value;
                 }
                 text += '<br />';
-                return '<div align="left">' + text + '</div>';
+                return '<div style="text-align:left">' + text + '</div>';
             }
         },
         legend: {
@@ -70,14 +71,10 @@ function renderTrendChart(chartDivId, model, urlName) {
     };
     chart.setOption(options);
     chart.on('legendselectchanged', function (params) {
-            currentSelection = null; // clear selection to avoid navigating to the selected build
-        }
-    );
+        currentSelection = null; // clear selection to avoid navigating to the selected build
+    });
     chart.resize();
     window.onresize = function () {
         chart.resize();
     };
 }
-
-
-
