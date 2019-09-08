@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.Test;
+import org.jvnet.hudson.test.Issue;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -27,17 +28,45 @@ import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
- * Tests the {@link QualityGateEvaluator}. The file 'checkstyle-quality-gate.xml' is being used for the tests. It contains 11
- * issues overall, from which 6 have high, 2 have normal and 3 have low severity.
+ * Tests the {@link QualityGateEvaluator}. The file 'checkstyle-quality-gate.xml' is being used for the tests. It
+ * contains 11 issues overall, from which 6 have high, 2 have normal and 3 have low severity.
  *
  * @author Michaela Reitschuster
  */
 @SuppressWarnings("deprecation") // old API should be still working
 // TODO: add some tests for severity HIGH
 public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
-    private static final Map<Result, QualityGateStatus> RESULT_TO_STATUS_MAPPING 
+    private static final Map<Result, QualityGateStatus> RESULT_TO_STATUS_MAPPING
             = Maps.fixedSize.of(Result.UNSTABLE, QualityGateStatus.WARNING, Result.FAILURE, QualityGateStatus.FAILED);
     private static final String REPORT_FILE = "checkstyle-quality-gate.xml";
+
+    /**
+     * Verifies that the first build is always considered stable if the quality gate is set up for delta warnings - even
+     * if there is a warning.
+     */
+    @Test @Issue("JENKINS-58635")
+    public void shouldBePassedForFirstBuildWithDelta() {
+        FreeStyleProject project = createFreeStyleProject();
+        enableAndConfigureCheckstyle(project,
+                recorder -> recorder.addQualityGate(11, QualityGateType.DELTA, QualityGateResult.UNSTABLE));
+        copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
+
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
+    }
+
+    /**
+     * Verifies that the first build is always considered stable if the quality gate is set up for new warnings - even
+     * if there is a new warning.
+     */
+    @Test
+    public void shouldBePassedForFirstBuildWithNew() {
+        FreeStyleProject project = createFreeStyleProject();
+        enableAndConfigureCheckstyle(project,
+                recorder -> recorder.addQualityGate(11, QualityGateType.NEW, QualityGateResult.UNSTABLE));
+        copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
+
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
+    }
 
     /**
      * Sets the UNSTABLE threshold to 8 and parse a file that contains exactly 8 warnings: the build should be
@@ -64,7 +93,8 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldBeUnstableWhenUnstableDeltaAllIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.addQualityGate(11, QualityGateType.DELTA, QualityGateResult.UNSTABLE));
+        enableAndConfigureCheckstyle(project,
+                recorder -> recorder.addQualityGate(11, QualityGateType.DELTA, QualityGateResult.UNSTABLE));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -74,7 +104,8 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldBeUnstableWhenUnstableNewAllIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.addQualityGate(11, QualityGateType.NEW, QualityGateResult.UNSTABLE));
+        enableAndConfigureCheckstyle(project,
+                recorder -> recorder.addQualityGate(11, QualityGateType.NEW, QualityGateResult.UNSTABLE));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -89,8 +120,7 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered unstable when its defined threshold for delta with high severity is
-     * reached.
+     * Tests if the build is considered unstable when its defined threshold for delta with high severity is reached.
      */
     @Test
     public void shouldBeUnstableWhenUnstableDeltaErrorIsReachedNew() {
@@ -113,8 +143,7 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests if the build is considered unstable when its defined threshold for delta with normal severity is
-     * reached.
+     * Tests if the build is considered unstable when its defined threshold for delta with normal severity is reached.
      */
     @Test
     public void shouldBeUnstableWhenUnstableDeltaNormalIsReachedNew() {
@@ -154,7 +183,8 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldBeUnstableWhenUnstableDeltaLowIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.addQualityGate(3, QualityGateType.DELTA_LOW, QualityGateResult.UNSTABLE));
+        enableAndConfigureCheckstyle(project,
+                recorder -> recorder.addQualityGate(3, QualityGateType.DELTA_LOW, QualityGateResult.UNSTABLE));
         runJobTwice(project, Result.UNSTABLE);
     }
 
@@ -165,7 +195,8 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldBeUnstableWhenUnstableNewLowIsReachedNew() {
         FreeStyleProject project = createFreeStyleProject();
-        enableAndConfigureCheckstyle(project, recorder -> recorder.addQualityGate(3, QualityGateType.NEW_LOW, QualityGateResult.UNSTABLE));
+        enableAndConfigureCheckstyle(project,
+                recorder -> recorder.addQualityGate(3, QualityGateType.NEW_LOW, QualityGateResult.UNSTABLE));
         runJobTwice(project, Result.UNSTABLE);
     }
 
