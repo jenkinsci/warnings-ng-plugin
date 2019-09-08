@@ -96,6 +96,15 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         return owner;
     }
 
+    /**
+     * Returns the build history for this job.
+     *
+     * @return the history
+     */
+    public History createBuildHistory() {
+        return new AnalysisHistory(owner, new ByIdResultSelector(getId()));
+    }
+
     @Override
     public void onAttached(final Run<?, ?> r) {
         owner = r;

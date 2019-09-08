@@ -187,7 +187,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
         return lastCompletedBuild.getActions(ResultAction.class)
                 .stream()
-                .filter(createResultActionFilter(selectTools, tools))
+                .filter(createToolFilter(selectTools, tools))
                 .anyMatch(resultAction -> resultAction.getResult().getTotalSize() > 0);
     }
 
@@ -200,7 +200,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
      * @return the table model
      */
     public PortletTableModel getModel(final List<Job<?, ?>> jobs) {
-        return new PortletTableModel(getVisibleJobs(jobs), this::getToolName, createResultActionFilter(selectTools, tools));
+        return new PortletTableModel(getVisibleJobs(jobs), this::getToolName, createToolFilter(selectTools, tools));
     }
 
     /**

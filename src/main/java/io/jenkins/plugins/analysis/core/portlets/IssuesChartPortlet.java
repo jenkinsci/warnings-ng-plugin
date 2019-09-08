@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +18,7 @@ import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration;
 import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.charts.CompositeResult;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
-import io.jenkins.plugins.analysis.core.model.JobAction;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
@@ -128,10 +127,12 @@ public class IssuesChartPortlet extends DashboardPortlet {
         SeverityTrendChart severityChart = new SeverityTrendChart();
 
         List<Iterable<? extends AnalysisBuildResult>> histories = jobs.stream()
-                .map(job -> job.getActions(JobAction.class))
-                .flatMap(Collection::stream)
-                .filter(createJobActionFilter(selectTools, tools))
-                .map(JobAction::createBuildHistory).collect(Collectors.toList());
+                .filter(job -> job.getLastCompletedBuild() != null)
+                .map(Job::getLastCompletedBuild)
+                .flatMap(build -> build.getActions(ResultAction.class)
+                        .stream()
+                        .filter(createToolFilter(selectTools, tools)))
+                .map(ResultAction::createBuildHistory).collect(Collectors.toList());
 
         return new JacksonFacade().toJson(
                 severityChart.create(new CompositeResult(histories), new ChartModelConfiguration(AxisType.DATE)));

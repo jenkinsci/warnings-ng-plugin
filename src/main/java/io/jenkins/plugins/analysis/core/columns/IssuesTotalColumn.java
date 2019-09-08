@@ -127,7 +127,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         }
 
         return lastCompletedBuild.getActions(ResultAction.class).stream()
-                .filter(createResultActionFilter(selectTools, tools))
+                .filter(createToolFilter(selectTools, tools))
                 .map(ResultAction::getResult)
                 .mapToInt(AnalysisResult::getTotalSize)
                 .reduce(Integer::sum);
@@ -149,7 +149,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         }
 
         return lastCompletedBuild.getActions(ResultAction.class).stream()
-                .filter(createResultActionFilter(selectTools, tools))
+                .filter(createToolFilter(selectTools, tools))
                 .map(result -> new AnalysisResultDescription(result, getLabelProviderFactory()))
                 .collect(Collectors.toList());
     }
