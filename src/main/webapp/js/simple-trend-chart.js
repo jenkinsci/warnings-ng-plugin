@@ -6,21 +6,22 @@
  * @param {String} urlName - the URL to the results, if empty or unset then clicking on the chart is disabled
  */
 function renderTrendChart(chartDivId, model, urlName) {
-    var chartModel = JSON.parse(model);
-    var chartPlaceHolder = document.getElementById(chartDivId);
-    var currentSelection; // the tooltip formatter will change this value while hoovering
+    let chartModel = JSON.parse(model);
+    let chartPlaceHolder = document.getElementById(chartDivId);
+
+    let selectedBuild; // the tooltip formatter will change this value while hoovering
 
     if (urlName) {
         chartPlaceHolder.onclick = function () {
-            if (urlName && currentSelection) {
-                window.location.assign(currentSelection.substring(1) + '/' + urlName);
+            if (urlName && selectedBuild > 0) {
+                window.location.assign(selectedBuild + '/' + urlName);
             }
         };
     }
 
-    var chart = echarts.init(chartPlaceHolder);
+    let chart = echarts.init(chartPlaceHolder);
     chartPlaceHolder.echart = chart;
-    var options = {
+    let options = {
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -31,12 +32,21 @@ function renderTrendChart(chartDivId, model, urlName) {
             },
             formatter: function (params, ticket, callback) {
                 if (params.componentType === 'legend') {
-                    currentSelection = null;
+                    selectedBuild = 0;
                     return params.name;
                 }
-                currentSelection = params[0].name;
-                var text = 'Build ' + params[0].name;
-                for (var i = 0, l = params.length; i < l; i++) {
+
+                let builds = chartModel.buildNumbers;
+                let labels = chartModel.xAxisLabels;
+                for (let i = 0; i < builds.length; i++) {
+                    if (params[0].name === labels[i]) {
+                        selectedBuild = builds[i];
+                        break;
+                    }
+                }
+
+                let text = 'Build ' + params[0].name;
+                for (let i = 0, l = params.length; i < l; i++) {
                     text += '<br/>' + params[i].marker + params[i].seriesName + ' : ' + params[i].value;
                 }
                 text += '<br />';
@@ -70,7 +80,7 @@ function renderTrendChart(chartDivId, model, urlName) {
     };
     chart.setOption(options);
     chart.on('legendselectchanged', function (params) {
-            currentSelection = null; // clear selection to avoid navigating to the selected build
+            selectedBuild = 0; // clear selection to avoid navigating to the selected build
         }
     );
     chart.resize();

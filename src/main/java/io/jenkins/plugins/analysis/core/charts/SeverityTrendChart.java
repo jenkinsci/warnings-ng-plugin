@@ -22,7 +22,8 @@ public class SeverityTrendChart implements TrendChart {
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
         LinesChartModel model = new LinesChartModel();
-        model.addXAxisLabels(dataSet.getXAxisLabels());
+        model.setXAxisLabels(dataSet.getXAxisLabels());
+        model.setBuildNumbers(dataSet.getBuildNumbers());
 
         Severity[] visibleSeverities
                 = {Severity.WARNING_LOW, Severity.WARNING_NORMAL, Severity.WARNING_HIGH, Severity.ERROR};

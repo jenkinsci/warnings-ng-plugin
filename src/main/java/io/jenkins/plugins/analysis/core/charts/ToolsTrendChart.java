@@ -30,7 +30,7 @@ public class ToolsTrendChart implements TrendChart {
             model.addSeries(lineSeries);
         }
 
-        model.addXAxisLabels(lineModel.getXAxisLabels());
+        model.setXAxisLabels(lineModel.getXAxisLabels());
 
         return model;
     }

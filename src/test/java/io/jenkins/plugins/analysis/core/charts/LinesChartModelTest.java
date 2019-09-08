@@ -36,7 +36,7 @@ class LinesChartModelTest {
     void shouldAddLabels() {
         LinesChartModel model = new LinesChartModel(ID);
 
-        model.addXAxisLabels(BUILDS);
+        model.setXAxisLabels(BUILDS);
 
         assertThat(model.size()).isEqualTo(3);
         assertThat(model.getXAxisLabels()).hasSize(3);
@@ -66,17 +66,17 @@ class LinesChartModelTest {
     @Test
     void testGetXAxisLabels() {
         LinesChartModel modelForSingleXAxisLabelTest = new LinesChartModel(ID);
-        modelForSingleXAxisLabelTest.addXAxisLabel("a");
+        modelForSingleXAxisLabelTest.setXAxisLabels(Collections.singletonList("a"));
         assertThat(modelForSingleXAxisLabelTest.getXAxisLabels())
                 .hasSize(1)
                 .isEqualTo(Collections.singletonList("a"));
 
         LinesChartModel modelForXAxisListLabelTest = new LinesChartModel(ID);
-        modelForXAxisListLabelTest.addXAxisLabels(Arrays.asList("a", "b", "c"));
+        modelForXAxisListLabelTest.setXAxisLabels(Arrays.asList("a", "b", "c"));
         assertThat(modelForXAxisListLabelTest.getXAxisLabels())
                 .hasSize(3)
                 .isEqualTo(Arrays.asList("a", "b", "c"));
-        modelForXAxisListLabelTest.addXAxisLabels(Arrays.asList("d", "e", "f"));
+        modelForXAxisListLabelTest.setXAxisLabels(Arrays.asList("d", "e", "f"));
         assertThat(modelForXAxisListLabelTest.getXAxisLabels())
                 .hasSize(6)
                 .isEqualTo(Arrays.asList("a", "b", "c", "d", "e", "f"));
@@ -100,7 +100,7 @@ class LinesChartModelTest {
             }
         }
 
-        model.addXAxisLabels(builds);
+        model.setXAxisLabels(builds);
         model.addSeries(series);
 
         assertThatJson(model).node("xAxisLabels")

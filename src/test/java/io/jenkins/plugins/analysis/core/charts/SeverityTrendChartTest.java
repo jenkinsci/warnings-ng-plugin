@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
  */
 class SeverityTrendChartTest {
     @Test
-    void shouldCreatePriorityChartForJobAndMultipleActions() {
+    void shouldCreatePriorityChartWithDifferentDisplayNames() {
         SeverityTrendChart chart = new SeverityTrendChart();
 
         List<AnalysisBuildResult> resultsCheckStyle = new ArrayList<>();
@@ -45,6 +45,8 @@ class SeverityTrendChartTest {
 
         assertThatJson(model).node("xAxisLabels")
                 .isArray().hasSize(2).containsExactly("#1", "#2");
+        assertThatJson(model).node("buildNumbers")
+                .isArray().hasSize(2).containsExactly(1, 2);
         assertThatJson(model).node("series")
                 .isArray().hasSize(4);
     }
@@ -68,6 +70,8 @@ class SeverityTrendChartTest {
 
         assertThatJson(model).node("xAxisLabels")
                 .isArray().hasSize(4).containsExactly("#1", "#2", "#3", "#4");
+        assertThatJson(model).node("buildNumbers")
+                .isArray().hasSize(4).containsExactly(1, 2, 3, 4);
         assertThatJson(model).node("series")
                 .isArray().hasSize(4);
     }
@@ -87,9 +91,9 @@ class SeverityTrendChartTest {
         verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 1, 2);
 
         assertThatJson(model).node("xAxisLabels")
-                .isArray().hasSize(2)
-                .contains("#1")
-                .contains("#2");
+                .isArray().hasSize(2).containsExactly("#1", "#2");
+        assertThatJson(model).node("buildNumbers")
+                .isArray().hasSize(2).containsExactly(1, 2);
 
         assertThatJson(model).node("series")
                 .isArray().hasSize(3);
@@ -111,9 +115,9 @@ class SeverityTrendChartTest {
         verifySeries(model.getSeries().get(3), Severity.ERROR, 5, 8);
 
         assertThatJson(model).node("xAxisLabels")
-                .isArray().hasSize(2)
-                .contains("#1")
-                .contains("#2");
+                .isArray().hasSize(2).containsExactly("#1", "#2");
+        assertThatJson(model).node("buildNumbers")
+                .isArray().hasSize(2).containsExactly(1, 2);
 
         assertThatJson(model).node("series")
                 .isArray().hasSize(4);
