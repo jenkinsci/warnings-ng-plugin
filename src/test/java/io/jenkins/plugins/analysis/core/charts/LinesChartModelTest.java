@@ -41,7 +41,7 @@ class LinesChartModelTest {
         assertThat(model.size()).isEqualTo(3);
         assertThat(model.getXAxisLabels()).hasSize(3);
         assertThat(model.toString()).isEqualTo(
-                "{\"series\":[],\"id\":\"spotbugs\",\"xAxisLabels\":[\"#1\",\"#2\",\"#3\"]}");
+                "{\"buildNumbers\":[],\"series\":[],\"id\":\"spotbugs\",\"xAxisLabels\":[\"#1\",\"#2\",\"#3\"]}");
     }
 
     @Test
