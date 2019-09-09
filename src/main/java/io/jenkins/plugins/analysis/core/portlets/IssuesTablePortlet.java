@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.portlets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -22,9 +21,9 @@ import org.kohsuke.stapler.DataBoundSetter;
 import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Job;
+import hudson.model.Run;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 
-import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -181,12 +180,15 @@ public class IssuesTablePortlet extends DashboardPortlet {
             return true;
         }
 
-        return job.getActions(JobAction.class)
+        Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
+        if (lastCompletedBuild == null) {
+            return true;
+        }
+
+        return lastCompletedBuild.getActions(ResultAction.class)
                 .stream()
                 .filter(createToolFilter(selectTools, tools))
-                .map(JobAction::getLatestAction)
-                .filter(Optional::isPresent)
-                .map(Optional::get).anyMatch(resultAction -> resultAction.getResult().getTotalSize() > 0);
+                .anyMatch(resultAction -> resultAction.getResult().getTotalSize() > 0);
     }
 
     /**
@@ -209,7 +211,7 @@ public class IssuesTablePortlet extends DashboardPortlet {
         private final Collection<String> toolNames;
 
         PortletTableModel(final List<Job<?, ?>> visibleJobs, final Function<ResultAction, String> namePrinter,
-                final Predicate<JobAction> filter) {
+                final Predicate<ResultAction> filter) {
             SortedMap<String, String> toolNamesById = mapToolIdsToNames(visibleJobs, namePrinter, filter);
 
             toolNames = toolNamesById.values();
@@ -220,12 +222,9 @@ public class IssuesTablePortlet extends DashboardPortlet {
 
         private SortedMap<String, String> mapToolIdsToNames(final List<Job<?, ?>> visibleJobs,
                 final Function<ResultAction, String> namePrinter,
-                final Predicate<JobAction> filter) {
-            return visibleJobs.stream()
-                    .flatMap(job -> job.getActions(JobAction.class).stream().filter(filter))
-                    .map(JobAction::getLatestAction)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
+                final Predicate<ResultAction> actionFilter) {
+            return visibleJobs.stream().filter(job -> job.getLastCompletedBuild() != null)
+                    .map(Job::getLastCompletedBuild).flatMap(build -> build.getActions(ResultAction.class).stream().filter(actionFilter))
                     .collect(Collectors.toMap(ResultAction::getId, namePrinter, (r1, r2) -> r1, TreeMap::new));
         }
 
@@ -233,16 +232,19 @@ public class IssuesTablePortlet extends DashboardPortlet {
             for (Job<?, ?> job : visibleJobs) {
                 TableRow row = new TableRow(job);
                 for (String id : toolNamesById.keySet()) {
-                    Result result = job.getActions(JobAction.class)
-                            .stream()
-                            .filter(jobAction -> jobAction.getId().equals(id))
-                            .findFirst()
-                            .map(JobAction::getLatestAction)
-                            .filter(Optional::isPresent)
-                            .map(Optional::get)
-                            .map(Result::new)
-                            .orElse(Result.EMPTY);
-                    row.add(result);
+                    Run<?, ?> lastCompletedBuild = job.getLastCompletedBuild();
+                    if (lastCompletedBuild == null) {
+                        row.add(Result.EMPTY);
+                    }
+                    else {
+                        Result result = lastCompletedBuild.getActions(ResultAction.class)
+                                .stream()
+                                .filter(action -> action.getId().equals(id))
+                                .findFirst()
+                                .map(Result::new)
+                                .orElse(Result.EMPTY);
+                        row.add(result);
+                    }
                 }
                 rows.add(row);
             }

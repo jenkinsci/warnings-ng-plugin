@@ -55,8 +55,8 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
     }
 
     /**
-     * Creates a filter that can be used to filter {@link JobAction} or {@link ResultAction} instances for a given set
-     * of IDs.
+     * Creates a filter that can be used to filter {@link ResultAction} instances for a given set
+     * of tools.
      *
      * @param canSelectTools
      *         if {@code true} the selection of tools is done by selecting the corresponding IDs, otherwise all
@@ -66,7 +66,7 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
      *
      * @return filter {@link Predicate}
      */
-    public static Predicate<JobAction> createToolFilter(final boolean canSelectTools,
+    public static Predicate<ResultAction> createToolFilter(final boolean canSelectTools,
             final List<ToolSelection> selectedTools) {
         if (canSelectTools) {
             return action -> StringContainsUtils.containsAnyIgnoreCase(action.getId(), getIds(selectedTools));

@@ -20,6 +20,23 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class IssuesTotalColumnTest {
+    private static final String NAME = "My Column";
+
+    @Test
+    void shouldShowNoResultIfBuild() {
+        IssuesTotalColumn column = createColumn();
+        column.setSelectTools(false);
+
+        Job<?, ?> job = mock(Job.class);
+
+        assertThat(column.getTotal(job)).isEmpty();
+        assertThat(column.getUrl(job)).isEmpty();
+        assertThat(column.getDetails(job)).isEmpty();
+        assertThat(column.getTools()).isEmpty();
+        assertThat(column.getSelectTools()).isFalse();
+        assertThat(column.getName()).isEqualTo(NAME);
+    }
+
     @Test
     void shouldShowNoResultIfNoAction() {
         IssuesTotalColumn column = createColumn();
@@ -29,6 +46,10 @@ class IssuesTotalColumnTest {
 
         assertThat(column.getTotal(job)).isEmpty();
         assertThat(column.getUrl(job)).isEmpty();
+        assertThat(column.getDetails(job)).isEmpty();
+        assertThat(column.getTools()).isEmpty();
+        assertThat(column.getSelectTools()).isFalse();
+        assertThat(column.getName()).isEqualTo(NAME);
     }
 
     @Test
@@ -94,6 +115,7 @@ class IssuesTotalColumnTest {
 
     private IssuesTotalColumn createColumn() {
         IssuesTotalColumn column = new IssuesTotalColumn();
+        column.setName(NAME);
         LabelProviderFactory labelProviderFactory = mock(LabelProviderFactory.class);
         registerTool(labelProviderFactory, CHECK_STYLE_ID, CHECK_STYLE_NAME);
         registerTool(labelProviderFactory, SPOT_BUGS_ID, SPOT_BUGS_NAME);
