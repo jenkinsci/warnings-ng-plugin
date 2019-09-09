@@ -64,7 +64,7 @@ public class IssuesTotalColumn extends ListViewColumn {
      *         if {@code true} the selection of tools can be done manually by selecting the corresponding ID, otherwise
      *         all available tools in a job are automatically selected
      */
-    @SuppressWarnings("WeakerAccess") // called by Stapler
+    // called by Stapler
     @DataBoundSetter
     public void setSelectTools(final boolean selectTools) {
         this.selectTools = selectTools;
@@ -252,24 +252,24 @@ public class IssuesTotalColumn extends ListViewColumn {
                 return false;
             }
             AnalysisResultDescription that = (AnalysisResultDescription) o;
-            return total == that.total
-                    && Objects.equals(icon, that.icon)
-                    && Objects.equals(name, that.name)
-                    && Objects.equals(url, that.url);
+            return getTotal() == that.getTotal()
+                    && Objects.equals(getIcon(), that.getIcon())
+                    && Objects.equals(getName(), that.getName())
+                    && Objects.equals(getUrl(), that.getUrl());
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(icon, name, total, url);
+            return Objects.hash(getIcon(), getName(), getTotal(), getUrl());
         }
 
         @Override
         public String toString() {
             return "AnalysisResultDescription{"
-                    + "icon='" + icon + '\''
-                    + ", name='" + name + '\''
-                    + ", total=" + total
-                    + ", url='" + url + '\''
+                    + "icon='" + getIcon() + '\''
+                    + ", name='" + getName() + '\''
+                    + ", total=" + getTotal()
+                    + ", url='" + getUrl() + '\''
                     + '}';
         }
     }
