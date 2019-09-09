@@ -19,6 +19,7 @@ import edu.hm.hafner.util.Ensure;
 public class LinesDataSet {
     private final Map<String, List<Integer>> dataSetSeries = new HashMap<>();
     private final List<String> xAxisLabels = new ArrayList<>();
+    private final List<Integer> buildNumbers = new ArrayList<>();
 
     int getXAxisSize() {
         return xAxisLabels.size();
@@ -70,5 +71,31 @@ public class LinesDataSet {
             dataSetSeries.putIfAbsent(dataPoints.getKey(), new ArrayList<>());
             dataSetSeries.get(dataPoints.getKey()).add(dataPoints.getValue());
         }
+    }
+
+    /**
+     * Adds data points for a new xAxisLabel. The data points for the X-axis tick are given by a map. Each dataSetId
+     * provides one value for the specified X-axis label.
+     *
+     * @param xAxisLabel
+     *         the label of the X-axis
+     * @param dataSetValues
+     *         the values for each of the series at the given X-axis tick
+     * @param buildNumber
+     *         the number of the associated build
+     */
+    public void add(final String xAxisLabel, final Map<String, Integer> dataSetValues, final int buildNumber) {
+        add(xAxisLabel, dataSetValues);
+
+        if (buildNumbers.contains(buildNumber)) {
+            throw new IllegalStateException("Build number already registered: " + buildNumber);
+        }
+
+
+        buildNumbers.add(buildNumber);
+    }
+
+    List<Integer> getBuildNumbers() {
+        return buildNumbers;
     }
 }
