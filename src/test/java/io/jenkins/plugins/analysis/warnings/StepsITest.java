@@ -511,6 +511,37 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
+     * Runs the the Java and JavaDoc parsers on two output files. Both parsers are using a custom ID that should be
+     * used for the origin field as well.
+     */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-57638")
+    public void shouldUseCustomIdsForOrigin() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt", "javac.txt");
+        Java java = new Java();
+        java.setId("j1");
+        java.setName("java1");
+        JavaDoc javaDoc = new JavaDoc();
+        javaDoc.setId("j2");
+        javaDoc.setName("java2");
+        job.setDefinition(asStage(createScanForIssuesStep(java, "java"),
+                createScanForIssuesStep(javaDoc, "javadoc"),
+                "publishIssues issues:[java, javadoc], aggregatingResults: 'true'"));
+
+        Run<?, ?> run = buildSuccessfully(job);
+
+        ResultAction action = getResultAction(run);
+        assertThat(action.getId()).isEqualTo("analysis");
+        assertThat(action.getDisplayName()).contains("Static Analysis");
+
+        AnalysisResult result = action.getResult();
+        Report report = result.getIssues();
+        assertThat(report.filter(issue -> "j1".equals(issue.getOrigin()))).hasSize(2);
+        assertThat(report.filter(issue -> "j2".equals(issue.getOrigin()))).hasSize(6);
+        assertThat(report.getTools()).containsExactlyInAnyOrder("java1", "java2");
+        assertThat(result.getIssues()).hasSize(2 + 6);
+    }
+
+    /**
      * Runs the Eclipse parsers using the 'tools' property.
      */
     @Test
