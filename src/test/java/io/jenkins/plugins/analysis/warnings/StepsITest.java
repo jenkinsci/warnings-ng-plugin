@@ -422,12 +422,31 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test @org.jvnet.hudson.test.Issue("JENKINS-57638")
     public void shouldUseCustomIdsForOrigin() {
-        WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt", "javac.txt");
-        job.setDefinition(asStage(
+        verifyCustomIdsForOrigin(asStage(
                 "def java = scanForIssues tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id1', name:'name1')",
                 "def javaDoc = scanForIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id2', name:'name2')",
                 "publishIssues issues:[java, javaDoc], aggregatingResults: 'true'"));
+    }
 
+    /**
+     * Runs the the Java and JavaDoc parsers on two output files. Both parsers are using a custom ID that should be
+     * used for the origin field as well.
+     */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-57638")
+    public void shouldUseCustomIdsForOriginSimpleStep() {
+        verifyCustomIdsForOrigin(asStage(
+                "recordIssues(\n"
+                        + "                    aggregatingResults: true, \n"
+                        + "                    tools: [\n"
+                        + "                        java(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id1', name:'name1'),\n"
+                        + "                        javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id2', name:'name2')\n"
+                        + "                    ]\n"
+                        + "                )"));
+    }
+
+    private void verifyCustomIdsForOrigin(final CpsFlowDefinition stage) {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt", "javac.txt");
+        job.setDefinition(stage);
         Run<?, ?> run = buildSuccessfully(job);
 
         ResultAction action = getResultAction(run);
