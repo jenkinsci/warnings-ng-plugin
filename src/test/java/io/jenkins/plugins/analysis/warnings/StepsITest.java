@@ -517,15 +517,10 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     @Test @org.jvnet.hudson.test.Issue("JENKINS-57638")
     public void shouldUseCustomIdsForOrigin() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt", "javac.txt");
-        Java java = new Java();
-        java.setId("j1");
-        java.setName("java1");
-        JavaDoc javaDoc = new JavaDoc();
-        javaDoc.setId("j2");
-        javaDoc.setName("java2");
-        job.setDefinition(asStage(createScanForIssuesStep(java, "java"),
-                createScanForIssuesStep(javaDoc, "javadoc"),
-                "publishIssues issues:[java, javadoc], aggregatingResults: 'true'"));
+        job.setDefinition(asStage(
+                "def java = scanForIssues tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id1', name:'name1')",
+                "def javaDoc = scanForIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id2', name:'name2')",
+                "publishIssues issues:[java, javaDoc], aggregatingResults: 'true'"));
 
         Run<?, ?> run = buildSuccessfully(job);
 
@@ -535,10 +530,10 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult result = action.getResult();
         Report report = result.getIssues();
-        assertThat(report.filter(issue -> "j1".equals(issue.getOrigin()))).hasSize(2);
-        assertThat(report.filter(issue -> "j2".equals(issue.getOrigin()))).hasSize(6);
-        assertThat(report.getTools()).containsExactlyInAnyOrder("java1", "java2");
+        assertThat(report.filter(issue -> "id1".equals(issue.getOrigin()))).hasSize(2);
+        assertThat(report.filter(issue -> "id2".equals(issue.getOrigin()))).hasSize(6);
         assertThat(result.getIssues()).hasSize(2 + 6);
+        assertThat(result.getSizePerOrigin()).contains(entry("id1", 2), entry("id2", 6));
     }
 
     /**
