@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.IssueParser;
+import edu.hm.hafner.analysis.parser.pvsstudio.PVSStudioParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -11,16 +12,14 @@ import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
-import edu.hm.hafner.analysis.parser.pvsstudio.PVSStudioParser;
-
 /**
  * Provides a parser and customized messages for PVS-Studio static analyzer.
  *
  * @author PVS-Studio Team
  */
 public class PVSStudio extends ReportScanningTool {
-
     private static final long serialVersionUID = -1114828406964963020L;
+
     private static final String ID = "pvs-studio"; // history chart title
 
     /** Creates a new instance of {@link PVSStudio}. */
@@ -39,7 +38,6 @@ public class PVSStudio extends ReportScanningTool {
     @Symbol("PVSStudio")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
-
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
@@ -58,7 +56,7 @@ public class PVSStudio extends ReportScanningTool {
 
         @Override
         public String getPattern() {
-            return "**/**.plog";
+            return "**/*.plog";
         }
 
         @Override
@@ -66,7 +64,6 @@ public class PVSStudio extends ReportScanningTool {
             return "https://www.viva64.com/en/pvs-studio/";
         }
     }
-
 }
 
 
