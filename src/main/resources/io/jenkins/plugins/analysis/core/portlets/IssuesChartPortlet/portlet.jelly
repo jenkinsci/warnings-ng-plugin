@@ -6,8 +6,7 @@
   <dp:decorate portlet="${it}" width="1">
     <tr>
       <td>
-
-        <div id="issues-chart" class="graph-cursor-pointer"
+        <div id="${it.id}-issues-chart" class="graph-cursor-pointer"
              style="width: 100%; min-height: ${it.height}px; min-width: 500px; height: ${it.height}px;"/>
 
       </td>
@@ -21,7 +20,7 @@
     var view = <st:bind value="${it}"/>
 
     view.getTrend(function (lineModel) {
-        renderTrendChart('issues-chart', lineModel.responseJSON);
+        renderTrendChart('${it.id}-issues-chart', lineModel.responseJSON);
     });
   </script>
 
