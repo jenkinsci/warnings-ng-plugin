@@ -105,6 +105,14 @@ public class IssuesRecorder extends Recorder {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
+    enum TrendChartType {
+        NONE,
+        TOOL,
+        AGGREGATION,
+        EVERYTHING
+    }
+
+    private TrendChartType trendChart = TrendChartType.EVERYTHING;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -123,6 +131,9 @@ public class IssuesRecorder extends Recorder {
      */
     @SuppressWarnings("deprecation")
     protected Object readResolve() {
+        if (trendChart == null) {
+            trendChart = TrendChartType.EVERYTHING;
+        }
         if (analysisTools == null) {
             analysisTools = new ArrayList<>();
         }
@@ -467,6 +478,21 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
+     * Sets the type of the trend chart that should be shown on the job page.
+     *
+     * @param trendChart
+     *         the type of the trend chart to use
+     */
+    public void setTrendChart(final TrendChartType trendChart) {
+        this.trendChart = trendChart;
+    }
+
+    @DataBoundSetter
+    public TrendChartType getTrendChart() {
+        return trendChart;
+    }
+
+    /**
      * Sets the minimum severity to consider when computing the health report. Issues with a severity less than this
      * value will be ignored.
      *
@@ -511,8 +537,8 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Executes the build step. Used from {@link RecordIssuesStep} to provide a {@link StageResultHandler}
-     * that has Pipeline-specific behavior.
+     * Executes the build step. Used from {@link RecordIssuesStep} to provide a {@link StageResultHandler} that has
+     * Pipeline-specific behavior.
      */
     void perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final StageResultHandler statusHandler) throws InterruptedException, IOException {
@@ -620,7 +646,7 @@ public class IssuesRecorder extends Recorder {
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
-        publisher.attachAction();
+        publisher.attachAction(trendChart);
     }
 
     /**
@@ -637,7 +663,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -662,7 +689,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -687,7 +715,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -712,7 +741,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -737,7 +767,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -762,7 +793,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -787,7 +819,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -812,7 +845,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -837,7 +871,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -862,7 +897,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -887,7 +923,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -912,7 +949,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -937,7 +975,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -962,7 +1001,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -987,7 +1027,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -1012,7 +1053,8 @@ public class IssuesRecorder extends Recorder {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -1034,7 +1076,8 @@ public class IssuesRecorder extends Recorder {
     /**
      * Descriptor for this step: defines the context and the UI elements.
      */
-    @Extension @Symbol("recordIssues")
+    @Extension
+    @Symbol("recordIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
         /** Retain backward compatibility. */

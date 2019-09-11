@@ -22,6 +22,7 @@ import io.jenkins.plugins.analysis.core.model.History;
 import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.TrendChartType;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
@@ -79,7 +80,6 @@ class IssuesPublisher {
         return report.getId();
     }
 
-
     /**
      * Creates a new {@link AnalysisResult} and attaches the result in a {@link ResultAction} that is registered with
      * the current run.
@@ -87,6 +87,19 @@ class IssuesPublisher {
      * @return the created result action
      */
     ResultAction attachAction() {
+        return attachAction(TrendChartType.EVERYTHING);
+    }
+
+    /**
+     * Creates a new {@link AnalysisResult} and attaches the result in a {@link ResultAction} that is registered with
+     * the current run.
+     *
+     * @param chartType
+     *         the chart to show
+     *
+     * @return the created result action
+     */
+    ResultAction attachAction(final TrendChartType chartType) {
         logger.log("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
 
         ResultSelector selector = ensureThatIdIsUnique();
