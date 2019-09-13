@@ -32,6 +32,10 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Ullrich Hafner
  */
 public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
+    private static final String AGGREGATION = "Aggregated Analysis Results";
+    private static final String ECLIPSE = "Eclipse ECJ Warnings Trend";
+    private static final String CHECKSTYLEW = "CheckStyle Warnings Trend";
+
     /**
      * Verifies that the trend chart is visible if there are two valid builds available.
      */
@@ -62,22 +66,24 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowTrendsAndAggregation() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
+        enableWarnings(project, new Eclipse(), new CheckStyle());
+
+        buildWithResult(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        assertActionProperties(project, build);
+
+        assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, project)))
+                .hasSize(3).containsExactly(AGGREGATION, ECLIPSE, CHECKSTYLEW);
+
         HtmlPage top = createAggregationJob(AggregationChartDisplay.TOP);
-        assertThat(getTrends(top)).hasSize(3).containsExactly(
-                "Aggregated Analysis Results",
-                "Eclipse ECJ Warnings Trend",
-                "CheckStyle Warnings Trend");
+        assertThat(getTrends(top)).hasSize(3).containsExactly(AGGREGATION, ECLIPSE, CHECKSTYLEW);
 
         HtmlPage bottom = createAggregationJob(AggregationChartDisplay.BOTTOM);
-        assertThat(getTrends(bottom)).hasSize(3).containsExactly(
-                "Eclipse ECJ Warnings Trend",
-                "CheckStyle Warnings Trend",
-                "Aggregated Analysis Results");
+        assertThat(getTrends(bottom)).hasSize(3).containsExactly(ECLIPSE, CHECKSTYLEW, AGGREGATION);
 
         HtmlPage none = createAggregationJob(AggregationChartDisplay.NONE);
-        assertThat(getTrends(none)).hasSize(2).containsExactly(
-                "Eclipse ECJ Warnings Trend",
-                "CheckStyle Warnings Trend");
+        assertThat(getTrends(none)).hasSize(2).containsExactly(ECLIPSE, CHECKSTYLEW);
     }
 
     private HtmlPage createAggregationJob(final AggregationChartDisplay chart) {
