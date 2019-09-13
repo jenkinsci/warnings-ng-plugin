@@ -105,14 +105,16 @@ public class IssuesRecorder extends Recorder {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
-    enum TrendChartType {
-        NONE,
-        TOOL,
-        AGGREGATION,
-        EVERYTHING
+    /**
+     * Defines the position of the aggregation chart.
+     */
+    public enum AggregationChartDisplay {
+        TOP,
+        BOTTOM,
+        NONE
     }
 
-    private TrendChartType trendChart = TrendChartType.EVERYTHING;
+    private AggregationChartDisplay trendChart = AggregationChartDisplay.TOP;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -129,10 +131,9 @@ public class IssuesRecorder extends Recorder {
      *
      * @return this
      */
-    @SuppressWarnings("deprecation")
     protected Object readResolve() {
         if (trendChart == null) {
-            trendChart = TrendChartType.EVERYTHING;
+            trendChart = AggregationChartDisplay.TOP;
         }
         if (analysisTools == null) {
             analysisTools = new ArrayList<>();
@@ -172,7 +173,7 @@ public class IssuesRecorder extends Recorder {
         qualityGates.add(new QualityGate(size, type, result));
     }
 
-    @SuppressWarnings({"unused", "WeakerAccess"}) // used by Stapler view data binding
+    @SuppressWarnings("unused") // used by Stapler view data binding
     public List<QualityGate> getQualityGates() {
         return qualityGates;
     }
@@ -483,12 +484,12 @@ public class IssuesRecorder extends Recorder {
      * @param trendChart
      *         the type of the trend chart to use
      */
-    public void setTrendChart(final TrendChartType trendChart) {
+    public void setTrendChart(final AggregationChartDisplay trendChart) {
         this.trendChart = trendChart;
     }
 
     @DataBoundSetter
-    public TrendChartType getTrendChart() {
+    public AggregationChartDisplay getTrendChart() {
         return trendChart;
     }
 
@@ -634,7 +635,6 @@ public class IssuesRecorder extends Recorder {
      * @param reportName
      *         the name of the report (might be empty)
      */
-    @SuppressWarnings("deprecation")
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
             final AnnotatedReport report, final String reportName, final StageResultHandler statusHandler) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();

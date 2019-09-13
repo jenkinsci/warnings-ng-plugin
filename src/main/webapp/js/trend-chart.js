@@ -8,7 +8,9 @@
          */
         renderTrendChart: function (model, redrawCallback) {
             var chartModel = JSON.parse(model);
-            var chart = echarts.init($(this)[0]);
+            const chartPlaceHolder = $(this)[0];
+            let chart = echarts.init(chartPlaceHolder);
+            chartPlaceHolder.echart = chart;
             var options = {
                 tooltip: {
                     trigger: 'axis',

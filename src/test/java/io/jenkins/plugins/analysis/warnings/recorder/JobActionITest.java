@@ -1,10 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import hudson.model.FreeStyleProject;
@@ -16,6 +18,7 @@ import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationChartDisplay;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
@@ -52,6 +55,45 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatTrendChartIsVisible(jobPage);
 
         assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
+    }
+
+    /**
+     * Verifies that the aggregation trend chart is visible at the top, or botton, or hidden.
+     */
+    @Test
+    public void shouldShowTrendsAndAggregation() {
+        HtmlPage top = createAggregationJob(AggregationChartDisplay.TOP);
+        assertThat(getTrends(top)).hasSize(3).containsExactly(
+                "Aggregated Analysis Results",
+                "Eclipse ECJ Warnings Trend",
+                "CheckStyle Warnings Trend");
+
+        HtmlPage bottom = createAggregationJob(AggregationChartDisplay.BOTTOM);
+        assertThat(getTrends(bottom)).hasSize(3).containsExactly(
+                "Eclipse ECJ Warnings Trend",
+                "CheckStyle Warnings Trend",
+                "Aggregated Analysis Results");
+
+        HtmlPage none = createAggregationJob(AggregationChartDisplay.NONE);
+        assertThat(getTrends(none)).hasSize(2).containsExactly(
+                "Eclipse ECJ Warnings Trend",
+                "CheckStyle Warnings Trend");
+    }
+
+    private HtmlPage createAggregationJob(final AggregationChartDisplay chart) {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
+        enableWarnings(project, r -> r.setTrendChart(chart), new Eclipse(), new CheckStyle());
+
+        buildWithResult(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        assertActionProperties(project, build);
+
+        return getWebPage(JavaScriptSupport.JS_DISABLED, project);
+    }
+
+    private List<String> getTrends(final HtmlPage jobPage) {
+        List<HtmlDivision> divs = jobPage.getByXPath("//div[@class=\"test-trend-caption\"]");
+        return divs.stream().map(HtmlDivision::getTextContent).collect(Collectors.toList());
     }
 
     /**
