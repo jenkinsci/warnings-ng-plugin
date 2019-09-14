@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,7 @@ import hudson.util.ListBoxModel;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -49,7 +51,9 @@ import io.jenkins.plugins.analysis.core.util.StageResultHandler;
  * an ID as step parameter.
  */
 @SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass"})
-public class PublishIssuesStep extends Step {
+public class PublishIssuesStep extends Step implements Serializable {
+    private static final long serialVersionUID = -1833335402353771148L;
+
     private final List<AnnotatedReport> reports;
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
@@ -64,6 +68,8 @@ public class PublishIssuesStep extends Step {
     private Severity minimumSeverity = Severity.WARNING_LOW;
 
     private List<QualityGate> qualityGates = new ArrayList<>();
+
+    private AggregationTrendChartDisplay aggregationTrend = AggregationTrendChartDisplay.TOP;
 
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
@@ -268,6 +274,21 @@ public class PublishIssuesStep extends Step {
     @SuppressWarnings("unused") // Used by Stapler
     public void setMinimumSeverity(final String minimumSeverity) {
         this.minimumSeverity = Severity.valueOf(minimumSeverity, Severity.WARNING_LOW);
+    }
+
+    /**
+     * Sets the type of the aggregation trend chart that should be shown on the job page.
+     *
+     * @param aggregationTrend
+     *         the type of the trend chart to use
+     */
+    @DataBoundSetter
+    public void setAggregationTrend(final AggregationTrendChartDisplay aggregationTrend) {
+        this.aggregationTrend = aggregationTrend;
+    }
+
+    public AggregationTrendChartDisplay getAggregationTrend() {
+        return aggregationTrend;
     }
 
     /**
@@ -728,16 +749,7 @@ public class PublishIssuesStep extends Step {
     static class Execution extends AnalysisExecution<ResultAction> {
         private static final long serialVersionUID = 6438321240776419897L;
 
-        private final HealthDescriptor healthDescriptor;
-        private final boolean ignoreQualityGate;
-        private final boolean ignoreFailedBuilds;
-        private final String sourceCodeEncoding;
-        private final List<QualityGate> qualityGates;
-        private final String id;
-        private final String name;
-        private final String referenceJobName;
-        private final List<AnnotatedReport> reports;
-        private final boolean failOnError;
+        private final PublishIssuesStep step;
 
         /**
          * Creates a new instance of the step execution object.
@@ -755,50 +767,42 @@ public class PublishIssuesStep extends Step {
                 throw new IllegalArgumentException(
                         "No reports provided in publish issues step, parameter 'issues' must be set!");
             }
-
-            ignoreQualityGate = step.getIgnoreQualityGate();
-            ignoreFailedBuilds = step.getIgnoreFailedBuilds();
-            failOnError = step.getFailOnError();
-            referenceJobName = step.getReferenceJobName();
-            sourceCodeEncoding = step.getSourceCodeEncoding();
-            healthDescriptor = new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
-                    step.getMinimumSeverityAsSeverity());
-            qualityGates = new ArrayList<>(step.getQualityGates());
-            name = StringUtils.defaultString(step.getName());
-            id = step.getId();
-            reports = step.reports;
+            this.step = step;
         }
 
         @Override
         protected ResultAction run() throws IOException, InterruptedException, IllegalStateException {
             QualityGateEvaluator qualityGate = new QualityGateEvaluator();
-            qualityGate.addAll(qualityGates);
+            qualityGate.addAll(new ArrayList<>(step.getQualityGates()));
 
             AnnotatedReport report;
-            if (reports.size() > 1) {
-                report = new AnnotatedReport(StringUtils.defaultIfEmpty(id, IssuesRecorder.DEFAULT_ID));
+            if (step.reports.size() > 1) {
+                report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), IssuesRecorder.DEFAULT_ID));
                 report.logInfo("Aggregating reports of:");
                 LabelProviderFactory factory = new LabelProviderFactory();
-                for (AnnotatedReport subReport : reports) {
+                for (AnnotatedReport subReport : step.reports) {
                     StaticAnalysisLabelProvider labelProvider = factory.create(subReport.getId());
                     report.logInfo("-> %s", labelProvider.getToolTip(subReport.size()));
                 }
             }
             else {
-                report = new AnnotatedReport(StringUtils.defaultIfEmpty(id, reports.get(0).getId())); // use ID from single report
+                report = new AnnotatedReport(StringUtils.defaultIfEmpty(step.getId(), step.reports.get(0).getId())); // use ID from single report
             }
-            report.addAll(reports);
+            report.addAll(step.reports);
 
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
-            IssuesPublisher publisher = new IssuesPublisher(getRun(), report, healthDescriptor, qualityGate,
-                    name, referenceJobName, ignoreQualityGate, ignoreFailedBuilds,
-                    getCharset(sourceCodeEncoding), getLogger(report), statusHandler, failOnError);
-            return publisher.attachAction();
+            IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
+                    new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
+                            step.getMinimumSeverityAsSeverity()), qualityGate,
+                    StringUtils.defaultString(step.getName()), step.getReferenceJobName(), step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
+                    getCharset(step.getSourceCodeEncoding()), getLogger(report), statusHandler, step.getFailOnError());
+            return publisher.attachAction(step.getAggregationTrend());
         }
 
         private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {
-            String toolName = new LabelProviderFactory().create(report.getId(), name).getName();
+            String toolName = new LabelProviderFactory().create(report.getId(),
+                    StringUtils.defaultString(step.getName())).getName();
             return new LogHandler(getTaskListener(), toolName, report.getReport());
         }
     }

@@ -22,7 +22,7 @@ import io.jenkins.plugins.analysis.core.model.History;
 import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationChartDisplay;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
@@ -87,7 +87,7 @@ class IssuesPublisher {
      * @return the created result action
      */
     ResultAction attachAction() {
-        return attachAction(AggregationChartDisplay.TOP);
+        return attachAction(AggregationTrendChartDisplay.TOP);
     }
 
     /**
@@ -99,7 +99,7 @@ class IssuesPublisher {
      *
      * @return the created result action
      */
-    ResultAction attachAction(final AggregationChartDisplay chartType) {
+    ResultAction attachAction(final AggregationTrendChartDisplay chartType) {
         logger.log("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
 
         ResultSelector selector = ensureThatIdIsUnique();
@@ -114,7 +114,7 @@ class IssuesPublisher {
                     "Some errors have been logged during recording of issues");
         }
 
-        if (chartType == AggregationChartDisplay.TOP) {
+        if (chartType == AggregationTrendChartDisplay.TOP) {
             AggregationAction action = run.getAction(AggregationAction.class);
             if (action == null) {
                 run.addAction(new AggregationAction());
@@ -123,7 +123,7 @@ class IssuesPublisher {
         ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding);
         run.addAction(action);
 
-        if (chartType == AggregationChartDisplay.BOTTOM) {
+        if (chartType == AggregationTrendChartDisplay.BOTTOM) {
             run.addOrReplaceAction(new AggregationAction());
         }
         return action;

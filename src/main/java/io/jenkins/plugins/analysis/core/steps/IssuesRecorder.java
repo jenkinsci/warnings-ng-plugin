@@ -108,13 +108,13 @@ public class IssuesRecorder extends Recorder {
     /**
      * Defines the position of the aggregation chart.
      */
-    public enum AggregationChartDisplay {
+    public enum AggregationTrendChartDisplay {
         TOP,
         BOTTOM,
         NONE
     }
 
-    private AggregationChartDisplay trendChart = AggregationChartDisplay.TOP;
+    private AggregationTrendChartDisplay aggregationTrend = AggregationTrendChartDisplay.TOP;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -132,8 +132,8 @@ public class IssuesRecorder extends Recorder {
      * @return this
      */
     protected Object readResolve() {
-        if (trendChart == null) {
-            trendChart = AggregationChartDisplay.TOP;
+        if (aggregationTrend == null) {
+            aggregationTrend = AggregationTrendChartDisplay.TOP;
         }
         if (analysisTools == null) {
             analysisTools = new ArrayList<>();
@@ -479,18 +479,18 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Sets the type of the trend chart that should be shown on the job page.
+     * Sets the type of the aggregation trend chart that should be shown on the job page.
      *
-     * @param trendChart
+     * @param aggregationTrend
      *         the type of the trend chart to use
      */
-    public void setTrendChart(final AggregationChartDisplay trendChart) {
-        this.trendChart = trendChart;
+    @DataBoundSetter
+    public void setAggregationTrend(final AggregationTrendChartDisplay aggregationTrend) {
+        this.aggregationTrend = aggregationTrend;
     }
 
-    @DataBoundSetter
-    public AggregationChartDisplay getTrendChart() {
-        return trendChart;
+    public AggregationTrendChartDisplay getAggregationTrend() {
+        return aggregationTrend;
     }
 
     /**
@@ -646,7 +646,7 @@ public class IssuesRecorder extends Recorder {
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
-        publisher.attachAction(trendChart);
+        publisher.attachAction(aggregationTrend);
     }
 
     /**
