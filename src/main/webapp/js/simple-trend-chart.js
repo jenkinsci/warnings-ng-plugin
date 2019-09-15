@@ -7,8 +7,8 @@
  * @param {String} urlName - the URL to the results, if empty or unset then clicking on the chart is disabled
  */
 function renderTrendChart (chartDivId, model, urlName) { // eslint-disable-line no-unused-vars
-    let chartModel = JSON.parse(model);
-    let chartPlaceHolder = document.getElementById(chartDivId);
+    const chartModel = JSON.parse(model);
+    const chartPlaceHolder = document.getElementById(chartDivId);
 
     let selectedBuild; // the tooltip formatter will change this value while hoovering
 
@@ -20,9 +20,9 @@ function renderTrendChart (chartDivId, model, urlName) { // eslint-disable-line 
         };
     }
 
-    let chart = echarts.init(chartPlaceHolder);
+    const chart = echarts.init(chartPlaceHolder);
     chartPlaceHolder.echart = chart;
-    let options = {
+    const options = {
         tooltip: {
             trigger: 'axis',
             axisPointer: {
@@ -37,8 +37,8 @@ function renderTrendChart (chartDivId, model, urlName) { // eslint-disable-line 
                     return params.name;
                 }
 
-                let builds = chartModel.buildNumbers;
-                let labels = chartModel.xAxisLabels;
+                const builds = chartModel.buildNumbers;
+                const labels = chartModel.xAxisLabels;
                 for (let i = 0; i < builds.length; i++) {
                     if (params[0].name === labels[i]) {
                         selectedBuild = builds[i];
