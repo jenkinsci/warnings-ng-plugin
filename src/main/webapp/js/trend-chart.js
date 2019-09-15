@@ -1,3 +1,4 @@
+/* global jQuery, echarts */
 (function ($) {
     $.fn.extend({
         /**
@@ -88,10 +89,7 @@
             $(window).on('resize', function () {
                 chart.resize();
             });
-            $(this).data("chart", chart);
+            $(this).data('chart', chart);
         }
     });
 })(jQuery);
-
-
-

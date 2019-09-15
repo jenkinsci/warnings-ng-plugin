@@ -1,3 +1,4 @@
+/* global jQuery, echarts */
 (function ($) {
     $.fn.extend({
         /**
@@ -13,7 +14,7 @@
                 title: getTitle(isTitleVisible),
                 tooltip: {
                     trigger: 'item',
-                    formatter: "{b}: {c} ({d}%)"
+                    formatter: '{b}: {c} ({d}%)'
                 },
                 legend: {
                     orient: 'horizontal',
@@ -52,14 +53,14 @@
             $(window).on('resize', function () {
                 chart.resize();
             });
-            $(this).data("chart", chart);
+            $(this).data('chart', chart);
 
             /**
              * Returns the title properties of the chart.
              *
              * @param {boolean} isTitleVisible - determines whether a title should be shown
              */
-            function getTitle(isTitleVisible) {
+            function getTitle (isTitleVisible) {
                 if (isTitleVisible) {
                     return {
                         text: pieModel.name,
@@ -68,14 +69,12 @@
                             fontSize: '16'
                         },
                         left: 'center'
-                    }
-                } else {
+                    };
+                }
+                else {
                     return null;
                 }
             }
         }
     });
 })(jQuery);
-
-
-

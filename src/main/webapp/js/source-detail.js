@@ -1,3 +1,4 @@
+/* global jQuery */
 (function ($) {
     $.fn.scrollView = function () {
         return this.each(function () {
@@ -6,10 +7,7 @@
             }, 1000);
         });
     };
-    $(document).ready(function() {
+    $(document).ready(function () {
         $('.highlight').scrollView();
     });
 })(jQuery);
-
-
-
