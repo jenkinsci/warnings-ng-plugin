@@ -3,6 +3,7 @@ jobs:
       freeStyleJob('dsl-freestyle-job') {
           publishers {
               recordIssues {
+                    aggregationTrend('NONE')
                     aggregatingResults(true)
                     blameDisabled(true)
                     forensicsDisabled(true)

@@ -13,6 +13,7 @@ import hudson.util.DescribableList;
 
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.casc.ConfigurationAsCode;
@@ -51,6 +52,7 @@ public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         IssuesRecorder recorder = (IssuesRecorder) publisher;
 
         assertThat(recorder.getAggregatingResults()).isFalse();
+        assertThat(recorder.getAggregationTrend()).isEqualTo(AggregationTrendChartDisplay.TOP);
         assertThat(recorder.getBlameDisabled()).isFalse();
         assertThat(recorder.getForensicsDisabled()).isFalse();
         assertThat(recorder.getEnabledForFailure()).isFalse();
@@ -93,6 +95,7 @@ public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         IssuesRecorder recorder = (IssuesRecorder) publisher;
 
         assertThat(recorder.getAggregatingResults()).isTrue();
+        assertThat(recorder.getAggregationTrend()).isEqualTo(AggregationTrendChartDisplay.NONE);
         assertThat(recorder.getBlameDisabled()).isTrue();
         assertThat(recorder.getForensicsDisabled()).isTrue();
         assertThat(recorder.getEnabledForFailure()).isTrue();
