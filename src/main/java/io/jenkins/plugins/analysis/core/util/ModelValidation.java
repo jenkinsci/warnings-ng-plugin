@@ -20,6 +20,8 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationTrendChartDisplay;
+
 /**
  * Validates all properties of a configuration of a static analysis tool in a job.
  *
@@ -106,6 +108,19 @@ public class ModelValidation {
         options.add(Messages.SeverityFilter_High(), Severity.WARNING_HIGH.getName());
         options.add(Messages.SeverityFilter_Normal(), Severity.WARNING_NORMAL.getName());
         options.add(Messages.SeverityFilter_Low(), Severity.WARNING_LOW.getName());
+        return options;
+    }
+
+    /**
+     * Returns a model with all available aggregation trend chart positions.
+     *
+     * @return a model with all available aggregation trend chart positions
+     */
+    public ListBoxModel getAllAggregationTrendChartPositions() {
+        ListBoxModel options = new ListBoxModel();
+        options.add(Messages.AggregationChart_Top(), AggregationTrendChartDisplay.TOP.name());
+        options.add(Messages.AggregationChart_Bottom(), AggregationTrendChartDisplay.BOTTOM.name());
+        options.add(Messages.AggregationChart_None(), AggregationTrendChartDisplay.NONE.name());
         return options;
     }
 

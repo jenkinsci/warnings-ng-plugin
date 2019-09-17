@@ -12,7 +12,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 
 import edu.hm.hafner.analysis.Severity;
-import edu.umd.cs.findbugs.annotations.Nullable;
+
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationTrendChartDisplay;
 
 /**
  * Page object for a configuration of the post build step "Record compiler warnings and static analysis results".
@@ -38,6 +39,7 @@ public class FreestyleConfiguration extends PageObject {
     private static final String FORENSICS_DISABLED = "_.forensicsDisabled";
     private static final String ENABLED_FOR_FAILURE = "_.enabledForFailure";
     private static final String AGGREGATING_RESULTS = "_.aggregatingResults";
+    private static final String AGGREGATION_TREND = "_.aggregationTrend";
 
     private final HtmlForm form;
 
@@ -285,11 +287,14 @@ public class FreestyleConfiguration extends PageObject {
             final Severity minimumSeverity) {
         setText(HEALTHY, Integer.toString(healthy));
         setText(UNHEALTHY, Integer.toString(unhealthy));
-
-        HtmlSelect select = getForm().getSelectByName(MINIMUM_SEVERITY);
-        select.setSelectedAttribute(select.getOptionByValue(minimumSeverity.getName()), true);
+        select(MINIMUM_SEVERITY, minimumSeverity.getName());
 
         return this;
+    }
+
+    private void select(final String name, final String value) {
+        HtmlSelect select = getForm().getSelectByName(name);
+        select.setSelectedAttribute(select.getOptionByValue(value), true);
     }
 
     public String getHealthy() {
@@ -300,16 +305,29 @@ public class FreestyleConfiguration extends PageObject {
         return getTextOf(UNHEALTHY);
     }
 
-    @Nullable
     public Severity getMinimumSeverity() {
-        HtmlSelect select = getForm().getSelectByName(MINIMUM_SEVERITY);
+        return Severity.valueOf(getSelectValue(MINIMUM_SEVERITY));
+    }
+
+    private String getSelectValue(final String name) {
+        HtmlSelect select = getForm().getSelectByName(name);
         HtmlOption selected = select.getSelectedOptions().get(0);
 
         String valueAttribute = selected.getValueAttribute();
         if (StringUtils.isBlank(valueAttribute)) {
-            return null;
+            throw new IllegalArgumentException("No value set for " + name);
         }
-        return Severity.valueOf(valueAttribute);
+        return valueAttribute;
+    }
+
+    public AggregationTrendChartDisplay getAggregationTrend() {
+        return AggregationTrendChartDisplay.valueOf(getSelectValue(AGGREGATION_TREND));
+    }
+
+    public FreestyleConfiguration setAggregationTrend(final AggregationTrendChartDisplay aggregationTrend) {
+        select(AGGREGATION_TREND, aggregationTrend.name());
+
+        return this;
     }
 
     private String getTextOf(final String id) {

@@ -9,6 +9,7 @@ import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.FreestyleConfiguration;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.InfoErrorPage;
@@ -36,6 +37,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         new FreestyleConfiguration(getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"))
                 .setSourceCodeEncoding(ENCODING)
                 .setAggregatingResults(true)
+                .setAggregationTrend(AggregationTrendChartDisplay.NONE)
                 .setBlameDisabled(true)
                 .setForensicsDisabled(true)
                 .setEnabledForFailure(true)
@@ -52,6 +54,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
 
         assertThat(saved.getSourceCodeEncoding()).isEqualTo(ENCODING);
         assertThat(saved.isAggregatingResults()).isTrue();
+        assertThat(saved.getAggregationTrend()).isEqualTo(AggregationTrendChartDisplay.NONE);
         assertThat(saved.isBlameDisabled()).isTrue();
         assertThat(saved.isForensicsDisabled()).isTrue();
         assertThat(saved.isEnabledForFailure()).isTrue();

@@ -1190,5 +1190,14 @@ public class IssuesRecorder extends Recorder {
         public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
             return model.validateUnhealthy(healthy, unhealthy);
         }
+
+        /**
+         * Returns a model with all aggregation trend chart positions.
+         *
+         * @return a model with all  aggregation trend chart positions
+         */
+        public ListBoxModel doFillAggregationTrendItems() {
+            return model.getAllAggregationTrendChartPositions();
+        }
     }
 }
