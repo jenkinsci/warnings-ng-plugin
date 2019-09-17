@@ -20,8 +20,6 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationTrendChartDisplay;
-
 /**
  * Validates all properties of a configuration of a static analysis tool in a job.
  *

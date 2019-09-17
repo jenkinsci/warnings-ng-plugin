@@ -13,7 +13,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 
 import edu.hm.hafner.analysis.Severity;
 
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder.AggregationTrendChartDisplay;
+import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
 
 /**
  * Page object for a configuration of the post build step "Record compiler warnings and static analysis results".

@@ -46,6 +46,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
+import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -104,15 +105,6 @@ public class IssuesRecorder extends Recorder {
     private String name;
 
     private List<QualityGate> qualityGates = new ArrayList<>();
-
-    /**
-     * Defines the position of the aggregation chart.
-     */
-    public enum AggregationTrendChartDisplay {
-        TOP,
-        BOTTOM,
-        NONE
-    }
 
     private AggregationTrendChartDisplay aggregationTrend = AggregationTrendChartDisplay.TOP;
 
