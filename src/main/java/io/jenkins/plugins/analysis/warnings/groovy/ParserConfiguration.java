@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.util.NoSuchElementException;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundSetter;
 import org.jenkinsci.Symbol;
@@ -17,6 +18,8 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.util.GlobalConfigurationFacade;
+import io.jenkins.plugins.analysis.core.util.GlobalConfigurationItem;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 
 /**
@@ -26,14 +29,21 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
  */
 @Extension
 @Symbol("warningsParsers") 
-public class ParserConfiguration extends GlobalConfiguration {
+public class ParserConfiguration extends GlobalConfigurationItem {
     private List<GroovyParser> parsers = new ArrayList<>();
 
     /**
-     * Loads the configuration from disk.
+     * Creates the Groovy parser configuration for the warnings plugins.
      */
     public ParserConfiguration() {
         super();
+
+        load();
+    }
+
+    @VisibleForTesting
+    ParserConfiguration(final GlobalConfigurationFacade facade) {
+        super(facade);
 
         load();
     }
@@ -65,6 +75,7 @@ public class ParserConfiguration extends GlobalConfiguration {
     @DataBoundSetter
     public void setParsers(final List<GroovyParser> parsers) {
         this.parsers = new ArrayList<>(parsers);
+
         save();
     }
 
