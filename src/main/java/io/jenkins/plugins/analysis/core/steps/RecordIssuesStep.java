@@ -38,6 +38,7 @@ import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
@@ -90,6 +91,8 @@ public class RecordIssuesStep extends Step implements Serializable {
     private String name;
 
     private List<QualityGate> qualityGates = new ArrayList<>();
+
+    private AggregationTrendChartDisplay aggregationTrend = AggregationTrendChartDisplay.TOP;
 
     private boolean failOnError;
 
@@ -887,6 +890,21 @@ public class RecordIssuesStep extends Step implements Serializable {
         this.minimumSeverity = Severity.valueOf(minimumSeverity, Severity.WARNING_LOW);
     }
 
+    /**
+     * Sets the type of the aggregation trend chart that should be shown on the job page.
+     *
+     * @param aggregationTrend
+     *         the type of the trend chart to use
+     */
+    @DataBoundSetter
+    public void setAggregationTrend(final AggregationTrendChartDisplay aggregationTrend) {
+        this.aggregationTrend = aggregationTrend;
+    }
+
+    public AggregationTrendChartDisplay getAggregationTrend() {
+        return aggregationTrend;
+    }
+
     public List<RegexpFilter> getFilters() {
         return new ArrayList<>(filters);
     }
@@ -905,7 +923,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * Actually performs the execution of the associated step.
      */
     static class Execution extends AnalysisExecution<Void> {
-        private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = -2840020502160375407L;
+
         private final RecordIssuesStep step;
 
         Execution(@NonNull final StepContext context, final RecordIssuesStep step) {
@@ -933,6 +952,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());
             recorder.setFailOnError(step.getFailOnError());
+            recorder.setAggregationTrend(step.aggregationTrend);
 
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
@@ -1058,6 +1078,15 @@ public class RecordIssuesStep extends Step implements Serializable {
          */
         public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
             return model.validateUnhealthy(healthy, unhealthy);
+        }
+
+        /**
+         * Returns a model with all aggregation trend chart positions.
+         *
+         * @return a model with all  aggregation trend chart positions
+         */
+        public ListBoxModel doFillAggregationTrendItems() {
+            return model.getAllAggregationTrendChartPositions();
         }
     }
 }

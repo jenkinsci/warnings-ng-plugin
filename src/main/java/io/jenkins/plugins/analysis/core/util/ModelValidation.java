@@ -110,6 +110,19 @@ public class ModelValidation {
     }
 
     /**
+     * Returns a model with all available aggregation trend chart positions.
+     *
+     * @return a model with all available aggregation trend chart positions
+     */
+    public ListBoxModel getAllAggregationTrendChartPositions() {
+        ListBoxModel options = new ListBoxModel();
+        options.add(Messages.AggregationChart_Top(), AggregationTrendChartDisplay.TOP.name());
+        options.add(Messages.AggregationChart_Bottom(), AggregationTrendChartDisplay.BOTTOM.name());
+        options.add(Messages.AggregationChart_None(), AggregationTrendChartDisplay.NONE.name());
+        return options;
+    }
+
+    /**
      * Returns the model with the possible reference jobs.
      *
      * @return the model with the possible reference jobs

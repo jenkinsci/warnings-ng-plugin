@@ -1,12 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
@@ -17,6 +20,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
@@ -29,6 +33,10 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Ullrich Hafner
  */
 public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
+    private static final String AGGREGATION = "Aggregated Analysis Results";
+    private static final String ECLIPSE = "Eclipse ECJ Warnings Trend";
+    private static final String CHECKSTYLEW = "CheckStyle Warnings Trend";
+
     /**
      * Verifies that the trend chart is visible if there are two valid builds available.
      */
@@ -52,6 +60,76 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatTrendChartIsVisible(jobPage);
 
         assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
+    }
+
+    /**
+     * Verifies that the aggregation trend chart is visible for a freestyle job at the top, or bottom, or hidden.
+     */
+    @Test
+    public void shouldShowTrendsAndAggregationFreestyle() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
+        enableWarnings(project, new Eclipse(), new CheckStyle());
+
+        buildWithResult(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        assertActionProperties(project, build);
+
+        assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, project)))
+                .hasSize(3).containsExactly(AGGREGATION, ECLIPSE, CHECKSTYLEW);
+
+        HtmlPage top = createAggregationJob(AggregationTrendChartDisplay.TOP);
+        assertThat(getTrends(top)).hasSize(3).containsExactly(AGGREGATION, ECLIPSE, CHECKSTYLEW);
+
+        HtmlPage bottom = createAggregationJob(AggregationTrendChartDisplay.BOTTOM);
+        assertThat(getTrends(bottom)).hasSize(3).containsExactly(ECLIPSE, CHECKSTYLEW, AGGREGATION);
+
+        HtmlPage none = createAggregationJob(AggregationTrendChartDisplay.NONE);
+        assertThat(getTrends(none)).hasSize(2).containsExactly(ECLIPSE, CHECKSTYLEW);
+    }
+
+    /**
+     * Verifies that the aggregation trend chart is visible for a pipeline job at the top, or bottom, or hidden.
+     */
+    @Test
+    public void shouldShowTrendsAndAggregationPipeline() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
+        job.setDefinition(asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
+                "publishIssues issues:[checkstyle], aggregationTrend: 'BOTTOM'",
+                "def eclipse = scanForIssues tool: eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')",
+                "publishIssues issues:[eclipse], aggregationTrend: 'BOTTOM'"
+        ));
+
+        buildSuccessfully(job);
+        buildSuccessfully(job);
+        assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, job)))
+                .hasSize(3).containsExactly(CHECKSTYLEW, ECLIPSE, AGGREGATION);
+
+        job.setDefinition(asStage("recordIssues tools: ["
+                        + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
+                        + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], aggregationTrend: 'NONE'"
+        ));
+
+        buildSuccessfully(job);
+        buildSuccessfully(job);
+        assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, job)))
+                .hasSize(2).containsExactly(CHECKSTYLEW, ECLIPSE);
+
+    }
+
+    private HtmlPage createAggregationJob(final AggregationTrendChartDisplay chart) {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
+        enableWarnings(project, r -> r.setAggregationTrend(chart), new Eclipse(), new CheckStyle());
+
+        buildWithResult(project, Result.SUCCESS);
+        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
+        assertActionProperties(project, build);
+
+        return getWebPage(JavaScriptSupport.JS_DISABLED, project);
+    }
+
+    private List<String> getTrends(final HtmlPage jobPage) {
+        List<HtmlDivision> divs = jobPage.getByXPath("//div[@class=\"test-trend-caption\"]");
+        return divs.stream().map(HtmlDivision::getTextContent).collect(Collectors.toList());
     }
 
     /**

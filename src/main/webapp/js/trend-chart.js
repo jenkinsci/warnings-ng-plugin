@@ -8,8 +8,10 @@
          * @param {Function} redrawCallback - callback that will be invoked if the user toggles date or build domain
          */
         renderTrendChart: function (model, redrawCallback) {
-            var chartModel = JSON.parse(model);
-            var chart = echarts.init($(this)[0]);
+            const chartModel = JSON.parse(model);
+            const chartPlaceHolder = $(this)[0];
+            const chart = echarts.init(chartPlaceHolder);
+            chartPlaceHolder.echart = chart;
             var options = {
                 tooltip: {
                     trigger: 'axis',
