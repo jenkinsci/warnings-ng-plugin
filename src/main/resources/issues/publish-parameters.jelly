@@ -6,7 +6,7 @@
   </st:documentation>
 
   <f:entry title="${%title.failOnError}" description="${%description.failOnError}" field="failOnError">
-      <f:checkbox />
+    <f:checkbox/>
   </f:entry>
 
   <i:hr title="${%Reference Analysis Results}"/>
