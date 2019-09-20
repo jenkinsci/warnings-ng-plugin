@@ -228,7 +228,7 @@ One important feature of the Warnings Next Generation plugin is the classificati
 - **outstanding**: all issues, that are part of the current and reference report
 
 In order to compute this classification, the plugin requires a reference build (baseline). New, fixed, and outstanding
-issues are then computed by comparing the issues in the current build and the baseline. There are three options that
+issues are then computed by comparing the issues in the current build and in the baseline. There are three options that
 control the selection of the reference build. 
 
 ![reference build configuration](images/reference.png) 
