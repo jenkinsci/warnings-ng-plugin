@@ -18,6 +18,7 @@ import io.jenkins.plugins.analysis.core.charts.LinesChartModel;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -29,6 +30,7 @@ public class JobAction implements Action {
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
     private final int numberOfTools;
+    private final TrendChartType trendChartType;
 
     /**
      * Creates a new instance of {@link JobAction}.
@@ -55,9 +57,27 @@ public class JobAction implements Action {
      *         the number of tools that have results to show
      */
     public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider, final int numberOfTools) {
+        this(owner, labelProvider, numberOfTools, TrendChartType.TOOLS_ONLY);
+    }
+
+    /**
+     * Creates a new instance of {@link JobAction}.
+     *
+     * @param owner
+     *         the job that owns this action
+     * @param labelProvider
+     *         the label provider
+     * @param numberOfTools
+     *         the number of tools that have results to show
+     * @param trendChartType
+     *         determines if the trend chart will be shown
+     */
+    public JobAction(final Job<?, ?> owner, final StaticAnalysisLabelProvider labelProvider, final int numberOfTools,
+            final TrendChartType trendChartType) {
         this.owner = owner;
         this.labelProvider = labelProvider;
         this.numberOfTools = numberOfTools;
+        this.trendChartType = trendChartType;
     }
 
     /**
@@ -182,7 +202,7 @@ public class JobAction implements Action {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public boolean isTrendVisible() {
-        return createBuildHistory().hasMultipleResults();
+        return trendChartType != TrendChartType.NONE && createBuildHistory().hasMultipleResults();
     }
 
     @Override

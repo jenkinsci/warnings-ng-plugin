@@ -33,13 +33,13 @@ import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
  * Pipeline step that scans report files or the console log for issues. Stores the created
@@ -86,7 +86,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
-    private AggregationTrendChartDisplay aggregationTrend = AggregationTrendChartDisplay.TOP;
+    private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
     private boolean failOnError;
 
@@ -885,18 +885,18 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Sets the type of the aggregation trend chart that should be shown on the job page.
+     * Sets the type of the trend chart that should be shown on the job page.
      *
-     * @param aggregationTrend
+     * @param trendChartType
      *         the type of the trend chart to use
      */
     @DataBoundSetter
-    public void setAggregationTrend(final AggregationTrendChartDisplay aggregationTrend) {
-        this.aggregationTrend = aggregationTrend;
+    public void setTrendChartType(final TrendChartType trendChartType) {
+        this.trendChartType = trendChartType;
     }
 
-    public AggregationTrendChartDisplay getAggregationTrend() {
-        return aggregationTrend;
+    public TrendChartType getTrendChartType() {
+        return trendChartType;
     }
 
     public List<RegexpFilter> getFilters() {
@@ -946,7 +946,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());
             recorder.setFailOnError(step.getFailOnError());
-            recorder.setAggregationTrend(step.aggregationTrend);
+            recorder.setTrendChartType(step.trendChartType);
 
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));

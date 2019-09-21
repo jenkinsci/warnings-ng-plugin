@@ -116,9 +116,9 @@ public class ModelValidation {
      */
     public ListBoxModel getAllAggregationTrendChartPositions() {
         ListBoxModel options = new ListBoxModel();
-        options.add(Messages.AggregationChart_Top(), AggregationTrendChartDisplay.TOP.name());
-        options.add(Messages.AggregationChart_Bottom(), AggregationTrendChartDisplay.BOTTOM.name());
-        options.add(Messages.AggregationChart_None(), AggregationTrendChartDisplay.NONE.name());
+        options.add(Messages.AggregationChart_Top(), TrendChartType.AGGREGATION_TOOLS.name());
+        options.add(Messages.AggregationChart_Bottom(), TrendChartType.TOOLS_AGGREGATION.name());
+        options.add(Messages.AggregationChart_None(), TrendChartType.TOOLS_ONLY.name());
         return options;
     }
 

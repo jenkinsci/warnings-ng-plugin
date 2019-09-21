@@ -13,7 +13,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 
 import edu.hm.hafner.analysis.Severity;
 
-import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
  * Page object for a configuration of the post build step "Record compiler warnings and static analysis results".
@@ -320,11 +320,11 @@ public class FreestyleConfiguration extends PageObject {
         return valueAttribute;
     }
 
-    public AggregationTrendChartDisplay getAggregationTrend() {
-        return AggregationTrendChartDisplay.valueOf(getSelectValue(AGGREGATION_TREND));
+    public TrendChartType getAggregationTrend() {
+        return TrendChartType.valueOf(getSelectValue(AGGREGATION_TREND));
     }
 
-    public FreestyleConfiguration setAggregationTrend(final AggregationTrendChartDisplay aggregationTrend) {
+    public FreestyleConfiguration setAggregationTrend(final TrendChartType aggregationTrend) {
         select(AGGREGATION_TREND, aggregationTrend.name());
 
         return this;

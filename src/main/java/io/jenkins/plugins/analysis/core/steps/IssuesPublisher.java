@@ -22,13 +22,13 @@ import io.jenkins.plugins.analysis.core.model.History;
 import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
-import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
@@ -87,19 +87,19 @@ class IssuesPublisher {
      * @return the created result action
      */
     ResultAction attachAction() {
-        return attachAction(AggregationTrendChartDisplay.TOP);
+        return attachAction(TrendChartType.AGGREGATION_TOOLS);
     }
 
     /**
      * Creates a new {@link AnalysisResult} and attaches the result in a {@link ResultAction} that is registered with
      * the current run.
      *
-     * @param chartType
+     * @param trendChartType
      *         the chart to show
      *
      * @return the created result action
      */
-    ResultAction attachAction(final AggregationTrendChartDisplay chartType) {
+    ResultAction attachAction(final TrendChartType trendChartType) {
         logger.log("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
 
         ResultSelector selector = ensureThatIdIsUnique();
@@ -114,16 +114,17 @@ class IssuesPublisher {
                     "Some errors have been logged during recording of issues");
         }
 
-        if (chartType == AggregationTrendChartDisplay.TOP) {
+        if (trendChartType == TrendChartType.AGGREGATION_TOOLS) {
             AggregationAction action = run.getAction(AggregationAction.class);
             if (action == null) {
                 run.addAction(new AggregationAction());
             }
         }
-        ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding);
+        ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding,
+                trendChartType);
         run.addAction(action);
 
-        if (chartType == AggregationTrendChartDisplay.BOTTOM) {
+        if (trendChartType == TrendChartType.TOOLS_AGGREGATION) {
             run.addOrReplaceAction(new AggregationAction());
         }
         return action;
