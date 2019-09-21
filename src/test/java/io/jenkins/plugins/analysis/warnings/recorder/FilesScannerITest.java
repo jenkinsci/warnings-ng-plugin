@@ -206,7 +206,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(0);
         assertThat(result).hasInfoMessages(
-                "-> PASSED - Total number of issues (any severity): 0 - Quality QualityGate: 6");
+                "-> PASSED - Total (any severity): 0 - Quality QualityGate: 6");
     }
 
     private ReportScanningTool createTool(final ReportScanningTool tool, final String pattern,
