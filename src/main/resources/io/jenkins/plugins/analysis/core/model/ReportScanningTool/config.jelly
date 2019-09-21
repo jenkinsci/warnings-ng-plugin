@@ -6,13 +6,13 @@
   <j:choose>
     <j:when test="${size(descriptor.pattern) > 0}">
       <f:entry title="${%title.pattern}" field="pattern"
-               description="${%description.overridePattern('http://ant.apache.org/manual/Types/fileset.html', descriptor.pattern)}">
+               description="${%description.overridePattern(descriptor.pattern)}">
         <f:textbox/>
       </f:entry>
     </j:when>
     <j:otherwise>
       <f:entry title="${%title.pattern}" field="pattern"
-               description="${%description.consoleOrPattern('http://ant.apache.org/manual/Types/fileset.html')}">
+               description="${%description.consoleOrPattern}">
         <f:textbox/>
       </f:entry>
     </j:otherwise>

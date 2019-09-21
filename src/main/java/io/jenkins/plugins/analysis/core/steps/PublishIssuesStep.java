@@ -15,20 +15,15 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
-import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import hudson.Extension;
 import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.util.ComboBoxModel;
-import hudson.util.FormValidation;
-import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
@@ -36,7 +31,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
@@ -811,9 +805,7 @@ public class PublishIssuesStep extends Step implements Serializable {
      * Descriptor for this step: defines the context and the UI labels.
      */
     @Extension
-    public static class Descriptor extends StepDescriptor {
-        private final ModelValidation model = new ModelValidation();
-
+    public static class Descriptor extends AnalysisStepDescriptor {
         @Override
         public Set<Class<?>> getRequiredContext() {
             return Sets.immutable.of(FlowNode.class, Run.class, TaskListener.class).castToSet();
@@ -828,92 +820,6 @@ public class PublishIssuesStep extends Step implements Serializable {
         @Override
         public String getDisplayName() {
             return Messages.PublishIssues_DisplayName();
-        }
-
-        /**
-         * Returns a model with all available charsets.
-         *
-         * @return a model with all available charsets
-         */
-        @SuppressWarnings("unused") // Used by view
-        public ComboBoxModel doFillSourceCodeEncodingItems() {
-            return model.getAllCharsets();
-        }
-
-        /**
-         * Returns a model with all available severity filters.
-         *
-         * @return a model with all available severity filters
-         */
-        @SuppressWarnings("unused") // Used by view
-        public ListBoxModel doFillMinimumSeverityItems() {
-            return model.getAllSeverityFilters();
-        }
-
-        /**
-         * Returns the model with the possible reference jobs.
-         *
-         * @return the model with the possible reference jobs
-         */
-        @SuppressWarnings("unused") // Used by view
-        public ComboBoxModel doFillReferenceJobNameItems() {
-            return model.getAllJobs();
-        }
-
-        /**
-         * Performs on-the-fly validation of the reference job.
-         *
-         * @param referenceJobName
-         *         the reference job
-         *
-         * @return the validation result
-         */
-        @SuppressWarnings("unused") // Used by view
-        public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
-            return model.validateJob(referenceJobName);
-        }
-
-        /**
-         * Performs on-the-fly validation on the character encoding.
-         *
-         * @param sourceCodeEncoding
-         *         the character encoding
-         *
-         * @return the validation result
-         */
-        @SuppressWarnings("unused") // Used by view
-        public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
-            return model.validateCharset(sourceCodeEncoding);
-        }
-
-        /**
-         * Performs on-the-fly validation of the health report thresholds.
-         *
-         * @param healthy
-         *         the healthy threshold
-         * @param unhealthy
-         *         the unhealthy threshold
-         *
-         * @return the validation result
-         */
-        @SuppressWarnings("unused") // Used by view
-        public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
-            return model.validateHealthy(healthy, unhealthy);
-        }
-
-        /**
-         * Performs on-the-fly validation of the health report thresholds.
-         *
-         * @param healthy
-         *         the healthy threshold
-         * @param unhealthy
-         *         the unhealthy threshold
-         *
-         * @return the validation result
-         */
-        @SuppressWarnings("unused") // Used by view
-        public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
-            return model.validateUnhealthy(healthy, unhealthy);
         }
     }
 }

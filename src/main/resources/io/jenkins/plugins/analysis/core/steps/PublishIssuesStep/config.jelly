@@ -21,8 +21,8 @@
 
   <i:hr title="${%File Encoding}"/>
 
-  <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}">
-    <f:combobox field="sourceCodeEncoding"/>
+  <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}" field="sourceCodeEncoding">
+    <f:combobox />
   </f:entry>
 
   <i:publish-parameters/>

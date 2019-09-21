@@ -13,24 +13,19 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
-import org.kohsuke.stapler.QueryParameter;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
-import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import hudson.EnvVars;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
-import hudson.util.ComboBoxModel;
-import hudson.util.FormValidation;
 
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 
 /**
  * Scan files or the console log for issues.
@@ -179,9 +174,7 @@ public class ScanForIssuesStep extends Step {
      * Descriptor for this step: defines the context and the UI elements.
      */
     @Extension
-    public static class Descriptor extends StepDescriptor {
-        private final ModelValidation model = new ModelValidation();
-
+    public static class Descriptor extends AnalysisStepDescriptor {
         @Override
         public Set<Class<?>> getRequiredContext() {
             return Sets.immutable.of(FilePath.class, EnvVars.class, TaskListener.class, Run.class).castToSet();
@@ -196,39 +189,6 @@ public class ScanForIssuesStep extends Step {
         @Override
         public String getDisplayName() {
             return Messages.ScanForIssues_DisplayName();
-        }
-
-        /**
-         * Returns a model with all available charsets.
-         *
-         * @return a model with all available charsets
-         */
-        public ComboBoxModel doFillSourceCodeEncodingItems() {
-            return model.getAllCharsets();
-        }
-
-        /**
-         * Performs on-the-fly validation of the character encoding.
-         *
-         * @param reportEncoding
-         *         the character encoding
-         *
-         * @return the validation result
-         */
-        public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
-            return model.validateCharset(reportEncoding);
-        }
-
-        /**
-         * Performs on-the-fly validation on the character encoding.
-         *
-         * @param sourceCodeEncoding
-         *         the character encoding
-         *
-         * @return the validation result
-         */
-        public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
-            return model.validateCharset(sourceCodeEncoding);
         }
     }
 }
