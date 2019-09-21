@@ -95,7 +95,7 @@ public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         IssuesRecorder recorder = (IssuesRecorder) publisher;
 
         assertThat(recorder.getAggregatingResults()).isTrue();
-        assertThat(recorder.getTrendChartType()).isEqualTo(TrendChartType.TOOLS_ONLY);
+        assertThat(recorder.getTrendChartType()).isEqualTo(TrendChartType.NONE);
         assertThat(recorder.getBlameDisabled()).isTrue();
         assertThat(recorder.getForensicsDisabled()).isTrue();
         assertThat(recorder.getEnabledForFailure()).isTrue();
