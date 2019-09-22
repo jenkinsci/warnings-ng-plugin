@@ -63,7 +63,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
             final String id, final String name, final Charset charset) {
-        this(owner, result, healthDescriptor, id, name, charset, TrendChartType.TOOLS_ONLY);
+        this(owner, result, healthDescriptor, id, name, charset, TrendChartType.AGGREGATION_TOOLS);
     }
 
     /**
