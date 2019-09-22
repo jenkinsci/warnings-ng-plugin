@@ -20,6 +20,8 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+
 /**
  * Validates all properties of a configuration of a static analysis tool in a job.
  *
@@ -44,6 +46,21 @@ public class ModelValidation {
         super();
 
         this.jenkins = jenkins;
+    }
+
+    /**
+     * Returns a model for the {@link QualityGateType} enumeration.
+     *
+     * @return the quality gate types
+     */
+    public ListBoxModel getAllSizeProperties() {
+        ListBoxModel model = new ListBoxModel();
+
+        for (QualityGateType qualityGateType : QualityGateType.values()) {
+            model.add(qualityGateType.getDisplayName(), qualityGateType.name());
+        }
+
+        return model;
     }
 
     /**
@@ -155,6 +172,22 @@ public class ModelValidation {
     static String createWrongEncodingErrorMessage() {
         return Messages.FieldValidator_Error_DefaultEncoding(
                 "https://docs.oracle.com/javase/8/docs/api/java/nio/charset/Charset.html");
+    }
+
+    /**
+     * Performs on-the-fly validation of the quality gate threshold.
+     *
+     * @param threshold
+     *         the threshold
+     *
+     * @return the validation result
+     */
+    @SuppressWarnings("WeakerAccess")
+    public FormValidation validateThreshold(@QueryParameter final int threshold) {
+        if (threshold > 0) {
+            return FormValidation.ok();
+        }
+        return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
     }
 
     /**

@@ -313,19 +313,15 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      */
     @Extension
     public static class QualityGateDescriptor extends Descriptor<QualityGate> {
+        private final ModelValidation modelValidation = new ModelValidation();
+
         /**
          * Return the model for the select widget.
          *
          * @return the quality gate types
          */
         public ListBoxModel doFillTypeItems() {
-            ListBoxModel model = new ListBoxModel();
-
-            for (QualityGateType qualityGateType : QualityGateType.values()) {
-                model.add(qualityGateType.getDisplayName(), qualityGateType.name());
-            }
-
-            return model;
+           return modelValidation.getAllSizeProperties();
         }
 
         /**
@@ -338,10 +334,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          */
         @SuppressWarnings("WeakerAccess")
         public FormValidation doCheckThreshold(@QueryParameter final int threshold) {
-            if (threshold > 0) {
-                return FormValidation.ok();
-            }
-            return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
+            return modelValidation.validateThreshold(threshold);
         }
     }
 }

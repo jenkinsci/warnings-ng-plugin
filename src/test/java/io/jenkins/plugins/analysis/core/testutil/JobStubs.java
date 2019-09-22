@@ -90,13 +90,13 @@ public final class JobStubs {
      *         the ID of the static analysis tool
      * @param name
      *         the name of the static analysis tool
-     * @param size
+     * @param totalSize
      *         the total number of issues for the tool
      *
      * @return the {@link Job} stub
      */
-    public static Job<?, ?> createJob(final String id, final String name, final int size) {
-        return createJobWithActions(createAction(size, id, name));
+    public static Job<?, ?> createJob(final String id, final String name, final int totalSize) {
+        return createJobWithActions(createAction(id, name, totalSize));
     }
 
     /**
@@ -106,17 +106,32 @@ public final class JobStubs {
      *         the ID of the static analysis tool
      * @param name
      *         the name of the static analysis tool
-     * @param size
+     * @param totalSize
      *         the total number of issues for the tool
      *
      * @return the {@link ResultAction} stub
      */
-    public static ResultAction createAction(final int size, final String id, final String name) {
-        ResultAction resultAction = mock(ResultAction.class);
-
+    public static ResultAction createAction(final String id, final String name, final int totalSize) {
         AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getTotalSize()).thenReturn(size);
+        when(result.getTotalSize()).thenReturn(totalSize);
 
+        return createAction(id, name, result);
+    }
+
+    /**
+     * Creates a stub for a static analysis {@link ResultAction}.
+     *
+     * @param id
+     *         the ID of the static analysis tool
+     * @param name
+     *         name of the static analysis tool
+     * @param result
+     *         the result to attach
+     *
+     * @return the {@link ResultAction} stub
+     */
+    public static ResultAction createAction(final String id, final String name, final AnalysisResult result) {
+        ResultAction resultAction = mock(ResultAction.class);
         when(resultAction.getResult()).thenReturn(result);
         when(resultAction.getId()).thenReturn(id);
         when(resultAction.getName()).thenReturn(name);

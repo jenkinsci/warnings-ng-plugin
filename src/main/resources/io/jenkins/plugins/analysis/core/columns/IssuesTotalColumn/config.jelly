@@ -4,6 +4,11 @@
   <f:entry title="${%Name}" field="name">
     <f:textbox default="${%# Issues}"/>
   </f:entry>
+
+  <f:entry title="${%title.type}" description="${%description.type}" field="type">
+    <f:select/>
+  </f:entry>
+
   <i:select-tools/>
 
 </j:jelly>

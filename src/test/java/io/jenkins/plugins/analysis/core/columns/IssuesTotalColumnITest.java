@@ -42,7 +42,7 @@ public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowIssueCounterEqualToOne() {
-        createAndBuildProjectWithFile(JAVAC_ONE_WARNING);
+        buildWithFile(JAVAC_ONE_WARNING);
 
         assertThat(getIssueCount(getRootPage())).isEqualTo(1);
     }
@@ -67,7 +67,7 @@ public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowIssueCounterEqualToSum() {
-        createAndBuildProjectWithFile(JAVAC_PYTHON_WARNINGS);
+        buildWithFile(JAVAC_PYTHON_WARNINGS);
 
         HtmlPage rootPage = getRootPage();
 
@@ -101,7 +101,7 @@ public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getIssueString(getRootPage())).isEqualTo(DASH);
     }
 
-    private FreeStyleProject createAndBuildProjectWithFile(final String fileName) {
+    private void buildWithFile(final String fileName) {
         FreeStyleProject project = createFreeStyleProject();
 
         Java javaAnalysis = new Java();
@@ -114,8 +114,6 @@ public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
         enableWarnings(project, javaAnalysis, pyLint);
 
         buildSuccessfully(project);
-
-        return project;
     }
 
     private HtmlPage getRootPage() {
