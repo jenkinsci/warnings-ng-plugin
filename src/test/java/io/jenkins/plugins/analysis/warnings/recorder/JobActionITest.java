@@ -97,7 +97,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldShowTrendsAndAggregationPipeline() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
         job.setDefinition(asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
-                "publishIssues issues:[checkstyle], aggregationTrend: 'TOOLS_AGGREGATION'",
+                "publishIssues issues:[checkstyle], trendChartType: 'TOOLS_AGGREGATION'",
                 "def eclipse = scanForIssues tool: eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')",
                 "publishIssues issues:[eclipse], trendChartType: 'TOOLS_AGGREGATION'"
         ));

@@ -39,7 +39,7 @@ public class FreestyleConfiguration extends PageObject {
     private static final String FORENSICS_DISABLED = "_.forensicsDisabled";
     private static final String ENABLED_FOR_FAILURE = "_.enabledForFailure";
     private static final String AGGREGATING_RESULTS = "_.aggregatingResults";
-    private static final String AGGREGATION_TREND = "_.aggregationTrend";
+    private static final String TREND_CHART_TYPE = "_.trendChartType";
 
     private final HtmlForm form;
 
@@ -320,12 +320,12 @@ public class FreestyleConfiguration extends PageObject {
         return valueAttribute;
     }
 
-    public TrendChartType getAggregationTrend() {
-        return TrendChartType.valueOf(getSelectValue(AGGREGATION_TREND));
+    public TrendChartType getTrendChartType() {
+        return TrendChartType.valueOf(getSelectValue(TREND_CHART_TYPE));
     }
 
-    public FreestyleConfiguration setAggregationTrend(final TrendChartType aggregationTrend) {
-        select(AGGREGATION_TREND, aggregationTrend.name());
+    public FreestyleConfiguration setTrendChartType(final TrendChartType trendChartType) {
+        select(TREND_CHART_TYPE, trendChartType.name());
 
         return this;
     }

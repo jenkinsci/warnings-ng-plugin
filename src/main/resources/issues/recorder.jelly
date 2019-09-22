@@ -17,9 +17,9 @@
            field="aggregatingResults">
     <f:checkbox/>
   </f:entry>
-  <f:entry title="${%title.aggregationTrend}" description="${%description.aggregationTrend}"
-           field="aggregationTrend">
-    <f:select default="TOP"/>
+  <f:entry title="${%title.trendChartType}" description="${%description.trendChartType}"
+           field="trendChartType">
+    <f:select default="AGGREGATION_TOOLS"/>
   </f:entry>
 
   <f:entry title="${%title.enabledForFailure}" description="${%description.enabledForFailure}"

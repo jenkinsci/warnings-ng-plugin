@@ -113,7 +113,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return a model with all  aggregation trend chart positions
      */
-    public ListBoxModel doFillAggregationTrendItems() {
-        return model.getAllAggregationTrendChartPositions();
+    public ListBoxModel doFillTrendChartTypeItems() {
+        return model.getAllTrendChartTypes();
     }
 }

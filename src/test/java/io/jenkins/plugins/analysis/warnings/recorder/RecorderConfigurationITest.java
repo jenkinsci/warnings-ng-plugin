@@ -37,7 +37,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         new FreestyleConfiguration(getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"))
                 .setSourceCodeEncoding(ENCODING)
                 .setAggregatingResults(true)
-                .setAggregationTrend(TrendChartType.TOOLS_ONLY)
+                .setTrendChartType(TrendChartType.TOOLS_ONLY)
                 .setBlameDisabled(true)
                 .setForensicsDisabled(true)
                 .setEnabledForFailure(true)
@@ -54,7 +54,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
 
         assertThat(saved.getSourceCodeEncoding()).isEqualTo(ENCODING);
         assertThat(saved.isAggregatingResults()).isTrue();
-        assertThat(saved.getAggregationTrend()).isEqualTo(TrendChartType.TOOLS_ONLY);
+        assertThat(saved.getTrendChartType()).isEqualTo(TrendChartType.TOOLS_ONLY);
         assertThat(saved.isBlameDisabled()).isTrue();
         assertThat(saved.isForensicsDisabled()).isTrue();
         assertThat(saved.isEnabledForFailure()).isTrue();
