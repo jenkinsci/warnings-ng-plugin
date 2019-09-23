@@ -11,6 +11,7 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
+import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 
 import static org.mockito.Mockito.*;
 
@@ -108,14 +109,43 @@ public final class JobStubs {
      *         the name of the static analysis tool
      * @param totalSize
      *         the total number of issues for the tool
+     * @param newSize
+     *         the total number of new issues for the tool
+     * @param fixedSize
+     *         the total number of fixed issues for the tool
+     *
+     * @return the {@link ResultAction} stub
+     */
+    public static ResultAction createAction(final String id, final String name,
+            final int totalSize, final int newSize, final int fixedSize) {
+        AnalysisResult result = mock(AnalysisResult.class);
+        when(result.getTotalSize()).thenReturn(totalSize);
+        when(result.getNewSize()).thenReturn(newSize);
+        when(result.getFixedSize()).thenReturn(fixedSize);
+        when(result.getTotals()).thenReturn(
+                new IssuesStatisticsBuilder()
+                        .setTotalNormalSize(totalSize)
+                        .setNewNormalSize(newSize)
+                        .setFixedSize(fixedSize)
+                        .build());
+
+        return createAction(id, name, result);
+    }
+
+    /**
+     * Creates a stub for a static analysis {@link ResultAction}.
+     *
+     * @param id
+     *         the ID of the static analysis tool
+     * @param name
+     *         the name of the static analysis tool
+     * @param totalSize
+     *         the total number of issues for the tool
      *
      * @return the {@link ResultAction} stub
      */
     public static ResultAction createAction(final String id, final String name, final int totalSize) {
-        AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getTotalSize()).thenReturn(totalSize);
-
-        return createAction(id, name, result);
+        return createAction(id, name, totalSize, 0, 0);
     }
 
     /**

@@ -1,114 +1,258 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.function.Function;
+
+import org.eclipse.collections.api.map.ImmutableMap;
+import org.eclipse.collections.impl.factory.Maps;
+
+import edu.hm.hafner.analysis.Severity;
+
+import org.jvnet.localizer.Localizable;
 
 /**
- * Simple data class that determines the number of issues (by severity, new and total and delta). This class basically
- * serves as a small proxy that provides method references to read the right property of a {@link AnalysisResult}.
+ * Simple data class that determines the total number of issues (by severity, new, total, fixed and delta) in a build.
  *
  * @author Ullrich Hafner
  */
-public class IssuesStatistics {
-    private final int totalSize;
-    private final int newSize;
-    private final int deltaSize;
+public class IssuesStatistics implements Serializable {
+    private static final long serialVersionUID = 2885481384170602793L;
 
     private final int totalErrorSize;
-    private final int newErrorSize;
-    private final int deltaErrorSize;
-
     private final int totalHighSize;
-    private final int newHighSize;
-    private final int deltaHighSize;
-
     private final int totalNormalSize;
-    private final int newNormalSize;
-    private final int deltaNormalSize;
-
     private final int totalLowSize;
+
+    private final int newErrorSize;
+    private final int newHighSize;
+    private final int newNormalSize;
     private final int newLowSize;
+
+    private final int deltaErrorSize;
+    private final int deltaHighSize;
+    private final int deltaNormalSize;
     private final int deltaLowSize;
 
-    @SuppressWarnings("ParameterNumber")
-    IssuesStatistics(final int totalSize, final int newSize, final int deltaSize,
-            final int totalErrorSize, final int newErrorSize, final int deltaErrorSize,
-            final int totalHighSize, final int newHighSize, final int deltaHighSize,
-            final int totalNormalSize, final int newNormalSize, final int deltaNormalSize,
-            final int totalLowSize, final int newLowSize, final int deltaLowSize) {
-        this.totalSize = totalSize;
-        this.newSize = newSize;
-        this.deltaSize = deltaSize;
+    private final int fixedSize;
+
+    private final Map<Severity, Integer> totalSizeBySeverity = Maps.mutable.empty();
+    private final Map<Severity, Integer> newSizeBySeverity = Maps.mutable.empty();
+
+    @SuppressWarnings("checkstyle:ParameterNumber")
+    IssuesStatistics(
+            final int totalErrorSize, final int totalHighSize, final int totalNormalSize, final int totalLowSize,
+            final int newErrorSize, final int newHighSize, final int newNormalSize, final int newLowSize,
+            final int deltaErrorSize, final int deltaHighSize, final int deltaNormalSize, final int deltaLowSize,
+            final int fixedSize) {
         this.totalErrorSize = totalErrorSize;
-        this.newErrorSize = newErrorSize;
-        this.deltaErrorSize = deltaErrorSize;
+        totalSizeBySeverity.put(Severity.ERROR, totalErrorSize);
         this.totalHighSize = totalHighSize;
-        this.newHighSize = newHighSize;
-        this.deltaHighSize = deltaHighSize;
+        totalSizeBySeverity.put(Severity.WARNING_HIGH, totalHighSize);
         this.totalNormalSize = totalNormalSize;
-        this.newNormalSize = newNormalSize;
-        this.deltaNormalSize = deltaNormalSize;
+        totalSizeBySeverity.put(Severity.WARNING_NORMAL, totalNormalSize);
         this.totalLowSize = totalLowSize;
+        totalSizeBySeverity.put(Severity.WARNING_LOW, totalLowSize);
+
+        this.newErrorSize = newErrorSize;
+        newSizeBySeverity.put(Severity.ERROR, newErrorSize);
+        this.newHighSize = newHighSize;
+        newSizeBySeverity.put(Severity.WARNING_HIGH, newHighSize);
+        this.newNormalSize = newNormalSize;
+        newSizeBySeverity.put(Severity.WARNING_NORMAL, newNormalSize);
         this.newLowSize = newLowSize;
+        newSizeBySeverity.put(Severity.WARNING_LOW, newLowSize);
+
+        this.deltaErrorSize = deltaErrorSize;
+        this.deltaHighSize = deltaHighSize;
+        this.deltaNormalSize = deltaNormalSize;
         this.deltaLowSize = deltaLowSize;
+
+        this.fixedSize = fixedSize;
     }
 
-    static int getTotalSize(final IssuesStatistics instance) {
-        return instance.totalSize;
+    public int getTotalSize() {
+        return totalErrorSize + totalHighSize + totalNormalSize + totalLowSize;
     }
 
-    static int getNewSize(final IssuesStatistics instance) {
-        return instance.newSize;
+    public int getNewSize() {
+        return newErrorSize + newHighSize + newNormalSize + newLowSize;
     }
 
-    static int getDeltaSize(final IssuesStatistics instance) {
-        return instance.deltaSize;
+    public int getDeltaSize() {
+        return deltaErrorSize + deltaHighSize + deltaNormalSize + deltaLowSize;
     }
 
-    static int getTotalErrorSize(final IssuesStatistics instance) {
-        return instance.totalErrorSize;
+    public int getTotalErrorSize() {
+        return totalErrorSize;
     }
 
-    static int getNewErrorSize(final IssuesStatistics instance) {
-        return instance.newErrorSize;
+    public int getTotalHighSize() {
+        return totalHighSize;
     }
 
-    static int getDeltaErrorSize(final IssuesStatistics instance) {
-        return instance.deltaErrorSize;
+    public int getTotalNormalSize() {
+        return totalNormalSize;
     }
 
-    static int getTotalHighSize(final IssuesStatistics instance) {
-        return instance.totalHighSize;
+    public int getTotalLowSize() {
+        return totalLowSize;
     }
 
-    static int getNewHighSize(final IssuesStatistics instance) {
-        return instance.newHighSize;
+    public int getNewErrorSize() {
+        return newErrorSize;
     }
 
-    static int getDeltaHighSize(final IssuesStatistics instance) {
-        return instance.deltaHighSize;
+    public int getNewHighSize() {
+        return newHighSize;
     }
 
-    static int getTotalNormalSize(final IssuesStatistics instance) {
-        return instance.totalNormalSize;
+    public int getNewNormalSize() {
+        return newNormalSize;
     }
 
-    static int getNewNormalSize(final IssuesStatistics instance) {
-        return instance.newNormalSize;
+    public int getNewLowSize() {
+        return newLowSize;
     }
 
-    static int getDeltaNormalSize(final IssuesStatistics instance) {
-        return instance.deltaNormalSize;
+    public int getDeltaErrorSize() {
+        return deltaErrorSize;
     }
 
-    static int getTotalLowSize(final IssuesStatistics instance) {
-        return instance.totalLowSize;
+    public int getDeltaHighSize() {
+        return deltaHighSize;
     }
 
-    static int getNewLowSize(final IssuesStatistics instance) {
-        return instance.newLowSize;
+    public int getDeltaNormalSize() {
+        return deltaNormalSize;
     }
 
-    static int getDeltaLowSize(final IssuesStatistics instance) {
-        return instance.deltaLowSize;
+    public int getDeltaLowSize() {
+        return deltaLowSize;
+    }
+
+    public int getFixedSize() {
+        return fixedSize;
+    }
+
+    public ImmutableMap<Severity, Integer> getTotalSizePerSeverity() {
+        return Maps.immutable.ofMap(totalSizeBySeverity);
+    }
+
+    public int getTotalSizeOf(final Severity severity) {
+        validateSeverity(severity);
+
+        return totalSizeBySeverity.get(severity);
+    }
+
+    public ImmutableMap<Severity, Integer> getNewSizePerSeverity() {
+        return Maps.immutable.ofMap(newSizeBySeverity);
+    }
+
+    public int getNewSizeOf(final Severity severity) {
+        validateSeverity(severity);
+
+        return newSizeBySeverity.get(severity);
+    }
+
+    private void validateSeverity(final Severity severity) {
+        if (!Severity.getPredefinedValues().contains(severity)) {
+            throw new NoSuchElementException("There is no such severity: " + severity);
+        }
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        IssuesStatistics that = (IssuesStatistics) o;
+        return totalErrorSize == that.totalErrorSize
+                && totalHighSize == that.totalHighSize
+                && totalNormalSize == that.totalNormalSize
+                && totalLowSize == that.totalLowSize
+                && newErrorSize == that.newErrorSize
+                && newHighSize == that.newHighSize
+                && newNormalSize == that.newNormalSize
+                && newLowSize == that.newLowSize
+                && deltaErrorSize == that.deltaErrorSize
+                && deltaHighSize == that.deltaHighSize
+                && deltaNormalSize == that.deltaNormalSize
+                && deltaLowSize == that.deltaLowSize
+                && fixedSize == that.fixedSize;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(totalErrorSize, totalHighSize, totalNormalSize, totalLowSize, newErrorSize, newHighSize,
+                newNormalSize, newLowSize, deltaErrorSize, deltaHighSize, deltaNormalSize, deltaLowSize, fixedSize);
+    }
+
+    /**
+     * Available report statistics.
+     */
+    public enum StatisticProperties {
+        TOTAL(Messages._Statistics_Total(), IssuesStatistics::getTotalSize),
+        TOTAL_ERROR(Messages._Statistics_Total_Error(), IssuesStatistics::getTotalErrorSize),
+        TOTAL_HIGH(Messages._Statistics_Total_High(), IssuesStatistics::getTotalHighSize),
+        TOTAL_NORMAL(Messages._Statistics_Total_Normal(), IssuesStatistics::getTotalNormalSize),
+        TOTAL_LOW(Messages._Statistics_Total_Low(), IssuesStatistics::getTotalLowSize),
+
+        NEW(Messages._Statistics_New(), IssuesStatistics::getNewSize),
+        NEW_ERROR(Messages._Statistics_New_Error(), IssuesStatistics::getNewErrorSize),
+        NEW_HIGH(Messages._Statistics_New_High(), IssuesStatistics::getNewHighSize),
+        NEW_NORMAL(Messages._Statistics_New_Normal(), IssuesStatistics::getNewNormalSize),
+        NEW_LOW(Messages._Statistics_New_Low(), IssuesStatistics::getNewLowSize),
+
+        DELTA(Messages._Statistics_Delta(), IssuesStatistics::getDeltaSize),
+        DELTA_ERROR(Messages._Statistics_Delta_Error(), IssuesStatistics::getDeltaErrorSize),
+        DELTA_HIGH(Messages._Statistics_Delta_High(), IssuesStatistics::getDeltaHighSize),
+        DELTA_NORMAL(Messages._Statistics_Delta_Normal(), IssuesStatistics::getDeltaNormalSize),
+        DELTA_LOW(Messages._Statistics_Delta_Low(), IssuesStatistics::getDeltaLowSize),
+
+        FIXED(Messages._Statistics_Delta_Low(), IssuesStatistics::getFixedSize);
+
+        private final Localizable displayName;
+        private final Function<IssuesStatistics, Integer> sizeGetter;
+
+        StatisticProperties(final Localizable displayName, final Function<IssuesStatistics, Integer> sizeGetter) {
+            this.displayName = displayName;
+            this.sizeGetter = sizeGetter;
+        }
+
+        /**
+         * Returns the localized human readable name of this instance.
+         *
+         * @return human readable name
+         */
+        public String getDisplayName() {
+            return displayName.toString();
+        }
+
+        /**
+         * Returns the method that should be used to determine the selected number of issues in the build.
+         *
+         * @return the threshold getter
+         */
+        public Function<IssuesStatistics, Integer> getSizeGetter() {
+            return sizeGetter;
+        }
+
+        /**
+         * Returns the selected number of issues in the build.
+         *
+         * @param statistics
+         *         the statistics to get the value from
+         *
+         * @return the threshold getter
+         */
+        public int get(final IssuesStatistics statistics) {
+            return sizeGetter.apply(statistics);
+        }
     }
 }

@@ -11,7 +11,7 @@ import hudson.model.Job;
 import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn.AnalysisResultDescription;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;
@@ -70,17 +70,20 @@ class IssuesTotalColumnTest {
     @Test @Issue("JENKINS-57312")
     void shouldShowResultOfNewWarnings() {
         IssuesTotalColumn column = createColumn();
-        column.setType(QualityGateType.NEW);
+        column.setType(StatisticProperties.NEW);
         column.setSelectTools(false);
 
         AnalysisResult result = mock(AnalysisResult.class);
         when(result.getNewSize()).thenReturn(1);
 
-        Job<?, ?> job = createJobWithActions(createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, result));
+        Job<?, ?> job = createJobWithActions(
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 3, 1, 2));
 
-        assertThat(column.getTotal(job)).isNotEmpty();
-        assertThat(column.getTotal(job)).hasValue(1);
+        assertThat(column.getTotal(job)).isNotEmpty().hasValue(1);
         assertThat(column.getUrl(job)).isEqualTo(CHECK_STYLE_ID);
+
+        column.setType(StatisticProperties.FIXED);
+        assertThat(column.getTotal(job)).isNotEmpty().hasValue(2);
     }
 
     @Test

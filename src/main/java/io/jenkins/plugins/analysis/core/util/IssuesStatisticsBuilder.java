@@ -8,9 +8,6 @@ package io.jenkins.plugins.analysis.core.util;
  */
 @SuppressWarnings("JavaDocMethod")
 public class IssuesStatisticsBuilder {
-    private int totalSize;
-    private int newSize;
-    private int deltaSize;
     private int totalErrorSize;
     private int newErrorSize;
     private int deltaErrorSize;
@@ -23,23 +20,9 @@ public class IssuesStatisticsBuilder {
     private int totalLowSize;
     private int newLowSize;
     private int deltaLowSize;
+    private int fixedSize;
 
-    public IssuesStatisticsBuilder setTotalSize(final int totalSize) {
-        this.totalSize = totalSize;
-        return this;
-    }
-
-    public IssuesStatisticsBuilder setNewSize(final int newSize) {
-        this.newSize = newSize;
-        return this;
-    }
-
-    public IssuesStatisticsBuilder setDeltaSize(final int deltaSize) {
-        this.deltaSize = deltaSize;
-        return this;
-    }
-
-    public IssuesStatisticsBuilder setTotalErrorSize(final int totalErrorSize) {
+     public IssuesStatisticsBuilder setTotalErrorSize(final int totalErrorSize) {
         this.totalErrorSize = totalErrorSize;
         return this;
     }
@@ -99,27 +82,77 @@ public class IssuesStatisticsBuilder {
         return this;
     }
 
+    public IssuesStatisticsBuilder setFixedSize(final int fixedSize) {
+        this.fixedSize = fixedSize;
+        return this;
+    }
+
     public IssuesStatistics build() {
-        return new IssuesStatistics(totalSize, newSize, deltaSize, totalErrorSize, newErrorSize, deltaErrorSize,
-                totalHighSize, newHighSize, deltaHighSize, totalNormalSize, newNormalSize, deltaNormalSize,
-                totalLowSize, newLowSize, deltaLowSize);
+        return new IssuesStatistics(
+                totalErrorSize, totalHighSize, totalNormalSize, totalLowSize,
+                newErrorSize, newHighSize, newNormalSize, newLowSize,
+                deltaErrorSize, deltaHighSize, deltaNormalSize, deltaLowSize,
+                fixedSize);
     }
 
     void clear() {
-        totalSize = 0;
-        newSize = 0;
-        deltaSize = 0;
         totalErrorSize = 0;
-        newErrorSize = 0;
-        deltaErrorSize = 0;
         totalHighSize = 0;
-        newHighSize = 0;
-        deltaHighSize = 0;
         totalNormalSize = 0;
-        newNormalSize = 0;
-        deltaNormalSize = 0;
         totalLowSize = 0;
+
+        newErrorSize = 0;
+        newHighSize = 0;
+        newNormalSize = 0;
         newLowSize = 0;
+
+        deltaErrorSize = 0;
+        deltaHighSize = 0;
+        deltaNormalSize = 0;
         deltaLowSize = 0;
+
+        fixedSize = 0;
+    }
+
+    /**
+     * Computed automatically.
+     *
+     * @param unused
+     *         not used
+     *
+     * @return this
+     * @deprecated Computed automatically.
+     */
+    @Deprecated
+    public IssuesStatisticsBuilder setTotalSize(final int unused) {
+        return this;
+    }
+
+    /**
+     * Computed automatically.
+     *
+     * @param unused
+     *         not used
+     *
+     * @return this
+     * @deprecated Computed automatically.
+     */
+    @Deprecated
+    public IssuesStatisticsBuilder setNewSize(final int unused) {
+        return this;
+    }
+
+    /**
+     * Computed automatically.
+     *
+     * @param unused
+     *         not used
+     *
+     * @return this
+     * @deprecated Computed automatically.
+     */
+    @Deprecated
+    public IssuesStatisticsBuilder setDeltaSize(final int unused) {
+        return this;
     }
 }

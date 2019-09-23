@@ -28,10 +28,8 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
-import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
-import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
@@ -49,7 +47,7 @@ public class IssuesTotalColumn extends ListViewColumn {
     private String name = "# Issues";
 
     private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();
-    private QualityGateType type = QualityGateType.TOTAL;
+    private StatisticProperties type = StatisticProperties.TOTAL;
 
     /** Creates a new instance of {@link ToolSelection}. */
     @DataBoundConstructor
@@ -64,7 +62,7 @@ public class IssuesTotalColumn extends ListViewColumn {
      * @return this
      */
     protected Object readResolve() {
-        type = QualityGateType.TOTAL;
+        type = StatisticProperties.TOTAL;
 
         return this;
     }
@@ -119,7 +117,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         this.name = name;
     }
 
-    public QualityGateType getType() {
+    public StatisticProperties getType() {
         return type;
     }
 
@@ -130,7 +128,7 @@ public class IssuesTotalColumn extends ListViewColumn {
      *         the type of the values to show
      */
     @DataBoundSetter
-    public void setType(final QualityGateType type) {
+    public void setType(final StatisticProperties type) {
         this.type = type;
     }
 
@@ -161,16 +159,9 @@ public class IssuesTotalColumn extends ListViewColumn {
         return lastCompletedBuild.getActions(ResultAction.class).stream()
                 .filter(createToolFilter(selectTools, tools))
                 .map(ResultAction::getResult)
-                .map(this::getStatistics)
-                .mapToInt(i -> type.getSizeGetter().apply(i))
+                .map(AnalysisResult::getTotals)
+                .mapToInt(totals -> type.getSizeGetter().apply(totals))
                 .reduce(Integer::sum);
-    }
-
-    private IssuesStatistics getStatistics(final AnalysisResult analysisResult) {
-        IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
-        builder.setTotalSize(analysisResult.getTotalSize()).setNewSize(analysisResult.getNewSize());
-        // FIXME: add all properties
-        return builder.build();
     }
 
     /**
