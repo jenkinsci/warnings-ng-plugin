@@ -46,7 +46,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
-import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -56,6 +55,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.RunResultHandler;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -106,7 +106,7 @@ public class IssuesRecorder extends Recorder {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
-    private AggregationTrendChartDisplay aggregationTrend = AggregationTrendChartDisplay.TOP;
+    private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -124,8 +124,8 @@ public class IssuesRecorder extends Recorder {
      * @return this
      */
     protected Object readResolve() {
-        if (aggregationTrend == null) {
-            aggregationTrend = AggregationTrendChartDisplay.TOP;
+        if (trendChartType == null) {
+            trendChartType = TrendChartType.AGGREGATION_TOOLS;
         }
         if (analysisTools == null) {
             analysisTools = new ArrayList<>();
@@ -471,18 +471,18 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Sets the type of the aggregation trend chart that should be shown on the job page.
+     * Sets the type of the trend chart that should be shown on the job page.
      *
-     * @param aggregationTrend
+     * @param trendChartType
      *         the type of the trend chart to use
      */
     @DataBoundSetter
-    public void setAggregationTrend(final AggregationTrendChartDisplay aggregationTrend) {
-        this.aggregationTrend = aggregationTrend;
+    public void setTrendChartType(final TrendChartType trendChartType) {
+        this.trendChartType = trendChartType;
     }
 
-    public AggregationTrendChartDisplay getAggregationTrend() {
-        return aggregationTrend;
+    public TrendChartType getTrendChartType() {
+        return trendChartType;
     }
 
     /**
@@ -638,7 +638,7 @@ public class IssuesRecorder extends Recorder {
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
-        publisher.attachAction(aggregationTrend);
+        publisher.attachAction(trendChartType);
     }
 
     /**
@@ -1188,8 +1188,8 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all  aggregation trend chart positions
          */
-        public ListBoxModel doFillAggregationTrendItems() {
-            return model.getAllAggregationTrendChartPositions();
+        public ListBoxModel doFillTrendChartTypeItems() {
+            return model.getAllTrendChartTypes();
         }
     }
 }

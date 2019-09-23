@@ -20,7 +20,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
@@ -77,14 +77,17 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, project)))
                 .hasSize(3).containsExactly(AGGREGATION, ECLIPSE, CHECKSTYLEW);
 
-        HtmlPage top = createAggregationJob(AggregationTrendChartDisplay.TOP);
+        HtmlPage top = createAggregationJob(TrendChartType.AGGREGATION_TOOLS);
         assertThat(getTrends(top)).hasSize(3).containsExactly(AGGREGATION, ECLIPSE, CHECKSTYLEW);
 
-        HtmlPage bottom = createAggregationJob(AggregationTrendChartDisplay.BOTTOM);
+        HtmlPage bottom = createAggregationJob(TrendChartType.TOOLS_AGGREGATION);
         assertThat(getTrends(bottom)).hasSize(3).containsExactly(ECLIPSE, CHECKSTYLEW, AGGREGATION);
 
-        HtmlPage none = createAggregationJob(AggregationTrendChartDisplay.NONE);
-        assertThat(getTrends(none)).hasSize(2).containsExactly(ECLIPSE, CHECKSTYLEW);
+        HtmlPage tools = createAggregationJob(TrendChartType.TOOLS_ONLY);
+        assertThat(getTrends(tools)).hasSize(2).containsExactly(ECLIPSE, CHECKSTYLEW);
+
+        HtmlPage none = createAggregationJob(TrendChartType.NONE);
+        assertThat(getTrends(none)).isEmpty();
     }
 
     /**
@@ -94,9 +97,9 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldShowTrendsAndAggregationPipeline() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
         job.setDefinition(asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
-                "publishIssues issues:[checkstyle], aggregationTrend: 'BOTTOM'",
+                "publishIssues issues:[checkstyle], trendChartType: 'TOOLS_AGGREGATION'",
                 "def eclipse = scanForIssues tool: eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')",
-                "publishIssues issues:[eclipse], aggregationTrend: 'BOTTOM'"
+                "publishIssues issues:[eclipse], trendChartType: 'TOOLS_AGGREGATION'"
         ));
 
         buildSuccessfully(job);
@@ -106,7 +109,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(asStage("recordIssues tools: ["
                         + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
-                        + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], aggregationTrend: 'NONE'"
+                        + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'TOOLS_ONLY'"
         ));
 
         buildSuccessfully(job);
@@ -114,11 +117,21 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, job)))
                 .hasSize(2).containsExactly(CHECKSTYLEW, ECLIPSE);
 
+        job.setDefinition(asStage("recordIssues tools: ["
+                        + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
+                        + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'NONE'"
+        ));
+
+        buildSuccessfully(job);
+        buildSuccessfully(job);
+        assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, job)))
+                .isEmpty();
+
     }
 
-    private HtmlPage createAggregationJob(final AggregationTrendChartDisplay chart) {
+    private HtmlPage createAggregationJob(final TrendChartType chart) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
-        enableWarnings(project, r -> r.setAggregationTrend(chart), new Eclipse(), new CheckStyle());
+        enableWarnings(project, r -> r.setTrendChartType(chart), new Eclipse(), new CheckStyle());
 
         buildWithResult(project, Result.SUCCESS);
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);

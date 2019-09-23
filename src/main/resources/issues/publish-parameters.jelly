@@ -5,8 +5,14 @@
     Provides all required input fields to publish issues.
   </st:documentation>
 
+  <i:hr title="${%Miscellaneous options}"/>
+
   <f:entry title="${%title.failOnError}" description="${%description.failOnError}" field="failOnError">
     <f:checkbox/>
+  </f:entry>
+  <f:entry title="${%title.trendChartType}" description="${%description.trendChartType}"
+           field="trendChartType">
+    <f:select default="AGGREGATION_TOOLS"/>
   </f:entry>
 
   <i:hr title="${%Reference Analysis Results}"/>

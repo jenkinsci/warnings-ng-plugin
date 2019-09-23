@@ -22,6 +22,7 @@ import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
  * Controls the live cycle of the results in a job. This action persists the results of a build and displays them on the
@@ -42,6 +43,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     private final String id;
     private final String name;
     private final String charset;
+    private TrendChartType trendChartType;
 
     /**
      * Creates a new instance of {@link ResultAction}.
@@ -61,12 +63,48 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
             final String id, final String name, final Charset charset) {
+        this(owner, result, healthDescriptor, id, name, charset, TrendChartType.AGGREGATION_TOOLS);
+    }
+
+    /**
+     * Creates a new instance of {@link ResultAction}.
+     *
+     * @param owner
+     *         the associated build/run that created the static analysis result
+     * @param result
+     *         the result of the static analysis run
+     * @param healthDescriptor
+     *         the health descriptor of the static analysis run
+     * @param id
+     *         the ID of the results
+     * @param name
+     *         the optional name of the results
+     * @param charset
+     *         the charset to use to display source files
+     * @param trendChartType
+     *         determines if the trend chart will be shown
+     */
+    public ResultAction(final Run<?, ?> owner, final AnalysisResult result, final HealthDescriptor healthDescriptor,
+            final String id, final String name, final Charset charset, final TrendChartType trendChartType) {
         this.owner = owner;
         this.result = result;
         this.healthDescriptor = healthDescriptor;
         this.id = id;
         this.name = name;
         this.charset = charset.name();
+        this.trendChartType = trendChartType;
+    }
+
+    /**
+     * Called after de-serialization to retain backward compatibility.
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        if (trendChartType == null) {
+            trendChartType = TrendChartType.TOOLS_ONLY;
+        }
+        return this;
     }
 
     /**
@@ -136,8 +174,8 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
     }
 
     /**
-     * Gets the absolute path to the build from the owner.
-     * This is needed for testing due to {@link Run#getAbsoluteUrl()} being final and therefore not mockable.
+     * Gets the absolute path to the build from the owner. This is needed for testing due to {@link
+     * Run#getAbsoluteUrl()} being final and therefore not mockable.
      *
      * @return the absolute url to the job
      */
@@ -155,7 +193,9 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
 
     @Override
     public Collection<? extends Action> getProjectActions() {
-        return Collections.singleton(new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size()));
+        return Collections.singleton(
+                new JobAction(owner.getParent(), getLabelProvider(), result.getSizePerOrigin().size(),
+                        trendChartType));
     }
 
     public AnalysisResult getResult() {

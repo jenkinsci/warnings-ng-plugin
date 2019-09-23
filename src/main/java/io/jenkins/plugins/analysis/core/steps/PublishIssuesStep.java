@@ -28,7 +28,6 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.core.util.AggregationTrendChartDisplay;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
@@ -37,6 +36,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
  * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
@@ -63,7 +63,7 @@ public class PublishIssuesStep extends Step implements Serializable {
 
     private List<QualityGate> qualityGates = new ArrayList<>();
 
-    private AggregationTrendChartDisplay aggregationTrend = AggregationTrendChartDisplay.TOP;
+    private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
     private String id = StringUtils.EMPTY;
     private String name = StringUtils.EMPTY;
@@ -271,18 +271,18 @@ public class PublishIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Sets the type of the aggregation trend chart that should be shown on the job page.
+     * Sets the type of the trend chart that should be shown on the job page.
      *
-     * @param aggregationTrend
+     * @param trendChartType
      *         the type of the trend chart to use
      */
     @DataBoundSetter
-    public void setAggregationTrend(final AggregationTrendChartDisplay aggregationTrend) {
-        this.aggregationTrend = aggregationTrend;
+    public void setTrendChartType(final TrendChartType trendChartType) {
+        this.trendChartType = trendChartType;
     }
 
-    public AggregationTrendChartDisplay getAggregationTrend() {
-        return aggregationTrend;
+    public TrendChartType getTrendChartType() {
+        return trendChartType;
     }
 
     /**
@@ -791,7 +791,7 @@ public class PublishIssuesStep extends Step implements Serializable {
                             step.getMinimumSeverityAsSeverity()), qualityGate,
                     StringUtils.defaultString(step.getName()), step.getReferenceJobName(), step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), statusHandler, step.getFailOnError());
-            return publisher.attachAction(step.getAggregationTrend());
+            return publisher.attachAction(step.getTrendChartType());
         }
 
         private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {
