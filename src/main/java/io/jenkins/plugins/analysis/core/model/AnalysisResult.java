@@ -262,15 +262,15 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         if (totals == null) {
             IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
 
-            builder.setTotalErrorSize(sizePerSeverity.get(Severity.ERROR));
-            builder.setTotalHighSize(sizePerSeverity.get(Severity.WARNING_HIGH));
-            builder.setTotalNormalSize(sizePerSeverity.get(Severity.WARNING_NORMAL));
-            builder.setTotalLowSize(sizePerSeverity.get(Severity.WARNING_LOW));
+            builder.setTotalErrorSize(sizePerSeverity.getOrDefault(Severity.ERROR, 0));
+            builder.setTotalHighSize(sizePerSeverity.getOrDefault(Severity.WARNING_HIGH, 0));
+            builder.setTotalNormalSize(sizePerSeverity.getOrDefault(Severity.WARNING_NORMAL, 0));
+            builder.setTotalLowSize(sizePerSeverity.getOrDefault(Severity.WARNING_LOW, 0));
 
-            builder.setNewErrorSize(newSizePerSeverity.get(Severity.ERROR));
-            builder.setNewHighSize(newSizePerSeverity.get(Severity.WARNING_HIGH));
-            builder.setNewNormalSize(newSizePerSeverity.get(Severity.WARNING_NORMAL));
-            builder.setNewLowSize(newSizePerSeverity.get(Severity.WARNING_LOW));
+            builder.setNewErrorSize(newSizePerSeverity.getOrDefault(Severity.ERROR, 0));
+            builder.setNewHighSize(newSizePerSeverity.getOrDefault(Severity.WARNING_HIGH, 0));
+            builder.setNewNormalSize(newSizePerSeverity.getOrDefault(Severity.WARNING_NORMAL, 0));
+            builder.setNewLowSize(newSizePerSeverity.getOrDefault(Severity.WARNING_LOW, 0));
 
             builder.setFixedSize(fixedSize);
             totals = builder.build();
@@ -699,7 +699,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Deprecated
     @SuppressWarnings({"DeprecatedIsStillUsed", "MismatchedQueryAndUpdateOfCollection"})
-    private final transient Map<Severity, Integer> sizePerSeverity = new HashMap<>();
+    private Map<Severity, Integer> sizePerSeverity = new HashMap<>();
     /**
      * Old serialization item.
      *
@@ -707,7 +707,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Deprecated
     @SuppressWarnings({"DeprecatedIsStillUsed", "MismatchedQueryAndUpdateOfCollection"})
-    private final transient Map<Severity, Integer> newSizePerSeverity = new HashMap<>();
+    private Map<Severity, Integer> newSizePerSeverity = new HashMap<>();
 
     /**
      * Properties of a Jenkins {@link Run} that contains an {@link AnalysisResult}.
