@@ -232,7 +232,7 @@ public class IssuesStatistics implements Serializable {
         DELTA_NORMAL(Messages._Statistics_Delta_Normal(), IssuesStatistics::getDeltaNormalSize),
         DELTA_LOW(Messages._Statistics_Delta_Low(), IssuesStatistics::getDeltaLowSize),
 
-        FIXED(Messages._Statistics_Delta_Low(), IssuesStatistics::getFixedSize);
+        FIXED(Messages._Statistics_Fixed(), IssuesStatistics::getFixedSize);
 
         private final Localizable displayName;
         private final Function<IssuesStatistics, Integer> sizeGetter;
