@@ -40,7 +40,7 @@ class QualityGateEvaluatorTest {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
 
         qualityGate.add(1, QualityGateType.DELTA, QualityGateResult.UNSTABLE);
-        assertThat(qualityGate.evaluate(builder.setDeltaSize(-1).build(), logger)).isEqualTo(QualityGateStatus.PASSED);
+        assertThat(qualityGate.evaluate(builder.setDeltaErrorSize(-1).build(), logger)).isEqualTo(QualityGateStatus.PASSED);
         assertThat(logger.getMessages()).containsExactly(
                 "-> PASSED - " + QualityGateType.DELTA.getDisplayName() + ": -1 - Quality QualityGate: 1");
     }
@@ -70,19 +70,19 @@ class QualityGateEvaluatorTest {
     void shouldEvaluateAllProperties() {
         IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
 
-        evaluateQualityGateFor(builder, builder::setTotalSize, QualityGateType.TOTAL);
+        evaluateQualityGateFor(builder, builder::setTotalNormalSize, QualityGateType.TOTAL);
         evaluateQualityGateFor(builder, builder::setTotalErrorSize, QualityGateType.TOTAL_ERROR);
         evaluateQualityGateFor(builder, builder::setTotalHighSize, QualityGateType.TOTAL_HIGH);
         evaluateQualityGateFor(builder, builder::setTotalNormalSize, QualityGateType.TOTAL_NORMAL);
         evaluateQualityGateFor(builder, builder::setTotalLowSize, QualityGateType.TOTAL_LOW);
 
-        evaluateQualityGateFor(builder, builder::setDeltaSize, QualityGateType.DELTA);
+        evaluateQualityGateFor(builder, builder::setDeltaNormalSize, QualityGateType.DELTA);
         evaluateQualityGateFor(builder, builder::setDeltaErrorSize, QualityGateType.DELTA_ERROR);
         evaluateQualityGateFor(builder, builder::setDeltaHighSize, QualityGateType.DELTA_HIGH);
         evaluateQualityGateFor(builder, builder::setDeltaNormalSize, QualityGateType.DELTA_NORMAL);
         evaluateQualityGateFor(builder, builder::setDeltaLowSize, QualityGateType.DELTA_LOW);
 
-        evaluateQualityGateFor(builder, builder::setNewSize, QualityGateType.NEW);
+        evaluateQualityGateFor(builder, builder::setNewNormalSize, QualityGateType.NEW);
         evaluateQualityGateFor(builder, builder::setNewErrorSize, QualityGateType.NEW_ERROR);
         evaluateQualityGateFor(builder, builder::setNewHighSize, QualityGateType.NEW_HIGH);
         evaluateQualityGateFor(builder, builder::setNewNormalSize, QualityGateType.NEW_NORMAL);
@@ -120,13 +120,13 @@ class QualityGateEvaluatorTest {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
 
         qualityGate.add(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
-        assertThat(qualityGate.evaluate(builder.setTotalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
+        assertThat(qualityGate.evaluate(builder.setTotalNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
         assertThat(logger.getMessages()).containsExactly(
                 "-> WARNING - " + QualityGateType.TOTAL.getDisplayName() + ": 1 - Quality QualityGate: 1");
 
         logger.clear();
         qualityGate.add(1, QualityGateType.NEW, QualityGateResult.UNSTABLE);
-        assertThat(qualityGate.evaluate(builder.setNewSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
+        assertThat(qualityGate.evaluate(builder.setNewNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
         assertThat(logger.getMessages()).containsExactly(
                 "-> WARNING - " + QualityGateType.TOTAL.getDisplayName() + ": 1 - Quality QualityGate: 1",
                 "-> WARNING - " + QualityGateType.NEW.getDisplayName() + ": 1 - Quality QualityGate: 1");
@@ -142,13 +142,13 @@ class QualityGateEvaluatorTest {
 
         qualityGate.add(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
         qualityGate.add(2, QualityGateType.TOTAL, QualityGateResult.FAILURE);
-        assertThat(qualityGate.evaluate(builder.setTotalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
+        assertThat(qualityGate.evaluate(builder.setTotalNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
         assertThat(logger.getMessages()).containsExactly(
                 "-> WARNING - " + QualityGateType.TOTAL.getDisplayName() + ": 1 - Quality QualityGate: 1",
                 "-> PASSED - " + QualityGateType.TOTAL.getDisplayName() + ": 1 - Quality QualityGate: 2");
 
         logger.clear();
-        assertThat(qualityGate.evaluate(builder.setTotalSize(2).build(), logger)).isEqualTo(QualityGateStatus.FAILED);
+        assertThat(qualityGate.evaluate(builder.setTotalNormalSize(2).build(), logger)).isEqualTo(QualityGateStatus.FAILED);
         assertThat(logger.getMessages()).containsExactly(
                 "-> WARNING - " + QualityGateType.TOTAL.getDisplayName() + ": 2 - Quality QualityGate: 1",
                 "-> FAILED - " + QualityGateType.TOTAL.getDisplayName() + ": 2 - Quality QualityGate: 2");
@@ -157,8 +157,8 @@ class QualityGateEvaluatorTest {
 
         other.add(2, QualityGateType.TOTAL, QualityGateResult.FAILURE);
         other.add(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
-        assertThat(other.evaluate(builder.setTotalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
-        assertThat(other.evaluate(builder.setTotalSize(2).build(), logger)).isEqualTo(QualityGateStatus.FAILED);
+        assertThat(other.evaluate(builder.setTotalNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
+        assertThat(other.evaluate(builder.setTotalNormalSize(2).build(), logger)).isEqualTo(QualityGateStatus.FAILED);
     }
 
     /**

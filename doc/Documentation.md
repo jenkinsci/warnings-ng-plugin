@@ -577,6 +577,16 @@ This library provides syntax highlighting for the most popular languages and ren
 
 ![source view](images/source-view.png)
 
+### Issues Total Column
+
+You can show the total number of issues of a job in separate columns of the Jenkins jobs table. By default, the Jenkins
+main list view will show a new column that counts the total number of issues of all tools. You can add additional columns
+that can configure
+- the column name 
+- the actual tools that should be taken into account
+- the type of the totals to show (overall warnings, new warnings, specific severitz, etc.)
+
+
 ### Dashboard view support
 
 Support for Jenkins [dashboard view](https://wiki.jenkins.io/display/JENKINS/Dashboard+View) is quite limited up to now.

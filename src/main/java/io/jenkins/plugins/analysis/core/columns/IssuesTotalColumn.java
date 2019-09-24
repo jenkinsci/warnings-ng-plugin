@@ -29,7 +29,6 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
-import io.jenkins.plugins.analysis.core.util.ModelValidation;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
@@ -226,8 +225,6 @@ public class IssuesTotalColumn extends ListViewColumn {
      */
     @Extension(optional = true)
     public static class IssuesTablePortletDescriptor extends ListViewColumnDescriptor {
-        private final ModelValidation modelValidation = new ModelValidation();
-
         @NonNull
         @Override
         public String getDisplayName() {
