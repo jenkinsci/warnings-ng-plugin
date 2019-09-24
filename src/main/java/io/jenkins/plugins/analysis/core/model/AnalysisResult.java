@@ -699,7 +699,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Deprecated
     @SuppressWarnings({"DeprecatedIsStillUsed", "MismatchedQueryAndUpdateOfCollection"})
-    private Map<Severity, Integer> sizePerSeverity = new HashMap<>();
+    private final Map<Severity, Integer> sizePerSeverity = new HashMap<>();
     /**
      * Old serialization item.
      *
@@ -707,7 +707,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Deprecated
     @SuppressWarnings({"DeprecatedIsStillUsed", "MismatchedQueryAndUpdateOfCollection"})
-    private Map<Severity, Integer> newSizePerSeverity = new HashMap<>();
+    private final Map<Severity, Integer> newSizePerSeverity = new HashMap<>();
 
     /**
      * Properties of a Jenkins {@link Run} that contains an {@link AnalysisResult}.
