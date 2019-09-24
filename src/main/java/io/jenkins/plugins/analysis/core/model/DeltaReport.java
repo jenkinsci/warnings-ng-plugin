@@ -136,6 +136,7 @@ public class DeltaReport {
                 .setNewHighSize(newIssues.getSizeOf(WARNING_HIGH))
                 .setNewNormalSize(newIssues.getSizeOf(WARNING_NORMAL))
                 .setNewLowSize(newIssues.getSizeOf(WARNING_LOW));
+        builder.setFixedSize(fixedIssues.size());
         if (!referenceBuildId.isEmpty()) {
             builder.setDeltaErrorSize(allIssues.getSizeOf(ERROR) - referenceIssues.getSizeOf(ERROR))
                     .setDeltaHighSize(allIssues.getSizeOf(WARNING_HIGH) - referenceIssues.getSizeOf(WARNING_HIGH))

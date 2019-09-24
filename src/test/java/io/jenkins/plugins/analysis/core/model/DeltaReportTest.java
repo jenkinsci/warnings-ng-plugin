@@ -102,6 +102,7 @@ class DeltaReportTest {
                 .setNewNormalSize(1)
                 .setNewErrorSize(1)
                 .setDeltaErrorSize(1)
+                .setFixedSize(1)
                 .build();
 
         DeltaReport deltaReport = new DeltaReport(report, history, 0);

@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -39,8 +40,8 @@ public class IssuesStatistics implements Serializable {
 
     private final int fixedSize;
 
-    private final Map<Severity, Integer> totalSizeBySeverity = Maps.mutable.empty();
-    private final Map<Severity, Integer> newSizeBySeverity = Maps.mutable.empty();
+    private final Map<Severity, Integer> totalSizeBySeverity = new HashMap<>();
+    private final Map<Severity, Integer> newSizeBySeverity = new HashMap<>();
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesStatistics(

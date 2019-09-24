@@ -19,7 +19,6 @@ import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Tag;
@@ -371,6 +370,16 @@ public abstract class IntegrationTest extends ResourceTest {
         copySingleFileToWorkspace(workspace, from, to);
     }
 
+    /**
+     * Returns the agent workspace of a job.
+     *
+     * @param agent
+     *         the agent
+     * @param job
+     *         the job
+     *
+     * @return path to the workspace
+     */
     protected FilePath getAgentWorkspace(final Slave agent, final TopLevelItem job) {
         FilePath workspace = agent.getWorkspaceFor(job);
         assertThat(workspace).isNotNull();
@@ -1274,7 +1283,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected String getConsoleLog(final AnalysisResult result) {
         try {
-            return FileUtils.readFileToString(result.getOwner().getLogFile(), StandardCharsets.UTF_8);
+            return JenkinsRule.getLog(result.getOwner());
         }
         catch (IOException e) {
             throw new AssertionError(e);

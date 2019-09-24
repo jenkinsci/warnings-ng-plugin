@@ -73,15 +73,28 @@ public final class JobStubs {
      *
      * @return the job stub
      */
-    public static Job createJobWithActions(final ResultAction... actions) {
+    public static Job<?, ?> createJobWithActions(final ResultAction... actions) {
+        @SuppressWarnings("rawtypes")
         Job job = mock(Job.class);
 
-        Run<?, ?> build = mock(Run.class);
-        when(build.getActions(ResultAction.class)).thenReturn(Lists.fixedSize.of(actions));
-
+        Run<?, ?> build = createBuildWithActions(actions);
         when(job.getLastCompletedBuild()).thenReturn(build);
 
         return job;
+    }
+
+    /**
+     * Creates a stub for a {@link Run} that has the specified actions attached.
+     *
+     * @param actions
+     *         the actions to attach, might be empty
+     *
+     * @return the run stub
+     */
+    public static Run<?, ?> createBuildWithActions(final ResultAction... actions) {
+        Run<?, ?> build = mock(Run.class);
+        when(build.getActions(ResultAction.class)).thenReturn(Lists.fixedSize.of(actions));
+        return build;
     }
 
     /**

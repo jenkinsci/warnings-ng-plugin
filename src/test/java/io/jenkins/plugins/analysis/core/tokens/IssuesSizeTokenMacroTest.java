@@ -1,17 +1,13 @@
 package io.jenkins.plugins.analysis.core.tokens;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import hudson.model.Run;
 
-import hudson.model.AbstractBuild;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
+
+import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests the class {@link IssuesSizeTokenMacro}.
@@ -23,73 +19,71 @@ class IssuesSizeTokenMacroTest {
     void shouldReturnZeroIfNoActionPresent() {
         IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
 
-        AbstractBuild<?, ?> run = createBuildWithNoActions();
-        assertThat(macro.evaluate(run, null, null)).isEqualTo("0");
+        Run<?, ?> run = createBuildWithActions();
+        assertThat(expandMacro(macro, run)).isEqualTo("0");
 
         macro.setTool("id");
-        assertThat(macro.evaluate(run, null, null)).isEqualTo("0");
-    }
-
-    private AbstractBuild<?, ?> createBuildWithNoActions() {
-        AbstractBuild<?, ?> run = mock(AbstractBuild.class);
-        when(run.getActions(ResultAction.class)).thenReturn(Collections.emptyList());
-        return run;
+        assertThat(expandMacro(macro, run)).isEqualTo("0");
     }
 
     @Test
     void shouldExpandTokenOfSingleAction() {
         IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
 
-        AbstractBuild<?, ?> run = createBuildWithOneAction();
-        assertThat(macro.evaluate(run, null, null)).isEqualTo("1");
+        Run<?, ?> run = createBuildWithActions(createAction("id", "name", 1));
+        assertThat(expandMacro(macro, run)).isEqualTo("1");
 
         macro.setTool("id");
-        assertThat(macro.evaluate(run, null, null)).isEqualTo("1");
+        assertThat(expandMacro(macro, run)).isEqualTo("1");
         
         macro.setTool("other");
-        assertThat(macro.evaluate(run, null, null)).isEqualTo("0");
+        assertThat(expandMacro(macro, run)).isEqualTo("0");
     }
 
     @Test
     void shouldExpandTokenOfTwoActions() {
         IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
 
-        AbstractBuild<?, ?> run = createBuildWithTwoActions();
-        assertThat(macro.evaluate(run, null, null)).isEqualTo("3");
+        Run<?, ?> run = createBuildWithActions(
+                createAction("first", "first name", 1),
+                createAction("second", "second name", 2));
+        assertThat(expandMacro(macro, run)).isEqualTo("3");
 
         macro.setTool("first");
-        assertThat(macro.evaluate(run, null, null)).isEqualTo("1");
+        assertThat(expandMacro(macro, run)).isEqualTo("1");
         
         macro.setTool("second");
-        assertThat(macro.evaluate(run, null, null)).isEqualTo("2");
+        assertThat(expandMacro(macro, run)).isEqualTo("2");
         
         macro.setTool("other");
-        assertThat(macro.evaluate(run, null, null)).isEqualTo("0");
+        assertThat(expandMacro(macro, run)).isEqualTo("0");
     }
 
-    private AbstractBuild<?, ?> createBuildWithTwoActions() {
-        AbstractBuild<?, ?> run = mock(AbstractBuild.class);
-        List<ResultAction> actions = new ArrayList<>();
-        actions.add(createActionWithResult("first", 1));
-        actions.add(createActionWithResult("second", 2));
-        when(run.getActions(ResultAction.class)).thenReturn(actions);
-        return run;
+    @Test
+    void shouldExpandTokenForNewAndFixedWarnings() {
+        IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
+
+        Run<?, ?> run = createBuildWithActions(
+                createAction("id", "name", 3, 2, 1));
+
+        assertThat(expandMacro(macro, run)).isEqualTo("3");
+
+        macro.setType(StatisticProperties.NEW.name());
+        assertThat(expandMacro(macro, run)).isEqualTo("2");
+
+        macro.setType(StatisticProperties.FIXED.name());
+        assertThat(expandMacro(macro, run)).isEqualTo("1");
     }
 
-    private AbstractBuild<?, ?> createBuildWithOneAction() {
-        AbstractBuild<?, ?> run = mock(AbstractBuild.class);
-        ResultAction action = createActionWithResult("id", 1);
-        when(run.getActions(ResultAction.class)).thenReturn(Collections.singletonList(action));
-        return run;
+    @Test
+    void shouldThrowExceptionIfEnumDoesNotExist() {
+        IssuesSizeTokenMacro macro = new IssuesSizeTokenMacro();
+
+        assertThatIllegalArgumentException().isThrownBy(
+                () -> macro.setType("wrong")).withMessageContaining("wrong");
     }
 
-    private ResultAction createActionWithResult(final String id, final int issuesCount) {
-        ResultAction action = mock(ResultAction.class);
-        when(action.getId()).thenReturn(id);
-
-        AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getTotalSize()).thenReturn(issuesCount);
-        when(action.getResult()).thenReturn(result);
-        return action;
+    private String expandMacro(final IssuesSizeTokenMacro macro, final Run<?, ?> run) {
+        return macro.evaluate(run, null, null, null);
     }
 }
