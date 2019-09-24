@@ -27,6 +27,7 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  *
  * @author Andreas Reiser
  */
+// TODO: add tests that create a new column
 public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JAVAC_ONE_WARNING = "javac_1_warning.txt";
     private static final String JAVAC_PYTHON_WARNINGS = "javac_python_3_issues.txt";

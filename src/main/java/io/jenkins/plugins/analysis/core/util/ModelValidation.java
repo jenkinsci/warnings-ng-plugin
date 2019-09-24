@@ -20,8 +20,6 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
-
 /**
  * Validates all properties of a configuration of a static analysis tool in a job.
  *
@@ -46,21 +44,6 @@ public class ModelValidation {
         super();
 
         this.jenkins = jenkins;
-    }
-
-    /**
-     * Returns a model for the {@link QualityGateType} enumeration.
-     *
-     * @return the quality gate types
-     */
-    public ListBoxModel getAllSizeProperties() {
-        ListBoxModel model = new ListBoxModel();
-
-        for (QualityGateType qualityGateType : QualityGateType.values()) {
-            model.add(qualityGateType.getDisplayName(), qualityGateType.name());
-        }
-
-        return model;
     }
 
     /**

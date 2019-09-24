@@ -46,7 +46,7 @@ import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
-@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass"})
+@SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassFanOutComplexity"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final long serialVersionUID = 1110545450292087475L;
 
@@ -699,7 +699,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Deprecated
     @SuppressWarnings({"DeprecatedIsStillUsed", "MismatchedQueryAndUpdateOfCollection"})
-    private transient Map<Severity, Integer> sizePerSeverity = new HashMap<>();
+    private final transient Map<Severity, Integer> sizePerSeverity = new HashMap<>();
     /**
      * Old serialization item.
      *
@@ -707,7 +707,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      */
     @Deprecated
     @SuppressWarnings({"DeprecatedIsStillUsed", "MismatchedQueryAndUpdateOfCollection"})
-    private transient Map<Severity, Integer> newSizePerSeverity = new HashMap<>();
+    private final transient Map<Severity, Integer> newSizePerSeverity = new HashMap<>();
 
     /**
      * Properties of a Jenkins {@link Run} that contains an {@link AnalysisResult}.

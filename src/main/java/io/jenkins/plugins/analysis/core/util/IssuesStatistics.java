@@ -18,6 +18,7 @@ import org.jvnet.localizer.Localizable;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.TooManyFields")
 public class IssuesStatistics implements Serializable {
     private static final long serialVersionUID = 2885481384170602793L;
 
@@ -141,6 +142,14 @@ public class IssuesStatistics implements Serializable {
         return Maps.immutable.ofMap(totalSizeBySeverity);
     }
 
+    /**
+     * Returns the total number of issues that have the specified {@link Severity}.
+     *
+     * @param severity
+     *         the severity of the issues to match
+     *
+     * @return total number of issues
+     */
     public int getTotalSizeOf(final Severity severity) {
         validateSeverity(severity);
 
@@ -151,6 +160,14 @@ public class IssuesStatistics implements Serializable {
         return Maps.immutable.ofMap(newSizeBySeverity);
     }
 
+    /**
+     * Returns the total number of new issues that have the specified {@link Severity}.
+     *
+     * @param severity
+     *         the severity of the issues to match
+     *
+     * @return total number of issues
+     */
     public int getNewSizeOf(final Severity severity) {
         validateSeverity(severity);
 

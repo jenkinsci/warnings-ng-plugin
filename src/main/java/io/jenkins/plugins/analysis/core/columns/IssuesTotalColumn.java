@@ -240,7 +240,13 @@ public class IssuesTotalColumn extends ListViewColumn {
          * @return the quality gate types
          */
         public ListBoxModel doFillTypeItems() {
-            return modelValidation.getAllSizeProperties();
+            ListBoxModel model = new ListBoxModel();
+
+            for (StatisticProperties qualityGateType : StatisticProperties.values()) {
+                model.add(qualityGateType.getDisplayName(), qualityGateType.name());
+            }
+
+            return model;
         }
     }
 

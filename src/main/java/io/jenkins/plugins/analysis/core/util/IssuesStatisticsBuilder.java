@@ -22,7 +22,7 @@ public class IssuesStatisticsBuilder {
     private int deltaLowSize;
     private int fixedSize;
 
-     public IssuesStatisticsBuilder setTotalErrorSize(final int totalErrorSize) {
+    public IssuesStatisticsBuilder setTotalErrorSize(final int totalErrorSize) {
         this.totalErrorSize = totalErrorSize;
         return this;
     }
@@ -115,7 +115,7 @@ public class IssuesStatisticsBuilder {
     }
 
     /**
-     * Computed automatically.
+     * Computed automatically since 6.1.0.
      *
      * @param unused
      *         not used
@@ -129,7 +129,7 @@ public class IssuesStatisticsBuilder {
     }
 
     /**
-     * Computed automatically.
+     * Computed automatically since 6.1.0.
      *
      * @param unused
      *         not used
@@ -143,7 +143,7 @@ public class IssuesStatisticsBuilder {
     }
 
     /**
-     * Computed automatically.
+     * Computed automatically since 6.1.0.
      *
      * @param unused
      *         not used

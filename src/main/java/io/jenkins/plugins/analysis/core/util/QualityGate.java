@@ -22,9 +22,9 @@ import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticPropertie
 import static io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult.*;
 
 /**
- * Defines a quality gate based on a specific threshold of issues (total, new, delta) in the current build. After a build has
- * been finished, a set of {@link QualityGate quality gates} will be evaluated and the overall quality gate status will
- * be reported in Jenkins UI.
+ * Defines a quality gate based on a specific threshold of issues (total, new, delta) in the current build. After a
+ * build has been finished, a set of {@link QualityGate quality gates} will be evaluated and the overall quality gate
+ * status will be reported in Jenkins UI.
  *
  * @author Ullrich Hafner
  */
@@ -130,7 +130,6 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
     public QualityGateResult getResult() {
         return status == QualityGateStatus.WARNING ? UNSTABLE : FAILURE;
     }
-
 
     @Override
     public boolean equals(final Object o) {
@@ -305,7 +304,13 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          * @return the quality gate types
          */
         public ListBoxModel doFillTypeItems() {
-           return modelValidation.getAllSizeProperties();
+            ListBoxModel model = new ListBoxModel();
+
+            for (QualityGateType qualityGateType : QualityGateType.values()) {
+                model.add(qualityGateType.getDisplayName(), qualityGateType.name());
+            }
+
+            return model;
         }
 
         /**
