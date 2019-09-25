@@ -27,6 +27,7 @@ skinparam component {
 [Steps] ---> [Filter]
 
 [Tokens] --> [Model]
+[Tokens] --> [Utilities]
 
 [Portlets] --> [Model]
 [Portlets] --> [Utilities]
