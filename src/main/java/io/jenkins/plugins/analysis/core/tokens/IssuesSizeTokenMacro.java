@@ -61,7 +61,7 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
 
     private String extractSelectedTotals(final Run<?, ?> run) {
         return String.valueOf(run.getActions(ResultAction.class).stream()
-                .filter(createToolFilter(run))
+                .filter(createToolFilter())
                 .map(ResultAction::getResult)
                 .map(AnalysisResult::getTotals)
                 .mapToInt(totals -> type.getSizeGetter().apply(totals))
@@ -69,7 +69,7 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
                 .orElse(0));
     }
 
-    private Predicate<ResultAction> createToolFilter(final Run<?, ?> run) {
+    private Predicate<ResultAction> createToolFilter() {
         if (StringUtils.isBlank(tool)) {
             return jobAction -> true;
         }
