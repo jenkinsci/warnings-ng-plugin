@@ -27,6 +27,7 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  *
  * @author Andreas Reiser
  */
+// TODO: add tests that create a new column
 public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JAVAC_ONE_WARNING = "javac_1_warning.txt";
     private static final String JAVAC_PYTHON_WARNINGS = "javac_python_3_issues.txt";
@@ -42,7 +43,7 @@ public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowIssueCounterEqualToOne() {
-        createAndBuildProjectWithFile(JAVAC_ONE_WARNING);
+        buildWithFile(JAVAC_ONE_WARNING);
 
         assertThat(getIssueCount(getRootPage())).isEqualTo(1);
     }
@@ -67,7 +68,7 @@ public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowIssueCounterEqualToSum() {
-        createAndBuildProjectWithFile(JAVAC_PYTHON_WARNINGS);
+        buildWithFile(JAVAC_PYTHON_WARNINGS);
 
         HtmlPage rootPage = getRootPage();
 
@@ -101,7 +102,7 @@ public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getIssueString(getRootPage())).isEqualTo(DASH);
     }
 
-    private FreeStyleProject createAndBuildProjectWithFile(final String fileName) {
+    private void buildWithFile(final String fileName) {
         FreeStyleProject project = createFreeStyleProject();
 
         Java javaAnalysis = new Java();
@@ -114,8 +115,6 @@ public class IssuesTotalColumnITest extends IntegrationTestWithJenkinsPerSuite {
         enableWarnings(project, javaAnalysis, pyLint);
 
         buildSuccessfully(project);
-
-        return project;
     }
 
     private HtmlPage getRootPage() {

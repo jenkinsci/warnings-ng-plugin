@@ -123,24 +123,22 @@ public class DeltaReport {
 
     /**
      * Returns statistics about the number of issues (total, new, delta).
-     * 
+     *
      * @return the issues statistics
      */
     public IssuesStatistics getStatistics() {
         IssuesStatisticsBuilder builder = new IssuesStatisticsBuilder();
-        builder.setTotalSize(allIssues.size())
-                .setTotalErrorSize(allIssues.getSizeOf(ERROR))
+        builder.setTotalErrorSize(allIssues.getSizeOf(ERROR))
                 .setTotalHighSize(allIssues.getSizeOf(WARNING_HIGH))
                 .setTotalNormalSize(allIssues.getSizeOf(WARNING_NORMAL))
                 .setTotalLowSize(allIssues.getSizeOf(WARNING_LOW));
-        builder.setNewSize(newIssues.size())
-                .setNewErrorSize(newIssues.getSizeOf(ERROR))
+        builder.setNewErrorSize(newIssues.getSizeOf(ERROR))
                 .setNewHighSize(newIssues.getSizeOf(WARNING_HIGH))
                 .setNewNormalSize(newIssues.getSizeOf(WARNING_NORMAL))
                 .setNewLowSize(newIssues.getSizeOf(WARNING_LOW));
+        builder.setFixedSize(fixedIssues.size());
         if (!referenceBuildId.isEmpty()) {
-            builder.setDeltaSize(allIssues.size() - referenceIssues.size())
-                    .setDeltaErrorSize(allIssues.getSizeOf(ERROR) - referenceIssues.getSizeOf(ERROR))
+            builder.setDeltaErrorSize(allIssues.getSizeOf(ERROR) - referenceIssues.getSizeOf(ERROR))
                     .setDeltaHighSize(allIssues.getSizeOf(WARNING_HIGH) - referenceIssues.getSizeOf(WARNING_HIGH))
                     .setDeltaNormalSize(allIssues.getSizeOf(WARNING_NORMAL) - referenceIssues.getSizeOf(WARNING_NORMAL))
                     .setDeltaLowSize(allIssues.getSizeOf(WARNING_LOW) - referenceIssues.getSizeOf(WARNING_LOW));

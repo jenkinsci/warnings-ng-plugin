@@ -61,6 +61,7 @@ main build page. From there you can also dive into the details:
      * [Source code blames (for Git projects)](#source-code-blames-for-git-projects)
      * [Repository forensics (for Git projects)](#repository-forensics-for-git-projects)
      * [Source code view](#source-code-view)
+     * [Issues Totals Column](#issues-totals-column)
      * [Dashboard view support](#dashboard-view-support)
      * [Configuration as code support](#configuration-as-code-support)
      * [Remote API](#remote-api)
@@ -577,16 +578,33 @@ This library provides syntax highlighting for the most popular languages and ren
 
 ![source view](images/source-view.png)
 
+### Issues Totals Column
+
+You can show the total number of issues of a job in separate columns of the Jenkins jobs table. By default, the Jenkins
+main list view will show a new column that counts the total number of issues of all tools. You can add additional columns
+that can configure
+- the column name 
+- the actual tools that should be taken into account
+- the type of the totals to show (overall warnings, new warnings, specific severity, etc.).
+
+![issues column](images/column.png)
+
 ### Dashboard view support
 
-Support for Jenkins [dashboard view](https://wiki.jenkins.io/display/JENKINS/Dashboard+View) is quite limited up to now.
-Currently, only one portlet is available, that shows the number of issues for a job (separated by each tool). Moreover,
-the visualization is quite ugly, since it is more complex to use modern JS libraries on pages that are not under control
-of the warnings plugin.
- 
-The remaining portlets from the old static analysis collector plugin will be added step by step.
+Support for Jenkins [dashboard view](https://wiki.jenkins.io/display/JENKINS/Dashboard+View) is also available.
+Currently, the following portlets are available:
 
+#### Issues per tool and job table
+
+An issues table shows the total number of issues for a job (separated by each tool). 
+ 
 ![issues portlet](images/issues-portlet.png)
+
+#### Issues trend
+
+A trend chart can be added as portlet that shows an aggregation of the total number of issues of all jobs.
+
+![chart portlet](images/chart-portlet.png)
 
 ### Configuration as code support
 

@@ -11,6 +11,7 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
+import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 
 import static org.mockito.Mockito.*;
 
@@ -72,15 +73,28 @@ public final class JobStubs {
      *
      * @return the job stub
      */
-    public static Job createJobWithActions(final ResultAction... actions) {
+    public static Job<?, ?> createJobWithActions(final ResultAction... actions) {
+        @SuppressWarnings("rawtypes")
         Job job = mock(Job.class);
 
-        Run<?, ?> build = mock(Run.class);
-        when(build.getActions(ResultAction.class)).thenReturn(Lists.fixedSize.of(actions));
-
+        Run<?, ?> build = createBuildWithActions(actions);
         when(job.getLastCompletedBuild()).thenReturn(build);
 
         return job;
+    }
+
+    /**
+     * Creates a stub for a {@link Run} that has the specified actions attached.
+     *
+     * @param actions
+     *         the actions to attach, might be empty
+     *
+     * @return the run stub
+     */
+    public static Run<?, ?> createBuildWithActions(final ResultAction... actions) {
+        Run<?, ?> build = mock(Run.class);
+        when(build.getActions(ResultAction.class)).thenReturn(Lists.fixedSize.of(actions));
+        return build;
     }
 
     /**
@@ -90,13 +104,13 @@ public final class JobStubs {
      *         the ID of the static analysis tool
      * @param name
      *         the name of the static analysis tool
-     * @param size
+     * @param totalSize
      *         the total number of issues for the tool
      *
      * @return the {@link Job} stub
      */
-    public static Job<?, ?> createJob(final String id, final String name, final int size) {
-        return createJobWithActions(createAction(size, id, name));
+    public static Job<?, ?> createJob(final String id, final String name, final int totalSize) {
+        return createJobWithActions(createAction(id, name, totalSize));
     }
 
     /**
@@ -106,17 +120,61 @@ public final class JobStubs {
      *         the ID of the static analysis tool
      * @param name
      *         the name of the static analysis tool
-     * @param size
+     * @param totalSize
+     *         the total number of issues for the tool
+     * @param newSize
+     *         the total number of new issues for the tool
+     * @param fixedSize
+     *         the total number of fixed issues for the tool
+     *
+     * @return the {@link ResultAction} stub
+     */
+    public static ResultAction createAction(final String id, final String name,
+            final int totalSize, final int newSize, final int fixedSize) {
+        AnalysisResult result = mock(AnalysisResult.class);
+        when(result.getTotalSize()).thenReturn(totalSize);
+        when(result.getNewSize()).thenReturn(newSize);
+        when(result.getFixedSize()).thenReturn(fixedSize);
+        when(result.getTotals()).thenReturn(
+                new IssuesStatisticsBuilder()
+                        .setTotalNormalSize(totalSize)
+                        .setNewNormalSize(newSize)
+                        .setFixedSize(fixedSize)
+                        .build());
+
+        return createAction(id, name, result);
+    }
+
+    /**
+     * Creates a stub for a static analysis {@link ResultAction}.
+     *
+     * @param id
+     *         the ID of the static analysis tool
+     * @param name
+     *         the name of the static analysis tool
+     * @param totalSize
      *         the total number of issues for the tool
      *
      * @return the {@link ResultAction} stub
      */
-    public static ResultAction createAction(final int size, final String id, final String name) {
+    public static ResultAction createAction(final String id, final String name, final int totalSize) {
+        return createAction(id, name, totalSize, 0, 0);
+    }
+
+    /**
+     * Creates a stub for a static analysis {@link ResultAction}.
+     *
+     * @param id
+     *         the ID of the static analysis tool
+     * @param name
+     *         name of the static analysis tool
+     * @param result
+     *         the result to attach
+     *
+     * @return the {@link ResultAction} stub
+     */
+    public static ResultAction createAction(final String id, final String name, final AnalysisResult result) {
         ResultAction resultAction = mock(ResultAction.class);
-
-        AnalysisResult result = mock(AnalysisResult.class);
-        when(result.getTotalSize()).thenReturn(size);
-
         when(resultAction.getResult()).thenReturn(result);
         when(resultAction.getId()).thenReturn(id);
         when(resultAction.getName()).thenReturn(name);

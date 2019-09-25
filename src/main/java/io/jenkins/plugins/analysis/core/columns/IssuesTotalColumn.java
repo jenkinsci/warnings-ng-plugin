@@ -19,6 +19,7 @@ import org.kohsuke.stapler.DataBoundSetter;
 import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.Run;
+import hudson.util.ListBoxModel;
 import hudson.views.ListViewColumn;
 import hudson.views.ListViewColumnDescriptor;
 
@@ -27,6 +28,7 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
@@ -44,6 +46,7 @@ public class IssuesTotalColumn extends ListViewColumn {
     private String name = "# Issues";
 
     private LabelProviderFactory labelProviderFactory = new LabelProviderFactory();
+    private StatisticProperties type = StatisticProperties.TOTAL;
 
     /** Creates a new instance of {@link ToolSelection}. */
     @DataBoundConstructor
@@ -52,7 +55,18 @@ public class IssuesTotalColumn extends ListViewColumn {
         // empty constructor required for stapler
     }
 
-    @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
+    /**
+     * Called after de-serialization to retain backward compatibility..
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        type = StatisticProperties.TOTAL;
+
+        return this;
+    }
+
+    @SuppressWarnings({"unused", "PMD.BooleanGetMethodName", "WeakerAccess"}) // called by Stapler
     public boolean getSelectTools() {
         return selectTools;
     }
@@ -74,6 +88,19 @@ public class IssuesTotalColumn extends ListViewColumn {
         return tools;
     }
 
+    /**
+     * Returns the tools that should be taken into account when summing up the totals of a job.
+     *
+     * @param tools
+     *         the tools to select
+     *
+     * @see #setSelectTools(boolean)
+     */
+    @DataBoundSetter
+    public void setTools(final List<ToolSelection> tools) {
+        this.tools = tools;
+    }
+
     public String getName() {
         return name;
     }
@@ -89,17 +116,19 @@ public class IssuesTotalColumn extends ListViewColumn {
         this.name = name;
     }
 
+    public StatisticProperties getType() {
+        return type;
+    }
+
     /**
-     * Returns the tools that should be taken into account when summing up the totals of a job.
+     * Defines which value should be shown in the column.
      *
-     * @param tools
-     *         the tools to select
-     *
-     * @see #setSelectTools(boolean)
+     * @param type
+     *         the type of the values to show
      */
     @DataBoundSetter
-    public void setTools(final List<ToolSelection> tools) {
-        this.tools = tools;
+    public void setType(final StatisticProperties type) {
+        this.type = type;
     }
 
     @VisibleForTesting
@@ -129,7 +158,8 @@ public class IssuesTotalColumn extends ListViewColumn {
         return lastCompletedBuild.getActions(ResultAction.class).stream()
                 .filter(createToolFilter(selectTools, tools))
                 .map(ResultAction::getResult)
-                .mapToInt(AnalysisResult::getTotalSize)
+                .map(AnalysisResult::getTotals)
+                .mapToInt(totals -> type.getSizeGetter().apply(totals))
                 .reduce(Integer::sum);
     }
 
@@ -199,6 +229,21 @@ public class IssuesTotalColumn extends ListViewColumn {
         @Override
         public String getDisplayName() {
             return Messages.IssuesTotalColumn_Name();
+        }
+
+        /**
+         * Return the model for the select widget.
+         *
+         * @return the quality gate types
+         */
+        public ListBoxModel doFillTypeItems() {
+            ListBoxModel model = new ListBoxModel();
+
+            for (StatisticProperties qualityGateType : StatisticProperties.values()) {
+                model.add(qualityGateType.getDisplayName(), qualityGateType.name());
+            }
+
+            return model;
         }
     }
 

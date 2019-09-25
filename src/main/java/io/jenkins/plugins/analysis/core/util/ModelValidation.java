@@ -158,6 +158,22 @@ public class ModelValidation {
     }
 
     /**
+     * Performs on-the-fly validation of the quality gate threshold.
+     *
+     * @param threshold
+     *         the threshold
+     *
+     * @return the validation result
+     */
+    @SuppressWarnings("WeakerAccess")
+    public FormValidation validateThreshold(@QueryParameter final int threshold) {
+        if (threshold > 0) {
+            return FormValidation.ok();
+        }
+        return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
+    }
+
+    /**
      * Performs on-the-fly validation of the health report thresholds.
      *
      * @param healthy

@@ -97,14 +97,12 @@ class DeltaReportTest {
         report.add(error);
 
         IssuesStatistics compareIssuesStatistics = new IssuesStatisticsBuilder()
-                .setTotalSize(3)
                 .setTotalNormalSize(2)
                 .setTotalErrorSize(1)
-                .setNewSize(2)
                 .setNewNormalSize(1)
                 .setNewErrorSize(1)
-                .setDeltaSize(1)
                 .setDeltaErrorSize(1)
+                .setFixedSize(1)
                 .build();
 
         DeltaReport deltaReport = new DeltaReport(report, history, 0);

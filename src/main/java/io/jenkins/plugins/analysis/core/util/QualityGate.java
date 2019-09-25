@@ -11,19 +11,20 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
-import org.jvnet.localizer.Localizable;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
+
 import static io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult.*;
 
 /**
- * Defines a quality gate based on a specific threshold of issues (total, new, delta) in the current build. After a build has
- * been finished, a set of {@link QualityGate quality gates} will be evaluated and the overall quality gate status will
- * be reported in Jenkins UI.
+ * Defines a quality gate based on a specific threshold of issues (total, new, delta) in the current build. After a
+ * build has been finished, a set of {@link QualityGate quality gates} will be evaluated and the overall quality gate
+ * status will be reported in Jenkins UI.
  *
  * @author Ullrich Hafner
  */
@@ -129,7 +130,6 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
     public QualityGateResult getResult() {
         return status == QualityGateStatus.WARNING ? UNSTABLE : FAILURE;
     }
-
 
     @Override
     public boolean equals(final Object o) {
@@ -248,45 +248,28 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      * Available quality gate types.
      */
     public enum QualityGateType {
-        /** Total number of issues. */
-        TOTAL(Messages._QualityGate_Type_Total(), IssuesStatistics::getTotalSize),
-        /** Total number of issues (severity Error). */
-        TOTAL_ERROR(Messages._QualityGate_Type_Total_Error(), IssuesStatistics::getTotalErrorSize),
-        /** Total number of issues (severity Warning High). */
-        TOTAL_HIGH(Messages._QualityGate_Type_Total_High(), IssuesStatistics::getTotalHighSize),
-        /** Total number of issues (severity Warning Normal). */
-        TOTAL_NORMAL(Messages._QualityGate_Type_Total_Normal(), IssuesStatistics::getTotalNormalSize),
-        /** Total number of issues (severity Warning Low). */
-        TOTAL_LOW(Messages._QualityGate_Type_Total_Low(), IssuesStatistics::getTotalLowSize),
+        TOTAL(StatisticProperties.TOTAL),
+        TOTAL_ERROR(StatisticProperties.TOTAL_ERROR),
+        TOTAL_HIGH(StatisticProperties.TOTAL_HIGH),
+        TOTAL_NORMAL(StatisticProperties.TOTAL_NORMAL),
+        TOTAL_LOW(StatisticProperties.TOTAL_LOW),
 
-        /** Number of new issues. */
-        NEW(Messages._QualityGate_Type_New(), IssuesStatistics::getNewSize),
-        /** Number of new issues (severity Error). */
-        NEW_ERROR(Messages._QualityGate_Type_New_Error(), IssuesStatistics::getNewErrorSize),
-        /** Number of new issues (severity Warning High). */
-        NEW_HIGH(Messages._QualityGate_Type_New_High(), IssuesStatistics::getNewHighSize),
-        /** Number of new issues (severity Warning Normal). */
-        NEW_NORMAL(Messages._QualityGate_Type_New_Normal(), IssuesStatistics::getNewNormalSize),
-        /** Number of new issues (severity Warning Low). */
-        NEW_LOW(Messages._QualityGate_Type_New_Low(), IssuesStatistics::getNewLowSize),
+        NEW(StatisticProperties.NEW),
+        NEW_ERROR(StatisticProperties.NEW_ERROR),
+        NEW_HIGH(StatisticProperties.NEW_HIGH),
+        NEW_NORMAL(StatisticProperties.NEW_NORMAL),
+        NEW_LOW(StatisticProperties.NEW_LOW),
 
-        /** Delta current build - reference build. */
-        DELTA(Messages._QualityGate_Type_Delta(), IssuesStatistics::getDeltaSize),
-        /** Delta current build - reference build (severity Error). */
-        DELTA_ERROR(Messages._QualityGate_Type_Delta_Error(), IssuesStatistics::getDeltaErrorSize),
-        /** Delta current build - reference build (severity Warning High). */
-        DELTA_HIGH(Messages._QualityGate_Type_Delta_High(), IssuesStatistics::getDeltaHighSize),
-        /** Delta current build - reference build (severity Warning Normal). */
-        DELTA_NORMAL(Messages._QualityGate_Type_Delta_Normal(), IssuesStatistics::getDeltaNormalSize),
-        /** Delta current build - reference build (severity Warning Low). */
-        DELTA_LOW(Messages._QualityGate_Type_Delta_Low(), IssuesStatistics::getDeltaLowSize);
+        DELTA(StatisticProperties.DELTA),
+        DELTA_ERROR(StatisticProperties.DELTA_ERROR),
+        DELTA_HIGH(StatisticProperties.DELTA_HIGH),
+        DELTA_NORMAL(StatisticProperties.DELTA_NORMAL),
+        DELTA_LOW(StatisticProperties.DELTA_LOW);
 
-        private final Localizable displayName;
-        private final Function<IssuesStatistics, Integer> sizeGetter;
+        private final StatisticProperties properties;
 
-        QualityGateType(final Localizable displayName, final Function<IssuesStatistics, Integer> sizeGetter) {
-            this.displayName = displayName;
-            this.sizeGetter = sizeGetter;
+        QualityGateType(final StatisticProperties statisticProperties) {
+            properties = statisticProperties;
         }
 
         /**
@@ -295,7 +278,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          * @return human readable name
          */
         public String getDisplayName() {
-            return displayName.toString();
+            return properties.getDisplayName();
         }
 
         /**
@@ -304,7 +287,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          * @return the threshold getter
          */
         public Function<IssuesStatistics, Integer> getSizeGetter() {
-            return sizeGetter;
+            return properties.getSizeGetter();
         }
     }
 
@@ -313,6 +296,8 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      */
     @Extension
     public static class QualityGateDescriptor extends Descriptor<QualityGate> {
+        private final ModelValidation modelValidation = new ModelValidation();
+
         /**
          * Return the model for the select widget.
          *
@@ -338,10 +323,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          */
         @SuppressWarnings("WeakerAccess")
         public FormValidation doCheckThreshold(@QueryParameter final int threshold) {
-            if (threshold > 0) {
-                return FormValidation.ok();
-            }
-            return FormValidation.error(Messages.FieldValidator_Error_NegativeThreshold());
+            return modelValidation.validateThreshold(threshold);
         }
     }
 }

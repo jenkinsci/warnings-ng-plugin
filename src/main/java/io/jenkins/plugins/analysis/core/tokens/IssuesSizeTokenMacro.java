@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.tokens;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -12,8 +11,9 @@ import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 
-import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 
 /**
  * Provides a token that evaluates to the number of issues.
@@ -23,11 +23,24 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 @Extension(optional = true)
 public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
     private String tool;
+    private StatisticProperties type = StatisticProperties.TOTAL;
 
     @Parameter
     public void setTool(final String tool) {
         this.tool = tool;
     }
+
+    /**
+     * Defines which value should be shown in the column.
+     *
+     * @param type
+     *         the type of the values to show
+     */
+    @Parameter
+    public void setType(final String type) {
+        this.type = StatisticProperties.valueOf(type);
+    }
+
 
     @Override
     public boolean acceptsMacroName(final String macroName) {
@@ -37,32 +50,31 @@ public class IssuesSizeTokenMacro extends DataBoundTokenMacro {
     @Override
     public String evaluate(final AbstractBuild<?, ?> abstractBuild, final TaskListener taskListener,
             final String macroName) {
-        return extractIssuesSize(abstractBuild);
+        return extractSelectedTotals(abstractBuild);
     }
 
     @Override
     public String evaluate(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final String macroName) {
-        return extractIssuesSize(run);
+        return extractSelectedTotals(run);
     }
 
-    private String extractIssuesSize(final Run<?, ?> run) {
-        List<ResultAction> actions = getActions(run);
-        int count = 0;
-        for (ResultAction action : actions) {
-            count += action.getResult().getTotalSize();
-        }
-        return String.valueOf(count);
+    private String extractSelectedTotals(final Run<?, ?> run) {
+        return String.valueOf(run.getActions(ResultAction.class).stream()
+                .filter(createToolFilter())
+                .map(ResultAction::getResult)
+                .map(AnalysisResult::getTotals)
+                .mapToInt(totals -> type.getSizeGetter().apply(totals))
+                .reduce(Integer::sum)
+                .orElse(0));
     }
 
-    private List<ResultAction> getActions(final Run<?, ?> run) {
+    private Predicate<ResultAction> createToolFilter() {
         if (StringUtils.isBlank(tool)) {
-            return run.getActions(ResultAction.class);
+            return jobAction -> true;
         }
         else {
-            return new ByIdResultSelector(tool).get(run)
-                    .map(Collections::singletonList)
-                    .orElse(Collections.emptyList());
+            return jobAction -> jobAction.getId().equals(tool);
         }
     }
 }

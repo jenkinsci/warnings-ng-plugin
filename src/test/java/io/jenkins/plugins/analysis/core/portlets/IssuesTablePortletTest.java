@@ -52,8 +52,8 @@ class IssuesTablePortletTest {
     @Test
     void shouldShowTableWithTwoTools() {
         Job<?, ?> job = createJobWithActions(
-                createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME),
-                createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         PortletTableModel model = createModel(list(job));
 
@@ -79,8 +79,8 @@ class IssuesTablePortletTest {
     @Test
     void shouldShowTableWithTwoSelectedTools() {
         Job<?, ?> job = createJobWithActions(
-                createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME),
-                createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         IssuesTablePortlet portlet = createPortlet();
         portlet.setSelectTools(true);
@@ -129,8 +129,8 @@ class IssuesTablePortletTest {
         portlet.setJenkinsFacade(jenkinsFacade);
 
         Job<?, ?> job = createJobWithActions(
-                createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME),
-                createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         PortletTableModel model = portlet.getModel(list(job));
 
@@ -170,11 +170,11 @@ class IssuesTablePortletTest {
     @Test
     void shouldShowTableWithTwoToolsAndTwoJobs() {
         Job<?, ?> first = createJobWithActions(
-                createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME),
-                createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1),
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
         Job<?, ?> second = createJobWithActions(
-                createAction(3, SPOT_BUGS_ID, SPOT_BUGS_NAME),
-                createAction(4, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
 
         PortletTableModel model = createModel(list(first, second));
 
@@ -208,11 +208,11 @@ class IssuesTablePortletTest {
         portlet.setHideCleanJobs(true);
 
         Job<?, ?> first = createJobWithActions(
-                createAction(0, SPOT_BUGS_ID, SPOT_BUGS_NAME),
-                createAction(0, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 0),
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 0));
         Job<?, ?> second = createJobWithActions(
-                createAction(3, SPOT_BUGS_ID, SPOT_BUGS_NAME),
-                createAction(4, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
 
         PortletTableModel model = portlet.getModel(list(first, second));
 
@@ -236,8 +236,8 @@ class IssuesTablePortletTest {
 
         Job<?, ?> first = createJobWithActions();
         Job<?, ?> second = createJobWithActions(
-                createAction(3, SPOT_BUGS_ID, SPOT_BUGS_NAME),
-                createAction(4, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
 
         PortletTableModel model = portlet.getModel(list(first, second));
 
@@ -257,9 +257,9 @@ class IssuesTablePortletTest {
     @Test
     void shouldShowTableWithTwoJobsWithDifferentTools() {
         Job<?, ?> first = createJobWithActions(
-                createAction(1, SPOT_BUGS_ID, SPOT_BUGS_NAME));
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 1));
         Job<?, ?> second = createJobWithActions(
-                createAction(2, CHECK_STYLE_ID, CHECK_STYLE_NAME));
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 2));
 
         PortletTableModel model = createModel(list(first, second));
 

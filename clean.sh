@@ -2,7 +2,7 @@
 
 JENKINS_HOME=../docker/volumes/jenkins-home
 
-mvn clean install || { echo "Build failed"; exit 1; }
+mvn clean install -Djenkins.test.timeout=1000 || { echo "Build failed"; exit 1; }
 
 echo "Installing plugin in $JENKINS_HOME"
 rm -rf $JENKINS_HOME/plugins/warnings-ng*
