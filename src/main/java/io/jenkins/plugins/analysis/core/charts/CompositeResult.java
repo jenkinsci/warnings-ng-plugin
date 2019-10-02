@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +32,7 @@ public class CompositeResult implements Iterable<AnalysisBuildResult> {
      *         the history of results for each tool
      */
     public CompositeResult(final List<Iterable<? extends AnalysisBuildResult>> historyOfTools) {
-        SortedMap<AnalysisBuild, AnalysisBuildResult> resultsByBuild = new TreeMap<>();
+        SortedMap<AnalysisBuild, AnalysisBuildResult> resultsByBuild = new TreeMap<>(Collections.reverseOrder());
         for (Iterable<? extends AnalysisBuildResult> toolHistory : historyOfTools) {
             for (AnalysisBuildResult toolResult : toolHistory) {
                 resultsByBuild.merge(toolResult.getBuild(), toolResult, CompositeAnalysisBuildResult::new);
@@ -40,6 +41,11 @@ public class CompositeResult implements Iterable<AnalysisBuildResult> {
         results = resultsByBuild.values();
     }
 
+    /**
+     * Returns an iterator over the composition of the {@link AnalysisBuildResult static analysis results}.
+     *
+     * @return an iterator, starting with the latest build (descending order).
+     */
     @NonNull
     @Override
     public Iterator<AnalysisBuildResult> iterator() {

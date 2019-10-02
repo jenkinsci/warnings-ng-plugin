@@ -38,7 +38,7 @@ class SeverityPieChartTest {
     void shouldCreateChartFromReportWithOneError() {
         SeverityPieChart severityPieChart = new SeverityPieChart();
 
-        PieChartModel pieChartModel = severityPieChart.create(createReport(0, 0, 0, 1));
+        PieChartModel pieChartModel = severityPieChart.create(createReport(1, 0, 0, 0));
         List<PieData> data = pieChartModel.getData();
 
         assertThat(data.get(0)).isEqualTo(new PieData("Error", 1));
@@ -63,12 +63,12 @@ class SeverityPieChartTest {
         assertThat(data.get(3)).isEqualTo(new PieData("Low", 1));
     }
 
-    private Report createReport(final int high, final int normal, final int low, final int error) {
+    private Report createReport(final int error, final int high, final int normal, final int low) {
         Report buildResult = mock(Report.class);
+        when(buildResult.getSizeOf(Severity.ERROR)).thenReturn(error);
         when(buildResult.getSizeOf(Severity.WARNING_HIGH)).thenReturn(high);
         when(buildResult.getSizeOf(Severity.WARNING_NORMAL)).thenReturn(normal);
         when(buildResult.getSizeOf(Severity.WARNING_LOW)).thenReturn(low);
-        when(buildResult.getSizeOf(Severity.ERROR)).thenReturn(error);
         return buildResult;
     }
 }
