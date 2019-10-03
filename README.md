@@ -47,7 +47,8 @@ please share it and provide pull requests for the
 [Warnings Next Generation Plug-in](https://github.com/jenkinsci/warnings-ng-plugin/pulls) and 
 the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/pulls). 
 
-For more details please refer to the [documentation](doc/Documentation.md).
+For more details please refer to the [documentation](doc/Documentation.md) or to an 
+[introductory video](https://www.youtube.com/watch?v=0GcEqML8nys).
 
 All source code is licensed under the MIT license.
 
