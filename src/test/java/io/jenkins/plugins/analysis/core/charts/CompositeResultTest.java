@@ -14,6 +14,7 @@ import io.jenkins.plugins.analysis.core.charts.CompositeResult.CompositeAnalysis
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 
 /**
  * Tests the class {@link CompositeResult}.
@@ -27,12 +28,12 @@ class CompositeResultTest {
     @Test
     void shouldCreateResultOfSequenceWithIdenticalBuilds() {
         List<AnalysisBuildResult> resultsCheckStyle = new ArrayList<>();
-        resultsCheckStyle.add(BuildResultStubs.createResult(2, 0, 2, 4, 6));
-        resultsCheckStyle.add(BuildResultStubs.createResult(1, 0, 1, 2, 3));
+        resultsCheckStyle.add(createResult(2, 0, 2, 4, 6));
+        resultsCheckStyle.add(createResult(1, 0, 1, 2, 3));
 
         List<AnalysisBuildResult> resultsSpotBugs = new ArrayList<>();
-        resultsSpotBugs.add(BuildResultStubs.createResult(2, 0, 12, 14, 16));
-        resultsSpotBugs.add(BuildResultStubs.createResult(1, 0, 11, 12, 13));
+        resultsSpotBugs.add(createResult(2, 0, 12, 14, 16));
+        resultsSpotBugs.add(createResult(1, 0, 11, 12, 13));
 
         CompositeResult compositeResult = new CompositeResult(asList(resultsCheckStyle, resultsSpotBugs));
 
@@ -41,13 +42,13 @@ class CompositeResultTest {
         Iterator<AnalysisBuildResult> iterator = compositeResult.iterator();
 
         AnalysisBuildResult first = iterator.next();
-        assertThat(first).hasBuild(BuildResultStubs.createBuild(2));
+        assertThat(first).hasBuild(createBuild(2));
         assertThat(first.getTotalSizeOf(Severity.WARNING_HIGH)).isEqualTo(14);
         assertThat(first.getTotalSizeOf(Severity.WARNING_NORMAL)).isEqualTo(18);
         assertThat(first.getTotalSizeOf(Severity.WARNING_LOW)).isEqualTo(22);
 
         AnalysisBuildResult second = iterator.next();
-        assertThat(second).hasBuild(BuildResultStubs.createBuild(1));
+        assertThat(second).hasBuild(createBuild(1));
         assertThat(second.getTotalSizeOf(Severity.WARNING_HIGH)).isEqualTo(12);
         assertThat(second.getTotalSizeOf(Severity.WARNING_NORMAL)).isEqualTo(14);
         assertThat(second.getTotalSizeOf(Severity.WARNING_LOW)).isEqualTo(16);
@@ -56,12 +57,12 @@ class CompositeResultTest {
     @Test
     void shouldCreatePriorityChartForJobAndMultipleActions() {
         List<AnalysisBuildResult> resultsCheckStyle = new ArrayList<>();
-        resultsCheckStyle.add(BuildResultStubs.createResult(2, CHECK_STYLE, 2));
-        resultsCheckStyle.add(BuildResultStubs.createResult(1, CHECK_STYLE, 1));
+        resultsCheckStyle.add(createResult(2, CHECK_STYLE, 2));
+        resultsCheckStyle.add(createResult(1, CHECK_STYLE, 1));
 
         List<AnalysisBuildResult> resultsSpotBugs = new ArrayList<>();
-        resultsSpotBugs.add(BuildResultStubs.createResult(2, SPOT_BUGS, 4));
-        resultsSpotBugs.add(BuildResultStubs.createResult(1, SPOT_BUGS, 3));
+        resultsSpotBugs.add(createResult(2, SPOT_BUGS, 4));
+        resultsSpotBugs.add(createResult(1, SPOT_BUGS, 3));
 
         CompositeResult compositeResult = new CompositeResult(asList(resultsCheckStyle, resultsSpotBugs));
 
@@ -71,8 +72,8 @@ class CompositeResultTest {
         AnalysisBuildResult first = iterator.next();
         AnalysisBuildResult second = iterator.next();
 
-        assertThat(first).hasBuild(BuildResultStubs.createBuild(2));
-        assertThat(second).hasBuild(BuildResultStubs.createBuild(1));
+        assertThat(first).hasBuild(createBuild(2));
+        assertThat(second).hasBuild(createBuild(1));
 
         assertThat(first.getSizePerOrigin()).contains(entry(CHECK_STYLE, 2), entry(SPOT_BUGS, 4));
         assertThat(second.getSizePerOrigin()).contains(entry(CHECK_STYLE, 1), entry(SPOT_BUGS, 3));
@@ -90,45 +91,45 @@ class CompositeResultTest {
     class CompositeAnalysisBuildResultTest {
         @Test
         void shouldMergeNumberOfTotalIssues() {
-            AnalysisBuildResult first = BuildResultStubs.createResult(1, 0, 3, 1, 6);
-            AnalysisBuildResult second = BuildResultStubs.createResult(1, 0, 1, 3, 9);
+            AnalysisBuildResult first = createResult(1, 0, 3, 1, 6);
+            AnalysisBuildResult second = createResult(1, 0, 1, 3, 9);
 
             CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
 
-            assertThat(run).hasBuild(BuildResultStubs.createBuild(1));
+            assertThat(run).hasBuild(createBuild(1));
             assertThat(run).hasTotalSize(23);
         }
 
         @Test
         void shouldMergeNumberOfFixedIssues() {
-            AnalysisBuildResult first = BuildResultStubs.createResultWithNewAndFixedIssues(1, 0, 2);
-            AnalysisBuildResult second = BuildResultStubs.createResultWithNewAndFixedIssues(1, 0, 3);
+            AnalysisBuildResult first = createResultWithNewAndFixedIssues(1, 0, 2);
+            AnalysisBuildResult second = createResultWithNewAndFixedIssues(1, 0, 3);
 
             CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
 
-            assertThat(run).hasBuild(BuildResultStubs.createBuild(1));
+            assertThat(run).hasBuild(createBuild(1));
             assertThat(run.getFixedSize()).isEqualTo(5);
         }
 
         @Test
         void shouldMergeNumberOfNewIssues() {
-            AnalysisBuildResult first = BuildResultStubs.createResultWithNewIssues(1, 0, 5, 2, 6);
-            AnalysisBuildResult second = BuildResultStubs.createResultWithNewIssues(1, 0, 4, 2, 7);
+            AnalysisBuildResult first = createResultWithNewIssues(1, 0, 5, 2, 6);
+            AnalysisBuildResult second = createResultWithNewIssues(1, 0, 4, 2, 7);
 
             CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
 
-            assertThat(run).hasBuild(BuildResultStubs.createBuild(1));
+            assertThat(run).hasBuild(createBuild(1));
             assertThat(run).hasNewSize(26);
         }
 
         @Test
         void shouldMergeTotalNumberOfIssuesBySeverity() {
-            AnalysisBuildResult first = BuildResultStubs.createResult(1, 0, 1, 2, 3);
-            AnalysisBuildResult second = BuildResultStubs.createResult(1, 0, 4, 5, 6);
+            AnalysisBuildResult first = createResult(1, 0, 1, 2, 3);
+            AnalysisBuildResult second = createResult(1, 0, 4, 5, 6);
 
             CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
 
-            assertThat(run).hasBuild(BuildResultStubs.createBuild(1));
+            assertThat(run).hasBuild(createBuild(1));
             assertThat(run.getTotalSizeOf(Severity.WARNING_HIGH)).isEqualTo(5);
             assertThat(run.getTotalSizeOf(Severity.WARNING_NORMAL)).isEqualTo(7);
             assertThat(run.getTotalSizeOf(Severity.WARNING_LOW)).isEqualTo(9);
@@ -136,12 +137,12 @@ class CompositeResultTest {
 
         @Test
         void shouldMergeNumberOfNewIssuesBySeverity() {
-            AnalysisBuildResult first = BuildResultStubs.createResultWithNewIssues(1, 0, 2, 6, 2);
-            AnalysisBuildResult second = BuildResultStubs.createResultWithNewIssues(1, 0, 5, 2, 2);
+            AnalysisBuildResult first = createResultWithNewIssues(1, 0, 2, 6, 2);
+            AnalysisBuildResult second = createResultWithNewIssues(1, 0, 5, 2, 2);
 
             CompositeAnalysisBuildResult run = new CompositeAnalysisBuildResult(first, second);
 
-            assertThat(run).hasBuild(BuildResultStubs.createBuild(1));
+            assertThat(run).hasBuild(createBuild(1));
             assertThat(run.getNewSizeOf(Severity.WARNING_HIGH)).isEqualTo(7);
             assertThat(run.getNewSizeOf(Severity.WARNING_NORMAL)).isEqualTo(8);
             assertThat(run.getNewSizeOf(Severity.WARNING_LOW)).isEqualTo(4);
