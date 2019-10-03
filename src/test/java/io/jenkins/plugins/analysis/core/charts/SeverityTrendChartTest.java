@@ -109,6 +109,7 @@ class SeverityTrendChartTest {
                 .isArray().hasSize(4);
     }
 
+    @SuppressWarnings("PMD.UnusedPrivateMethod")
     private static Stream<Arguments> createResults() {
         return Stream.of(
                 Arguments.of(createSingleResults(), "single AnalysisBuildResult instances"),

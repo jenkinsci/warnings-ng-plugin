@@ -13,6 +13,11 @@
     <exclude name="GuardLogStatement"/>
     <exclude name="AccessorMethodGeneration"/>
   </rule>
+  <rule ref="category/java/bestpractices.xml/UnusedPrivateMethod">
+    <properties>
+      <property name="ignoredAnnotations" value="java.lang.Deprecated," />
+    </properties>
+  </rule>
   <rule ref="category/java/codestyle.xml">
     <exclude name="AtLeastOneConstructor"/>
     <exclude name="UnnecessaryConstructor"/>
