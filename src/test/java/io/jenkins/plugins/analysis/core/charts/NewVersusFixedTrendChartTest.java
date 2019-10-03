@@ -5,12 +5,10 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult.BuildProperties;
-import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
+import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link NewVersusFixedTrendChart}.
@@ -23,8 +21,8 @@ class NewVersusFixedTrendChartTest {
         NewVersusFixedTrendChart chart = new NewVersusFixedTrendChart();
 
         List<AnalysisBuildResult> results = new ArrayList<>();
-        results.add(createResult(10, 11, 1));
-        results.add(createResult(20, 21, 2));
+        results.add(createResultWithNewAndFixedIssues(2, 20, 21));
+        results.add(createResultWithNewAndFixedIssues(1, 10, 11));
 
         LinesChartModel model = chart.create(results, new ChartModelConfiguration());
 
@@ -46,16 +44,5 @@ class NewVersusFixedTrendChartTest {
         for (int value : values) {
             assertThatJson(series).node("data").isArray().hasSize(values.length).contains(value);
         }
-    }
-
-    private AnalysisBuildResult createResult(final int newSize, final int fixedSize, final int number) {
-        AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
-
-        when(buildResult.getFixedSize()).thenReturn(fixedSize);
-        when(buildResult.getNewSize()).thenReturn(newSize);
-
-        AnalysisBuild build = new BuildProperties(number, "#" + number, 10);
-        when(buildResult.getBuild()).thenReturn(build);
-        return buildResult;
     }
 }

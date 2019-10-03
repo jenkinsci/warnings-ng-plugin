@@ -7,14 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Severity;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult.BuildProperties;
-import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 
+import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link HealthTrendChart}.
@@ -62,24 +60,11 @@ class HealthTrendChartTest {
 
     private List<AnalysisBuildResult> createBuildResults() {
         List<AnalysisBuildResult> resultsCheckStyle = new ArrayList<>();
-        resultsCheckStyle.add(createResult(0, 0, 0, 1));
-        resultsCheckStyle.add(createResult(5, 0, 0, 2));
-        resultsCheckStyle.add(createResult(5, 5, 0, 3));
-        resultsCheckStyle.add(createResult(5, 5, 5, 4));
+        resultsCheckStyle.add(createResult(1, 0, 0, 0, 0));
+        resultsCheckStyle.add(createResult(2, 0, 5, 0, 0));
+        resultsCheckStyle.add(createResult(3, 0, 5, 5, 0));
+        resultsCheckStyle.add(createResult(4, 0, 5, 5, 5));
         return resultsCheckStyle;
-    }
-
-    private AnalysisBuildResult createResult(final int high, final int normal, final int low, final int number) {
-        AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
-
-        when(buildResult.getTotalSize()).thenReturn(high + normal + low);
-        when(buildResult.getTotalSizeOf(Severity.WARNING_HIGH)).thenReturn(high);
-        when(buildResult.getTotalSizeOf(Severity.WARNING_NORMAL)).thenReturn(normal);
-        when(buildResult.getTotalSizeOf(Severity.WARNING_LOW)).thenReturn(low);
-
-        AnalysisBuild build = new BuildProperties(number, "#" + number, 10);
-        when(buildResult.getBuild()).thenReturn(build);
-        return buildResult;
     }
 
     private void verifySeries(final LinesChartModel model, final int index, final int... numbers) {
