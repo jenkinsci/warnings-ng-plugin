@@ -26,6 +26,7 @@ import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.Java;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.assertj.core.api.Assumptions.*;
 
 /**
  * Tests build on a docker container worker.
@@ -52,6 +53,8 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldBuildMavenOnAgent() throws IOException, InterruptedException {
+        assumeThat(isWindows()).as("Running on Windows").isFalse();
+
         DumbSlave agent = createDockerContainerAgent(javaDockerRule.get());
 
         FreeStyleProject project = createFreeStyleProject();
@@ -81,6 +84,8 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldBuildMakefileOnAgent() throws IOException, InterruptedException {
+        assumeThat(isWindows()).as("Running on Windows").isFalse();
+
         DumbSlave agent = createDockerContainerAgent(gccDockerRule.get());
 
         FreeStyleProject project = createFreeStyleProject();
