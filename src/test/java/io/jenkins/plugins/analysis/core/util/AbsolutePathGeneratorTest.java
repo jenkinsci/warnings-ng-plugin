@@ -7,7 +7,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,11 +18,8 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator.FileSystem;
-
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
 import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link AbsolutePathGenerator}.
@@ -91,7 +87,7 @@ class AbsolutePathGeneratorTest {
         report.add(builder.setDirectory(workspace).setFileName("relative.txt").build());
         report.add(builder.setDirectory(workspace).setFileName(normalize("../../core/util/normalized.txt")).build());
 
-        AbsolutePathGenerator generator = new AbsolutePathGenerator(new FileSystem());
+        AbsolutePathGenerator generator = new AbsolutePathGenerator();
         generator.run(report, Paths.get(resourceFolder));
 
         assertThat(report).hasSize(5);
@@ -113,22 +109,23 @@ class AbsolutePathGeneratorTest {
     }
 
     @ParameterizedTest(name = "[{index}] Relative file name = {0}")
-    @ValueSource(strings = {"relative/file.txt", "../file.txt", "file.txt"})
+    @ValueSource(strings = {"../util/relative.txt", "relative.txt", "../../core/util/relative.txt"})
     @DisplayName("Should replace relative issue path with absolute path in stubbed FileSystem facade")
     void shouldResolveRelativePath(final String fileName) {
-        String absolutePath = WORKSPACE_PATH + "/" + fileName;
-
-        FileSystem fileSystem = mock(FileSystem.class);
-        when(fileSystem.resolveAbsolutePath(WORKSPACE, fileName)).thenReturn(Optional.of(absolutePath));
+        URI resourceFolder = getResourceFolder();
+        String workspace = getUriPath(resourceFolder);
 
         IssueBuilder builder = new IssueBuilder();
 
         Report report = createIssuesSingleton(fileName, builder.setOrigin(ID));
 
-        AbsolutePathGenerator generator = new AbsolutePathGenerator(fileSystem);
-        generator.run(report, WORKSPACE);
+        AbsolutePathGenerator generator = new AbsolutePathGenerator();
+        generator.run(report, Paths.get(resourceFolder));
 
-        assertThat(report.iterator()).toIterable().containsExactly(builder.setFileName(absolutePath).build());
+        assertThat(report.get(0).getFileName())
+                .as("Resolving file '%s'", normalize(fileName))
+                .isEqualTo(workspace + RELATIVE_FILE);
+        assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
     }
@@ -144,7 +141,7 @@ class AbsolutePathGeneratorTest {
         Issue issue = new IssueBuilder().setDirectory(workspace).setFileName(normalize(fileName)).build();
         report.add(issue);
 
-        AbsolutePathGenerator generator = new AbsolutePathGenerator(new FileSystem());
+        AbsolutePathGenerator generator = new AbsolutePathGenerator();
         generator.run(report, Paths.get(resourceFolder));
 
         assertThat(report.get(0).getFileName())
@@ -153,16 +150,6 @@ class AbsolutePathGeneratorTest {
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 already resolved");
-    }
-
-    @ParameterizedTest(name = "[{index}] Relative filename = {0}")
-    @ValueSource(strings = {"../util/relative.txt", "relative.txt", "../../core/util/relative.txt"})
-    @DisplayName("Should resolve relative path in FileSystem facade")
-    void shouldResolvePathInFacade(final String fileName) {
-        FileSystem fileSystem = new FileSystem();
-        Optional<String> absolute = fileSystem.resolveAbsolutePath(Paths.get(getResourceFolder()), fileName);
-        assertThat(absolute).isPresent();
-        assertThat(absolute.get()).endsWith(PATH_TO_RESOURCE);
     }
 
     private String getUriPath(final URI resourceFolder) {

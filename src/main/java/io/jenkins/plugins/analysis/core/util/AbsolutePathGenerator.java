@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.PathUtil;
-import edu.hm.hafner.util.VisibleForTesting;
 
 /**
  * Resolves absolute paths of the affected files of a set of issues.
@@ -21,19 +20,6 @@ import edu.hm.hafner.util.VisibleForTesting;
  */
 public class AbsolutePathGenerator {
     static final String NOTHING_TO_DO = "-> none of the issues requires resolving of absolute path";
-    private final FileSystem fileSystem;
-
-    /**
-     * Creates a new instance of {@link AbsolutePathGenerator}.
-     */
-    public AbsolutePathGenerator() {
-        this(new FileSystem());
-    }
-
-    @VisibleForTesting
-    AbsolutePathGenerator(final FileSystem fileSystem) {
-        this.fileSystem = fileSystem;
-    }
 
     /**
      * Resolves absolute paths of the affected files of the specified set of issues.
@@ -77,7 +63,7 @@ public class AbsolutePathGenerator {
         int changed = 0;
 
         for (String fileName : affectedFiles) {
-            Optional<String> absolutePath = fileSystem.resolveAbsolutePath(workspace, fileName);
+            Optional<String> absolutePath = resolveAbsolutePath(workspace, fileName);
             if (absolutePath.isPresent()) {
                 String resolved = absolutePath.get();
                 pathMapping.put(fileName, resolved);
@@ -98,18 +84,12 @@ public class AbsolutePathGenerator {
         return pathMapping;
     }
 
-    /**
-     * File system facade for test cases.
-     */
-    @VisibleForTesting
-    static class FileSystem {
-        Optional<String> resolveAbsolutePath(final Path parent, final String fileName) {
-            try {
-                return Optional.of(new PathUtil().toString(parent.resolve(fileName)));
-            }
-            catch (IOException | InvalidPathException ignored) {
-                return Optional.empty();
-            }
+    private Optional<String> resolveAbsolutePath(final Path parent, final String fileName) {
+        try {
+            return Optional.of(new PathUtil().toString(parent.resolve(fileName)));
+        }
+        catch (IOException | InvalidPathException ignored) {
+            return Optional.empty();
         }
     }
 }
