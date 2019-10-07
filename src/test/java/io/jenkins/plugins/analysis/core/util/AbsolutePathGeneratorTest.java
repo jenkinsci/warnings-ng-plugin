@@ -30,7 +30,7 @@ import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 class AbsolutePathGeneratorTest {
     private static final URI RESOURCE_FOLDER = getResourceFolder();
     private static final Path RESOURCE_FOLDER_PATH = Paths.get(RESOURCE_FOLDER);
-    private static final String RESOURCE_FOLDER_WORKSPACE = getUriPath(RESOURCE_FOLDER);
+    private static final String RESOURCE_FOLDER_WORKSPACE = getUriPath();
 
     private static final String ID = "ID";
     private static final String RELATIVE_FILE = "relative.txt";
@@ -48,9 +48,7 @@ class AbsolutePathGeneratorTest {
         new AbsolutePathGenerator().run(report, RESOURCE_FOLDER_PATH);
 
         assertThat(report.iterator()).toIterable().containsExactly(report.get(0));
-        assertThat(report.getInfoMessages()).hasSize(1);
-        assertThat(report.getInfoMessages().get(0)).contains("1 unresolved");
-        assertThat(report.getErrorMessages()).hasSize(2).contains("- " + fileName);
+        assertThatOneFileIsUnresolved(fileName, report);
     }
 
     @Test
@@ -100,10 +98,8 @@ class AbsolutePathGeneratorTest {
 
     @ParameterizedTest(name = "[{index}] Relative file name = {0}")
     @ValueSource(strings = {"../util/relative.txt", "relative.txt", "../../core/util/relative.txt"})
-    @DisplayName("Should replace relative issue path with absolute path in stubbed FileSystem facade")
+    @DisplayName("Should replace relative issue path with absolute path")
     void shouldResolveRelativePath(final String fileName) {
-        String workspace = getUriPath(RESOURCE_FOLDER);
-
         IssueBuilder builder = new IssueBuilder();
 
         Report report = createIssuesSingleton(fileName, builder.setOrigin(ID));
@@ -113,36 +109,76 @@ class AbsolutePathGeneratorTest {
 
         assertThat(report.get(0).getFileName())
                 .as("Resolving file '%s'", normalize(fileName))
-                .isEqualTo(workspace + RELATIVE_FILE);
+                .isEqualTo(RESOURCE_FOLDER_WORKSPACE + RELATIVE_FILE);
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
     }
 
+    @Test
+    @DisplayName("Should replace relative issue path with absolute path in child folder")
+    void shouldResolveRelativePathInOtherFolder() {
+        IssueBuilder builder = new IssueBuilder();
+
+        String fileName = "child.txt";
+        Report report = createIssuesSingleton(fileName, builder.setOrigin(ID));
+
+        AbsolutePathGenerator generator = new AbsolutePathGenerator();
+        generator.run(report, RESOURCE_FOLDER_PATH);
+
+        assertThatOneFileIsUnresolved(fileName, report);
+
+        report = createIssuesSingleton(fileName, builder.setOrigin(ID));
+        generator.run(report, RESOURCE_FOLDER_PATH.resolve("child"));
+
+        assertThatChildIsResolved(report);
+
+        report = createIssuesSingleton(fileName, builder.setOrigin(ID));
+        generator.run(report, RESOURCE_FOLDER_PATH, RESOURCE_FOLDER_PATH.resolve("child"));
+
+        assertThatChildIsResolved(report);
+
+        report = createIssuesSingleton(fileName, builder.setOrigin(ID));
+        generator.run(report, RESOURCE_FOLDER_PATH.resolve("child"), RESOURCE_FOLDER_PATH);
+
+        assertThatChildIsResolved(report);
+    }
+
+    private void assertThatChildIsResolved(final Report report) {
+        assertThat(report.get(0).getFileName()).isEqualTo(RESOURCE_FOLDER_WORKSPACE + "child/child.txt");
+        assertThat(report.getErrorMessages()).isEmpty();
+        assertThat(report.getInfoMessages()).hasSize(1);
+        assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
+    }
+
+    private void assertThatOneFileIsUnresolved(final String fileName, final Report report) {
+        assertThat(report.getInfoMessages()).hasSize(1);
+        assertThat(report.getInfoMessages().get(0)).contains("1 unresolved");
+        assertThat(report.getErrorMessages()).hasSize(2).contains("- " + fileName);
+    }
+
     @ParameterizedTest(name = "[{index}] Relative filename = {0}")
     @ValueSource(strings = {"../util/relative.txt", "relative.txt", "../../core/util/relative.txt"})
-    @DisplayName("Should leave existing absolute path unchanged with real FileSystem in resource folder")
+    @DisplayName("Should let existing absolute path unchanged")
     void shouldResolveAbsolutePath(final String fileName) {
         Report report = new Report();
-        URI resourceFolder = getResourceFolder();
-        String workspace = getUriPath(resourceFolder);
 
-        Issue issue = new IssueBuilder().setDirectory(workspace).setFileName(normalize(fileName)).build();
+        Issue issue = new IssueBuilder().setDirectory(RESOURCE_FOLDER_WORKSPACE).setFileName(normalize(fileName)).build();
         report.add(issue);
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(report, Paths.get(resourceFolder));
+        generator.run(report, Paths.get(RESOURCE_FOLDER));
 
         assertThat(report.get(0).getFileName())
                 .as("Resolving file '%s'", normalize(fileName))
-                .isEqualTo(workspace + RELATIVE_FILE);
+                .isEqualTo(RESOURCE_FOLDER_WORKSPACE + RELATIVE_FILE);
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 already resolved");
     }
 
-    private static String getUriPath(final URI resourceFolder) {
-        String workspace = resourceFolder.getPath();
+    private static String getUriPath() {
+        String workspace = RESOURCE_FOLDER.getPath();
         if (isWindows() && workspace.charAt(0) == SLASH) {
             workspace = workspace.substring(1);
         }
