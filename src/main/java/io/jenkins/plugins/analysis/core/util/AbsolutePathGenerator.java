@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.util;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -110,15 +109,6 @@ public class AbsolutePathGenerator {
             }
             catch (IOException | InvalidPathException ignored) {
                 return Optional.empty();
-            }
-        }
-
-        boolean isRelative(final String fileName) {
-            try {
-                return !Paths.get(fileName).isAbsolute();
-            }
-            catch (InvalidPathException ignored) {
-                return false; // do not try to resolve illegal paths
             }
         }
     }

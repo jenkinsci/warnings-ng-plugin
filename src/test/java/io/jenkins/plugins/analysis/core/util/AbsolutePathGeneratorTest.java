@@ -22,6 +22,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator.FileSystem;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -88,6 +89,7 @@ class AbsolutePathGeneratorTest {
         IssueBuilder builder = new IssueBuilder();
 
         report.add(builder.setFileName("").build());
+        report.add(builder.setFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID).build());
         report.add(builder.setFileName("relative.txt").build());
         report.add(builder.setDirectory(workspace).setFileName("relative.txt").build());
         report.add(builder.setDirectory(workspace).setFileName(normalize("../../core/util/normalized.txt")).build());
@@ -95,14 +97,16 @@ class AbsolutePathGeneratorTest {
         AbsolutePathGenerator generator = new AbsolutePathGenerator(new FileSystem());
         generator.run(report, Paths.get(resourceFolder));
 
-        assertThat(report).hasSize(4);
+        assertThat(report).hasSize(5);
         assertThat(report.get(0))
                 .as("Issue with no file name").hasFileName("-");
         assertThat(report.get(1))
-                .as("Issue with relative file name").hasFileName(workspace + RELATIVE_FILE);
+                .as("Issue in console log").hasFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
         assertThat(report.get(2))
-                .as("Issue with absolute file name (normalized)").hasFileName(workspace + RELATIVE_FILE);
+                .as("Issue with relative file name").hasFileName(workspace + RELATIVE_FILE);
         assertThat(report.get(3))
+                .as("Issue with absolute file name (normalized)").hasFileName(workspace + RELATIVE_FILE);
+        assertThat(report.get(4))
                 .as("Issue with absolute file name (not normalized)").hasFileName(workspace + "normalized.txt");
 
         assertThat(report.getInfoMessages()).hasSize(1);
@@ -119,7 +123,6 @@ class AbsolutePathGeneratorTest {
 
         FileSystem fileSystem = mock(FileSystem.class);
         when(fileSystem.resolveAbsolutePath(WORKSPACE, fileName)).thenReturn(Optional.of(absolutePath));
-        when(fileSystem.isRelative(fileName)).thenReturn(true);
 
         IssueBuilder builder = new IssueBuilder();
 
