@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.collections.api.list.MutableList;
 import org.eclipse.collections.impl.factory.Lists;
@@ -91,13 +92,10 @@ public class AbsolutePathGenerator {
     }
 
     private Optional<String> resolveAbsolutePath(final MutableList<Path> prefixes, final String fileName) {
-        for (Path prefix : prefixes) {
-            Optional<String> resolved = resolveAbsolutePath(prefix, fileName);
-            if (resolved.isPresent()) {
-                return resolved;
-            }
-        }
-        return Optional.empty();
+        return prefixes.stream()
+                .map(path -> resolveAbsolutePath(path, fileName))
+                .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
+                .findFirst();
     }
     private Optional<String> resolveAbsolutePath(final Path parent, final String fileName) {
         try {
