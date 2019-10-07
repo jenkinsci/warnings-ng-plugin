@@ -28,11 +28,12 @@ import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
  */
 @SuppressFBWarnings("DMI")
 class AbsolutePathGeneratorTest {
-    private static final String WORKSPACE_PATH = "path";
-    private static final Path WORKSPACE = Paths.get(WORKSPACE_PATH);
+    private static final URI RESOURCE_FOLDER = getResourceFolder();
+    private static final Path RESOURCE_FOLDER_PATH = Paths.get(RESOURCE_FOLDER);
+    private static final String RESOURCE_FOLDER_WORKSPACE = getUriPath(RESOURCE_FOLDER);
+
     private static final String ID = "ID";
     private static final String RELATIVE_FILE = "relative.txt";
-    private static final String PATH_TO_RESOURCE = "io/jenkins/plugins/analysis/core/util/relative.txt";
     private static final char SLASH = '/';
 
     /**
@@ -44,51 +45,40 @@ class AbsolutePathGeneratorTest {
     void shouldReturnFallbackOnError(final String fileName) {
         Report report = createIssuesSingleton(fileName, new IssueBuilder());
 
-        new AbsolutePathGenerator().run(report, WORKSPACE);
+        new AbsolutePathGenerator().run(report, RESOURCE_FOLDER_PATH);
 
         assertThat(report.iterator()).toIterable().containsExactly(report.get(0));
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 unresolved");
         assertThat(report.getErrorMessages()).hasSize(2).contains("- " + fileName);
-
     }
 
     @Test
     @DisplayName("Should skip processing if there are no issues")
     void shouldDoNothingIfNoIssuesPresent() {
-        AbsolutePathGenerator generator = new AbsolutePathGenerator();
         Report report = new Report();
-        generator.run(report, WORKSPACE);
+
+        new AbsolutePathGenerator().run(report, RESOURCE_FOLDER_PATH);
+
         assertThat(report).hasSize(0);
         assertThat(report.getInfoMessages()).containsExactly(AbsolutePathGenerator.NOTHING_TO_DO);
-    }
-
-    /**
-     * Returns whether the OS under test is Windows or Unix.
-     *
-     * @return {@code true} if the OS is Windows, {@code false} otherwise
-     */
-    private boolean isWindows() {
-        return File.pathSeparatorChar == ';';
     }
 
     @Test
     @DisplayName("Should skip existing absolute paths")
     void shouldNotTouchAbsolutePathOrEmptyPath() {
         Report report = new Report();
-        URI resourceFolder = getResourceFolder();
-        String workspace = getUriPath(resourceFolder);
 
         IssueBuilder builder = new IssueBuilder();
 
         report.add(builder.setFileName("").build());
         report.add(builder.setFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID).build());
         report.add(builder.setFileName("relative.txt").build());
-        report.add(builder.setDirectory(workspace).setFileName("relative.txt").build());
-        report.add(builder.setDirectory(workspace).setFileName(normalize("../../core/util/normalized.txt")).build());
+        report.add(builder.setDirectory(RESOURCE_FOLDER_WORKSPACE).setFileName("relative.txt").build());
+        report.add(builder.setDirectory(RESOURCE_FOLDER_WORKSPACE).setFileName(normalize("../../core/util/normalized.txt")).build());
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(report, Paths.get(resourceFolder));
+        generator.run(report, RESOURCE_FOLDER_PATH);
 
         assertThat(report).hasSize(5);
         assertThat(report.get(0))
@@ -96,11 +86,11 @@ class AbsolutePathGeneratorTest {
         assertThat(report.get(1))
                 .as("Issue in console log").hasFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
         assertThat(report.get(2))
-                .as("Issue with relative file name").hasFileName(workspace + RELATIVE_FILE);
+                .as("Issue with relative file name").hasFileName(RESOURCE_FOLDER_WORKSPACE + RELATIVE_FILE);
         assertThat(report.get(3))
-                .as("Issue with absolute file name (normalized)").hasFileName(workspace + RELATIVE_FILE);
+                .as("Issue with absolute file name (normalized)").hasFileName(RESOURCE_FOLDER_WORKSPACE + RELATIVE_FILE);
         assertThat(report.get(4))
-                .as("Issue with absolute file name (not normalized)").hasFileName(workspace + "normalized.txt");
+                .as("Issue with absolute file name (not normalized)").hasFileName(RESOURCE_FOLDER_WORKSPACE + "normalized.txt");
 
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
@@ -112,15 +102,14 @@ class AbsolutePathGeneratorTest {
     @ValueSource(strings = {"../util/relative.txt", "relative.txt", "../../core/util/relative.txt"})
     @DisplayName("Should replace relative issue path with absolute path in stubbed FileSystem facade")
     void shouldResolveRelativePath(final String fileName) {
-        URI resourceFolder = getResourceFolder();
-        String workspace = getUriPath(resourceFolder);
+        String workspace = getUriPath(RESOURCE_FOLDER);
 
         IssueBuilder builder = new IssueBuilder();
 
         Report report = createIssuesSingleton(fileName, builder.setOrigin(ID));
 
         AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(report, Paths.get(resourceFolder));
+        generator.run(report, RESOURCE_FOLDER_PATH);
 
         assertThat(report.get(0).getFileName())
                 .as("Resolving file '%s'", normalize(fileName))
@@ -152,12 +141,21 @@ class AbsolutePathGeneratorTest {
         assertThat(report.getInfoMessages().get(0)).contains("1 already resolved");
     }
 
-    private String getUriPath(final URI resourceFolder) {
+    private static String getUriPath(final URI resourceFolder) {
         String workspace = resourceFolder.getPath();
         if (isWindows() && workspace.charAt(0) == SLASH) {
             workspace = workspace.substring(1);
         }
         return workspace;
+    }
+
+    /**
+     * Returns whether the OS under test is Windows or Unix.
+     *
+     * @return {@code true} if the OS is Windows, {@code false} otherwise
+     */
+    private static boolean isWindows() {
+        return File.pathSeparatorChar == ';';
     }
 
     private Report createIssuesSingleton(final String fileName, final IssueBuilder issueBuilder) {
@@ -171,7 +169,7 @@ class AbsolutePathGeneratorTest {
         return fileName.replace("/", File.separator);
     }
 
-    private URI getResourceFolder() {
+    private static URI getResourceFolder() {
         try {
             URL resource = AbsolutePathGeneratorTest.class.getResource(RELATIVE_FILE);
             String fileName = resource.toExternalForm();
