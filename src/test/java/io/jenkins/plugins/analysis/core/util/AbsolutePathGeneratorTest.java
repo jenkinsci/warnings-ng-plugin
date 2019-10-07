@@ -76,9 +76,6 @@ class AbsolutePathGeneratorTest {
         return File.pathSeparatorChar == ';';
     }
 
-    /**
-     * Ensures that absolute paths are not changed while relative paths are resolved.
-     */
     @Test
     @DisplayName("Should skip existing absolute paths")
     void shouldNotTouchAbsolutePathOrEmptyPath() {
@@ -117,7 +114,7 @@ class AbsolutePathGeneratorTest {
 
     @ParameterizedTest(name = "[{index}] Relative file name = {0}")
     @ValueSource(strings = {"relative/file.txt", "../file.txt", "file.txt"})
-    @DisplayName("Should resolve relative path with stubbed FileSystem facade")
+    @DisplayName("Should replace relative issue path with absolute path in stubbed FileSystem facade")
     void shouldResolveRelativePath(final String fileName) {
         String absolutePath = WORKSPACE_PATH + "/" + fileName;
 
@@ -136,12 +133,9 @@ class AbsolutePathGeneratorTest {
         assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
     }
 
-    /**
-     * Ensures that existing absolute paths are resolved by using different relative paths to the same target.
-     */
     @ParameterizedTest(name = "[{index}] Relative filename = {0}")
     @ValueSource(strings = {"../util/relative.txt", "relative.txt", "../../core/util/relative.txt"})
-    @DisplayName("Should resolve relative path with real FileSystem in resource folder")
+    @DisplayName("Should leave existing absolute path unchanged with real FileSystem in resource folder")
     void shouldResolveAbsolutePath(final String fileName) {
         Report report = new Report();
         URI resourceFolder = getResourceFolder();
@@ -157,6 +151,18 @@ class AbsolutePathGeneratorTest {
                 .as("Resolving file '%s'", normalize(fileName))
                 .isEqualTo(workspace + RELATIVE_FILE);
         assertThat(report.getErrorMessages()).isEmpty();
+        assertThat(report.getInfoMessages()).hasSize(1);
+        assertThat(report.getInfoMessages().get(0)).contains("1 already resolved");
+    }
+
+    @ParameterizedTest(name = "[{index}] Relative filename = {0}")
+    @ValueSource(strings = {"../util/relative.txt", "relative.txt", "../../core/util/relative.txt"})
+    @DisplayName("Should resolve relative path in FileSystem facade")
+    void shouldResolvePathInFacade(final String fileName) {
+        FileSystem fileSystem = new FileSystem();
+        Optional<String> absolute = fileSystem.resolveAbsolutePath(Paths.get(getResourceFolder()), fileName);
+        assertThat(absolute).isPresent();
+        assertThat(absolute.get()).endsWith(PATH_TO_RESOURCE);
     }
 
     private String getUriPath(final URI resourceFolder) {
@@ -176,16 +182,6 @@ class AbsolutePathGeneratorTest {
 
     private String normalize(final String fileName) {
         return fileName.replace("/", File.separator);
-    }
-
-    @ParameterizedTest(name = "[{index}] Relative filename = {0}")
-    @ValueSource(strings = {"../util/relative.txt", "relative.txt", "../../core/util/relative.txt"})
-    @DisplayName("Should resolve relative path in FileSystem facade")
-    void shouldResolvePath(final String fileName) {
-        FileSystem fileSystem = new FileSystem();
-        Optional<String> absolute = fileSystem.resolveAbsolutePath(Paths.get(getResourceFolder()), fileName);
-        assertThat(absolute).isPresent();
-        assertThat(absolute.get()).endsWith(PATH_TO_RESOURCE);
     }
 
     private URI getResourceFolder() {
