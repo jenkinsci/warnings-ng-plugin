@@ -10,8 +10,8 @@ import jenkins.model.GlobalConfiguration;
  * @author Ullrich Hafner
  */
 public class GlobalConfigurationItem extends GlobalConfiguration {
-    private final Runnable actualLoad;
-    private final Runnable actualSave;
+    private transient Runnable actualLoad;
+    private transient Runnable actualSave;
 
     /**
      * Creates a new {@link GlobalConfigurationItem}.
@@ -19,6 +19,10 @@ public class GlobalConfigurationItem extends GlobalConfiguration {
     protected GlobalConfigurationItem() {
         super();
 
+        activatePersistence();
+    }
+
+    private void activatePersistence() {
         actualLoad = super::load;
         actualSave = super::save;
     }
@@ -36,6 +40,18 @@ public class GlobalConfigurationItem extends GlobalConfiguration {
         actualLoad = facade::load;
         actualSave = facade::save;
     }
+
+    /**
+     * Called after de-serialization to restore transient fields.
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        activatePersistence();
+
+        return this;
+    }
+
 
     @Override
     public final synchronized void load() {
