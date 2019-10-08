@@ -96,15 +96,15 @@ public class AffectedFilesResolver {
      *         directory to store the copied files in
      * @param agentWorkspace
      *         directory of the workspace in the agent, all source files must be part of this directory
+     * @param additionalPaths
+     *         additional paths that may contain the affected files
      *
      * @throws InterruptedException
      *         if the user cancels the processing
      */
-    public void copyAffectedFilesToBuildFolder(final Report report,
-            final FilePath affectedFilesFolder, final FilePath agentWorkspace,
-            final FilePath... sourceFolders) throws InterruptedException {
-        copyAffectedFilesToBuildFolder(report, new RemoteFacade(affectedFilesFolder, agentWorkspace,
-                sourceFolders));
+    public void copyAffectedFilesToBuildFolder(final Report report, final FilePath affectedFilesFolder,
+            final FilePath agentWorkspace, final FilePath... additionalPaths) throws InterruptedException {
+        copyAffectedFilesToBuildFolder(report, new RemoteFacade(affectedFilesFolder, agentWorkspace, additionalPaths));
     }
 
     @VisibleForTesting
