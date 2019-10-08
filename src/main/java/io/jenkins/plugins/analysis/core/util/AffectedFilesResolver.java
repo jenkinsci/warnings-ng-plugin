@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Set;
 
+import org.eclipse.collections.impl.factory.Lists;
+
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -99,12 +101,15 @@ public class AffectedFilesResolver {
      *         if the user cancels the processing
      */
     public void copyAffectedFilesToBuildFolder(final Report report,
-            final FilePath affectedFilesFolder, final FilePath agentWorkspace) throws InterruptedException {
-        copyAffectedFilesToBuildFolder(report, new RemoteFacade(agentWorkspace, affectedFilesFolder));
+            final FilePath affectedFilesFolder, final FilePath agentWorkspace,
+            final FilePath... sourceFolders) throws InterruptedException {
+        copyAffectedFilesToBuildFolder(report, new RemoteFacade(affectedFilesFolder, agentWorkspace,
+                sourceFolders));
     }
 
     @VisibleForTesting
-    void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade) throws InterruptedException {
+    void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade)
+            throws InterruptedException {
         int copied = 0;
         int notFound = 0;
         int notInWorkspace = 0;
@@ -142,11 +147,13 @@ public class AffectedFilesResolver {
         private final VirtualChannel channel;
         private final FilePath workspace;
         private final FilePath affectedFilesFolder;
+        private final FilePath[] sourceFolders;
 
-        RemoteFacade(final FilePath workspace, final FilePath affectedFilesFolder) {
+        RemoteFacade(final FilePath affectedFilesFolder, final FilePath workspace, final FilePath... sourceFolders) {
             channel = workspace.getChannel();
             this.workspace = workspace;
             this.affectedFilesFolder = affectedFilesFolder;
+            this.sourceFolders = sourceFolders;
         }
 
         boolean exists(final String fileName) {
@@ -173,10 +180,13 @@ public class AffectedFilesResolver {
          */
         boolean isInWorkspace(final String fileName) {
             PathUtil pathUtil = new PathUtil();
-            String workspaceDirectory = pathUtil.getAbsolutePath(workspace.getRemote());
             String sourceFile = pathUtil.getAbsolutePath(createFile(fileName).getRemote());
 
-            return sourceFile.startsWith(workspaceDirectory);
+            return Lists.mutable.with(sourceFolders)
+                    .with(workspace)
+                    .stream()
+                    .map(sourceFolder -> pathUtil.getAbsolutePath(sourceFolder.getRemote()))
+                    .anyMatch(sourceFile::startsWith);
         }
 
         public void copy(final String fileName) throws IOException, InterruptedException {

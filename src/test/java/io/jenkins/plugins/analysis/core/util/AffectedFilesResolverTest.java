@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -48,7 +49,7 @@ class AffectedFilesResolverTest {
     }
 
     private FilePath createWorkspaceStub() throws IOException {
-        return new FilePath(Files.createTempFile("prefix", "suffix").toFile());
+        return new FilePath(Files.createTempDirectory("prefix").toFile());
     }
 
     @Test
@@ -138,5 +139,37 @@ class AffectedFilesResolverTest {
         assertThat(message).contains("1 not in workspace");
         assertThat(message).contains("0 not-found");
         assertThat(message).contains("0 with I/O error");
+    }
+
+    @Nested
+    class RemoteFacadeTest {
+        @Test
+        void shouldFindFileInWorkspace() throws IOException {
+            FilePath buildFolderStub = createWorkspaceStub();
+            FilePath workspaceStub = createWorkspaceStub();
+            FilePath sourceFolderStub = createWorkspaceStub();
+            RemoteFacade remoteFacade = new RemoteFacade(buildFolderStub, workspaceStub);
+
+            assertThat(remoteFacade.isInWorkspace(workspaceStub.getRemote())).isTrue();
+            assertThat(remoteFacade.isInWorkspace(workspaceStub.child(FILE_NAME).getRemote())).isTrue();
+
+            assertThat(remoteFacade.isInWorkspace(sourceFolderStub.getRemote())).isFalse();
+            assertThat(remoteFacade.isInWorkspace(sourceFolderStub.child(FILE_NAME).getRemote())).isFalse();
+        }
+
+        @Test
+        void shouldFindFileInSourceFolder() throws IOException {
+            FilePath buildFolderStub = createWorkspaceStub();
+            FilePath workspaceStub = createWorkspaceStub();
+            FilePath sourceFolderStub = createWorkspaceStub();
+
+            RemoteFacade remoteFacade = new RemoteFacade(buildFolderStub, workspaceStub, sourceFolderStub);
+
+            assertThat(remoteFacade.isInWorkspace(workspaceStub.getRemote())).isTrue();
+            assertThat(remoteFacade.isInWorkspace(workspaceStub.child(FILE_NAME).getRemote())).isTrue();
+
+            assertThat(remoteFacade.isInWorkspace(sourceFolderStub.getRemote())).isTrue();
+            assertThat(remoteFacade.isInWorkspace(sourceFolderStub.child(FILE_NAME).getRemote())).isTrue();
+        }
     }
 }
