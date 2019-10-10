@@ -385,13 +385,6 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         assertColumnsOfTest(rows.get(7), commits.get("Test"), 1);
         assertColumnsOfTest(rows.get(8), commits.get("Test"), 2);
         assertColumnsOfTest(rows.get(9), commits.get("Test"), 3);
-
-        table.goToPage(2);
-        assertThat(table.getInfo()).isEqualTo("Showing 11 to 11 of 11 entries");
-
-        List<BlamesRow> secondPageRows = table.getRows();
-        assertThat(secondPageRows).hasSize(1);
-        assertColumnsOfTest(secondPageRows.get(0), commits.get("Test"), 4);
     }
 
     private Map<String, String> createGitRepository() throws Exception {

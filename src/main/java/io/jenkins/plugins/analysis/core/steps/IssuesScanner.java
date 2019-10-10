@@ -132,7 +132,7 @@ class IssuesScanner {
     private Collection<String> getPermittedSourceDirectories(final Report report) {
         Collection<String> permittedSourceDirectories = WarningsPluginConfiguration.getInstance()
                 .getPermittedSourceDirectories(sourceDirectories);
-        if (!permittedSourceDirectories.equals(sourceDirectories)) {
+        if (!permittedSourceDirectories.isEmpty() && !permittedSourceDirectories.equals(sourceDirectories)) {
             report.logError("Additional source directories '%s' must be registered in Jenkins system configuration", sourceDirectories);
         }
         return permittedSourceDirectories;
@@ -268,17 +268,33 @@ class IssuesScanner {
             fileLocations.getInfoMessages().forEach(filtered::logInfo);
             fileLocations.getErrorMessages().forEach(filtered::logError);
 
+            return new AnnotatedReport(id, filtered,
+                    blame(filtered, fileLocations),
+                    mineRepository(filtered, fileLocations));
+        }
+
+        private Blames blame(final Report filtered, final FileLocations fileLocations) {
+            if (fileLocations.isEmpty()) {
+                return new Blames();
+            }
             Blames blames = blamer.blame(fileLocations);
             blames.logSummary();
             blames.getInfoMessages().forEach(filtered::logInfo);
             blames.getErrorMessages().forEach(filtered::logError);
+            return blames;
+        }
+
+        private RepositoryStatistics mineRepository(final Report filtered, final FileLocations fileLocations)
+                throws InterruptedException {
+            if (fileLocations.isEmpty()) {
+                return new RepositoryStatistics();
+            }
 
             RepositoryStatistics statistics = miner.mine(fileLocations.getRelativePaths());
             statistics.logSummary();
             statistics.getInfoMessages().forEach(filtered::logInfo);
             statistics.getErrorMessages().forEach(filtered::logError);
-
-            return new AnnotatedReport(id, filtered, blames, statistics);
+            return statistics;
         }
 
         private void resolveAbsolutePaths(final Report report, final File workspace) {

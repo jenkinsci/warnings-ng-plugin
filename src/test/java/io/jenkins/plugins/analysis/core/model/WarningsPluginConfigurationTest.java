@@ -21,7 +21,7 @@ class WarningsPluginConfigurationTest {
 
     @Test
     void shouldHaveNoRootFoldersWhenCreated() {
-        WarningsPluginConfiguration configuration = new WarningsPluginConfiguration(mock(GlobalConfigurationFacade.class));
+        WarningsPluginConfiguration configuration = createConfiguration();
 
         assertThat(configuration.getSourceDirectories()).isEmpty();
         assertThat(configuration.getPermittedSourceDirectories(Collections.emptyList())).isEmpty();
@@ -39,5 +39,23 @@ class WarningsPluginConfigurationTest {
         assertThat(configuration.getPermittedSourceDirectories(Collections.singletonList("One"))).containsExactly("One");
         assertThat(configuration.getPermittedSourceDirectories(asList("One", "Two"))).containsExactly("One", "Two");
         assertThat(configuration.getPermittedSourceDirectories(asList("One", "Two", "Three"))).containsExactly("One", "Two");
+    }
+
+    @Test
+    void shouldNormalizePath() {
+        WarningsPluginConfiguration configuration = createConfiguration();
+
+        configuration.setSourceDirectories(asList(
+                new SourceDirectory("relative\\file.txt"),
+                new SourceDirectory("C:\\absolute\\file.txt")));
+
+        String relative = "relative/file.txt";
+        String absolute = "C:/absolute/file.txt";
+        assertThat(configuration.getPermittedSourceDirectories(asList(relative, absolute)))
+                .containsExactly(relative, absolute);
+    }
+
+    private WarningsPluginConfiguration createConfiguration() {
+        return new WarningsPluginConfiguration(mock(GlobalConfigurationFacade.class));
     }
 }

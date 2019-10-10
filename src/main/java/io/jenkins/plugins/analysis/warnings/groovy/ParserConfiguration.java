@@ -54,7 +54,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      * @return the singleton instance
      */
     public static ParserConfiguration getInstance() {
-        return GlobalConfiguration.all().get(ParserConfiguration.class); // FIXME: indirectly calls Jenkins.getInstance
+        return GlobalConfiguration.all().get(ParserConfiguration.class);
     }
 
     /**

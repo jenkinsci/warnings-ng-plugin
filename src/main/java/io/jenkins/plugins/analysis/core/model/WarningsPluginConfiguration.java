@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundSetter;
@@ -83,12 +85,18 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
      * @param directories
      *         the new source root folders to filter
      *
-     * @return the source root folders
+     * @return the source root folders (converted to normalized Unix paths)
      */
     public Collection<String> getPermittedSourceDirectories(final Collection<String> directories) {
-        return sourceDirectories.stream()
+        PathUtil pathUtil = new PathUtil();
+        Set<String> permittedDirectories = sourceDirectories.stream()
                 .map(SourceDirectory::getPath)
-                .filter(directories::contains)
-                .collect(Collectors.toList());
+                .map(pathUtil::getAbsolutePath)
+                .collect(Collectors.toSet());
+        Set<String> filtered = directories.stream()
+                .map(pathUtil::getAbsolutePath)
+                .collect(Collectors.toSet());
+        filtered.retainAll(permittedDirectories);
+        return filtered;
     }
 }
