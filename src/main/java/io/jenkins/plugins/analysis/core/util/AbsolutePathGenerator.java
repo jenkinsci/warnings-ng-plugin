@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core.util;
 import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,6 +26,20 @@ import edu.hm.hafner.util.PathUtil;
  */
 public class AbsolutePathGenerator {
     static final String NOTHING_TO_DO = "-> none of the issues requires resolving of absolute path";
+
+    /**
+     * Resolves absolute paths of the affected files of the specified set of issues.
+     *
+     * @param report
+     *         the issues to resolve the paths
+     * @param workspace
+     *         the workspace containing the affected files
+     * @param additionalPaths
+     *         additional paths that may contain the affected files
+     */
+    public void run(final Report report, final Path workspace, final Collection<String> additionalPaths) {
+        run(report, workspace, additionalPaths.stream().map(Paths::get).toArray(Path[]::new));
+    }
 
     /**
      * Resolves absolute paths of the affected files of the specified set of issues.

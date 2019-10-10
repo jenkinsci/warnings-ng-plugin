@@ -64,6 +64,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
+    private String sourceDirectory = StringUtils.EMPTY;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
@@ -692,6 +693,22 @@ public class RecordIssuesStep extends Step implements Serializable {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
+    public String getSourceDirectory() {
+        return sourceDirectory;
+    }
+
+    /**
+     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * then this folder needs to be added in Jenkins global configuration.
+     *
+     * @param sourceDirectory
+     *         a folder containing the source code
+     */
+    @DataBoundSetter
+    public void setSourceDirectory(final String sourceDirectory) {
+        this.sourceDirectory = sourceDirectory;
+    }
+
     /**
      * Returns whether the results for each configured static analysis result should be aggregated into a single result
      * or if every tool should get an individual result.
@@ -946,8 +963,8 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());
             recorder.setFailOnError(step.getFailOnError());
-            recorder.setTrendChartType(step.trendChartType);
-
+            recorder.setTrendChartType(step.getTrendChartType());
+            recorder.setSourceDirectory(step.getSourceDirectory());
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
 

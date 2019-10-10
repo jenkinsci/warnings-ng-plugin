@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,7 @@ import jenkins.MasterToSlaveFileCallable;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
 import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
@@ -58,6 +60,7 @@ import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 @SuppressWarnings("PMD.ExcessiveImports")
 class IssuesScanner {
     private final FilePath workspace;
+    private final Collection<String> sourceDirectories;
     private final Run<?, ?> run;
     private final FilePath jenkinsRootDir;
     private final Charset sourceCodeEncoding;
@@ -77,12 +80,14 @@ class IssuesScanner {
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
-            final FilePath workspace, final Run<?, ?> run, final FilePath jenkinsRootDir, final TaskListener listener,
+            final FilePath workspace, final Collection<String> sourceDirectories, final Run<?, ?> run,
+            final FilePath jenkinsRootDir, final TaskListener listener,
             final BlameMode blameMode, final ForensicsMode forensicsMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
         this.workspace = workspace;
+        this.sourceDirectories = sourceDirectories;
         this.run = run;
         this.jenkinsRootDir = jenkinsRootDir;
         this.listener = listener;
@@ -114,14 +119,23 @@ class IssuesScanner {
         else {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
                     getAgentName(), sourceCodeEncoding);
-
-            result = workspace.act(new ReportPostProcessor(
-                    tool.getActualId(), report, sourceCodeEncoding.name(),
-                    createBlamer(report), createMiner(report), filters));
-            copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()));
+            Collection<String> permittedSourceDirectories = getPermittedSourceDirectories(report);
+            result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
+                    createBlamer(report), createMiner(report), filters, permittedSourceDirectories));
+            copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()),
+                    permittedSourceDirectories);
         }
         logger.log(result.getReport());
         return result;
+    }
+
+    private Collection<String> getPermittedSourceDirectories(final Report report) {
+        Collection<String> permittedSourceDirectories = WarningsPluginConfiguration.getInstance()
+                .getPermittedSourceDirectories(sourceDirectories);
+        if (!permittedSourceDirectories.equals(sourceDirectories)) {
+            report.logError("Additional source directories '%s' must be registered in Jenkins system configuration", sourceDirectories);
+        }
+        return permittedSourceDirectories;
     }
 
     private Blamer createBlamer(final Report report) {
@@ -155,11 +169,12 @@ class IssuesScanner {
         }
     }
 
-    private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder)
-            throws InterruptedException {
+    private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder,
+            final Collection<String> permittedAdditionalSourceDirectories) throws InterruptedException {
         report.logInfo("Copying affected files to Jenkins' build folder '%s'", affectedFilesFolder);
 
-        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, affectedFilesFolder, workspace);
+        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, affectedFilesFolder, workspace,
+                permittedAdditionalSourceDirectories);
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {
@@ -221,10 +236,12 @@ class IssuesScanner {
         private final String sourceCodeEncoding;
         private final Blamer blamer;
         private final RepositoryMiner miner;
+        private final Collection<String> sourceDirectories;
         private final List<RegexpFilter> filters;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final Blamer blamer, final RepositoryMiner miner, final List<RegexpFilter> filters) {
+                final Blamer blamer, final RepositoryMiner miner, final List<RegexpFilter> filters,
+                final Collection<String> sourceDirectories) {
             super();
 
             this.id = id;
@@ -233,6 +250,7 @@ class IssuesScanner {
             this.blamer = blamer;
             this.filters = filters;
             this.miner = miner;
+            this.sourceDirectories = sourceDirectories;
         }
 
         @Override
@@ -267,7 +285,7 @@ class IssuesScanner {
             report.logInfo("Resolving absolute file names for all issues in workspace '%s'", workspace.toString());
 
             AbsolutePathGenerator generator = new AbsolutePathGenerator();
-            generator.run(report, workspace.toPath());
+            generator.run(report, workspace.toPath(), sourceDirectories);
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {

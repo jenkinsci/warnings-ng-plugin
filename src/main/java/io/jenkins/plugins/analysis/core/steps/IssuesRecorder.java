@@ -82,6 +82,7 @@ public class IssuesRecorder extends Recorder {
     private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
+    private String sourceDirectory = StringUtils.EMPTY;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
@@ -119,11 +120,15 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility.
+     * Called after de-serialization to retain backward compatibility or to populate new elements (that would be otherwise
+     * initialized to {@code null}).
      *
      * @return this
      */
     protected Object readResolve() {
+        if (sourceDirectory == null) {
+            sourceDirectory = StringUtils.EMPTY;
+        }
         if (trendChartType == null) {
             trendChartType = TrendChartType.AGGREGATION_TOOLS;
         }
@@ -288,6 +293,22 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setSourceCodeEncoding(final String sourceCodeEncoding) {
         this.sourceCodeEncoding = sourceCodeEncoding;
+    }
+
+    public String getSourceDirectory() {
+        return sourceDirectory;
+    }
+
+    /**
+     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * then this folder needs to be added in Jenkins global configuration.
+     *
+     * @param sourceDirectory
+     *         a folder containing the source code
+     */
+    @DataBoundSetter
+    public void setSourceDirectory(final String sourceDirectory) {
+        this.sourceDirectory = sourceDirectory;
     }
 
     /**
@@ -597,7 +618,8 @@ public class IssuesRecorder extends Recorder {
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
-        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(), workspace, run,
+        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
+                workspace, Collections.singleton(sourceDirectory), run,
                 new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                 isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
 

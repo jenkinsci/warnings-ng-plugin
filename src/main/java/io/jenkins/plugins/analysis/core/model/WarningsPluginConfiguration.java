@@ -1,6 +1,7 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.core.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,7 +13,6 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 import jenkins.model.GlobalConfiguration;
 
-import io.jenkins.plugins.analysis.core.model.SourceRoot;
 import io.jenkins.plugins.analysis.core.util.GlobalConfigurationFacade;
 import io.jenkins.plugins.analysis.core.util.GlobalConfigurationItem;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
@@ -26,7 +26,7 @@ import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 @Extension
 @Symbol("warningsPlugin")
 public class WarningsPluginConfiguration extends GlobalConfigurationItem {
-    private List<SourceRoot> sourceRoots = Collections.emptyList();
+    private List<SourceDirectory> sourceDirectories = Collections.emptyList();
 
     /**
      * Creates the global configuration for the warnings plugins.
@@ -59,25 +59,36 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
      *
      * @return the source root folders
      */
-    public List<SourceRoot> getSourceRoots() {
-        return sourceRoots;
-    }
-
-    public List<String> getSourceRootFolders() {
-        return sourceRoots.stream().map(SourceRoot::getFolderName).collect(Collectors.toList());
+    public List<SourceDirectory> getSourceDirectories() {
+        return sourceDirectories;
     }
 
     /**
      * Sets the list of available source root folders to the specified elements. Previously set source root folders will
      * be removed.
      *
-     * @param sourceRoots
+     * @param sourceDirectories
      *         the new source root folders
      */
     @DataBoundSetter
-    public void setSourceRoots(final List<SourceRoot> sourceRoots) {
-        this.sourceRoots = new ArrayList<>(sourceRoots);
+    public void setSourceDirectories(final Collection<SourceDirectory> sourceDirectories) {
+        this.sourceDirectories = new ArrayList<>(sourceDirectories);
 
         save();
+    }
+
+    /**
+     * Filters the specified collection of directories so that only permitted source directories will be returned.
+     *
+     * @param directories
+     *         the new source root folders to filter
+     *
+     * @return the source root folders
+     */
+    public Collection<String> getPermittedSourceDirectories(final Collection<String> directories) {
+        return sourceDirectories.stream()
+                .map(SourceDirectory::getPath)
+                .filter(directories::contains)
+                .collect(Collectors.toList());
     }
 }

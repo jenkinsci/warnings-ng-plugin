@@ -18,6 +18,9 @@
   <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}" field="sourceCodeEncoding">
     <f:combobox />
   </f:entry>
+  <f:entry title="${%title.sourceDirectory}" description="${%description.sourceDirectory}" field="sourceDirectory">
+    <f:combobox />
+  </f:entry>
 
   <i:hr title="${%Issue filters}"/>
 

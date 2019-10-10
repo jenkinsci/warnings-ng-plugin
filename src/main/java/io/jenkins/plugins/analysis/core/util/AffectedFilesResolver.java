@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.Set;
 
 import org.eclipse.collections.impl.factory.Lists;
@@ -105,6 +106,27 @@ public class AffectedFilesResolver {
     public void copyAffectedFilesToBuildFolder(final Report report, final FilePath affectedFilesFolder,
             final FilePath agentWorkspace, final FilePath... additionalPaths) throws InterruptedException {
         copyAffectedFilesToBuildFolder(report, new RemoteFacade(affectedFilesFolder, agentWorkspace, additionalPaths));
+    }
+
+    /**
+     * Copies all files with issues from the workspace to the build folder.
+     *
+     * @param report
+     *         the issues
+     * @param affectedFilesFolder
+     *         directory to store the copied files in
+     * @param agentWorkspace
+     *         directory of the workspace in the agent, all source files must be part of this directory
+     * @param additionalPaths
+     *         additional paths that may contain the affected files
+     *
+     * @throws InterruptedException
+     *         if the user cancels the processing
+     */
+    public void copyAffectedFilesToBuildFolder(final Report report, final FilePath affectedFilesFolder,
+            final FilePath agentWorkspace, final Collection<String> additionalPaths) throws InterruptedException {
+        copyAffectedFilesToBuildFolder(report, new RemoteFacade(affectedFilesFolder, agentWorkspace,
+                additionalPaths.stream().map(agentWorkspace::child).toArray(FilePath[]::new)));
     }
 
     @VisibleForTesting

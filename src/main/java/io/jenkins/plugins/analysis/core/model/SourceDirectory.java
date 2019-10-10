@@ -12,36 +12,37 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 
 /**
- * Defines the properties of a warnings parser that uses a Groovy script to parse the warnings log.
+ * Directory that contains the source files that have issues.
  *
  * @author Ullrich Hafner
  */
-public class SourceRoot extends AbstractDescribableImpl<SourceRoot> implements Serializable {
+public class SourceDirectory extends AbstractDescribableImpl<SourceDirectory> implements Serializable {
     private static final long serialVersionUID = -3864564528382064924L;
-    private final String folderName;
+
+    private final String path;
 
     /**
-     * Creates a new instance of {@link SourceRoot}.
+     * Creates a new instance of {@link SourceDirectory}.
      *
-     * @param folderName
+     * @param path
      *         the name of the folder
      */
     @DataBoundConstructor
-    public SourceRoot(final String folderName) {
-        this.folderName = folderName;
+    public SourceDirectory(final String path) {
+        this.path = path;
     }
 
-    public String getFolderName() {
-        return folderName;
+    public String getPath() {
+        return path;
     }
 
     /**
-     * Descriptor to validate {@link SourceRoot}.
+     * Descriptor to validate {@link SourceDirectory}.
      *
      * @author Ullrich Hafner
      */
     @Extension
-    public static class DescriptorImpl extends Descriptor<SourceRoot> {
+    public static class DescriptorImpl extends Descriptor<SourceDirectory> {
         @NonNull
         @Override
         public String getDisplayName() {
