@@ -51,7 +51,7 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
      */
     public static WarningsPluginConfiguration getInstance() {
         return GlobalConfiguration.all()
-                .get(WarningsPluginConfiguration.class); // FIXME: indirectly calls Jenkins.getInstance
+                .get(WarningsPluginConfiguration.class);
     }
 
     /**

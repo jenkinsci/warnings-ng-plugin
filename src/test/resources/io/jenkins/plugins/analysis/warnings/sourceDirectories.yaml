@@ -1,0 +1,5 @@
+unclassified:
+  warningsPlugin:
+    sourceDirectories:
+    - path: "relative"
+    - path: "/absolute"
