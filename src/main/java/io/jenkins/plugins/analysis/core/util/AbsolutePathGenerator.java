@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +13,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.eclipse.collections.api.list.MutableList;
-import org.eclipse.collections.impl.factory.Lists;
+import org.apache.commons.io.FilenameUtils;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Report;
@@ -57,16 +57,23 @@ public class AbsolutePathGenerator {
                 .filter(this::isInterestingFileName)
                 .collect(Collectors.toSet());
 
+        PathUtil pathUtil = new PathUtil();
         if (filesToProcess.isEmpty()) {
             report.logInfo(NOTHING_TO_DO);
-            report.stream().forEach(issue -> issue.setFileName(new PathUtil().getAbsolutePath(issue.getFileName())));
+            report.stream().forEach(issue -> issue.setFileName(pathUtil.getAbsolutePath(issue.getFileName())));
             return;
         }
 
         FilteredLog log = new FilteredLog(report, "Can't resolve absolute paths for some files:");
 
-        MutableList<Path> prefixes = Lists.mutable.with(additionalPaths).with(workspace);
-        Map<String, String> pathMapping = resolveAbsoluteNames(filesToProcess, prefixes, log);
+        Set<Path> absolutePaths = Arrays.stream(additionalPaths)
+                .filter(path -> isAbsolute(path.toString()))
+                .collect(Collectors.toSet());
+        absolutePaths.add(workspace);
+        Arrays.stream(additionalPaths)
+                .filter(path -> !isAbsolute(path.toString()))
+                .map(workspace::resolve).forEach(absolutePaths::add);
+        Map<String, String> pathMapping = resolveAbsoluteNames(filesToProcess, absolutePaths, log);
         report.stream()
                 .filter(issue -> pathMapping.containsKey(issue.getFileName()))
                 .forEach(issue -> issue.setFileName(pathMapping.get(issue.getFileName())));
@@ -74,11 +81,16 @@ public class AbsolutePathGenerator {
         log.logSummary();
     }
 
+    // TODO: replace with PathUtil.isAbsolute
+    private boolean isAbsolute(final String fileName) {
+        return FilenameUtils.getPrefixLength(fileName) > 0;
+    }
+
     private boolean isInterestingFileName(final String fileName) {
         return !"-".equals(fileName) && !ConsoleLogHandler.isInConsoleLog(fileName);
     }
 
-    private Map<String, String> resolveAbsoluteNames(final Set<String> affectedFiles, final MutableList<Path> prefixes,
+    private Map<String, String> resolveAbsoluteNames(final Set<String> affectedFiles, final Collection<Path> prefixes,
             final FilteredLog log) {
         Map<String, String> pathMapping = new HashMap<>();
         int errors = 0;
@@ -107,12 +119,13 @@ public class AbsolutePathGenerator {
         return pathMapping;
     }
 
-    private Optional<String> resolveAbsolutePath(final MutableList<Path> prefixes, final String fileName) {
+    private Optional<String> resolveAbsolutePath(final Collection<Path> prefixes, final String fileName) {
         return prefixes.stream()
                 .map(path -> resolveAbsolutePath(path, fileName))
                 .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
                 .findFirst();
     }
+
     private Optional<String> resolveAbsolutePath(final Path parent, final String fileName) {
         try {
             return Optional.of(new PathUtil().toString(parent.resolve(fileName)));

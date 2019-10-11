@@ -144,6 +144,35 @@ class AbsolutePathGeneratorTest {
         assertThatChildIsResolved(report);
     }
 
+    @Test
+    @DisplayName("Should replace relative issue path with absolute path in relative path of workspace")
+    void shouldResolveRelativePathInWorkspaceSubFolder() {
+        IssueBuilder builder = new IssueBuilder();
+
+        String fileName = "child.txt";
+        Report report = createIssuesSingleton(fileName, builder.setOrigin(ID));
+
+        AbsolutePathGenerator generator = new AbsolutePathGenerator();
+        generator.run(report, RESOURCE_FOLDER_PATH);
+
+        assertThatOneFileIsUnresolved(fileName, report);
+
+        report = createIssuesSingleton(fileName, builder.setOrigin(ID));
+        generator.run(report, RESOURCE_FOLDER_PATH.resolve("child"));
+
+        assertThatChildIsResolved(report);
+
+        report = createIssuesSingleton(fileName, builder.setOrigin(ID));
+        generator.run(report, RESOURCE_FOLDER_PATH, Paths.get("child"));
+
+        assertThatChildIsResolved(report);
+
+        report = createIssuesSingleton(fileName, builder.setOrigin(ID));
+        generator.run(report, RESOURCE_FOLDER_PATH.resolve("child"), RESOURCE_FOLDER_PATH);
+
+        assertThatChildIsResolved(report);
+    }
+
     private void assertThatChildIsResolved(final Report report) {
         assertThat(report.get(0).getFileName()).isEqualTo(RESOURCE_FOLDER_WORKSPACE + "child/child.txt");
         assertThat(report.getErrorMessages()).isEmpty();
