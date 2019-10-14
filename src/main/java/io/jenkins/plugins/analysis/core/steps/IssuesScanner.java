@@ -273,7 +273,7 @@ class IssuesScanner {
 
             createFingerprints(filtered);
 
-            FileLocations fileLocations = new ReportLocations().toFileLocations(filtered, workspace.getPath());
+            FileLocations fileLocations = new ReportLocations().toFileLocations(filtered);
             fileLocations.logSummary();
             fileLocations.getInfoMessages().forEach(filtered::logInfo);
             fileLocations.getErrorMessages().forEach(filtered::logError);
@@ -300,7 +300,7 @@ class IssuesScanner {
                 return new RepositoryStatistics();
             }
 
-            RepositoryStatistics statistics = miner.mine(fileLocations.getRelativePaths());
+            RepositoryStatistics statistics = miner.mine(fileLocations.getFiles());
             statistics.logSummary();
             statistics.getInfoMessages().forEach(filtered::logInfo);
             statistics.getErrorMessages().forEach(filtered::logError);

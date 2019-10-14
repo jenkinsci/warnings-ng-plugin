@@ -6,11 +6,8 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.forensics.blame.FileLocations;
-import io.jenkins.plugins.forensics.blame.FileLocations.FileSystem;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link ReportLocations}.
@@ -26,9 +23,9 @@ class ReportLocationsTest {
     void shouldConvertEmptyReport() {
         Report report = new Report();
 
-        FileLocations empty = new ReportLocations().toFileLocations(report, WORKSPACE, createFileSystemStub());
+        FileLocations empty = new ReportLocations().toFileLocations(report);
 
-        assertThat(empty.getRelativePaths()).isEmpty();
+        assertThat(empty.getFiles()).isEmpty();
     }
 
     @Test
@@ -39,10 +36,10 @@ class ReportLocationsTest {
         builder.setDirectory(WORKSPACE);
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
 
-        FileLocations singleLine = new ReportLocations().toFileLocations(report, WORKSPACE, createFileSystemStub());
+        FileLocations singleLine = new ReportLocations().toFileLocations(report);
 
-        assertThat(singleLine.getRelativePaths()).containsExactly(TXT_FILE);
-        assertThat(singleLine.getLines(TXT_FILE)).containsExactly(1);
+        assertThat(singleLine.getFiles()).containsExactly(absolute(TXT_FILE));
+        assertThat(singleLine.getLines(absolute(TXT_FILE))).containsExactly(1);
     }
 
     @Test
@@ -54,10 +51,10 @@ class ReportLocationsTest {
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
         report.add(builder.setFileName(TXT_FILE).setLineStart(5).build());
 
-        FileLocations twoLines = new ReportLocations().toFileLocations(report, WORKSPACE, createFileSystemStub());
+        FileLocations twoLines = new ReportLocations().toFileLocations(report);
 
-        assertThat(twoLines.getRelativePaths()).containsExactly(TXT_FILE);
-        assertThat(twoLines.getLines(TXT_FILE)).containsExactly(1, 5);
+        assertThat(twoLines.getFiles()).containsExactly(absolute(TXT_FILE));
+        assertThat(twoLines.getLines(absolute(TXT_FILE))).containsExactly(1, 5);
     }
 
     @Test
@@ -69,16 +66,14 @@ class ReportLocationsTest {
         report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
         report.add(builder.setFileName(JAVA_FILE).setLineStart(10).build());
 
-        FileLocations twoFiles = new ReportLocations().toFileLocations(report, WORKSPACE, createFileSystemStub());
+        FileLocations twoFiles = new ReportLocations().toFileLocations(report);
 
-        assertThat(twoFiles.getRelativePaths()).containsExactlyInAnyOrder(TXT_FILE, JAVA_FILE);
-        assertThat(twoFiles.getLines(TXT_FILE)).containsExactly(1);
-        assertThat(twoFiles.getLines(JAVA_FILE)).containsExactly(10);
+        assertThat(twoFiles.getFiles()).containsExactlyInAnyOrder(absolute(TXT_FILE), absolute(JAVA_FILE));
+        assertThat(twoFiles.getLines(absolute(TXT_FILE))).containsExactly(1);
+        assertThat(twoFiles.getLines(absolute(JAVA_FILE))).containsExactly(10);
     }
 
-    private FileSystem createFileSystemStub() {
-        FileSystem fileSystem = mock(FileSystem.class);
-        when(fileSystem.resolveAbsolutePath(anyString(), any())).thenReturn(WORKSPACE);
-        return fileSystem;
+    private String absolute(final String fileName) {
+        return WORKSPACE + "/" + fileName;
     }
 }
