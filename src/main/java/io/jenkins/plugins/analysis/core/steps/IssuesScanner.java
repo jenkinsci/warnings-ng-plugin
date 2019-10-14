@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,6 +40,7 @@ import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.core.util.SourceDirectoryResolver;
 import io.jenkins.plugins.forensics.blame.Blamer;
 import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
 import io.jenkins.plugins.forensics.blame.BlamerFactory;
@@ -112,18 +114,17 @@ class IssuesScanner {
         AnnotatedReport result;
         if (report.isEmpty()) {
             result = new AnnotatedReport(tool.getActualId(), report); // nothing to post process
-            if (report.hasErrors()) {
+            if (report.hasErrors()) { // FIXME: why here?
                 report.logInfo("Skipping post processing due to errors");
             }
         }
         else {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
                     getAgentName(), sourceCodeEncoding);
-            Collection<String> permittedSourceDirectories = getPermittedSourceDirectories(report);
             result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                    createBlamer(report), createMiner(report), filters, permittedSourceDirectories));
-            copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()),
-                    permittedSourceDirectories);
+                    createBlamer(report, workspace.getChannel()), createMiner(report, workspace.getChannel()), filters,
+                    new SourceDirectoryResolver().toAbsolutePaths(workspace.getRemote(), sourceDirectories)));
+            copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()));
         }
         logger.log(result.getReport());
         return result;
@@ -131,14 +132,16 @@ class IssuesScanner {
 
     private Collection<String> getPermittedSourceDirectories(final Report report) {
         Collection<String> permittedSourceDirectories = WarningsPluginConfiguration.getInstance()
-                .getPermittedSourceDirectories(sourceDirectories);
-        if (!permittedSourceDirectories.isEmpty() && !permittedSourceDirectories.equals(sourceDirectories)) {
-            report.logError("Additional source directories '%s' must be registered in Jenkins system configuration", sourceDirectories);
+                .getPermittedSourceDirectories(workspace, sourceDirectories);
+        if (!sourceDirectories.isEmpty()
+                && sourceDirectories.size() != permittedSourceDirectories.size() - 1) { // do not count workspace
+            report.logError("Additional source directories '%s' must be registered in Jenkins system configuration",
+                    sourceDirectories);
         }
         return permittedSourceDirectories;
     }
 
-    private Blamer createBlamer(final Report report) {
+    private Blamer createBlamer(final Report report, final VirtualChannel channel) {
         Blamer blamer;
         if (blameMode == BlameMode.DISABLED) {
             report.logInfo("Skipping SCM blames as requested");
@@ -147,7 +150,8 @@ class IssuesScanner {
         else {
             FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
-            blamer = BlamerFactory.findBlamerFor(run, workspace, listener, log);
+            List<FilePath> directories = getSourceDirectoriesAsFilePaths(report, channel);
+            blamer = BlamerFactory.findBlamerFor(run, directories, listener, log);
             log.logSummary();
             log.getInfoMessages().forEach(report::logInfo);
             log.getErrorMessages().forEach(report::logError);
@@ -156,11 +160,17 @@ class IssuesScanner {
         return blamer;
     }
 
-    private RepositoryMiner createMiner(final Report report) {
+    private List<FilePath> getSourceDirectoriesAsFilePaths(final Report report, final VirtualChannel channel) {
+        return getPermittedSourceDirectories(report).stream()
+                        .map(path -> new FilePath(channel, path))
+                        .collect(Collectors.toList());
+    }
+
+    private RepositoryMiner createMiner(final Report report, final VirtualChannel channel) {
         if (forensicsMode == ForensicsMode.ENABLED) {
             FilteredLog log = new FilteredLog("Errors while mining source code repository for "
                     + run.getFullDisplayName());
-            return MinerFactory.findMinerFor(run, workspace, listener, log);
+            return MinerFactory.findMinerFor(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
         }
         else {
             report.logInfo("Skipping SCM forensics as requested");
@@ -169,12 +179,12 @@ class IssuesScanner {
         }
     }
 
-    private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder,
-            final Collection<String> permittedAdditionalSourceDirectories) throws InterruptedException {
+    private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder)
+            throws InterruptedException {
         report.logInfo("Copying affected files to Jenkins' build folder '%s'", affectedFilesFolder);
 
         new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, affectedFilesFolder, workspace,
-                permittedAdditionalSourceDirectories);
+                getPermittedSourceDirectories(report));
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {
@@ -255,7 +265,7 @@ class IssuesScanner {
 
         @Override
         public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) throws InterruptedException {
-            resolveAbsolutePaths(originalReport, workspace);
+            resolveAbsolutePaths(originalReport);
             resolveModuleNames(originalReport, workspace);
             resolvePackageNames(originalReport);
 
@@ -297,11 +307,12 @@ class IssuesScanner {
             return statistics;
         }
 
-        private void resolveAbsolutePaths(final Report report, final File workspace) {
-            report.logInfo("Resolving absolute file names for all issues in workspace '%s'", workspace.toString());
+        private void resolveAbsolutePaths(final Report report) {
+            report.logInfo("Resolving absolute file names for all issues in source directories '%s'",
+                    sourceDirectories);
 
             AbsolutePathGenerator generator = new AbsolutePathGenerator();
-            generator.run(report, workspace.toPath(), sourceDirectories);
+            generator.run(report, sourceDirectories);
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.assertj.core.data.MapEntry;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.CreateFileBuilder;
@@ -257,13 +256,12 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      * @throws Exception
      *         if there is a problem with the git repository
      */
-    @Issue("JENKINS-57260") @Ignore("Until JENKINS-57260 has been fixed")
-    @Test
+    @Test @Issue("JENKINS-57260")
     public void shouldBlameWithBuildOutOfTree() throws Exception {
         gitRepo.init();
         createAndCommitFile("Test.h", "#ifdef \"");
 
-        final String commit = gitRepo.head();
+        String firstCommit = gitRepo.head();
 
         createAndCommitFile("Jenkinsfile", "pipeline {\n"
                 + "  agent any\n"
@@ -273,7 +271,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                 + "  stages {\n"
                 + "    stage('Prepare') {\n"
                 + "      steps {\n"
-                + "        dir('src') {\n"
+                + "        dir('source') {\n"
                 + "          checkout scm\n"
                 + "        }\n"
                 + "      }\n"
@@ -284,7 +282,11 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                 + "          sh 'mkdir doxygen'\n"
                 + "          sh 'echo Test.h:1: Error: Unexpected character `\"`> doxygen/doxygen.log'\n"
                 + "        }\n"
-                + "        recordIssues(aggregatingResults: true, enabledForFailure: true, tools: [ doxygen(name: 'Doxygen', pattern: 'build/doxygen/doxygen/doxygen.log') ] )\n"
+                + "        recordIssues(aggregatingResults: true, "
+                + "             enabledForFailure: true, "
+                + "             tool: doxygen(name: 'Doxygen', pattern: 'build/doxygen/doxygen/doxygen.log'), "
+                + "             sourceDirectory: 'source'"
+                + "        )\n"
                 + "      }\n"
                 + "    }\n"
                 + "  }\n"
@@ -305,7 +307,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                 file("Test.h:1"),
                 author("Git SampleRepoRule"),
                 email("gits@mplereporule"),
-                commit(commit),
+                commit(firstCommit),
                 age("1"));
     }
 

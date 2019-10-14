@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,12 +8,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FilenameUtils;
+
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundSetter;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
+import hudson.FilePath;
 import jenkins.model.GlobalConfiguration;
 
 import io.jenkins.plugins.analysis.core.util.GlobalConfigurationFacade;
@@ -29,6 +33,7 @@ import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 @Symbol("warningsPlugin")
 public class WarningsPluginConfiguration extends GlobalConfigurationItem {
     private List<SourceDirectory> sourceDirectories = Collections.emptyList();
+    private Set<String> normalizedSourceDirectories = Collections.emptySet();
 
     /**
      * Creates the global configuration for the warnings plugins.
@@ -76,27 +81,60 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
     public void setSourceDirectories(final Collection<SourceDirectory> sourceDirectories) {
         this.sourceDirectories = new ArrayList<>(sourceDirectories);
 
+        PathUtil pathUtil = new PathUtil();
+        normalizedSourceDirectories = sourceDirectories.stream()
+                .map(SourceDirectory::getPath)
+                .map(pathUtil::getAbsolutePath)
+                .collect(Collectors.toSet());
+
         save();
     }
 
     /**
-     * Filters the specified collection of directories so that only permitted source directories will be returned.
+     * Filters the specified collection of additional directories so that only permitted source directories will be
+     * returned. Permitted source directories are absolute paths that have been registered using {@link
+     * #setSourceDirectories(Collection)} or relative paths in the workspace.
      *
-     * @param directories
-     *         the new source root folders to filter
+     * @param workspace
+     *         the workspace containing the affected files
+     * @param additionalPaths
+     *         additional paths that may contain the affected files
      *
-     * @return the source root folders (converted to normalized Unix paths)
+     * @return Permitted source directories including the workspace, all relative paths in the workspace, and all
+     *         registered permitted absolute paths. The elements in the collection are converted normalized Unix paths -
+     *         relative paths are resolved to absolute paths in the workspace.
      */
-    public Collection<String> getPermittedSourceDirectories(final Collection<String> directories) {
+    public Collection<String> getPermittedSourceDirectories(final FilePath workspace,
+            final Collection<String> additionalPaths) {
+        List<String> permitted = new ArrayList<>();
+        permitted.add(workspace.getRemote());
+
         PathUtil pathUtil = new PathUtil();
-        Set<String> permittedDirectories = sourceDirectories.stream()
-                .map(SourceDirectory::getPath)
-                .map(pathUtil::getAbsolutePath)
-                .collect(Collectors.toSet());
-        Set<String> filtered = directories.stream()
-                .map(pathUtil::getAbsolutePath)
-                .collect(Collectors.toSet());
-        filtered.retainAll(permittedDirectories);
-        return filtered;
+        for (String path : additionalPaths) {
+            String normalized = pathUtil.getAbsolutePath(path);
+            if (isAbsolute(normalized)) {
+                if (normalizedSourceDirectories.contains(normalized)) { // skip not registered absolute paths
+                    permitted.add(normalized);
+                }
+            }
+            else {
+                permitted.add(workspace.child(normalized).getRemote());
+            }
+        }
+        return permitted;
+    }
+
+    /**
+     * Returns whether the specified  path is absolute. Note that we cannot depend on {@link Path#isAbsolute()} since
+     * Jenkins master may run on a different OS than the agent.
+     *
+     * @param path
+     *         the path to check
+     *
+     * @return {@code true} if this path is absolute, {@code false} otherwise
+     */
+    // TODO: replace with PathUtil.isAbsolute
+    private boolean isAbsolute(final String path) {
+        return FilenameUtils.getPrefixLength(path) > 0;
     }
 }

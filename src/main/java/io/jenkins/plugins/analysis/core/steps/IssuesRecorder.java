@@ -54,6 +54,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.RunResultHandler;
+import io.jenkins.plugins.analysis.core.util.SourceDirectoryResolver;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
@@ -618,8 +619,9 @@ public class IssuesRecorder extends Recorder {
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
+        SourceDirectoryResolver sourceDirectoryHandler = new SourceDirectoryResolver();
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
-                workspace, Collections.singleton(sourceDirectory), run,
+                workspace, sourceDirectoryHandler.asCollection(sourceDirectory), run,
                 new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                 isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
 

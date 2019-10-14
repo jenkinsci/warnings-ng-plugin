@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.steps;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +27,7 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
+import io.jenkins.plugins.analysis.core.util.SourceDirectoryResolver;
 
 /**
  * Scan files or the console log for issues.
@@ -174,7 +174,7 @@ public class ScanForIssuesStep extends Step {
             isBlameDisabled = step.getBlameDisabled();
             isForensicsDisabled = step.getForensicsDisabled();
             filters = step.getFilters();
-            sourceDirectories = Collections.singleton(step.getSourceDirectory());
+            sourceDirectories = new SourceDirectoryResolver().asCollection(step.getSourceDirectory());
         }
 
         @Override

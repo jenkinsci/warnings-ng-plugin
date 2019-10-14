@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -14,10 +14,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FilenameUtils;
+import org.eclipse.collections.impl.factory.Lists;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.PathUtil;
+import edu.hm.hafner.util.VisibleForTesting;
 
 /**
  * Resolves absolute paths of the affected files of a set of issues.
@@ -34,11 +36,17 @@ public class AbsolutePathGenerator {
      *         the issues to resolve the paths
      * @param workspace
      *         the workspace containing the affected files
-     * @param additionalPaths
-     *         additional paths that may contain the affected files
+     *
+     * @deprecated use {@link #run(Report, Collection)}
      */
-    public void run(final Report report, final Path workspace, final Collection<String> additionalPaths) {
-        run(report, workspace, additionalPaths.stream().map(Paths::get).toArray(Path[]::new));
+    @Deprecated
+    public void run(final Report report, final Path workspace) {
+        run(report, Collections.singleton(workspace.toString()));
+    }
+
+    @VisibleForTesting
+    void run(final Report report, final Path workspace, final Path additionalDirectory) {
+        run(report, Lists.fixedSize.of(workspace.toString(), additionalDirectory.toString()));
     }
 
     /**
@@ -46,12 +54,10 @@ public class AbsolutePathGenerator {
      *
      * @param report
      *         the issues to resolve the paths
-     * @param workspace
-     *         the workspace containing the affected files
-     * @param additionalPaths
-     *         additional paths that may contain the affected files
+     * @param sourceDirectories
+     *         collection of source paths to search for the affected files
      */
-    public void run(final Report report, final Path workspace, final Path... additionalPaths) {
+    public void run(final Report report, final Collection<String> sourceDirectories) {
         Set<String> filesToProcess = report.getFiles()
                 .stream()
                 .filter(this::isInterestingFileName)
@@ -66,14 +72,7 @@ public class AbsolutePathGenerator {
 
         FilteredLog log = new FilteredLog(report, "Can't resolve absolute paths for some files:");
 
-        Set<Path> absolutePaths = Arrays.stream(additionalPaths)
-                .filter(path -> isAbsolute(path.toString()))
-                .collect(Collectors.toSet());
-        absolutePaths.add(workspace);
-        Arrays.stream(additionalPaths)
-                .filter(path -> !isAbsolute(path.toString()))
-                .map(workspace::resolve).forEach(absolutePaths::add);
-        Map<String, String> pathMapping = resolveAbsoluteNames(filesToProcess, absolutePaths, log);
+        Map<String, String> pathMapping = resolveAbsoluteNames(filesToProcess, sourceDirectories, log);
         report.stream()
                 .filter(issue -> pathMapping.containsKey(issue.getFileName()))
                 .forEach(issue -> issue.setFileName(pathMapping.get(issue.getFileName())));
@@ -81,24 +80,33 @@ public class AbsolutePathGenerator {
         log.logSummary();
     }
 
-    // TODO: replace with PathUtil.isAbsolute
-    private boolean isAbsolute(final String fileName) {
-        return FilenameUtils.getPrefixLength(fileName) > 0;
-    }
-
     private boolean isInterestingFileName(final String fileName) {
         return !"-".equals(fileName) && !ConsoleLogHandler.isInConsoleLog(fileName);
     }
 
-    private Map<String, String> resolveAbsoluteNames(final Set<String> affectedFiles, final Collection<Path> prefixes,
-            final FilteredLog log) {
+    /**
+     * Returns whether the specified  path is absolute. Note that we cannot depend on {@link Path#isAbsolute()} since
+     * Jenkins master may run on a different OS than the agent.
+     *
+     * @param path
+     *         the path to check
+     *
+     * @return {@code true} if this path is absolute, {@code false} otherwise
+     */
+    // TODO: replace with PathUtil.isAbsolute
+    private boolean isAbsolute(final String path) {
+        return FilenameUtils.getPrefixLength(path) > 0;
+    }
+
+    private Map<String, String> resolveAbsoluteNames(final Set<String> affectedFiles,
+            final Collection<String> sourceDirectories, final FilteredLog log) {
         Map<String, String> pathMapping = new HashMap<>();
         int errors = 0;
         int unchanged = 0;
         int changed = 0;
 
         for (String fileName : affectedFiles) {
-            Optional<String> absolutePath = resolveAbsolutePath(prefixes, fileName);
+            Optional<String> absolutePath = resolveAbsolutePath(fileName, sourceDirectories);
             if (absolutePath.isPresent()) {
                 String resolved = absolutePath.get();
                 pathMapping.put(fileName, resolved);
@@ -119,18 +127,34 @@ public class AbsolutePathGenerator {
         return pathMapping;
     }
 
-    private Optional<String> resolveAbsolutePath(final Collection<Path> prefixes, final String fileName) {
-        return prefixes.stream()
+    private Optional<String> resolveAbsolutePath(final String fileName, final Collection<String> sourceDirectories) {
+        if (isAbsolute(fileName)) {
+            return resolveAbsolutePath(Paths.get(fileName));
+        }
+        return resolveRelativePath(fileName, sourceDirectories);
+    }
+
+    private Optional<String> resolveRelativePath(final String fileName, final Collection<String> sourceDirectories) {
+        return sourceDirectories.stream()
                 .map(path -> resolveAbsolutePath(path, fileName))
                 .flatMap(o -> o.map(Stream::of).orElseGet(Stream::empty))
                 .findFirst();
     }
 
-    private Optional<String> resolveAbsolutePath(final Path parent, final String fileName) {
+    private Optional<String> resolveAbsolutePath(final String parent, final String fileName) {
         try {
-            return Optional.of(new PathUtil().toString(parent.resolve(fileName)));
+            return resolveAbsolutePath(Paths.get(parent, fileName));
         }
-        catch (IOException | InvalidPathException ignored) {
+        catch (InvalidPathException ignored) {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<String> resolveAbsolutePath(final Path path) {
+        try {
+            return Optional.of(new PathUtil().toString(path));
+        }
+        catch (IOException ignored) {
             return Optional.empty();
         }
     }

@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,10 +46,16 @@ class AbsolutePathGeneratorTest {
     void shouldReturnFallbackOnError(final String fileName) {
         Report report = createIssuesSingleton(fileName, new IssueBuilder());
 
-        new AbsolutePathGenerator().run(report, RESOURCE_FOLDER_PATH);
+        resolvePaths(report, RESOURCE_FOLDER_PATH);
 
         assertThat(report.iterator()).toIterable().containsExactly(report.get(0));
         assertThatOneFileIsUnresolved(fileName, report);
+    }
+
+    private AbsolutePathGenerator resolvePaths(final Report report, final Path workspace) {
+        AbsolutePathGenerator absolutePathGenerator = new AbsolutePathGenerator();
+        absolutePathGenerator.run(report, Collections.singleton(workspace.toString()));
+        return absolutePathGenerator;
     }
 
     @Test
@@ -56,7 +63,7 @@ class AbsolutePathGeneratorTest {
     void shouldDoNothingIfNoIssuesPresent() {
         Report report = new Report();
 
-        new AbsolutePathGenerator().run(report, RESOURCE_FOLDER_PATH);
+        resolvePaths(report, RESOURCE_FOLDER_PATH);
 
         assertThat(report).hasSize(0);
         assertThat(report.getInfoMessages()).containsExactly(AbsolutePathGenerator.NOTHING_TO_DO);
@@ -75,8 +82,7 @@ class AbsolutePathGeneratorTest {
         report.add(builder.setDirectory(RESOURCE_FOLDER_WORKSPACE).setFileName("relative.txt").build());
         report.add(builder.setDirectory(RESOURCE_FOLDER_WORKSPACE).setFileName(normalize("../../core/util/normalized.txt")).build());
 
-        AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(report, RESOURCE_FOLDER_PATH);
+        resolvePaths(report, RESOURCE_FOLDER_PATH);
 
         assertThat(report).hasSize(5);
         assertThat(report.get(0))
@@ -104,8 +110,7 @@ class AbsolutePathGeneratorTest {
 
         Report report = createIssuesSingleton(fileName, builder.setOrigin(ID));
 
-        AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(report, RESOURCE_FOLDER_PATH);
+        resolvePaths(report, RESOURCE_FOLDER_PATH);
 
         assertThat(report.get(0).getFileName())
                 .as("Resolving file '%s'", normalize(fileName))
@@ -123,8 +128,7 @@ class AbsolutePathGeneratorTest {
         String fileName = "child.txt";
         Report report = createIssuesSingleton(fileName, builder.setOrigin(ID));
 
-        AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(report, RESOURCE_FOLDER_PATH);
+        AbsolutePathGenerator generator = resolvePaths(report, RESOURCE_FOLDER_PATH);
 
         assertThatOneFileIsUnresolved(fileName, report);
 
@@ -152,8 +156,7 @@ class AbsolutePathGeneratorTest {
         String fileName = "child.txt";
         Report report = createIssuesSingleton(fileName, builder.setOrigin(ID));
 
-        AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(report, RESOURCE_FOLDER_PATH);
+        AbsolutePathGenerator generator = resolvePaths(report, RESOURCE_FOLDER_PATH);
 
         assertThatOneFileIsUnresolved(fileName, report);
 
@@ -161,9 +164,6 @@ class AbsolutePathGeneratorTest {
         generator.run(report, RESOURCE_FOLDER_PATH.resolve("child"));
 
         assertThatChildIsResolved(report);
-
-        report = createIssuesSingleton(fileName, builder.setOrigin(ID));
-        generator.run(report, RESOURCE_FOLDER_PATH, Paths.get("child"));
 
         assertThatChildIsResolved(report);
 
@@ -195,8 +195,7 @@ class AbsolutePathGeneratorTest {
         Issue issue = new IssueBuilder().setDirectory(RESOURCE_FOLDER_WORKSPACE).setFileName(normalize(fileName)).build();
         report.add(issue);
 
-        AbsolutePathGenerator generator = new AbsolutePathGenerator();
-        generator.run(report, Paths.get(RESOURCE_FOLDER));
+        resolvePaths(report, Paths.get(RESOURCE_FOLDER));
 
         assertThat(report.get(0).getFileName())
                 .as("Resolving file '%s'", normalize(fileName))
