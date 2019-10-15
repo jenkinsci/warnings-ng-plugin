@@ -118,7 +118,7 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
                 }
             }
             else {
-                permitted.add(workspace.child(normalized).getRemote());
+                permitted.add(pathUtil.getAbsolutePath(workspace.child(normalized).getRemote()));
             }
         }
         return permitted;

@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.util.PathUtil;
+
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 
@@ -29,6 +31,7 @@ class WarningsPluginConfigurationTest {
 
     private static final List<SourceDirectory> SOURCE_ROOTS
             = asList(new SourceDirectory(FIRST), new SourceDirectory(SECOND));
+    private static final PathUtil PATH_UTIL = new PathUtil();
 
     @Test
     void shouldHaveNoRootFoldersWhenCreated() {
@@ -67,18 +70,22 @@ class WarningsPluginConfigurationTest {
         WarningsPluginConfiguration configuration = createConfiguration();
 
         configuration.setSourceDirectories(asList(
-                new SourceDirectory("/absolute/folder"),
-                new SourceDirectory("C:\\absolute\\folder")));
+                new SourceDirectory("/absolute/unix"),
+                new SourceDirectory("C:\\absolute\\windows")));
 
-        String relative = "relative/folder";
-        String absoluteUnix = "/absolute/folder";
-        String absoluteWindows = "C:/absolute/folder";
-        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE, asList(relative, absoluteUnix, absoluteWindows)))
-                .containsExactly(WORKSPACE_PATH, getWorkspacePath(relative), absoluteUnix, absoluteWindows);
+        String relativeUnix = "relative/unix";
+        String relativeWindows = "relative\\windows";
+        String absoluteUnix = "/absolute/unix";
+        String absoluteWindows = "C:\\absolute\\windows";
+        String absoluteWindowsNormalized = "C:/absolute/windows";
+        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE,
+                asList(relativeUnix, relativeWindows, absoluteUnix, absoluteWindows, absoluteWindowsNormalized)))
+                .containsExactly(WORKSPACE_PATH, getWorkspacePath(relativeUnix), getWorkspacePath(relativeWindows),
+                        absoluteUnix, PATH_UTIL.getAbsolutePath(absoluteWindows), absoluteWindowsNormalized);
     }
 
     private String getWorkspacePath(final String relative) {
-        return WORKSPACE_PATH + "/" + relative;
+        return PATH_UTIL.getAbsolutePath(WORKSPACE_PATH + "/" + relative);
     }
 
     @SafeVarargs
