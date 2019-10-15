@@ -641,49 +641,49 @@ total number of issues for each tool.
       "id": "maven",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/maven",
       "name": "Maven Warnings",
-      "threshold": 9
+      "size": 9
     },
     {
       "id": "java",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/java",
       "name": "Java Warnings",
-      "threshold": 1
+      "size": 1
     },
     {
       "id": "javadoc",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/javadoc",
       "name": "JavaDoc Warnings",
-      "threshold": 0
+      "size": 0
     },
     {
       "id": "checkstyle",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/checkstyle",
       "name": "CheckStyle Warnings",
-      "threshold": 0
+      "size": 0
     },
     {
       "id": "pmd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/pmd",
       "name": "PMD Warnings",
-      "threshold": 671
+      "size": 671
     },
     {
       "id": "spotbugs",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/spotbugs",
       "name": "SpotBugs Warnings",
-      "threshold": 0
+      "size": 0
     },
     {
       "id": "cpd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/cpd",
       "name": "CPD Warnings",
-      "threshold": 123
+      "size": 123
     },
     {
       "id": "open-tasks",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/open-tasks",
       "name": "Open Tasks Scanner Warnings",
-      "threshold": 11
+      "size": 11
     }
   ]
 }
