@@ -169,7 +169,7 @@ public class AffectedFilesResolver {
     static class RemoteFacade {
         private final VirtualChannel channel;
         private final FilePath affectedFilesFolder;
-        private List<FilePath> sourceDirectories;
+        private final List<FilePath> sourceDirectories;
 
         RemoteFacade(final FilePath affectedFilesFolder, final FilePath workspace, final FilePath... sourceFolders) {
             channel = workspace.getChannel();
