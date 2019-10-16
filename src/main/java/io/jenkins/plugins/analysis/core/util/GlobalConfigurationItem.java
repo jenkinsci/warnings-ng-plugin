@@ -10,8 +10,10 @@ import jenkins.model.GlobalConfiguration;
  * @author Ullrich Hafner
  */
 public class GlobalConfigurationItem extends GlobalConfiguration {
-    private transient Runnable actualLoad;
+    @SuppressWarnings("PMD.DoNotUseThreads")
     private transient Runnable actualSave;
+    @SuppressWarnings("PMD.DoNotUseThreads")
+    private transient Runnable actualLoad;
 
     /**
      * Creates a new {@link GlobalConfigurationItem}.
@@ -53,12 +55,12 @@ public class GlobalConfigurationItem extends GlobalConfiguration {
     }
 
 
-    @Override
+    @Override @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
     public final synchronized void load() {
         actualLoad.run();
     }
 
-    @Override
+    @Override @SuppressWarnings("PMD.AvoidSynchronizedAtMethodLevel")
     public final synchronized void save() {
         actualSave.run();
     }

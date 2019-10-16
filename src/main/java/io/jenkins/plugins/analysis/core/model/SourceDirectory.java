@@ -29,6 +29,8 @@ public class SourceDirectory extends AbstractDescribableImpl<SourceDirectory> im
      */
     @DataBoundConstructor
     public SourceDirectory(final String path) {
+        super();
+
         this.path = path;
     }
 

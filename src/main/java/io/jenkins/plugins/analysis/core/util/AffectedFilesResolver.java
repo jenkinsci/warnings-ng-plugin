@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.collections.impl.factory.Lists;
@@ -167,15 +168,13 @@ public class AffectedFilesResolver {
 
     static class RemoteFacade {
         private final VirtualChannel channel;
-        private final FilePath workspace;
         private final FilePath affectedFilesFolder;
-        private final FilePath[] sourceFolders;
+        private List<FilePath> sourceDirectories;
 
         RemoteFacade(final FilePath affectedFilesFolder, final FilePath workspace, final FilePath... sourceFolders) {
             channel = workspace.getChannel();
-            this.workspace = workspace;
             this.affectedFilesFolder = affectedFilesFolder;
-            this.sourceFolders = sourceFolders;
+            sourceDirectories = Lists.mutable.with(sourceFolders).with(workspace).toList();
         }
 
         boolean exists(final String fileName) {
@@ -204,8 +203,7 @@ public class AffectedFilesResolver {
             PathUtil pathUtil = new PathUtil();
             String sourceFile = pathUtil.getAbsolutePath(createFile(fileName).getRemote());
 
-            return Lists.mutable.with(sourceFolders)
-                    .with(workspace)
+            return sourceDirectories
                     .stream()
                     .map(sourceFolder -> pathUtil.getAbsolutePath(sourceFolder.getRemote()))
                     .anyMatch(sourceFile::startsWith);
