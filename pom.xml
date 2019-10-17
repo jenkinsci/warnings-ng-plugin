@@ -12,7 +12,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>6.1.0-SNAPSHOT</version>
+  <version>6.2.0-SNAPSHOT</version>
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -30,8 +30,8 @@
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>6.0.2</analysis-model-api.version>
     <analysis-model.version>6.0.2</analysis-model.version>
-    <forensics-api-plugin.version>0.4.1</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.3.2</git-forensics-plugin.version>
+    <forensics-api-plugin.version>0.5.0-20191017.180939-5</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.5.0-20191017.174109-3</git-forensics-plugin.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
