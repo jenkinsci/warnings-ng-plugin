@@ -56,6 +56,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored
     private String referenceJobName = StringUtils.EMPTY;
+    private String referenceBuildId = StringUtils.EMPTY;
     private boolean failOnError = false; // by default, it should not fail on error
 
     private int healthy;
@@ -200,6 +201,21 @@ public class PublishIssuesStep extends Step implements Serializable {
     @SuppressWarnings("WeakerAccess") // Required by Stapler
     public String getReferenceJobName() {
         return referenceJobName;
+    }
+
+    /**
+     * Sets the reference build id to get the results for the issue difference computation.
+     *
+     * @param referenceBuildId
+     *         the build id of the reference job
+     */
+    @DataBoundSetter
+    public void setReferenceBuildId(final String referenceBuildId) {
+        this.referenceBuildId = referenceBuildId;
+    }
+
+    public String getReferenceBuildId() {
+        return referenceBuildId;
     }
 
     @Nullable
@@ -792,7 +808,8 @@ public class PublishIssuesStep extends Step implements Serializable {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
                     new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), qualityGate,
-                    StringUtils.defaultString(step.getName()), step.getReferenceJobName(), step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
+                    StringUtils.defaultString(step.getName()), step.getReferenceJobName(), step.getReferenceBuildId(),
+                    step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), statusHandler, step.getFailOnError());
             return publisher.attachAction(step.getTrendChartType());
         }

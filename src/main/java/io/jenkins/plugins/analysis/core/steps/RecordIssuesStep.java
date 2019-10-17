@@ -70,6 +70,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
     private String referenceJobName;
+    private String referenceBuildId;
 
     private int healthy;
     private int unhealthy;
@@ -857,6 +858,34 @@ public class RecordIssuesStep extends Step implements Serializable {
         return referenceJobName;
     }
 
+    /**
+     * Sets the reference build id of the reference job for the issue difference computation.
+     *
+     * @param referenceBuildId
+     *         the build id of the reference job
+     */
+    @DataBoundSetter
+    public void setReferenceBuildId(final String referenceBuildId) {
+        if (IssuesRecorder.NO_REFERENCE_BUILD.equals(referenceBuildId)) {
+            this.referenceBuildId = StringUtils.EMPTY;
+        } else {
+	    this.referenceBuildId = referenceBuildId;
+	}
+    }
+
+    /**
+     * Returns the reference build id of the reference job to get the results for the issue difference computation.
+     * If the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_BUILD} is returned.
+     *
+     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_BUILD} if undefined
+     */
+    public String getReferenceBuildId() {
+        if (StringUtils.isBlank(referenceBuildId)) {
+            return IssuesRecorder.NO_REFERENCE_BUILD;
+        }
+        return referenceBuildId;
+    }
+
     public int getHealthy() {
         return healthy;
     }
@@ -954,6 +983,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setIgnoreQualityGate(step.getIgnoreQualityGate());
             recorder.setIgnoreFailedBuilds(step.getIgnoreFailedBuilds());
             recorder.setReferenceJobName(step.getReferenceJobName());
+            recorder.setReferenceBuildId(step.getReferenceBuildId());
             recorder.setHealthy(step.getHealthy());
             recorder.setUnhealthy(step.getUnhealthy());
             recorder.setMinimumSeverity(step.getMinimumSeverity());

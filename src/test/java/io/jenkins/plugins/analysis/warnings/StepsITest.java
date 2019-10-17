@@ -780,6 +780,44 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
+     * Creates a reference job and starts a build having 2 warnings.  Then two builds for the job.  Then another job is created that
+     * uses the first build as a reference.  Verifies that the association is correctly stored.
+     */
+    @Test
+    public void shouldUseOtherJobBuildAsReference() {
+        WorkflowJob reference = createPipeline("reference");
+        copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start-rev0.txt");
+        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
+
+        AnalysisResult firstReferenceResult = scheduleSuccessfulBuild(reference);
+        cleanWorkspace(reference);
+        copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
+        AnalysisResult secondReferenceResult = scheduleSuccessfulBuild(reference);
+
+        assertThat(firstReferenceResult.getTotalSize()).isEqualTo(1);
+        assertThat(firstReferenceResult.getIssues()).hasSize(1);
+        assertThat(firstReferenceResult.getReferenceBuild()).isEmpty();
+        assertThat(firstReferenceResult.getOwner().getId()).isEqualTo("1");
+
+        assertThat(secondReferenceResult.getTotalSize()).isEqualTo(2);
+        assertThat(secondReferenceResult.getIssues()).hasSize(2);
+        assertThat(secondReferenceResult.getReferenceBuild().get().getId()).isEqualTo("1");
+        assertThat(secondReferenceResult.getOwner().getId()).isEqualTo("2");
+
+        WorkflowJob job = createPipelineWithWorkspaceFiles("java-start.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
+                "publishIssues issues:[issues], referenceJobName:'reference', referenceBuildId: '1'"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result.getReferenceBuild().isPresent());
+        assertThat(result.getReferenceBuild().get().getId()).isEqualTo(firstReferenceResult.getOwner().getId());
+        assertThat(result.getReferenceBuild().get().getId()).isEqualTo("1");
+
+        assertThat(result.getNewIssues()).hasSize(1);
+    }
+
+    /**
      * Verifies that when publishIssues marks the build as unstable it also marks the step with
      * WarningAction so that visualizations can display the step as unstable rather than just
      * the whole build.

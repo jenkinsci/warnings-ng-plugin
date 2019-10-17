@@ -50,6 +50,7 @@ class IssuesPublisher {
     private final Charset sourceCodeEncoding;
     private final QualityGateEvaluator qualityGate;
     private final String referenceJobName;
+    private final String referenceBuildId;
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
@@ -59,7 +60,7 @@ class IssuesPublisher {
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
-            final String name, final String referenceJobName, final boolean ignoreQualityGate,
+            final String name, final String referenceJobName, final String referenceBuildId, final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
             final StageResultHandler stageResultHandler, final boolean failOnErrors) {
 
@@ -70,6 +71,7 @@ class IssuesPublisher {
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.qualityGate = qualityGate;
         this.referenceJobName = referenceJobName;
+        this.referenceBuildId = referenceBuildId;
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
@@ -199,7 +201,11 @@ class IssuesPublisher {
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
             if (referenceJob.isPresent()) {
-                baseline = referenceJob.get().getLastBuild();
+                if (referenceBuildId != null) {
+                    baseline = referenceJob.get().getBuild(referenceBuildId);
+                } else {
+                    baseline = referenceJob.get().getLastBuild();
+                }
             }
         }
         return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(filtered),
