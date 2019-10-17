@@ -1,6 +1,6 @@
 # Contributing to the Warnings Next Generation Plugin
 
-This page provides information about contributing code to Jenkins' Warnings NExt Generation plug-in.
+This page provides information about contributing code to Jenkins' Warnings Next Generation plug-in.
 
 :exclamation: There's a lot more to the Jenkins project than just code. For information on contributing to the Jenkins'
 project overall, check out [Jenkins' contributing landing page](https://jenkins.io/participate/).
@@ -85,6 +85,7 @@ The CI job for this project is located at [ci.jenkins.io](https://ci.jenkins.io/
 
 # Links
 
+* [Join the Gitter chat of the Warnings Plugin](https://gitter.im/jenkinsci/warnings-plugin)
 * [Jenkins Contribution Landing Page](https://jenkins.io/paricipate/)
 * [Jenkins IRC Channel](https://jenkins.io/chat/)
 * [Beginners Guide To Contributing](https://wiki.jenkins.io/display/JENKINS/Beginners+Guide+to+Contributing)

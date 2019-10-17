@@ -12,7 +12,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>6.2.0-SNAPSHOT</version>
+  <version>6.1.0-SNAPSHOT</version>
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -30,8 +30,8 @@
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>6.0.2</analysis-model-api.version>
     <analysis-model.version>6.0.2</analysis-model.version>
-    <forensics-api-plugin.version>0.5.0-20191017.180939-5</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.5.0-20191017.174109-3</git-forensics-plugin.version>
+    <forensics-api-plugin.version>0.4.1</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.3.2</git-forensics-plugin.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
@@ -43,7 +43,7 @@
 
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
     <json.version>20190722</json.version>
-    <jackson-databind.version>2.9.9</jackson-databind.version>
+    <jackson-databind.version>2.9.10</jackson-databind.version>
     <slf4j.version>1.7.28</slf4j.version>
     <prettytime.version>4.0.2.Final</prettytime.version>
 
@@ -79,7 +79,7 @@
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    <pmd.version>6.18.0</pmd.version>
+    <pmd.version>6.17.0</pmd.version>
     <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
     <checkstyle.version>8.24</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.12.2</spotbugs-maven-plugin.version>
