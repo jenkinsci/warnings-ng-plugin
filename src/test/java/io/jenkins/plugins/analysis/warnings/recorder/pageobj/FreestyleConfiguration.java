@@ -33,6 +33,7 @@ public class FreestyleConfiguration extends PageObject {
     private static final String MINIMUM_SEVERITY = "_.minimumSeverity";
 
     private static final String SOURCE_CODE_ENCODING = "_.sourceCodeEncoding";
+    private static final String SOURCE_DIRECTORY = "_.sourceDirectory";
 
     private static final String PATTERN = "_.pattern";
     private static final String BLAME_DISABLED = "_.blameDisabled";
@@ -78,6 +79,25 @@ public class FreestyleConfiguration extends PageObject {
     }
 
     /**
+     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * then this folder needs to be added in Jenkins global configuration.
+     *
+     * @param sourceDirectory
+     *         a folder containing the source code
+     *
+     * @return this
+     */
+    public FreestyleConfiguration setSourceDirectory(final String sourceDirectory) {
+        setText(SOURCE_DIRECTORY, sourceDirectory);
+
+        return this;
+    }
+
+    public String getSourceDirectory() {
+        return getTextOf(SOURCE_DIRECTORY);
+    }
+
+    /**
      * Determines whether the results for each configured static analysis result should be aggregated into a single
      * result or if every tool should get an individual result.
      *
@@ -120,6 +140,7 @@ public class FreestyleConfiguration extends PageObject {
      *
      * @param forensicsDisabled
      *         {@code true} if SCM forensics should be disabled, {@code false} otherwise
+     *
      * @return this
      */
     public FreestyleConfiguration setForensicsDisabled(final boolean forensicsDisabled) {
