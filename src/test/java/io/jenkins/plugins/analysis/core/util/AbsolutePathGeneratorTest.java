@@ -17,6 +17,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.PathUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import static edu.hm.hafner.analysis.assertj.Assertions.*;
@@ -85,21 +86,25 @@ class AbsolutePathGeneratorTest {
         resolvePaths(report, RESOURCE_FOLDER_PATH);
 
         assertThat(report).hasSize(5);
-        assertThat(report.get(0))
-                .as("Issue with no file name").hasFileName("-");
-        assertThat(report.get(1))
-                .as("Issue in console log").hasFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
-        assertThat(report.get(2))
-                .as("Issue with relative file name").hasFileName(RESOURCE_FOLDER_WORKSPACE + RELATIVE_FILE);
-        assertThat(report.get(3))
-                .as("Issue with absolute file name (normalized)").hasFileName(RESOURCE_FOLDER_WORKSPACE + RELATIVE_FILE);
-        assertThat(report.get(4))
-                .as("Issue with absolute file name (not normalized)").hasFileName(RESOURCE_FOLDER_WORKSPACE + "normalized.txt");
+        assertThat(report.get(0)).as("Issue with no file name")
+                .hasFileName("-");
+        assertThat(report.get(1)).as("Issue in console log")
+                .hasFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
+        assertThat(report.get(2)).as("Issue with relative file name")
+                .hasFileName(getAbsolutePath(RELATIVE_FILE));
+        assertThat(report.get(3)).as("Issue with absolute file name (normalized)")
+                .hasFileName(getAbsolutePath(RELATIVE_FILE));
+        assertThat(report.get(4)).as("Issue with absolute file name (not normalized)")
+                .hasFileName(getAbsolutePath("normalized.txt"));
 
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
         assertThat(report.getInfoMessages().get(0)).contains("2 already resolved");
         assertThat(report.getErrorMessages()).isEmpty();
+    }
+
+    private String getAbsolutePath(final String fileName) {
+        return new PathUtil().getAbsolutePath(RESOURCE_FOLDER_PATH.resolve(fileName));
     }
 
     @ParameterizedTest(name = "[{index}] Relative file name = {0}")
@@ -112,9 +117,8 @@ class AbsolutePathGeneratorTest {
 
         resolvePaths(report, RESOURCE_FOLDER_PATH);
 
-        assertThat(report.get(0).getFileName())
-                .as("Resolving file '%s'", normalize(fileName))
-                .isEqualTo(RESOURCE_FOLDER_WORKSPACE + RELATIVE_FILE);
+        assertThat(report.get(0).getFileName()).as("Resolving file '%s'", normalize(fileName))
+                .isEqualTo(getAbsolutePath(RELATIVE_FILE));
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
@@ -174,7 +178,7 @@ class AbsolutePathGeneratorTest {
     }
 
     private void assertThatChildIsResolved(final Report report) {
-        assertThat(report.get(0).getFileName()).isEqualTo(RESOURCE_FOLDER_WORKSPACE + "child/child.txt");
+        assertThat(report.get(0).getFileName()).isEqualTo(getAbsolutePath("child/child.txt"));
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
@@ -197,9 +201,8 @@ class AbsolutePathGeneratorTest {
 
         resolvePaths(report, Paths.get(RESOURCE_FOLDER));
 
-        assertThat(report.get(0).getFileName())
-                .as("Resolving file '%s'", normalize(fileName))
-                .isEqualTo(RESOURCE_FOLDER_WORKSPACE + RELATIVE_FILE);
+        assertThat(report.get(0).getFileName()).as("Resolving file '%s'", normalize(fileName))
+                .isEqualTo(getAbsolutePath(RELATIVE_FILE));
         assertThat(report.getErrorMessages()).isEmpty();
         assertThat(report.getInfoMessages()).hasSize(1);
         assertThat(report.getInfoMessages().get(0)).contains("1 already resolved");
