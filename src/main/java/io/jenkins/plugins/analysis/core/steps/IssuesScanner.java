@@ -151,7 +151,7 @@ class IssuesScanner {
             FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
             List<FilePath> directories = getSourceDirectoriesAsFilePaths(report, channel);
-            blamer = BlamerFactory.findBlamerFor(run, directories, listener, log);
+            blamer = BlamerFactory.findBlamer(run, directories, listener, log);
             log.logSummary();
             log.getInfoMessages().forEach(report::logInfo);
             log.getErrorMessages().forEach(report::logError);
@@ -170,7 +170,7 @@ class IssuesScanner {
         if (forensicsMode == ForensicsMode.ENABLED) {
             FilteredLog log = new FilteredLog("Errors while mining source code repository for "
                     + run.getFullDisplayName());
-            return MinerFactory.findMinerFor(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
+            return MinerFactory.findMiner(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
         }
         else {
             report.logInfo("Skipping SCM forensics as requested");
