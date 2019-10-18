@@ -57,12 +57,11 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
      * @return the singleton instance
      */
     public static WarningsPluginConfiguration getInstance() {
-        return GlobalConfiguration.all()
-                .get(WarningsPluginConfiguration.class);
+        return GlobalConfiguration.all().get(WarningsPluginConfiguration.class);
     }
 
     /**
-     * Returns the list of additional source root folders.
+     * Returns the list of source directories that contain the affected files..
      *
      * @return the source root folders
      */
@@ -71,11 +70,10 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
     }
 
     /**
-     * Sets the list of available source root folders to the specified elements. Previously set source root folders will
-     * be removed.
+     * Sets the list of source directories to the specified elements. Previously set directories will be removed.
      *
      * @param sourceDirectories
-     *         the new source root folders
+     *         the source directories that contain the affected files
      */
     @DataBoundSetter
     public void setSourceDirectories(final Collection<SourceDirectory> sourceDirectories) {
@@ -101,8 +99,8 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
      *         additional paths that may contain the affected files
      *
      * @return Permitted source directories including the workspace, all relative paths in the workspace, and all
-     *         registered permitted absolute paths. The elements in the collection are converted normalized Unix paths -
-     *         relative paths are resolved to absolute paths in the workspace.
+     *         registered permitted absolute paths. The elements in the collection are converted to normalized Unix
+     *         paths - relative paths are resolved to absolute paths in the workspace.
      */
     public Collection<String> getPermittedSourceDirectories(final FilePath workspace,
             final Collection<String> additionalPaths) {
