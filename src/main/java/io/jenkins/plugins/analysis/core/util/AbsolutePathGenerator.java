@@ -13,7 +13,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.io.FilenameUtils;
 import org.eclipse.collections.impl.factory.Lists;
 
 import edu.hm.hafner.analysis.FilteredLog;
@@ -84,20 +83,6 @@ public class AbsolutePathGenerator {
         return !"-".equals(fileName) && !ConsoleLogHandler.isInConsoleLog(fileName);
     }
 
-    /**
-     * Returns whether the specified  path is absolute. Note that we cannot depend on {@link Path#isAbsolute()} since
-     * Jenkins master may run on a different OS than the agent.
-     *
-     * @param path
-     *         the path to check
-     *
-     * @return {@code true} if this path is absolute, {@code false} otherwise
-     */
-    // TODO: replace with PathUtil.isAbsolute
-    private boolean isAbsolute(final String path) {
-        return FilenameUtils.getPrefixLength(path) > 0;
-    }
-
     private Map<String, String> resolveAbsoluteNames(final Set<String> affectedFiles,
             final Collection<String> sourceDirectories, final FilteredLog log) {
         Map<String, String> pathMapping = new HashMap<>();
@@ -128,7 +113,8 @@ public class AbsolutePathGenerator {
     }
 
     private Optional<String> resolveAbsolutePath(final String fileName, final Collection<String> sourceDirectories) {
-        if (isAbsolute(fileName)) {
+        PathUtil pathUtil = new PathUtil();
+        if (pathUtil.isAbsolute(fileName)) {
             return resolveAbsolutePath(Paths.get(fileName));
         }
         return resolveRelativePath(fileName, sourceDirectories);

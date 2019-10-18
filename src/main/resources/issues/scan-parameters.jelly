@@ -13,13 +13,13 @@
     <f:checkbox />
   </f:entry>
 
-  <i:hr title="${%File Encoding}"/>
+  <i:hr title="${%Affected Files}"/>
 
-  <f:entry title="${%title.sourceCodeEncoding}" description="${%description.sourceCodeEncoding}" field="sourceCodeEncoding">
+  <f:entry title="${%title.sourceCodeEncoding}" field="sourceCodeEncoding">
     <f:combobox />
   </f:entry>
   <f:entry title="${%title.sourceDirectory}" description="${%description.sourceDirectory}" field="sourceDirectory">
-    <f:combobox />
+    <f:textbox />
   </f:entry>
 
   <i:hr title="${%Issue filters}"/>

@@ -14,6 +14,7 @@ import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -121,8 +122,8 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility or to populate new elements (that would be otherwise
-     * initialized to {@code null}).
+     * Called after de-serialization to retain backward compatibility or to populate new elements (that would be
+     * otherwise initialized to {@code null}).
      *
      * @return this
      */
@@ -1214,6 +1215,21 @@ public class IssuesRecorder extends Recorder {
          */
         public ListBoxModel doFillTrendChartTypeItems() {
             return model.getAllTrendChartTypes();
+        }
+
+        /**
+         * Performs on-the-fly validation on the source code directory.
+         *
+         * @param project
+         *         the project
+         * @param sourceDirectory
+         *         the file pattern
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String sourceDirectory) {
+            return model.doCheckSourceDirectory(project, sourceDirectory);
         }
     }
 }

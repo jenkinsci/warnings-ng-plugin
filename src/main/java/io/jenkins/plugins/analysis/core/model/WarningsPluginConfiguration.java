@@ -1,14 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.apache.commons.io.FilenameUtils;
 
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -110,7 +107,7 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
         PathUtil pathUtil = new PathUtil();
         for (String path : additionalPaths) {
             String normalized = pathUtil.getAbsolutePath(path);
-            if (isAbsolute(normalized)) {
+            if (pathUtil.isAbsolute(normalized)) {
                 if (normalizedSourceDirectories.contains(normalized)) { // skip not registered absolute paths
                     permitted.add(normalized);
                 }
@@ -120,19 +117,5 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
             }
         }
         return permitted;
-    }
-
-    /**
-     * Returns whether the specified  path is absolute. Note that we cannot depend on {@link Path#isAbsolute()} since
-     * Jenkins master may run on a different OS than the agent.
-     *
-     * @param path
-     *         the path to check
-     *
-     * @return {@code true} if this path is absolute, {@code false} otherwise
-     */
-    // TODO: replace with PathUtil.isAbsolute
-    private boolean isAbsolute(final String path) {
-        return FilenameUtils.getPrefixLength(path) > 0;
     }
 }

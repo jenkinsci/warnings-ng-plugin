@@ -1,12 +1,12 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import edu.hm.hafner.util.PathUtil;
 
 /**
  * Resolves source directories by expanding relative paths to absolute paths in the workspace.
@@ -44,11 +44,12 @@ public class SourceDirectoryResolver {
      *         source directory
      */
     public Collection<String> toAbsolutePaths(final String workspace, final Collection<String> additionalPaths) {
+        PathUtil pathUtil = new PathUtil();
         LinkedHashSet<String> allPaths = new LinkedHashSet<>();
         allPaths.add(workspace);
         additionalPaths.stream()
                 .map(path -> {
-                    if (isAbsolute(path)) {
+                    if (pathUtil.isAbsolute(path)) {
                         return path;
                     }
                     else {
@@ -56,19 +57,5 @@ public class SourceDirectoryResolver {
                     }
                 }).forEachOrdered(allPaths::add);
         return allPaths;
-    }
-
-    /**
-     * Returns whether the specified  path is absolute. Note that we cannot depend on {@link Path#isAbsolute()} since
-     * Jenkins master may run on a different OS than the agent.
-     *
-     * @param path
-     *         the path to check
-     *
-     * @return {@code true} if this path is absolute, {@code false} otherwise
-     */
-    // TODO: replace with PathUtil.isAbsolute
-    private boolean isAbsolute(final String path) {
-        return FilenameUtils.getPrefixLength(path) > 0;
     }
 }

@@ -56,7 +56,7 @@ public class ConfigurationAsCodeITest extends IntegrationTestWithJenkinsPerTest 
         List<SourceDirectory> parsers = WarningsPluginConfiguration.getInstance().getSourceDirectories();
         assertThat(parsers.stream().map(SourceDirectory::getPath))
                 .hasSize(2)
-                .containsExactlyInAnyOrder("relative", "/absolute");
+                .containsExactlyInAnyOrder("C:\\Windows", "/absolute");
     }
 
     /**
