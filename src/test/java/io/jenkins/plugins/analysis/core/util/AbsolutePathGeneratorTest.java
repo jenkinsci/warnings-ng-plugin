@@ -8,6 +8,7 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -137,7 +138,7 @@ class AbsolutePathGeneratorTest {
         assertThatOneFileIsUnresolved(fileName, report);
 
         report = createIssuesSingleton(fileName, builder.setOrigin(ID));
-        generator.run(report, RESOURCE_FOLDER_PATH.resolve("child"));
+        generator.run(report,  Collections.singleton(RESOURCE_FOLDER_PATH.resolve("child").toString()));
 
         assertThatChildIsResolved(report);
 
@@ -165,7 +166,7 @@ class AbsolutePathGeneratorTest {
         assertThatOneFileIsUnresolved(fileName, report);
 
         report = createIssuesSingleton(fileName, builder.setOrigin(ID));
-        generator.run(report, RESOURCE_FOLDER_PATH.resolve("child"));
+        generator.run(report, createSubFolder());
 
         assertThatChildIsResolved(report);
 
@@ -175,6 +176,10 @@ class AbsolutePathGeneratorTest {
         generator.run(report, RESOURCE_FOLDER_PATH.resolve("child"), RESOURCE_FOLDER_PATH);
 
         assertThatChildIsResolved(report);
+    }
+
+    private Set<String> createSubFolder() {
+        return Collections.singleton(RESOURCE_FOLDER_PATH.resolve("child").toString());
     }
 
     private void assertThatChildIsResolved(final Report report) {
@@ -196,7 +201,10 @@ class AbsolutePathGeneratorTest {
     void shouldResolveAbsolutePath(final String fileName) {
         Report report = new Report();
 
-        Issue issue = new IssueBuilder().setDirectory(new PathUtil().getAbsolutePath(RESOURCE_FOLDER_WORKSPACE)).build();
+        Issue issue = new IssueBuilder()
+                .setDirectory(new PathUtil().getAbsolutePath(RESOURCE_FOLDER_WORKSPACE))
+                .setFileName(normalize(fileName))
+                .build();
         report.add(issue);
 
         resolvePaths(report, Paths.get(RESOURCE_FOLDER));
