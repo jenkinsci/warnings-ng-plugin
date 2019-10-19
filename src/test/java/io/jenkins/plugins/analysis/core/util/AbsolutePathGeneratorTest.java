@@ -196,16 +196,17 @@ class AbsolutePathGeneratorTest {
     void shouldResolveAbsolutePath(final String fileName) {
         Report report = new Report();
 
-        Issue issue = new IssueBuilder().setDirectory(RESOURCE_FOLDER_WORKSPACE).setFileName(normalize(fileName)).build();
+        Issue issue = new IssueBuilder().setDirectory(new PathUtil().getAbsolutePath(RESOURCE_FOLDER_WORKSPACE)).build();
         report.add(issue);
 
         resolvePaths(report, Paths.get(RESOURCE_FOLDER));
 
-        assertThat(report.get(0).getFileName()).as("Resolving file '%s'", normalize(fileName))
+        String description = String.format("Resolving file '%s'", normalize(fileName));
+        assertThat(report.get(0).getFileName()).as(description)
                 .isEqualTo(getAbsolutePath(RELATIVE_FILE));
-        assertThat(report.getErrorMessages()).isEmpty();
-        assertThat(report.getInfoMessages()).hasSize(1);
-        assertThat(report.getInfoMessages().get(0)).contains("1 already resolved");
+        assertThat(report.getErrorMessages()).as(description).isEmpty();
+        assertThat(report.getInfoMessages()).as(description).hasSize(1);
+        assertThat(report.getInfoMessages().get(0)).as(description).contains("1 already resolved");
     }
 
     private static String getUriPath() {

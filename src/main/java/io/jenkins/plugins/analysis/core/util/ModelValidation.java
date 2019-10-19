@@ -280,11 +280,7 @@ public class ModelValidation {
             try {
                 FilePath workspace = project.getSomeWorkspace();
                 if (workspace != null && workspace.exists()) {
-                    PathUtil pathUtil = new PathUtil();
-                    if (pathUtil.isAbsolute(sourceDirectory)) {
-                        return FormValidation.ok();
-                    }
-                    return workspace.validateRelativeDirectory(sourceDirectory);
+                    return validateRelativePath(sourceDirectory, workspace);
                 }
             }
             catch (InterruptedException | IOException ignore) {
@@ -293,5 +289,14 @@ public class ModelValidation {
         }
 
         return FormValidation.ok();
+    }
+
+    private FormValidation validateRelativePath(
+            @QueryParameter final String sourceDirectory, final FilePath workspace) throws IOException {
+        PathUtil pathUtil = new PathUtil();
+        if (pathUtil.isAbsolute(sourceDirectory)) {
+            return FormValidation.ok();
+        }
+        return workspace.validateRelativeDirectory(sourceDirectory);
     }
 }
