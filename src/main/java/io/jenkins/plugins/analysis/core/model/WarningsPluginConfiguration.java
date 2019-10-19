@@ -18,7 +18,6 @@ import jenkins.model.GlobalConfiguration;
 
 import io.jenkins.plugins.analysis.core.util.GlobalConfigurationFacade;
 import io.jenkins.plugins.analysis.core.util.GlobalConfigurationItem;
-import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 
 /**
  * Global system configuration of the warnings plugin. These configuration options are used globally for all jobs and
@@ -49,7 +48,7 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
     }
 
     /**
-     * Returns the singleton instance of this {@link ParserConfiguration}.
+     * Returns the singleton instance of this {@link WarningsPluginConfiguration}.
      *
      * @return the singleton instance
      */

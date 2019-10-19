@@ -1,8 +1,8 @@
 # Jenkins Warnings Next Generation Plugin
 
-The Jenkins Warnings Next Generation Plugin collects compiler warnings or issues reported by static analysis tools and visualizes the 
-results. It has built-in support for numerous static analysis tools (including several compilers), see the list of
-[supported report formats](../SUPPORTED-FORMATS.md). 
+The Jenkins Warnings Next Generation Plugin collects compiler warnings or issues reported by static analysis tools 
+and visualizes the results. It has built-in support for numerous static analysis tools (including several compilers), 
+see the list of [supported report formats](../SUPPORTED-FORMATS.md). 
 
 ## Supported project types
 
@@ -17,7 +17,8 @@ The Warnings Next Generation plugin supports the following Jenkins project types
 
 ## Features overview 
 
-The Warnings Next Generation Plugin provides the following features when added as a post build action (or step) to a job: 
+The Warnings Next Generation Plugin provides the following features when added as a post build action (or step) 
+to a job: 
 
 1. The plugin scans the console log of a Jenkins build or files in the workspace of your job for any kind of issues. 
 There are more than hundred [report formats](../SUPPORTED-FORMATS.md) supported. Among the problems it can detect:
@@ -34,7 +35,7 @@ main build page. From there you can also dive into the details:
     - annotated source code of the affected files
     - trend charts of the issues 
    
-:note: The plugin does not run the static analysis, it just visualizes the results reported by such tools. 
+:exclamation: The plugin does not run the static analysis, it just visualizes the results reported by such tools. 
 You still need to enable and configure the static analysis tool in your build file or Jenkinsfile. 
  
 ## Table of Contents

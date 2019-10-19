@@ -620,9 +620,9 @@ public class IssuesRecorder extends Recorder {
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
-        SourceDirectoryResolver sourceDirectoryHandler = new SourceDirectoryResolver();
+        SourceDirectoryResolver sourceDirectoryResolver = new SourceDirectoryResolver();
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
-                workspace, sourceDirectoryHandler.asCollection(sourceDirectory), run,
+                workspace, sourceDirectoryResolver.asCollection(sourceDirectory), run,
                 new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                 isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
 

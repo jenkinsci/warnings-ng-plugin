@@ -102,10 +102,15 @@ class IssuesScanner {
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
         if (tool.getDescriptor().isPostProcessingEnabled()) {
+            if (report.hasErrors()) {
+                report.logInfo("Skipping post processing due to errors");
+
+                return createAnnotatedReport(report);
+            }
             return postProcess(report, logger);
         }
         else {
-            return new AnnotatedReport(tool.getActualId(), filter(report, filters, tool.getActualId()));
+            return createAnnotatedReport(filter(report, filters, tool.getActualId()));
         }
     }
 
@@ -113,10 +118,7 @@ class IssuesScanner {
             throws IOException, InterruptedException {
         AnnotatedReport result;
         if (report.isEmpty()) {
-            result = new AnnotatedReport(tool.getActualId(), report); // nothing to post process
-            if (report.hasErrors()) { // FIXME: why here?
-                report.logInfo("Skipping post processing due to errors");
-            }
+            result = createAnnotatedReport(report); // nothing to post process
         }
         else {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
@@ -128,6 +130,10 @@ class IssuesScanner {
         }
         logger.log(result.getReport());
         return result;
+    }
+
+    private AnnotatedReport createAnnotatedReport(final Report report) {
+        return new AnnotatedReport(tool.getActualId(), report);
     }
 
     private Collection<String> getPermittedSourceDirectories(final Report report) {
@@ -150,8 +156,7 @@ class IssuesScanner {
         else {
             FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
-            List<FilePath> directories = getSourceDirectoriesAsFilePaths(report, channel);
-            blamer = BlamerFactory.findBlamer(run, directories, listener, log);
+            blamer = BlamerFactory.findBlamer(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
             log.logSummary();
             log.getInfoMessages().forEach(report::logInfo);
             log.getErrorMessages().forEach(report::logError);
