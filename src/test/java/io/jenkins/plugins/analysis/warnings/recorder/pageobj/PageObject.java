@@ -27,6 +27,15 @@ class PageObject {
         return page;
     }
 
+    /**
+     * Returns the HTML page of this page object as plain text.
+     *
+     * @return the HTML page of this page object
+     */
+    public String getPageHtml() {
+        return getPage().asText();
+    }
+
     static HtmlPage clickOnElement(final DomElement element) {
         try {
             return element.click();

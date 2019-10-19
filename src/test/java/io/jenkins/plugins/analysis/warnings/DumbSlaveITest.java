@@ -55,7 +55,10 @@ public class DumbSlaveITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(issues.getRows()).hasSize(2);
 
         SourceCodeView actualCSharpContent = issues.getRow(0).openSourceCode();
-        assertThat(actualCSharpContent.getSourceCode()).isEqualTo(C_SHARP_CONTENT);
+        assertThat(actualCSharpContent.getSourceCode())
+                .as(String.format("%s\n%s", issues.getRow(0).getValuesByColumn().toString(),
+                        actualCSharpContent.getPageHtml()))
+                .isEqualTo(C_SHARP_CONTENT);
 
         SourceCodeView actualJavaContent = issues.getRow(1).openSourceCode();
         assertThat(actualJavaContent.getSourceCode()).isEqualTo(JAVA_CONTENT);
