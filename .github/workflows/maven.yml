@@ -7,7 +7,7 @@ jobs:
 
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
+        platform: [windows-latest]
 
     runs-on: ${{ matrix.platform }}
     name: on ${{ matrix.platform }}
@@ -19,4 +19,4 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run: mvn -V clean verify --file pom.xml  -Djenkins.test.timeout=5000
+      run: mvn -V clean verify --file pom.xml  -Djenkins.test.timeout=5000 -Dtest=AbsolutePathGeneratorTest

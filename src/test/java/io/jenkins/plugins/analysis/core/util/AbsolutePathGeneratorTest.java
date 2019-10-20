@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -99,7 +100,8 @@ class AbsolutePathGeneratorTest {
                 .hasFileName(getAbsolutePath("normalized.txt"));
 
         assertThat(report.getInfoMessages()).hasSize(1);
-        assertThat(report.getInfoMessages().get(0)).contains("1 resolved");
+        assertThat(report.getInfoMessages().get(0)).as(report.stream().map(Issue::getFileName).collect(Collectors.joining()))
+                .contains("1 resolved");
         assertThat(report.getInfoMessages().get(0)).contains("2 already resolved");
         assertThat(report.getErrorMessages()).isEmpty();
     }
