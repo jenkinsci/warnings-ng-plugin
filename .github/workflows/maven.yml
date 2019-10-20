@@ -19,4 +19,5 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run: mvn -V clean verify --file pom.xml  -Djenkins.test.timeout=5000 -Dtest=AbsolutePathGeneratorTest
+      run: mvn -V test --file pom.xml  -Djenkins.test.timeout=5000 -Dtest=DumbSlaveITest
+
