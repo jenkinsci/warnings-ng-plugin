@@ -34,7 +34,7 @@ import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 class AbsolutePathGeneratorTest {
     private static final URI RESOURCE_FOLDER = getResourceFolder();
     private static final Path RESOURCE_FOLDER_PATH = Paths.get(RESOURCE_FOLDER);
-    private static final String RESOURCE_FOLDER_WORKSPACE = getUriPath();
+    private static final String RESOURCE_FOLDER_STRING = getUriPath(RESOURCE_FOLDER);
 
     private static final String ID = "ID";
     private static final String RELATIVE_FILE = "relative.txt";
@@ -82,8 +82,8 @@ class AbsolutePathGeneratorTest {
         report.add(builder.setFileName("").build());
         report.add(builder.setFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID).build());
         report.add(builder.setFileName("relative.txt").build());
-        report.add(builder.setDirectory(RESOURCE_FOLDER_WORKSPACE).setFileName("relative.txt").build());
-        report.add(builder.setDirectory(RESOURCE_FOLDER_WORKSPACE).setFileName(normalize("../../core/util/normalized.txt")).build());
+        report.add(builder.setDirectory(RESOURCE_FOLDER_STRING).setFileName("relative.txt").build());
+        report.add(builder.setDirectory(RESOURCE_FOLDER_STRING).setFileName(normalize("../../core/util/normalized.txt")).build());
 
         resolvePaths(report, RESOURCE_FOLDER_PATH);
 
@@ -204,7 +204,7 @@ class AbsolutePathGeneratorTest {
         Report report = new Report();
 
         Issue issue = new IssueBuilder()
-                .setDirectory(new PathUtil().getAbsolutePath(RESOURCE_FOLDER_WORKSPACE))
+                .setDirectory(RESOURCE_FOLDER_STRING)
                 .setFileName(normalize(fileName))
                 .build();
         report.add(issue);
@@ -219,12 +219,12 @@ class AbsolutePathGeneratorTest {
         assertThat(report.getInfoMessages().get(0)).as(description).contains("1 already resolved");
     }
 
-    private static String getUriPath() {
-        String workspace = RESOURCE_FOLDER.getPath();
+    private static String getUriPath(final URI folder) {
+        String workspace = folder.getPath();
         if (isWindows() && workspace.charAt(0) == SLASH) {
             workspace = workspace.substring(1);
         }
-        return workspace;
+        return new PathUtil().getAbsolutePath(workspace);
     }
 
     /**
