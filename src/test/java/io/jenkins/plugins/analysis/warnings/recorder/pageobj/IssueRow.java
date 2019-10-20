@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings.recorder.pageobj;
 
 import java.util.List;
 
+import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
 
@@ -38,7 +39,15 @@ public class IssueRow extends TableRow<IssueColumn> {
     public SourceCodeView openSourceCode() {
         assertThat(hasLink(IssueColumn.FILE)).isTrue();
 
-        HtmlPage htmlPage = clickOnElement(getLink(IssueColumn.FILE));
+        DomElement link = getLink(IssueColumn.FILE);
+        System.out.println("=================");
+        System.out.println(link);
+        System.out.println("=================");
+        System.out.println(link.asText());
+        System.out.println("=================");
+        System.out.println(link.asXml());
+        System.out.println("=================");
+        HtmlPage htmlPage = clickOnElement(link);
 
         return new SourceCodeView(htmlPage);
     }

@@ -11,6 +11,8 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow.IssueColumn;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
 
@@ -54,7 +56,10 @@ public class DumbSlaveITest extends IntegrationTestWithJenkinsPerTest {
         IssuesTable issues = details.select(TabType.ISSUES);
         assertThat(issues.getRows()).hasSize(2);
 
-        SourceCodeView actualCSharpContent = issues.getRow(0).openSourceCode();
+        IssueRow row = issues.getRow(0);
+        assertThat(row.hasLink(IssueColumn.FILE)).isTrue();
+
+        SourceCodeView actualCSharpContent = row.openSourceCode();
         System.out.println(String.format("%s\n%s", issues.getRow(0).getValuesByColumn().toString(),
                 actualCSharpContent.getPageHtml()));
         assertThat(actualCSharpContent.getSourceCode())
