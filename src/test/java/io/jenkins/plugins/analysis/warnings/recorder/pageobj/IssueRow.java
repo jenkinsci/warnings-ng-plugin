@@ -40,13 +40,6 @@ public class IssueRow extends TableRow<IssueColumn> {
         assertThat(hasLink(IssueColumn.FILE)).isTrue();
 
         DomElement link = getLink(IssueColumn.FILE);
-        System.out.println("=================");
-        System.out.println(link);
-        System.out.println("=================");
-        System.out.println(link.asText());
-        System.out.println("=================");
-        System.out.println(link.asXml());
-        System.out.println("=================");
         HtmlPage htmlPage = clickOnElement(link);
 
         return new SourceCodeView(htmlPage);

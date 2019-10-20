@@ -8,6 +8,7 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Slave;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
@@ -56,18 +57,17 @@ public class DumbSlaveITest extends IntegrationTestWithJenkinsPerTest {
         IssuesTable issues = details.select(TabType.ISSUES);
         assertThat(issues.getRows()).hasSize(2);
 
-        IssueRow row = issues.getRow(0);
-        assertThat(row.hasLink(IssueColumn.FILE)).isTrue();
+        IssueRow cSharpRow = issues.getRow(0);
+        assertThat(cSharpRow.hasLink(IssueColumn.FILE)).isTrue();
+        IssueRow javaRow = issues.getRow(1);
+        assertThat(javaRow.hasLink(IssueColumn.FILE)).isTrue();
 
-        SourceCodeView actualCSharpContent = row.openSourceCode();
-        System.out.println(String.format("%s\n%s", issues.getRow(0).getValuesByColumn().toString(),
-                actualCSharpContent.getPageHtml()));
-        assertThat(actualCSharpContent.getSourceCode())
-                .as(String.format("%s\n%s", issues.getRow(0).getValuesByColumn().toString(),
-                        actualCSharpContent.getPageHtml()))
-                .isEqualTo(C_SHARP_CONTENT);
+        assertThat(getWebPage(result, 0).getSourceCode()).isEqualTo(JAVA_CONTENT);
+        assertThat(getWebPage(result, 1).getSourceCode()).isEqualTo(C_SHARP_CONTENT);
+    }
 
-        SourceCodeView actualJavaContent = issues.getRow(1).openSourceCode();
-        assertThat(actualJavaContent.getSourceCode()).isEqualTo(JAVA_CONTENT);
+    private SourceCodeView getWebPage(final AnalysisResult result, final int index) {
+        return new SourceCodeView(getWebPage(JavaScriptSupport.JS_DISABLED, result,
+                    new FileNameRenderer(result.getOwner()).getSourceCodeUrl(result.getIssues().get(index))));
     }
 }
