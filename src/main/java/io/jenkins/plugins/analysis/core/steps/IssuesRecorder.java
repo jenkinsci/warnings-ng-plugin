@@ -2,6 +2,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -46,6 +48,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -75,7 +78,9 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
-public class IssuesRecorder extends Recorder {
+public class IssuesRecorder extends Recorder implements Serializable {
+    private static final long serialVersionUID = -5129133484590854697L;
+
     static final String NO_REFERENCE_JOB = "-";
     static final String DEFAULT_ID = "analysis";
 
@@ -524,7 +529,7 @@ public class IssuesRecorder extends Recorder {
             throw new IOException("No workspace found for " + build);
         }
 
-        perform(build, workspace, listener, new RunResultHandler(build));
+        perform(build, workspace, listener, new RunResultHandler(build), new ConsoleLogReaderFactory(build));
 
         return true;
     }
@@ -534,10 +539,10 @@ public class IssuesRecorder extends Recorder {
      * Pipeline-specific behavior.
      */
     void perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final StageResultHandler statusHandler) throws InterruptedException, IOException {
+            final StageResultHandler statusHandler, final ReaderFactory readerFactory) throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            record(run, workspace, listener, statusHandler);
+            record(run, workspace, listener, statusHandler, readerFactory);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -550,12 +555,12 @@ public class IssuesRecorder extends Recorder {
     }
 
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final StageResultHandler statusHandler)
+            final StageResultHandler statusHandler, final ReaderFactory readerFactory)
             throws IOException, InterruptedException {
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, DEFAULT_ID));
             for (Tool tool : analysisTools) {
-                totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
+                totalIssues.add(scanWithTool(run, workspace, listener, tool, readerFactory), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
             publishResult(run, listener, toolName, totalIssues, toolName, statusHandler);
@@ -567,7 +572,7 @@ public class IssuesRecorder extends Recorder {
                     report.logInfo("Ignoring 'aggregatingResults' and ID '%s' since only a single tool is defined.",
                             id);
                 }
-                report.add(scanWithTool(run, workspace, listener, tool));
+                report.add(scanWithTool(run, workspace, listener, tool, readerFactory));
                 if (StringUtils.isNotBlank(id) || StringUtils.isNotBlank(name)) {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
                             name, id);
@@ -596,10 +601,10 @@ public class IssuesRecorder extends Recorder {
     }
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final Tool tool) throws IOException, InterruptedException {
+            final Tool tool, final ReaderFactory readerFactory) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(), workspace, run,
                 new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
-                isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
+                isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED, readerFactory);
 
         return issuesScanner.scan();
     }

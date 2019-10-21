@@ -848,7 +848,7 @@ public abstract class IntegrationTest extends ResourceTest {
         return action.getResult();
     }
 
-    private void logConsole(final Run<?, ?> run) {
+    protected void logConsole(final Run<?, ?> run) {
         try (Reader reader = run.getLogReader()) {
             try (BufferedReader bufferedReader = new BufferedReader(reader)) {
                 bufferedReader.lines().forEach(System.out::println);

@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -117,9 +118,15 @@ public abstract class ReportScanningTool extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
+        return scan(run, workspace, sourceCodeEncoding, logger, new ConsoleLogReaderFactory(run));
+    }
+
+    @Override
+    public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
+            final LogHandler logger, final ReaderFactory readerFactory) {
         String actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
-            return scanInConsoleLog(workspace, run, logger);
+            return scanInConsoleLog(workspace, run, logger, readerFactory);
         }
         else {
             if (StringUtils.isBlank(getPattern())) {
@@ -159,7 +166,8 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run, final LogHandler logger) {
+    private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run, final LogHandler logger,
+            final ReaderFactory readerFactory) {
         Ensure.that(getDescriptor().canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
@@ -170,7 +178,7 @@ public abstract class ReportScanningTool extends Tool {
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
         logger.log(consoleReport);
 
-        Report report = createParser().parse(new ConsoleLogReaderFactory(run));
+        Report report = createParser().parse(readerFactory);
 
         if (getDescriptor().isConsoleLog()) {
             report.stream().filter(issue -> !issue.hasFileName())

@@ -26,6 +26,7 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 
 /**
  * Scan files or the console log for issues.
@@ -164,7 +165,7 @@ public class ScanForIssuesStep extends Step {
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), workspace, getRun(), new FilePath(getRun().getRootDir()), listener,
                     isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
-                    isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
+                    isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED, new ConsoleLogReaderFactory(getRun()));
 
             return issuesScanner.scan();
         }

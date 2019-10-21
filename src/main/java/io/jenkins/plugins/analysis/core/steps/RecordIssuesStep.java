@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,12 +35,11 @@ import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
@@ -923,6 +924,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
         Execution(@NonNull final StepContext context, final RecordIssuesStep step) {
             super(context);
+
             this.step = step;
         }
 
@@ -948,15 +950,23 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setFailOnError(step.getFailOnError());
             recorder.setTrendChartType(step.trendChartType);
 
-            StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
-                    getContext().get(FlowNode.class));
+            if (getContext().hasBody()) {
+                Path blockLog = Files.createTempFile("warnings-ng", "console-log");
 
-            FilePath workspace = getWorkspace();
-            workspace.mkdirs();
-            recorder.perform(getRun(), workspace, getTaskListener(), statusHandler);
+                getContext().newBodyInvoker()
+//                        .withContext(new LogSplitter(blockLog.toString()))
+                        .withContext(new ConsoleLogSplitter(blockLog.toString()))
+                        .withCallback(new RecordIssuesCallback(recorder, blockLog.toString()))
+                        .start();
+            }
+            else {
+                RecordIssuesRunner runner = new RecordIssuesRunner();
+
+                runner.run(recorder, new ContextFacade(getContext()), new ConsoleLogReaderFactory(getRun()));
+            }
+
             return null;
         }
-
     }
 
     /**
@@ -979,6 +989,11 @@ public class RecordIssuesStep extends Step implements Serializable {
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
             return Sets.immutable.of(FilePath.class, FlowNode.class, Run.class, TaskListener.class).castToSet();
+        }
+
+        @Override
+        public boolean takesImplicitBlockArgument() {
+            return true;
         }
     }
 }

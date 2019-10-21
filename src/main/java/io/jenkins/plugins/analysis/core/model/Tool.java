@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 
 import org.kohsuke.stapler.DataBoundSetter;
@@ -138,6 +139,31 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      */
     public abstract Report scan(Run<?, ?> run, FilePath workspace, Charset sourceCodeEncoding, LogHandler logger)
             throws ParsingException, ParsingCanceledException;
+
+    /**
+     * Scans the results of a build for issues. This method is invoked on Jenkins master. I.e., if a tool wants to
+     * process some build results it is required to run a {@link MasterToSlaveCallable}.
+     *
+     * @param run
+     *         the build
+     * @param workspace
+     *         the workspace of the build
+     * @param sourceCodeEncoding
+     *         the encoding to use to read source files
+     * @param logger
+     *         the logger
+     *
+     * @return the created report
+     * @throws ParsingException
+     *         Signals that during parsing a non recoverable error has been occurred
+     * @throws ParsingCanceledException
+     *         Signals that the parsing has been aborted by the user
+     */
+    public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding, final LogHandler logger,
+            final ReaderFactory factory)
+            throws ParsingException, ParsingCanceledException {
+        return scan(run, workspace, sourceCodeEncoding, logger);
+    }
 
     /** Descriptor for {@link Tool}. **/
     public abstract static class ToolDescriptor extends Descriptor<Tool> {

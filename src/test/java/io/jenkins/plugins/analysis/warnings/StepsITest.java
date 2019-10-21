@@ -51,6 +51,29 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class StepsITest extends IntegrationTestWithJenkinsPerTest {
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-44450")
+    public void shouldRunClosure() {
+        createAgentWithEnabledSecurity("agent");
+
+        WorkflowJob job = createPipeline();
+        job.setDefinition(new CpsFlowDefinition("node ('agent') {\n"
+                + "  stage ('Block Scoped Usage') {\n"
+                + "      echo 'MediaPortal.cs(1,1): warning CS0162: Not recorded'\n"
+                + "      recordIssues (tools: [msBuild(), java()], aggregatingResults: true) {"
+                + "         echo 'MediaPortal.cs(2,1): warning CS0162: Recorded'\n"
+                + "         sleep (time: 5, unit: 'SECONDS')\n"
+                + "         echo 'MediaPortal.cs(3,1): warning CS0162: Recorded'\n"
+                + "      }    \n"
+                + "      echo 'MediaPortal.cs(4,1): warning CS0162: Not recorded'\n"
+                + "  }    \n"
+                + "}", true));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result).hasTotalSize(1);
+        assertThat(result.getIssues().get(0)).hasFileName("MediaPortal.cs").hasLineStart(2);
+    }
+
     /** Verifies that a {@link Tool} defines a {@link Symbol}. */
     @Test
     public void shouldProvideSymbol() {
