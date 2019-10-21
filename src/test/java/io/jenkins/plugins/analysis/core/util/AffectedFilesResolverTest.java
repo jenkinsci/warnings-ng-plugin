@@ -13,8 +13,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.PathUtil;
 
 import hudson.FilePath;
+import hudson.remoting.VirtualChannel;
 
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.RemoteFacade;
 
@@ -49,7 +51,9 @@ class AffectedFilesResolverTest {
     }
 
     private FilePath createWorkspaceStub() throws IOException {
-        return new FilePath(Files.createTempDirectory("prefix").toFile());
+        PathUtil pathUtil = new PathUtil();
+        return new FilePath((VirtualChannel) null,
+                pathUtil.getAbsolutePath(Files.createTempDirectory("prefix").toFile().toPath()));
     }
 
     @Test
