@@ -952,6 +952,17 @@ public abstract class IntegrationTest extends ResourceTest {
         return action.getResult();
     }
 
+    private void logConsole(final Run<?, ?> run) {
+        try (Reader reader = run.getLogReader()) {
+            try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+                bufferedReader.lines().forEach(System.out::println);
+            }
+        }
+        catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
     /**
      * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the
      * builds result is checked to be equals to {@code expectedResult}.

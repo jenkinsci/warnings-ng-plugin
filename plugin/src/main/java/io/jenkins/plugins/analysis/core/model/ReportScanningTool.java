@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
@@ -125,16 +126,16 @@ public abstract class ReportScanningTool extends Tool {
 
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
-            final LogHandler logger) {
+            final LogHandler logger, final ReaderFactory readerFactory) {
         Report report = scan(run, workspace, logger);
-        report.setOrigin(getActualId(), getActualName());
+        report.setOrigin(getActualId(), getActualName(), readerFactory);
         return report;
     }
 
-    private Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
+    private Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger, final ReaderFactory readerFactory) {
         String actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
-            return scanInConsoleLog(workspace, run, logger);
+            return scanInConsoleLog(workspace, run, logger, readerFactory);
         }
         else {
             if (StringUtils.isBlank(getPattern())) {
@@ -176,7 +177,8 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run, final LogHandler logger) {
+    private Report scanInConsoleLog(final FilePath workspace, final Run<?, ?> run, final LogHandler logger,
+            final ReaderFactory readerFactory) {
         Ensure.that(getDescriptor().canScanConsoleLog()).isTrue(
                 "Static analysis tool %s cannot scan console log output, please define a file pattern",
                 getActualName());
@@ -187,7 +189,7 @@ public abstract class ReportScanningTool extends Tool {
         consoleReport.logInfo("Parsing console log (workspace: '%s')", workspace);
         logger.log(consoleReport);
 
-        Report report = createParser().parse(new ConsoleLogReaderFactory(run));
+        Report report = createParser().parse(readerFactory);
 
         report.logInfo("Successfully parsed console log");
         report.logInfo("-> found %s (skipped %s)",

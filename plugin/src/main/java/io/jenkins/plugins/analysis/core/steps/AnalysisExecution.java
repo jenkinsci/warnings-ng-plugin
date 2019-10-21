@@ -1,18 +1,34 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Reader;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
+import edu.hm.hafner.analysis.ParsingException;
+import edu.hm.hafner.analysis.ReaderFactory;
+import edu.umd.cs.findbugs.annotations.NonNull;
+
+import org.jenkinsci.plugins.workflow.graph.FlowNode;
+import org.jenkinsci.plugins.workflow.log.TaskListenerDecorator;
+import org.jenkinsci.plugins.workflow.steps.BodyExecutionCallback;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.SynchronousNonBlockingStepExecution;
 import hudson.FilePath;
+import hudson.console.ConsoleLogFilter;
 import hudson.model.Computer;
 import hudson.model.Run;
 import hudson.model.TaskListener;
+import hudson.remoting.TeeOutputStream;
 import hudson.remoting.VirtualChannel;
 
+import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 
 /**
  * Base class for static analysis step executions. Provides several helper methods to obtain the defined {@link
@@ -30,15 +46,6 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         super(context);
     }
 
-    /**
-     * Returns the associated pipeline run.
-     *
-     * @return the run
-     * @throws IOException
-     *         if the run could be be resolved
-     * @throws InterruptedException
-     *         if the user canceled the run
-     */
     protected Run<?, ?> getRun() throws IOException, InterruptedException {
         Run<?, ?> run = getContext().get(Run.class);
 
@@ -48,16 +55,17 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
 
         return run;
     }
+    
+    protected FlowNode getFlowNode() throws IOException, InterruptedException {
+        FlowNode flowNode = getContext().get(FlowNode.class);
 
-    /**
-     * Returns a {@link VirtualChannel} to the agent where this step has been executed.
-     *
-     * @return the channel
-     * @throws IOException
-     *         if the computer could be be resolved
-     * @throws InterruptedException
-     *         if the user canceled the run
-     */
+        if (flowNode == null) {
+            throw new IOException("Can't resolve FlowNode for " + toString());
+        }
+
+        return flowNode;
+    }
+
     protected Optional<VirtualChannel> getChannel() throws IOException, InterruptedException {
         Computer computer = getContext().get(Computer.class);
 
@@ -68,28 +76,10 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         return Optional.ofNullable(computer.getChannel());
     }
 
-    /**
-     * Returns Jenkins' build folder.
-     *
-     * @return the build folder
-     * @throws IOException
-     *         if the build folder could be be resolved
-     * @throws InterruptedException
-     *         if the user canceled the run
-     */
     protected FilePath getBuildFolder() throws IOException, InterruptedException {
         return new FilePath(getRun().getRootDir());
     }
 
-    /**
-     * Returns the workspace for this job.
-     *
-     * @return the workspace
-     * @throws IOException
-     *         if the workspace could not be resolved
-     * @throws InterruptedException
-     *         if the user canceled the execution
-     */
     protected FilePath getWorkspace() throws IOException, InterruptedException {
         FilePath workspace = getContext().get(FilePath.class);
 
@@ -97,16 +87,11 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
             throw new IOException("No workspace available for " + toString());
         }
 
+        workspace.mkdirs();
+
         return workspace;
     }
 
-    /**
-     * Returns the {@link TaskListener} for this execution.
-     *
-     * @return the task listener (or a silent listener if no task listener could be found)
-     * @throws InterruptedException
-     *         if the user canceled the execution
-     */
     protected TaskListener getTaskListener() throws InterruptedException {
         try {
             TaskListener listener = getContext().get(TaskListener.class);
@@ -120,17 +105,121 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         return TaskListener.NULL;
     }
 
-    /**
-     * Returns the default charset for the specified encoding string. If the default encoding is empty or {@code null},
-     * or if the charset is not valid then the default encoding of the platform is returned.
-     *
-     * @param charset
-     *         identifier of the character set
-     *
-     * @return the default charset for the specified encoding string
-     */
     protected Charset getCharset(final String charset) {
         return new ModelValidation().getCharset(charset);
     }
 
+    /**
+     * Splits off a second branch of the console log into a temporary file that can be parsed by a {@link Tool} parser
+     * later on.
+     */
+    static class LogSplitter extends TaskListenerDecorator {
+        private static final long serialVersionUID = -4867121027779734489L;
+
+        private final String log;
+
+        LogSplitter(final String fileName) {
+            log = fileName;
+        }
+
+        @Override @NonNull
+        public OutputStream decorate(@NonNull final OutputStream logger) throws IOException {
+            return new TeeOutputStream(logger, Files.newOutputStream(Paths.get(log)));
+        }
+    }
+
+    /**
+     * Splits off a second branch of the console log into a temporary file that can be parsed by a {@link Tool} parser
+     * later on.
+     */
+    static class ConsoleLogSplitter extends ConsoleLogFilter {
+        private static final long serialVersionUID = -4867121027779734489L;
+
+        private final String log;
+
+        ConsoleLogSplitter(final String fileName) {
+            log = fileName;
+        }
+
+        @Override
+        public OutputStream decorateLogger(final Run build, final OutputStream logger)
+                throws IOException, InterruptedException {
+            return super.decorateLogger(build, logger);
+        }
+    }
+
+    /**
+     * Callback that runs after the body of this step has been executed. This callback will record the issues of the
+     * console log of this block.
+     */
+    static class RecordIssuesCallback extends BodyExecutionCallback {
+        private static final long serialVersionUID = -2269253566145222283L;
+
+        private final IssuesRecorder recorder;
+        private final String consoleLogFileName;
+
+        RecordIssuesCallback(final IssuesRecorder recorder,
+                final String consoleLogFileName) {
+            this.recorder = recorder;
+            this.consoleLogFileName = consoleLogFileName;
+        }
+
+        @Override
+        public void onSuccess(final StepContext context, final Object result) {
+            ContextFacade contextFacade = new ContextFacade(context);
+            BlockOutputReaderFactory readerFactory = new BlockOutputReaderFactory(Paths.get(consoleLogFileName),
+                    contextFacade.getCharset());
+            System.out.println("==================");
+            readerFactory.readStream().forEach(line -> System.out.format(">>> %s\n", line));
+            System.out.println("==================");
+            RecordIssuesRunner runner = new RecordIssuesRunner();
+            runner.run(recorder, contextFacade, readerFactory);
+        }
+
+        @Override
+        public void onFailure(final StepContext context, final Throwable t) {
+            // silently ignore
+        }
+    }
+
+    static class RecordIssuesRunner {
+        void run(final IssuesRecorder recorder,  final ContextFacade context, final ReaderFactory readerFactory) {
+            try {
+                recorder.perform(context.getRun(), context.getWorkspace(), context.getTaskListener(),
+                        new PipelineResultHandler(context.getRun(),
+                        context.getFlowNode()), readerFactory);
+            }
+            catch (IOException | InterruptedException exception) {
+                // silently ignore
+            }
+        }
+    }
+
+    /**
+     * Provides a reader factory for the portion of the console log of a script block.
+     */
+    private static class BlockOutputReaderFactory extends ReaderFactory {
+        private final Path log;
+
+        BlockOutputReaderFactory(final Path log, final Charset charset) {
+            super(charset);
+
+            this.log = log;
+        }
+
+        @Override
+        public String getFileName() {
+            return "block-console.log";
+        }
+
+        @Override
+        public Reader create() {
+            try {
+                return Files.newBufferedReader(log);
+            }
+            catch (IOException e) {
+                throw new ParsingException(e);
+            }
+        }
+    }
 }

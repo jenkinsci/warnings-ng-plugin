@@ -25,6 +25,8 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
+import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 
 /**
  * Scan files or the console log for issues.
@@ -209,7 +211,7 @@ public class ScanForIssuesStep extends Step {
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), workspace, sourceDirectory,
                     getRun(), new FilePath(getRun().getRootDir()), listener,
-                    scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
+                    scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED, new ConsoleLogReaderFactory(getRun()));
 
             return issuesScanner.scan();
         }

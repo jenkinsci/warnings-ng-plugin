@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -670,7 +672,7 @@ public class IssuesRecorder extends Recorder {
             throw new IOException("No workspace found for " + build);
         }
 
-        perform(build, workspace, listener, new RunResultHandler(build));
+        perform(build, workspace, listener, new RunResultHandler(build), new ConsoleLogReaderFactory(build));
 
         return true;
     }
@@ -691,10 +693,10 @@ public class IssuesRecorder extends Recorder {
      * @return the created results
      */
     List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final StageResultHandler statusHandler) throws InterruptedException, IOException {
+            final StageResultHandler statusHandler, final ReaderFactory readerFactory) throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            return record(run, workspace, listener, statusHandler);
+            return record(run, workspace, listener, statusHandler, readerFactory);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
@@ -708,12 +710,12 @@ public class IssuesRecorder extends Recorder {
     }
 
     private List<AnalysisResult> record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final StageResultHandler statusHandler) throws IOException, InterruptedException {
+            final StageResultHandler statusHandler, final ReaderFactory readerFactory) throws IOException, InterruptedException {
         List<AnalysisResult> results = new ArrayList<>();
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, DEFAULT_ID));
             for (Tool tool : analysisTools) {
-                totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
+                totalIssues.add(scanWithTool(run, workspace, listener, tool, readerFactory), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
             results.add(publishResult(run, listener, toolName, totalIssues, toolName, statusHandler));
@@ -725,7 +727,7 @@ public class IssuesRecorder extends Recorder {
                     report.logInfo("Ignoring 'aggregatingResults' and ID '%s' since only a single tool is defined.",
                             id);
                 }
-                report.add(scanWithTool(run, workspace, listener, tool));
+                report.add(scanWithTool(run, workspace, listener, tool, readerFactory));
                 if (StringUtils.isNotBlank(id) || StringUtils.isNotBlank(name)) {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
                             name, id);
@@ -756,11 +758,11 @@ public class IssuesRecorder extends Recorder {
     }
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final Tool tool) throws IOException, InterruptedException {
+            final Tool tool, final ReaderFactory readerFactory) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
                 workspace, sourceDirectory, run,
                 new FilePath(run.getRootDir()), listener,
-                scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
+                scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED, readerFactory);
 
         return issuesScanner.scan();
     }
