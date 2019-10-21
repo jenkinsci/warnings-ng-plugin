@@ -22,6 +22,7 @@ import edu.hm.hafner.analysis.ModuleDetector;
 import edu.hm.hafner.analysis.ModuleDetector.FileSystem;
 import edu.hm.hafner.analysis.ModuleResolver;
 import edu.hm.hafner.analysis.PackageNameResolver;
+import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.FilteredLog;
@@ -68,6 +69,7 @@ class IssuesScanner {
     private final TaskListener listener;
     private final String scm;
     private final BlameMode blameMode;
+    private final ReaderFactory readerFactory;
 
     enum BlameMode {
         ENABLED, DISABLED
@@ -77,7 +79,8 @@ class IssuesScanner {
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
             final FilePath workspace, final String sourceDirectory, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
-            final String scm, final BlameMode blameMode) {
+            final String scm, final BlameMode blameMode,
+            final ReaderFactory readerFactory) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -88,11 +91,12 @@ class IssuesScanner {
         this.listener = listener;
         this.scm = scm;
         this.blameMode = blameMode;
+        this.readerFactory = readerFactory;
     }
 
     public AnnotatedReport scan() throws IOException, InterruptedException {
         LogHandler logger = new LogHandler(listener, tool.getActualName());
-        Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
+        Report report = tool.scan(run, workspace, sourceCodeEncoding, logger, readerFactory);
 
         AnnotatedReport annotatedReport = postProcessReport(report);
 

@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,11 +20,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;
+import org.jenkinsci.plugins.workflow.steps.BodyInvoker;
 import org.jenkinsci.plugins.workflow.steps.Step;
 import org.jenkinsci.plugins.workflow.steps.StepContext;
 import org.jenkinsci.plugins.workflow.steps.StepExecution;
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.console.ConsoleLogFilter;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -33,6 +37,7 @@ import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
@@ -779,8 +784,10 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     /**
      * Determines whether to skip the SCM blaming.
-     * 
-     * @param blameDisabled {@code true} if SCM blaming should be disabled
+     *
+     * @param blameDisabled
+     *         {@code true} if SCM blaming should be disabled
+     *
      * @deprecated use {@link #setSkipBlames(boolean)}
      */
     @Deprecated
@@ -1071,6 +1078,7 @@ public class RecordIssuesStep extends Step implements Serializable {
 
         Execution(@NonNull final StepContext context, final RecordIssuesStep step) {
             super(context);
+
             this.step = step;
         }
 
@@ -1106,9 +1114,23 @@ public class RecordIssuesStep extends Step implements Serializable {
             FilePath workspace = getWorkspace();
             workspace.mkdirs();
 
-            return recorder.perform(getRun(), workspace, getTaskListener(), statusHandler);
-        }
+            if (getContext().hasBody()) {
+                Path blockLog = Files.createTempFile("warnings-ng", "console-log");
+                RecordIssuesCallback callback = new RecordIssuesCallback(recorder, blockLog.toString());
+                getContext().newBodyInvoker()
+                        .withContext(BodyInvoker.mergeConsoleLogFilters(
+                                getContext().get(ConsoleLogFilter.class),
+                                new ConsoleLogSplitter(blockLog.toString())))
+                        .withCallback(callback)
+                        .start();
+                return callback.getResults();
+            }
+            else {
+                RecordIssuesRunner runner = new RecordIssuesRunner();
 
+                return runner.run(recorder, new ContextFacade(getContext()), new ConsoleLogReaderFactory(getRun()));
+            }
+        }
     }
 
     /**
@@ -1131,6 +1153,11 @@ public class RecordIssuesStep extends Step implements Serializable {
         @Override
         public Set<? extends Class<?>> getRequiredContext() {
             return Sets.immutable.of(FilePath.class, FlowNode.class, Run.class, TaskListener.class).castToSet();
+        }
+
+        @Override
+        public boolean takesImplicitBlockArgument() {
+            return true;
         }
     }
 }
