@@ -9,9 +9,12 @@ project overall, check out [Jenkins' contributing landing page](https://jenkins.
 
 If you don't have a specific problem or task in mind, i.e.,  you simply want to participate in this open source project 
 I would suggest to have a look at the 
-[open issues in our issues tracker](https://issues.jenkins-ci.org/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20%3D%20warnings-ng-plugin%20AND%20labels%20in%20(help-wanted%2C%20newbie-friendly)%20order%20by%20updated%20DESC). 
-I marked several newbie friendly issues with the labels `newbie-friendly` and `help-wanted`. These are a good starting
+[open newbie friendly issues in our issues tracker](https://issues.jenkins-ci.org/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20in%20(analysis-model%2C%20forensics-api-plugin%2C%20git-forensics-plugin%2C%20warnings-ng-plugin)%20AND%20labels%20%3D%20newbie-friendly%20order%20by%20updated%20DESC). 
+I marked several newbie friendly issues with the labels `newbie-friendly`. These are a good starting
 point to get in touch with this Jenkins plugin.
+If you already have some experience with the plugin you can also fix one of the issues that are marked with the label
+`help-wanted` [open issues in our issues tracker](https://issues.jenkins-ci.org/issues/?filter=-1&jql=resolution%20%3D%20Unresolved%20AND%20component%20in%20(analysis-model%2C%20forensics-api-plugin%2C%20git-forensics-plugin%2C%20warnings-ng-plugin)%20AND%20labels%20%3D%20help-wanted%20order%20by%20updated%20DESC). 
+
 
 ## Parser Implementations
 
