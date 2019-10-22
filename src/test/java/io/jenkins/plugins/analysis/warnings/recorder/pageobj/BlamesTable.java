@@ -32,7 +32,6 @@ public class BlamesTable extends PageObject {
     private static final String SCM_BLAMES_ID = "blames";
 
     private DomElement scmInfo = null;
-    private DomElement scmPaginate = null;
     private DomElement scmFilter = null;
 
     private List<BlamesRow> rows = new ArrayList<>();
@@ -58,7 +57,6 @@ public class BlamesTable extends PageObject {
         clickOnElement(content);
 
         scmInfo = page.getElementById(SCM_BLAMES_ID + "_info");
-        scmPaginate = page.getElementById(SCM_BLAMES_ID + "_paginate");
         scmFilter = page.getElementById(SCM_BLAMES_ID + "_filter");
 
         HtmlTable table = getHtmlTable(page);
