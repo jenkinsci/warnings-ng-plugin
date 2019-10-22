@@ -1,12 +1,12 @@
 # Jenkins Warnings Next Generation Plugin
 
-The Jenkins Warnings Next Generation Plugin collects compiler warnings or issues reported by static analysis tools and visualizes the 
-results. It has built-in support for numerous static analysis tools (including several compilers), see the list of
-[supported report formats](../SUPPORTED-FORMATS.md). 
+The Jenkins Warnings Next Generation Plugin collects compiler warnings or issues reported by static analysis tools 
+and visualizes the results. It has built-in support for numerous static analysis tools (including several compilers), 
+see the list of [supported report formats](../SUPPORTED-FORMATS.md). 
 
 ## Supported project types
 
-The Warnings Next Generation plugin has support for the following Jenkins project types:
+The Warnings Next Generation plugin supports the following Jenkins project types:
 
 - Freestyle Project
 - Maven Project
@@ -17,10 +17,11 @@ The Warnings Next Generation plugin has support for the following Jenkins projec
 
 ## Features overview 
 
-The Warnings Next Generation Plugin provides the following features when added as a post build action (or step) to a job: 
+The Warnings Next Generation Plugin provides the following features when added as a post build action (or step) 
+to a job: 
 
 1. The plugin scans the console log of a Jenkins build or files in the workspace of your job for any kind of issues. 
-There are almost one hundred [report formats](../SUPPORTED-FORMATS.md) supported. Among the problems it can detect:
+There are more than hundred [report formats](../SUPPORTED-FORMATS.md) supported. Among the problems it can detect:
     - errors from your compiler (C, C#, Java, etc.)
     - warnings from a static analysis tool (CheckStyle, StyleCop, SpotBugs, etc.)
     - duplications from a copy-and-paste detector (CPD, Simian, etc.)
@@ -33,55 +34,75 @@ main build page. From there you can also dive into the details:
     - list of all issues including helpful comments from the reporting tool
     - annotated source code of the affected files
     - trend charts of the issues 
-    
+   
+:exclamation: The plugin does not run the static analysis, it just visualizes the results reported by such tools. 
+You still need to enable and configure the static analysis tool in your build file or Jenkinsfile. 
+ 
 ## Table of Contents
 
-  * [Configuration](#configuration)
-     * [Tool selection](#tool-selection)
-     * [Creating support for a custom tool](#creating-support-for-a-custom-tool)
-        * [Deploying a new tool using a custom plugin](#deploying-a-new-tool-using-a-custom-plugin)
-        * [Creating a new tool using a Groovy parser](#creating-a-new-tool-using-a-groovy-parser)
-            * [Creating a Groovy parser programmatically](#creating-a-groovy-parser-programmatically)
-        * [Using the defined tool](#using-the-defined-tool)
-     * [Setting the source code file encoding](#setting-the-source-code-file-encoding)
-     * [Control the selection of the reference build (baseline)](#control-the-selection-of-the-reference-build-baseline)
-     * [Filtering issues](#filtering-issues)
-     * [Quality gate configuration](#quality-gate-configuration)
-     * [Health report configuration](#health-report-configuration)
-     * [Pipeline configuration](#pipeline-configuration)
-        * [Simple Pipeline configuration](#simple-pipeline-configuration)
-        * [Declarative Pipeline configuration](#declarative-pipeline-configuration)
-        * [Advanced Pipeline configuration](#advanced-pipeline-configuration)
-  * [New features](#new-features)
-     * [Issues history: new, fixed, and outstanding issues](#issues-history-new-fixed-and-outstanding-issues)
-     * [Severities](#severities)
-     * [Build trend](#build-trend)
-     * [Issues overview](#issues-overview)
-     * [Issues details](#issues-details)
-     * [Source code blames (for Git projects)](#source-code-blames-for-git-projects)
-     * [Repository forensics (for Git projects)](#repository-forensics-for-git-projects)
-     * [Source code view](#source-code-view)
-     * [Issues Totals Column](#issues-totals-column)
-     * [Dashboard view support](#dashboard-view-support)
-     * [Configuration as code support](#configuration-as-code-support)
-     * [Remote API](#remote-api)
-        * [Aggregation summary of all analysis results](#aggregation-summary-of-all-analysis-results)
-        * [Summary of the analysis result](#summary-of-the-analysis-result)
-        * [Details of the analysis result](#details-of-the-analysis-result)
-     * [Token macro support](#token-macro-support)
-  * [Transition from the static analysis suite](#transition-from-the-static-analysis-suite)
-     * [Migration of Pipelines](#migration-of-pipelines)
-     * [Migration of all other jobs](#migration-of-all-other-jobs)
-     * [Migration of plugins depending on analysis-core](#migration-of-plugins-depending-on-analysis-core)
+* [Jenkins Warnings Next Generation Plugin](#jenkins-warnings-next-generation-plugin)
+  * [Supported project types](#supported-project-types)
+  * [Features overview](#features-overview)
+  * [Table of Contents](#table-of-contents)
+* [Configuration](#configuration)
+  * [Tool selection](#tool-selection)
+  * [Creating support for a custom tool](#creating-support-for-a-custom-tool)
+    * [Export your issues into a supported format](#export-your-issues-into-a-supported-format)
+    * [Deploying a new tool using a custom plugin](#deploying-a-new-tool-using-a-custom-plugin)
+    * [Creating a new tool using a Groovy parser](#creating-a-new-tool-using-a-groovy-parser)
+    * [Creating a Groovy parser programmatically](#creating-a-groovy-parser-programmatically)
+    * [Importing a parser using configuration as code (JCasC)](#importing-a-parser-using-configuration-as-code-jcasc)
+    * [Using the defined tool](#using-the-defined-tool)
+  * [Properties to process the affected source code files](#properties-to-process-the-affected-source-code-files)
+  * [Control the selection of the reference build (baseline)](#control-the-selection-of-the-reference-build-baseline)
+  * [Filtering issues](#filtering-issues)
+  * [Quality gate configuration](#quality-gate-configuration)
+  * [Health report configuration](#health-report-configuration)
+  * [Pipeline configuration](#pipeline-configuration)
+    * [Simple Pipeline configuration](#simple-pipeline-configuration)
+    * [Declarative Pipeline configuration](#declarative-pipeline-configuration)
+    * [Advanced Pipeline configuration](#advanced-pipeline-configuration)
+* [New features](#new-features)
+  * [Issues history: new, fixed, and outstanding issues](#issues-history-new-fixed-and-outstanding-issues)
+  * [Severities](#severities)
+  * [Build trend](#build-trend)
+    * [Distribution of issues by severity](#distribution-of-issues-by-severity)
+    * [Issues per static analysis type](#issues-per-static-analysis-type)
+    * [New vs. Fixed issues](#new-vs-fixed-issues)
+    * [Health of the project](#health-of-the-project)
+    * [Zooming](#zooming)
+    * [Build vs. Date Axis](#build-vs-date-axis)
+  * [Issues overview](#issues-overview)
+  * [Issues details](#issues-details)
+  * [Source code blames (for Git projects)](#source-code-blames-for-git-projects)
+  * [Repository forensics (for Git projects)](#repository-forensics-for-git-projects)
+  * [Source code view](#source-code-view)
+  * [Issues Totals Column](#issues-totals-column)
+  * [Dashboard view support](#dashboard-view-support)
+    * [Issues per tool and job table](#issues-per-tool-and-job-table)
+    * [Issues trend](#issues-trend)
+  * [Remote API](#remote-api)
+    * [Aggregation summary of all analysis results](#aggregation-summary-of-all-analysis-results)
+    * [Summary of the analysis result](#summary-of-the-analysis-result)
+    * [Details of the analysis result](#details-of-the-analysis-result)
+  * [Token macro support](#token-macro-support)
+* [Transition from the static analysis suite](#transition-from-the-static-analysis-suite)
+  * [Migration of Pipelines](#migration-of-pipelines)
+  * [Migration of all other jobs](#migration-of-all-other-jobs)
+  * [Migration of plugins depending on analysis-core](#migration-of-plugins-depending-on-analysis-core)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
 # Configuration
 
-The configuration of the plugin is the same for all Jenkins job types. It is enabled in the UI by adding 
-the post build action *"Record compiler warnings and static analysis results"* to your job. In pipelines the plugin will be activated 
-by adding the step `recordIssues`. Note that for scripted pipelines some additional features are available to 
-aggregate and group issues, see [section Advanced Pipeline Configuration](#advanced-pipeline-configuration) for details. 
+You can configure every option of the plugin in Jenkins job configuration user interface (in freestyle, maven, or 
+matrix jobs). Here you need to add and enable the post build action *"Record compiler warnings and static 
+analysis results"* to your job. 
+
+In pipelines the plugin will be activated by adding the step `recordIssues`. This step can be configured with the same 
+user interface as well (by using the Snippet editor). Note that for scripted pipelines some additional features are 
+available to aggregate and group issues, see [section Advanced Pipeline Configuration](#advanced-pipeline-configuration) 
+for details. 
 
 In the following sections, both the graphical configuration and the pipeline configuration are shown side by side.
     
@@ -126,7 +147,7 @@ This option is disabled by default, since analysis results might be inaccurate i
  
 An example pipeline with these options is shown in the following snippet:
 
-```
+```groovy
 recordIssues(
     enabledForFailure: true, aggregatingResults: true, 
     tools: [java(), checkStyle(pattern: 'checkstyle-result.xml', reportEncoding: 'UTF-8')]
@@ -135,13 +156,13 @@ recordIssues(
 
 If you are using a single tool you can use the property `tool` instead of `tools`: 
 
-```
+```groovy
 recordIssues enabledForFailure: true, aggregatingResults: true, tool: checkStyle(pattern: 'checkstyle-result.xml')
 ```
 
 ### Creating support for a custom tool
 
-If none of the built-in tools works in your project you have three ways to add additional tools. 
+If none of the built-in tools works in your project you have several ways to add additional tools. 
 
 #### Export your issues into a supported format
 
@@ -170,9 +191,10 @@ text into an issue instance. Here is an example of such a Groovy based parser:
 
 ![groovy parser](images/groovy-parser.png)  
 
-##### Creating a Groovy parser programmatically
+#### Creating a Groovy parser programmatically
 
-The Groovy based parser can also be created using a Groovy script from within a pipeline, a Jenkins startup script or the script console.
+The Groovy based parser can also be created using a Groovy script from within a pipeline, a Jenkins startup script or 
+the script console, see the following example:
 
 ```groovy
 def config = io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration.getInstance()
@@ -181,13 +203,36 @@ if(!config.contains('pep8-groovy')){
     def newParser = new io.jenkins.plugins.analysis.warnings.groovy.GroovyParser(
         'pep8-groovy', 
         'Pep8 Groovy Parser', 
-        "(.*):(\d+):(\d+): (\D\d*) (.*)", 
+        '(.*):(\\d+):(\\d+): (\\D\\d*) (.*)', 
         'return builder.setFileName(matcher.group(1)).setCategory(matcher.group(4)).setMessage(matcher.group(5)).buildOptional()', 
         "optparse.py:69:11: E401 multiple imports on one line"
     )
     config.setParsers(config.getParsers().plus(newParser))
 }
 ```
+
+#### Importing a parser using configuration as code (JCasC)
+
+Groovy based parsers can also be specified using a section in your
+[JCasC yaml file](https://github.com/jenkinsci/configuration-as-code-plugin). Here is a small example that shows how to
+ add such a parser:
+```yaml
+unclassified:
+  warningsParsers:
+    parsers:
+      - name: "Example parser"
+        id: example-id
+        regexp: "^\\s*(.*):(\\d+):(.*):\\s*(.*)$"
+        script: |
+          import edu.hm.hafner.analysis.Severity
+          builder.setFileName(matcher.group(1))
+                  .setLineStart(Integer.parseInt(matcher.group(2)))
+                  .setSeverity(Severity.WARNING_NORMAL)
+                  .setCategory(matcher.group(3))
+                  .setMessage(matcher.group(4))
+          return builder.buildOptional();
+        example: "somefile.txt:2:SeriousWarnings:SomethingWentWrong"
+``` 
 
 #### Using the defined tool
 
@@ -202,24 +247,44 @@ be set in the same way as for the other tools.
 
 In order to use a Groovy parser in a pipeline you need to use a script statement of the following form:
 
-```
+```groovy
 recordIssues sourceCodeEncoding: 'UTF-8', 
     tool: groovyScript(parserId: 'groovy-id-in-system-config', pattern:'**/*report.log', reportEncoding:'UTF-8')
 ```
 
-### Setting the source code file encoding
+### Properties to process the affected source code files
 
-In order to let the plugin parse and display your source code files it is required to set the encoding for these
-files as well: 
+In order to let the plugin parse and display your source code files it is required to set the correct 
+encoding for these files. Additionally, if your source code is not located in the workspace (e.g. it has been checked 
+out into a shared agent folder), the plugin will not automatically find your source files. 
+In order to let the plugin display those files you can add an additional source directory:
 
-![encoding configuration](images/encoding.png) 
+![affected files configuration](images/affected-files.png) 
 
 An example pipeline with these options is shown in the following snippet, note that the encoding of the report 
 files may be set differently if required:
 
+```groovy
+recordIssues sourceCodeEncoding: 'ISO-8859-1', sourceDirectory: '/path/to/sources', tool: java(reportEncoding: 'UTF-8')
 ```
-recordIssues sourceCodeEncoding: 'ISO-8859-1', tool: java(reportEncoding: 'UTF-8')
-```
+
+Note that the content of files outside of the workspace might be sensitive. In order 
+to prevent showing such files by accident you need to provide a whitelist of allowed source code directories 
+in Jenkins system configuration screen:
+
+![source directory configuration](images/source-directories-white-list.png) 
+
+Alternatively, this configuration setting can be provided by the follwoing subsection in your
+[JCasC yaml file](https://github.com/jenkinsci/configuration-as-code-plugin):
+
+```yaml
+unclassified:
+  warningsPlugin:
+    sourceDirectories:
+    - path: "C:\\Temp"
+    - path: "/mnt/sources"
+``` 
+
 
 ### Control the selection of the reference build (baseline)
 
@@ -236,7 +301,7 @@ control the selection of the reference build.
 
 An example pipeline with these options is shown in the following snippet:
 
-```
+```groovy
 recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true, referenceJobName: 'my-project/master'
 ```
 
@@ -250,7 +315,7 @@ category or type.
 
 An example pipeline with these options is shown in the following snippet:
 
-```
+```groovy
 recordIssues tool: java(pattern: '*.log'), filters: [includeFile('MyFile.*.java'), excludeCategory('WHITESPACE')]
 ```
 
@@ -265,7 +330,7 @@ the number of issues that will fail a given quality gate.
 
 An example pipeline with these options is shown in the following snippet:
 
-```
+```groovy
 recordIssues tool: java(pattern: '*.log'), qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]]
 ```
 
@@ -283,7 +348,7 @@ when creating the health report can be selected.
 
 An example pipeline with these options is shown in the following snippet:
 
-```
+```groovy
 recordIssues tool: java(pattern: '*.log'), healthy: 10, unhealthy: 100, minimumSeverity: 'HIGH'
 ```
 
@@ -304,7 +369,7 @@ in a given set of files (or in the console log) and reports these issues in your
 snippet generator to create a working snippet that calls this step. A typical example of this step 
 is shown in the following example:
 
-```
+```groovy
 recordIssues(
     enabledForFailure: true, 
     tool: java(pattern: '*.log'), 
@@ -546,8 +611,8 @@ commit ID.
 ![source control overview](images/git.png) 
 
 In order to disable the blame feature, set the property `blameDisabled` to `true`, see the following example:
-```
-recordIssues blameDisabled: true, tool: java([pattern: '*.log')
+```groovy
+recordIssues blameDisabled: true, tool: java(pattern: '*.log')
 ```
 
 ### Repository forensics (for Git projects)
@@ -559,16 +624,16 @@ If not disabled in the job configuration, the plugin will mine the source code r
 [Code as a Crime Scene](https://www.adamtornhill.com/articles/crimescene/codeascrimescene.htm) 
 (Adam Tornhill, November 2013) to determine statistics of the affected files.
 In the corresponding *SCM Forensics* view all issues will be listed with the following properties of the affected files:
-  - total number of commits
-  - total number of different authors
-  - creation time
-  - last modification time
+- total number of commits
+- total number of different authors
+- creation time
+- last modification time
   
 ![source control overview](images/forensics-view.png) 
 
 In order to disable the forensics feature, set the property `forensicsDisabled` to `true`, see the following example:
-```
-recordIssues forensicsDisabled: true, tool: java([pattern: '*.log')
+```groovy
+recordIssues forensicsDisabled: true, tool: java(pattern: '*.log')
 ```
 
 ### Source code view
@@ -605,23 +670,6 @@ An issues table shows the total number of issues for a job (separated by each to
 A trend chart can be added as portlet that shows an aggregation of the total number of issues of all jobs.
 
 ![chart portlet](images/chart-portlet.png)
-
-### Configuration as code support
-
-The Warnings Next Generation plugin is compatible with the 
-[Configuration as Code plugin](https://github.com/jenkinsci/configuration-as-code-plugin). 
-You can import parser configurations (see section [Creating a new tool in the user interface](#creating-a-new-tool-in-the-user-interface)) into Jenkins' system configuration using a YAML configuration in the form 
-of the following example: 
-
-```yaml
-unclassified:
-  warningsParsers:
-    parsers:
-    - name: "Name of Parser (used in all user interface labels)"
-      id: "id" # the ID must be a valid URL
-      regexp: ".*"
-      script: "Groovy Script"
-``` 
 
 ### Remote API
 

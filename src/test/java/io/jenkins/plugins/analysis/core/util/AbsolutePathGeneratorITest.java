@@ -43,7 +43,7 @@ public class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSui
     @Test
     @Issue("JENKINS-58824")
     public void shouldMapIssueToAffectedFileIfPathIsInWrongCase() {
-        assumeThat(isWindows()).as("Running on Windows").isTrue();
+        assumeThat(isWindows()).as("Running not on Windows").isTrue();
 
         Slave agent = createAgentWithWrongWorkspaceFolder();
         FreeStyleProject project = createJobForAgent(agent);

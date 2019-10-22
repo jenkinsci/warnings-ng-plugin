@@ -14,6 +14,7 @@ import edu.hm.hafner.analysis.Severity;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
@@ -54,6 +55,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.RunResultHandler;
+import io.jenkins.plugins.analysis.core.util.SourceDirectoryResolver;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
@@ -82,6 +84,7 @@ public class IssuesRecorder extends Recorder {
     private List<Tool> analysisTools = new ArrayList<>();
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
+    private String sourceDirectory = StringUtils.EMPTY;
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
@@ -119,11 +122,15 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Called after de-serialization to retain backward compatibility.
+     * Called after de-serialization to retain backward compatibility or to populate new elements (that would be
+     * otherwise initialized to {@code null}).
      *
      * @return this
      */
     protected Object readResolve() {
+        if (sourceDirectory == null) {
+            sourceDirectory = StringUtils.EMPTY;
+        }
         if (trendChartType == null) {
             trendChartType = TrendChartType.AGGREGATION_TOOLS;
         }
@@ -288,6 +295,22 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setSourceCodeEncoding(final String sourceCodeEncoding) {
         this.sourceCodeEncoding = sourceCodeEncoding;
+    }
+
+    public String getSourceDirectory() {
+        return sourceDirectory;
+    }
+
+    /**
+     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * then this folder needs to be added in Jenkins global configuration.
+     *
+     * @param sourceDirectory
+     *         a folder containing the source code
+     */
+    @DataBoundSetter
+    public void setSourceDirectory(final String sourceDirectory) {
+        this.sourceDirectory = sourceDirectory;
     }
 
     /**
@@ -597,7 +620,9 @@ public class IssuesRecorder extends Recorder {
 
     private AnnotatedReport scanWithTool(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final Tool tool) throws IOException, InterruptedException {
-        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(), workspace, run,
+        SourceDirectoryResolver sourceDirectoryResolver = new SourceDirectoryResolver();
+        IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
+                workspace, sourceDirectoryResolver.asCollection(sourceDirectory), run,
                 new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                 isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
 
@@ -1190,6 +1215,21 @@ public class IssuesRecorder extends Recorder {
          */
         public ListBoxModel doFillTrendChartTypeItems() {
             return model.getAllTrendChartTypes();
+        }
+
+        /**
+         * Performs on-the-fly validation on the source code directory.
+         *
+         * @param project
+         *         the project
+         * @param sourceDirectory
+         *         the file pattern
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String sourceDirectory) {
+            return model.doCheckSourceDirectory(project, sourceDirectory);
         }
     }
 }

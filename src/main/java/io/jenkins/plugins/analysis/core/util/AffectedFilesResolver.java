@@ -4,12 +4,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
+
+import org.eclipse.collections.impl.factory.Lists;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.PathUtil;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.FilePath;
 import hudson.model.Run;
@@ -76,6 +81,15 @@ public class AffectedFilesResolver {
     }
 
     /**
+     * Returns a file name for a temporary file that will hold the contents of the source.
+     *
+     * @return the temporary name
+     */
+    private static String getTempName(final String fileName) {
+        return Integer.toHexString(fileName.hashCode()) + ".tmp";
+    }
+
+    /**
      * Copies all files with issues from the workspace to the build folder.
      *
      * @param report
@@ -84,44 +98,65 @@ public class AffectedFilesResolver {
      *         directory to store the copied files in
      * @param agentWorkspace
      *         directory of the workspace in the agent, all source files must be part of this directory
+     * @param additionalPaths
+     *         additional paths that may contain the affected files
      *
      * @throws InterruptedException
      *         if the user cancels the processing
      */
-    public void copyAffectedFilesToBuildFolder(final Report report,
-            final FilePath affectedFilesFolder, final FilePath agentWorkspace) throws InterruptedException {
+    public void copyAffectedFilesToBuildFolder(final Report report, final FilePath affectedFilesFolder,
+            final FilePath agentWorkspace, final FilePath... additionalPaths) throws InterruptedException {
+        copyAffectedFilesToBuildFolder(report, new RemoteFacade(affectedFilesFolder, agentWorkspace, additionalPaths));
+    }
+
+    /**
+     * Copies all files with issues from the workspace to the build folder.
+     *
+     * @param report
+     *         the issues
+     * @param affectedFilesFolder
+     *         directory to store the copied files in
+     * @param agentWorkspace
+     *         directory of the workspace in the agent, all source files must be part of this directory
+     * @param additionalPaths
+     *         additional paths that may contain the affected files
+     *
+     * @throws InterruptedException
+     *         if the user cancels the processing
+     */
+    public void copyAffectedFilesToBuildFolder(final Report report, final FilePath affectedFilesFolder,
+            final FilePath agentWorkspace, final Collection<String> additionalPaths) throws InterruptedException {
+        copyAffectedFilesToBuildFolder(report, new RemoteFacade(affectedFilesFolder, agentWorkspace,
+                additionalPaths.stream().map(agentWorkspace::child).toArray(FilePath[]::new)));
+    }
+
+    @VisibleForTesting
+    void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade)
+            throws InterruptedException {
         int copied = 0;
         int notFound = 0;
         int notInWorkspace = 0;
 
-        VirtualChannel channel = agentWorkspace.getChannel();
         FilteredLog log = new FilteredLog(report,
                 "Can't copy some affected workspace files to Jenkins build folder:");
         Set<String> files = report.getFiles();
         files.remove("-");
         for (String file : files) {
-            FilePath remoteFile = new FilePath(channel, file);
-            try {
-                if (remoteFile.exists()) {
-                    if (isInWorkspace(remoteFile, agentWorkspace)) {
-                        try {
-                            copy(remoteFile, affectedFilesFolder);
-                            copied++;
-                        }
-                        catch (IOException exception) {
-                            log.logError("- '%s', IO exception has been thrown: %s", file, exception);
-                        }
+            if (remoteFacade.exists(file)) {
+                if (remoteFacade.isInWorkspace(file)) {
+                    try {
+                        remoteFacade.copy(file);
+                        copied++;
                     }
-                    else {
-                        notInWorkspace++;
+                    catch (IOException exception) {
+                        log.logError("- '%s', IO exception has been thrown: %s", file, exception);
                     }
                 }
                 else {
-                    notFound++;
+                    notInWorkspace++;
                 }
             }
-            catch (IOException exception) {
-                log.logError("- '%s', IO exception has been thrown: %s", file, exception);
+            else {
                 notFound++;
             }
         }
@@ -131,36 +166,53 @@ public class AffectedFilesResolver {
         log.logSummary();
     }
 
-    private void copy(final FilePath remoteFile, final FilePath affectedFilesFolder) throws IOException, InterruptedException {
-        FilePath buildFolderCopy = affectedFilesFolder.child(getTempName(remoteFile.getRemote()));
-        remoteFile.copyTo(buildFolderCopy);
-    }
+    static class RemoteFacade {
+        private final VirtualChannel channel;
+        private final FilePath affectedFilesFolder;
+        private final List<FilePath> sourceDirectories;
 
-    /**
-     * Checks whether the source file is in the workspace. Due to security reasons copying of files outside of the
-     * workspace is prohibited.
-     *
-     * @param fileName
-     *         the file name of the source
-     * @param workspace
-     *         the workspace on the agent
-     *
-     * @return {@code true} if the file is in the workspace, {@code false} otherwise
-     */
-    private boolean isInWorkspace(final FilePath fileName, final FilePath workspace) {
-        PathUtil pathUtil = new PathUtil();
-        String workspaceDirectory = pathUtil.getAbsolutePath(workspace.getRemote());
-        String sourceFile = pathUtil.getAbsolutePath(fileName.getRemote());
+        RemoteFacade(final FilePath affectedFilesFolder, final FilePath workspace, final FilePath... sourceFolders) {
+            channel = workspace.getChannel();
+            this.affectedFilesFolder = affectedFilesFolder;
+            sourceDirectories = Lists.mutable.with(sourceFolders).with(workspace).toList();
+        }
 
-        return sourceFile.startsWith(workspaceDirectory);
-    }
+        boolean exists(final String fileName) {
+            try {
+                return createFile(fileName).exists();
+            }
+            catch (IOException | InterruptedException exception) {
+                return false;
+            }
+        }
 
-    /**
-     * Returns a file name for a temporary file that will hold the contents of the source.
-     *
-     * @return the temporary name
-     */
-    private static String getTempName(final String fileName) {
-        return Integer.toHexString(fileName.hashCode()) + ".tmp";
+        private FilePath createFile(final String fileName) {
+            return new FilePath(channel, fileName);
+        }
+
+        /**
+         * Checks whether the source file is in the workspace. Due to security reasons copying of files outside of the
+         * workspace is prohibited.
+         *
+         * @param fileName
+         *         the file name of the source
+         *
+         * @return {@code true} if the file is in the workspace, {@code false} otherwise
+         */
+        boolean isInWorkspace(final String fileName) {
+            PathUtil pathUtil = new PathUtil();
+            String sourceFile = pathUtil.getAbsolutePath(createFile(fileName).getRemote());
+
+            return sourceDirectories
+                    .stream()
+                    .map(sourceFolder -> pathUtil.getAbsolutePath(sourceFolder.getRemote()))
+                    .anyMatch(sourceFile::startsWith);
+        }
+
+        public void copy(final String fileName) throws IOException, InterruptedException {
+            FilePath remoteFile = createFile(fileName);
+            FilePath buildFolderCopy = affectedFilesFolder.child(getTempName(remoteFile.getRemote()));
+            remoteFile.copyTo(buildFolderCopy);
+        }
     }
 }

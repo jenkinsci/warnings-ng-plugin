@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
+import io.jenkins.plugins.analysis.core.util.SourceDirectoryResolver;
 
 /**
  * Scan files or the console log for issues.
@@ -35,6 +37,7 @@ public class ScanForIssuesStep extends Step {
     private Tool tool;
 
     private String sourceCodeEncoding = StringUtils.EMPTY;
+    private String sourceDirectory = StringUtils.EMPTY;
     private boolean isBlameDisabled;
     private boolean isForensicsDisabled;
 
@@ -121,6 +124,22 @@ public class ScanForIssuesStep extends Step {
         this.sourceCodeEncoding = sourceCodeEncoding;
     }
 
+    public String getSourceDirectory() {
+        return sourceDirectory;
+    }
+
+    /**
+     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * then this folder needs to be added in Jenkins global configuration.
+     *
+     * @param sourceDirectory
+     *         a folder containing the source code
+     */
+    @DataBoundSetter
+    public void setSourceDirectory(final String sourceDirectory) {
+        this.sourceDirectory = sourceDirectory;
+    }
+
     @Override
     public StepExecution start(final StepContext context) {
         return new Execution(context, this);
@@ -137,6 +156,7 @@ public class ScanForIssuesStep extends Step {
         private final boolean isBlameDisabled;
         private final boolean isForensicsDisabled;
         private final List<RegexpFilter> filters;
+        private final Collection<String> sourceDirectories;
 
         /**
          * Creates a new instance of the step execution object.
@@ -154,6 +174,7 @@ public class ScanForIssuesStep extends Step {
             isBlameDisabled = step.getBlameDisabled();
             isForensicsDisabled = step.getForensicsDisabled();
             filters = step.getFilters();
+            sourceDirectories = new SourceDirectoryResolver().asCollection(step.getSourceDirectory());
         }
 
         @Override
@@ -162,7 +183,8 @@ public class ScanForIssuesStep extends Step {
             TaskListener listener = getTaskListener();
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
-                    getCharset(sourceCodeEncoding), workspace, getRun(), new FilePath(getRun().getRootDir()), listener,
+                    getCharset(sourceCodeEncoding), workspace, sourceDirectories,
+                    getRun(), new FilePath(getRun().getRootDir()), listener,
                     isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                     isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
 

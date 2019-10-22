@@ -173,7 +173,7 @@ class ModelValidationTest {
     @Test
     void shouldContainSingleElementAndPlaceHolder() {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        Job job = mock(Job.class);
+        Job<?, ?> job = mock(Job.class);
         String name = "Job Name";
         when(jenkins.getFullNameOf(job)).thenReturn(name);
         when(jenkins.getAllJobNames()).thenReturn(Collections.singleton(name));

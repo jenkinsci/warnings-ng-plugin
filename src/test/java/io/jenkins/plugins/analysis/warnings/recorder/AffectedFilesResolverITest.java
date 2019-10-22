@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -22,6 +23,9 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
+import io.jenkins.plugins.analysis.core.model.SourceDirectory;
+import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
+import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
@@ -202,9 +206,53 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject job = createFreeStyleProject();
         prepareGccLog(job);
         enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
+
+        IssueRow row = buildAndVerifyFilesResolving(job,
+                "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+
+        assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
+    }
+
+    /**
+     * Verifies that a source code file will be copied from outside the workspace if configured correspondingly.
+     */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-55998")
+    public void shouldShowFileOutsideWorkspaceIfConfigured() {
+        FreeStyleProject job = createFreeStyleProject();
+        prepareGccLog(job);
+
+        IssuesRecorder recorder = enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
+        String buildsFolder = job.getRootDir().getAbsolutePath();
+        recorder.setSourceDirectory(buildsFolder);
+
+        // First build: copying the affected file is forbidden
+        IssueRow unresolvedRow = buildAndVerifyFilesResolving(job,
+                "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+
+        AnalysisResult result = getAnalysisResult(job.getLastCompletedBuild());
+        assertThat(result.getErrorMessages()).contains(
+                String.format("Additional source directories '[%s]' must be registered in Jenkins system configuration",
+                        buildsFolder));
+
+        assertThat(unresolvedRow.hasLink(IssueColumn.FILE)).isFalse();
+
+        WarningsPluginConfiguration.getInstance().setSourceDirectories(
+                Collections.singletonList(new SourceDirectory(buildsFolder)));
+
+        // Second build: copying the affected file is permitted
+        IssueRow resolvedRow = buildAndVerifyFilesResolving(job,
+                "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+
+        assertThat(resolvedRow.hasLink(IssueColumn.FILE)).isTrue();
+
+        SourceCodeView sourceCodeView = resolvedRow.openSourceCode();
+        assertThat(sourceCodeView.getSourceCode()).contains("<io.jenkins.plugins.analysis.core.steps.IssuesRecorder>");
+    }
+
+    private IssueRow buildAndVerifyFilesResolving(final FreeStyleProject job, final String... resolveMessages) {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
-        assertThat(getConsoleLog(result)).contains("0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        assertThat(getConsoleLog(result)).contains(resolveMessages);
 
         IssuesTable issues = getIssuesTable(result);
         assertThat(issues.getColumns()).containsExactly(
@@ -215,9 +263,8 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         assertThat(row.getValuesByColumn()).contains(
                 entry(IssueColumn.DETAILS, "foo defined but not used"),
                 entry(IssueColumn.FILE, "config.xml:451"),
-                entry(IssueColumn.SEVERITY, "Normal"),
-                entry(IssueColumn.AGE, "1"));
-        assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
+                entry(IssueColumn.SEVERITY, "Normal"));
+        return row;
     }
 
     private IssuesTable getIssuesTable(final AnalysisResult result) {

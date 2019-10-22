@@ -8,9 +8,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
-import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlTable;
 import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
@@ -126,34 +124,6 @@ public class BlamesTable extends PageObject {
         }
         catch (IOException exception) {
             throw new AssertionError(exception);
-        }
-    }
-
-    /**
-     * Go to a page number in the table.
-     *
-     * @param pageNumber
-     *         The page number to go to. 1-based.
-     */
-    @SuppressWarnings("PMD.SystemPrintln")
-    public void goToPage(final int pageNumber) {
-        DomNodeList<HtmlElement> pages = scmPaginate.getElementsByTagName("a");
-
-        if (pages.size() >= pageNumber) {
-            HtmlElement pageButton = pages.get(pageNumber - 1);
-            clickOnElement(pageButton);
-            while (!scmPaginate.getElementsByTagName("a").get(pageNumber - 1).getEnclosingElement("li").getAttribute("class").contains("active")) {
-                System.out.println("Clicked pagination link: " + pageButton);
-                System.out.println("Waiting for Ajax call to filter issues table ...");
-                clickOnElement(pageButton);
-                pageButton.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
-            }
-
-            load();
-        }
-        else {
-            throw new IllegalArgumentException(
-                    "Page number " + pageNumber + " does not exist, size = " + pages.size());
         }
     }
 

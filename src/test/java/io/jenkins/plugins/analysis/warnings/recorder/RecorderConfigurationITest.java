@@ -25,6 +25,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
     private static final String PATTERN = "**/*.txt";
     private static final String ENCODING = "UTF-8";
     private static final String REFERENCE = "reference";
+    private static final String SOURCE_DIRECTORY = "relative";
 
     /**
      * Verifies that job configuration screen correctly modifies the properties of an {@link IssuesRecorder} instance.
@@ -36,6 +37,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
 
         new FreestyleConfiguration(getWebPage(JavaScriptSupport.JS_ENABLED, job, "configure"))
                 .setSourceCodeEncoding(ENCODING)
+                .setSourceDirectory(SOURCE_DIRECTORY)
                 .setAggregatingResults(true)
                 .setTrendChartType(TrendChartType.TOOLS_ONLY)
                 .setBlameDisabled(true)
@@ -53,6 +55,7 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
                 getWebPage(JavaScriptSupport.JS_DISABLED, job, "configure"));
 
         assertThat(saved.getSourceCodeEncoding()).isEqualTo(ENCODING);
+        assertThat(saved.getSourceDirectory()).isEqualTo(SOURCE_DIRECTORY);
         assertThat(saved.isAggregatingResults()).isTrue();
         assertThat(saved.getTrendChartType()).isEqualTo(TrendChartType.TOOLS_ONLY);
         assertThat(saved.isBlameDisabled()).isTrue();

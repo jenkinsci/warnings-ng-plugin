@@ -12,7 +12,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>6.1.2-SNAPSHOT</version>
+  <version>7.0.0-SNAPSHOT</version>
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -28,10 +28,10 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <analysis-model-api.version>6.0.2</analysis-model-api.version>
-    <analysis-model.version>6.0.2</analysis-model.version>
-    <forensics-api-plugin.version>0.4.1</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.3.2</git-forensics-plugin.version>
+    <analysis-model-api.version>6.0.3</analysis-model-api.version>
+    <analysis-model.version>6.0.3</analysis-model.version>
+    <forensics-api-plugin.version>0.5.0-20191017.180939-5</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.5.0-20191017.174109-3</git-forensics-plugin.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
@@ -832,7 +832,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <failBuildOnProblemsFound>false</failBuildOnProblemsFound>
+          <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
           <checkDependencies>false</checkDependencies>
           <analysisConfiguration>
@@ -841,36 +841,9 @@
             </revapi.semver.ignore>
             <revapi.ignore>
               <item>
-                <code>java.method.returnTypeChanged</code>
-                <newType>edu.hm.hafner.analysis.IssueParser</newType>
-                <justification>The parser should not be visible.</justification>
-              </item>
-              <item>
-                <code>java.method.removed</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.core.util.AffectedFilesResolver</classQualifiedName>
-                <methodName>copyFilesWithAnnotationsToBuildFolder</methodName>
-                <justification>Now method copies on the master.</justification>
-              </item>
-              <item>
                 <regex>true</regex>
                 <code>java.missing.*</code>
                 <justification>Dependencies are not being checked, so they are reported as missing</justification>
-              </item>
-              <item>
-                <code>java.annotation.removed</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.IssuesRecorder.Descriptor</classQualifiedName>
-                <justification>Symbol-based usage migrated transparently to RecordIssuesStep</justification>
-              </item>
-              <item>
-                <code>java.method.removed</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.core.util.QualityGateStatus</classQualifiedName>
-                <justification>Not part of the plugin's public API</justification>
-              </item>
-              <item>
-                <regex>true</regex>
-                <code>.*</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.warnings.WarningsPlugin</classQualifiedName>
-                <justification>The tool is not part of API.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>

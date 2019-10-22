@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -261,5 +262,41 @@ public class ModelValidation {
             return FormValidation.error(result);
         }
         return FormValidation.ok();
+    }
+
+    /**
+     * Performs on-the-fly validation on the source code directory.
+     *
+     * @param project
+     *         the project
+     * @param sourceDirectory
+     *         the file pattern
+     *
+     * @return the validation result
+     */
+    public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String sourceDirectory) {
+        if (project != null) { // there is no workspace in pipelines
+            try {
+                FilePath workspace = project.getSomeWorkspace();
+                if (workspace != null && workspace.exists()) {
+                    return validateRelativePath(sourceDirectory, workspace);
+                }
+            }
+            catch (InterruptedException | IOException ignore) {
+                // ignore and return ok
+            }
+        }
+
+        return FormValidation.ok();
+    }
+
+    private FormValidation validateRelativePath(
+            @QueryParameter final String sourceDirectory, final FilePath workspace) throws IOException {
+        PathUtil pathUtil = new PathUtil();
+        if (pathUtil.isAbsolute(sourceDirectory)) {
+            return FormValidation.ok();
+        }
+        return workspace.validateRelativeDirectory(sourceDirectory);
     }
 }
