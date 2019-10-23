@@ -1,11 +1,12 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
@@ -13,12 +14,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
-import hudson.model.Label;
-import hudson.model.Node;
 import hudson.model.Slave;
-import hudson.model.labels.LabelAtom;
 import hudson.slaves.DumbSlave;
-import hudson.slaves.RetentionStrategy;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
@@ -36,6 +33,10 @@ import static org.assertj.core.api.Assumptions.*;
  */
 public class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String SOURCE_CODE = "public class Test {}";
+
+    /** Temporary workspace for the agent. */
+    @Rule
+    public TemporaryFolder agentWorkspace = new TemporaryFolder();
 
     /**
      * Verifies that the affected files will be copied even if the file name uses the wrong case (Windows only).
@@ -82,14 +83,12 @@ public class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSui
     private Slave createAgentWithWrongWorkspaceFolder() {
         try {
             JenkinsRule jenkinsRule = getJenkins();
-            Label l = new LabelAtom("agent");
-            String labels = l.getExpression();
             int size = jenkinsRule.jenkins.getNodes().size();
 
-            DumbSlave slave = new DumbSlave("slave" + size, "dummy",
-                    jenkinsRule.createTmpDir().getPath().toLowerCase(Locale.ENGLISH), "1",
-                    Node.Mode.NORMAL, labels, jenkinsRule.createComputerLauncher(null), RetentionStrategy.NOOP,
-                    Collections.emptyList());
+            DumbSlave slave = new DumbSlave("slave" + size,
+                    agentWorkspace.getRoot().getPath().toLowerCase(Locale.ENGLISH),
+                    jenkinsRule.createComputerLauncher(null));
+            slave.setLabelString("agent");
             jenkinsRule.jenkins.addNode(slave);
             jenkinsRule.waitOnline(slave);
 
