@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.IssueDifference;
 import edu.hm.hafner.analysis.Report;
 
 import hudson.model.Run;
@@ -45,7 +46,7 @@ public class DeltaReport {
                     build);
 
             referenceIssues = history.getIssues();
-            IssueDifference difference = new IssueDifference(report, currentBuildNumber, referenceIssues);
+            IssueDifference difference = new IssueDifference(report, String.valueOf(currentBuildNumber), referenceIssues);
             outstandingIssues = difference.getOutstandingIssues();
             newIssues = difference.getNewIssues();
             fixedIssues = difference.getFixedIssues();
