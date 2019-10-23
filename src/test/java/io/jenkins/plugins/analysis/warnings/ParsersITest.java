@@ -788,6 +788,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindNoJavacIssuesInEclipseOutput() {
         shouldFindIssuesOfTool(0, new Java(), "eclipse.txt");
     }
+    
+    /** Runs the ProtoLint parser on an output file that contains 10 issues. */
+    @Test
+    public void shouldFindAllProtoLintIssues() {
+        shouldFindIssuesOfTool(10, new ProtoLint(), "protolint.txt");
+    }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
     private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
