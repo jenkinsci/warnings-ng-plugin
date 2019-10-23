@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.util;
 
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import jenkins.model.GlobalConfiguration;
 
@@ -9,6 +10,7 @@ import jenkins.model.GlobalConfiguration;
  *
  * @author Ullrich Hafner
  */
+@SuppressFBWarnings("IS2_INCONSISTENT_SYNC")
 public class GlobalConfigurationItem extends GlobalConfiguration {
     @SuppressWarnings("PMD.DoNotUseThreads")
     private transient Runnable actualSave;

@@ -86,7 +86,7 @@ class SeverityTrendChartTest {
     @ParameterizedTest(name = "{1}")
     @MethodSource("createResults")
     @DisplayName("shouldHaveNotMoreValuesThatAllowed")
-    void shouldHaveNotMoreValuesThatAllowed(final Iterable<? extends AnalysisBuildResult> results, final String name) {
+    void shouldHaveNotMoreValuesThatAllowed(final Iterable<? extends AnalysisBuildResult> results, @SuppressWarnings("unused") final String name) {
         SeverityTrendChart chart = new SeverityTrendChart();
 
         ChartModelConfiguration configuration = mock(ChartModelConfiguration.class);

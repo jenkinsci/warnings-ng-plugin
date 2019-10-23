@@ -243,6 +243,7 @@ class IssuesScanner {
      * Post processes the report on the build agent. Assigns absolute paths, package names, and module names and
      * computes fingerprints for each issue. Finally, for each file the SCM blames are computed.
      */
+    @SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
     private static class ReportPostProcessor extends MasterToSlaveFileCallable<AnnotatedReport> {
         private static final long serialVersionUID = -9138045560271783096L;
 
