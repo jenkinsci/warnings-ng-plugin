@@ -20,7 +20,6 @@ import org.eclipse.collections.api.list.ImmutableList;
 import org.eclipse.collections.impl.factory.Lists;
 import org.eclipse.collections.impl.factory.Maps;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -348,10 +347,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         RepositoryStatistics statistics = new RepositoryStatisticsXmlStream().read(getStatisticsPath());
         repositoryStatistics = new WeakReference<>(statistics);
         return statistics;
-    }
-
-    private Map<Severity, Integer> getSizePerSeverity(final Report report) {
-        return new HashMap<>(report.getPropertyCount(Issue::getSeverity));
     }
 
     @Override

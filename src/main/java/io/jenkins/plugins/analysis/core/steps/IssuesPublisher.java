@@ -41,6 +41,7 @@ import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGate
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 class IssuesPublisher {
     private final AnnotatedReport report;
     private final Run<?, ?> run;
