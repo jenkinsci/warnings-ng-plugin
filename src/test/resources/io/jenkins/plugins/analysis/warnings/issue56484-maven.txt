@@ -15,3 +15,4 @@
 [2019-03-09T19:12:23.995Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/Report.java:[82,44] [ConstructorLeaksThis] Constructors should not pass the 'this' reference out in method invocations, since the object may not be fully constructed.
 [2019-03-09T19:12:23.996Z]     (see https://errorprone.info/bugpattern/ConstructorLeaksThis)
 [2019-03-09T19:12:23.996Z] [WARNING] /var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/Report.java:[100,44] [ConstructorLeaksThis] Constructors should not pass the 'this' reference out in method invocations, since the object may not be fully constructed.
+[2019-03-09T19:12:23.996Z]     (see https://errorprone.info/bugpattern/ConstructorLeaksThis)

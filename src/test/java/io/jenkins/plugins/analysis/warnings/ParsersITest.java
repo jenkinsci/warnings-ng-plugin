@@ -319,10 +319,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(3, new Cadence(), "CadenceIncisive.txt");
     }
 
-    /** Runs the Mentor parser on an output file that contains 13 issues. */
+    /** Runs the Mentor parser on an output file that contains 12 issues. */
     @Test
     public void shouldFindAllMentorGraphicsIssues() {
-        shouldFindIssuesOfTool(13, new MentorGraphics(), "MentorGraphics.log");
+        shouldFindIssuesOfTool(12, new MentorGraphics(), "MentorGraphics.log");
     }
 
     /** Runs the PMD parser on an output file that contains 262 issues (PMD 6.1.0). */

@@ -223,7 +223,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
-        assertThat(result).hasTotalSize(10);
+        assertThat(result).hasTotalSize(6);
     }
 
     /**
