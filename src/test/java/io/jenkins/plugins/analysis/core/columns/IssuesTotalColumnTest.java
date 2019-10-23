@@ -128,7 +128,6 @@ class IssuesTotalColumnTest {
         assertThat(column.getTotal(job)).isEmpty();
         assertThat(column.getUrl(job)).isEmpty();
 
-        // TODO: does that make sense?
         column.setTools(Collections.emptyList());
 
         assertThat(column.getTotal(job)).isEmpty();
