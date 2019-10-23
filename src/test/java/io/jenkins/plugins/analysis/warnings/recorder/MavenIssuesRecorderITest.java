@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.jvnet.hudson.test.ToolInstallations;
 
@@ -46,8 +45,6 @@ public class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite
      * Runs a maven build without a pom.xml. Enables reporting of maven warnings and errors. 
      */
     @Test
-    // FIXME: remove if there is an option to verify the colored console log
-    @Ignore("Check how the maven plugin reports colored console logs")
     public void shouldParseMavenError() {
         MavenModuleSet project = createMavenJob();
         copySingleFileToWorkspace(project, "pom-error.xml", "pom.xml");
@@ -56,8 +53,8 @@ public class MavenIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite
         recorder.setEnabledForFailure(true);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.FAILURE);
-        assertThat(result).hasTotalSize(2);
-        assertThat(result.getSizePerSeverity()).containsExactly(entry(Severity.ERROR, 2));
+        assertThat(result).hasTotalSize(2).hasTotalErrorsSize(2);
+        assertThat(result.getSizePerSeverity()).contains(entry(Severity.ERROR, 2));
     }
 
     /**
