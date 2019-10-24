@@ -19,7 +19,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class ProtoLint extends ReportScanningTool {
 
-	private static final long serialVersionUID = -5718503998068521571L;
+    private static final long serialVersionUID = -5718503998068521571L;
 	
 	private static final String ID = "protolint";
 
@@ -51,18 +51,8 @@ public class ProtoLint extends ReportScanningTool {
         }
 
         @Override
-        public boolean canScanConsoleLog() {
-            return false;
-        }
-
-        @Override
         public String getUrl() {
             return "https://github.com/yoheimuta/protolint";
-        }
-
-        @Override
-        public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
         }
     }
 }
