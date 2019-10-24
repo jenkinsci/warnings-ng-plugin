@@ -2,11 +2,12 @@ package io.jenkins.plugins.analysis.warnings.axivion;
 
 import org.apache.commons.lang3.Validate;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
-
-import net.sf.json.JSONObject;
 
 /**
  * Provides json to generic jenkins issue transformations for all six Axivion violation kinds.
@@ -22,61 +23,61 @@ final class DefaultTransformations {
     static Issue createAVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.AV));
 
-        JSONObject issue = rawIssue.getPayload();
-        String description = createDescription(rawIssue, issue);
+        final JsonObject payload = rawIssue.getPayload();
+        final String description = createDescription(rawIssue, payload);
 
         return new IssueBuilder()
                 .setDirectory(rawIssue.getProjectDir())
-                .setFileName(issue.optString("sourcePath", ""))
-                .setLineStart(issue.getInt("sourceLine"))
-                .setType(issue.getString("violationType"))
+                .setFileName(payload.getAsJsonPrimitive("sourcePath").getAsString())
+                .setLineStart(payload.getAsJsonPrimitive("sourceLine").getAsString())
+                .setType(payload.getAsJsonPrimitive("violationType").getAsString())
                 .setCategory(rawIssue.getKind().name())
                 .setMessage("Architecture Violation")
                 .setDescription(description)
-                .setFingerprint(rawIssue.getKind().name() + issue.getInt("id"))
+                .setFingerprint(rawIssue.getKind().name() + payload.getAsJsonPrimitive("id").getAsString())
                 .setSeverity(Severity.WARNING_HIGH)
                 .build();
     }
 
-    private static String createDescription(final AxRawIssue rawIssue, final JSONObject issue) {
-        if (issue.getString("violationType").equals("Divergence")) {
+    private static String createDescription(final AxRawIssue rawIssue, final JsonObject payload) {
+        if (getString(payload, "violationType").equals("Divergence")) {
             return "Unexpected dependency from <i>"
-                    + issue.getString("architectureSourceType")
+                    + getString(payload, "architectureSourceType")
                     + " &lt;"
-                    + issue.getString("architectureSource")
+                    + getString(payload, "architectureSource")
                     + "&gt;"
                     + "</i> to <i>"
-                    + issue.getString("architectureTargetType")
+                    + getString(payload, "architectureTargetType")
                     + " &lt;"
-                    + issue.getString("architectureTarget")
+                    + getString(payload, "architectureTarget")
                     + "&gt;</i>"
                     + "<p>Cause is a <i>"
-                    + issue.getString("dependencyType")
+                    + getString(payload, "dependencyType")
                     + "</i> dependency"
                     + " from <i>"
-                    + issue.getString("sourceEntityType")
+                    + getString(payload, "sourceEntityType")
                     + " &lt;"
-                    + issue.getString("sourceEntity")
+                    + getString(payload, "sourceEntity")
                     + "&gt;"
                     + "</i> to <i>"
-                    + issue.getString("targetEntityType")
+                    + getString(payload, "targetEntityType")
                     + " &lt;"
-                    + issue.getString("sourceEntity")
+                    + getString(payload, "sourceEntity")
                     + "&gt;</i>"
-                    + createLink(rawIssue, issue.getInt("id"));
+                    + createLink(rawIssue, getInt(payload, "id"));
         }
         else {
             return "Missing Architecture Dependency from <i>"
-                    + issue.getString("architectureSourceType")
+                    + getString(payload, "architectureSourceType")
                     + " &lt;"
-                    + issue.getString("architectureSource")
+                    + getString(payload, "architectureSource")
                     + "&gt;"
                     + "</i> to <i>"
-                    + issue.getString("architectureTargetType")
+                    + getString(payload, "architectureTargetType")
                     + " &lt;"
-                    + issue.getString("architectureTarget")
+                    + getString(payload, "architectureTarget")
                     + "&gt;</i>"
-                    + createLink(rawIssue, issue.getInt("id"));
+                    + createLink(rawIssue, getInt(payload, "id"));
         }
     }
 
@@ -86,47 +87,47 @@ final class DefaultTransformations {
     static Issue createCLIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.CL));
 
-        JSONObject issue = rawIssue.getPayload();
-        String cloneType = "type " + issue.getInt("cloneType");
-        String description =
+        final JsonObject payload = rawIssue.getPayload();
+        final String cloneType = "type " + getInt(payload, "cloneType");
+        final String description =
                 "Left part of clone pair"
                         + " of "
                         + (cloneType + " clone")
                         + " of length "
-                        + issue.getInt("leftLength")
+                        + getInt(payload, "leftLength")
                         + "LOC"
-                        + createLink(rawIssue, issue.getInt("id"));
+                        + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
                 .setDirectory(rawIssue.getProjectDir())
-                .setFileName(issue.optString("leftPath", ""))
-                .setLineStart(issue.getInt("leftLine"))
-                .setLineEnd(issue.getInt("leftEndLine"))
+                .setFileName(getString(payload, "leftPath"))
+                .setLineStart(getInt(payload, "leftLine"))
+                .setLineEnd(getInt(payload, "leftEndLine"))
                 .setType(cloneType)
                 .setCategory(rawIssue.getKind().name())
                 .setMessage(cloneType + " clone")
                 .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + issue.getInt("id"))
+                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
                 .setSeverity(Severity.WARNING_NORMAL)
                 .build();
     }
 
     static Issue createCYIssue(final AxRawIssue rawIssue) {
-        JSONObject payload = rawIssue.getPayload();
-        String description =
+        final JsonObject payload = rawIssue.getPayload();
+        final String description =
                 "Source: "
-                        + payload.getString("sourceEntity")
+                        + getString(payload, "sourceEntity")
                         + " Target: "
-                        + payload.getString("targetEntity")
-                        + createLink(rawIssue, payload.getInt("id"));
+                        + getString(payload, "targetEntity")
+                        + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
                 .setDirectory(rawIssue.getProjectDir())
-                .setFileName(payload.optString("sourcePath", ""))
-                .setLineStart(payload.getInt("sourceLine"))
+                .setFileName(getString(payload, "sourcePath"))
+                .setLineStart(getInt(payload, "sourceLine"))
                 .setType("Cycle")
                 .setCategory(rawIssue.getKindName())
                 .setMessage("Call cycle")
                 .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + payload.getInt("id"))
+                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
                 .setSeverity(Severity.WARNING_HIGH)
                 .build();
     }
@@ -137,22 +138,22 @@ final class DefaultTransformations {
     static Issue createDEIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.DE));
 
-        JSONObject payload = rawIssue.getPayload();
-        String description =
-                payload.getString("entityType")
+        final JsonObject payload = rawIssue.getPayload();
+        final String description =
+                getString(payload, "entityType")
                         + "<i>"
-                        + payload.getString("entity")
+                        + getString(payload, "entity")
                         + "</i>"
-                        + createLink(rawIssue, payload.getInt("id"));
+                        + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
                 .setDirectory(rawIssue.getProjectDir())
-                .setFileName(payload.optString("path", ""))
-                .setLineStart(payload.getInt("line"))
+                .setFileName(getString(payload, "path"))
+                .setLineStart(getInt(payload, "line"))
                 .setType("Dead Entity")
                 .setCategory(rawIssue.getKindName())
                 .setMessage("Entity is dead")
                 .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + payload.getInt("id"))
+                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
                 .setSeverity(Severity.WARNING_HIGH)
                 .build();
     }
@@ -163,29 +164,29 @@ final class DefaultTransformations {
     static Issue createMVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.MV));
 
-        JSONObject payload = rawIssue.getPayload();
-        String description =
-                payload.getString("entityType")
+        final JsonObject payload = rawIssue.getPayload();
+        final String description =
+                getString(payload, "entityType")
                         + " <i>"
-                        + payload.getString("entity")
+                        + getString(payload, "entity")
                         + "</i>"
                         + "<p>Val: <b>"
-                        + payload.getInt("value")
+                        + getInt(payload, "value")
                         + "</b>"
                         + "<br>Max: "
-                        + payload.optInt("max")
+                        + getInt(payload, "max")
                         + "<br>Min: "
-                        + payload.optInt("min")
-                        + createLink(rawIssue, payload.getInt("id"));
+                        + getInt(payload, "min")
+                        + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
                 .setDirectory(rawIssue.getProjectDir())
-                .setFileName(payload.optString("path", ""))
-                .setLineStart(payload.getInt("line"))
-                .setType(payload.getString("description"))
+                .setFileName(getString(payload, "path"))
+                .setLineStart(getInt(payload, "line"))
+                .setType(getString(payload, "description"))
                 .setCategory(rawIssue.getKindName())
-                .setMessage("Metric " + payload.getString("description") + " out of valid range")
+                .setMessage("Metric " + getString(payload, "description") + " out of valid range")
                 .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + payload.getInt("id"))
+                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
                 .setSeverity(Severity.WARNING_HIGH)
                 .build();
     }
@@ -196,22 +197,22 @@ final class DefaultTransformations {
     static Issue createSVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.SV));
 
-        JSONObject payload = rawIssue.getPayload();
-        String description =
-                payload.getString("message")
+        final JsonObject payload = rawIssue.getPayload();
+        final String description =
+                getString(payload, "message")
                         + " <i>"
-                        + payload.optString("entity", "")
+                        + getString(payload, "entity")
                         + "</i>"
-                        + createLink(rawIssue, payload.getInt("id"));
+                        + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
                 .setDirectory(rawIssue.getProjectDir())
-                .setFileName(payload.optString("path", ""))
-                .setLineStart(payload.getInt("line"))
-                .setType(payload.getString("errorNumber"))
+                .setFileName(getString(payload, "path"))
+                .setLineStart(getInt(payload, "line"))
+                .setType(getString(payload, "errorNumber"))
                 .setCategory(rawIssue.getKindName())
-                .setMessage("Style violation " + payload.getString("errorNumber"))
+                .setMessage("Style violation " + getString(payload, "errorNumber"))
                 .setDescription(description)
-                .setFingerprint(rawIssue.getKindName() + payload.getInt("id"))
+                .setFingerprint(rawIssue.getKindName() + getInt(payload, "id"))
                 .setSeverity(parsePriority(payload))
                 .build();
     }
@@ -219,8 +220,8 @@ final class DefaultTransformations {
     /**
      * Converts dashboard severity to a warnings-ng severity.
      */
-    private static Severity parsePriority(final JSONObject issue) {
-        String severity = issue.optString("severity", null);
+    private static Severity parsePriority(final JsonObject payload) {
+        final String severity = getString(payload, "severity");
 
         if (severity != null) {
             if ("mandatory".equals(severity)) {
@@ -243,5 +244,19 @@ final class DefaultTransformations {
                 + issue.getKind().name()
                 + id
                 + "\">More details</a>";
+    }
+
+    private static String getString(final JsonObject payload, final String memberName) {
+        final JsonElement intermediate = payload.get(memberName);
+        return isJsonNull(intermediate) ? "" : intermediate.getAsString();
+    }
+
+    private static int getInt(final JsonObject payload, final String memberName) {
+        final JsonElement intermediate = payload.get(memberName);
+        return isJsonNull(intermediate) ? -1 : intermediate.getAsInt();
+    }
+
+    private static boolean isJsonNull(final JsonElement element) {
+        return element == null || element.isJsonNull();
     }
 }

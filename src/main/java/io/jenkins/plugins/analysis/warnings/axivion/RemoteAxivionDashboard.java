@@ -1,6 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -12,12 +16,12 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.util.EntityUtils;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import edu.hm.hafner.analysis.ParsingException;
-
-import net.sf.json.JSONException;
-import net.sf.json.JSONObject;
 
 /**
  * Represents an actual dashboard connection to retrieve violations via http.
@@ -37,7 +41,7 @@ class RemoteAxivionDashboard implements AxivionDashboard {
     }
 
     @Override
-    public JSONObject getIssues(final AxIssueKind kind) {
+    public JsonObject getIssues(final AxIssueKind kind) {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
 
@@ -65,12 +69,18 @@ class RemoteAxivionDashboard implements AxivionDashboard {
         catch (IOException e) {
             throw new ParsingException(e, "Cannot retrieve information from dashboard");
         }
-        catch (JSONException e) {
-            throw new ParsingException(e, "Invalid JSON response from dashboard");
-        }
     }
 
-    private JSONObject convertToJson(final HttpResponse response) throws IOException {
-        return JSONObject.fromObject(EntityUtils.toString(response.getEntity()));
+    private JsonObject convertToJson(final HttpResponse response) throws IOException {
+        final InputStream is = response.getEntity().getContent();
+        if (is == null) {
+            throw new ParsingException("Response without a json body");
+        }
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+        final JsonElement json = JsonParser.parseReader(reader);
+        if (!json.isJsonObject()) {
+            throw new ParsingException("Invalid response from dashboard. Json object expected.");
+        }
+        return json.getAsJsonObject();
     }
 }

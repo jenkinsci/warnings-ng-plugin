@@ -1,10 +1,9 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URL;
 
-import net.sf.json.JSONObject;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import io.jenkins.plugins.analysis.warnings.Resource;
 
@@ -15,19 +14,13 @@ import io.jenkins.plugins.analysis.warnings.Resource;
 class TestDashboard implements AxivionDashboard {
 
     @Override
-    public JSONObject getIssues(final AxIssueKind kind) {
+    public JsonObject getIssues(final AxIssueKind kind) {
         return getIssuesFrom(resolveResourcePath(kind));
     }
 
-    JSONObject getIssuesFrom(final String resourcePath) {
-        URL svJson = this.getClass().getResource(resourcePath);
-        try {
-            final String payload = new String(new Resource(svJson).asByteArray());
-            return JSONObject.fromObject(payload);
-        }
-        catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+    JsonObject getIssuesFrom(final String resourcePath) {
+        final URL testCase = this.getClass().getResource(resourcePath);
+        return JsonParser.parseReader(new Resource(testCase).asReader()).getAsJsonObject();
     }
 
     private String resolveResourcePath(final AxIssueKind kind) {

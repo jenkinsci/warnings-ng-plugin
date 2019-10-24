@@ -17,14 +17,13 @@ import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
 import com.cloudbees.plugins.credentials.common.StandardListBoxModel;
 import com.cloudbees.plugins.credentials.common.StandardUsernamePasswordCredentials;
+import com.google.gson.JsonObject;
 
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import net.sf.json.JSONObject;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -112,7 +111,7 @@ public final class AxivionSuite extends Tool {
         report.logInfo("Local basedir: " + basedir);
 
         for (AxIssueKind kind : AxIssueKind.values()) {
-            JSONObject payload = dashboard.getIssues(kind);
+            final JsonObject payload = dashboard.getIssues(kind);
             parser.parse(report, kind, payload);
         }
 

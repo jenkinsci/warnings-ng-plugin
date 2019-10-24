@@ -1,12 +1,13 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
 import java.io.Serializable;
+import java.util.stream.StreamSupport;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
 
 /**
  * Is aware of how to parse json payloads according to different issue kinds.
@@ -34,15 +35,15 @@ class AxivionParser implements Serializable {
      * @param payload
      *         json payload to parse
      */
-    void parse(final Report report, final AxIssueKind kind, final JSONObject payload) {
-        JSONArray jsonArray = payload.optJSONArray("rows");
+    void parse(final Report report, final AxIssueKind kind, final JsonObject payload) {
+        final JsonArray jsonArray = payload.getAsJsonArray("rows");
         if (jsonArray != null) {
             report.logInfo("Importing %s %s", jsonArray.size(), kind.plural());
-            jsonArray.stream()
-                    .filter(JSONObject.class::isInstance)
-                    .map(JSONObject.class::cast)
+            StreamSupport.stream(jsonArray.spliterator(), false)
+                    .filter(JsonObject.class::isInstance)
+                    .map(JsonObject.class::cast)
                     .map(issueAsJson -> new AxRawIssue(projectUrl, baseDir, issueAsJson, kind))
-                    .map(issue -> kind.getTransformation().transform(issue))
+                    .map(kind::transform)
                     .forEach(report::add);
         }
     }
