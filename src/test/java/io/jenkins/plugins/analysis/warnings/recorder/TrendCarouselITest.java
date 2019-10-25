@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.*;
  * @author Tobias Redl
  * @author Andreas Neumeier
  */
-
 public class TrendCarouselITest extends IntegrationTestWithJenkinsPerSuite {
     /** Test that the three trend charts are shown in right order. */
     @Test

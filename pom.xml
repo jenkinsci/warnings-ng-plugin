@@ -33,6 +33,8 @@
     <forensics-api-plugin.version>0.5.0</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.5.0</git-forensics-plugin.version>
 
+    <module.name>${project.groupId}.warnings.ng</module.name>
+
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -603,6 +605,33 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>${maven-jar-plugin.version}</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Built-By>Ullrich Hafner</Built-By>
+              <Url>${project.scm.url}</Url>
+              <Jenkins-ClassFilter-Whitelisted>true</Jenkins-ClassFilter-Whitelisted>
+              <Automatic-Module-Name>${module.name}</Automatic-Module-Name>
+            </manifestEntries>
+          </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+            <configuration>
+              <includes>
+                <include>**/*Assert*</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+        <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
         <configuration>
@@ -870,20 +899,6 @@
           <artifactId>maven-release-plugin</artifactId>
           <configuration>
             <arguments>-Djenkins.test.timeout=2000</arguments>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>${maven-jar-plugin.version}</version>
-          <configuration>
-            <archive>
-              <manifestEntries>
-                <Built-By>Ullrich Hafner</Built-By>
-                <Url>${project.scm.url}</Url>
-                <Jenkins-ClassFilter-Whitelisted>true</Jenkins-ClassFilter-Whitelisted>
-              </manifestEntries>
-            </archive>
           </configuration>
         </plugin>
         <plugin>
