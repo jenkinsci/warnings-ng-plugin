@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import net.sf.json.JSONObject;
+import com.google.gson.JsonObject;
 
 /**
  * Strategy how to retrieve issues from the Axivion dashboard.
@@ -12,5 +12,5 @@ interface AxivionDashboard {
      * @param kind
      *         kind to look for {@link AxIssueKind}
      */
-    JSONObject getIssues(AxIssueKind kind);
+    JsonObject getIssues(AxIssueKind kind);
 }

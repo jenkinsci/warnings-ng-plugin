@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
-import net.sf.json.JSONObject;
+import com.google.gson.JsonObject;
 
 /**
  * Represents a location-aware violation in json format.
@@ -8,10 +8,10 @@ import net.sf.json.JSONObject;
 final class AxRawIssue {
     private final String dashboardUrl;
     private final String projectDir;
-    private final JSONObject payload;
+    private final JsonObject payload;
     private final AxIssueKind kind;
 
-    AxRawIssue(final String dashboardUrl, final String baseDir, final JSONObject payload,
+    AxRawIssue(final String dashboardUrl, final String baseDir, final JsonObject payload,
             final AxIssueKind kind) {
         this.dashboardUrl = dashboardUrl;
         projectDir = baseDir;
@@ -27,7 +27,7 @@ final class AxRawIssue {
         return projectDir;
     }
 
-    JSONObject getPayload() {
+    JsonObject getPayload() {
         return payload;
     }
 

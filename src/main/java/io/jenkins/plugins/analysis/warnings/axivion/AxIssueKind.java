@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
+import edu.hm.hafner.analysis.Issue;
+
 /**
  * Supported issue kinds by Axivion Suite.
  */
@@ -24,8 +26,8 @@ enum AxIssueKind {
         return plural;
     }
 
-    public AxIssueTransformation getTransformation() {
-        return transformation;
+    public Issue transform(final AxRawIssue rawIssue) {
+        return transformation.transform(rawIssue);
     }
 }
 
