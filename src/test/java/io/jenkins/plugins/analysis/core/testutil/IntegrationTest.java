@@ -82,7 +82,7 @@ import static org.assertj.core.api.Assumptions.*;
  * @author Ullrich Hafner
  */
 @Tag("IntegrationTest")
-@SuppressWarnings({"ClassDataAbstractionCoupling", "ClassFanOutComplexity", "SameParameterValue", "PMD.SystemPrintln", "PMD.GodClass", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity"})
+@SuppressWarnings({"ClassFanOutComplexity", "SameParameterValue", "PMD.SystemPrintln", "PMD.GodClass", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.CouplingBetweenObjects", "PMD.CyclomaticComplexity"})
 public abstract class IntegrationTest extends ResourceTest {
     /** Issue log files will be renamed to mach this pattern. */
     private static final String FILE_NAME_PATTERN = "%s-issues.txt";
@@ -902,7 +902,6 @@ public abstract class IntegrationTest extends ResourceTest {
      * @param script
      *         the script
      */
-    @SuppressWarnings("PMD.SystemPrintln")
     private void logJenkinsFile(final String script) {
         System.out.println("----------------------------------------------------------------------");
         System.out.println(script);
