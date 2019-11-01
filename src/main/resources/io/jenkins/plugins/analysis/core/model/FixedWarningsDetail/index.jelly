@@ -9,14 +9,12 @@
     <l:main-panel>
 
       <issues:bootstrap-css/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/datatables.min.css"/>
+      <issues:datatables-css/>
       <issues:fontawesome-css/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
-      <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
-      <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
-      <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
-      <script src="${resURL}/plugin/warnings-ng/js/libs/datatables.min.js"/>
+      <issues:bootstrap-js/>
+      <issues:datatables-js/>
 
       <div class="fluid-container">
 

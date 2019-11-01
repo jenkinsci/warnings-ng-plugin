@@ -202,6 +202,7 @@ public class JobAction implements Action {
      */
     @SuppressWarnings("unused") // Called by jelly view
     public boolean isTrendVisible() {
+
         return trendChartType != TrendChartType.NONE && createBuildHistory().hasMultipleResults();
     }
 

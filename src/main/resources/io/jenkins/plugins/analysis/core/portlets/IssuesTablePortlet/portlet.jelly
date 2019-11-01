@@ -52,13 +52,10 @@
           </j:when>
           <j:otherwise>
             <issues:bootstrap-css/>
+            <issues:fontawesome-css/>
             <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
-            <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/solid.min.css"/>
-            <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/font-awesome/css/fontawesome.min.css"/>
 
-            <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
-            <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
-            <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
+            <issues:bootstrap-js/>
 
             <issues:zero-issues/>
           </j:otherwise>

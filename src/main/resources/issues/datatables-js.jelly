@@ -1,0 +1,11 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Includes bootstrap CSS.
+  </st:documentation>
+
+  <script src="${resURL}/plugin/datatables-api/datatables/js/jquery.dataTables.min.js"/>
+  <script src="${resURL}/plugin/datatables-api/datatables/js/dataTables.bootstrap4.min.js"/>
+
+</j:jelly>

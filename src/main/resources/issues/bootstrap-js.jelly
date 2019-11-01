@@ -1,0 +1,12 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Includes bootstrap JS (and dependencies).
+  </st:documentation>
+
+  <i:jquery-js/>
+  <script src="${resURL}/plugin/popper-api/popper/popper.min.js"/>
+  <script src="${resURL}/plugin/bootstrap4-api/bootstrap/bootstrap.min.js"/>
+
+</j:jelly>

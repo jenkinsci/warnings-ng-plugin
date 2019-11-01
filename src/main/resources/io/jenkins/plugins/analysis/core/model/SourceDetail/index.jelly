@@ -17,7 +17,7 @@
 
       <j:out value="${it.sourceCode}"/>
 
-      <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
+      <issues:jquery-js/>
       <script src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
       <script src="${resURL}/plugin/warnings-ng/js/source-detail.js"/>
 

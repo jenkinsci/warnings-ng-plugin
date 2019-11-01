@@ -1,0 +1,10 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Includes bootstrap JS (and dependencies).
+  </st:documentation>
+
+  <script src="${resURL}/plugin/jquery3-api/jquery/jquery.min.js"/>
+
+</j:jelly>

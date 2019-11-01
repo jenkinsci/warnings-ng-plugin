@@ -12,9 +12,7 @@
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
       <issues:fontawesome-css/>
 
-      <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
-      <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
-      <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
+      <issues:bootstrap-js/>
 
       <div class="fluid-container">
         

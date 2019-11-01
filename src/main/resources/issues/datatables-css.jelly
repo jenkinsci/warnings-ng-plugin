@@ -5,7 +5,6 @@
     Includes bootstrap CSS.
   </st:documentation>
 
-  <link rel="stylesheet" href="${resURL}/plugin/bootstrap4-api/bootstrap/bootstrap.min.css"/>
-  <link rel="stylesheet" href="${resURL}/css/style.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/datatables-api/datatables/css/dataTables.bootstrap4.min.css"/>
 
 </j:jelly>
