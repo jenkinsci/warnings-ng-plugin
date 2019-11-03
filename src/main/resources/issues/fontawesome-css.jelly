@@ -5,7 +5,7 @@
     Includes Font Awesome CSS.
   </st:documentation>
 
-  <link rel="stylesheet" href="${resURL}/plugin/font-awesome-api/font-awesome/css/solid.min.css"/>
-  <link rel="stylesheet" href="${resURL}/plugin/font-awesome-api/font-awesome/css/fontawesome.min.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/font-awesome-api/webjars/css/solid.min.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/font-awesome-api/webjars/css/fontawesome.min.css"/>
 
 </j:jelly>

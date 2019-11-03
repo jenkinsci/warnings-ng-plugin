@@ -6,7 +6,7 @@
   </st:documentation>
 
   <i:jquery-js/>
-  <script src="${resURL}/plugin/popper-api/popper/popper.min.js"/>
-  <script src="${resURL}/plugin/bootstrap4-api/bootstrap/bootstrap.min.js"/>
+  <script src="${resURL}/plugin/popper-api/webjars/popper.min.js"/>
+  <script src="${resURL}/plugin/bootstrap4-api/dist/bootstrap.min.js"/>
 
 </j:jelly>

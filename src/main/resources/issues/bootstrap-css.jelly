@@ -5,7 +5,7 @@
     Includes bootstrap CSS.
   </st:documentation>
 
-  <link rel="stylesheet" href="${resURL}/plugin/bootstrap4-api/bootstrap/bootstrap.min.css"/>
+  <link rel="stylesheet" href="${resURL}/plugin/bootstrap4-api/dist/bootstrap.min.css"/>
   <link rel="stylesheet" href="${resURL}/css/style.css"/>
 
 </j:jelly>

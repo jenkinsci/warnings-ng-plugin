@@ -5,7 +5,7 @@
     Includes bootstrap CSS.
   </st:documentation>
 
-  <script src="${resURL}/plugin/data-tables-api/datatables/js/jquery.dataTables.min.js"/>
-  <script src="${resURL}/plugin/data-tables-api/datatables/js/dataTables.bootstrap4.min.js"/>
+  <script src="${resURL}/plugin/data-tables-api/webjars/js/jquery.dataTables.min.js"/>
+  <script src="${resURL}/plugin/data-tables-api/webjars/js/dataTables.bootstrap4.min.js"/>
 
 </j:jelly>

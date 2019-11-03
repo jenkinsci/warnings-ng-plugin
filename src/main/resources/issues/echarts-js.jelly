@@ -5,6 +5,6 @@
     Includes ECharts.
   </st:documentation>
 
-  <script src="${resURL}/plugin/echarts-api/echarts/echarts-en.common.min.js"/>
+  <script src="${resURL}/plugin/echarts-api/webjars/echarts-en.common.min.js"/>
 
 </j:jelly>

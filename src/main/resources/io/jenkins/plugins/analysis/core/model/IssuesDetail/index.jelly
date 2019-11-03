@@ -17,7 +17,7 @@
       <issues:bootstrap-js/>
       <issues:datatables-js/>
 
-      <st:adjunct includes="io.jenkins.plugins.echarts.api.echarts" />
+      <issues:echarts-js/>
 
       <div class="fluid-container">
 
