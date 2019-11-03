@@ -111,8 +111,9 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url) {
-            return new DryModel(getAgeBuilder(build, url), getFileNameRenderer(build), this);
+        public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url,
+                final Report report) {
+            return new DryModel(report, getFileNameRenderer(build), getAgeBuilder(build, url), this);
         }
 
         static String formatTargets(final FileNameRenderer fileNameRenderer, final Issue issue) {
@@ -286,18 +287,22 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
      * Provides a table that contains the duplication references as well.
      */
     static class DryModel extends DetailsTableModel {
-        DryModel(final AgeBuilder ageBuilder,
-                final FileNameRenderer fileNameRenderer,
+        DryModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
                 final DescriptionProvider descriptionProvider) {
-            super(ageBuilder, fileNameRenderer, descriptionProvider);
+            super(report, fileNameRenderer, ageBuilder, descriptionProvider);
         }
 
         @Override
-        public List<String> getHeaders(final Report report) {
+        public String getId() {
+            return "issues";
+        }
+
+        @Override
+        public List<String> getHeaders() {
             List<String> headers = new ArrayList<>();
             headers.add(Messages.DRY_Table_Column_Details());
             headers.add(Messages.DRY_Table_Column_File());
-            if (report.hasPackages()) {
+            if (getReport().hasPackages()) {
                 headers.add(Messages.DRY_Table_Column_Package());
             }
             headers.add(Messages.DRY_Table_Column_Severity());
@@ -308,11 +313,11 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        public List<Integer> getWidths(final Report report) {
+        public List<Integer> getWidths() {
             List<Integer> widths = new ArrayList<>();
             widths.add(1);
             widths.add(2);
-            if (report.hasPackages()) {
+            if (getReport().hasPackages()) {
                 widths.add(2);
             }
             widths.add(1);
@@ -323,7 +328,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        public DuplicationRow getRow(final Report report, final Issue issue) {
+        public DuplicationRow getRow(final Issue issue) {
             DuplicationRow row = new DuplicationRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
                     issue);
             row.setPackageName(issue);
@@ -334,9 +339,9 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
+        public void configureColumns(final ColumnDefinitionBuilder builder) {
             builder.add("description").add("fileName", "string");
-            if (report.hasPackages()) {
+            if (getReport().hasPackages()) {
                 builder.add("packageName");
             }
             builder.add("severity").add("linesCount").add("duplicatedIn").add("age");

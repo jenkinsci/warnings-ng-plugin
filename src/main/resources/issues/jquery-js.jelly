@@ -2,9 +2,10 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
 
   <st:documentation>
-    Includes bootstrap JS (and dependencies).
+    Includes JQuery 3 JS (and additional plugins).
   </st:documentation>
 
-  <script src="${resURL}/plugin/jquery3-api/jquery/jquery.min.js"/>
+  <script type="text/javascript" src="${resURL}/plugin/jquery3-api/jquery/jquery.min.js"/>
+  <script type="text/javascript" src="${resURL}/plugin/jquery3-api/plugins/visible.js"/>
 
 </j:jelly>

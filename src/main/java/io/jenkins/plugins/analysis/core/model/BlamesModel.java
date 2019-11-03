@@ -32,15 +32,20 @@ public class BlamesModel extends DetailsTableModel {
 
     private final Blames blames;
 
-    BlamesModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-            final DescriptionProvider descriptionProvider, final Blames blames) {
-        super(ageBuilder, fileNameRenderer, descriptionProvider);
+    BlamesModel(final Report report, final Blames blames, final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder, final DescriptionProvider labelProvider) {
+        super(report, fileNameRenderer, ageBuilder, labelProvider);
 
         this.blames = blames;
     }
 
     @Override
-    public List<String> getHeaders(final Report report) {
+    public String getId() {
+        return "blames";
+    }
+
+    @Override
+    public List<String> getHeaders() {
         return Arrays.asList(
                 Messages.Table_Column_Details(),
                 Messages.Table_Column_File(),
@@ -51,12 +56,22 @@ public class BlamesModel extends DetailsTableModel {
     }
 
     @Override
-    public List<Integer> getWidths(final Report report) {
+    public List<Integer> getWidths() {
         return Arrays.asList(1, 1, 1, 1, 1, 1);
     }
 
     @Override
-    public BlamesRow getRow(final Report report, final Issue issue) {
+    public void configureColumns(final ColumnDefinitionBuilder builder) {
+        builder.add("description")
+                .add("fileName", "string")
+                .add("age")
+                .add("author")
+                .add("email")
+                .add("commit");
+    }
+
+    @Override
+    protected BlamesRow getRow(final Issue issue) {
         BlamesRow row = new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue);
         if (blames.contains(issue.getFileName())) {
             FileBlame blameRequest = blames.getBlame(issue.getFileName());
@@ -71,11 +86,6 @@ public class BlamesModel extends DetailsTableModel {
             row.setCommit(UNDEFINED);
         }
         return row;
-    }
-
-    @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder, final Report report) {
-        builder.add("description").add("fileName", "string").add("age").add("author").add("email").add("commit");
     }
 
     /**

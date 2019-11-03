@@ -27,23 +27,28 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBui
  * @author Ullrich Hafner
  */
 public class IssuesModel extends DetailsTableModel {
-    IssuesModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+    IssuesModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
             final DescriptionProvider descriptionProvider) {
-        super(ageBuilder, fileNameRenderer, descriptionProvider);
+        super(report, fileNameRenderer, ageBuilder, descriptionProvider);
     }
 
     @Override
-    public List<String> getHeaders(final Report report) {
+    public String getId() {
+        return "issues";
+    }
+
+    @Override
+    public List<String> getHeaders() {
         List<String> visibleColumns = new ArrayList<>();
         visibleColumns.add(Messages.Table_Column_Details());
         visibleColumns.add(Messages.Table_Column_File());
-        if (report.hasPackages()) {
+        if (getReport().hasPackages()) {
             visibleColumns.add(Messages.Table_Column_Package());
         }
-        if (report.hasCategories()) {
+        if (getReport().hasCategories()) {
             visibleColumns.add(Messages.Table_Column_Category());
         }
-        if (report.hasTypes()) {
+        if (getReport().hasTypes()) {
             visibleColumns.add(Messages.Table_Column_Type());
         }
         visibleColumns.add(Messages.Table_Column_Severity());
@@ -52,17 +57,17 @@ public class IssuesModel extends DetailsTableModel {
     }
 
     @Override
-    public List<Integer> getWidths(final Report report) {
+    public List<Integer> getWidths() {
         List<Integer> widths = new ArrayList<>();
         widths.add(1);
         widths.add(1);
-        if (report.hasPackages()) {
+        if (getReport().hasPackages()) {
             widths.add(2);
         }
-        if (report.hasCategories()) {
+        if (getReport().hasCategories()) {
             widths.add(1);
         }
-        if (report.hasTypes()) {
+        if (getReport().hasTypes()) {
             widths.add(1);
         }
         widths.add(1);
@@ -71,7 +76,7 @@ public class IssuesModel extends DetailsTableModel {
     }
 
     @Override
-    public IssuesRow getRow(final Report report, final Issue issue) {
+    public IssuesRow getRow(final Issue issue) {
         IssuesRow row = new IssuesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue);
         row.setPackageName(issue);
         row.setCategory(issue);
@@ -81,15 +86,15 @@ public class IssuesModel extends DetailsTableModel {
     }
 
     @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
+    public void configureColumns(final ColumnDefinitionBuilder builder) {
         builder.add("description").add("fileName", "string");
-        if (report.hasPackages()) {
+        if (getReport().hasPackages()) {
             builder.add("packageName");
         }
-        if (report.hasCategories()) {
+        if (getReport().hasCategories()) {
             builder.add("category");
         }
-        if (report.hasTypes()) {
+        if (getReport().hasTypes()) {
             builder.add("type");
         }
         builder.add("severity").add("age");

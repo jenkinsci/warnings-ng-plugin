@@ -38,15 +38,21 @@ public class ForensicsModel extends DetailsTableModel {
 
     private final RepositoryStatistics statistics;
 
-    ForensicsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-            final DescriptionProvider descriptionProvider, final RepositoryStatistics statistics) {
-        super(ageBuilder, fileNameRenderer, descriptionProvider);
+    public ForensicsModel(final Report report, final RepositoryStatistics statistics,
+            final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+            final DescriptionProvider labelProvider) {
+        super(report, fileNameRenderer, ageBuilder, labelProvider);
 
         this.statistics = statistics;
     }
 
     @Override
-    public List<String> getHeaders(final Report report) {
+    public String getId() {
+        return "forensics";
+    }
+
+    @Override
+    public List<String> getHeaders() {
         return Arrays.asList(
                 Messages.Table_Column_Details(),
                 Messages.Table_Column_File(),
@@ -58,12 +64,12 @@ public class ForensicsModel extends DetailsTableModel {
     }
 
     @Override
-    public List<Integer> getWidths(final Report report) {
+    public List<Integer> getWidths() {
         return Arrays.asList(1, 1, 1, 1, 1, 2, 2);
     }
 
     @Override
-    public ForensicsRow getRow(final Report report, final Issue issue) {
+    public ForensicsRow getRow(final Issue issue) {
         ForensicsRow row = new ForensicsRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
                 issue);
         if (statistics.contains(issue.getFileName())) {
@@ -83,8 +89,12 @@ public class ForensicsModel extends DetailsTableModel {
     }
 
     @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder, final Report report) {
-        builder.add("description").add("fileName", "string").add("age").add("authorsSize").add("commitsSize")
+    public void configureColumns(final ColumnDefinitionBuilder builder) {
+        builder.add("description")
+                .add("fileName", "string")
+                .add("age")
+                .add("authorsSize")
+                .add("commitsSize")
                 .add("modifiedDays", "num")
                 .add("addedDays", "num");
     }

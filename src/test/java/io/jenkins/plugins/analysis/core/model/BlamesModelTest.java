@@ -31,11 +31,11 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         report.add(createIssue(2));
         Blames blames = mock(Blames.class);
 
-        BlamesModel model = createModel(blames);
+        BlamesModel model = createModel(report, blames);
 
-        assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getColumnsDefinition(report)).isEqualTo("["
+        assertThat(model.getHeaders()).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getWidths()).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getColumnsDefinition()).isEqualTo("["
                 + "{\"data\": \"description\"},"
                 + "{"
                 + "  \"type\": \"string\","
@@ -50,7 +50,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"email\"},"
                 + "{\"data\": \"commit\"}"
                 + "]");
-        assertThat(model.getContent(report)).hasSize(2);
+        assertThat(model.getRows()).hasSize(2);
     }
 
     @Test
@@ -68,15 +68,16 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         when(blames.contains(issue.getFileName())).thenReturn(true);
         when(blames.getBlame(issue.getFileName())).thenReturn(blameRequest);
 
-        BlamesModel model = createModel(blames);
+        BlamesModel model = createModel(report, blames);
 
-        BlamesRow actualRow = model.getRow(report, issue);
+        BlamesRow actualRow = model.getRow(issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(COMMIT)
                 .hasAuthor(NAME)
                 .hasEmail(EMAIL);
-        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
+        assertThatDetailedColumnContains(actualRow.getFileName(),
+                createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     @Test
@@ -87,18 +88,20 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         Blames blames = mock(Blames.class);
 
-        BlamesModel model = createModel(blames);
+        BlamesModel model = createModel(report, blames);
 
-        BlamesRow actualRow = model.getRow(report, issue);
+        BlamesRow actualRow = model.getRow(issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(BlamesModel.UNDEFINED)
                 .hasAuthor(BlamesModel.UNDEFINED)
                 .hasEmail(BlamesModel.UNDEFINED);
-        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
+
+        assertThatDetailedColumnContains(actualRow.getFileName(),
+                createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
-    private BlamesModel createModel(final Blames blames) {
-        return new BlamesModel(createAgeBuilder(), createFileNameRenderer(), issue -> DESCRIPTION, blames);
+    private BlamesModel createModel(final Report report, final Blames blames) {
+        return new BlamesModel(report, blames, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION);
     }
 }

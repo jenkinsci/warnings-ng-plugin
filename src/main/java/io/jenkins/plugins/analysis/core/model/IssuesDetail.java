@@ -40,6 +40,7 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.datatables.api.TableModel;
 
 /**
  * Build view that shows the details for a subset of issues.
@@ -229,7 +230,7 @@ public class IssuesDetail implements ModelObject {
      * @return the table model
      */
     public DetailsTableModel getIssuesModel() {
-        return labelProvider.getIssuesModel(owner, getUrl());
+        return labelProvider.getIssuesModel(owner, getUrl(), report);
     }
 
     /**
@@ -237,8 +238,11 @@ public class IssuesDetail implements ModelObject {
      *
      * @return the table model
      */
-    public DetailsTableModel getBlamesModel() {
-        return labelProvider.getBlamesModel(owner, getUrl(), result.getBlames());
+    public TableModel getBlamesModel() {
+        return new BlamesModel(report, result.getBlames(),
+                labelProvider.getFileNameRenderer(owner),
+                labelProvider.getAgeBuilder(owner,  getUrl()),
+                labelProvider);
     }
 
     /**
@@ -246,8 +250,11 @@ public class IssuesDetail implements ModelObject {
      *
      * @return the table model
      */
-    public DetailsTableModel getForensicsModel() {
-        return labelProvider.getForensicsModel(owner, getUrl(), result.getForensics());
+    public TableModel getForensicsModel() {
+        return new ForensicsModel(report, result.getForensics(),
+                labelProvider.getFileNameRenderer(owner),
+                labelProvider.getAgeBuilder(owner,  getUrl()),
+                labelProvider);
     }
 
     private String toJsonArray(final List<Object> rows) {
@@ -267,14 +274,14 @@ public class IssuesDetail implements ModelObject {
     @SuppressWarnings("unused") // Called by jelly view
     public String getTableModel(final String id) {
         List<Object> rows;
-        if ("#issues".equals(id)) {
-            rows = getIssuesModel().getContent(getIssues());
+        if ("issues".equals(id)) {
+            rows = getIssuesModel().getRows();
         }
-        else if ("#blames".equals(id)) {
-            rows = getBlamesModel().getContent(getIssues());
+        else if ("blames".equals(id)) {
+            rows = getBlamesModel().getRows();
         }
-        else if ("#forensics".equals(id)) {
-            rows = getForensicsModel().getContent(getIssues());
+        else if ("forensics".equals(id)) {
+            rows = getForensicsModel().getRows();
         }
         else {
             throw new NoSuchElementException("No such table model: " + id);

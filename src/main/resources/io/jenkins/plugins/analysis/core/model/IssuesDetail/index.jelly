@@ -21,20 +21,7 @@
 
       <div class="fluid-container">
 
-        <h3>${it.displayName}
-
-
-        <div class="col-12">
-            <span class="badge badge-dark d-xxxl-inline d-none">xxxl</span>
-            <span class="badge badge-dark d-xxl-inline d-xxxl-none d-none">xxl</span>
-            <span class="badge badge-dark d-xl-inline d-xxl-none d-none">xl</span>
-            <span class="badge badge-dark d-lg-inline d-xl-none d-none">lg</span>
-            <span class="badge badge-dark d-md-inline d-lg-none d-none">md</span>
-            <span class="badge badge-dark d-sm-inline d-md-none d-none">sm</span>
-            <span class="badge badge-dark d-inline d-sm-none">xs</span>
-        </div>
-
-        </h3>
+        <h3>${it.displayName}</h3>
 
         <j:set var="i" value="${it.issues}"/>
         <j:choose>
@@ -117,6 +104,8 @@
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/pie-chart.js"/>
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
+
+      <script type="text/javascript" src="${resURL}/plugin/datatables-api/js/table.js"/>
 
     </l:main-panel>
 

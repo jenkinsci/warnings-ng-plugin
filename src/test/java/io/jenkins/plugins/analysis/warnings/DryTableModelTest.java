@@ -30,8 +30,6 @@ class DryTableModelTest extends AbstractDetailsModelTest {
     void shouldConvertIssueToArrayOfColumns() {
         Locale.setDefault(Locale.ENGLISH);
 
-        DryModel model = createModel();
-
         IssueBuilder builder = new IssueBuilder();
         builder.setReference("1");
         DuplicationGroup group = new DuplicationGroup();
@@ -52,9 +50,10 @@ class DryTableModelTest extends AbstractDetailsModelTest {
         Report report = new Report();
         report.add(issue).add(duplicate);
 
-        assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getColumnsDefinition(report)).isEqualTo("["
+        DryModel model = createModel(report);
+        assertThat(model.getHeaders()).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getWidths()).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(model.getColumnsDefinition()).isEqualTo("["
                 + "{\"data\": \"description\"},"
                 + "{"
                 + "  \"type\": \"string\","
@@ -69,11 +68,12 @@ class DryTableModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"duplicatedIn\"},"
                 + "{\"data\": \"age\"}]");
 
-        DuplicationRow actualRow = model.getRow(report, issue);
+        DuplicationRow actualRow = model.getRow(issue);
         assertThat(actualRow)
                 .hasDescription("<div class=\"details-control\" data-description=\"" + DESCRIPTION + "\"></div>")
                 .hasAge("1");
-        assertThat(actualRow.getFileName()).hasDisplay(getFileNameFor(issue, 1)).hasSort("/path/to/file-1:0000010");
+        assertThatDetailedColumnContains(actualRow.getFileName(),
+                getFileNameFor(issue, 1), "/path/to/file-1:0000010");
         assertThat(actualRow.getPackageName()).isEqualTo("<a href=\"packageName.45/\">-</a>");
         assertThat(actualRow.getDuplicatedIn()).isEqualTo(
                 String.format("<ul><li>%s</li></ul>", getFileNameFor(duplicate, 2)));
@@ -86,7 +86,7 @@ class DryTableModelTest extends AbstractDetailsModelTest {
                 issue.getLineStart(), index, issue.getLineStart());
     }
 
-    private DryModel createModel() {
-        return new DryModel(createAgeBuilder(), createFileNameRenderer(), issue -> DESCRIPTION);
+    private DryModel createModel(final Report report) {
+        return new DryModel(report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION);
     }
 }

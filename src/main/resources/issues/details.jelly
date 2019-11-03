@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues" xmlns:dt="/table" >
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
   <j:set var="l" value="${it.tabLabelProvider}"/>
@@ -57,12 +57,18 @@
             <issues:property property="type" name="${l.type}" elements="${i.types}"/>
 
             <j:if test="${i.isNotEmpty()}">
-              <issues:table tableId="issues" issues="${i}" model="${it.issuesModel}"/>
+              <div role="tabpanel" id="issuesContent" class="tab-pane fade">
+                <dt:table model="${it.issuesModel}"/>
+              </div>
               <j:if test="${it.isBlameVisible()}">
-                <issues:table tableId="blames" issues="${i}" model="${it.blamesModel}"/>
+                <div role="tabpanel" id="blamesContent" class="tab-pane fade">
+                  <dt:table model="${it.blamesModel}"/>
+                </div>
               </j:if>
               <j:if test="${it.isForensicsVisible()}">
-                <issues:table tableId="forensics" issues="${i}" model="${it.forensicsModel}"/>
+                <div role="tabpanel" id="forensicsContent" class="tab-pane fade">
+                  <dt:table model="${it.forensicsModel}"/>
+                </div>
               </j:if>
             </j:if>
 

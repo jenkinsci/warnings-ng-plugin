@@ -19,13 +19,6 @@
     });
 
     /**
-     * Create data table instances for the detail tables.
-     */
-    showTable('#issues');
-    showTable('#blames');
-    showTable('#forensics');
-
-    /**
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
      * If the user selects the tab using an #anchor prefer this tab.
      */
@@ -53,48 +46,6 @@
         window.location.hash = e.target.hash;
         var activeTab = $(e.target).attr('href');
         localStorage.setItem('activeTab', activeTab);
-    });
-
-    /**
-     * Stores the order of every table in the local storage of the browser.
-     */
-    var allTables = $('#statistics').find('table');
-    allTables.on('order.dt', function (e) {
-        var table = $(e.target);
-        var order = table.DataTable().order();
-        var id = table.attr('id');
-        localStorage.setItem(id + '#orderBy', order[0][0]);
-        localStorage.setItem(id + '#orderDirection', order[0][1]);
-    });
-
-    /**
-     * Restores the order of every table by reading the local storage of the browser.
-     * If no order has been stored yet, the table is skipped.
-     * Also saves the default length of the number of table columns.
-     */
-    allTables.each(function () {
-        // Restore order
-        var id = $(this).attr('id');
-        var orderBy = localStorage.getItem(id + '#orderBy');
-        var orderDirection = localStorage.getItem(id + '#orderDirection');
-        var dataTable = $(this).DataTable();
-        if (orderBy && orderDirection) {
-            var order = [orderBy, orderDirection];
-            try {
-                dataTable.order(order).draw();
-            }
-            catch (ignore) { // TODO: find a way to determine the number of columns here
-                dataTable.order([[1, 'asc']]).draw();
-            }
-        }
-        // Store paging size
-        $(this).on('length.dt', function (e, settings, len) {
-            localStorage.setItem(id + '#table-length', len);
-        });
-        var storedLength = localStorage.getItem(id + '#table-length');
-        if ($.isNumeric(storedLength)) {
-            dataTable.page.len(storedLength).draw();
-        }
     });
 
     /**
@@ -190,60 +141,4 @@
         }
     }
 
-    /**
-     * Initializes the specified table.
-     *
-     * @param {String} id - the ID of the table
-     */
-    function showTable (id) {
-        var table = $(id);
-        if (table.length) {
-            // Create a data table instance for the issues table.
-            var dataTable = table.DataTable({
-                language: {
-                    emptyTable: 'Loading - please wait ...'
-                },
-                deferRender: true,
-                pagingType: 'numbers', // Page number button only
-                order: [[1, 'asc']],
-                columnDefs: [{
-                    targets: 0, // First column contains details button
-                    orderable: false
-                }],
-                columns: JSON.parse(table.attr('data-columns-definition'))
-            });
-
-            // Add event listener for opening and closing details
-            table.on('click', 'div.details-control', function () {
-                var tr = $(this).parents('tr');
-                var row = dataTable.row(tr);
-
-                if (row.child.isShown()) {
-                    // This row is already open - close it
-                    row.child.hide();
-                    tr.removeClass('shown');
-                }
-                else {
-                    // Open this row
-                    row.child($(this).data('description')).show();
-                    tr.addClass('shown');
-                }
-            });
-
-            // Content is loaded on demand: if the active tab shows the table, then content is loaded using Ajax
-            var tabToggleLink = $('a[data-toggle="tab"]');
-            tabToggleLink.on('show.bs.tab', function (e) {
-                var activeTab = $(e.target).attr('href');
-                if (activeTab === (id + 'Content') && dataTable.data().length === 0) {
-                    view.getTableModel(id, function (t) {
-                        (function ($) {
-                            var table = $(id).DataTable();
-                            var model = JSON.parse(t.responseObject());
-                            table.rows.add(model).draw();
-                        })(jQuery);
-                    });
-                }
-            });
-        }
-    }
 })(jQuery);

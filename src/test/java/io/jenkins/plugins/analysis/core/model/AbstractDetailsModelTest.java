@@ -11,8 +11,10 @@ import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+import io.jenkins.plugins.datatables.api.TableModel.DetailedColumnDefinition;
 
 import static j2html.TagCreator.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -81,5 +83,11 @@ public abstract class AbstractDetailsModelTest {
      */
     protected DefaultAgeBuilder createAgeBuilder() {
         return new DefaultAgeBuilder(1, "url");
+    }
+
+    protected void assertThatDetailedColumnContains(final DetailedColumnDefinition actualColumn,
+            final String expectedDisplayName, final String expectedSortOrder) {
+        assertThat(actualColumn.getDisplay()).isEqualTo(expectedDisplayName);
+        assertThat(actualColumn.getSort()).isEqualTo(expectedSortOrder);
     }
 }
