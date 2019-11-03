@@ -105,7 +105,7 @@
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
 
-      <script type="text/javascript" src="${resURL}/plugin/datatables-api/js/table.js"/>
+      <script type="text/javascript" src="${resURL}/plugin/data-tables-api/js/table.js"/>
 
     </l:main-panel>
 

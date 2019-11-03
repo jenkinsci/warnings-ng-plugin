@@ -217,7 +217,7 @@
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>datatables-api</artifactId>
+      <artifactId>data-tables-api</artifactId>
       <version>0.1.0-SNAPSHOT</version>
     </dependency>
     <!-- Project Library Dependencies -->
