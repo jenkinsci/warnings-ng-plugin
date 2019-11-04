@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8" />
 
@@ -9,7 +9,8 @@
     <l:main-panel>
       <script src="${resURL}/plugin/warnings-ng/js/libs/prism.js"/>
 
-      <issues:fontawesome-css/>
+      <st:adjunct includes="io.jenkins.plugins.font-awesome"/>
+
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/prism.css"/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-prism.css"/>
 
@@ -17,8 +18,8 @@
 
       <j:out value="${it.sourceCode}"/>
 
-      <issues:jquery-js/>
-      <script src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
+      <st:adjunct includes="io.jenkins.plugins.jquery3"/>
+
       <script src="${resURL}/plugin/warnings-ng/js/source-detail.js"/>
 
     </l:main-panel>

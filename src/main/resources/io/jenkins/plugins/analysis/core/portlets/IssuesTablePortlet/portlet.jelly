@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:issues="/issues" xmlns:st="jelly:stapler">
 
   <dp:decorate portlet="${it}" width="1">
     <tr>
@@ -51,11 +51,10 @@
 
           </j:when>
           <j:otherwise>
-            <issues:bootstrap-css/>
-            <issues:fontawesome-css/>
-            <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+            <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+            <st:adjunct includes="io.jenkins.plugins.font-awesome"/>
 
-            <issues:bootstrap-js/>
+            <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
             <issues:zero-issues/>
           </j:otherwise>

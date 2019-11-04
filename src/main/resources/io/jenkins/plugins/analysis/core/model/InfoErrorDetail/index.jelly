@@ -8,11 +8,9 @@
 
     <l:main-panel>
 
-      <issues:bootstrap-css/>
+      <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+      <st:adjunct includes="io.jenkins.plugins.font-awesome"/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
-      <issues:fontawesome-css/>
-
-      <issues:bootstrap-js/>
 
       <div class="fluid-container">
         
@@ -21,8 +19,6 @@
         <issues:log-messages errors="${it.errorMessages}" messages="${it.infoMessages}"/>
         
       </div>
-
-      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
 
     </l:main-panel>
   </l:layout>

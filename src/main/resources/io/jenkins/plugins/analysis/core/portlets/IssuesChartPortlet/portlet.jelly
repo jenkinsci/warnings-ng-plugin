@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:st="jelly:stapler" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:dp="/hudson/plugins/view/dashboard" xmlns:st="jelly:stapler">
 
   <j:set var="model" value="${it.register(jobs)}"/>
 
@@ -13,7 +13,8 @@
     </tr>
   </dp:decorate>
 
-  <issues:echarts-js/>
+  <st:adjunct includes="io.jenkins.plugins.echarts"/>
+
   <script src="${resURL}/plugin/warnings-ng/js/simple-trend-chart.js"/>
 
   <script>

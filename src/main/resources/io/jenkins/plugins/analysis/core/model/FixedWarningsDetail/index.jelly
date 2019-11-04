@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
   <l:layout title="${it.displayName}" norefresh="true">
@@ -8,13 +8,11 @@
 
     <l:main-panel>
 
-      <issues:bootstrap-css/>
-      <issues:datatables-css/>
-      <issues:fontawesome-css/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+      <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+      <st:adjunct includes="io.jenkins.plugins.font-awesome"/>
+      <st:adjunct includes="io.jenkins.plugins.data-tables"/>
 
-      <issues:bootstrap-js/>
-      <issues:datatables-js/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
       <div class="fluid-container">
 
@@ -70,7 +68,7 @@
         </div>
 
       </div>
-      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
+
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/fixed-detail.js"/>
 
     </l:main-panel>

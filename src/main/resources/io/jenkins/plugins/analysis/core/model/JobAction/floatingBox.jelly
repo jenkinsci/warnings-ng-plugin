@@ -1,16 +1,19 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
 
   <j:if test="${from.isTrendVisible()}">
 
     <div class="test-trend-caption">
       ${from.trendName}
     </div>
+
     <div align="right">
       <div id="${from.urlName}-history-chart" class="graph-cursor-pointer"
            style="width: 500px; min-height: 200px; min-width: 500px; height: 200px;"/>
     </div>
-    <issues:echarts-js/>
+
+    <st:adjunct includes="io.jenkins.plugins.echarts"/>
+
     <script src="${resURL}/plugin/warnings-ng/js/simple-trend-chart.js"/>
     <script>
       var proxy = <st:bind value="${from}"/>;
