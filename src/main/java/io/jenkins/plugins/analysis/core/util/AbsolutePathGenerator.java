@@ -115,7 +115,7 @@ public class AbsolutePathGenerator {
     private Optional<String> resolveAbsolutePath(final String fileName, final Collection<String> sourceDirectories) {
         PathUtil pathUtil = new PathUtil();
         if (pathUtil.isAbsolute(fileName)) {
-            return resolveAbsolutePath(Paths.get(fileName));
+            return resolveAbsolutePath(fileName);
         }
         return resolveRelativePath(fileName, sourceDirectories);
     }
@@ -129,18 +129,18 @@ public class AbsolutePathGenerator {
 
     private Optional<String> resolveAbsolutePath(final String parent, final String fileName) {
         try {
-            return resolveAbsolutePath(Paths.get(parent, fileName));
+            return Optional.of(new PathUtil().toString(Paths.get(parent, fileName)));
         }
-        catch (InvalidPathException ignored) {
+        catch (IOException | InvalidPathException ignored) {
             return Optional.empty();
         }
     }
 
-    private Optional<String> resolveAbsolutePath(final Path path) {
+    private Optional<String> resolveAbsolutePath(final String path) {
         try {
-            return Optional.of(new PathUtil().toString(path));
+            return Optional.of(new PathUtil().toString(Paths.get(path)));
         }
-        catch (IOException ignored) {
+        catch (IOException | InvalidPathException ignored) {
             return Optional.empty();
         }
     }
