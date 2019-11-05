@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -306,6 +307,18 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
             headers.add(Messages.DRY_Table_Column_DuplicatedIn());
             headers.add(Messages.DRY_Table_Column_Age());
             return headers;
+        }
+
+        @Override
+        public List<String> getHeaderClasses(final Report report) {
+            return Arrays.asList(
+                    ANY_HEADER_CLASS,
+                    ANY_HEADER_CLASS,
+                    ANY_HEADER_CLASS,
+                    ANY_HEADER_CLASS,
+                    ANY_HEADER_CLASS,
+                    ANY_HEADER_CLASS,
+                    ANY_HEADER_CLASS);
         }
 
         @Override
