@@ -127,18 +127,9 @@ public class AbsolutePathGenerator {
                 .findFirst();
     }
 
-    private Optional<String> resolveAbsolutePath(final String parent, final String fileName) {
+    private Optional<String> resolveAbsolutePath(final String first, final String... other) {
         try {
-            return Optional.of(new PathUtil().toString(Paths.get(parent, fileName)));
-        }
-        catch (IOException | InvalidPathException ignored) {
-            return Optional.empty();
-        }
-    }
-
-    private Optional<String> resolveAbsolutePath(final String path) {
-        try {
-            return Optional.of(new PathUtil().toString(Paths.get(path)));
+            return Optional.of(new PathUtil().toString(Paths.get(first, other)));
         }
         catch (IOException | InvalidPathException ignored) {
             return Optional.empty();
