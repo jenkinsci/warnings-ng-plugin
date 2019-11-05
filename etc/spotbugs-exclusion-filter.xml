@@ -16,7 +16,7 @@
       <Class name="~.*Messages" />
   </Match>
   <Match>
-      <Bug code="UwF, SIC, NP, Dm, UI, DMI" />
+      <Bug code="UwF, SIC, NP, Dm, UI, DMI, UPM" />
       <Class name="~.*Test.*" />
   </Match>
 </FindBugsFilter>
