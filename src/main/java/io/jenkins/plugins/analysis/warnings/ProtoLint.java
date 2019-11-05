@@ -8,9 +8,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides a parser and customized messages for ProtoLint.
@@ -18,10 +16,9 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  * @author David Hart
  */
 public class ProtoLint extends ReportScanningTool {
-
     private static final long serialVersionUID = -5718503998068521571L;
-	
-	private static final String ID = "protolint";
+
+    private static final String ID = "protolint";
 
     /** Creates a new instance of {@link ProtoLint}. */
     @DataBoundConstructor
