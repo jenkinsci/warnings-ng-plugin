@@ -12,6 +12,7 @@ import hudson.model.Run;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class InfoErrorDetail implements ModelObject {
     private final Run<?, ?> owner;
     private final ImmutableList<String> errorMessages;

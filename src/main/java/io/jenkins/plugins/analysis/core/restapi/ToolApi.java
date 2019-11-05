@@ -10,6 +10,7 @@ import org.kohsuke.stapler.export.ExportedBean;
  * @author Ullrich Hafner
  */
 @ExportedBean
+@SuppressWarnings("PMD.DataClass")
 public class ToolApi {
     private final String name;
     private final String id;

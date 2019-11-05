@@ -33,6 +33,7 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public abstract class DuplicateCodeScanner extends ReportScanningTool {
     private static final long serialVersionUID = -8446643146836067375L;
 
@@ -189,7 +190,6 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
     /**
      * Validates the number of lines thresholds.
      */
-    @SuppressWarnings("ParameterHidesMemberVariable")
     static class ThresholdValidation {
         /** Minimum number of duplicate lines for a warning with severity high. */
         static final int DEFAULT_HIGH_THRESHOLD = 50;
@@ -260,6 +260,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
             return highThreshold;
         }
 
+        @SuppressWarnings("ConditionCoveredByFurtherCondition")
         private boolean isValid(final int normalThreshold, final int highThreshold) {
             return !(highThreshold <= 0 || normalThreshold <= 0 || highThreshold <= normalThreshold);
         }
