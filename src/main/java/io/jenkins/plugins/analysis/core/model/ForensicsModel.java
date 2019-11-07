@@ -58,6 +58,18 @@ public class ForensicsModel extends DetailsTableModel {
     }
 
     @Override
+    public List<String> getHeaderClasses(final Report report) {
+        return Arrays.asList(
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS);
+    }
+
+    @Override
     public List<Integer> getWidths(final Report report) {
         return Arrays.asList(1, 1, 1, 1, 1, 2, 2);
     }

@@ -29,6 +29,7 @@ import io.jenkins.plugins.forensics.blame.FileBlame;
  */
 public class BlamesModel extends DetailsTableModel {
     static final String UNDEFINED = "-";
+    static final int UNDEFINED_DATE = 0;
 
     private final Blames blames;
 
@@ -47,12 +48,25 @@ public class BlamesModel extends DetailsTableModel {
                 Messages.Table_Column_Age(),
                 Messages.Table_Column_Author(),
                 Messages.Table_Column_Email(),
-                Messages.Table_Column_Commit());
+                Messages.Table_Column_Commit(),
+                Messages.Table_Column_AddedAt());
+    }
+
+    @Override
+    public List<String> getHeaderClasses(final Report report) {
+        return Arrays.asList(
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                DATE_HEADER_CLASS);
     }
 
     @Override
     public List<Integer> getWidths(final Report report) {
-        return Arrays.asList(1, 1, 1, 1, 1, 1);
+        return Arrays.asList(1, 1, 1, 1, 1, 1, 1);
     }
 
     @Override
@@ -64,18 +78,26 @@ public class BlamesModel extends DetailsTableModel {
             row.setAuthor(blameRequest.getName(line));
             row.setEmail(blameRequest.getEmail(line));
             row.setCommit(blameRequest.getCommit(line));
+            row.setAddedAt(blameRequest.getTime(line));
         }
         else {
             row.setAuthor(UNDEFINED);
             row.setEmail(UNDEFINED);
             row.setCommit(UNDEFINED);
+            row.setAddedAt(UNDEFINED_DATE);
         }
         return row;
     }
 
     @Override
     public void configureColumns(final ColumnDefinitionBuilder builder, final Report report) {
-        builder.add("description").add("fileName", "string").add("age").add("author").add("email").add("commit");
+        builder.add("description")
+                .add("fileName", "string")
+                .add("age")
+                .add("author")
+                .add("email")
+                .add("commit")
+                .add("addedAt");
     }
 
     /**
@@ -86,6 +108,7 @@ public class BlamesModel extends DetailsTableModel {
         private String author;
         private String email;
         private String commit;
+        private int addedAt;
 
         BlamesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider, final Issue issue) {
@@ -104,6 +127,10 @@ public class BlamesModel extends DetailsTableModel {
             return commit;
         }
 
+        public int getAddedAt() {
+            return addedAt;
+        }
+
         void setAuthor(final String author) {
             this.author = author;
         }
@@ -114,6 +141,10 @@ public class BlamesModel extends DetailsTableModel {
 
         void setCommit(final String commit) {
             this.commit = commit;
+        }
+
+        void setAddedAt(final int addedAt) {
+            this.addedAt = addedAt;
         }
     }
 }

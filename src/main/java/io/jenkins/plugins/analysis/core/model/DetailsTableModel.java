@@ -24,6 +24,7 @@ import static j2html.TagCreator.*;
  *
  * <ul>
  * <li>header name for each column</li>
+ * <li>column types for each column (via header class)</li>
  * <li>width for each column</li>
  * <li>content for each row</li>
  * <li>content for whole table</li>
@@ -35,6 +36,15 @@ public abstract class DetailsTableModel {
     private final AgeBuilder ageBuilder;
     private final FileNameRenderer fileNameRenderer;
     private final DescriptionProvider descriptionProvider;
+
+    /**
+     * An unspecified column.
+     */
+    protected static final String ANY_HEADER_CLASS = "";
+    /**
+     * A column with a date in it.
+     */
+    protected static final String DATE_HEADER_CLASS = "date";
 
     /**
      * Creates a new instance of {@link DetailsTableModel}.
@@ -90,6 +100,17 @@ public abstract class DetailsTableModel {
         configureColumns(builder, report);
         return builder.toString();
     }
+
+    /**
+     * Returns the classes for all column headers.
+     *
+     * @param report
+     *         the report to show
+     *
+     * @return the table header classes
+     */
+    @SuppressWarnings("unused") //called by Jelly view
+    public abstract List<String> getHeaderClasses(Report report);
 
     /**
      * Configures the columns of the report table.

@@ -332,7 +332,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     private void assertOneIssue(final String commit, final BlamesTable table) {
         assertThat(table.getColumns())
                 .containsExactly(BlamesColumn.DETAILS, BlamesColumn.FILE, BlamesColumn.AGE, BlamesColumn.AUTHOR,
-                        BlamesColumn.EMAIL, BlamesColumn.COMMIT);
+                        BlamesColumn.EMAIL, BlamesColumn.COMMIT, BlamesColumn.ADDED);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
         List<BlamesRow> rows = table.getRows();
         assertThat(rows).hasSize(1);
@@ -451,5 +451,9 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
 
     private MapEntry<BlamesColumn, String> file(final String file) {
         return entry(BlamesColumn.FILE, file);
+    }
+
+    private MapEntry<BlamesColumn, String> added(final String time) {
+        return entry(BlamesColumn.ADDED, time);
     }
 }

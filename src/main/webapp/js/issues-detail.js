@@ -1,5 +1,5 @@
 /* global jQuery, view */
-(function ($) {
+(function ($, luxon) {
     if ($('#severities-chart').length) {
         initializePieCharts();
     }
@@ -206,10 +206,28 @@
                 deferRender: true,
                 pagingType: 'numbers', // Page number button only
                 order: [[1, 'asc']],
-                columnDefs: [{
-                    targets: 0, // First column contains details button
-                    orderable: false
-                }],
+                columnDefs: [
+                    {
+                        targets: 0, // First column contains details button
+                        orderable: false
+                    },
+                    {
+                        targets: 'date', // All columns with the '.date' class in the <th>
+                        render: function (data, type, _row, _meta) {
+                            if (type === 'display') {
+                                if (data === 0) {
+                                    return '-';
+                                }
+                                var dateTime = luxon.DateTime.fromMillis(data * 1000);
+                                return '<span title="' + dateTime.toLocaleString(luxon.DateTime.DATETIME_SHORT) + '">' +
+                                    dateTime.toRelative({ locale: 'en' }) + '</span>';
+                            }
+                            else {
+                                return data;
+                            }
+                        }
+                    }
+                ],
                 columns: JSON.parse(table.attr('data-columns-definition'))
             });
 
@@ -246,4 +264,4 @@
             });
         }
     }
-})(jQuery);
+})(jQuery, luxon);

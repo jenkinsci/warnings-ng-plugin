@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -29,12 +30,14 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 import com.gargoylesoftware.htmlunit.NicelyResynchronizingAjaxController;
+import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlFormUtil;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import edu.hm.hafner.util.ResourceTest;
@@ -122,6 +125,7 @@ public abstract class IntegrationTest extends ResourceTest {
     static WebClient create(final JenkinsRule jenkins, final boolean isJavaScriptEnabled) {
         WebClient webClient = jenkins.createWebClient();
         webClient.setCssErrorHandler(new SilentCssErrorHandler());
+        webClient.setJavaScriptErrorListener(new IntegrationTestJavaScriptErrorListener());
         java.util.logging.Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.SEVERE);
         webClient.setIncorrectnessListener((s, o) -> {
         });
@@ -1289,4 +1293,69 @@ public abstract class IntegrationTest extends ResourceTest {
             throw new AssertionError(e);
         }
     }
+
+    private static class IntegrationTestJavaScriptErrorListener implements JavaScriptErrorListener {
+        /**
+         * Informs about a javascript exceptions.
+         *
+         * @param page
+         *         the page that causes the problem
+         * @param scriptException
+         *         the occurred script exception
+         */
+        @Override
+        public void scriptException(final HtmlPage page, final ScriptException scriptException) {
+            System.out.println("A JavaScript exception occured at: " + page.toString());
+            scriptException.printStackTrace();
+        }
+
+        /**
+         * Informs about a javascript timeout error.
+         *
+         * @param page
+         *         the page that causes the problem
+         * @param allowedTime
+         *         the max time allowed for the execution
+         * @param executionTime
+         *         the already consumed time
+         */
+        public void timeoutError(final HtmlPage page, final long allowedTime, final long executionTime) {
+            System.out.println("A JavaScript timeout occured at: " + page.toString() + ". Allowed: "
+                    + allowedTime + " timed out after: " + executionTime);
+        }
+
+        /**
+         * Informs about a malformed url referencing to to script.
+         *
+         * @param page
+         *         the page that causes the problem
+         * @param url
+         *         the malformed url
+         * @param malformedURLException
+         *         the occurred exception
+         */
+        public void malformedScriptURL(final HtmlPage page, final String url,
+                final MalformedURLException malformedURLException) {
+            System.out.println("A JavaScript exception occured at: " + page.toString()
+                    + ", due to the malformed URL: " + url.toString());
+            malformedURLException.printStackTrace();
+        }
+
+        /**
+         * Informs about an exception during load of a javascript file refereed from a page.
+         *
+         * @param page
+         *         the page that causes the problem
+         * @param scriptUrl
+         *         the url to load the script from
+         * @param exception
+         *         the occurred exception
+         */
+        public void loadScriptError(final HtmlPage page, final URL scriptUrl, final Exception exception) {
+            System.out.println("A JavaScript exception occured at: " + page.toString()
+                    + ", while loading the file from the URL: " + scriptUrl.toString());
+            exception.printStackTrace();
+        }
+    }
+
 }

@@ -21,8 +21,9 @@ class BlamesModelTest extends AbstractDetailsModelTest {
     private static final String COMMIT = "commit";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
+    private static final int TIME = 12_345;
 
-    private static final int EXPECTED_COLUMNS_SIZE = 6;
+    private static final int EXPECTED_COLUMNS_SIZE = 7;
 
     @Test
     void shouldConvertIssueToArrayWithAllColumnsAndRows() {
@@ -48,7 +49,8 @@ class BlamesModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"age\"},"
                 + "{\"data\": \"author\"},"
                 + "{\"data\": \"email\"},"
-                + "{\"data\": \"commit\"}"
+                + "{\"data\": \"commit\"},"
+                + "{\"data\": \"addedAt\"}"
                 + "]");
         assertThat(model.getContent(report)).hasSize(2);
     }
@@ -63,6 +65,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         when(blameRequest.getCommit(issue.getLineStart())).thenReturn(COMMIT);
         when(blameRequest.getEmail(issue.getLineStart())).thenReturn(EMAIL);
         when(blameRequest.getName(issue.getLineStart())).thenReturn(NAME);
+        when(blameRequest.getTime(issue.getLineStart())).thenReturn(TIME);
 
         Blames blames = mock(Blames.class);
         when(blames.contains(issue.getFileName())).thenReturn(true);
@@ -75,7 +78,8 @@ class BlamesModelTest extends AbstractDetailsModelTest {
                 .hasAge("1")
                 .hasCommit(COMMIT)
                 .hasAuthor(NAME)
-                .hasEmail(EMAIL);
+                .hasEmail(EMAIL)
+                .hasAddedAt(TIME);
         assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
     }
 
@@ -94,7 +98,8 @@ class BlamesModelTest extends AbstractDetailsModelTest {
                 .hasAge("1")
                 .hasCommit(BlamesModel.UNDEFINED)
                 .hasAuthor(BlamesModel.UNDEFINED)
-                .hasEmail(BlamesModel.UNDEFINED);
+                .hasEmail(BlamesModel.UNDEFINED)
+                .hasAddedAt(BlamesModel.UNDEFINED_DATE);
         assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
     }
 

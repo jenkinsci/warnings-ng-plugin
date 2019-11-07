@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import edu.hm.hafner.analysis.Issue;
@@ -49,6 +50,18 @@ public class IssuesModel extends DetailsTableModel {
         visibleColumns.add(Messages.Table_Column_Severity());
         visibleColumns.add(Messages.Table_Column_Age());
         return visibleColumns;
+    }
+
+    @Override
+    public List<String> getHeaderClasses(final Report report) {
+        return Arrays.asList(
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS,
+                ANY_HEADER_CLASS);
     }
 
     @Override

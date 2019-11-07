@@ -24,8 +24,9 @@
         </colgroup>
         <thead>
           <tr>
-            <j:forEach var="label" items="${model.getHeaders(issues)}">
-              <th>${label}</th>
+            <j:set var="headerClasses" value="${model.getHeaderClasses(issues)}"/>
+            <j:forEach var="label" items="${model.getHeaders(issues)}" indexVar="i">
+              <th class="${headerClasses.get(i)}">${label}</th>
             </j:forEach>
           </tr>
         </thead>
