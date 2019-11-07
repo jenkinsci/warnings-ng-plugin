@@ -58,16 +58,16 @@
 
             <j:if test="${i.isNotEmpty()}">
               <div role="tabpanel" id="issuesContent" class="tab-pane fade">
-                <dt:table model="${it.issuesModel}"/>
+                <dt:table model="${it.getTableModel('issues')}"/>
               </div>
               <j:if test="${it.isBlameVisible()}">
                 <div role="tabpanel" id="blamesContent" class="tab-pane fade">
-                  <dt:table model="${it.blamesModel}"/>
+                  <dt:table model="${it.getTableModel('blames')}"/>
                 </div>
               </j:if>
               <j:if test="${it.isForensicsVisible()}">
                 <div role="tabpanel" id="forensicsContent" class="tab-pane fade">
-                  <dt:table model="${it.forensicsModel}"/>
+                  <dt:table model="${it.getTableModel('forensics')}"/>
                 </div>
               </j:if>
             </j:if>

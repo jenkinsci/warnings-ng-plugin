@@ -40,6 +40,7 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.datatables.api.DefaultAsyncTableContentProvider;
 import io.jenkins.plugins.datatables.api.TableModel;
 
 /**
@@ -49,7 +50,7 @@ import io.jenkins.plugins.datatables.api.TableModel;
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 @ExportedBean
-public class IssuesDetail implements ModelObject {
+public class IssuesDetail extends DefaultAsyncTableContentProvider implements ModelObject {
     private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
 
@@ -225,44 +226,6 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the model for the details table that shows the overall list of issues.
-     *
-     * @return the table model
-     */
-    public DetailsTableModel getIssuesModel() {
-        return labelProvider.getIssuesModel(owner, getUrl(), report);
-    }
-
-    /**
-     * Returns the model for the details table that shows the SCM blames.
-     *
-     * @return the table model
-     */
-    public TableModel getBlamesModel() {
-        return new BlamesModel(report, result.getBlames(),
-                labelProvider.getFileNameRenderer(owner),
-                labelProvider.getAgeBuilder(owner,  getUrl()),
-                labelProvider);
-    }
-
-    /**
-     * Returns the model for the details table that shows the SCM respository statistics.
-     *
-     * @return the table model
-     */
-    public TableModel getForensicsModel() {
-        return new ForensicsModel(report, result.getForensics(),
-                labelProvider.getFileNameRenderer(owner),
-                labelProvider.getAgeBuilder(owner,  getUrl()),
-                labelProvider);
-    }
-
-    private String toJsonArray(final List<Object> rows) {
-        JacksonFacade facade = new JacksonFacade();
-        return facade.toJson(rows);
-    }
-
-    /**
      * Returns the UI model for the specified table.
      *
      * @param id
@@ -270,24 +233,26 @@ public class IssuesDetail implements ModelObject {
      *
      * @return the UI model as JSON
      */
-    @JavaScriptMethod
-    @SuppressWarnings("unused") // Called by jelly view
-    public String getTableModel(final String id) {
-        List<Object> rows;
+    @Override
+    public TableModel getTableModel(final String id) {
         if ("issues".equals(id)) {
-            rows = getIssuesModel().getRows();
+            return labelProvider.getIssuesModel(owner, getUrl(), report);
         }
         else if ("blames".equals(id)) {
-            rows = getBlamesModel().getRows();
+            return new BlamesModel(report, result.getBlames(),
+                    labelProvider.getFileNameRenderer(owner),
+                    labelProvider.getAgeBuilder(owner,  getUrl()),
+                    labelProvider);
         }
         else if ("forensics".equals(id)) {
-            rows = getForensicsModel().getRows();
+            return new ForensicsModel(report, result.getForensics(),
+                    labelProvider.getFileNameRenderer(owner),
+                    labelProvider.getAgeBuilder(owner,  getUrl()),
+                    labelProvider);
         }
         else {
             throw new NoSuchElementException("No such table model: " + id);
         }
-
-        return toJsonArray(rows);
     }
 
     /**
