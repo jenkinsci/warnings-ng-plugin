@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues" xmlns:dt="/table" >
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:issues="/issues" xmlns:dt="/data-tables" >
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
   <j:set var="l" value="${it.tabLabelProvider}"/>
