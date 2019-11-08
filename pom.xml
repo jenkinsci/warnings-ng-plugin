@@ -879,6 +879,14 @@
                 <justification>Dependencies are not being checked, so they are reported as missing</justification>
               </item>
             </revapi.ignore>
+            <revapi.ignore>
+              <item>
+                <regex>false</regex>
+                <code>java.method.parameterTypeChanged</code>
+                <classSimpleName>WarningsPluginConfiguration</classSimpleName>
+                <justification>Nobody should depend on that method</justification>
+              </item>
+            </revapi.ignore>
           </analysisConfiguration>
         </configuration>
         <executions>
