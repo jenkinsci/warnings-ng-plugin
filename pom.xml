@@ -28,12 +28,19 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
+    <module.name>${project.groupId}.warnings.ng</module.name>
+
     <analysis-model-api.version>7.0.1</analysis-model-api.version>
     <analysis-model.version>7.0.1</analysis-model.version>
     <forensics-api-plugin.version>0.5.0</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.5.0</git-forensics-plugin.version>
 
-    <module.name>${project.groupId}.warnings.ng</module.name>
+    <font-awesome-api.version>5.10.1-1-SNAPSHOT</font-awesome-api.version>
+    <bootstrap4-api.version>4.1.3-1-SNAPSHOT</bootstrap4-api.version>
+    <popper-api.version>1.15.0-1-SNAPSHOT</popper-api.version>
+    <jquery3-api.version>3.4.1-1-SNAPSHOT</jquery3-api.version>
+    <echarts-api.version>4.4.0-1-SNAPSHOT</echarts-api.version>
+    <data-tables-api.version>1.10.20-1-SNAPSHOT</data-tables-api.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
@@ -189,43 +196,7 @@
   </dependencyManagement>
 
   <dependencies>
-
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>font-awesome-api</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>bootstrap4-api</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>popper-api</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>jquery3-api</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>echarts-api</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>data-tables-api</artifactId>
-      <version>0.1.0-SNAPSHOT</version>
-    </dependency>
     <!-- Project Library Dependencies -->
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>analysis-model-api</artifactId>
-      <version>${analysis-model-api.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.ocpsoft.prettytime</groupId>
       <artifactId>prettytime</artifactId>
@@ -322,6 +293,41 @@
     </dependency>
 
     <!-- Required Jenkins Plug-in Dependencies -->
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>analysis-model-api</artifactId>
+      <version>${analysis-model-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>font-awesome-api</artifactId>
+      <version>${font-awesome-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>bootstrap4-api</artifactId>
+      <version>${bootstrap4-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>popper-api</artifactId>
+      <version>${popper-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>jquery3-api</artifactId>
+      <version>${jquery3-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>echarts-api</artifactId>
+      <version>${echarts-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>data-tables-api</artifactId>
+      <version>${data-tables-api.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>script-security</artifactId>
