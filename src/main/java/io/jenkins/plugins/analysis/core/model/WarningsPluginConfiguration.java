@@ -72,7 +72,7 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
      *         the source directories that contain the affected files
      */
     @DataBoundSetter
-    public void setSourceDirectories(final Collection<SourceDirectory> sourceDirectories) {
+    public void setSourceDirectories(final List<SourceDirectory> sourceDirectories) {
         this.sourceDirectories = new ArrayList<>(sourceDirectories);
 
         PathUtil pathUtil = new PathUtil();
@@ -87,7 +87,7 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
     /**
      * Filters the specified collection of additional directories so that only permitted source directories will be
      * returned. Permitted source directories are absolute paths that have been registered using {@link
-     * #setSourceDirectories(Collection)} or relative paths in the workspace.
+     * #setSourceDirectories(List)} or relative paths in the workspace.
      *
      * @param workspace
      *         the workspace containing the affected files
