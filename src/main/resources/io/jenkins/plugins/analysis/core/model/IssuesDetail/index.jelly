@@ -11,7 +11,6 @@
 
       <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
       <st:adjunct includes="io.jenkins.plugins.echarts"/>
-      <st:adjunct includes="io.jenkins.plugins.data-tables"/>
       <st:adjunct includes="io.jenkins.plugins.font-awesome"/>
 
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
@@ -102,7 +101,6 @@
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/pie-chart.js"/>
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
-      <script type="text/javascript" src="${resURL}/plugin/data-tables-api/js/table.js"/>
 
     </l:main-panel>
 
