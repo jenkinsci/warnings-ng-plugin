@@ -35,12 +35,12 @@
     <forensics-api-plugin.version>0.5.0</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.5.0</git-forensics-plugin.version>
 
-    <font-awesome-api.version>5.10.1-1-SNAPSHOT</font-awesome-api.version>
-    <bootstrap4-api.version>4.1.3-1-SNAPSHOT</bootstrap4-api.version>
-    <popper-api.version>1.15.0-1-SNAPSHOT</popper-api.version>
-    <jquery3-api.version>3.4.1-1-SNAPSHOT</jquery3-api.version>
-    <echarts-api.version>4.4.0-1-SNAPSHOT</echarts-api.version>
-    <data-tables-api.version>1.10.20-1-SNAPSHOT</data-tables-api.version>
+    <font-awesome-api.version>5.10.1-1-20191109.221444-1</font-awesome-api.version>
+    <jquery3-api.version>3.4.1-1-20191109.214852-1</jquery3-api.version>
+    <popper-api.version>1.15.0-1-20191109.214649-1</popper-api.version>
+    <bootstrap4-api.version>4.1.3-1-20191109.221309-1</bootstrap4-api.version>
+    <data-tables-api.version>1.10.20-1-20191109.224348-1</data-tables-api.version>
+    <echarts-api.version>4.4.0-1-20191109.221549-1</echarts-api.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
