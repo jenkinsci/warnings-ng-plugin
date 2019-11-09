@@ -1305,7 +1305,7 @@ public abstract class IntegrationTest extends ResourceTest {
          */
         @Override
         public void scriptException(final HtmlPage page, final ScriptException scriptException) {
-            System.out.println("A JavaScript exception occured at: " + page.toString());
+            System.out.println("A JavaScript exception occurred at: " + page.toString());
             scriptException.printStackTrace();
         }
 
@@ -1319,8 +1319,9 @@ public abstract class IntegrationTest extends ResourceTest {
          * @param executionTime
          *         the already consumed time
          */
+        @Override
         public void timeoutError(final HtmlPage page, final long allowedTime, final long executionTime) {
-            System.out.println("A JavaScript timeout occured at: " + page.toString() + ". Allowed: "
+            System.out.println("A JavaScript timeout occurred at: " + page.toString() + ". Allowed: "
                     + allowedTime + " timed out after: " + executionTime);
         }
 
@@ -1334,10 +1335,11 @@ public abstract class IntegrationTest extends ResourceTest {
          * @param malformedURLException
          *         the occurred exception
          */
+        @Override
         public void malformedScriptURL(final HtmlPage page, final String url,
                 final MalformedURLException malformedURLException) {
-            System.out.println("A JavaScript exception occured at: " + page.toString()
-                    + ", due to the malformed URL: " + url.toString());
+            System.out.println("A JavaScript exception occurred at: " + page.toString()
+                    + ", due to the malformed URL: " + url);
             malformedURLException.printStackTrace();
         }
 
@@ -1351,10 +1353,17 @@ public abstract class IntegrationTest extends ResourceTest {
          * @param exception
          *         the occurred exception
          */
+        @Override
         public void loadScriptError(final HtmlPage page, final URL scriptUrl, final Exception exception) {
-            System.out.println("A JavaScript exception occured at: " + page.toString()
+            System.out.println("A JavaScript exception occurred at: " + page.toString()
                     + ", while loading the file from the URL: " + scriptUrl.toString());
             exception.printStackTrace();
+        }
+
+        @Override
+        public void warn(final String message, final String sourceName, final int line, final String lineSource,
+                final int lineOffset) {
+            // ignore warnings
         }
     }
 

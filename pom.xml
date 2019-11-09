@@ -189,7 +189,22 @@
   </dependencyManagement>
 
   <dependencies>
-
+    <dependency>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-test-harness</artifactId>
+      <version>${jenkins-test-harness.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jenkins-ci.main</groupId>
+          <artifactId>jenkins-test-harness-htmlunit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-test-harness-htmlunit</artifactId>
+      <version>2.36.0-1</version>
+    </dependency>
     <!-- Project Library Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
