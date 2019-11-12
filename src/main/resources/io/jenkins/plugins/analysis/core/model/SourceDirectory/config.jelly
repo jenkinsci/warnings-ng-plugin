@@ -4,10 +4,5 @@
   <f:entry title="${%Absolute path of folder}" field="path">
     <f:textbox/>
   </f:entry>
-  <f:entry title="">
-    <div align="right">
-      <f:repeatableDeleteButton/>
-    </div>
-  </f:entry>
 
 </j:jelly>
