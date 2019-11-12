@@ -650,7 +650,8 @@ main list view will show a new column that counts the total number of issues of 
 that can configure
 - the column name 
 - the actual tools that should be taken into account
-- the type of the totals to show (overall warnings, new warnings, specific severity, etc.).
+- the type of the totals to show (overall warnings, new warnings, specific severity, etc.), see section 
+[Token Macro Support](#token-macro-support).
 
 ![issues column](images/column.png)
 
@@ -862,13 +863,33 @@ Here is an example JSON report:
 ### Token macro support
 
 The Warnings plugin provides the token `ANALYSIS_ISSUES_COUNT` that could be used in additional post build processing
-steps, e.g. in the mailer. In order to use this token you need to install the latest release of the 
+steps, e.g. in the mailer. In order to use this token you need to install the 
 [Token Macro plugin](https://plugins.jenkins.io/token-macro). 
-The token has an optional parameter `tool` that could be used to select a particular analysis result. 
+The token has the following optional parameters:
+- `tool`: selects a particular analysis result, if not defined all results are summed up
+- `type`: selects the type of the counter to use, choose one of:
+  - Total (any severity)  
+  - Total (errors only)
+  - Total (severity high only)
+  - Total (severity normal only)
+  - Total (severity low only)
+  - New (any severity)
+  - New (errors only)
+  - New (severity high only)
+  - New (severity normal only)
+  - New (severity low only)
+  - Delta (any severity)
+  - Delta (errors only)
+  - Delta (severity high only)
+  - Delta (severity normal only)
+  - Delta (severity low only)
+  - Fixed (any severity)
+
 Examples:
 
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
 - `${ANALYSIS_ISSUES_COUNT, tool="checkstyle"}`: expands to the total number of **CheckStyle** issues
+- `${ANALYSIS_ISSUES_COUNT, tool="checkstyle", type: "NEW"}`: expands to the number of new **CheckStyle** issues
 
 ## Transition from the static analysis suite
 
