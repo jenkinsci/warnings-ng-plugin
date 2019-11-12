@@ -25,10 +25,10 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
- * Controls the live cycle of the results in a job. This action persists the results of a build and displays them on the
- * build page. The actual visualization of the results is defined in the matching {@code summary.jelly} file. This
- * action also provides access to the static analysis details: these are rendered using a new {@link IssuesDetail}
- * instance.
+ * Controls the live cycle of the analysis results in a job. This action persists the results of a build and displays a
+ * summary on the build page. The actual visualization of the results is defined in the matching {@code
+ * summary.jelly} file. This action also provides access to the static analysis details: these are rendered using a new
+ * {@link IssuesDetail} instance.
  *
  * @author Ullrich Hafner
  */
