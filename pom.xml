@@ -882,9 +882,9 @@
             <revapi.ignore>
               <item>
                 <regex>false</regex>
-                <code>java.method.parameterTypeChanged</code>
-                <classSimpleName>WarningsPluginConfiguration</classSimpleName>
-                <justification>Nobody should depend on that method</justification>
+                <code>java.annotation.removed</code>
+                <classSimpleName>IssuesDetail</classSimpleName>
+                <justification>Annotation was just wrong.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>
