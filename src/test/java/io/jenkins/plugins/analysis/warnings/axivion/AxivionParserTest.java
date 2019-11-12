@@ -144,8 +144,20 @@ class AxivionParserTest {
     @Test
     void canParseMultipleViolationInRows() {
         Report report = new Report();
-        String resourcePath = "/io/jenkins/plugins/analysis/warnings/axivion/multiple-violations.json";
-        parser.parse(report, AxIssueKind.SV, dashboard.getIssuesFrom(resourcePath));
+        parser.parse(report, AxIssueKind.SV, dashboard.getIssuesFrom(
+                "/io/jenkins/plugins/analysis/warnings/axivion/multiple-violations.json"));
         assertThat(report).hasSize(3);
+    }
+
+    @Test
+    void absenceTypeArchitectureViolationsMayNotHaveAPath() {
+        Report report = new Report();
+
+        parser.parse(report, AxIssueKind.AV,
+                dashboard.getIssuesFrom("/io/jenkins/plugins/analysis/warnings/axivion/av_empty_paths.json"));
+        Issue issue = report.get(0);
+
+        assertThat(issue.getType()).isEqualTo("Absence");
+        assertThat(issue.getFileName()).isEqualTo("-");
     }
 }
