@@ -30,8 +30,6 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
         ForensicsModel model = createModel(report, statistics);
 
-        assertThat(model.getHeaders()).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getWidths()).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getColumnsDefinition()).isEqualTo("["
                 + "{\"data\": \"description\"},"
                 + "{"
@@ -62,6 +60,11 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
                 + "  }"
                 + "}"
                 + "]");
+        assertThat(getLabels(model))
+                .containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
+        assertThat(getWidths(model))
+                .containsExactly(1, 1, 1, 1, 1, 2, 2);
+
         assertThat(model.getRows()).hasSize(2);
     }
 

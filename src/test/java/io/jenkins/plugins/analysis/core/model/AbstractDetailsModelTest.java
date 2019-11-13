@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -11,6 +12,7 @@ import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+import io.jenkins.plugins.datatables.api.TableColumn;
 import io.jenkins.plugins.datatables.api.TableModel.DetailedColumnDefinition;
 
 import static j2html.TagCreator.*;
@@ -89,5 +91,13 @@ public abstract class AbstractDetailsModelTest {
             final String expectedDisplayName, final String expectedSortOrder) {
         assertThat(actualColumn.getDisplay()).isEqualTo(expectedDisplayName);
         assertThat(actualColumn.getSort()).isEqualTo(expectedSortOrder);
+    }
+
+    protected Stream<String> getLabels(final DetailsTableModel model) {
+        return model.getColumns().stream().map(TableColumn::getHeaderLabel);
+    }
+
+    protected Stream<Integer> getWidths(final DetailsTableModel model) {
+        return model.getColumns().stream().map(TableColumn::getWidth);
     }
 }

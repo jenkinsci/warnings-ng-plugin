@@ -1,12 +1,13 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.datatables.api.TableColumn;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 
@@ -45,29 +46,17 @@ public class BlamesModel extends DetailsTableModel {
     }
 
     @Override
-    public List<String> getHeaders() {
-        return Arrays.asList(
-                Messages.Table_Column_Details(),
-                Messages.Table_Column_File(),
-                Messages.Table_Column_Age(),
-                Messages.Table_Column_Author(),
-                Messages.Table_Column_Email(),
-                Messages.Table_Column_Commit());
-    }
+    public List<TableColumn> getColumns() {
+        List<TableColumn> columns = new ArrayList<>();
 
-    @Override
-    public List<Integer> getWidths() {
-        return Arrays.asList(1, 1, 1, 1, 1, 1);
-    }
+        columns.add(createDetailsColumn());
+        columns.add(createFileColumn());
+        columns.add(createAgeColumn());
+        columns.add(new TableColumn(Messages.Table_Column_Author(), "author"));
+        columns.add(new TableColumn(Messages.Table_Column_Email(), "email"));
+        columns.add(new TableColumn(Messages.Table_Column_Commit(), "commit"));
 
-    @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder) {
-        builder.add("description")
-                .add("fileName", "string")
-                .add("age")
-                .add("author")
-                .add("email")
-                .add("commit");
+        return columns;
     }
 
     @Override

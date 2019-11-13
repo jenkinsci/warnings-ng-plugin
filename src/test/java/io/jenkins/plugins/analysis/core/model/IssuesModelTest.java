@@ -19,7 +19,6 @@ import static org.mockito.Mockito.*;
  */
 class IssuesModelTest extends AbstractDetailsModelTest {
     private static final String PACKAGE_NAME = "<a href=\"packageName.1802059882/\">package-1</a>";
-    private static final int EXPECTED_COLUMNS_SIZE = 7;
 
     @Test
     void shouldConvertIssuesToArrayWithAllColumns() {
@@ -29,8 +28,6 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         report.add(createIssue(2));
 
         IssuesModel model = createModel(report);
-        assertThat(model.getHeaders()).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getWidths()).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getColumnsDefinition()).isEqualTo("["
                 + "{\"data\": \"description\"},"
                 + "{"
@@ -46,6 +43,8 @@ class IssuesModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"type\"},"
                 + "{\"data\": \"severity\"},"
                 + "{\"data\": \"age\"}]");
+
+        assertThat(model.getRows()).hasSize(2);
 
         IssuesRow actualRow = model.getRow(issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
@@ -65,21 +64,29 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         when(report.iterator()).thenReturn(issues.iterator());
 
         DetailsTableModel model = createModel(report);
-        assertThat(model.getHeaders()).hasSize(4).doesNotContain("Package", "Category", "Types");
-        assertThat(model.getWidths()).hasSize(4);
+        assertThat(getLabels(model))
+                .containsExactly("Details", "File", "Severity", "Age");
+        assertThat(getWidths(model))
+                .containsExactly(1, 1, 1, 1);
         assertThat(model.getRows()).hasSize(1);
 
         when(report.hasPackages()).thenReturn(true);
-        assertThat(model.getHeaders()).hasSize(5).contains("Package").doesNotContain("Category", "Type");
-        assertThat(model.getWidths()).hasSize(5);
+        assertThat(getLabels(model))
+                .containsExactly("Details", "File", "Package", "Severity", "Age");
+        assertThat(getWidths(model))
+                .containsExactly(1, 1, 2, 1, 1);
 
         when(report.hasCategories()).thenReturn(true);
-        assertThat(model.getHeaders()).hasSize(6).contains("Package", "Category").doesNotContain("Type");
-        assertThat(model.getWidths()).hasSize(6);
+        assertThat(getLabels(model))
+                .containsExactly("Details", "File", "Package", "Category", "Severity", "Age");
+        assertThat(getWidths(model))
+                .containsExactly(1, 1, 2, 1, 1, 1);
 
         when(report.hasTypes()).thenReturn(true);
-        assertThat(model.getHeaders()).hasSize(EXPECTED_COLUMNS_SIZE).contains("Package", "Category", "Type");
-        assertThat(model.getWidths()).hasSize(EXPECTED_COLUMNS_SIZE);
+        assertThat(getLabels(model))
+                .containsExactly("Details", "File", "Package", "Category", "Type", "Severity", "Age");
+        assertThat(getWidths(model))
+                .containsExactly(1, 1, 2, 1, 1, 1, 1);
     }
 
     private IssuesModel createModel(final Report report) {

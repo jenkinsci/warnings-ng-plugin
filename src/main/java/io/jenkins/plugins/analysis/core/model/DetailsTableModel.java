@@ -14,6 +14,7 @@ import j2html.tags.UnescapedText;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
+import io.jenkins.plugins.datatables.api.TableColumn;
 import io.jenkins.plugins.datatables.api.TableModel;
 
 import static edu.hm.hafner.util.IntegerParser.*;
@@ -86,6 +87,22 @@ public abstract class DetailsTableModel extends TableModel {
             rows.add(getRow(issue));
         }
         return rows;
+    }
+
+    protected TableColumn createDetailsColumn() {
+        return new TableColumn(Messages.Table_Column_Details(), "description").setHeaderClass("nosort");
+    }
+
+    protected TableColumn createFileColumn() {
+        return new TableColumn(Messages.Table_Column_File(), "fileName", "string");
+    }
+
+    protected TableColumn createAgeColumn() {
+        return new TableColumn(Messages.Table_Column_Age(), "age");
+    }
+
+    protected TableColumn createSeverityColumn() {
+        return new TableColumn(Messages.Table_Column_Severity(), "severity");
     }
 
     /**

@@ -7,6 +7,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.datatables.api.TableColumn;
 
 /**
  * Provides the dynamic model for the details table that shows the issue properties.
@@ -38,41 +39,23 @@ public class IssuesModel extends DetailsTableModel {
     }
 
     @Override
-    public List<String> getHeaders() {
-        List<String> visibleColumns = new ArrayList<>();
-        visibleColumns.add(Messages.Table_Column_Details());
-        visibleColumns.add(Messages.Table_Column_File());
-        if (getReport().hasPackages()) {
-            visibleColumns.add(Messages.Table_Column_Package());
-        }
-        if (getReport().hasCategories()) {
-            visibleColumns.add(Messages.Table_Column_Category());
-        }
-        if (getReport().hasTypes()) {
-            visibleColumns.add(Messages.Table_Column_Type());
-        }
-        visibleColumns.add(Messages.Table_Column_Severity());
-        visibleColumns.add(Messages.Table_Column_Age());
-        return visibleColumns;
-    }
+    public List<TableColumn> getColumns() {
+        List<TableColumn> columns = new ArrayList<>();
 
-    @Override
-    public List<Integer> getWidths() {
-        List<Integer> widths = new ArrayList<>();
-        widths.add(1);
-        widths.add(1);
+        columns.add(createDetailsColumn());
+        columns.add(createFileColumn());
         if (getReport().hasPackages()) {
-            widths.add(2);
+            columns.add(new TableColumn(Messages.Table_Column_Package(), "packageName").setWidth(2));
         }
         if (getReport().hasCategories()) {
-            widths.add(1);
+            columns.add(new TableColumn(Messages.Table_Column_Category(), "category"));
         }
         if (getReport().hasTypes()) {
-            widths.add(1);
+            columns.add(new TableColumn(Messages.Table_Column_Type(), "type"));
         }
-        widths.add(1);
-        widths.add(1);
-        return widths;
+        columns.add(createSeverityColumn());
+        columns.add(createAgeColumn());
+        return columns;
     }
 
     @Override
@@ -83,21 +66,6 @@ public class IssuesModel extends DetailsTableModel {
         row.setType(issue);
         row.setSeverity(issue);
         return row;
-    }
-
-    @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder) {
-        builder.add("description").add("fileName", "string");
-        if (getReport().hasPackages()) {
-            builder.add("packageName");
-        }
-        if (getReport().hasCategories()) {
-            builder.add("category");
-        }
-        if (getReport().hasTypes()) {
-            builder.add("type");
-        }
-        builder.add("severity").add("age");
     }
 
     /**

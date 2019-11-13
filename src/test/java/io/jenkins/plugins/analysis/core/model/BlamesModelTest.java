@@ -22,8 +22,6 @@ class BlamesModelTest extends AbstractDetailsModelTest {
     private static final String NAME = "name";
     private static final String EMAIL = "email";
 
-    private static final int EXPECTED_COLUMNS_SIZE = 6;
-
     @Test
     void shouldConvertIssueToArrayWithAllColumnsAndRows() {
         Report report = new Report();
@@ -32,9 +30,6 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         Blames blames = mock(Blames.class);
 
         BlamesModel model = createModel(report, blames);
-
-        assertThat(model.getHeaders()).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getWidths()).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getColumnsDefinition()).isEqualTo("["
                 + "{\"data\": \"description\"},"
                 + "{"
@@ -50,6 +45,11 @@ class BlamesModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"email\"},"
                 + "{\"data\": \"commit\"}"
                 + "]");
+        assertThat(getLabels(model))
+                .containsExactly("Details", "File", "Age", "Author", "Email", "Commit");
+        assertThat(getWidths(model))
+                .containsExactly(1, 1, 1, 1, 1, 1);
+
         assertThat(model.getRows()).hasSize(2);
     }
 

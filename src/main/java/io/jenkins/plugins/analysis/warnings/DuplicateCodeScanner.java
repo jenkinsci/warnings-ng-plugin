@@ -24,6 +24,7 @@ import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
+import io.jenkins.plugins.datatables.api.TableColumn;
 
 import static io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider.*;
 import static j2html.TagCreator.*;
@@ -190,7 +191,6 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
     /**
      * Validates the number of lines thresholds.
      */
-    @SuppressWarnings("ParameterHidesMemberVariable")
     static class ThresholdValidation {
         /** Minimum number of duplicate lines for a warning with severity high. */
         static final int DEFAULT_HIGH_THRESHOLD = 50;
@@ -298,33 +298,19 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        public List<String> getHeaders() {
-            List<String> headers = new ArrayList<>();
-            headers.add(Messages.DRY_Table_Column_Details());
-            headers.add(Messages.DRY_Table_Column_File());
-            if (getReport().hasPackages()) {
-                headers.add(Messages.DRY_Table_Column_Package());
-            }
-            headers.add(Messages.DRY_Table_Column_Severity());
-            headers.add(Messages.DRY_Table_Column_LinesCount());
-            headers.add(Messages.DRY_Table_Column_DuplicatedIn());
-            headers.add(Messages.DRY_Table_Column_Age());
-            return headers;
-        }
+        public List<TableColumn> getColumns() {
+            List<TableColumn> columns = new ArrayList<>();
 
-        @Override
-        public List<Integer> getWidths() {
-            List<Integer> widths = new ArrayList<>();
-            widths.add(1);
-            widths.add(2);
+            columns.add(new TableColumn(Messages.DRY_Table_Column_Details(), "description"));
+            columns.add(new TableColumn(Messages.DRY_Table_Column_File(), "fileName", "string").setWidth(2));
             if (getReport().hasPackages()) {
-                widths.add(2);
+                columns.add(new TableColumn(Messages.DRY_Table_Column_Package(), "packageName").setWidth(2));
             }
-            widths.add(1);
-            widths.add(1);
-            widths.add(3);
-            widths.add(1);
-            return widths;
+            columns.add(new TableColumn(Messages.DRY_Table_Column_Severity(), "severity"));
+            columns.add(new TableColumn(Messages.DRY_Table_Column_LinesCount(), "linesCount"));
+            columns.add(new TableColumn(Messages.DRY_Table_Column_DuplicatedIn(), "duplicatedIn").setWidth(3));
+            columns.add(new TableColumn(Messages.DRY_Table_Column_Age(), "age"));
+            return columns;
         }
 
         @Override
@@ -336,15 +322,6 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
             row.setLinesCount(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
             row.setDuplicatedIn(formatTargets(getFileNameRenderer(), issue));
             return row;
-        }
-
-        @Override
-        public void configureColumns(final ColumnDefinitionBuilder builder) {
-            builder.add("description").add("fileName", "string");
-            if (getReport().hasPackages()) {
-                builder.add("packageName");
-            }
-            builder.add("severity").add("linesCount").add("duplicatedIn").add("age");
         }
 
         /**

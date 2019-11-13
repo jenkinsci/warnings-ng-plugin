@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.core.model;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +12,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.datatables.api.TableColumn;
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
@@ -52,20 +53,18 @@ public class ForensicsModel extends DetailsTableModel {
     }
 
     @Override
-    public List<String> getHeaders() {
-        return Arrays.asList(
-                Messages.Table_Column_Details(),
-                Messages.Table_Column_File(),
-                Messages.Table_Column_Age(),
-                Messages.Table_Column_AuthorsSize(),
-                Messages.Table_Column_CommitsSize(),
-                Messages.Table_Column_LastCommit(),
-                Messages.Table_Column_AddedAt());
-    }
+    public List<TableColumn> getColumns() {
+        List<TableColumn> columns = new ArrayList<>();
 
-    @Override
-    public List<Integer> getWidths() {
-        return Arrays.asList(1, 1, 1, 1, 1, 2, 2);
+        columns.add(createDetailsColumn());
+        columns.add(createFileColumn());
+        columns.add(createAgeColumn());
+        columns.add(new TableColumn(Messages.Table_Column_AuthorsSize(), "authorsSize"));
+        columns.add(new TableColumn(Messages.Table_Column_CommitsSize(), "commitsSize"));
+        columns.add(new TableColumn(Messages.Table_Column_LastCommit(), "modifiedDays", "num").setWidth(2));
+        columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedDays", "num").setWidth(2));
+
+        return columns;
     }
 
     @Override
@@ -86,17 +85,6 @@ public class ForensicsModel extends DetailsTableModel {
             row.setAddedDays(0);
         }
         return row;
-    }
-
-    @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder) {
-        builder.add("description")
-                .add("fileName", "string")
-                .add("age")
-                .add("authorsSize")
-                .add("commitsSize")
-                .add("modifiedDays", "num")
-                .add("addedDays", "num");
     }
 
     /**

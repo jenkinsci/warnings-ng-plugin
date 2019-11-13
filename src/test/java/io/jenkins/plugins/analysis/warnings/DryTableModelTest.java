@@ -23,7 +23,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 class DryTableModelTest extends AbstractDetailsModelTest {
     private static final String DESCRIPTION = "DESCRIPTION";
-    private static final int EXPECTED_COLUMNS_SIZE = 6;
 
     @Test
     @SuppressFBWarnings("DMI")
@@ -51,8 +50,6 @@ class DryTableModelTest extends AbstractDetailsModelTest {
         report.add(issue).add(duplicate);
 
         DryModel model = createModel(report);
-        assertThat(model.getHeaders()).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getWidths()).hasSize(EXPECTED_COLUMNS_SIZE);
         assertThat(model.getColumnsDefinition()).isEqualTo("["
                 + "{\"data\": \"description\"},"
                 + "{"
@@ -67,6 +64,10 @@ class DryTableModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"linesCount\"},"
                 + "{\"data\": \"duplicatedIn\"},"
                 + "{\"data\": \"age\"}]");
+        assertThat(getLabels(model))
+                .containsExactly("Details", "File", "Severity", "#Lines", "Duplicated In", "Age");
+        assertThat(getWidths(model))
+                .containsExactly(1, 2, 1, 1, 3, 1);
 
         DuplicationRow actualRow = model.getRow(issue);
         assertThat(actualRow)
