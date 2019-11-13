@@ -53,6 +53,8 @@ public abstract class DetailsTableModel extends TableModel {
     protected DetailsTableModel(final Report report, final FileNameRenderer fileNameRenderer,
             final AgeBuilder ageBuilder,
             final DescriptionProvider descriptionProvider) {
+        super();
+
         this.report = report;
         this.fileNameRenderer = fileNameRenderer;
         this.ageBuilder = ageBuilder;

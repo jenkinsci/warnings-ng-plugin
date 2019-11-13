@@ -936,6 +936,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the created result
      */
+    @SuppressWarnings("PMD.SystemPrintln")
     protected AnalysisResult getAnalysisResult(final Run<?, ?> build) {
         List<AnalysisResult> analysisResults = getAnalysisResults(build);
 
@@ -1294,6 +1295,7 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
+    @SuppressWarnings("PMD.SystemPrintln")
     private static class IntegrationTestJavaScriptErrorListener implements JavaScriptErrorListener {
         /**
          * Informs about a javascript exceptions.
