@@ -10,14 +10,17 @@ import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.Run;
+import hudson.util.FormValidation;
 import jenkins.security.MasterToSlaveCallable;
 
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
 
 /**
  * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
@@ -141,6 +144,8 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
     /** Descriptor for {@link Tool}. **/
     public abstract static class ToolDescriptor extends Descriptor<Tool> {
+        private final ModelValidation model = new ModelValidation();
+
         private final String id;
 
         /**
@@ -152,7 +157,20 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         protected ToolDescriptor(final String id) {
             super();
 
+            new ModelValidation().ensureValidId(id);
             this.id = id;
+        }
+
+        /**
+         * Performs on-the-fly validation of the ID.
+         *
+         * @param id
+         *         the ID of the tool
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckId(@QueryParameter final String id) {
+            return model.validateId(id);
         }
 
         @Override
