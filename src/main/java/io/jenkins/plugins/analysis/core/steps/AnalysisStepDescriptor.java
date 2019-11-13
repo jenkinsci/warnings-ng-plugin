@@ -116,4 +116,16 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     public ListBoxModel doFillTrendChartTypeItems() {
         return model.getAllTrendChartTypes();
     }
+
+    /**
+     * Performs on-the-fly validation of the ID.
+     *
+     * @param id
+     *         the ID of the tool
+     *
+     * @return the validation result
+     */
+    public FormValidation doCheckId(@QueryParameter final String id) {
+        return model.validateId(id);
+    }
 }

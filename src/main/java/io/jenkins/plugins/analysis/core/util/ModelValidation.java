@@ -7,6 +7,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.DomainValidator;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.PathUtil;
@@ -75,6 +76,39 @@ public class ModelValidation {
             // ignore and return default
         }
         return Charset.defaultCharset();
+    }
+
+    /**
+     * Ensures that the specified ID is valid.
+     *
+     * @param id
+     *         the custom ID of the tool
+     *
+     * @throws IllegalArgumentException if the ID is not valid
+     */
+    public void ensureValidId(final String id) {
+        if (!isValidId(id)) {
+            throw new IllegalArgumentException(String.format("An ID must be a valid URL, but '%s' is not.", id));
+        }
+    }
+
+    /**
+     * Performs on-the-fly validation of the ID.
+     *
+     * @param id
+     *         the custom ID of the tool
+     *
+     * @return the validation result
+     */
+    public FormValidation validateId(final String id) {
+        if (isValidId(id)) {
+            return FormValidation.ok();
+        }
+        return FormValidation.error(Messages.FieldValidator_Error_WrongIdFormat());
+    }
+
+    private boolean isValidId(final String id) {
+        return StringUtils.isEmpty(id) || DomainValidator.getInstance(true).isValid(id);
     }
 
     /**

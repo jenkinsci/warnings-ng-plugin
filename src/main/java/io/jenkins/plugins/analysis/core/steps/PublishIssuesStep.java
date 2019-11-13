@@ -30,6 +30,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.PipelineResultHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
@@ -102,6 +103,8 @@ public class PublishIssuesStep extends Step implements Serializable {
      */
     @DataBoundSetter
     public void setId(final String id) {
+        new ModelValidation().ensureValidId(id);
+
         this.id = id;
     }
 
