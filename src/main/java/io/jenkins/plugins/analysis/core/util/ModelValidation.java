@@ -87,7 +87,7 @@ public class ModelValidation {
      * @throws IllegalArgumentException if the ID is not valid
      */
     public void ensureValidId(final String id) {
-        if (!DomainValidator.getInstance(true).isValid(id)) {
+        if (!isValidId(id)) {
             throw new IllegalArgumentException(String.format("An ID must be a valid URL, but '%s' is not.", id));
         }
     }
@@ -101,10 +101,14 @@ public class ModelValidation {
      * @return the validation result
      */
     public FormValidation validateId(final String id) {
-        if (DomainValidator.getInstance(true).isValid(id)) {
+        if (isValidId(id)) {
             return FormValidation.ok();
         }
         return FormValidation.error(Messages.FieldValidator_Error_WrongIdFormat());
+    }
+
+    private boolean isValidId(final String id) {
+        return StringUtils.isEmpty(id) || DomainValidator.getInstance(true).isValid(id);
     }
 
     /**

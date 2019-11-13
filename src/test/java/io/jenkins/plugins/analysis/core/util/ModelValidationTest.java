@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
  */
 class ModelValidationTest {
     @ParameterizedTest(name = "{index} => Should be marked as illegal ID: \"{0}\"")
-    @ValueSource(strings = {"", "a b", "a/b", "a#b"})
+    @ValueSource(strings = {"a b", "a/b", "a#b"})
     @DisplayName("should reject IDs")
     void shouldRejectId(final String id) {
         ModelValidation model = new ModelValidation();
@@ -43,7 +43,7 @@ class ModelValidationTest {
     }
 
     @ParameterizedTest(name = "{index} => Should be marked as valid ID: \"{0}\"")
-    @ValueSource(strings = {"a", "aWordb", "a-b"})
+    @ValueSource(strings = {"", "a", "aWordb", "a-b"})
     @DisplayName("should accept IDs")
     void shouldAcceptId(final String id) {
         ModelValidation model = new ModelValidation();

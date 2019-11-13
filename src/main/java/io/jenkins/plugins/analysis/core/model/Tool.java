@@ -146,19 +146,19 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
     public abstract static class ToolDescriptor extends Descriptor<Tool> {
         private final ModelValidation model = new ModelValidation();
 
-        private final String id;
+        private final String defaultId;
 
         /**
          * Creates a new instance of {@link ToolDescriptor} with the given ID.
          *
-         * @param id
+         * @param defaultId
          *         the unique ID of the tool
          */
-        protected ToolDescriptor(final String id) {
+        protected ToolDescriptor(final String defaultId) {
             super();
 
-            new ModelValidation().ensureValidId(id);
-            this.id = id;
+            new ModelValidation().ensureValidId(defaultId);
+            this.defaultId = defaultId;
         }
 
         /**
@@ -175,7 +175,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
         @Override
         public String getId() {
-            return id;
+            return defaultId;
         }
 
         /**
