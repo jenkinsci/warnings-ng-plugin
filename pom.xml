@@ -881,10 +881,23 @@
             </revapi.ignore>
             <revapi.ignore>
               <item>
-                <regex>false</regex>
-                <code>java.method.parameterTypeChanged</code>
-                <classSimpleName>WarningsPluginConfiguration</classSimpleName>
-                <justification>Nobody should depend on that method</justification>
+                <code>java.annotation.removed</code>
+                <classSimpleName>IssuesDetail</classSimpleName>
+                <justification>Annotation was just wrong.</justification>
+              </item>
+            </revapi.ignore>
+            <revapi.ignore>
+              <item>
+                <code>java.method.added</code>
+                <methodName>clearRepeatableProperties</methodName>
+                <justification>Required for bug fix.</justification>
+              </item>
+            </revapi.ignore>
+            <revapi.ignore>
+              <item>
+                <code>java.method.added</code>
+                <classSimpleName>GlobalConfigurationItem</classSimpleName>
+                <justification>Required for bug fix.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>

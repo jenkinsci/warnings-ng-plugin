@@ -57,6 +57,11 @@ public class ParserConfiguration extends GlobalConfigurationItem {
         return GlobalConfiguration.all().get(ParserConfiguration.class);
     }
 
+    @Override
+    protected void clearRepeatableProperties() {
+        setParsers(new ArrayList<>());
+    }
+
     /**
      * Returns the list of available Groovy parsers.
      *
