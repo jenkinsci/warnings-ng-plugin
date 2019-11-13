@@ -22,17 +22,17 @@
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
      * If the user selects the tab using an #anchor prefer this tab.
      */
-    var detailsTabs = $('#tab-details');
+    const detailsTabs = $('#tab-details');
     detailsTabs.find('li:first-child a').tab('show');
 
-    var url = document.location.toString();
+    const url = document.location.toString();
     if (url.match('#')) {
-        var tabName = url.split('#')[1];
+        const tabName = url.split('#')[1];
 
         detailsTabs.find('a[href="#' + tabName + '"]').tab('show');
     }
     else {
-        var activeTab = localStorage.getItem('activeTab');
+        const activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
             detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
         }
@@ -41,10 +41,10 @@
     /**
      * Store the selected tab in browser's local storage.
      */
-    var tabToggleLink = $('a[data-toggle="tab"]');
+    const tabToggleLink = $('a[data-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
         window.location.hash = e.target.hash;
-        var activeTab = $(e.target).attr('href');
+        const activeTab = $(e.target).attr('href');
         localStorage.setItem('activeTab', activeTab);
     });
 
@@ -85,7 +85,7 @@
      * redraws the trend charts.
      */
     function redrawTrendCharts () {
-        var isBuildOnXAxis = !(localStorage.getItem('#trendBuildAxis') === 'date');
+        const isBuildOnXAxis = !(localStorage.getItem('#trendBuildAxis') === 'date');
 
         /**
          * Creates a build trend chart that shows the number of issues for a couple of builds.
@@ -129,13 +129,13 @@
      * @param {String} carouselId - ID of the carousel
      */
     function storeAndRestoreCarousel (carouselId) {
-        var carousel = $('#' + carouselId);
+        const carousel = $('#' + carouselId);
         carousel.on('slid.bs.carousel', function (e) {
             localStorage.setItem(carouselId, e.to);
             var chart = $(e.relatedTarget).find('>:first-child').data('chart');
             chart.resize();
         });
-        var activeCarousel = localStorage.getItem(carouselId);
+        const activeCarousel = localStorage.getItem(carouselId);
         if (activeCarousel) {
             carousel.carousel(parseInt(activeCarousel));
         }
