@@ -30,8 +30,8 @@
     <!-- Project Dependencies Configuration -->
     <analysis-model-api.version>7.0.2</analysis-model-api.version>
     <analysis-model.version>7.0.2</analysis-model.version>
-    <forensics-api-plugin.version>0.5.0</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.5.0</git-forensics-plugin.version>
+    <forensics-api-plugin.version>0.6.1</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.6.0</git-forensics-plugin.version>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
@@ -85,7 +85,7 @@
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <pmd.version>6.19.0</pmd.version>
     <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
-    <checkstyle.version>8.24</checkstyle.version>
+    <checkstyle.version>8.26</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.12.2</spotbugs-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
     <maven-surefire.plugin>3.0.0-M3</maven-surefire.plugin>

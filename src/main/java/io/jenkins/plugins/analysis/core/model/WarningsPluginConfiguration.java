@@ -47,6 +47,11 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
         load();
     }
 
+    @Override
+    protected void clearRepeatableProperties() {
+        setSourceDirectories(new ArrayList<>());
+    }
+
     /**
      * Returns the singleton instance of this {@link WarningsPluginConfiguration}.
      *

@@ -28,13 +28,13 @@ final class DefaultTransformations {
 
         return new IssueBuilder()
                 .setDirectory(rawIssue.getProjectDir())
-                .setFileName(payload.getAsJsonPrimitive("sourcePath").getAsString())
-                .setLineStart(payload.getAsJsonPrimitive("sourceLine").getAsString())
-                .setType(payload.getAsJsonPrimitive("violationType").getAsString())
+                .setFileName(getString(payload, "sourcePath"))
+                .setLineStart(getString(payload, "sourceLine"))
+                .setType(getString(payload, "violationType"))
                 .setCategory(rawIssue.getKind().name())
                 .setMessage("Architecture Violation")
                 .setDescription(description)
-                .setFingerprint(rawIssue.getKind().name() + payload.getAsJsonPrimitive("id").getAsString())
+                .setFingerprint(rawIssue.getKind().name() + getString(payload, "id"))
                 .setSeverity(Severity.WARNING_HIGH)
                 .build();
     }
