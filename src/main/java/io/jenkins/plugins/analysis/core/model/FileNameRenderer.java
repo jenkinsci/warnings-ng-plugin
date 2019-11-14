@@ -81,8 +81,16 @@ public class FileNameRenderer {
      * @return the link (if the file is accessible)
      */
     public DomContent createAffectedFileLink(final Issue issue, final String prefix) {
-        if (ConsoleLogHandler.isInConsoleLog(issue.getFileName()) || facade.canAccessAffectedFileOf(issue)) {
-            return a().withHref(prefix + getSourceCodeUrl(issue)).withText(getFileNameAtLine(issue));
+        if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
+            return a().withHref(prefix + getSourceCodeUrl(issue))
+                    .withText(getFileNameAtLine(issue));
+        }
+        else if (facade.canAccessAffectedFileOf(issue)) {
+            return a().withHref(prefix + getSourceCodeUrl(issue))
+                    .withText(getFileNameAtLine(issue))
+                    .attr("data-toggle", "tooltip")
+                    .attr("data-placement", "bottom")
+                    .withTitle(issue.getFileName());
         }
         else {
             return text(getFileNameAtLine(issue));

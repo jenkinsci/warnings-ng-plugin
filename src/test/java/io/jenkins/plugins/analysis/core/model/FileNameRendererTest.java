@@ -5,10 +5,11 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -37,7 +38,7 @@ class FileNameRendererTest {
 
         Issue issue = new IssueBuilder().setFileName("/path/to/affected/file.txt").setLineStart(20).build();
 
-        assertThat(renderer.renderAffectedFileLink(issue)).matches("<a href=\"source\\.[0-9a-f-]+/#20\">file.txt:20</a>");
+        assertThat(renderer.renderAffectedFileLink(issue)).matches("<a href=\"source\\.[0-9a-f-]+/#20\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"/path/to/affected/file.txt\">file.txt:20</a>");
         assertThat(renderer.renderAffectedFileLink(issue)).contains(issue.getId().toString());
     }
 
