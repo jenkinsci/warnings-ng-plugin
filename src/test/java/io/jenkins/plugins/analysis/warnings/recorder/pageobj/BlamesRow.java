@@ -15,7 +15,7 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.BlamesCol
 @SuppressWarnings("PMD.DataClass")
 public class BlamesRow extends TableRow<BlamesColumn> {
     public enum BlamesColumn {
-        DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT
+        DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT, ADDED
     }
 
     /**

@@ -30,10 +30,10 @@
     <!-- Project Dependencies Configuration -->
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>7.0.1</analysis-model-api.version>
-    <analysis-model.version>7.0.1</analysis-model.version>
-    <forensics-api-plugin.version>0.5.0</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.5.0</git-forensics-plugin.version>
+    <analysis-model-api.version>7.0.2</analysis-model-api.version>
+    <analysis-model.version>7.0.2</analysis-model.version>
+    <forensics-api-plugin.version>0.6.1</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.6.0</git-forensics-plugin.version>
 
     <font-awesome-api.version>5.10.1-1-beta1</font-awesome-api.version>
     <jquery3-api.version>3.4.1-1-beta1</jquery3-api.version>
@@ -45,24 +45,26 @@
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
-    <commons.digester.version>3.2</commons.digester.version>
+    <commons.digester.version>2.1</commons.digester.version>
+    <commons.digester3.version>3.2</commons.digester3.version>
     <commons.text.version>1.8</commons.text.version>
+    <commons.validator.version>1.6</commons.validator.version>
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
     <json.version>20190722</json.version>
-    <jackson-databind.version>2.9.10</jackson-databind.version>
-    <slf4j.version>1.7.28</slf4j.version>
+    <jackson-databind.version>2.9.10.1</jackson-databind.version>
+    <slf4j.version>1.7.29</slf4j.version>
     <prettytime.version>4.0.2.Final</prettytime.version>
 
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.5.2</junit.version>
     <junit-platform-launcher.version>1.5.2</junit-platform-launcher.version>
     <mockito.version>3.1.0</mockito.version>
-    <assertj.version>3.13.2</assertj.version>
-    <archunit.version>0.11.0</archunit.version>
-    <json-unit-fluent.version>2.10.0</json-unit-fluent.version>
+    <assertj.version>3.14.0</assertj.version>
+    <archunit.version>0.12.0</archunit.version>
+    <json-unit-fluent.version>2.11.1</json-unit-fluent.version>
     <xmlunit.version>1.6</xmlunit.version>
     <jsoup.version>1.12.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
@@ -88,9 +90,9 @@
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    <pmd.version>6.17.0</pmd.version>
+    <pmd.version>6.19.0</pmd.version>
     <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
-    <checkstyle.version>8.24</checkstyle.version>
+    <checkstyle.version>8.26</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.12.2</spotbugs-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
     <maven-surefire.plugin>3.0.0-M3</maven-surefire.plugin>
@@ -103,11 +105,11 @@
     <animal-sniffer-maven-plugin.version>1.18</animal-sniffer-maven-plugin.version>
     <maven-hpi-plugin.version>2.5</maven-hpi-plugin.version>
     <maven-javadoc-plugin.version>3.1.1</maven-javadoc-plugin.version>
-    <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
+    <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>
     <pitest-maven.plugin>1.4.10</pitest-maven.plugin>
     <pitest-maven.junit5.plugin>0.10</pitest-maven.junit5.plugin>
-    <revapi-maven-plugin.version>0.11.1</revapi-maven-plugin.version>
-    <revapi-java.version>0.19.1</revapi-java.version>
+    <revapi-maven-plugin.version>0.11.2</revapi-maven-plugin.version>
+    <revapi-java.version>0.20.0</revapi-java.version>
 
     <spotbugs.failOnError>false</spotbugs.failOnError>
 
@@ -132,6 +134,11 @@
 
   <dependencyManagement>
     <dependencies>
+      <dependency>
+        <groupId>commons-digester</groupId>
+        <artifactId>commons-digester</artifactId>
+        <version>${commons.digester.version}</version>
+      </dependency>
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>credentials</artifactId>
@@ -196,6 +203,7 @@
   </dependencyManagement>
 
   <dependencies>
+
     <!-- Project Library Dependencies -->
     <dependency>
       <groupId>org.ocpsoft.prettytime</groupId>
@@ -228,6 +236,11 @@
       <version>${commons.lang.version}</version>
     </dependency>
     <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+      <version>${commons.validator.version}</version>
+    </dependency>
+    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>${commons.io.version}</version>
@@ -235,7 +248,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
-      <version>${commons.digester.version}</version>
+      <version>${commons.digester3.version}</version>
       <exclusions>
         <exclusion>
           <artifactId>asm</artifactId>

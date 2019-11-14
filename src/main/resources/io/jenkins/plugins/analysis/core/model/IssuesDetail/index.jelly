@@ -40,9 +40,7 @@
         </j:choose>
       </div>
 
-      <script>var view =
-        <st:bind value="${it}"/>
-      </script>
+      <script>var view = <st:bind value="${it}"/></script>
 
       <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
 

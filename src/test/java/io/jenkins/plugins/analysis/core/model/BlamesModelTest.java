@@ -21,6 +21,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
     private static final String COMMIT = "commit";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
+    private static final int TIME = 12_345;
 
     @Test
     void shouldConvertIssueToArrayWithAllColumnsAndRows() {
@@ -43,12 +44,13 @@ class BlamesModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"age\"},"
                 + "{\"data\": \"author\"},"
                 + "{\"data\": \"email\"},"
-                + "{\"data\": \"commit\"}"
+                + "{\"data\": \"commit\"},"
+                + "{\"data\": \"addedAt\"}"
                 + "]");
         assertThat(getLabels(model))
-                .containsExactly("Details", "File", "Age", "Author", "Email", "Commit");
+                .containsExactly("Details", "File", "Age", "Author", "Email", "Commit", "Added");
         assertThat(getWidths(model))
-                .containsExactly(1, 1, 1, 1, 1, 1);
+                .containsExactly(1, 1, 1, 1, 1, 1, 1);
 
         assertThat(model.getRows()).hasSize(2);
     }
@@ -63,6 +65,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         when(blameRequest.getCommit(issue.getLineStart())).thenReturn(COMMIT);
         when(blameRequest.getEmail(issue.getLineStart())).thenReturn(EMAIL);
         when(blameRequest.getName(issue.getLineStart())).thenReturn(NAME);
+        when(blameRequest.getTime(issue.getLineStart())).thenReturn(TIME);
 
         Blames blames = mock(Blames.class);
         when(blames.contains(issue.getFileName())).thenReturn(true);
@@ -75,7 +78,8 @@ class BlamesModelTest extends AbstractDetailsModelTest {
                 .hasAge("1")
                 .hasCommit(COMMIT)
                 .hasAuthor(NAME)
-                .hasEmail(EMAIL);
+                .hasEmail(EMAIL)
+                .hasAddedAt(TIME);
         assertThatDetailedColumnContains(actualRow.getFileName(),
                 createExpectedFileName(issue), "/path/to/file-1:0000015");
     }

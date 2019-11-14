@@ -30,6 +30,7 @@ import io.jenkins.plugins.forensics.blame.FileBlame;
  */
 public class BlamesModel extends DetailsTableModel {
     static final String UNDEFINED = "-";
+    static final int UNDEFINED_DATE = 0;
 
     private final Blames blames;
 
@@ -55,6 +56,7 @@ public class BlamesModel extends DetailsTableModel {
         columns.add(new TableColumn(Messages.Table_Column_Author(), "author"));
         columns.add(new TableColumn(Messages.Table_Column_Email(), "email"));
         columns.add(new TableColumn(Messages.Table_Column_Commit(), "commit"));
+        columns.add(new TableColumn(Messages.Table_Column_Commit(), "addedAt").setHeaderClass("date"));
 
         return columns;
     }
@@ -68,11 +70,13 @@ public class BlamesModel extends DetailsTableModel {
             row.setAuthor(blameRequest.getName(line));
             row.setEmail(blameRequest.getEmail(line));
             row.setCommit(blameRequest.getCommit(line));
+            row.setAddedAt(blameRequest.getTime(line));
         }
         else {
             row.setAuthor(UNDEFINED);
             row.setEmail(UNDEFINED);
             row.setCommit(UNDEFINED);
+            row.setAddedAt(UNDEFINED_DATE);
         }
         return row;
     }
@@ -85,6 +89,7 @@ public class BlamesModel extends DetailsTableModel {
         private String author;
         private String email;
         private String commit;
+        private int addedAt;
 
         BlamesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider, final Issue issue) {
@@ -103,6 +108,10 @@ public class BlamesModel extends DetailsTableModel {
             return commit;
         }
 
+        public int getAddedAt() {
+            return addedAt;
+        }
+
         void setAuthor(final String author) {
             this.author = author;
         }
@@ -113,6 +122,10 @@ public class BlamesModel extends DetailsTableModel {
 
         void setCommit(final String commit) {
             this.commit = commit;
+        }
+
+        public void setAddedAt(final int addedAt) {
+            this.addedAt = addedAt;
         }
     }
 }
