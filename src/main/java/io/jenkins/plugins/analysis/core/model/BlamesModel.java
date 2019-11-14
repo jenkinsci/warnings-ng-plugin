@@ -8,6 +8,7 @@ import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.datatables.api.TableColumn;
+import io.jenkins.plugins.datatables.api.TableColumn.ColumnCss;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 
@@ -56,7 +57,8 @@ public class BlamesModel extends DetailsTableModel {
         columns.add(new TableColumn(Messages.Table_Column_Author(), "author"));
         columns.add(new TableColumn(Messages.Table_Column_Email(), "email"));
         columns.add(new TableColumn(Messages.Table_Column_Commit(), "commit"));
-        columns.add(new TableColumn(Messages.Table_Column_Commit(), "addedAt").setHeaderClass("date"));
+        columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedAt")
+                .setHeaderClass(ColumnCss.DATE));
 
         return columns;
     }

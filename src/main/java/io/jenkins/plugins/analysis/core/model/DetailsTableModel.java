@@ -15,6 +15,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBui
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.datatables.api.TableColumn;
+import io.jenkins.plugins.datatables.api.TableColumn.ColumnCss;
 import io.jenkins.plugins.datatables.api.TableModel;
 
 import static edu.hm.hafner.util.IntegerParser.*;
@@ -92,7 +93,7 @@ public abstract class DetailsTableModel extends TableModel {
     }
 
     protected TableColumn createDetailsColumn() {
-        return new TableColumn(Messages.Table_Column_Details(), "description").setHeaderClass("nosort");
+        return new TableColumn(Messages.Table_Column_Details(), "description").setHeaderClass(ColumnCss.NO_SORT);
     }
 
     protected TableColumn createFileColumn() {

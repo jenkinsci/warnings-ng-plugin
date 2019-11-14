@@ -18,7 +18,6 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class ForensicsModelTest extends AbstractDetailsModelTest {
-    private static final int EXPECTED_COLUMNS_SIZE = 7;
     private static final String FILE_NAME = "/path/to/file-1";
 
     @Test
@@ -43,22 +42,8 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"age\"},"
                 + "{\"data\": \"authorsSize\"},"
                 + "{\"data\": \"commitsSize\"},"
-                + "{"
-                + "  \"type\": \"num\","
-                + "  \"data\": \"modifiedDays\","
-                + "  \"render\": {"
-                + "     \"_\": \"display\","
-                + "     \"sort\": \"sort\""
-                + "  }"
-                + "},"
-                + "{"
-                + "  \"type\": \"num\","
-                + "  \"data\": \"addedDays\","
-                + "  \"render\": {"
-                + "     \"_\": \"display\","
-                + "     \"sort\": \"sort\""
-                + "  }"
-                + "}"
+                + "{\"data\": \"modifiedAt\"},"
+                + "{\"data\": \"addedAt\"}"
                 + "]");
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
@@ -79,8 +64,8 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         FileStatistics fileStatistics = mock(FileStatistics.class);
         when(fileStatistics.getNumberOfAuthors()).thenReturn(15);
         when(fileStatistics.getNumberOfCommits()).thenReturn(20);
-        when(fileStatistics.getLastModifiedInDays()).thenReturn(25);
-        when(fileStatistics.getAgeInDays()).thenReturn(30);
+        when(fileStatistics.getLastModificationTime()).thenReturn(25);
+        when(fileStatistics.getCreationTime()).thenReturn(30);
 
         when(statistics.get(FILE_NAME)).thenReturn(fileStatistics);
         when(statistics.contains(FILE_NAME)).thenReturn(true);
@@ -91,15 +76,12 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasAuthorsSize("15")
-                .hasCommitsSize("20");
+                .hasCommitsSize("20")
+                .hasModifiedAt(25)
+                .hasAddedAt(30);
 
         assertThatDetailedColumnContains(actualRow.getFileName(),
                 createExpectedFileName(issue), "/path/to/file-1:0000015");
-
-        assertThatDetailedColumnContains(actualRow.getModifiedDays(),
-                "4 weeks ago", "25");
-        assertThatDetailedColumnContains(actualRow.getAddedDays(),
-                "1 month ago", "30");
     }
 
     @Test
@@ -120,12 +102,10 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
         assertThatDetailedColumnContains(actualRow.getFileName(),
                 createExpectedFileName(issue), "/path/to/file-1:0000015");
-
-        assertThat(actualRow.getModifiedDays().getSort()).isEqualTo("0");
-        assertThat(actualRow.getAddedDays().getSort()).isEqualTo("0");
     }
 
     private ForensicsModel createModel(final Report report, final RepositoryStatistics statistics) {
-        return new ForensicsModel(report, statistics, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION);
+        return new ForensicsModel(report, statistics, createFileNameRenderer(), createAgeBuilder(),
+                issue -> DESCRIPTION);
     }
 }

@@ -1,18 +1,14 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-
-import org.ocpsoft.prettytime.PrettyTime;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.datatables.api.TableColumn;
+import io.jenkins.plugins.datatables.api.TableColumn.ColumnCss;
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
@@ -61,8 +57,12 @@ public class ForensicsModel extends DetailsTableModel {
         columns.add(createAgeColumn());
         columns.add(new TableColumn(Messages.Table_Column_AuthorsSize(), "authorsSize"));
         columns.add(new TableColumn(Messages.Table_Column_CommitsSize(), "commitsSize"));
-        columns.add(new TableColumn(Messages.Table_Column_LastCommit(), "modifiedDays", "num").setWidth(2));
-        columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedDays", "num").setWidth(2));
+        columns.add(new TableColumn(Messages.Table_Column_LastCommit(), "modifiedAt")
+                .setWidth(2)
+                .setHeaderClass(ColumnCss.DATE));
+        columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedAt")
+                .setWidth(2)
+                .setHeaderClass(ColumnCss.DATE));
 
         return columns;
     }
@@ -75,14 +75,14 @@ public class ForensicsModel extends DetailsTableModel {
             FileStatistics result = statistics.get(issue.getFileName());
             row.setAuthorsSize(String.valueOf(result.getNumberOfAuthors()));
             row.setCommitsSize(String.valueOf(result.getNumberOfCommits()));
-            row.setModifiedDays(result.getLastModifiedInDays());
-            row.setAddedDays(result.getAgeInDays());
+            row.setModifiedAt(result.getLastModificationTime());
+            row.setAddedAt(result.getCreationTime());
         }
         else {
             row.setAuthorsSize(UNDEFINED);
             row.setCommitsSize(UNDEFINED);
-            row.setModifiedDays(0);
-            row.setAddedDays(0);
+            row.setModifiedAt(0);
+            row.setAddedAt(0);
         }
         return row;
     }
@@ -94,8 +94,8 @@ public class ForensicsModel extends DetailsTableModel {
     public static class ForensicsRow extends TableRow {
         private String authorsSize;
         private String commitsSize;
-        private DetailedColumnDefinition modifiedDays;
-        private DetailedColumnDefinition addedDays;
+        private int modifiedAt;
+        private int addedAt;
 
         ForensicsRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider, final Issue issue) {
@@ -110,12 +110,12 @@ public class ForensicsModel extends DetailsTableModel {
             return commitsSize;
         }
 
-        public DetailedColumnDefinition getModifiedDays() {
-            return modifiedDays;
+        public int getModifiedAt() {
+            return modifiedAt;
         }
 
-        public DetailedColumnDefinition getAddedDays() {
-            return addedDays;
+        public int getAddedAt() {
+            return addedAt;
         }
 
         void setAuthorsSize(final String authorsSize) {
@@ -126,19 +126,12 @@ public class ForensicsModel extends DetailsTableModel {
             this.commitsSize = commitsSize;
         }
 
-        void setModifiedDays(final long modifiedDays) {
-            this.modifiedDays = new DetailedColumnDefinition(getElapsedTime(modifiedDays),
-                    String.valueOf(modifiedDays));
+        void setModifiedAt(final int modifiedAt) {
+            this.modifiedAt = modifiedAt;
         }
 
-        void setAddedDays(final long addedDays) {
-            this.addedDays = new DetailedColumnDefinition(getElapsedTime(addedDays), String.valueOf(addedDays));
-        }
-
-        private String getElapsedTime(final long days) {
-            PrettyTime prettyTime = new PrettyTime();
-            return prettyTime.format(
-                    Date.from(LocalDate.now().minusDays(days).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        void setAddedAt(final int addedAt) {
+            this.addedAt = addedAt;
         }
     }
 }

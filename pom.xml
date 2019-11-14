@@ -56,7 +56,6 @@
     <json.version>20190722</json.version>
     <jackson-databind.version>2.9.10.1</jackson-databind.version>
     <slf4j.version>1.7.29</slf4j.version>
-    <prettytime.version>4.0.2.Final</prettytime.version>
 
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.5.2</junit.version>
@@ -205,11 +204,6 @@
   <dependencies>
 
     <!-- Project Library Dependencies -->
-    <dependency>
-      <groupId>org.ocpsoft.prettytime</groupId>
-      <artifactId>prettytime</artifactId>
-      <version>${prettytime.version}</version>
-    </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-nop</artifactId>
