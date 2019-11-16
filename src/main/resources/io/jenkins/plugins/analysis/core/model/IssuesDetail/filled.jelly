@@ -4,6 +4,8 @@
   <div class="row py-3">
 
     <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 d-none d-block d-lg-block d-xl-none d-xxl-none">
+
+
       <div class="card card-marg-bot">
         <div data-role="page" class="card-body">
 
