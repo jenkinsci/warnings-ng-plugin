@@ -317,11 +317,6 @@
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>popper-api</artifactId>
-      <version>${popper-api.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
       <artifactId>jquery3-api</artifactId>
       <version>${jquery3-api.version}</version>
     </dependency>
