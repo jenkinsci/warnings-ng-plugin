@@ -1,70 +1,50 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:issues="/issues" xmlns:dt="/data-tables" >
+<j:jelly xmlns:j="jelly:core" xmlns:issues="/issues" xmlns:dt="/data-tables" xmlns:bs="/bootstrap">
 
   <div class="row py-3">
 
+    <!-- A carousel with all pie charts on small screens -->
     <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 d-none d-block d-lg-block d-xl-none d-xxl-none">
 
-
-      <div class="card card-marg-bot">
-        <div data-role="page" class="card-body">
-
-          <h5 class="card-title">
-            ${%Overview}
-            <i class="fa fa-bell icon-right fa-2x" aria-hidden="true"/>
-          </h5>
-
-          <div id="overview-carousel" class="carousel slide" data-interval="false" >
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <div id="severities-chart" class="graph-cursor-pointer card-chart"/>
-              </div>
-              <div class="carousel-item">
-                <div id="trend-chart" class="graph-cursor-pointer card-chart"/>
-              </div>
+      <bs:card title="${%Overview}" fontAwesomeIcon="fa-bell">
+        <div id="overview-carousel" class="carousel slide" data-interval="false">
+          <div class="carousel-inner">
+            <div class="carousel-item active">
+              <div id="severities-chart" class="graph-cursor-pointer card-chart"/>
             </div>
-            <a class="carousel-control-prev" data-target="#overview-carousel" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"/>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" data-target="#overview-carousel" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"/>
-              <span class="sr-only">Next</span>
-            </a>
+            <div class="carousel-item">
+              <div id="trend-chart" class="graph-cursor-pointer card-chart"/>
+            </div>
           </div>
-
+          <a class="carousel-control-prev" data-target="#overview-carousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"/>
+            <span class="sr-only">Previous</span>
+          </a>
+          <a class="carousel-control-next" data-target="#overview-carousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"/>
+            <span class="sr-only">Next</span>
+          </a>
         </div>
-      </div>
+      </bs:card>
+
     </div>
 
+    <!-- A single trend chart with the severities pie chart on large screens -->
     <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
-      <div class="card card-marg-bot">
-        <div data-role="page" class="card-body">
 
-          <h5 class="card-title">
-            ${%Severities Distribution}
-            <i class="fa fa-chart-pie icon-right fa-2x" aria-hidden="true"/>
-          </h5>
+      <bs:card title="${%Severities Distribution}" fontAwesomeIcon="fa-chart-pie">
+        <div id="single-severities-chart" class="graph-cursor-pointer card-chart"/>
+      </bs:card>
 
-          <div id="single-severities-chart" class="graph-cursor-pointer card-chart"/>
-
-        </div>
-      </div>
     </div>
 
+    <!-- A single trend chart with the reference pie chart on large screens -->
     <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
-      <div class="card card-marg-bot">
-        <div data-role="page" class="card-body">
 
-          <h5 class="card-title">
-            ${%Reference Comparison}
-            <i class="fa fa-bell icon-right fa-2x" aria-hidden="true"/>
-          </h5>
+      <bs:card title="${%Reference Comparison}" fontAwesomeIcon="fa-bell">
+        <div id="single-trend-chart" class="graph-cursor-pointer card-chart"/>
+      </bs:card>
 
-          <div id="single-trend-chart" class="graph-cursor-pointer card-chart"/>
-
-        </div>
-      </div>
     </div>
 
     <div class="col-xs-12 col-sm-6 col-md-7 col-lg-8 col-xl-6 col-xxl-8">
@@ -82,77 +62,74 @@
       <j:if test="${i.isNotEmpty()}">
 
         <div id="statistics">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title">${%Details}
-                <img class="icon-right" src="${resURL}/${it.labelProvider.largeIconUrl}"></img>
-              </h5>
 
-              <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
+          <bs:card title="${%Details}" pngIcon="${resURL}/${it.labelProvider.largeIconUrl}">
+            <ul class="nav nav-tabs flex-wrap" role="tablist" id="tab-details">
 
-                <issues:property-tab property="origin" name="${l.tools}" elements="${i.tools}"/>
-                <issues:property-tab property="moduleName" name="${l.modules}" elements="${i.modules}"/>
-                <issues:property-tab property="packageName" name="${l.packages}" elements="${i.packages}"/>
-                <j:if test="${i.hasFolders()}">
-                  <issues:property-tab property="folder" name="${l.folders}" elements="${i.folders}"/>
-                </j:if>
-                <issues:property-tab property="fileName" name="${l.files}" elements="${i.files}"/>
-                <issues:property-tab property="category" name="${l.categories}" elements="${i.categories}"/>
-                <issues:property-tab property="type" name="${l.types}" elements="${i.types}"/>
+              <issues:property-tab property="origin" name="${l.tools}" elements="${i.tools}"/>
+              <issues:property-tab property="moduleName" name="${l.modules}" elements="${i.modules}"/>
+              <issues:property-tab property="packageName" name="${l.packages}" elements="${i.packages}"/>
+              <j:if test="${i.hasFolders()}">
+                <issues:property-tab property="folder" name="${l.folders}" elements="${i.folders}"/>
+              </j:if>
+              <issues:property-tab property="fileName" name="${l.files}" elements="${i.files}"/>
+              <issues:property-tab property="category" name="${l.categories}" elements="${i.categories}"/>
+              <issues:property-tab property="type" name="${l.types}" elements="${i.types}"/>
 
-                <j:if test="${i.isNotEmpty()}">
+              <j:if test="${i.isNotEmpty()}">
+                <li class="nav-item">
+                  <a class="nav-link" role="tab" data-toggle="tab" href="#issuesContent">${l.issues}</a>
+                </li>
+                <j:if test="${it.isBlameVisible()}">
                   <li class="nav-item">
-                    <a class="nav-link" role="tab" data-toggle="tab" href="#issuesContent">${l.issues}</a>
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#blamesContent">${%SCM Blames}</a>
                   </li>
-                  <j:if test="${it.isBlameVisible()}">
-                    <li class="nav-item">
-                      <a class="nav-link" role="tab" data-toggle="tab" href="#blamesContent">${%SCM Blames}</a>
-                    </li>
-                  </j:if>
-                  <j:if test="${it.isForensicsVisible()}">
-                    <li class="nav-item">
-                      <a class="nav-link" role="tab" data-toggle="tab" href="#forensicsContent">${%SCM Forensics}</a>
-                    </li>
-                  </j:if>
                 </j:if>
-
-              </ul>
-
-              <div class="tab-content">
-
-                <issues:property property="origin" name="${l.toolName}" elements="${i.tools}"/>
-                <issues:property property="moduleName" name="${l.moduleName}" elements="${i.modules}"/>
-                <issues:property property="packageName" name="${l.packageName}" elements="${i.packages}"/>
-                <j:if test="${i.hasFolders()}">
-                  <issues:property property="folder" name="${l.folderName}" elements="${i.folders}"/>
+                <j:if test="${it.isForensicsVisible()}">
+                  <li class="nav-item">
+                    <a class="nav-link" role="tab" data-toggle="tab" href="#forensicsContent">${%SCM Forensics}</a>
+                  </li>
                 </j:if>
-                <issues:property property="fileName" name="${l.fileName}" elements="${i.files}"/>
-                <issues:property property="category" name="${l.category}" elements="${i.categories}"/>
-                <issues:property property="type" name="${l.type}" elements="${i.types}"/>
+              </j:if>
 
-                <j:if test="${i.isNotEmpty()}">
-                  <div role="tabpanel" id="issuesContent" class="tab-pane fade">
-                    <dt:table model="${it.getTableModel('issues')}"/>
+            </ul>
+
+            <div class="tab-content">
+
+              <issues:property property="origin" name="${l.toolName}" elements="${i.tools}"/>
+              <issues:property property="moduleName" name="${l.moduleName}" elements="${i.modules}"/>
+              <issues:property property="packageName" name="${l.packageName}" elements="${i.packages}"/>
+              <j:if test="${i.hasFolders()}">
+                <issues:property property="folder" name="${l.folderName}" elements="${i.folders}"/>
+              </j:if>
+              <issues:property property="fileName" name="${l.fileName}" elements="${i.files}"/>
+              <issues:property property="category" name="${l.category}" elements="${i.categories}"/>
+              <issues:property property="type" name="${l.type}" elements="${i.types}"/>
+
+              <j:if test="${i.isNotEmpty()}">
+                <div role="tabpanel" id="issuesContent" class="tab-pane fade">
+                  <dt:table model="${it.getTableModel('issues')}"/>
+                </div>
+                <j:if test="${it.isBlameVisible()}">
+                  <div role="tabpanel" id="blamesContent" class="tab-pane fade">
+                    <dt:table model="${it.getTableModel('blames')}"/>
                   </div>
-                  <j:if test="${it.isBlameVisible()}">
-                    <div role="tabpanel" id="blamesContent" class="tab-pane fade">
-                      <dt:table model="${it.getTableModel('blames')}"/>
-                    </div>
-                  </j:if>
-                  <j:if test="${it.isForensicsVisible()}">
-                    <div role="tabpanel" id="forensicsContent" class="tab-pane fade">
-                      <dt:table model="${it.getTableModel('forensics')}"/>
-                    </div>
-                  </j:if>
                 </j:if>
-
-              </div>
+                <j:if test="${it.isForensicsVisible()}">
+                  <div role="tabpanel" id="forensicsContent" class="tab-pane fade">
+                    <dt:table model="${it.getTableModel('forensics')}"/>
+                  </div>
+                </j:if>
+              </j:if>
 
             </div>
-          </div>
+
+          </bs:card>
+
         </div>
 
       </j:if>
+
     </div>
 
   </div>
