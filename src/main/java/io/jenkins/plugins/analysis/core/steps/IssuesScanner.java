@@ -148,28 +148,28 @@ class IssuesScanner {
     }
 
     private Blamer createBlamer(final Report report, final VirtualChannel channel) {
-        Blamer blamer;
         if (blameMode == BlameMode.DISABLED) {
             report.logInfo("Skipping SCM blames as requested");
-            blamer = new NullBlamer();
+            return new NullBlamer();
         }
         else {
             FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
             report.logInfo("Creating SCM blamer to obtain author and commit information for affected files");
-            blamer = BlamerFactory.findBlamer(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
+            Blamer blamer = BlamerFactory.findBlamer(run, getSourceDirectoriesAsFilePaths(report, channel),
+                    listener, log);
             log.logSummary();
             log.getInfoMessages().forEach(report::logInfo);
             log.getErrorMessages().forEach(report::logError);
 
+            return blamer;
         }
-        return blamer;
     }
 
     private List<FilePath> getSourceDirectoriesAsFilePaths(final Report report, final VirtualChannel channel) {
         return getPermittedSourceDirectories(report).stream()
-                        .map(path -> new FilePath(channel, path))
-                        .collect(Collectors.toList());
+                .map(path -> new FilePath(channel, path))
+                .collect(Collectors.toList());
     }
 
     private RepositoryMiner createMiner(final Report report, final VirtualChannel channel) {
@@ -177,7 +177,13 @@ class IssuesScanner {
             FilteredLog log = new FilteredLog("Errors while determining a supported SCM miner for "
                     + run.getFullDisplayName());
             report.logInfo("Creating SCM miner to obtain statistics for affected repository files");
-            return MinerFactory.findMiner(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
+            RepositoryMiner miner = MinerFactory.findMiner(run, getSourceDirectoriesAsFilePaths(report, channel),
+                    listener, log);
+            log.logSummary();
+            log.getInfoMessages().forEach(report::logInfo);
+            log.getErrorMessages().forEach(report::logError);
+
+            return miner;
         }
         else {
             report.logInfo("Skipping SCM repository mining as requested");
