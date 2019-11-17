@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:bs="/bootstrap">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
   <l:layout title="${it.displayName}" norefresh="true">
@@ -16,17 +16,10 @@
 
       <div class="fluid-container">
 
+        <bs:card title="${it.displayName}" fontAwesomeIcon="fa-award">
 
-        <div class="card card-marg-bot">
-          <div data-role="page" class="card-body">
-
-            <h5 class="card-title">
-              ${it.displayName}
-              <i class="fa fa-award icon-right fa-2x" aria-hidden="true"/>
-            </h5>
-
-            <div class="table-responsive">
-              <table class="table table-hover table-striped display" id="fixed">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped display" id="fixed">
               <thead>
                 <tr>
                   <th>${%File}</th>
@@ -63,9 +56,9 @@
                 </j:forEach>
               </tbody>
             </table>
-            </div>
           </div>
-        </div>
+
+        </bs:card>
 
       </div>
 

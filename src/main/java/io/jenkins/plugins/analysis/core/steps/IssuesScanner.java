@@ -156,6 +156,7 @@ class IssuesScanner {
         else {
             FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
+            report.logInfo("Creating SCM blamer to obtain author and commit information for affected files");
             blamer = BlamerFactory.findBlamer(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
             log.logSummary();
             log.getInfoMessages().forEach(report::logInfo);
@@ -173,12 +174,13 @@ class IssuesScanner {
 
     private RepositoryMiner createMiner(final Report report, final VirtualChannel channel) {
         if (forensicsMode == ForensicsMode.ENABLED) {
-            FilteredLog log = new FilteredLog("Errors while mining source code repository for "
+            FilteredLog log = new FilteredLog("Errors while determining a supported SCM miner for "
                     + run.getFullDisplayName());
+            report.logInfo("Creating SCM miner to obtain statistics for affected repository files");
             return MinerFactory.findMiner(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
         }
         else {
-            report.logInfo("Skipping SCM forensics as requested");
+            report.logInfo("Skipping SCM repository mining as requested");
 
             return new NullMiner();
         }

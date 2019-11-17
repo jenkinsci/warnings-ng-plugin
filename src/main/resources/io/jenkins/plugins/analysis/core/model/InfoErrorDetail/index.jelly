@@ -8,8 +8,6 @@
 
     <l:main-panel>
 
-      <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
-      <st:adjunct includes="io.jenkins.plugins.font-awesome"/>
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
       <div class="fluid-container">
