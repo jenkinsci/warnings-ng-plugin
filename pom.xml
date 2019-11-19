@@ -87,7 +87,7 @@
     <checkstyle.version>8.26</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.12.2</spotbugs-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
-    <maven-surefire.plugin>3.0.0-M3</maven-surefire.plugin>
+    <maven-surefire.plugin>3.0.0-M4</maven-surefire.plugin>
     <maven-failsafe.plugin>3.0.0-M3</maven-failsafe.plugin>
     <jar.maven.plugin>3.0.2</jar.maven.plugin>
     <maven-error-prone-plugin.version>2.8.5</maven-error-prone-plugin.version>
