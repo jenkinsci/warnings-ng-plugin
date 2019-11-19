@@ -5,9 +5,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.validator.routines.DomainValidator;
 
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.PathUtil;
@@ -28,8 +28,8 @@ import hudson.util.ListBoxModel;
  * @author Ullrich Hafner
  */
 public class ModelValidation {
-    /** All available character sets. */
     private static final Set<String> ALL_CHARSETS = Charset.availableCharsets().keySet();
+    private static final Pattern VALID_ID_PATTERN = Pattern.compile("[a-z0-9][a-z0-9-_]*");
 
     @VisibleForTesting
     static final String NO_REFERENCE_JOB = "-";
@@ -108,7 +108,7 @@ public class ModelValidation {
     }
 
     private boolean isValidId(final String id) {
-        return StringUtils.isEmpty(id) || DomainValidator.getInstance(true).isValid(id);
+        return StringUtils.isEmpty(id) || VALID_ID_PATTERN.matcher(id).matches();
     }
 
     /**
