@@ -1,1 +1,1 @@
-buildPlugin(useAci: true, platforms: ['maven'])
+buildPlugin(useAci: true)
