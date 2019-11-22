@@ -61,7 +61,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
- * issues in an {@link AnalysisResult}. The result is attached to the {@link Run} by registering a {@link
+ * issues in an {@link AnalysisResult}. The result is attached to a {@link Run} by registering a {@link
  * ResultAction}.
  * <p>
  * Additional features:
