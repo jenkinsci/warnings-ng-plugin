@@ -12,7 +12,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>8.0.0-SNAPSHOT</version>
+  <version>${revision}${changelist}</version>
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -20,6 +20,8 @@
   </description>
 
   <properties>
+    <revision>8.0.0</revision>
+    <changelist>-SNAPSHOT</changelist>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     <!-- Override properties defined in parent POM -->
@@ -1095,6 +1097,10 @@
     <repository>
       <id>repo.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+    <repository>
+      <id>incrementals.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/incrementals/</url>
     </repository>
   </repositories>
 
