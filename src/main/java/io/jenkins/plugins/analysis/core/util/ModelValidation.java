@@ -29,7 +29,7 @@ import hudson.util.ListBoxModel;
  */
 public class ModelValidation {
     private static final Set<String> ALL_CHARSETS = Charset.availableCharsets().keySet();
-    private static final Pattern VALID_ID_PATTERN = Pattern.compile("[a-z0-9][a-z0-9-_]*");
+    private static final Pattern VALID_ID_PATTERN = Pattern.compile("\\p{Alnum}[\\p{Alnum}-_]*");
 
     @VisibleForTesting
     static final String NO_REFERENCE_JOB = "-";
