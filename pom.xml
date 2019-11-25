@@ -30,6 +30,7 @@
     <!-- Project Dependencies Configuration -->
     <module.name>${project.groupId}.warnings.ng</module.name>
 
+    <codingstyle.version>0.2.7</codingstyle.version>
     <analysis-model-api.version>7.0.2</analysis-model-api.version>
     <analysis-model.version>7.0.2</analysis-model.version>
     <forensics-api-plugin.version>0.6.1</forensics-api-plugin.version>
