@@ -190,6 +190,8 @@ public class IssuesRecorder extends Recorder {
      */
     @DataBoundSetter
     public void setId(final String id) {
+        new ModelValidation().ensureValidId(id);
+
         this.id = id;
     }
 
@@ -1115,6 +1117,18 @@ public class IssuesRecorder extends Recorder {
         @Override
         public boolean isApplicable(final Class<? extends AbstractProject> jobType) {
             return true;
+        }
+
+        /**
+         * Performs on-the-fly validation of the ID.
+         *
+         * @param id
+         *         the ID of the tool
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckId(@QueryParameter final String id) {
+            return model.validateId(id);
         }
 
         /**

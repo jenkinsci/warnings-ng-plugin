@@ -10,14 +10,17 @@ import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.model.Run;
+import hudson.util.FormValidation;
 import jenkins.security.MasterToSlaveCallable;
 
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
 
 /**
  * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
@@ -141,23 +144,38 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
 
     /** Descriptor for {@link Tool}. **/
     public abstract static class ToolDescriptor extends Descriptor<Tool> {
-        private final String id;
+        private final ModelValidation model = new ModelValidation();
+
+        private final String defaultId;
 
         /**
          * Creates a new instance of {@link ToolDescriptor} with the given ID.
          *
-         * @param id
+         * @param defaultId
          *         the unique ID of the tool
          */
-        protected ToolDescriptor(final String id) {
+        protected ToolDescriptor(final String defaultId) {
             super();
 
-            this.id = id;
+            new ModelValidation().ensureValidId(defaultId);
+            this.defaultId = defaultId;
+        }
+
+        /**
+         * Performs on-the-fly validation of the ID.
+         *
+         * @param id
+         *         the ID of the tool
+         *
+         * @return the validation result
+         */
+        public FormValidation doCheckId(@QueryParameter final String id) {
+            return model.validateId(id);
         }
 
         @Override
         public String getId() {
-            return id;
+            return defaultId;
         }
 
         /**

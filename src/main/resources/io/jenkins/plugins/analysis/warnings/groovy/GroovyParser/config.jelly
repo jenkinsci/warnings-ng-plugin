@@ -13,9 +13,4 @@
       <p:advanced/>
     </j:otherwise>
   </j:choose>
-  <f:entry title="">
-    <div align="right">
-      <f:repeatableDeleteButton/>
-    </div>
-  </f:entry>
 </j:jelly>

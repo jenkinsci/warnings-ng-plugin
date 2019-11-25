@@ -19,7 +19,6 @@ import edu.hm.hafner.analysis.Severity;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
-import org.kohsuke.stapler.export.ExportedBean;
 import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
@@ -49,7 +48,6 @@ import io.jenkins.plugins.datatables.api.TableModel;
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
-@ExportedBean
 public class IssuesDetail extends DefaultAsyncTableContentProvider implements ModelObject {
     private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();

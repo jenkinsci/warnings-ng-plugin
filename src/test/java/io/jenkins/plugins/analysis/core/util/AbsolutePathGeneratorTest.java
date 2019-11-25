@@ -44,8 +44,9 @@ class AbsolutePathGeneratorTest {
      * Ensures that illegal file names are processed without problems. Afterwards, the path name should be unchanged.
      */
     @ParameterizedTest(name = "[{index}] Illegal filename = {0}")
-    @ValueSource(strings = {"/does/not/exist", "!<>$&/&(", "\0 Null-Byte"})
+    @ValueSource(strings = {"/does/not/exist", "!<>$&/&(", "\0 Null-Byte", "C:/!<>$&/&( \0", "/!<>$&/&( \0"})
     @DisplayName("Should not change path on errors")
+    @org.jvnet.hudson.test.Issue("JENKINS-59986")
     void shouldReturnFallbackOnError(final String fileName) {
         Report report = createIssuesSingleton(fileName, new IssueBuilder());
 

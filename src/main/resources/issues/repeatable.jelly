@@ -31,7 +31,13 @@
   </st:documentation>
 
   <div id="${field}">
-    <f:repeatableProperty field="${field}"/>
+    <f:repeatableProperty field="${field}">
+      <f:entry title="">
+        <div align="right">
+          <f:repeatableDeleteButton/>
+        </div>
+      </f:entry>
+    </f:repeatableProperty>
   </div>
 
 </j:jelly>

@@ -39,6 +39,7 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class IssuesTablePortlet extends DashboardPortlet {
     private static final Sanitizer SANITIZER = new Sanitizer();
 

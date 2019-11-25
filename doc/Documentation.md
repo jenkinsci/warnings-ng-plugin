@@ -170,11 +170,16 @@ A simple way to get the analysis results of your tool into the Warnings plugin i
 of the already supported formats. E.g., several tools export their issues into the CheckStyle or PMD format. If you
 want to use all features of the Warnings Plugin it would be even better if you would export the information into the
 *native* [XML](../src/test/resources/io/jenkins/plugins/analysis/warnings/warnings-issues.xml) or 
-[JSON](../src/test/resources/io/jenkins/plugins/analysis/warnings/issues.json) format. 
+[JSON](../src/test/resources/io/jenkins/plugins/analysis/warnings/issues.json) format (this parser uses the ID `issues`).  
 These formats are already registered in the user interface and you can use them out-of-the-box. You can even provide
 issues in a simple log file that contains single lines of JSON issues, see 
 [example](../src/test/resources/io/jenkins/plugins/analysis/warnings/json-issues.log).
 
+Here is an example step that can be used to parse the native JSON (or XML) format:
+
+```groovy
+recordIssues(tool: issues())
+```
 #### Deploying a new tool using a custom plugin
 
 The most flexible way is to define a new tool by writing a Java class that will be deployed in your own small 
@@ -650,7 +655,8 @@ main list view will show a new column that counts the total number of issues of 
 that can configure
 - the column name 
 - the actual tools that should be taken into account
-- the type of the totals to show (overall warnings, new warnings, specific severity, etc.).
+- the type of the totals to show (overall warnings, new warnings, specific severity, etc.), see section 
+[Token Macro Support](#token-macro-support).
 
 ![issues column](images/column.png)
 
@@ -862,13 +868,33 @@ Here is an example JSON report:
 ### Token macro support
 
 The Warnings plugin provides the token `ANALYSIS_ISSUES_COUNT` that could be used in additional post build processing
-steps, e.g. in the mailer. In order to use this token you need to install the latest release of the 
+steps, e.g. in the mailer. In order to use this token you need to install the 
 [Token Macro plugin](https://plugins.jenkins.io/token-macro). 
-The token has an optional parameter `tool` that could be used to select a particular analysis result. 
+The token has the following optional parameters:
+- `tool`: selects a particular analysis result, if not defined all results are summed up
+- `type`: selects the type of the counter to use, choose one of:
+  - Total (any severity)  
+  - Total (errors only)
+  - Total (severity high only)
+  - Total (severity normal only)
+  - Total (severity low only)
+  - New (any severity)
+  - New (errors only)
+  - New (severity high only)
+  - New (severity normal only)
+  - New (severity low only)
+  - Delta (any severity)
+  - Delta (errors only)
+  - Delta (severity high only)
+  - Delta (severity normal only)
+  - Delta (severity low only)
+  - Fixed (any severity)
+
 Examples:
 
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
 - `${ANALYSIS_ISSUES_COUNT, tool="checkstyle"}`: expands to the total number of **CheckStyle** issues
+- `${ANALYSIS_ISSUES_COUNT, tool="checkstyle", type: "NEW"}`: expands to the number of new **CheckStyle** issues
 
 ## Transition from the static analysis suite
 

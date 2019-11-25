@@ -30,6 +30,7 @@ import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class IssuesChartPortlet extends DashboardPortlet {
     private boolean hideCleanJobs;
     private boolean selectTools = false;

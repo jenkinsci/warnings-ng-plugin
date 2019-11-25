@@ -47,7 +47,7 @@ import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 
 /** Provides a parser and customized messages for the Axivion Suite. */
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.DataClass"})
 public final class AxivionSuite extends Tool {
     private static final long serialVersionUID = 967222727302169818L;
     private static final String ID = "axivion-suite";
