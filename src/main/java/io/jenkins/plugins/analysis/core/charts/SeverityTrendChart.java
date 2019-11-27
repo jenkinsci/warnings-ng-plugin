@@ -26,6 +26,28 @@ public class SeverityTrendChart implements TrendChart {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
+        return createChartFromDataSet(dataSet);
+    }
+
+    /**
+     * Creates the chart for the specified list of results.
+     *
+     * @param results
+     *         the analysis results to render
+     * @param configuration
+     *         the chart configuration to be used
+     *
+     * @return the chart model
+     */
+    public LinesChartModel aggregate(final List<Iterable<? extends BuildResult<AnalysisBuildResult>>> results,
+            final ChartModelConfiguration configuration) {
+        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
+        LinesDataSet dataSet = builder.createAggregatedDataSet(configuration, results);
+
+        return createChartFromDataSet(dataSet);
+    }
+
+    private LinesChartModel createChartFromDataSet(final LinesDataSet dataSet) {
         LinesChartModel model = new LinesChartModel();
         model.setDomainAxisLabels(dataSet.getDomainAxisLabels());
         model.setBuildNumbers(dataSet.getBuildNumbers());

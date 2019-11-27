@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,7 +127,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
     public String getTrend() {
         SeverityTrendChart severityChart = new SeverityTrendChart();
 
-        List<Iterable<BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
+        List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
                 .filter(job -> job.getLastCompletedBuild() != null)
                 .map(Job::getLastCompletedBuild)
                 .flatMap(build -> build.getActions(ResultAction.class)
@@ -137,7 +136,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
                 .map(ResultAction::createBuildHistory).collect(Collectors.toList());
 
         return new JacksonFacade().toJson(
-                severityChart.create(Collections.emptyList(), new ChartModelConfiguration(AxisType.DATE)));
+                severityChart.aggregate(histories, new ChartModelConfiguration(AxisType.DATE)));
     }
 
     /**
