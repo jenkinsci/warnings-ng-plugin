@@ -14,7 +14,6 @@
 
     <st:adjunct includes="io.jenkins.plugins.echarts"/>
 
-    <script src="${resURL}/plugin/warnings-ng/js/simple-trend-chart.js"/>
     <script>
       var proxy = <st:bind value="${from}"/>;
       proxy.getBuildTrend(function (trendModel) {

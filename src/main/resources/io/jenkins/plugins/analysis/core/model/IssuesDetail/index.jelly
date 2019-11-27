@@ -11,12 +11,7 @@
 
       <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
       <st:adjunct includes="io.jenkins.plugins.echarts"/>
-
-      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/pie-chart.js"/>
-      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/trend-chart.js"/>
-
       <st:adjunct includes="io.jenkins.plugins.font-awesome"/>
-
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
       <div class="fluid-container">

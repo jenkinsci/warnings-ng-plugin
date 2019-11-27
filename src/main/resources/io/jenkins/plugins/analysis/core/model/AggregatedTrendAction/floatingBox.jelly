@@ -13,14 +13,13 @@
     </div>
 
     <st:adjunct includes="io.jenkins.plugins.echarts"/>
-    <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/simple-trend-chart.js"/>
+
     <script>
-      var proxy = <st:bind value="${from}"/>;
+      var proxy =<st:bind value="${from}"/>;
       proxy.getBuildTrend(function (trendModel) {
       renderTrendChart('aggregation-history-chart', trendModel.responseJSON, null);
       });
     </script>
-
   </j:if>
 
 </j:jelly>

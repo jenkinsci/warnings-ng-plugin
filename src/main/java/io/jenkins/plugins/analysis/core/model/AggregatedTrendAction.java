@@ -1,22 +1,27 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.model.InvisibleAction;
 import hudson.model.Job;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration;
-import io.jenkins.plugins.analysis.core.charts.CompositeResult;
-import io.jenkins.plugins.analysis.core.charts.LinesChartModel;
+import io.jenkins.plugins.analysis.core.charts.CompositeBuildResult;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
+import io.jenkins.plugins.echarts.api.charts.Build;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
 
 /**
  * Project action that renders a combined trend chart of all tools in the job.
@@ -66,9 +71,11 @@ public class AggregatedTrendAction extends InvisibleAction {
     }
 
     private LinesChartModel createChartModel() {
-        List<Iterable<? extends AnalysisBuildResult>> histories = new ArrayList<>(createBuildHistory());
-
-        return new ToolsTrendChart().create(new CompositeResult(histories), new ChartModelConfiguration());
+        Run<?, ?> lastBuild = owner.getLastBuild();
+        if (lastBuild == null) {
+            return new LinesChartModel();
+        }
+        return new ToolsTrendChart().create(new CompositeBuildResultsIterable(lastBuild), new ChartModelConfiguration());
     }
 
     /**
@@ -87,4 +94,57 @@ public class AggregatedTrendAction extends InvisibleAction {
         AnalysisHistory singleResult = history.iterator().next();
         return singleResult.hasMultipleResults();
     }
+
+    /**
+     * Combines the history results of several {@link AnalysisBuildResult static analysis results} into a single result
+     * history.
+     *
+     * @author Ullrich Hafner
+     */
+    private static class CompositeBuildResultsIterable implements Iterable<BuildResult<AnalysisBuildResult>> {
+        private final Run<?, ?> lastBuild;
+
+        CompositeBuildResultsIterable(final Run<?, ?> lastBuild) {
+            this.lastBuild = lastBuild;
+        }
+
+        @Override @NonNull
+        public Iterator<BuildResult<AnalysisBuildResult>> iterator() {
+            return new CompositeIterator(lastBuild);
+        }
+    }
+
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
+    private static class CompositeIterator implements Iterator<BuildResult<AnalysisBuildResult>> {
+        private Optional<Run<?, ?>> latestAction;
+
+        CompositeIterator(final Run<?, ?> current) {
+            this.latestAction = Optional.of(current);
+        }
+
+        @Override
+        public boolean hasNext() {
+            return latestAction.isPresent();
+        }
+
+        @Override
+        public BuildResult<AnalysisBuildResult> next() {
+            if (!latestAction.isPresent()) {
+                throw new NoSuchElementException();
+            }
+            Run<?, ?> run = latestAction.get();
+            latestAction = Optional.ofNullable(run.getPreviousBuild());
+
+            Set<AnalysisResult> results = run.getActions(ResultAction.class)
+                    .stream()
+                    .map(ResultAction::getResult)
+                    .collect(Collectors.toSet());
+            CompositeBuildResult compositeBuildResult = new CompositeBuildResult();
+            for (AnalysisResult result : results) {
+                compositeBuildResult.add(result);
+            }
+            return new BuildResult<>(new Build(run), compositeBuildResult);
+        }
+    }
+
 }

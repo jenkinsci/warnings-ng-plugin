@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.echarts.api.charts.SeriesBuilder;
 
 /**
  * Builds the model for a trend chart showing the relationship between new and fixed issues for a given number of
@@ -11,7 +12,7 @@ import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
  *
  * @author Ullrich Hafner
  */
-public class NewVersusFixedSeriesBuilder extends SeriesBuilder {
+public class NewVersusFixedSeriesBuilder extends SeriesBuilder<AnalysisBuildResult> {
     static final String NEW = "new";
     static final String FIXED = "fixed";
 
@@ -22,5 +23,4 @@ public class NewVersusFixedSeriesBuilder extends SeriesBuilder {
         series.put(FIXED, current.getFixedSize());
         return series;
     }
-
 }

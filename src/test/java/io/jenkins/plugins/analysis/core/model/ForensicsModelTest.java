@@ -48,7 +48,7 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
         assertThat(getWidths(model))
-                .containsExactly(1, 1, 1, 1, 1, 2, 2);
+                .containsExactly(1, 2, 1, 1, 1, 2, 2);
 
         assertThat(model.getRows()).hasSize(2);
     }

@@ -9,6 +9,9 @@ import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
 
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
@@ -25,10 +28,10 @@ class HealthTrendChartTest {
         HealthDescriptor healthDescriptor = new HealthDescriptor(5, 10, Severity.WARNING_NORMAL);
         HealthTrendChart chart = new HealthTrendChart(healthDescriptor);
 
-        List<AnalysisBuildResult> resultsCheckStyle = createBuildResults();
+        List<BuildResult<AnalysisBuildResult>> resultsCheckStyle = createBuildResults();
         LinesChartModel model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
 
-        assertThatJson(model).node("xAxisLabels")
+        assertThatJson(model).node("domainAxisLabels")
                 .isArray().containsExactly("#1", "#2", "#3", "#4");
         assertThatJson(model).node("series")
                 .isArray().hasSize(3);
@@ -46,10 +49,10 @@ class HealthTrendChartTest {
         HealthDescriptor healthDescriptor = new HealthDescriptor(-1, -1, Severity.WARNING_NORMAL);
         HealthTrendChart chart = new HealthTrendChart(healthDescriptor);
 
-        List<AnalysisBuildResult> resultsCheckStyle = createBuildResults();
+        List<BuildResult<AnalysisBuildResult>> resultsCheckStyle = createBuildResults();
         LinesChartModel model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
 
-        assertThatJson(model).node("xAxisLabels")
+        assertThatJson(model).node("domainAxisLabels")
                 .isArray().containsExactly("#1", "#2", "#3", "#4");
         assertThatJson(model).node("series")
                 .isArray().hasSize(1);
@@ -58,8 +61,8 @@ class HealthTrendChartTest {
         verifySeries(model, 0, 0, 5, 10, 15);
     }
 
-    private List<AnalysisBuildResult> createBuildResults() {
-        List<AnalysisBuildResult> resultsCheckStyle = new ArrayList<>();
+    private List<BuildResult<AnalysisBuildResult>> createBuildResults() {
+        List<BuildResult<AnalysisBuildResult>> resultsCheckStyle = new ArrayList<>();
         resultsCheckStyle.add(createResult(1, 0, 0, 0, 0));
         resultsCheckStyle.add(createResult(2, 0, 5, 0, 0));
         resultsCheckStyle.add(createResult(3, 0, 5, 5, 0));

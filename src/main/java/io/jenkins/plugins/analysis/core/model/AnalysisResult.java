@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.BiConsumer;
@@ -28,13 +27,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
+import io.jenkins.plugins.echarts.api.charts.Build;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
@@ -560,11 +559,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     @Override
-    public AnalysisBuild getBuild() {
-        return new BuildProperties(owner);
-    }
-
-    @Override
     public int getTotalSize() {
         return totals.getTotalSize();
     }
@@ -704,80 +698,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     @SuppressWarnings({"DeprecatedIsStillUsed", "MismatchedQueryAndUpdateOfCollection"})
     private final Map<Severity, Integer> newSizePerSeverity = new HashMap<>();
 
-    /**
-     * Properties of a Jenkins {@link Run} that contains an {@link AnalysisResult}.
-     */
-    public static class BuildProperties implements AnalysisBuild {
-        private long timeInMillis;
-        private int number;
-        private String displayName;
-
-        /**
-         * Creates a new instance of {@link BuildProperties}.
-         *
-         * @param run
-         *         the properties of the run
-         */
-        BuildProperties(final Run<?, ?> run) {
-            this(run.getNumber(), run.getDisplayName(), run.getTimeInMillis());
-        }
-
-        /**
-         * Creates a new instance of {@link BuildProperties}.
-         *
-         * @param number
-         *         build number
-         * @param displayName
-         *         human readable name of the build
-         * @param timeInMillis
-         *         the build time (in milli seconds)
-         */
-        public BuildProperties(final int number, final String displayName, final long timeInMillis) {
-            this.timeInMillis = timeInMillis;
-            this.number = number;
-            this.displayName = displayName;
-        }
-
-        @Override
-        public long getTimeInMillis() {
-            return timeInMillis;
-        }
-
-        @Override
-        public int getNumber() {
-            return number;
-        }
-
-        @Override
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        @Override
-        public int compareTo(final AnalysisBuild o) {
-            return getNumber() - o.getNumber();
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (this == o) {
-                return true;
-            }
-            if (o == null || getClass() != o.getClass()) {
-                return false;
-            }
-            BuildProperties that = (BuildProperties) o;
-            return number == that.number;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(number);
-        }
-
-        @Override
-        public String toString() {
-            return getDisplayName();
-        }
+    public Build getBuild() {
+        return new Build(getOwner());
     }
 }

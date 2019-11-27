@@ -16,6 +16,7 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;
@@ -68,7 +69,7 @@ class AnalysisHistoryTest {
 
         AnalysisHistory history = new AnalysisHistory(last, resultSelector);
 
-        assertThat(history.iterator()).toIterable().containsExactly(lastResult, middleResult, firstResult);
+        assertThat(history.iterator()).toIterable().extracting(BuildResult::getResult).containsExactly(lastResult, middleResult, firstResult);
         assertThat(history.hasMultipleResults()).isTrue();
     }
 

@@ -1,11 +1,8 @@
 /* global jQuery, view */
 (function ($) {
-    if ($('#severities-chart').length) {
-        initializePieCharts();
-    }
-
     redrawTrendCharts();
     storeAndRestoreCarousel('trend-carousel');
+    storeAndRestoreCarousel('overview-carousel');
 
     /**
      * Create a data table instance for all tables that are marked with class "property-table".
@@ -56,31 +53,6 @@
     });
 
     /**
-     * Initializes the pie chart. There are two different variants: on small screens we have a carousel that
-     * switches between the two charts. On large screens both pie charts are drawn side-by-side.
-     */
-    function initializePieCharts () {
-        /**
-         * Creates a doughnut chart that shows the number of issues per severity.
-         * Requires that DOM <div> elements exist with the IDs '#severities-chart', '#single-severities-chart'.
-         */
-        view.getSeverityModel(function (severityModel) {
-            $('#severities-chart').renderPieChart(severityModel.responseJSON, true); // small screens
-            $('#single-severities-chart').renderPieChart(severityModel.responseJSON, false); // large screens
-        });
-        /**
-         * Creates a doughnut chart that shows the number of new, fixed and outstanding issues.
-         * Requires that DOM <div> elements exist with the IDs '#trend-chart', '#single-trend-chart'.
-         */
-        view.getTrendModel(function (pieModel) {
-            $('#trend-chart').renderPieChart(pieModel.responseJSON, true);
-            $('#single-trend-chart').renderPieChart(pieModel.responseJSON, false);
-        });
-
-        storeAndRestoreCarousel('overview-carousel');
-    }
-
-    /**
      * Redraws the trend charts. Reads the last selected X-Axis type from the browser local storage and
      * redraws the trend charts.
      */
@@ -92,7 +64,7 @@
          * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
          */
         view.getBuildTrend(isBuildOnXAxis, function (lineModel) {
-            $('#severities-trend-chart').renderTrendChart(lineModel.responseJSON, redrawTrendCharts);
+            renderZoomableTrendChart('severities-trend-chart', lineModel.responseJSON, redrawTrendCharts);
         });
 
         /**
@@ -100,7 +72,7 @@
          * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
          */
         view.getToolsTrend(isBuildOnXAxis, function (lineModel) {
-            $('#tools-trend-chart').renderTrendChart(lineModel.responseJSON, redrawTrendCharts);
+            renderZoomableTrendChart('tools-trend-chart', lineModel.responseJSON, redrawTrendCharts);
         });
 
         /**
@@ -108,7 +80,7 @@
          * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
          */
         view.getNewVersusFixedTrend(isBuildOnXAxis, function (lineModel) {
-            $('#new-versus-fixed-trend-chart').renderTrendChart(lineModel.responseJSON, redrawTrendCharts);
+            renderZoomableTrendChart('new-versus-fixed-trend-chart', lineModel.responseJSON, redrawTrendCharts);
         });
 
         /**
@@ -117,7 +89,7 @@
          */
         if ($('#health-trend-chart').length) {
             view.getHealthTrend(isBuildOnXAxis, function (lineModel) {
-                $('#health-trend-chart').renderTrendChart(lineModel.responseJSON, redrawTrendCharts);
+                renderZoomableTrendChart('health-trend-chart', lineModel.responseJSON, redrawTrendCharts);
             });
         }
     }
@@ -132,8 +104,10 @@
         const carousel = $('#' + carouselId);
         carousel.on('slid.bs.carousel', function (e) {
             localStorage.setItem(carouselId, e.to);
-            var chart = $(e.relatedTarget).find('>:first-child').data('chart');
-            chart.resize();
+            const chart = $(e.relatedTarget).find('>:first-child')[0].echart;
+            if (chart) {
+                chart.resize();
+            }
         });
         const activeCarousel = localStorage.getItem(carouselId);
         if (activeCarousel) {

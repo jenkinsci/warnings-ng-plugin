@@ -4,10 +4,15 @@ import java.util.List;
 
 import edu.hm.hafner.analysis.Severity;
 
-import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
-import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.api.charts.LineSeries;
+import io.jenkins.plugins.echarts.api.charts.LineSeries.FilledMode;
+import io.jenkins.plugins.echarts.api.charts.LineSeries.StackedMode;
+import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
+import io.jenkins.plugins.echarts.api.charts.LinesDataSet;
 
 /**
  * Builds the model for a trend chart showing all issues by severity for a given number of builds.
@@ -16,13 +21,13 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
  */
 public class SeverityTrendChart implements TrendChart {
     @Override
-    public LinesChartModel create(final Iterable<? extends AnalysisBuildResult> results,
+    public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
         LinesChartModel model = new LinesChartModel();
-        model.setXAxisLabels(dataSet.getXAxisLabels());
+        model.setDomainAxisLabels(dataSet.getDomainAxisLabels());
         model.setBuildNumbers(dataSet.getBuildNumbers());
 
         Severity[] visibleSeverities

@@ -38,12 +38,12 @@
     <forensics-api-plugin.version>0.6.1</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.6.0</git-forensics-plugin.version>
 
-    <font-awesome-api.version>5.10.1-1-beta1</font-awesome-api.version>
-    <jquery3-api.version>3.4.1-1-beta1</jquery3-api.version>
-    <popper-api.version>1.15.0-1-beta1</popper-api.version>
-    <bootstrap4-api.version>4.1.3-1-beta2</bootstrap4-api.version>
-    <data-tables-api.version>1.10.20-1-beta3</data-tables-api.version>
-    <echarts-api.version>4.4.0-1-beta1</echarts-api.version>
+    <font-awesome-api.version>5.11.2-1-beta1-rc47.a93da8514fdd</font-awesome-api.version>
+    <jquery3-api.version>3.4.1-1-beta2-rc53.c40ba34317aa</jquery3-api.version>
+    <popper-api.version>1.15.0-1-beta2-rc50.5cd401532679</popper-api.version>
+    <bootstrap4-api.version>4.1.3-1-beta3-rc53.60aeeb03da2a</bootstrap4-api.version>
+    <data-tables-api.version>1.10.20-1-beta4-rc72.fab652dc6fb9</data-tables-api.version>
+    <echarts-api.version>4.4.0-1-beta2-rc58.15401a03cb88</echarts-api.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>

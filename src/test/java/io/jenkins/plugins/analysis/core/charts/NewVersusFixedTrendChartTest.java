@@ -6,6 +6,11 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.api.charts.LineSeries;
+import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
+import io.jenkins.plugins.echarts.api.charts.Palette;
 
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
@@ -20,7 +25,7 @@ class NewVersusFixedTrendChartTest {
     void shouldCreateALinesChartModel() {
         NewVersusFixedTrendChart chart = new NewVersusFixedTrendChart();
 
-        List<AnalysisBuildResult> results = new ArrayList<>();
+        List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();
         results.add(createResultWithNewAndFixedIssues(2, 20, 21));
         results.add(createResultWithNewAndFixedIssues(1, 10, 11));
 
@@ -29,7 +34,7 @@ class NewVersusFixedTrendChartTest {
         verifySeries(model.getSeries().get(0), Palette.RED, "New", 10, 20);
         verifySeries(model.getSeries().get(1), Palette.GREEN, "Fixed", 11, 21);
 
-        assertThatJson(model).node("xAxisLabels")
+        assertThatJson(model).node("domainAxisLabels")
                 .isArray().hasSize(2)
                 .contains("#1")
                 .contains("#2");
@@ -38,7 +43,8 @@ class NewVersusFixedTrendChartTest {
                 .isArray().hasSize(2);
     }
 
-    private void verifySeries(final LineSeries series, final Palette normalColor, final String newVersusFixedSeriesBuilderName, final int... values) {
+    private void verifySeries(final LineSeries series, final Palette normalColor,
+            final String newVersusFixedSeriesBuilderName, final int... values) {
         assertThatJson(series).node("itemStyle").node("color").isEqualTo(normalColor.getNormal());
         assertThatJson(series).node("name").isString().isEqualTo(newVersusFixedSeriesBuilderName);
         for (int value : values) {

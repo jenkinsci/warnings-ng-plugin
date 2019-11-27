@@ -1,6 +1,9 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
 
 /**
  * Creates a model for a trend chart of a given number of static analysis build results.
@@ -16,5 +19,6 @@ public interface TrendChart {
      *
      * @return the chart model
      */
-    LinesChartModel create(Iterable<? extends AnalysisBuildResult> results, ChartModelConfiguration configuration);
+    LinesChartModel create(Iterable<? extends BuildResult<AnalysisBuildResult>> results,
+            ChartModelConfiguration configuration);
 }

@@ -16,9 +16,9 @@ import hudson.model.BallColor;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
-import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
 import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.echarts.api.charts.Build;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -156,9 +156,7 @@ class SummaryTest {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0);
         when(analysisResult.getTotalSize()).thenReturn(0);
-        AnalysisBuild build = mock(AnalysisBuild.class);
-        when(build.getNumber()).thenReturn(1);
-        when(analysisResult.getBuild()).thenReturn(build);
+        when(analysisResult.getBuild()).thenReturn(new Build(1));
         when(analysisResult.getNoIssuesSinceBuild()).thenReturn(3);
         String createdHtml = createSummary(analysisResult).create();
         assertThat(createdHtml).doesNotContain("No warnings for");
@@ -343,9 +341,7 @@ class SummaryTest {
         when(run.getUrl()).thenReturn("job/my-job/15");
         when(analysisRun.getReferenceBuild()).thenReturn(Optional.of(run));
 
-        AnalysisBuild build = mock(AnalysisBuild.class);
-        when(build.getNumber()).thenReturn(2);
-        when(analysisRun.getBuild()).thenReturn(build);
+        when(analysisRun.getBuild()).thenReturn(new Build(2));
 
         return analysisRun;
     }

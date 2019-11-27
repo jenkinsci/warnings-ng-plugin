@@ -8,10 +8,13 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
+
 /**
  * History of analysis results.
  */
-public interface History extends Iterable<AnalysisResult> {
+public interface History extends Iterable<BuildResult<AnalysisBuildResult>> {
     /**
      * Returns the baseline action (if already available).
      *
@@ -50,7 +53,7 @@ public interface History extends Iterable<AnalysisResult> {
 
     @Override
     @NonNull
-    Iterator<AnalysisResult> iterator();
+    Iterator<BuildResult<AnalysisBuildResult>> iterator();
 
     /**
      * Returns whether this history has more than one result.

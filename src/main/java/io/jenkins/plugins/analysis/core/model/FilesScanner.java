@@ -100,20 +100,20 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         }
     }
 
-    private void aggregateIssuesOfFile(final Path file, final Report report) {
+    private void aggregateIssuesOfFile(final Path file, final Report aggregatedReport) {
         try {
-            Report result = parser.parse(new FileReaderFactory(file, new ModelValidation().getCharset(encoding)));
-            report.addAll(result);
-            report.logInfo("Successfully parsed file %s", file);
-            report.logInfo("-> found %s (skipped %s)",
-                    plural(report.getSize(), "issue"),
-                    plural(report.getDuplicatesSize(), "duplicate"));
+            Report fileReport = parser.parse(new FileReaderFactory(file, new ModelValidation().getCharset(encoding)));
+            aggregatedReport.addAll(fileReport);
+            aggregatedReport.logInfo("Successfully parsed file %s", file);
+            aggregatedReport.logInfo("-> found %s (skipped %s)",
+                    plural(fileReport.getSize(), "issue"),
+                    plural(fileReport.getDuplicatesSize(), "duplicate"));
         }
         catch (ParsingException exception) {
-            report.logException(exception, "Parsing of file '%s' failed due to an exception:", file);
+            aggregatedReport.logException(exception, "Parsing of file '%s' failed due to an exception:", file);
         }
         catch (ParsingCanceledException ignored) {
-            report.logInfo("Parsing of file %s has been canceled", file);
+            aggregatedReport.logInfo("Parsing of file %s has been canceled", file);
         }
     }
 

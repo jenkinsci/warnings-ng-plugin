@@ -23,8 +23,6 @@ import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration;
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
@@ -41,6 +39,8 @@ import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.datatables.api.DefaultAsyncTableContentProvider;
 import io.jenkins.plugins.datatables.api.TableModel;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration.AxisType;
 
 /**
  * Build view that shows the details for a subset of issues.

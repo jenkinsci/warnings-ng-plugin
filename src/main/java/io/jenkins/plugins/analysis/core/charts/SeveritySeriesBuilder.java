@@ -6,13 +6,14 @@ import java.util.Map;
 import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.echarts.api.charts.SeriesBuilder;
 
 /**
  * Builds the series for a stacked line chart showing all issues by severity.
  *
  * @author Ullrich Hafner
  */
-public class SeveritySeriesBuilder extends SeriesBuilder {
+public class SeveritySeriesBuilder extends SeriesBuilder<AnalysisBuildResult> {
     @Override
     protected Map<String, Integer> computeSeries(final AnalysisBuildResult current) {
         Map<String, Integer> series = new HashMap<>();

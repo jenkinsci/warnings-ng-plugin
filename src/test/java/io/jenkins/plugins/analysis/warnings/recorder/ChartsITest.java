@@ -19,13 +19,13 @@ import hudson.model.Result;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.TimeFacade;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel.PieChartType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel.TrendChartType;
+import io.jenkins.plugins.echarts.api.charts.TimeFacade;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;

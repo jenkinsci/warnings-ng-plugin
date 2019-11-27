@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.portlets;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,14 +15,14 @@ import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration;
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
-import io.jenkins.plugins.analysis.core.charts.CompositeResult;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration.AxisType;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
@@ -127,7 +128,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
     public String getTrend() {
         SeverityTrendChart severityChart = new SeverityTrendChart();
 
-        List<Iterable<? extends AnalysisBuildResult>> histories = jobs.stream()
+        List<Iterable<BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
                 .filter(job -> job.getLastCompletedBuild() != null)
                 .map(Job::getLastCompletedBuild)
                 .flatMap(build -> build.getActions(ResultAction.class)
@@ -136,7 +137,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
                 .map(ResultAction::createBuildHistory).collect(Collectors.toList());
 
         return new JacksonFacade().toJson(
-                severityChart.create(new CompositeResult(histories), new ChartModelConfiguration(AxisType.DATE)));
+                severityChart.create(Collections.emptyList(), new ChartModelConfiguration(AxisType.DATE)));
     }
 
     /**

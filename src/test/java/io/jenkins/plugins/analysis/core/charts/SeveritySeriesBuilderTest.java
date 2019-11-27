@@ -4,8 +4,11 @@ import org.junit.jupiter.api.Test;
 
 import com.google.common.collect.Lists;
 
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration.AxisType;
+import io.jenkins.plugins.echarts.api.charts.LinesDataSet;
 
 import static edu.hm.hafner.analysis.Severity.*;
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
@@ -25,7 +28,7 @@ class SeveritySeriesBuilderTest {
 
         LinesDataSet model = builder.createDataSet(createConfiguration(), Lists.newArrayList());
 
-        assertThat(model.getXAxisSize()).isEqualTo(0);
+        assertThat(model.getDomainAxisSize()).isEqualTo(0);
         assertThat(model.getDataSetIds()).isEmpty();
     }
 
@@ -43,12 +46,12 @@ class SeveritySeriesBuilderTest {
     void shouldHaveThreeValuesForSingleBuild() {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
 
-        AnalysisBuildResult singleResult = createResult(1, 0, 1, 2, 3);
+        BuildResult<AnalysisBuildResult> singleResult = createResult(1, 0, 1, 2, 3);
 
         LinesDataSet dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList(singleResult));
 
-        assertThat(dataSet.getXAxisSize()).isEqualTo(1);
-        assertThat(dataSet.getXAxisLabels()).containsExactly("#1");
+        assertThat(dataSet.getDomainAxisSize()).isEqualTo(1);
+        assertThat(dataSet.getDomainAxisLabels()).containsExactly("#1");
 
         assertThat(dataSet.getDataSetIds()).containsExactlyInAnyOrder(
                 ERROR.getName(), WARNING_HIGH.getName(), WARNING_NORMAL.getName(), WARNING_LOW.getName());
@@ -77,8 +80,8 @@ class SeveritySeriesBuilderTest {
                 createResult(1, 1000, 100, 10, 1)
         ));
 
-        assertThat(dataSet.getXAxisSize()).isEqualTo(3);
-        assertThat(dataSet.getXAxisLabels()).containsExactly("#2", "#3", "#4");
+        assertThat(dataSet.getDomainAxisSize()).isEqualTo(3);
+        assertThat(dataSet.getDomainAxisLabels()).containsExactly("#2", "#3", "#4");
 
         assertThat(dataSet.getDataSetIds()).containsExactlyInAnyOrder(
                 ERROR.getName(), WARNING_HIGH.getName(), WARNING_NORMAL.getName(), WARNING_LOW.getName());

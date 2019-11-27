@@ -6,6 +6,8 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.echarts.api.charts.PieChartModel;
+import io.jenkins.plugins.echarts.api.charts.PieData;
 
 /**
  * Builds the model for a pie chart showing the distribution of issues by severity.

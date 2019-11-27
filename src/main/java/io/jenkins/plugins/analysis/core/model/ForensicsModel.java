@@ -53,7 +53,7 @@ public class ForensicsModel extends DetailsTableModel {
         List<TableColumn> columns = new ArrayList<>();
 
         columns.add(createDetailsColumn());
-        columns.add(createFileColumn());
+        columns.add(createFileColumn().setWidth(2));
         columns.add(createAgeColumn());
         columns.add(new TableColumn(Messages.Table_Column_AuthorsSize(), "authorsSize"));
         columns.add(new TableColumn(Messages.Table_Column_CommitsSize(), "commitsSize"));

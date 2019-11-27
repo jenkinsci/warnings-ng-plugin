@@ -2,6 +2,10 @@ package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Report;
 
+import io.jenkins.plugins.echarts.api.charts.Palette;
+import io.jenkins.plugins.echarts.api.charts.PieChartModel;
+import io.jenkins.plugins.echarts.api.charts.PieData;
+
 /**
  * Builds the model for a pie chart showing the number of new, fixed, and outstanding issues.
  *

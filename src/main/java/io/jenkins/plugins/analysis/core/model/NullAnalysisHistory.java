@@ -9,6 +9,9 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.echarts.api.charts.BuildResult;
+
 /**
  * Empty build history.
  *
@@ -42,7 +45,7 @@ public class NullAnalysisHistory implements History {
 
     @NonNull
     @Override
-    public Iterator<AnalysisResult> iterator() {
+    public Iterator<BuildResult<AnalysisBuildResult>> iterator() {
         return Collections.emptyIterator();
     }
 
