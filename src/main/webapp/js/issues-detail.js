@@ -1,4 +1,4 @@
-/* global jQuery, view */
+/* global jQuery, view, renderZoomableTrendChart */
 (function ($) {
     redrawTrendCharts();
     storeAndRestoreCarousel('trend-carousel');

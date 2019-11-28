@@ -35,7 +35,7 @@ public class ForensicsModel extends DetailsTableModel {
 
     private final RepositoryStatistics statistics;
 
-    public ForensicsModel(final Report report, final RepositoryStatistics statistics,
+    ForensicsModel(final Report report, final RepositoryStatistics statistics,
             final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
             final DescriptionProvider labelProvider) {
         super(report, fileNameRenderer, ageBuilder, labelProvider);

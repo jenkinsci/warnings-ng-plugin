@@ -1295,7 +1295,7 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
-    @SuppressWarnings("PMD.SystemPrintln")
+    @SuppressWarnings({"PMD.AvoidPrintStackTrace", "PMD.SystemPrintln"})
     private static class IntegrationTestJavaScriptErrorListener implements JavaScriptErrorListener {
         /**
          * Informs about a javascript exceptions.
