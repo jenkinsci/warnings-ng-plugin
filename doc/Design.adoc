@@ -1,0 +1,26 @@
+= Warnings Plugin Design
+Ullrich Hafner <ullrich.hafner@gmail.com>
+
+:xrefstyle: short
+
+ifndef::imagesdir[:imagesdir: images]
+ifndef::plantUMLDir[:plantUMLDir: .plantuml/]
+
+The Jenkins Warnings Next Generation Plugin is depending on several other Jenkins plugins. The most important modules
+are shown in the <<dependencies>>.
+
+[[dependencies]]
+[plantuml]
+.Plugin Dependencies
+----
+include::design.puml[Plugin Dependencies]
+----
+
+== Attributes
+
+.Built-in
+asciidoctor-version:: {asciidoctor-version}
+safe-mode-name:: {safe-mode-name}
+docdir:: {docdir}
+docfile:: {docfile}
+imagesdir:: {imagesdir}
