@@ -19,7 +19,7 @@ categories:
       - fix
       - bugfix
       - regression
-  - title: 📖 Documentation updates
+  - title: 📝 Documentation updates
     label: documentation
   - title: 📦 Dependency updates
     label: dependencies
