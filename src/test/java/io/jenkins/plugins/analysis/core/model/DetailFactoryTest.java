@@ -20,8 +20,9 @@ import edu.hm.hafner.analysis.Severity;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -147,8 +148,9 @@ class DetailFactoryTest {
     @Test
     void shouldCreateConsoleDetailForSourceLinksIfFileNameIsSelf() {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.readConsoleLog(any())).thenReturn(createLines());
-        DetailFactory detailFactory = new DetailFactory(jenkins);
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        when(buildFolder.readConsoleLog(any())).thenReturn(createLines());
+        DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
         Report report = new Report();
 
         IssueBuilder issueBuilder = new IssueBuilder();
@@ -169,9 +171,10 @@ class DetailFactoryTest {
     @Test
     void shouldShowExceptionMessageIfAffectedFileIsNotReadable() throws IOException {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.readBuildFile(any(), anyString(), any())).thenThrow(new IOException("file error"));
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        when(buildFolder.readFile(any(), anyString(), any())).thenThrow(new IOException("file error"));
 
-        DetailFactory detailFactory = new DetailFactory(jenkins);
+        DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
         Report report = new Report();
 
         IssueBuilder issueBuilder = new IssueBuilder();
@@ -192,9 +195,10 @@ class DetailFactoryTest {
     @Test
     void shouldReturnSourceDetailWhenCalledWithSourceLinkAndIssueNotInConsoleLog() throws IOException {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
-        when(jenkins.readBuildFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        when(buildFolder.readFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
 
-        DetailFactory detailFactory = new DetailFactory(jenkins);
+        DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
         Report report = new Report();
 
         IssueBuilder issueBuilder = new IssueBuilder();

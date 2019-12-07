@@ -4,6 +4,7 @@ import hudson.util.XStream2;
 
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.util.AbstractXmlStream;
 
 /**
  * Reads {@link RepositoryStatistics} from an XML file.
@@ -16,16 +17,13 @@ class RepositoryStatisticsXmlStream extends AbstractXmlStream<RepositoryStatisti
     }
 
     @Override
-    protected RepositoryStatistics createDefaultValue() {
+    public RepositoryStatistics createDefaultValue() {
         return new RepositoryStatistics();
     }
 
     @Override
-    protected XStream2 createStream() {
-        XStream2 xStream2 = new XStream2();
-        xStream2.alias("repo", RepositoryStatistics.class);
-        xStream2.alias("file", FileStatistics.class);
-        return xStream2;
+    protected void configureXStream(final XStream2 xStream) {
+        xStream.alias("repo", RepositoryStatistics.class);
+        xStream.alias("file", FileStatistics.class);
     }
-
 }

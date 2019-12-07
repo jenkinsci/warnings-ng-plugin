@@ -14,8 +14,8 @@ import edu.hm.hafner.util.SerializableTest;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser.DescriptorImpl;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;

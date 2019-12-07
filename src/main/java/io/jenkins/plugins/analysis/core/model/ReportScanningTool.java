@@ -24,9 +24,9 @@ import hudson.util.FormValidation;
 
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
-import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.util.EnvironmentResolver;
 
 /**
  * Describes a static analysis tool that reports issues by scanning a report file. Report files are identified using an

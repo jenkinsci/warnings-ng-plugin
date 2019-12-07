@@ -32,11 +32,12 @@
     <!-- Project Dependencies Configuration -->
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <codingstyle.version>0.2.7</codingstyle.version>
+    <codingstyle.version>0.3.0</codingstyle.version>
     <analysis-model-api.version>7.0.2</analysis-model-api.version>
     <analysis-model.version>7.0.2</analysis-model.version>
-    <forensics-api-plugin.version>0.6.1</forensics-api-plugin.version>
+    <forensics-api-plugin.version>0.6.2-rc264.1e3082f9c320</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.6.0</git-forensics-plugin.version>
+    <plugin-util-api.version>0.1.0-beta1-rc10.5177988a84e6</plugin-util-api.version>
 
     <font-awesome-api.version>5.11.2-1-beta1-rc47.a93da8514fdd</font-awesome-api.version>
     <jquery3-api.version>3.4.1-1-beta2-rc53.c40ba34317aa</jquery3-api.version>
@@ -298,6 +299,11 @@
     <!-- Required Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
       <artifactId>analysis-model-api</artifactId>
       <version>${analysis-model-api.version}</version>
     </dependency>
@@ -509,6 +515,21 @@
       <artifactId>xmlunit</artifactId>
       <version>${xmlunit.version}</version>
       <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>edu.hm.hafner</groupId>
+      <artifactId>codingstyle</artifactId>
+      <version>${codingstyle.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
     </dependency>
 
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->

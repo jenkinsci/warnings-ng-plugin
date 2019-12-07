@@ -10,8 +10,10 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
 
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
+import hudson.model.Run;
+
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.datatables.api.TableColumn;
 import io.jenkins.plugins.datatables.api.TableModel.DetailedColumnDefinition;
 
@@ -74,8 +76,8 @@ public abstract class AbstractDetailsModelTest {
      */
     protected FileNameRenderer createFileNameRenderer() {
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
-        return new FileNameRenderer(buildFolder);
+        when(buildFolder.canAccessAffectedFileOf(any(), any())).thenReturn(true);
+        return new FileNameRenderer(mock(Run.class), buildFolder);
     }
 
     /**

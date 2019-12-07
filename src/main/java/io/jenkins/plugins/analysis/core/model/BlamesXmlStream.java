@@ -4,6 +4,7 @@ import hudson.util.XStream2;
 
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
+import io.jenkins.plugins.util.AbstractXmlStream;
 
 /**
  * Reads {@link Blames} from an XML file.
@@ -16,18 +17,15 @@ class BlamesXmlStream extends AbstractXmlStream<Blames> {
     }
 
     @Override
-    protected Blames createDefaultValue() {
+    public Blames createDefaultValue() {
         return new Blames();
     }
 
     @Override
-    protected XStream2 createStream() {
-        XStream2 xStream2 = new XStream2();
-        xStream2.alias("io.jenkins.plugins.analysis.core.scm.Blames", Blames.class);
-        xStream2.alias("io.jenkins.plugins.analysis.core.scm.BlameRequest", FileBlame.class);
-        xStream2.alias("blames", Blames.class);
-        xStream2.alias("blame", FileBlame.class);
-        return xStream2;
+    protected void configureXStream(final XStream2 xStream) {
+        xStream.alias("io.jenkins.plugins.analysis.core.scm.Blames", Blames.class);
+        xStream.alias("io.jenkins.plugins.analysis.core.scm.BlameRequest", FileBlame.class);
+        xStream.alias("blames", Blames.class);
+        xStream.alias("blame", FileBlame.class);
     }
-
 }

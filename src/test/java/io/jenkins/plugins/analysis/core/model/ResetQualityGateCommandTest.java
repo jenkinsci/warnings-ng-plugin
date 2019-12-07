@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import hudson.model.FreeStyleBuild;
 import hudson.model.Item;
 
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;

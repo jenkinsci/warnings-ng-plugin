@@ -11,7 +11,7 @@ import hudson.DescriptorExtensionList;
 import hudson.ExtensionPoint;
 
 import io.jenkins.plugins.analysis.core.model.Tool.ToolDescriptor;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Creates {@link StaticAnalysisLabelProvider} instances based on a provided ID and name.

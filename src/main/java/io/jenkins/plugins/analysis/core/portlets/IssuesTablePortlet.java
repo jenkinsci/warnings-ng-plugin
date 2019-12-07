@@ -28,8 +28,8 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 import static j2html.TagCreator.*;

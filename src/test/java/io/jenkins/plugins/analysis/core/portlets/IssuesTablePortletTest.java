@@ -11,7 +11,7 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.PortletTableModel;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Result;
 import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.TableRow;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
 import static org.assertj.core.api.Assertions.*;

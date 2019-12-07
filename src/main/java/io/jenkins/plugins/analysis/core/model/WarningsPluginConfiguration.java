@@ -16,8 +16,8 @@ import hudson.Extension;
 import hudson.FilePath;
 import jenkins.model.GlobalConfiguration;
 
-import io.jenkins.plugins.analysis.core.util.GlobalConfigurationFacade;
-import io.jenkins.plugins.analysis.core.util.GlobalConfigurationItem;
+import io.jenkins.plugins.util.GlobalConfigurationFacade;
+import io.jenkins.plugins.util.GlobalConfigurationItem;
 
 /**
  * Global system configuration of the warnings plugin. These configuration options are used globally for all jobs and

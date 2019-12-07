@@ -119,7 +119,7 @@ public class AggregatedTrendAction extends InvisibleAction {
         private Optional<Run<?, ?>> latestAction;
 
         CompositeIterator(final Run<?, ?> current) {
-            this.latestAction = Optional.of(current);
+            latestAction = Optional.of(current);
         }
 
         @Override
@@ -146,5 +146,4 @@ public class AggregatedTrendAction extends InvisibleAction {
             return new BuildResult<>(new Build(run), compositeBuildResult);
         }
     }
-
 }

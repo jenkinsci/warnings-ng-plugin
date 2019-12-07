@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import org.junit.jupiter.api.Test;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
-import com.google.common.collect.Lists;
+import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.echarts.api.charts.BuildResult;
@@ -26,7 +28,7 @@ class SeveritySeriesBuilderTest {
     void shouldHaveEmptyDataSetForEmptyIterator() {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
 
-        LinesDataSet model = builder.createDataSet(createConfiguration(), Lists.newArrayList());
+        LinesDataSet model = builder.createDataSet(createConfiguration(), new ArrayList<>());
 
         assertThat(model.getDomainAxisSize()).isEqualTo(0);
         assertThat(model.getDataSetIds()).isEmpty();
@@ -48,7 +50,7 @@ class SeveritySeriesBuilderTest {
 
         BuildResult<AnalysisBuildResult> singleResult = createResult(1, 0, 1, 2, 3);
 
-        LinesDataSet dataSet = builder.createDataSet(createConfiguration(), Lists.newArrayList(singleResult));
+        LinesDataSet dataSet = builder.createDataSet(createConfiguration(), Collections.singleton(singleResult));
 
         assertThat(dataSet.getDomainAxisSize()).isEqualTo(1);
         assertThat(dataSet.getDomainAxisLabels()).containsExactly("#1");
@@ -73,7 +75,7 @@ class SeveritySeriesBuilderTest {
         when(configuration.getBuildCount()).thenReturn(3);
         when(configuration.isBuildCountDefined()).thenReturn(true);
 
-        LinesDataSet dataSet = builder.createDataSet(configuration, Lists.newArrayList(
+        LinesDataSet dataSet = builder.createDataSet(configuration, Arrays.asList(
                 createResult(4, 4000, 400, 40, 4),
                 createResult(3, 3000, 300, 30, 3),
                 createResult(2, 2000, 200, 20, 2),

@@ -24,6 +24,7 @@ import edu.hm.hafner.analysis.ModuleResolver;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+import edu.hm.hafner.util.FilteredLog;
 
 import hudson.FilePath;
 import hudson.model.Computer;
@@ -50,7 +51,6 @@ import io.jenkins.plugins.forensics.miner.MinerFactory;
 import io.jenkins.plugins.forensics.miner.RepositoryMiner;
 import io.jenkins.plugins.forensics.miner.RepositoryMiner.NullMiner;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
-import io.jenkins.plugins.forensics.util.FilteredLog;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
@@ -301,10 +301,12 @@ class IssuesScanner {
             if (fileLocations.isEmpty()) {
                 return new Blames();
             }
-            Blames blames = blamer.blame(fileLocations);
-            blames.logSummary();
-            blames.getInfoMessages().forEach(filtered::logInfo);
-            blames.getErrorMessages().forEach(filtered::logError);
+            FilteredLog log = new FilteredLog(
+                    "Errors while extracting author and commit information from Git:");
+            Blames blames = blamer.blame(fileLocations, log);
+            log.logSummary();
+            log.getInfoMessages().forEach(filtered::logInfo);
+            log.getErrorMessages().forEach(filtered::logError);
             return blames;
         }
 

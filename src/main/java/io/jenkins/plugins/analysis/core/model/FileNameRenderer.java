@@ -9,7 +9,7 @@ import j2html.tags.DomContent;
 
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 
 import static j2html.TagCreator.*;
@@ -22,6 +22,7 @@ import static j2html.TagCreator.*;
  */
 public class FileNameRenderer {
     private final BuildFolderFacade facade;
+    private final Run<?, ?> build;
 
     /**
      * Creates a new {@link FileNameRenderer}.
@@ -30,18 +31,21 @@ public class FileNameRenderer {
      *         the build to obtain the affected file from
      */
     public FileNameRenderer(final Run<?, ?> build) {
-        this(new BuildFolderFacade(build));
+        this(build, new BuildFolderFacade());
     }
 
     /**
      * Creates a new {@link FileNameRenderer}.
      *
+     * @param build
+     *         the build to obtain the affected file from
      * @param facade
      *         facade to the build folder that contains the affected files
      */
     @VisibleForTesting
-    public FileNameRenderer(final BuildFolderFacade facade) {
+    public FileNameRenderer(final Run<?, ?> build, final BuildFolderFacade facade) {
         this.facade = facade;
+        this.build = build;
     }
 
     /**
@@ -85,7 +89,7 @@ public class FileNameRenderer {
             return a().withHref(prefix + getSourceCodeUrl(issue))
                     .withText(getFileNameAtLine(issue));
         }
-        else if (facade.canAccessAffectedFileOf(issue)) {
+        else if (facade.canAccessAffectedFileOf(build, issue)) {
             return a().withHref(prefix + getSourceCodeUrl(issue))
                     .withText(getFileNameAtLine(issue))
                     .attr("data-toggle", "tooltip")
@@ -135,29 +139,6 @@ public class FileNameRenderer {
         }
         else {
             return issue.getBaseName();
-        }
-    }
-
-    /**
-     * Encapsulates access to the files in Jenkins' build folder.
-     */
-    public static class BuildFolderFacade {
-        private final Run<?, ?> build;
-
-        BuildFolderFacade(final Run<?, ?> build) {
-            this.build = build;
-        }
-
-        /**
-         * Returns whether the affected file of the specified issue can be accessed.
-         *
-         * @param issue
-         *         the issue to check the affected file for
-         *
-         * @return {@code true} if the affected file of the specified issue can be accessed, {@code false} otherwise
-         */
-        public boolean canAccessAffectedFileOf(final Issue issue) {
-            return AffectedFilesResolver.hasAffectedFile(build, issue);
         }
     }
 }

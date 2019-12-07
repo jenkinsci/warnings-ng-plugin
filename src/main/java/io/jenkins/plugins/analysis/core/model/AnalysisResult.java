@@ -29,13 +29,13 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 import io.jenkins.plugins.echarts.api.charts.Build;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Stores the results of a static analysis run. Provides support for persisting the results of the build and loading and

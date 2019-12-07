@@ -11,7 +11,7 @@ import hudson.model.Job;
 import hudson.util.ComboBoxModel;
 
 import io.jenkins.plugins.analysis.core.model.ToolSelection.ToolSelectionDescriptor;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
