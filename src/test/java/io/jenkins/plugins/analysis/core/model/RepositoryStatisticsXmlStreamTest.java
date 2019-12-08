@@ -25,8 +25,10 @@ class RepositoryStatisticsXmlStreamTest extends ResourceTest {
     @Test
     void shouldWriteReport() {
         RepositoryStatistics statistics = new RepositoryStatistics();
-        FileStatistics fileStatistics = new FileStatistics(FILE, ONE_DAY * 5);
+        FileStatistics fileStatistics = new FileStatistics(FILE);
         fileStatistics.inspectCommit(ONE_DAY * 4, "name");
+        fileStatistics.inspectCommit(ONE_DAY * 3, "another");
+        fileStatistics.inspectCommit(ONE_DAY * 2, "another");
         statistics.add(fileStatistics);
 
         RepositoryStatisticsXmlStream stream = new RepositoryStatisticsXmlStream();
@@ -37,10 +39,10 @@ class RepositoryStatisticsXmlStreamTest extends ResourceTest {
 
         assertThat(restored).hasFiles(FILE);
         FileStatistics restoredFile = restored.get(FILE);
-        assertThat(restoredFile).hasAgeInDays(1);
-        assertThat(restoredFile).hasLastModifiedInDays(1);
-        assertThat(restoredFile).hasNumberOfAuthors(1);
-        assertThat(restoredFile).hasNumberOfCommits(1);
+        assertThat(restoredFile).hasNumberOfAuthors(2);
+        assertThat(restoredFile).hasNumberOfCommits(3);
+        assertThat(restoredFile).hasCreationTime(ONE_DAY * 2);
+        assertThat(restoredFile).hasLastModificationTime(ONE_DAY * 4);
     }
 
     private Path createTempFile() {

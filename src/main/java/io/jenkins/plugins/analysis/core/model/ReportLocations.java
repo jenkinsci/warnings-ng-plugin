@@ -35,7 +35,7 @@ public class ReportLocations {
      * @deprecated use {@link #toFileLocations(Report)}
      */
     @Deprecated
-    public FileLocations toFileLocations(final Report report, final String workspace) {
+    public FileLocations toFileLocations(final Report report, @SuppressWarnings("unused") final String workspace) {
         return toFileLocations(report);
     }
 }

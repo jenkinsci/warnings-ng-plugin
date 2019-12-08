@@ -288,10 +288,6 @@ class IssuesScanner {
             createFingerprints(filtered);
 
             FileLocations fileLocations = new ReportLocations().toFileLocations(filtered);
-            fileLocations.logSummary();
-            fileLocations.getInfoMessages().forEach(filtered::logInfo);
-            fileLocations.getErrorMessages().forEach(filtered::logError);
-
             return new AnnotatedReport(id, filtered,
                     blame(filtered, fileLocations),
                     mineRepository(filtered, fileLocations));
@@ -301,8 +297,7 @@ class IssuesScanner {
             if (fileLocations.isEmpty()) {
                 return new Blames();
             }
-            FilteredLog log = new FilteredLog(
-                    "Errors while extracting author and commit information from Git:");
+            FilteredLog log = new FilteredLog("Errors while extracting author and commit information from Git:");
             Blames blames = blamer.blame(fileLocations, log);
             log.logSummary();
             log.getInfoMessages().forEach(filtered::logInfo);
@@ -316,10 +311,11 @@ class IssuesScanner {
                 return new RepositoryStatistics();
             }
 
-            RepositoryStatistics statistics = miner.mine(fileLocations.getFiles());
-            statistics.logSummary();
-            statistics.getInfoMessages().forEach(filtered::logInfo);
-            statistics.getErrorMessages().forEach(filtered::logError);
+            FilteredLog log = new FilteredLog("Errors while mining source control repository:");
+            RepositoryStatistics statistics = miner.mine(fileLocations.getFiles(), log);
+            log.logSummary();
+            log.getInfoMessages().forEach(filtered::logInfo);
+            log.getErrorMessages().forEach(filtered::logError);
             return statistics;
         }
 
