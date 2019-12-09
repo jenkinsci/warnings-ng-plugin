@@ -27,6 +27,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
@@ -699,6 +700,6 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private final Map<Severity, Integer> newSizePerSeverity = new HashMap<>();
 
     public Build getBuild() {
-        return new Build(getOwner());
+        return new JenkinsBuild(getOwner());
     }
 }

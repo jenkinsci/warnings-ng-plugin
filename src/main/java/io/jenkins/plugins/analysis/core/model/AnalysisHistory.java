@@ -11,10 +11,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import hudson.model.Result;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.echarts.api.charts.Build;
 import io.jenkins.plugins.echarts.api.charts.BuildResult;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
@@ -241,7 +241,7 @@ public class AnalysisHistory implements History {
                 cursor = getRunWithResult(run.getPreviousBuild(), selector, IGNORE_QUALITY_GATE, IGNORE_JOB_RESULT);
 
                 if (resultAction.isPresent()) {
-                    return new BuildResult<>(new Build(run), resultAction.get().getResult());
+                    return new BuildResult<>(new JenkinsBuild(run), resultAction.get().getResult());
                 }
             }
 

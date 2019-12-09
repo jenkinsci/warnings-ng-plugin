@@ -15,10 +15,10 @@ import hudson.model.Job;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.charts.CompositeBuildResult;
+import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
-import io.jenkins.plugins.echarts.api.charts.Build;
 import io.jenkins.plugins.echarts.api.charts.BuildResult;
 import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
 import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
@@ -143,7 +143,7 @@ public class AggregatedTrendAction extends InvisibleAction {
             for (AnalysisResult result : results) {
                 compositeBuildResult.add(result);
             }
-            return new BuildResult<>(new Build(run), compositeBuildResult);
+            return new BuildResult<>(new JenkinsBuild(run), compositeBuildResult);
         }
     }
 }
