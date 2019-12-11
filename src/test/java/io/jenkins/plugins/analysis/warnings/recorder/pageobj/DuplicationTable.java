@@ -17,6 +17,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -69,6 +70,7 @@ public class DuplicationTable extends PageObject {
         assertThat(bodies).hasSize(1);
 
         HtmlTableBody mainBody = bodies.get(0);
+        waitForAjaxCall(mainBody);
         List<HtmlTableRow> contentRows = mainBody.getRows();
 
         for (HtmlTableRow row : contentRows) {

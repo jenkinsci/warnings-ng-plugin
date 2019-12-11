@@ -75,7 +75,7 @@ public class IssuesTable extends PageObject {
     }
 
     @SuppressWarnings("PMD.SystemPrintln")
-    private static void waitForAjaxCall(final HtmlTableBody body) {
+    static void waitForAjaxCall(final HtmlTableBody body) {
         while ("Loading - please wait ...".equals(
                 body.getRows().get(0).getCells().get(0).getFirstChild().getTextContent())) {
             System.out.println("Waiting for Ajax call to populate issues table ...");
