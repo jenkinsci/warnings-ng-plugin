@@ -65,7 +65,7 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
         RepositoryStatistics statistics = result.getForensics();
 
         assertThat(statistics).isEmpty();
-        assertThat(result.getInfoMessages()).contains("Skipping SCM forensics as requested");
+        assertThat(result.getInfoMessages()).contains("Skipping SCM repository mining as requested");
     }
 
     private WorkflowJob createJob(final String disableForensicsParameter) throws Exception {

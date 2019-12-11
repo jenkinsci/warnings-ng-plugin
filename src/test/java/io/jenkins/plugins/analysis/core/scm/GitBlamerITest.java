@@ -346,8 +346,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                 author("Git SampleRepoRule"),
                 email("gits@mplereporule"),
                 commit(commit),
-                age("1"),
-                added("TODO"));
+                age("1")).containsKey(BlamesColumn.ADDED);
     }
 
     private void assertColumnsOfRowLoremIpsum(final BlamesRow row, final int lineNumber, final String commitId) {
@@ -357,8 +356,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                 author("John Doe"),
                 email("john@doe"),
                 commit(commitId),
-                age("1"),
-                added("TODO"));
+                age("1")).containsKey(BlamesColumn.ADDED);
     }
 
     private void assertColumnsOfRowBob(final BlamesRow row, final String commitId, final int lineNumber) {
@@ -368,14 +366,13 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                 author("Alice Miller"),
                 email("alice@miller"),
                 commit(commitId),
-                age("1"),
-                added("TODO"));
+                age("1")).containsKey(BlamesColumn.ADDED);
     }
 
     private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
         assertThat(table.getColumns())
                 .containsExactly(BlamesColumn.DETAILS, BlamesColumn.FILE, BlamesColumn.AGE, BlamesColumn.AUTHOR,
-                        BlamesColumn.EMAIL, BlamesColumn.COMMIT);
+                        BlamesColumn.EMAIL, BlamesColumn.COMMIT, BlamesColumn.ADDED);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 10 of 11 entries");
         List<BlamesRow> rows = table.getRows();
         assertThat(rows).hasSize(10);
@@ -454,9 +451,5 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
 
     private MapEntry<BlamesColumn, String> file(final String file) {
         return entry(BlamesColumn.FILE, file);
-    }
-
-    private MapEntry<BlamesColumn, String> added(final String time) {
-        return entry(BlamesColumn.ADDED, time);
     }
 }
