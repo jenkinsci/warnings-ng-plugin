@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>3.53</version>
+    <version>3.54</version>
     <relativePath />
   </parent>
 
@@ -63,7 +63,7 @@
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.5.2</junit.version>
     <junit-platform-launcher.version>1.5.2</junit-platform-launcher.version>
-    <mockito.version>3.1.0</mockito.version>
+    <mockito.version>3.2.0</mockito.version>
     <assertj.version>3.14.0</assertj.version>
     <archunit.version>0.12.0</archunit.version>
     <json-unit-fluent.version>2.11.1</json-unit-fluent.version>
@@ -106,9 +106,9 @@
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
-    <pmd.version>6.19.0</pmd.version>
+    <pmd.version>6.20.0</pmd.version>
     <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
-    <checkstyle.version>8.26</checkstyle.version>
+    <checkstyle.version>8.27</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.12.2</spotbugs-maven-plugin.version>
     <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
     <maven-surefire.plugin>3.0.0-M4</maven-surefire.plugin>
