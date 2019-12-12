@@ -72,9 +72,9 @@
     <json-smart.version>2.3</json-smart.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <token-macro.version>2.5</token-macro.version>
+    <token-macro.version>2.8</token-macro.version>
     <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
-    <matrix-project.version>1.13</matrix-project.version>
+    <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>4.0.0</git-plugin.version>
     <workflow-api.version>2.34</workflow-api.version>
@@ -88,6 +88,20 @@
     <folder-plugin.version>6.1.2</folder-plugin.version>
     <credentials.version>2.3.0</credentials.version>
     <httpcomponents-client.version>4.5.10-1.0</httpcomponents-client.version>
+    <configuration-as-code.version>1.30</configuration-as-code.version>
+    <job-dsl.version>1.76</job-dsl.version>
+    <timestamper.version>1.9</timestamper.version>
+    <envinject.version>2.1.6</envinject.version>
+    <flexible-publish.version>0.15.2</flexible-publish.version>
+    <pipeline-stage-step.version>2.3</pipeline-stage-step.version>
+    <workflow-durable-task-step.version>2.15</workflow-durable-task-step.version>
+    <workflow-basic-steps.version>2.7</workflow-basic-steps.version>
+    <docker-fixtures.version>1.8</docker-fixtures.version>
+    <ssh-slaves.version>1.25</ssh-slaves.version>
+    <jdk-tool.version>1.2</jdk-tool.version>
+    <workflow-support.version>3.2</workflow-support.version>
+    <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
+    <form-element-path.version>1.8</form-element-path.version>
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
@@ -541,7 +555,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>form-element-path</artifactId>
-      <version>1.8</version>
+      <version>${form-element-path.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -566,19 +580,19 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>flexible-publish</artifactId>
-      <version>0.15.2</version>
+      <version>${flexible-publish.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>envinject</artifactId>
-      <version>2.1.6</version>
+      <version>${envinject.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>timestamper</artifactId>
-      <version>1.9</version>
+      <version>${timestamper.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -590,13 +604,13 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>job-dsl</artifactId>
-      <version>1.76</version>
+      <version>${job-dsl.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>
-      <version>1.30</version>
+      <version>${configuration-as-code.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -610,40 +624,40 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>pipeline-stage-step</artifactId>
-      <version>2.3</version>
+      <version>${pipeline-stage-step.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- node -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-durable-task-step</artifactId>
-      <version>2.15</version>
+      <version>${workflow-durable-task-step.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- recorder -> step -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-basic-steps</artifactId>
-      <version>2.7</version>
+      <version>${workflow-basic-steps.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- Docker Agents -->
     <dependency>
       <groupId>org.jenkins-ci.test</groupId>
       <artifactId>docker-fixtures</artifactId>
-      <version>1.8</version>
+      <version>${docker-fixtures.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ssh-slaves</artifactId>
-      <version>1.25</version>
+      <version>${ssh-slaves.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jdk-tool</artifactId>
-      <version>1.2</version>
+      <version>${jdk-tool.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -667,13 +681,13 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-support</artifactId>
-      <version>3.2</version>
+      <version>${workflow-support.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkinsci.plugins</groupId>
       <artifactId>pipeline-model-definition</artifactId>
-      <version>1.2</version>
+      <version>${pipeline-model-definition.version}</version>
       <scope>test</scope>
     </dependency>
 
