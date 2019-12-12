@@ -65,10 +65,7 @@ public class DuplicationTable extends PageObject {
                     "Details", "File", "Severity", "#Lines", "Duplicated In", "Age");
         }
 
-        while (table.getBodies().isEmpty()) {
-            System.out.println("Waiting for table to be initialized ...");
-            table.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
-        }
+        waitUntilTableIsInitialized(table);
 
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);
@@ -80,6 +77,14 @@ public class DuplicationTable extends PageObject {
         for (HtmlTableRow row : contentRows) {
             List<HtmlTableCell> rowCells = row.getCells();
             rows.add(new DuplicationRow(rowCells, hasPackages));
+        }
+    }
+
+    @SuppressWarnings("PMD.SystemPrintln")
+    private void waitUntilTableIsInitialized(final HtmlTable table) {
+        while (table.getBodies().isEmpty()) {
+            System.out.println("Waiting for table to be initialized ...");
+            table.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
         }
     }
 
