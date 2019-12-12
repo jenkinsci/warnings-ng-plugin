@@ -596,7 +596,7 @@
     <dependency>
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>
-      <version>1.18</version>
+      <version>1.30</version>
       <scope>test</scope>
     </dependency>
     <dependency>
