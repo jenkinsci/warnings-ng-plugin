@@ -17,7 +17,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import static io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -66,6 +65,11 @@ public class DuplicationTable extends PageObject {
                     "Details", "File", "Severity", "#Lines", "Duplicated In", "Age");
         }
 
+        while (table.getBodies().isEmpty()) {
+            System.out.println("Waiting for table to be initialized ...");
+            table.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
+        }
+
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);
 
@@ -76,6 +80,15 @@ public class DuplicationTable extends PageObject {
         for (HtmlTableRow row : contentRows) {
             List<HtmlTableCell> rowCells = row.getCells();
             rows.add(new DuplicationRow(rowCells, hasPackages));
+        }
+    }
+
+    @SuppressWarnings("PMD.SystemPrintln")
+    static void waitForAjaxCall(final HtmlTableBody body) {
+        while ("Loading - please wait ...".equals(
+                body.getRows().get(0).getCells().get(0).getFirstChild().getTextContent())) {
+            System.out.println("Waiting for Ajax call to populate issues table ...");
+            body.getPage().getEnclosingWindow().getJobManager().waitForJobs(1000);
         }
     }
 
