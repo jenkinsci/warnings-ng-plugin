@@ -35,7 +35,7 @@
     <codingstyle.version>0.3.0</codingstyle.version>
     <analysis-model-api.version>8.0.0-beta1</analysis-model-api.version>
     <analysis-model.version>8.0.0-beta1</analysis-model.version>
-    <forensics-api-plugin.version>0.7.0-beta1</forensics-api-plugin.version>
+    <forensics-api-plugin.version>0.7.0-beta2</forensics-api-plugin.version>
     <git-forensics-plugin.version> 0.7.0-beta1</git-forensics-plugin.version>
     <plugin-util-api.version>0.1.0-beta1</plugin-util-api.version>
 
@@ -77,14 +77,14 @@
     <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>4.0.0</git-plugin.version>
-    <workflow-api.version>2.34</workflow-api.version>
-    <workflow-cps.version>2.67</workflow-cps.version>
+    <workflow-api.version>2.37</workflow-api.version>
+    <workflow-cps.version>2.74</workflow-cps.version>
     <workflow-step-api.version>2.20</workflow-step-api.version>
-    <workflow-job.version>2.32</workflow-job.version>
+    <workflow-job.version>2.35</workflow-job.version>
     <structs.version>1.20</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
-    <script-security.version>1.58</script-security.version>
+    <script-security.version>1.62</script-security.version>
     <folder-plugin.version>6.1.2</folder-plugin.version>
     <credentials.version>2.3.0</credentials.version>
     <httpcomponents-client.version>4.5.10-1.0</httpcomponents-client.version>
@@ -99,7 +99,7 @@
     <docker-fixtures.version>1.8</docker-fixtures.version>
     <ssh-slaves.version>1.25</ssh-slaves.version>
     <jdk-tool.version>1.2</jdk-tool.version>
-    <workflow-support.version>3.2</workflow-support.version>
+    <workflow-support.version>3.3</workflow-support.version>
     <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
     <form-element-path.version>1.8</form-element-path.version>
 
