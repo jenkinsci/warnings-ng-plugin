@@ -24,7 +24,7 @@ node ('maven') {
                 writeFile file: settingsXml, text: libraryResource('settings-azure.xml')
                 mavenOptions += "-s $settingsXml"
             }
-            mavenOptions += "clean verify jacoco:prepare-agent test integration-test jacoco:report -DskipITs"
+            mavenOptions += "clean verify jacoco:prepare-agent test integration-test jacoco:report"
             command = "mvn ${mavenOptions.join(' ')}"
             env << "PATH+MAVEN=${tool 'mvn'}/bin"
 
