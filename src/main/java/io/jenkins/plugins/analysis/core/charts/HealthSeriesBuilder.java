@@ -5,7 +5,7 @@ import java.util.Map;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.echarts.api.charts.SeriesBuilder;
+import io.jenkins.plugins.echarts.SeriesBuilder;
 
 /**
  * Builds the series for a graph showing all warnings by health descriptor.

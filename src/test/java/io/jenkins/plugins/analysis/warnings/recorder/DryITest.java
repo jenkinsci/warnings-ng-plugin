@@ -25,9 +25,9 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DuplicationTable.DuplicationRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
+import io.jenkins.plugins.datatables.TablePageObject;
+import io.jenkins.plugins.datatables.TableRowPageObject;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -37,6 +37,14 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Stephan Plöderl
  */
 public class DryITest extends IntegrationTestWithJenkinsPerSuite {
+    static final String DETAILS = "Details";
+    static final String FILE = "File";
+    static final String PACKAGE = "Package";
+    static final String SEVERITY = "Severity";
+    static final String LINES = "#Lines";
+    static final String DUPLICATIONS = "Duplicated In";
+    static final String AGE = "Age";
+
     private static final String FOLDER = "dry/";
     private static final String CPD_REPORT = FOLDER + "cpd.xml";
     private static final int ROW_INDEX_OF_DUPLICATION_TO_INSPECT = 8;
@@ -85,7 +93,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
-        DuplicationTable issues = getDuplicationTable(details);
+        TablePageObject issues = getDuplicationTable(details);
         assertThat(issues.getRows()).hasSize(10); // paging of 10 is activated by default
         
         assertSizeOfSeverity(issues, 4, 5); // HIGH
@@ -93,16 +101,16 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertSizeOfSeverity(issues, 0, 6); // LOW
     }
 
-    private DuplicationTable getDuplicationTable(final HtmlPage details) {
-        return new DuplicationTable(details, false);
+    private TablePageObject getDuplicationTable(final HtmlPage details) {
+        return new TablePageObject(details, "issues");
     }
 
-    private void assertSizeOfSeverity(final DuplicationTable table, final int row, 
+    private void assertSizeOfSeverity(final TablePageObject table, final int row,
             final int numberOfSelectedIssues) {
-        DuplicationRow selectedRow = table.getRow(row);
-        HtmlPage detailsOfSeverity = selectedRow.clickSeverity();
+        TableRowPageObject selectedRow = table.getRow(row);
+        HtmlPage detailsOfSeverity = selectedRow.clickColumnLink(SEVERITY);
 
-        DuplicationTable issues = getDuplicationTable(detailsOfSeverity);
+        TablePageObject issues = getDuplicationTable(detailsOfSeverity);
         assertThat(issues.getRows()).hasSize(numberOfSelectedIssues);
     }
 
@@ -121,10 +129,10 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
-        DuplicationTable issues = getDuplicationTable(details);
+        TablePageObject issues = getDuplicationTable(details);
         assertThat(issues.getRows()).hasSize(10);
 
-        HtmlPage sourceCodePage = issues.getRow(0).clickSourceCode();
+        HtmlPage sourceCodePage = issues.getRow(0).clickColumnLink(FILE);
         SourceCodeView sourceCodeView = new SourceCodeView(sourceCodePage);
 
         String htmlFile = toString(FOLDER + "Main.source");
@@ -142,20 +150,13 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-        DuplicationTable issues = getDuplicationTable(details);
+        TablePageObject issues = getDuplicationTable(details);
 
-        assertThat(issues.getTitle()).isEqualTo("Issues");
-        assertThat(issues.getRows()).containsExactly(
-                new DuplicationRow("Main.java:3", "-", "Low", 1, 1),
-                new DuplicationRow("Main.java:4", "-", "Low", 1, 1),
-                new DuplicationRow("Main.java:5", "-", "Low", 1, 1),
-                new DuplicationRow("Main.java:6", "-", "Low", 3, 1),
-                new DuplicationRow("Main.java:8", "-", "Low", 10, 1),
-                new DuplicationRow("Main.java:8", "-", "Low", 8, 1),
-                new DuplicationRow("Main.java:8", "-", "Low", 3, 1),
-                new DuplicationRow("Main.java:8", "-", "Low", 1, 1),
-                new DuplicationRow("Main.java:11", "-", "Low", 3, 1),
-                new DuplicationRow("Main.java:15", "-", "Low", 3, 1));
+        assertThat(issues.getRows()).hasSize(10);
+        assertThat(issues.getColumnHeaders()).containsExactly(DETAILS, FILE, SEVERITY, LINES, DUPLICATIONS, AGE);
+        assertThat(issues.getRow(0).getValuesByColumnLabel())
+                .contains(entry(FILE, "Main.java:3"), entry(SEVERITY, "Low"), entry(LINES, "1"), entry(AGE, "1"),
+                        entry(DUPLICATIONS, "Main.java:8"));
     }
 
     /**

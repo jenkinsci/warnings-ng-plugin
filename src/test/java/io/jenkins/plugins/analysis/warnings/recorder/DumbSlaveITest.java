@@ -1,4 +1,4 @@
-package io.jenkins.plugins.analysis.warnings;
+package io.jenkins.plugins.analysis.warnings.recorder;
 
 import org.junit.Test;
 import org.jvnet.hudson.test.Issue;
@@ -12,10 +12,9 @@ import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow.IssueColumn;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
+import io.jenkins.plugins.datatables.TablePageObject;
+import io.jenkins.plugins.datatables.TableRowPageObject;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -54,13 +53,13 @@ public class DumbSlaveITest extends IntegrationTestWithJenkinsPerTest {
 
         DetailsTab details = new DetailsTab(getWebPage(JavaScriptSupport.JS_ENABLED, result));
 
-        IssuesTable issues = details.select(TabType.ISSUES);
+        TablePageObject issues = details.select(TabType.ISSUES);
         assertThat(issues.getRows()).hasSize(2);
 
-        IssueRow cSharpRow = issues.getRow(0);
-        assertThat(cSharpRow.hasLink(IssueColumn.FILE)).isTrue();
-        IssueRow javaRow = issues.getRow(1);
-        assertThat(javaRow.hasLink(IssueColumn.FILE)).isTrue();
+        TableRowPageObject cSharpRow = issues.getRow(0);
+        assertThat(cSharpRow.hasLink(MiscIssuesRecorderITest.FILE)).isTrue();
+        TableRowPageObject javaRow = issues.getRow(1);
+        assertThat(javaRow.hasLink(MiscIssuesRecorderITest.FILE)).isTrue();
 
         assertThat(getWebPage(result, 0).getSourceCode()).isEqualTo(C_SHARP_CONTENT);
         assertThat(getWebPage(result, 1).getSourceCode()).isEqualTo(JAVA_CONTENT);

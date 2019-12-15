@@ -9,9 +9,9 @@ import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.echarts.api.charts.BuildResult;
-import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
+import io.jenkins.plugins.echarts.BuildResult;
+import io.jenkins.plugins.echarts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.LinesChartModel;
 
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;

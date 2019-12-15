@@ -17,8 +17,8 @@ import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
-import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
+import io.jenkins.plugins.echarts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.LinesChartModel;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical

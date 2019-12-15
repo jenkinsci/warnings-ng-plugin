@@ -14,8 +14,8 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
-import io.jenkins.plugins.datatables.api.TableColumn;
-import io.jenkins.plugins.datatables.api.TableModel.DetailedColumnDefinition;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableModel.DetailedColumnDefinition;
 
 import static j2html.TagCreator.*;
 import static org.assertj.core.api.Assertions.*;

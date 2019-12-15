@@ -22,11 +22,10 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.AnalysisResultAssert;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesRow.BlamesColumn;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.BlamesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
+import io.jenkins.plugins.datatables.TablePageObject;
+import io.jenkins.plugins.datatables.TableRowPageObject;
 import io.jenkins.plugins.forensics.blame.Blamer;
 
 import static io.jenkins.plugins.forensics.assertions.Assertions.*;
@@ -39,6 +38,14 @@ import static io.jenkins.plugins.forensics.assertions.Assertions.*;
  */
 @SuppressWarnings("PMD.SignatureDeclareThrowsException")
 public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
+    private static final String DETAILS = "Details";
+    private static final String FILE = "File";
+    private static final String AGE = "Age";
+    private static final String AUTHOR = "Author";
+    private static final String EMAIL = "Email"; 
+    private static final String COMMIT = "Commit"; 
+    private static final String ADDED = "Added";
+
     /** The Git repository for the test. */
     @Rule
     public GitSampleRepoRule gitRepo = new GitSampleRepoRule();
@@ -56,7 +63,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(job);
         assertSuccessfulBlame(result, 1, 1);
 
-        BlamesTable table = getSourceControlTable(result);
+        TablePageObject table = getBlamesTable(result);
         assertOneIssue(gitRepo.head(), table);
     }
 
@@ -120,7 +127,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 1, 1);
 
-        BlamesTable table = getSourceControlTable(result);
+        TablePageObject table = getBlamesTable(result);
         assertOneIssue(testCommit, table);
     }
 
@@ -160,7 +167,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 11, 3);
 
-        BlamesTable table = getSourceControlTable(result);
+        TablePageObject table = getBlamesTable(result);
         assertElevenIssues(commits, table);
     }
 
@@ -197,12 +204,12 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 11, 3);
 
-        BlamesTable table = getSourceControlTable(result);
+        TablePageObject table = getBlamesTable(result);
         assertElevenIssues(commits, table);
     }
 
     /**
-     * Test filtering in the {@link BlamesTable}.
+     * Verifies that the table can be filtered by text.
      *
      * @throws Exception
      *         if there is a problem with the git repository
@@ -237,12 +244,12 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 11, 3);
 
-        BlamesTable table = getSourceControlTable(result);
+        TablePageObject table = getBlamesTable(result);
         assertElevenIssues(commits, table);
 
         table.filter("LoremIpsum.java");
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 4 of 4 entries (filtered from 11 total entries)");
-        List<BlamesRow> rows = table.getRows();
+        List<TableRowPageObject> rows = table.getRows();
         assertThat(rows).hasSize(4);
         assertColumnsOfRowLoremIpsum(rows.get(0), 1, commits.get("LoremIpsum"));
         assertColumnsOfRowLoremIpsum(rows.get(1), 2, commits.get("LoremIpsum"));
@@ -297,11 +304,13 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 1, 1);
 
-        BlamesTable table = getSourceControlTable(result);
+        TablePageObject table = getBlamesTable(result);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
-        List<BlamesRow> rows = table.getRows();
+        assertThat(table.size()).isEqualTo(1);
+        
+        List<TableRowPageObject> rows = table.getRows();
         assertThat(rows).hasSize(1);
-        assertThat(rows.get(0).getValuesByColumn()).contains(
+        assertThat(rows.get(0).getValuesByColumnLabel()).contains(
                 details("Unexpected character"),
                 file("Test.h:1"),
                 author("Git SampleRepoRule"),
@@ -310,7 +319,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                 age("1"));
     }
 
-    private BlamesTable getSourceControlTable(final AnalysisResult result) {
+    private TablePageObject getBlamesTable(final AnalysisResult result) {
         HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
         DetailsTab detailsTab = new DetailsTab(page);
@@ -329,52 +338,51 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                         "-> blamed authors of issues in " + numberOfFiles + " files");
     }
 
-    private void assertOneIssue(final String commit, final BlamesTable table) {
-        assertThat(table.getColumns())
-                .containsExactly(BlamesColumn.DETAILS, BlamesColumn.FILE, BlamesColumn.AGE, BlamesColumn.AUTHOR,
-                        BlamesColumn.EMAIL, BlamesColumn.COMMIT, BlamesColumn.ADDED);
+    private void assertOneIssue(final String commit, final TablePageObject table) {
+        assertThat(table.getColumnHeaders())
+                .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT, ADDED);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
-        List<BlamesRow> rows = table.getRows();
+        List<TableRowPageObject> rows = table.getRows();
         assertThat(rows).hasSize(1);
         assertColumnsOfTest(rows.get(0), commit, 1);
     }
 
-    private void assertColumnsOfTest(final BlamesRow row, final String commit, final int lineNumber) {
-        assertThat(row.getValuesByColumn()).contains(
+    private void assertColumnsOfTest(final TableRowPageObject row, final String commit, final int lineNumber) {
+        assertThat(row.getValuesByColumnLabel()).contains(
                 details("Test Warning for Jenkins"),
                 file("Test.java:" + lineNumber),
                 author("Git SampleRepoRule"),
                 email("gits@mplereporule"),
                 commit(commit),
-                age("1")).containsKey(BlamesColumn.ADDED);
+                age("1")).containsKey(ADDED);
     }
 
-    private void assertColumnsOfRowLoremIpsum(final BlamesRow row, final int lineNumber, final String commitId) {
-        assertThat(row.getValuesByColumn()).contains(
+    private void assertColumnsOfRowLoremIpsum(final TableRowPageObject row, final int lineNumber, final String commitId) {
+        assertThat(row.getValuesByColumnLabel()).contains(
                 details("Another Warning for Jenkins"),
                 file("LoremIpsum.java:" + lineNumber),
                 author("John Doe"),
                 email("john@doe"),
                 commit(commitId),
-                age("1")).containsKey(BlamesColumn.ADDED);
+                age("1")).containsKey(ADDED);
     }
 
-    private void assertColumnsOfRowBob(final BlamesRow row, final String commitId, final int lineNumber) {
-        assertThat(row.getValuesByColumn()).contains(
+    private void assertColumnsOfRowBob(final TableRowPageObject row, final String commitId, final int lineNumber) {
+        assertThat(row.getValuesByColumnLabel()).contains(
                 details("Bobs Warning for Jenkins"),
                 file("Bob.java:" + lineNumber),
                 author("Alice Miller"),
                 email("alice@miller"),
                 commit(commitId),
-                age("1")).containsKey(BlamesColumn.ADDED);
+                age("1")).containsKey(ADDED);
     }
 
-    private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
-        assertThat(table.getColumns())
-                .containsExactly(BlamesColumn.DETAILS, BlamesColumn.FILE, BlamesColumn.AGE, BlamesColumn.AUTHOR,
-                        BlamesColumn.EMAIL, BlamesColumn.COMMIT, BlamesColumn.ADDED);
+    private void assertElevenIssues(final Map<String, String> commits, final TablePageObject table) {
+        assertThat(table.getColumnHeaders())
+                .containsExactly(DETAILS, FILE, AGE, AUTHOR,
+                        EMAIL, COMMIT, ADDED);
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 10 of 11 entries");
-        List<BlamesRow> rows = table.getRows();
+        List<TableRowPageObject> rows = table.getRows();
         assertThat(rows).hasSize(10);
         assertColumnsOfRowBob(rows.get(0), commits.get("Bob"), 1);
         assertColumnsOfRowBob(rows.get(1), commits.get("Bob"), 2);
@@ -429,27 +437,27 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         gitRepo.git("commit", "--message=" + fileName + " created");
     }
 
-    private MapEntry<BlamesColumn, String> details(final String details) {
-        return entry(BlamesColumn.DETAILS, details);
+    private MapEntry<String, String> details(final String details) {
+        return entry(DETAILS, details);
     }
 
-    private MapEntry<BlamesColumn, String> age(final String age) {
-        return entry(BlamesColumn.AGE, age);
+    private MapEntry<String, String> age(final String age) {
+        return entry(AGE, age);
     }
 
-    private MapEntry<BlamesColumn, String> author(final String author) {
-        return entry(BlamesColumn.AUTHOR, author);
+    private MapEntry<String, String> author(final String author) {
+        return entry(AUTHOR, author);
     }
 
-    private MapEntry<BlamesColumn, String> email(final String email) {
-        return entry(BlamesColumn.EMAIL, email);
+    private MapEntry<String, String> email(final String email) {
+        return entry(EMAIL, email);
     }
 
-    private MapEntry<BlamesColumn, String> commit(final String commit) {
-        return entry(BlamesColumn.COMMIT, commit);
+    private MapEntry<String, String> commit(final String commit) {
+        return entry(COMMIT, commit);
     }
 
-    private MapEntry<BlamesColumn, String> file(final String file) {
-        return entry(BlamesColumn.FILE, file);
+    private MapEntry<String, String> file(final String file) {
+        return entry(FILE, file);
     }
 }

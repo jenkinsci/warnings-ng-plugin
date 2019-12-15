@@ -7,10 +7,10 @@ import java.util.Collections;
 import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.echarts.api.charts.BuildResult;
-import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration.AxisType;
-import io.jenkins.plugins.echarts.api.charts.LinesDataSet;
+import io.jenkins.plugins.echarts.BuildResult;
+import io.jenkins.plugins.echarts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.ChartModelConfiguration.AxisType;
+import io.jenkins.plugins.echarts.LinesDataSet;
 
 import static edu.hm.hafner.analysis.Severity.*;
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;

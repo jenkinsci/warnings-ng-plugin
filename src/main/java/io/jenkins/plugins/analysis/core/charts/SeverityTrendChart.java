@@ -6,13 +6,13 @@ import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
-import io.jenkins.plugins.echarts.api.charts.BuildResult;
-import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.api.charts.LineSeries;
-import io.jenkins.plugins.echarts.api.charts.LineSeries.FilledMode;
-import io.jenkins.plugins.echarts.api.charts.LineSeries.StackedMode;
-import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
-import io.jenkins.plugins.echarts.api.charts.LinesDataSet;
+import io.jenkins.plugins.echarts.BuildResult;
+import io.jenkins.plugins.echarts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.LineSeries;
+import io.jenkins.plugins.echarts.LineSeries.FilledMode;
+import io.jenkins.plugins.echarts.LineSeries.StackedMode;
+import io.jenkins.plugins.echarts.LinesChartModel;
+import io.jenkins.plugins.echarts.LinesDataSet;
 
 /**
  * Builds the model for a trend chart showing all issues by severity for a given number of builds.

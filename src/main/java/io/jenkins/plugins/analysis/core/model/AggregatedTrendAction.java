@@ -19,9 +19,9 @@ import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
-import io.jenkins.plugins.echarts.api.charts.BuildResult;
-import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
+import io.jenkins.plugins.echarts.BuildResult;
+import io.jenkins.plugins.echarts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.LinesChartModel;
 
 /**
  * Project action that renders a combined trend chart of all tools in the job.

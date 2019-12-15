@@ -6,7 +6,7 @@ import java.util.Map;
 import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.echarts.api.charts.SeriesBuilder;
+import io.jenkins.plugins.echarts.SeriesBuilder;
 
 /**
  * Builds the series for a stacked line chart showing all issues by severity.

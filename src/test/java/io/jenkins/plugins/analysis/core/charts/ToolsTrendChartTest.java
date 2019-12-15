@@ -8,12 +8,12 @@ import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.echarts.api.charts.Build;
-import io.jenkins.plugins.echarts.api.charts.BuildResult;
-import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.api.charts.LineSeries;
-import io.jenkins.plugins.echarts.api.charts.LinesChartModel;
-import io.jenkins.plugins.echarts.api.charts.Palette;
+import io.jenkins.plugins.echarts.Build;
+import io.jenkins.plugins.echarts.BuildResult;
+import io.jenkins.plugins.echarts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.LineSeries;
+import io.jenkins.plugins.echarts.LinesChartModel;
+import io.jenkins.plugins.echarts.Palette;
 
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;

@@ -7,7 +7,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import io.jenkins.plugins.datatables.api.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn;
 
 /**
  * Provides the dynamic model for the details table that shows the issue properties.

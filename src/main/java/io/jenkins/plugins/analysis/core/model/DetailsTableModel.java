@@ -14,9 +14,9 @@ import j2html.tags.UnescapedText;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
-import io.jenkins.plugins.datatables.api.TableColumn;
-import io.jenkins.plugins.datatables.api.TableColumn.ColumnCss;
-import io.jenkins.plugins.datatables.api.TableModel;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
+import io.jenkins.plugins.datatables.TableModel;
 
 import static edu.hm.hafner.util.IntegerParser.*;
 import static j2html.TagCreator.*;

@@ -25,7 +25,7 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel.PieChartType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel.TrendChartType;
-import io.jenkins.plugins.echarts.api.charts.TimeFacade;
+import io.jenkins.plugins.echarts.TimeFacade;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;

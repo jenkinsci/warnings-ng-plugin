@@ -33,13 +33,12 @@ import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow.IssueColumn;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SummaryBox;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
+import io.jenkins.plugins.datatables.TablePageObject;
+import io.jenkins.plugins.datatables.TableRowPageObject;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -53,6 +52,14 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
+    static final String DETAILS = "Details";
+    static final String FILE = "File";
+    static final String PACKAGE = "Package";
+    static final String CATEGORY = "Category";
+    static final String TYPE = "Type";
+    static final String SEVERITY = "Severity";
+    static final String AGE = "Age";
+
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
      */
@@ -481,32 +488,31 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 new PropertyRow("LineLengthCheck", 1, 50),
                 new PropertyRow("RightCurlyCheck", 2, 100));
 
-        IssuesTable issues = new IssuesTable(details);
-        assertThat(issues.getColumns()).containsExactly(IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.CATEGORY,
-                IssueColumn.TYPE, IssueColumn.SEVERITY, IssueColumn.AGE);
+        TablePageObject issues = new TablePageObject(details, "issues");
+        assertThat(issues.getColumnHeaders())
+                .containsExactly(DETAILS, FILE, CATEGORY, TYPE, SEVERITY, AGE);
 
-        assertThat(issues.getTitle()).isEqualTo("Issues");
-        List<IssueRow> rows = issues.getRows();
+        List<TableRowPageObject> rows = issues.getRows();
         assertThat(rows).hasSize(4);
-        assertThat(rows.get(0).getValuesByColumn()).contains(
+        assertThat(rows.get(0).getValuesByColumnLabel()).contains(
                 file("CsharpNamespaceDetector.java:22"),
                 category("Design"),
                 type("DesignForExtensionCheck"),
                 error(),
                 age("2"));
-        assertThat(rows.get(1).getValuesByColumn()).contains(
+        assertThat(rows.get(1).getValuesByColumnLabel()).contains(
                 file("CsharpNamespaceDetector.java:29"),
                 category("Sizes"),
                 type("LineLengthCheck"),
                 error(),
                 age("1"));
-        assertThat(rows.get(2).getValuesByColumn()).contains(
+        assertThat(rows.get(2).getValuesByColumnLabel()).contains(
                 file("CsharpNamespaceDetector.java:30"),
                 category("Blocks"),
                 type("RightCurlyCheck"),
                 error(),
                 age("1"));
-        assertThat(rows.get(3).getValuesByColumn()).contains(
+        assertThat(rows.get(3).getValuesByColumnLabel()).contains(
                 file("CsharpNamespaceDetector.java:37"),
                 category("Blocks"),
                 type("RightCurlyCheck"),
@@ -534,26 +540,25 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 new PropertyRow("DesignForExtensionCheck", 2, 100),
                 new PropertyRow("LineLengthCheck", 1, 50));
 
-        IssuesTable issues = detailsTab.select(TabType.ISSUES);
+        TablePageObject issues = detailsTab.select(TabType.ISSUES);
 
-        assertThat(issues.getColumns()).containsExactly(IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.CATEGORY,
-                IssueColumn.TYPE, IssueColumn.SEVERITY, IssueColumn.AGE);
-        assertThat(issues.getTitle()).isEqualTo("Issues");
-        List<IssueRow> rows = issues.getRows();
+        assertThat(issues.getColumnHeaders())
+                .containsExactly(DETAILS, FILE, CATEGORY, TYPE, SEVERITY, AGE);
+        List<TableRowPageObject> rows = issues.getRows();
         assertThat(rows).hasSize(3);
-        assertThat(rows.get(0).getValuesByColumn()).contains(
+        assertThat(rows.get(0).getValuesByColumnLabel()).contains(
                 file("CsharpNamespaceDetector.java:17"),
                 category("Design"),
                 type("DesignForExtensionCheck"),
                 error(),
                 age("1"));
-        assertThat(rows.get(1).getValuesByColumn()).contains(
+        assertThat(rows.get(1).getValuesByColumnLabel()).contains(
                 file("CsharpNamespaceDetector.java:22"),
                 category("Design"),
                 type("DesignForExtensionCheck"),
                 error(),
                 age("1"));
-        assertThat(rows.get(2).getValuesByColumn()).contains(
+        assertThat(rows.get(2).getValuesByColumnLabel()).contains(
                 file("CsharpNamespaceDetector.java:42"),
                 category("Sizes"),
                 type("LineLengthCheck"),
@@ -561,24 +566,24 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 age("1"));
     }
 
-    private MapEntry<IssueColumn, String> age(final String age) {
-        return entry(IssueColumn.AGE, age);
+    private MapEntry<String, String> age(final String age) {
+        return entry(AGE, age);
     }
 
-    private MapEntry<IssueColumn, String> error() {
-        return entry(IssueColumn.SEVERITY, "Error");
+    private MapEntry<String, String> error() {
+        return entry(SEVERITY, "Error");
     }
 
-    private MapEntry<IssueColumn, String> type(final String type) {
-        return entry(IssueColumn.TYPE, type);
+    private MapEntry<String, String> type(final String type) {
+        return entry(TYPE, type);
     }
 
-    private MapEntry<IssueColumn, String> category(final String category) {
-        return entry(IssueColumn.CATEGORY, category);
+    private MapEntry<String, String> category(final String category) {
+        return entry(CATEGORY, category);
     }
 
-    private MapEntry<IssueColumn, String> file(final String file) {
-        return entry(IssueColumn.FILE, file);
+    private MapEntry<String, String> file(final String file) {
+        return entry(FILE, file);
     }
 
     /**

@@ -6,9 +6,9 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Report;
 
-import io.jenkins.plugins.echarts.api.charts.Palette;
-import io.jenkins.plugins.echarts.api.charts.PieChartModel;
-import io.jenkins.plugins.echarts.api.charts.PieData;
+import io.jenkins.plugins.echarts.Palette;
+import io.jenkins.plugins.echarts.PieChartModel;
+import io.jenkins.plugins.echarts.PieData;
 
 import static io.jenkins.plugins.analysis.core.charts.Messages.*;
 import static org.assertj.core.api.Assertions.*;

@@ -37,10 +37,10 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
-import io.jenkins.plugins.datatables.api.DefaultAsyncTableContentProvider;
-import io.jenkins.plugins.datatables.api.TableModel;
-import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.api.charts.ChartModelConfiguration.AxisType;
+import io.jenkins.plugins.datatables.DefaultAsyncTableContentProvider;
+import io.jenkins.plugins.datatables.TableModel;
+import io.jenkins.plugins.echarts.ChartModelConfiguration;
+import io.jenkins.plugins.echarts.ChartModelConfiguration.AxisType;
 
 /**
  * Build view that shows the details for a subset of issues.

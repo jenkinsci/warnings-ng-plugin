@@ -32,11 +32,12 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow.IssueColumn;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
+import io.jenkins.plugins.datatables.TablePageObject;
+import io.jenkins.plugins.datatables.TableRowPageObject;
 
+import static io.jenkins.plugins.analysis.warnings.recorder.MiscIssuesRecorderITest.FILE;
+import static io.jenkins.plugins.analysis.warnings.recorder.MiscIssuesRecorderITest.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -62,16 +63,16 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        IssueRow row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
+        TableRowPageObject row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
         SourceCodeView sourceCodeView = new SourceCodeView(getSourceCodePage(result));
 
-        assertThat(row.hasLink(IssueColumn.FILE)).isTrue();
+        assertThat(row.hasLink(FILE)).isTrue();
         assertThat(sourceCodeView.getSourceCode()).isEqualToIgnoringWhitespace(readSourceCode(project));
 
         deleteAffectedFilesInBuildFolder(result);
 
         row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
-        assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
+        assertThat(row.hasLink(FILE)).isFalse();
     }
 
     /**
@@ -83,13 +84,13 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        IssueRow row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
-        assertThat(row.hasLink(IssueColumn.FILE)).isTrue();
+        TableRowPageObject row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
+        assertThat(row.hasLink(FILE)).isTrue();
 
         makeAffectedFilesInBuildFolderUnreadable(result);
 
         row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
-        assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
+        assertThat(row.hasLink(FILE)).isFalse();
     }
 
     private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
@@ -109,7 +110,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         }
     }
 
-    private IssueRow getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
+    private TableRowPageObject getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
         return getIssuesTable(result).getRow(rowNumber);
     }
 
@@ -208,10 +209,10 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         prepareGccLog(job);
         enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
 
-        IssueRow row = buildAndVerifyFilesResolving(job,
+        TableRowPageObject row = buildAndVerifyFilesResolving(job,
                 "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
-        assertThat(row.hasLink(IssueColumn.FILE)).isFalse();
+        assertThat(row.hasLink(FILE)).isFalse();
     }
 
     /**
@@ -227,7 +228,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         recorder.setSourceDirectory(buildsFolder);
 
         // First build: copying the affected file is forbidden
-        IssueRow unresolvedRow = buildAndVerifyFilesResolving(job,
+        TableRowPageObject unresolvedRow = buildAndVerifyFilesResolving(job,
                 "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
         AnalysisResult result = getAnalysisResult(job.getLastCompletedBuild());
@@ -235,40 +236,44 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
                 String.format("Additional source directories '[%s]' must be registered in Jenkins system configuration",
                         buildsFolder));
 
-        assertThat(unresolvedRow.hasLink(IssueColumn.FILE)).isFalse();
+        assertThat(unresolvedRow.hasLink(FILE)).isFalse();
 
         WarningsPluginConfiguration.getInstance().setSourceDirectories(
                 Collections.singletonList(new SourceDirectory(buildsFolder)));
 
         // Second build: copying the affected file is permitted
-        IssueRow resolvedRow = buildAndVerifyFilesResolving(job,
+        TableRowPageObject resolvedRow = buildAndVerifyFilesResolving(job,
                 "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
 
-        assertThat(resolvedRow.hasLink(IssueColumn.FILE)).isTrue();
+        assertThat(resolvedRow.hasLink(FILE)).isTrue();
 
-        SourceCodeView sourceCodeView = resolvedRow.openSourceCode();
+        SourceCodeView sourceCodeView = openSourceCode(resolvedRow);
         assertThat(sourceCodeView.getSourceCode()).contains("<io.jenkins.plugins.analysis.core.steps.IssuesRecorder>");
     }
 
-    private IssueRow buildAndVerifyFilesResolving(final FreeStyleProject job, final String... resolveMessages) {
+    private SourceCodeView openSourceCode(final TableRowPageObject resolvedRow) {
+        return new SourceCodeView(resolvedRow.clickColumnLink(FILE));
+    }
+
+    private TableRowPageObject buildAndVerifyFilesResolving(final FreeStyleProject job, final String... resolveMessages) {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
         assertThat(getConsoleLog(result)).contains(resolveMessages);
 
-        IssuesTable issues = getIssuesTable(result);
-        assertThat(issues.getColumns()).containsExactly(
-                IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.SEVERITY, IssueColumn.AGE);
-        List<IssueRow> rows = issues.getRows();
+        TablePageObject issues = getIssuesTable(result);
+        assertThat(issues.getColumnHeaders()).containsExactly(
+                DETAILS, FILE, SEVERITY, AGE);
+        List<TableRowPageObject> rows = issues.getRows();
         assertThat(rows).hasSize(1);
-        IssueRow row = rows.get(0);
-        assertThat(row.getValuesByColumn()).contains(
-                entry(IssueColumn.DETAILS, "foo defined but not used"),
-                entry(IssueColumn.FILE, "config.xml:451"),
-                entry(IssueColumn.SEVERITY, "Normal"));
+        TableRowPageObject row = rows.get(0);
+        assertThat(row.getValuesByColumnLabel()).contains(
+                entry(DETAILS, "foo defined but not used"),
+                entry(FILE, "config.xml:451"),
+                entry(SEVERITY, "Normal"));
         return row;
     }
 
-    private IssuesTable getIssuesTable(final AnalysisResult result) {
+    private TablePageObject getIssuesTable(final AnalysisResult result) {
         HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
         DetailsTab detailsTab = new DetailsTab(details);
         return detailsTab.select(TabType.ISSUES);

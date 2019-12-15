@@ -13,6 +13,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import edu.hm.hafner.util.NoSuchElementException;
 
+import io.jenkins.plugins.datatables.TablePageObject;
+
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -90,9 +92,9 @@ public class DetailsTab extends PageObject {
             case TYPES:
                 return new PropertyTable(getPage(), tabType.getProperty());
             case ISSUES:
-                return new IssuesTable(getPage());
+                return new TablePageObject(getPage(), "issues");
             case BLAMES:
-                return new BlamesTable(getPage());
+                return new TablePageObject(getPage(), "blames");
             default:
                 throw new NoSuchElementException("No page object registered for %s", tabType);
         }
