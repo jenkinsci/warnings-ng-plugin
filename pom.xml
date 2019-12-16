@@ -20,7 +20,7 @@
   </description>
 
   <properties>
-    <revision>8.0.0</revision>
+    <revision>8.0.0-beta1</revision>
     <changelist>-SNAPSHOT</changelist>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
