@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.assertj.core.data.MapEntry;
 import org.junit.Rule;
 import org.junit.Test;
 import org.jvnet.hudson.test.CreateFileBuilder;
@@ -311,12 +310,12 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         List<TableRowPageObject> rows = table.getRows();
         assertThat(rows).hasSize(1);
         assertThat(rows.get(0).getValuesByColumnLabel()).contains(
-                details("Unexpected character"),
-                file("Test.h:1"),
-                author("Git SampleRepoRule"),
-                email("gits@mplereporule"),
-                commit(firstCommit),
-                age("1"));
+                entry(DETAILS, "Unexpected character"),
+                entry(FILE, "Test.h:1"),
+                entry(AUTHOR, "Git SampleRepoRule"),
+                entry(EMAIL, "gits@mplereporule"),
+                entry(COMMIT, firstCommit),
+                entry(AGE, "1"));
     }
 
     private TablePageObject getBlamesTable(final AnalysisResult result) {
@@ -349,32 +348,32 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
 
     private void assertColumnsOfTest(final TableRowPageObject row, final String commit, final int lineNumber) {
         assertThat(row.getValuesByColumnLabel()).contains(
-                details("Test Warning for Jenkins"),
-                file("Test.java:" + lineNumber),
-                author("Git SampleRepoRule"),
-                email("gits@mplereporule"),
-                commit(commit),
-                age("1")).containsKey(ADDED);
+                entry(DETAILS, "Test Warning for Jenkins"),
+                entry(FILE, "Test.java:" + lineNumber),
+                entry(AUTHOR, "Git SampleRepoRule"),
+                entry(EMAIL, "gits@mplereporule"),
+                entry(COMMIT, commit),
+                entry(AGE, "1")).containsKey(ADDED);
     }
 
     private void assertColumnsOfRowLoremIpsum(final TableRowPageObject row, final int lineNumber, final String commitId) {
         assertThat(row.getValuesByColumnLabel()).contains(
-                details("Another Warning for Jenkins"),
-                file("LoremIpsum.java:" + lineNumber),
-                author("John Doe"),
-                email("john@doe"),
-                commit(commitId),
-                age("1")).containsKey(ADDED);
+                entry(DETAILS, "Another Warning for Jenkins"),
+                entry(FILE, "LoremIpsum.java:" + lineNumber),
+                entry(AUTHOR, "John Doe"),
+                entry(EMAIL, "john@doe"),
+                entry(COMMIT, commitId),
+                entry(AGE, "1")).containsKey(ADDED);
     }
 
     private void assertColumnsOfRowBob(final TableRowPageObject row, final String commitId, final int lineNumber) {
         assertThat(row.getValuesByColumnLabel()).contains(
-                details("Bobs Warning for Jenkins"),
-                file("Bob.java:" + lineNumber),
-                author("Alice Miller"),
-                email("alice@miller"),
-                commit(commitId),
-                age("1")).containsKey(ADDED);
+                entry(DETAILS, "Bobs Warning for Jenkins"),
+                entry(FILE, "Bob.java:" + lineNumber),
+                entry(AUTHOR, "Alice Miller"),
+                entry(EMAIL, "alice@miller"),
+                entry(COMMIT, commitId),
+                entry(AGE, "1")).containsKey(ADDED);
     }
 
     private void assertElevenIssues(final Map<String, String> commits, final TablePageObject table) {
@@ -435,29 +434,5 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         gitRepo.write(fileName, content);
         gitRepo.git("add", fileName);
         gitRepo.git("commit", "--message=" + fileName + " created");
-    }
-
-    private MapEntry<String, String> details(final String details) {
-        return entry(DETAILS, details);
-    }
-
-    private MapEntry<String, String> age(final String age) {
-        return entry(AGE, age);
-    }
-
-    private MapEntry<String, String> author(final String author) {
-        return entry(AUTHOR, author);
-    }
-
-    private MapEntry<String, String> email(final String email) {
-        return entry(EMAIL, email);
-    }
-
-    private MapEntry<String, String> commit(final String commit) {
-        return entry(COMMIT, commit);
-    }
-
-    private MapEntry<String, String> file(final String file) {
-        return entry(FILE, file);
     }
 }

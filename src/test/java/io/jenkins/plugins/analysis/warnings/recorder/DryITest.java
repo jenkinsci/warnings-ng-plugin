@@ -37,13 +37,12 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Stephan Plöderl
  */
 public class DryITest extends IntegrationTestWithJenkinsPerSuite {
-    static final String DETAILS = "Details";
-    static final String FILE = "File";
-    static final String PACKAGE = "Package";
-    static final String SEVERITY = "Severity";
-    static final String LINES = "#Lines";
-    static final String DUPLICATIONS = "Duplicated In";
-    static final String AGE = "Age";
+    private static final String DETAILS = "Details";
+    private static final String FILE = "File";
+    private static final String SEVERITY = "Severity";
+    private static final String LINES = "#Lines";
+    private static final String DUPLICATIONS = "Duplicated In";
+    private static final String AGE = "Age";
 
     private static final String FOLDER = "dry/";
     private static final String CPD_REPORT = FOLDER + "cpd.xml";

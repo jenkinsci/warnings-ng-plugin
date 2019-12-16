@@ -36,7 +36,6 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
 import io.jenkins.plugins.datatables.TablePageObject;
 import io.jenkins.plugins.datatables.TableRowPageObject;
 
-import static io.jenkins.plugins.analysis.warnings.recorder.MiscIssuesRecorderITest.FILE;
 import static io.jenkins.plugins.analysis.warnings.recorder.MiscIssuesRecorderITest.*;
 import static org.assertj.core.api.Assertions.*;
 
@@ -49,10 +48,10 @@ import static org.assertj.core.api.Assertions.*;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String FOLDER = "affected-files";
-    private static final String SOURCE_FILE = FOLDER + "/Main.java";
+    private static final String SOURCE_AFFECTED_FILE = FOLDER + "/Main.java";
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
-    private static final String ECLIPSE_REPORT_ONE_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
-    private static final int ROW_NUMBER_ACTUAL_FILE = 0;
+    private static final String ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
+    private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 0;
 
     /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
@@ -63,16 +62,16 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        TableRowPageObject row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
+        TableRowPageObject row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
         SourceCodeView sourceCodeView = new SourceCodeView(getSourceCodePage(result));
 
-        assertThat(row.hasLink(FILE)).isTrue();
+        assertThat(row.hasLink(AFFECTED_FILE)).isTrue();
         assertThat(sourceCodeView.getSourceCode()).isEqualToIgnoringWhitespace(readSourceCode(project));
 
         deleteAffectedFilesInBuildFolder(result);
 
-        row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
-        assertThat(row.hasLink(FILE)).isFalse();
+        row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.hasLink(AFFECTED_FILE)).isFalse();
     }
 
     /**
@@ -84,13 +83,13 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        TableRowPageObject row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
-        assertThat(row.hasLink(FILE)).isTrue();
+        TableRowPageObject row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.hasLink(AFFECTED_FILE)).isTrue();
 
         makeAffectedFilesInBuildFolderUnreadable(result);
 
-        row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_FILE);
-        assertThat(row.hasLink(FILE)).isFalse();
+        row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.hasLink(AFFECTED_FILE)).isFalse();
     }
 
     private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
@@ -137,7 +136,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
     private FreeStyleProject getJobWithWorkspaceFiles() {
         FreeStyleProject job = createFreeStyleProject();
-        copyMultipleFilesToWorkspace(job, ECLIPSE_REPORT, SOURCE_FILE);
+        copyMultipleFilesToWorkspace(job, ECLIPSE_REPORT, SOURCE_AFFECTED_FILE);
         return job;
     }
 
@@ -156,7 +155,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     private void assertThatFileExistsInBuildFolder(final Issue issue, final FreeStyleProject project,
             final Run<?, ?> owner) {
         Path buildFolderCopy = AffectedFilesResolver.getFile(owner, issue.getFileName());
-        if (issue.getFileName().contains(SOURCE_FILE)) {
+        if (issue.getFileName().contains(SOURCE_AFFECTED_FILE)) {
             assertThat(buildFolderCopy).exists();
             assertThat(buildFolderCopy).hasSameContentAs(getSourceInWorkspace(project));
         }
@@ -171,7 +170,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     private String getBaseName() {
-        return Paths.get(SOURCE_FILE).getFileName().toString();
+        return Paths.get(SOURCE_AFFECTED_FILE).getFileName().toString();
     }
 
     /**
@@ -195,7 +194,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      */
     @Test
     public void shouldFindAffectedFilesWhereasThreeFilesAreNotFound() {
-        AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT, SOURCE_FILE);
+        AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT, SOURCE_AFFECTED_FILE);
 
         assertThat(getConsoleLog(result)).contains("1 copied", "3 not-found", "0 with I/O error");
     }
@@ -212,7 +211,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         TableRowPageObject row = buildAndVerifyFilesResolving(job,
                 "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
-        assertThat(row.hasLink(FILE)).isFalse();
+        assertThat(row.hasLink(AFFECTED_FILE)).isFalse();
     }
 
     /**
@@ -236,7 +235,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
                 String.format("Additional source directories '[%s]' must be registered in Jenkins system configuration",
                         buildsFolder));
 
-        assertThat(unresolvedRow.hasLink(FILE)).isFalse();
+        assertThat(unresolvedRow.hasLink(AFFECTED_FILE)).isFalse();
 
         WarningsPluginConfiguration.getInstance().setSourceDirectories(
                 Collections.singletonList(new SourceDirectory(buildsFolder)));
@@ -245,14 +244,14 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         TableRowPageObject resolvedRow = buildAndVerifyFilesResolving(job,
                 "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
 
-        assertThat(resolvedRow.hasLink(FILE)).isTrue();
+        assertThat(resolvedRow.hasLink(AFFECTED_FILE)).isTrue();
 
         SourceCodeView sourceCodeView = openSourceCode(resolvedRow);
         assertThat(sourceCodeView.getSourceCode()).contains("<io.jenkins.plugins.analysis.core.steps.IssuesRecorder>");
     }
 
     private SourceCodeView openSourceCode(final TableRowPageObject resolvedRow) {
-        return new SourceCodeView(resolvedRow.clickColumnLink(FILE));
+        return new SourceCodeView(resolvedRow.clickColumnLink(AFFECTED_FILE));
     }
 
     private TableRowPageObject buildAndVerifyFilesResolving(final FreeStyleProject job, final String... resolveMessages) {
@@ -262,13 +261,13 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         TablePageObject issues = getIssuesTable(result);
         assertThat(issues.getColumnHeaders()).containsExactly(
-                DETAILS, FILE, SEVERITY, AGE);
+                DETAILS, AFFECTED_FILE, SEVERITY, AGE);
         List<TableRowPageObject> rows = issues.getRows();
         assertThat(rows).hasSize(1);
         TableRowPageObject row = rows.get(0);
         assertThat(row.getValuesByColumnLabel()).contains(
                 entry(DETAILS, "foo defined but not used"),
-                entry(FILE, "config.xml:451"),
+                entry(AFFECTED_FILE, "config.xml:451"),
                 entry(SEVERITY, "Normal"));
         return row;
     }
@@ -297,7 +296,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
      */
     @Test
     public void shouldFindOneAffectedFile() {
-        AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT_ONE_AFFECTED_FILE, SOURCE_FILE);
+        AnalysisResult result = buildEclipseProject(ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE, SOURCE_AFFECTED_FILE);
 
         assertThat(getConsoleLog(result)).contains("1 copied", "0 not-found", "0 with I/O error");
     }

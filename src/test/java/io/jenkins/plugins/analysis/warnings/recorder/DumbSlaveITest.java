@@ -57,9 +57,9 @@ public class DumbSlaveITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(issues.getRows()).hasSize(2);
 
         TableRowPageObject cSharpRow = issues.getRow(0);
-        assertThat(cSharpRow.hasLink(MiscIssuesRecorderITest.FILE)).isTrue();
+        assertThat(cSharpRow.hasLink(MiscIssuesRecorderITest.AFFECTED_FILE)).isTrue();
         TableRowPageObject javaRow = issues.getRow(1);
-        assertThat(javaRow.hasLink(MiscIssuesRecorderITest.FILE)).isTrue();
+        assertThat(javaRow.hasLink(MiscIssuesRecorderITest.AFFECTED_FILE)).isTrue();
 
         assertThat(getWebPage(result, 0).getSourceCode()).isEqualTo(C_SHARP_CONTENT);
         assertThat(getWebPage(result, 1).getSourceCode()).isEqualTo(JAVA_CONTENT);
