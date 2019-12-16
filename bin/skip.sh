@@ -2,7 +2,7 @@
 
 JENKINS_HOME=../docker/volumes/jenkins-home
 
-mvn clean install -DskipTests || { echo "Build failed"; exit 1; }
+mvn clean install -Pskip || { echo "Build failed"; exit 1; }
 
 echo "Installing plugin in $JENKINS_HOME"
 rm -rf $JENKINS_HOME/plugins/warnings-ng*

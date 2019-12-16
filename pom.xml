@@ -1125,18 +1125,15 @@
 
   <profiles>
     <profile>
-      <id>skip-javadoc-with-tests</id>
-      <activation>
-        <property>
-          <name>skipTests</name>
-          <value>true</value>
-        </property>
-      </activation>
+      <id>skip</id>
       <properties>
         <maven.javadoc.skip>true</maven.javadoc.skip>
+        <pmd.skip>true</pmd.skip>
         <spotbugs.skip>true</spotbugs.skip>
         <checkstyle.skip>true</checkstyle.skip>
-        <pmd.skip>true</pmd.skip>
+        <skipTests>true</skipTests>
+        <skipITs>true</skipITs>
+        <revapi.skip>true</revapi.skip>
       </properties>
     </profile>
   </profiles>
