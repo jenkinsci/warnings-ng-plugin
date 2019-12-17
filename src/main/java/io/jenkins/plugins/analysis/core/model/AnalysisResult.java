@@ -35,7 +35,9 @@ import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
 import io.jenkins.plugins.echarts.Build;
 import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.blame.BlamesXmlStream;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.forensics.miner.RepositoryStatisticsXmlStream;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
