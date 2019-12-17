@@ -50,7 +50,7 @@
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
     <json.version>20190722</json.version>
     <jackson-databind.version>2.9.10.1</jackson-databind.version>
-    <slf4j.version>1.7.29</slf4j.version>
+    <slf4j.version>1.7.30</slf4j.version>
     <prettytime.version>4.0.2.Final</prettytime.version>
 
     <!-- Test Library Dependencies Versions -->
