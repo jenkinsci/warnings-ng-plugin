@@ -7,6 +7,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.LinesChartModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.bind.JavaScriptMethod;
@@ -19,9 +22,6 @@ import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
-import io.jenkins.plugins.echarts.BuildResult;
-import io.jenkins.plugins.echarts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.LinesChartModel;
 
 /**
  * Project action that renders a combined trend chart of all tools in the job.

@@ -6,11 +6,12 @@ import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
+import edu.hm.hafner.echarts.LinesDataSet;
+
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.echarts.BuildResult;
-import io.jenkins.plugins.echarts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.ChartModelConfiguration.AxisType;
-import io.jenkins.plugins.echarts.LinesDataSet;
 
 import static edu.hm.hafner.analysis.Severity.*;
 import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;

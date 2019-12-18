@@ -1,8 +1,8 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import hudson.model.Run;
+import edu.hm.hafner.echarts.Build;
 
-import io.jenkins.plugins.echarts.Build;
+import hudson.model.Run;
 
 /**
  * A build that has been executed by a Jenkins {@link Run}.

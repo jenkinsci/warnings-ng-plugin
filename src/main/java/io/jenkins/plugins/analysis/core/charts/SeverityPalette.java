@@ -1,8 +1,7 @@
 package io.jenkins.plugins.analysis.core.charts;
 
 import edu.hm.hafner.analysis.Severity;
-
-import io.jenkins.plugins.echarts.Palette;
+import edu.hm.hafner.echarts.Palette;
 
 /**
  * Provides colors for {@link Severity}.

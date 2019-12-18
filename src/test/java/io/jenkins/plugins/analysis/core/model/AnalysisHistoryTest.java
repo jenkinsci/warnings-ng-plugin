@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import edu.hm.hafner.echarts.BuildResult;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.Result;
@@ -16,7 +17,6 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.echarts.BuildResult;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode.*;

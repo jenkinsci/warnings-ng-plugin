@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import edu.hm.hafner.echarts.TimeFacade;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -25,7 +27,6 @@ import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel.PieChartType;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.TrendCarousel.TrendChartType;
-import io.jenkins.plugins.echarts.TimeFacade;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;

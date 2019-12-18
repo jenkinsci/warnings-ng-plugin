@@ -4,10 +4,10 @@ import org.eclipse.collections.api.set.ImmutableSet;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.PieChartModel;
+import edu.hm.hafner.echarts.PieData;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
-import io.jenkins.plugins.echarts.PieChartModel;
-import io.jenkins.plugins.echarts.PieData;
 
 /**
  * Builds the model for a pie chart showing the distribution of issues by severity.

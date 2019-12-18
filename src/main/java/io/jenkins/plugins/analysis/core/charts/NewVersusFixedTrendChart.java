@@ -1,14 +1,15 @@
 package io.jenkins.plugins.analysis.core.charts;
 
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.LineSeries;
+import edu.hm.hafner.echarts.LineSeries.FilledMode;
+import edu.hm.hafner.echarts.LineSeries.StackedMode;
+import edu.hm.hafner.echarts.LinesChartModel;
+import edu.hm.hafner.echarts.LinesDataSet;
+import edu.hm.hafner.echarts.Palette;
+
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.echarts.BuildResult;
-import io.jenkins.plugins.echarts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.LineSeries;
-import io.jenkins.plugins.echarts.LineSeries.FilledMode;
-import io.jenkins.plugins.echarts.LineSeries.StackedMode;
-import io.jenkins.plugins.echarts.LinesChartModel;
-import io.jenkins.plugins.echarts.LinesDataSet;
-import io.jenkins.plugins.echarts.Palette;
 
 /**
  * Builds the model for a trend chart showing all new and fixed issues for a given number of builds.

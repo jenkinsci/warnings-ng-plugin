@@ -3,11 +3,11 @@ package io.jenkins.plugins.analysis.core.charts;
 import org.eclipse.collections.impl.factory.Maps;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.Build;
+import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.echarts.Build;
-import io.jenkins.plugins.echarts.BuildResult;
 
 import static org.mockito.Mockito.*;
 

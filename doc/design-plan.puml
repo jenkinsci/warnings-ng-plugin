@@ -50,12 +50,12 @@ component [git-forensics-plugin] #lightBlue
 [forensics-api-plugin] ..> [echarts-api-plugin]
 [forensics-api-plugin] ..> [plugin-util-api-plugin]
 
-
 [plugin-util-api-plugin] .> [codingstyle]
 [datatables-api-plugin] .> [jquery3-api-plugin]
 [jquery3-api-plugin] <. [boostrap4-api-plugin]
 
 [datatables-api-plugin] ..> [datatables-api]
-[echarts-api-plugin] ..> [echarts-api]
+[echarts-api-plugin] ..> [echarts-build-trends]
+[echarts-api-plugin] .> [plugin-util-api-plugin]
 
 @enduml

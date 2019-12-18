@@ -12,12 +12,13 @@ import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
+import edu.hm.hafner.echarts.Build;
+
 import hudson.model.BallColor;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.echarts.Build;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static org.assertj.core.api.Assertions.*;

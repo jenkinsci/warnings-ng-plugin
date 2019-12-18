@@ -15,6 +15,8 @@ import java.util.function.Function;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -39,8 +41,6 @@ import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.datatables.DefaultAsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableModel;
-import io.jenkins.plugins.echarts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.ChartModelConfiguration.AxisType;
 
 /**
  * Build view that shows the details for a subset of issues.

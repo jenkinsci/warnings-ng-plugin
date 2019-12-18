@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core.model;
 import java.io.IOException;
 import java.util.Optional;
 
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.LinesChartModel;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -17,8 +19,6 @@ import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
-import io.jenkins.plugins.echarts.ChartModelConfiguration;
-import io.jenkins.plugins.echarts.LinesChartModel;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical

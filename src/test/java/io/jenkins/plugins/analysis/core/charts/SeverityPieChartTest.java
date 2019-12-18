@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-
-import io.jenkins.plugins.echarts.PieChartModel;
-import io.jenkins.plugins.echarts.PieData;
+import edu.hm.hafner.echarts.PieChartModel;
+import edu.hm.hafner.echarts.PieData;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;

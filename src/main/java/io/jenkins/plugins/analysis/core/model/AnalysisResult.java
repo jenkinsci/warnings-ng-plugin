@@ -21,6 +21,7 @@ import org.eclipse.collections.impl.factory.Maps;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.Build;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -33,7 +34,6 @@ import io.jenkins.plugins.analysis.core.util.IssuesStatisticsBuilder;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StaticAnalysisRun;
-import io.jenkins.plugins.echarts.Build;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.BlamesXmlStream;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;

@@ -3,8 +3,9 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.hm.hafner.echarts.SeriesBuilder;
+
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.echarts.SeriesBuilder;
 
 /**
  * Builds the model for a trend chart showing the relationship between new and fixed issues for a given number of
