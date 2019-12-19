@@ -983,6 +983,7 @@
           </dependency>
         </dependencies>
         <configuration>
+          <oldVersion>7.2.2</oldVersion>
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
           <checkDependencies>false</checkDependencies>
