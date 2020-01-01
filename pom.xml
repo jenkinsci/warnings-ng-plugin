@@ -37,7 +37,7 @@
     <analysis-model.version>8.0.0-beta2</analysis-model.version>
     <forensics-api-plugin.version>0.7.0-beta3</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta2</git-forensics-plugin.version>
-    <plugin-util-api.version>0.1.0-beta4-SNAPSHOT</plugin-util-api.version>
+    <plugin-util-api.version>0.1.0-beta4</plugin-util-api.version>
 
     <font-awesome-api.version>5.11.2-2-beta2</font-awesome-api.version>
     <jquery3-api.version>3.4.1-3-beta1</jquery3-api.version>
