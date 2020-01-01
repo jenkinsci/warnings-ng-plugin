@@ -575,8 +575,7 @@ public class IssuesRecorder extends Recorder {
     }
 
     private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
-            final StageResultHandler statusHandler)
-            throws IOException, InterruptedException {
+            final StageResultHandler statusHandler) throws IOException, InterruptedException {
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, DEFAULT_ID));
             for (Tool tool : analysisTools) {

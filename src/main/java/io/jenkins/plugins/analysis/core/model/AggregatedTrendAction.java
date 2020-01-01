@@ -13,7 +13,7 @@ import edu.hm.hafner.echarts.LinesChartModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.bind.JavaScriptMethod;
-import hudson.model.InvisibleAction;
+import hudson.model.Action;
 import hudson.model.Job;
 import hudson.model.Run;
 
@@ -22,13 +22,14 @@ import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
+import io.jenkins.plugins.echarts.AsyncTrendChart;
 
 /**
  * Project action that renders a combined trend chart of all tools in the job.
  *
  * @author Ullrich Hafner
  */
-public class AggregatedTrendAction extends InvisibleAction {
+public class AggregatedTrendAction implements Action, AsyncTrendChart {
     private static final int MIN_TOOLS = 2;
 
     private final Job<?, ?> owner;
@@ -45,6 +46,19 @@ public class AggregatedTrendAction extends InvisibleAction {
         this.owner = owner;
     }
 
+    public String getIconFileName() {
+        return null;
+    }
+
+    public String getDisplayName() {
+        return null;
+    }
+
+    @Override
+    public String getUrlName() {
+        return "warnings-aggregation";
+    }
+
     private Set<AnalysisHistory> createBuildHistory() {
         Run<?, ?> lastFinishedRun = owner.getLastCompletedBuild();
         if (lastFinishedRun == null) {
@@ -59,14 +73,10 @@ public class AggregatedTrendAction extends InvisibleAction {
         }
     }
 
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
-     *
-     * @return the UI model as JSON
-     */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public String getBuildTrend() {
+    @Override
+    public String getBuildTrendModel() {
         return new JacksonFacade().toJson(createChartModel());
     }
 
@@ -78,12 +88,7 @@ public class AggregatedTrendAction extends InvisibleAction {
         return new ToolsTrendChart().create(new CompositeBuildResultsIterable(lastBuild), new ChartModelConfiguration());
     }
 
-    /**
-     * Returns whether the trend chart is visible or not.
-     *
-     * @return {@code true} if the trend is visible, false otherwise
-     */
-    @SuppressWarnings("unused") // Called by jelly view
+    @Override
     public boolean isTrendVisible() {
         Set<AnalysisHistory> history = createBuildHistory();
 
