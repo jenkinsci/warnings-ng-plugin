@@ -12,6 +12,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.StaplerProxy;
 import org.kohsuke.stapler.bind.JavaScriptMethod;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import hudson.model.Action;
 import hudson.model.HealthReport;
 import hudson.model.HealthReportingAction;
@@ -112,6 +113,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return the ID
      */
+    @Whitelisted
     public String getId() {
         return id;
     }
@@ -154,6 +156,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
         onAttached(r);
     }
 
+    @Whitelisted
     @Override
     public String getDisplayName() {
         return getLabelProvider().getLinkName();
@@ -198,6 +201,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
                         trendChartType));
     }
 
+    @Whitelisted
     public AnalysisResult getResult() {
         return result;
     }
@@ -282,6 +286,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      * @return {@code true} if the result is successful, {@code false} if the result has been set to {@link
      *         Result#UNSTABLE} or {@link Result#FAILURE}.
      */
+    @Whitelisted
     public boolean isSuccessful() {
         return getResult().isSuccessful();
     }

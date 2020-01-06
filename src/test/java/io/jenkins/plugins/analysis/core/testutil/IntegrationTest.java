@@ -935,11 +935,12 @@ public abstract class IntegrationTest extends ResourceTest {
     protected AnalysisResult getAnalysisResult(final Run<?, ?> build) {
         List<AnalysisResult> analysisResults = getAnalysisResults(build);
 
+        System.out.println("----- Console Log -----");
+        System.out.println(getConsoleLog(build));
+
         assertThat(analysisResults).hasSize(1);
 
         AnalysisResult result = analysisResults.get(0);
-        System.out.println("----- Console Log -----");
-        System.out.println(getConsoleLog(result));
         System.out.println("----- Error Messages -----");
         result.getErrorMessages().forEach(System.out::println);
         System.out.println("----- Info Messages -----");
@@ -1282,8 +1283,20 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the console log
      */
     protected String getConsoleLog(final AnalysisResult result) {
+        return getConsoleLog(result.getOwner());
+    }
+
+    /**
+     * Returns the console log as a String.
+     *
+     * @param build
+     *         the build to get the log for
+     *
+     * @return the console log
+     */
+    protected String getConsoleLog(final Run<?, ?> build) {
         try {
-            return JenkinsRule.getLog(result.getOwner());
+            return JenkinsRule.getLog(build);
         }
         catch (IOException e) {
             throw new AssertionError(e);

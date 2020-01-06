@@ -11,6 +11,8 @@ import com.google.errorprone.annotations.FormatMethod;
 import edu.hm.hafner.analysis.Report;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
+
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
@@ -149,6 +151,7 @@ public class AnnotatedReport implements Serializable {
      *
      * @return the ID
      */
+    @Whitelisted
     public String getId() {
         return id;
     }
@@ -158,6 +161,7 @@ public class AnnotatedReport implements Serializable {
      *
      * @return total number of issues
      */
+    @Whitelisted
     public int size() {
         return aggregatedReport.size();
     }
