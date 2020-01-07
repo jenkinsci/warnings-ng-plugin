@@ -30,7 +30,7 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <codingstyle.version>0.3.0</codingstyle.version>
+    <codingstyle.version>0.3.1</codingstyle.version>
     <analysis-model-api.version>7.0.3</analysis-model-api.version>
     <analysis-model.version>7.0.3</analysis-model.version>
     <forensics-api-plugin.version>0.6.1</forensics-api-plugin.version>
