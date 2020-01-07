@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.eclipse.collections.api.list.ImmutableList;
 
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import hudson.model.Run;
 
 /**
@@ -50,6 +51,7 @@ public interface StaticAnalysisRun extends AnalysisBuildResult {
      *
      * @return the quality gate status
      */
+    @Whitelisted
     QualityGateStatus getQualityGateStatus();
 
     /**

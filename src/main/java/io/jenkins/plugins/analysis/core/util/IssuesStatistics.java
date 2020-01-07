@@ -12,6 +12,7 @@ import org.eclipse.collections.impl.factory.Maps;
 
 import edu.hm.hafner.analysis.Severity;
 
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import org.jvnet.localizer.Localizable;
 
 /**
@@ -75,66 +76,82 @@ public class IssuesStatistics implements Serializable {
         this.fixedSize = fixedSize;
     }
 
+    @Whitelisted
     public int getTotalSize() {
         return totalErrorSize + totalHighSize + totalNormalSize + totalLowSize;
     }
 
+    @Whitelisted
     public int getNewSize() {
         return newErrorSize + newHighSize + newNormalSize + newLowSize;
     }
 
+    @Whitelisted
     public int getDeltaSize() {
         return deltaErrorSize + deltaHighSize + deltaNormalSize + deltaLowSize;
     }
 
+    @Whitelisted
     public int getTotalErrorSize() {
         return totalErrorSize;
     }
 
+    @Whitelisted
     public int getTotalHighSize() {
         return totalHighSize;
     }
 
+    @Whitelisted
     public int getTotalNormalSize() {
         return totalNormalSize;
     }
 
+    @Whitelisted
     public int getTotalLowSize() {
         return totalLowSize;
     }
 
+    @Whitelisted
     public int getNewErrorSize() {
         return newErrorSize;
     }
 
+    @Whitelisted
     public int getNewHighSize() {
         return newHighSize;
     }
 
+    @Whitelisted
     public int getNewNormalSize() {
         return newNormalSize;
     }
 
+    @Whitelisted
     public int getNewLowSize() {
         return newLowSize;
     }
 
+    @Whitelisted
     public int getDeltaErrorSize() {
         return deltaErrorSize;
     }
 
+    @Whitelisted
     public int getDeltaHighSize() {
         return deltaHighSize;
     }
 
+    @Whitelisted
     public int getDeltaNormalSize() {
         return deltaNormalSize;
     }
 
+    @Whitelisted
     public int getDeltaLowSize() {
         return deltaLowSize;
     }
 
+    @Whitelisted
     public int getFixedSize() {
         return fixedSize;
     }

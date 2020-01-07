@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,6 +37,7 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
@@ -51,6 +53,98 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class StepsITest extends IntegrationTestWithJenkinsPerTest {
+
+    private static final String NO_QUALITY_GATE = "";
+
+    /**
+     * Runs a pipeline and verifies the {@code scanForIssues} step has some whitelisted methods.
+     */
+    @Test
+    public void shouldWhitelistScannerApi() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("recorder/checkstyle1.xml", "recorder/checkstyle2.xml");
+
+        configureScanner(job, "checkstyle1");
+        Run<?, ?> baseline = buildSuccessfully(job);
+
+        assertThat(getConsoleLog(baseline)).contains("[total=" + 3 + "]");
+        assertThat(getConsoleLog(baseline)).contains("[id=checkstyle]");
+
+        configureScanner(job, "checkstyle2");
+        Run<?, ?> build = buildSuccessfully(job);
+        assertThat(getConsoleLog(build)).contains("[total=" + 4 + "]");
+        assertThat(getConsoleLog(build)).contains("[id=checkstyle]");
+    }
+
+    private void configureScanner(final WorkflowJob job, final String fileName) {
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         def report = scanForIssues tool: checkStyle(pattern: '**/" + fileName + "*')\n"
+                + "         echo '[total=' + report.size() + ']' \n"
+                + "         echo '[id=' + report.getId() + ']' \n"
+                + "  }\n"
+                + "}", true));
+    }
+
+    /**
+     * Runs a pipeline and verifies the {@code publishIssues} step has whitelisted methods.
+     */
+    @Test
+    public void shouldWhitelistPublisherApi() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("recorder/checkstyle1.xml", "recorder/checkstyle2.xml");
+
+        configurePublisher(job, "checkstyle1", NO_QUALITY_GATE);
+        Run<?, ?> baseline = buildSuccessfully(job);
+
+        verifyApiResults(baseline, 3, 0, 0, "INACTIVE");
+
+        configurePublisher(job, "checkstyle2", NO_QUALITY_GATE);
+        Run<?, ?> build = buildSuccessfully(job);
+        verifyApiResults(build, 4, 3, 2, "INACTIVE");
+
+        configurePublisher(job, "checkstyle2", "[threshold: 4, type: 'TOTAL', unstable: true]");
+        Run<?, ?> unstable = buildWithResult(job, Result.UNSTABLE);
+        verifyApiResults(unstable, 4, 0, 0, "WARNING");
+
+        configurePublisher(job, "checkstyle2", "[threshold: 4, type: 'TOTAL', unstable: false]");
+        Run<?, ?> failed = buildWithResult(job, Result.FAILURE);
+        verifyApiResults(failed, 4, 0, 0, "FAILED");
+    }
+
+    private void verifyApiResults(final Run<?, ?> baseline, final int totalSize, final int newSize, final int fixedSize,
+            final String qualityGateStatus) {
+        assertThat(getConsoleLog(baseline)).contains("[total=" + totalSize + "]");
+        assertThat(getConsoleLog(baseline)).contains("[new=" + newSize + "]");
+        assertThat(getConsoleLog(baseline)).contains("[fixed=" + fixedSize + "]");
+        assertThat(getConsoleLog(baseline)).contains("[id=checkstyle]");
+        assertThat(getConsoleLog(baseline)).contains("[name=CheckStyle Warnings]");
+        assertThat(getConsoleLog(baseline)).contains("[status=" + qualityGateStatus + "]");
+        boolean isSuccessful = QualityGateStatus.valueOf(qualityGateStatus).isSuccessful();
+        assertThat(getConsoleLog(baseline)).contains("[isSuccessful=" + isSuccessful + "]");
+        assertThat(getConsoleLog(baseline)).contains("[isSuccessfulQualityGate=" + isSuccessful + "]");
+    }
+
+    private void configurePublisher(final WorkflowJob job, final String fileName, final String qualityGate) {
+        String qualityGateParameter = String.format("qualityGates: [%s]", qualityGate);
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         def issues = scanForIssues tool: checkStyle(pattern: '**/" + fileName + "*')\n"
+                + "         def action = publishIssues issues:[issues], " + qualityGateParameter + "\n"
+                + "         echo '[id=' + action.getId() + ']' \n"
+                + "         echo '[name=' + action.getDisplayName() + ']' \n"
+                + "         echo '[isSuccessful=' + action.isSuccessful() + ']' \n"
+                + "         def result = action.getResult()\n"
+                + "         def status = result.getQualityGateStatus()\n"
+                + "         echo '[status=' + status + ']' \n"
+                + "         echo '[isSuccessfulQualityGate=' + status.isSuccessful() + ']' \n"
+                + "         def totals = result.getTotals()\n"
+                + "         echo '[total=' + totals.getTotalSize() + ']' \n"
+                + "         echo '[new=' + totals.getNewSize() + ']' \n"
+                + "         echo '[fixed=' + totals.getFixedSize() + ']' \n"
+                + "  }\n"
+                + "}", true));
+    }
+
+
     /** Verifies that a {@link Tool} defines a {@link Symbol}. */
     @Test
     public void shouldProvideSymbol() {
@@ -699,7 +793,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 "publishIssues(issues:[java], qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
         WorkflowRun run = (WorkflowRun)buildWithResult(job, Result.UNSTABLE);
         FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
-                node -> node.getDisplayFunctionName().equals("publishIssues"));
+                node -> "publishIssues".equals(Objects.requireNonNull(node).getDisplayFunctionName()));
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
@@ -720,7 +814,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 + "qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
         WorkflowRun run = (WorkflowRun)buildWithResult(job, Result.UNSTABLE);
         FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
-                node -> node.getDisplayFunctionName().equals("recordIssues"));
+                node -> "recordIssues".equals(Objects.requireNonNull(node).getDisplayFunctionName()));
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
