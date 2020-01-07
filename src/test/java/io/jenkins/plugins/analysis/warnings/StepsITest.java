@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -68,9 +69,6 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(getConsoleLog(baseline)).contains("[total=" + 3 + "]");
         assertThat(getConsoleLog(baseline)).contains("[id=checkstyle]");
 
-        System.out.println("----- Console Log -----");
-        System.out.println(getConsoleLog(baseline));
-
         configureScanner(job, "checkstyle2");
         Run<?, ?> build = buildSuccessfully(job);
         assertThat(getConsoleLog(build)).contains("[total=" + 4 + "]");
@@ -98,9 +96,6 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         Run<?, ?> baseline = buildSuccessfully(job);
 
         verifyApiResults(baseline, 3, 0, 0, "INACTIVE");
-
-        System.out.println("----- Console Log -----");
-        System.out.println(getConsoleLog(baseline));
 
         configurePublisher(job, "checkstyle2", NO_QUALITY_GATE);
         Run<?, ?> build = buildSuccessfully(job);
@@ -798,7 +793,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 "publishIssues(issues:[java], qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
         WorkflowRun run = (WorkflowRun)buildWithResult(job, Result.UNSTABLE);
         FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
-                node -> node.getDisplayFunctionName().equals("publishIssues"));
+                node -> "publishIssues".equals(Objects.requireNonNull(node).getDisplayFunctionName()));
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
@@ -819,7 +814,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 + "qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
         WorkflowRun run = (WorkflowRun)buildWithResult(job, Result.UNSTABLE);
         FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
-                node -> node.getDisplayFunctionName().equals("recordIssues"));
+                node -> "recordIssues".equals(Objects.requireNonNull(node).getDisplayFunctionName()));
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
