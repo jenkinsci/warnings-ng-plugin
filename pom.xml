@@ -31,8 +31,8 @@
 
     <!-- Project Dependencies Configuration -->
     <codingstyle.version>0.3.0</codingstyle.version>
-    <analysis-model-api.version>7.0.2</analysis-model-api.version>
-    <analysis-model.version>7.0.2</analysis-model.version>
+    <analysis-model-api.version>7.0.3</analysis-model-api.version>
+    <analysis-model.version>7.0.3</analysis-model.version>
     <forensics-api-plugin.version>0.6.1</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.6.0</git-forensics-plugin.version>
 
