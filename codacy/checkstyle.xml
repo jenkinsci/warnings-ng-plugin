@@ -35,6 +35,8 @@
     <module name="MissingJavadocMethodCheck">
       <property name="allowMissingPropertyJavadoc" value="true"/>
     </module>
+    <module name="MissingJavadocTypeCheck"/>
+    <module name="MissingJavadocPackageCheck"/>
     <module name="JavadocVariable">
       <property name="scope" value="protected"/>
       <property name="tokens" value="VARIABLE_DEF"/>
