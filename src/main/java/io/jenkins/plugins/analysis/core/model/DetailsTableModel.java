@@ -178,6 +178,7 @@ public abstract class DetailsTableModel extends TableModel {
             return createDetailsColumn(details);
         }
 
+        // FIXME: move to data-tables plugin
         private String createDetailsColumn(final UnescapedText details) {
             return div()
                     .withClass("details-control")

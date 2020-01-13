@@ -29,7 +29,6 @@
     <module name="JavadocType"/>
     <module name="JavadocMethod">
       <property name="scope" value="protected"/>
-      <property name="allowUndeclaredRTE" value="true"/>
       <property name="suppressLoadErrors" value="true"/>
     </module>
     <module name="MissingJavadocMethodCheck">
