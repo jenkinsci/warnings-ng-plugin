@@ -71,7 +71,8 @@ class DryTableModelTest extends AbstractDetailsModelTest {
 
         DuplicationRow actualRow = model.getRow(issue);
         assertThat(actualRow)
-                .hasDescription("<div class=\"details-control\" data-description=\"" + DESCRIPTION + "\"></div>")
+                .hasDescription("<div class=\"details-control\" data-description=\"" + DESCRIPTION + "\">"
+                        + DETAILS_ICON + "</div>")
                 .hasAge("1");
         assertThatDetailedColumnContains(actualRow.getFileName(),
                 getFileNameFor(issue, 1), "/path/to/file-1:0000010");
@@ -89,6 +90,7 @@ class DryTableModelTest extends AbstractDetailsModelTest {
     }
 
     private DryModel createModel(final Report report) {
-        return new DryModel(report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION);
+        return new DryModel(report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION,
+                createJenkinsFacade());
     }
 }

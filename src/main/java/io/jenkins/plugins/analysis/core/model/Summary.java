@@ -56,7 +56,7 @@ public class Summary {
     Summary(final StaticAnalysisLabelProvider labelProvider, final AnalysisResult result,
             final LabelProviderFactoryFacade facade) {
         this.labelProvider = labelProvider;
-        this.analysisResult = result;
+        analysisResult = result;
         this.facade = facade;
     }
 

@@ -7,13 +7,15 @@ import org.apache.commons.text.StringEscapeUtils;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.util.LookaheadStream;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.ContainerTag;
 import j2html.tags.UnescapedText;
 
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
+import io.jenkins.plugins.fontawesome.api.SvgTag;
+import io.jenkins.plugins.util.JenkinsFacade;
 
-import static io.jenkins.plugins.fontawesome.api.SvgTag.*;
 import static j2html.TagCreator.*;
 
 /**
@@ -24,6 +26,19 @@ import static j2html.TagCreator.*;
  */
 public class SourcePrinter {
     private static final Sanitizer SANITIZER = new Sanitizer();
+    private final JenkinsFacade jenkinsFacade;
+
+    /**
+     * Creates a new instance of {@link SourcePrinter}.
+     */
+    public SourcePrinter() {
+        this(new JenkinsFacade());
+    }
+
+    @VisibleForTesting
+    SourcePrinter(final JenkinsFacade jenkinsFacade) {
+        this.jenkinsFacade = jenkinsFacade;
+    }
 
     /**
      * Creates a colorized HTML snippet with the specified source code. Highlights the specified issue and provides a
@@ -96,7 +111,8 @@ public class SourcePrinter {
     private ContainerTag createCollapseButton(final boolean isCollapseVisible) {
         ContainerTag td = td();
         if (isCollapseVisible) {
-            td.with(new UnescapedText(fontAwesomeSvgIcon("chevron-circle-down").withClasses("analysis-collapse-icon").render()));
+            td.with(new UnescapedText(new SvgTag("chevron-circle-down", jenkinsFacade)
+                    .withClasses("analysis-collapse-icon").render()));
         }
         return td;
     }

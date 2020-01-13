@@ -106,6 +106,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
     }
 
     private BlamesModel createModel(final Report report, final Blames blames) {
-        return new BlamesModel(report, blames, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION);
+        return new BlamesModel(report, blames, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION,
+                createJenkinsFacade());
     }
 }

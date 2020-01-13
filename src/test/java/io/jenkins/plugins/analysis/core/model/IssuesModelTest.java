@@ -8,6 +8,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -90,7 +91,10 @@ class IssuesModelTest extends AbstractDetailsModelTest {
     }
 
     private IssuesModel createModel(final Report report) {
-        return new IssuesModel(report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION);
+        JenkinsFacade jenkinsFacade = createJenkinsFacade();
+
+        return new IssuesModel(report, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION,
+                jenkinsFacade);
     }
 }
 

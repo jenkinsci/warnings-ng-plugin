@@ -5,12 +5,14 @@ import java.util.List;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Provides the dynamic model for the details table that shows the source control file statistics.
@@ -38,7 +40,14 @@ public class ForensicsModel extends DetailsTableModel {
     ForensicsModel(final Report report, final RepositoryStatistics statistics,
             final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
             final DescriptionProvider labelProvider) {
-        super(report, fileNameRenderer, ageBuilder, labelProvider);
+        this(report, statistics, fileNameRenderer, ageBuilder, labelProvider, new JenkinsFacade());
+    }
+
+    @VisibleForTesting
+    ForensicsModel(final Report report, final RepositoryStatistics statistics,
+            final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+            final DescriptionProvider labelProvider, final JenkinsFacade jenkinsFacade) {
+        super(report, fileNameRenderer, ageBuilder, labelProvider, jenkinsFacade);
 
         this.statistics = statistics;
     }
@@ -70,7 +79,7 @@ public class ForensicsModel extends DetailsTableModel {
     @Override
     public ForensicsRow getRow(final Issue issue) {
         ForensicsRow row = new ForensicsRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                issue);
+                issue, getJenkinsFacade());
         if (statistics.contains(issue.getFileName())) {
             FileStatistics result = statistics.get(issue.getFileName());
             row.setAuthorsSize(String.valueOf(result.getNumberOfAuthors()));
@@ -98,8 +107,8 @@ public class ForensicsModel extends DetailsTableModel {
         private int addedAt;
 
         ForensicsRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue) {
-            super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
+                final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
         }
 
         public String getAuthorsSize() {

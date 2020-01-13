@@ -22,6 +22,6 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
     }
 
     private TableRow createRow(final Issue issue) {
-        return new TableRow(createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue);
+        return new TableRow(createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue, createJenkinsFacade());
     }
 }

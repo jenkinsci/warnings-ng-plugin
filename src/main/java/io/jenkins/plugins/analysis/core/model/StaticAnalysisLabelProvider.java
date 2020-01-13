@@ -20,9 +20,9 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
+import io.jenkins.plugins.fontawesome.api.SvgTag;
 import io.jenkins.plugins.util.JenkinsFacade;
 
-import static io.jenkins.plugins.fontawesome.api.SvgTag.*;
 import static j2html.TagCreator.*;
 
 /**
@@ -38,6 +38,10 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
+    @VisibleForTesting
+    static final String ERROR_ICON = "exclamation-triangle";
+    @VisibleForTesting
+    static final String INFO_ICON = "info-circle";
 
     private final String id;
     @Nullable
@@ -209,12 +213,12 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the title div
      */
     public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
-        String icon = hasErrors ? "exclamation-triangle" : "info-circle";
+        String icon = hasErrors ? ERROR_ICON : INFO_ICON;
         return div(join(getName() + ": ",
                 getWarningsCount(result),
                 a().withHref(getId() + "/info")
                         .withId(id + "-title")
-                        .with(new UnescapedText(fontAwesomeSvgIcon(icon).withClasses("info-page-decorator").render()))));
+                        .with(new UnescapedText(new SvgTag(icon, jenkins).withClasses("info-page-decorator").render()))));
     }
 
     /**

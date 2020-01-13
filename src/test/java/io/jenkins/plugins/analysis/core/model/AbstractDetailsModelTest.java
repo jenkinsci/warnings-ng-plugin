@@ -16,6 +16,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.Defaul
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel.DetailedColumnDefinition;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static j2html.TagCreator.*;
 import static org.assertj.core.api.Assertions.*;
@@ -32,8 +33,11 @@ public abstract class AbstractDetailsModelTest {
             = join("Hello description with", a().withHref("url").withText("link")).render();
     private static final String MESSAGE
             = join("Hello message with", a().withHref("url").withText("link")).render();
+    /** Details icon that opens a new row. */
+    protected static final String DETAILS_ICON = "<svg class=\"details-icon svg-icon\"><use href=\"/path/to/icon\"></use></svg>";
     static final String EXPECTED_DESCRIPTION = String.format(
-            "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt; %s\"></div>",
+            "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt; %s\">"
+                    + DETAILS_ICON + "</div>",
             StringEscapeUtils.escapeHtml4(MESSAGE), StringEscapeUtils.escapeHtml4(DESCRIPTION));
 
     private IssueBuilder createBuilder() {
@@ -101,5 +105,11 @@ public abstract class AbstractDetailsModelTest {
 
     protected Stream<Integer> getWidths(final DetailsTableModel model) {
         return model.getColumns().stream().map(TableColumn::getWidth);
+    }
+
+    protected JenkinsFacade createJenkinsFacade() {
+        JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
+        when(jenkinsFacade.getImagePath(anyString())).thenReturn("/path/to/icon");
+        return jenkinsFacade;
     }
 }

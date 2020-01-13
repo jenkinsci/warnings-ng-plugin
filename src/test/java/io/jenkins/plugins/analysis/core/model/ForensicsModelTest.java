@@ -106,6 +106,6 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
     private ForensicsModel createModel(final Report report, final RepositoryStatistics statistics) {
         return new ForensicsModel(report, statistics, createFileNameRenderer(), createAgeBuilder(),
-                issue -> DESCRIPTION);
+                issue -> DESCRIPTION, createJenkinsFacade());
     }
 }

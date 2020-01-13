@@ -61,7 +61,7 @@ class SummaryTest {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 Lists.immutable.of("Error 1", "Error 2"), 0);
         String createdHtml = createSummary(analysisResult).create();
-        assertThat(createdHtml).contains("class=\"fa fa-exclamation-triangle\"");
+        assertThat(createdHtml).contains("<svg class=\"info-page-decorator svg-icon\"><use href=\"/path/to/error\"></use></svg>");
     }
 
     /**
@@ -72,7 +72,7 @@ class SummaryTest {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0);
         String createdHtml = createSummary(analysisResult).create();
-        assertThat(createdHtml).contains("<a href=\"test/info\"><i class=\"fa fa-info-circle\"></i>");
+        assertThat(createdHtml).contains("<svg class=\"info-page-decorator svg-icon\"><use href=\"/path/to/info\"></use></svg>");
     }
 
     /**
@@ -84,7 +84,7 @@ class SummaryTest {
                 EMPTY_ERRORS, 0);
         String createdHtml = createSummary(analysisResult).create();
         assertThat(createdHtml).contains("<div id=\"test-summary\">");
-        assertThat(createdHtml).contains("<div id=\"test-title\">");
+        assertThat(createdHtml).contains("id=\"test-title\"");
     }
 
     /**
@@ -350,6 +350,8 @@ class SummaryTest {
     private StaticAnalysisLabelProvider createLabelProvider(final String id, final String name) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getImagePath(any(BallColor.class))).thenReturn("color");
+        when(jenkins.getImagePath(contains(StaticAnalysisLabelProvider.ERROR_ICON))).thenReturn("/path/to/error");
+        when(jenkins.getImagePath(contains(StaticAnalysisLabelProvider.INFO_ICON))).thenReturn("/path/to/info");
         when(jenkins.getAbsoluteUrl(any())).thenReturn("absoluteUrl");
         return new StaticAnalysisLabelProvider(id, name, jenkins);
     }

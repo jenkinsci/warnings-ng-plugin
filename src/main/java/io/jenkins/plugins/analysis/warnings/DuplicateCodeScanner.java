@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.UnescapedText;
 
@@ -25,6 +26,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider.*;
 import static j2html.TagCreator.*;
@@ -291,7 +293,13 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
     static class DryModel extends DetailsTableModel {
         DryModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
                 final DescriptionProvider descriptionProvider) {
-            super(report, fileNameRenderer, ageBuilder, descriptionProvider);
+            super(report, fileNameRenderer, ageBuilder, descriptionProvider, new JenkinsFacade());
+        }
+
+        @VisibleForTesting
+        DryModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+                final DescriptionProvider descriptionProvider, final JenkinsFacade jenkinsFacade) {
+            super(report, fileNameRenderer, ageBuilder, descriptionProvider, jenkinsFacade);
         }
 
         @Override
@@ -318,7 +326,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         @Override
         public DuplicationRow getRow(final Issue issue) {
             DuplicationRow row = new DuplicationRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                    issue);
+                    issue, getJenkinsFacade());
             row.setPackageName(issue);
             row.setSeverity(issue);
             row.setLinesCount(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
@@ -337,8 +345,9 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
             private String duplicatedIn;
 
             DuplicationRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                    final DescriptionProvider descriptionProvider, final Issue issue) {
-                super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
+                    final DescriptionProvider descriptionProvider,
+                    final Issue issue, final JenkinsFacade jenkinsFacade) {
+                super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
             }
 
             public String getPackageName() {

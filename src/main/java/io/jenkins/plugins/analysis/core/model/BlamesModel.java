@@ -5,12 +5,14 @@ import java.util.List;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Provides the dynamic model for the details table that shows the source control blames.
@@ -37,7 +39,13 @@ public class BlamesModel extends DetailsTableModel {
 
     BlamesModel(final Report report, final Blames blames, final FileNameRenderer fileNameRenderer,
             final AgeBuilder ageBuilder, final DescriptionProvider labelProvider) {
-        super(report, fileNameRenderer, ageBuilder, labelProvider);
+        this(report, blames, fileNameRenderer, ageBuilder, labelProvider, new JenkinsFacade());
+    }
+
+    @VisibleForTesting
+    BlamesModel(final Report report, final Blames blames, final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder, final DescriptionProvider labelProvider, final JenkinsFacade jenkinsFacade) {
+        super(report, fileNameRenderer, ageBuilder, labelProvider, jenkinsFacade);
 
         this.blames = blames;
     }
@@ -65,7 +73,8 @@ public class BlamesModel extends DetailsTableModel {
 
     @Override
     protected BlamesRow getRow(final Issue issue) {
-        BlamesRow row = new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue);
+        BlamesRow row = new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+                issue, getJenkinsFacade());
         if (blames.contains(issue.getFileName())) {
             FileBlame blameRequest = blames.getBlame(issue.getFileName());
             int line = issue.getLineStart();
@@ -94,8 +103,8 @@ public class BlamesModel extends DetailsTableModel {
         private int addedAt;
 
         BlamesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue) {
-            super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
+                final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
         }
 
         public String getAuthor() {
