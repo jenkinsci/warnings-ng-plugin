@@ -13,6 +13,7 @@ import j2html.tags.UnescapedText;
 
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 
+import static io.jenkins.plugins.fontawesome.api.SvgTag.*;
 import static j2html.TagCreator.*;
 
 /**
@@ -70,31 +71,43 @@ public class SourcePrinter {
 
     private String createInfoPanel(final Issue issue, final String description, final int start,
             final String iconUrl) {
-        if (StringUtils.isEmpty(description)) {
-            return createMessage(issue.getMessage(), iconUrl).render();
-
-        }
-        return createDescription(issue.getMessage(), description, start, iconUrl).render();
+        return createIssueBox(issue, description, iconUrl).withClass("analysis-warning").render();
     }
 
-    private ContainerTag createMessage(final String message, final String iconUrl) {
-        return div().withClass("analysis-warning").with(messageLabelFrom(message, iconUrl));
-    }
-
-    private ContainerTag messageLabelFrom(final String message, final String iconUrl) {
-        return label().withClass("collapse-btn").with(table().with(
-                tr().with(td().with(img().withSrc(iconUrl),
-                        td().withClass("analysis-title-column").with(div().withClass("analysis-warning-title").with(unescape(message)))))));
-    }
-
-    private ContainerTag createDescription(final String message, final String description, final int line,
+    private ContainerTag createIssueBox(final Issue issue, final String description,
             final String iconUrl) {
-        String id = "collapse-" + line;
-        return div().withClass("analysis-warning").with(
-                input().withClass("collapse-open").withId(id).attr("type", "checkbox"),
-                messageLabelFrom(message, iconUrl).attr("for", id),
-                div().withClass("collapse-panel").with(
-                        div().withClasses("collapse-inner", "analysis-detail").with(unescape(description))));
+        if (StringUtils.isEmpty(description)) {
+            return createTitle(issue.getMessage(), iconUrl, false);
+        }
+        else {
+            return createTitleAndCollapsedDescription(issue.getMessage(), description, iconUrl);
+        }
+    }
+
+    private ContainerTag createTitle(final String message, final String iconUrl, final boolean isCollapseVisible) {
+        return div().with(table().withClass("analysis-title").with(tr().with(
+                td().with(img().withSrc(iconUrl)),
+                td().withClass("analysis-title-column")
+                        .with(div().withClass("analysis-warning-title").with(unescape(message))),
+                createCollapseButton(isCollapseVisible)
+        )));
+    }
+
+    private ContainerTag createCollapseButton(final boolean isCollapseVisible) {
+        ContainerTag td = td();
+        if (isCollapseVisible) {
+            td.with(new UnescapedText(fontAwesomeSvgIcon("chevron-circle-down").withClasses("analysis-collapse-icon").render()));
+        }
+        return td;
+    }
+
+    private ContainerTag createTitleAndCollapsedDescription(final String message, final String description,
+            final String iconUrl) {
+        return div().with(
+                div().withClass("analysis-collapse-button").with(createTitle(message, iconUrl, true)),
+                div().withClasses("collapse", "analysis-detail")
+                        .with(unescape(description))
+                        .withId("analysis-description"));
     }
 
     private UnescapedText unescape(final String message) {

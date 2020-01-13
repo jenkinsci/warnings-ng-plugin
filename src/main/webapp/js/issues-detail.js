@@ -7,12 +7,16 @@
     /**
      * Create a data table instance for all tables that are marked with class "property-table".
      */
-    $('table.property-table').DataTable({
-        pagingType: 'numbers', // Page number button only
-        columnDefs: [{
-            targets: 'no-sort', // Columns with class 'no-sort' are not orderable
-            orderable: false
-        }]
+    const propertyTables = $('table.property-table');
+    propertyTables.each(function () {
+        const table = jQuery3(this);
+        table.DataTable({
+            pagingType: 'numbers', // Page number button only
+            columnDefs: [{
+                targets: 'no-sort', // Columns with class 'no-sort' are not orderable
+                orderable: false
+            }]
+        });
     });
 
     /**
@@ -115,4 +119,4 @@
         }
     }
 
-})(jQuery);
+})(jQuery3);

@@ -32,47 +32,19 @@
 
 /* ------------------------------------------------------------------------------------------------------------------- */
 
-/* DataTables Details */
+/* Font awesome icons */
 
-/* Mouse cursor pointer for details icon */
-div.details-control {
-    position: relative;
-    cursor: pointer;
-}
-
-/* Add font awesome plus icon when its closed */
-.fa:before {
-    font-family: "Font Awesome 5 Free";
-    font-weight: 900;
-}
-
-/* Add font awesome plus icon when its closed */
-div.details-control:before {
-    content: "\f055";
-    font-family: "Font Awesome 5 Free";
-    padding: 12px;
-    font-size: 1.5em;
-    font-weight: 900;
-    color: #b4b4b4;
-}
-
-/* Add font awesome minus icon when it's opened */
-tr.shown div.details-control:before {
-    content: "\f056";
-    font-family: "Font Awesome 5 Free";
-    padding: 12px;
-    font-size: 1.5em;
-    font-weight: 900;
-    color: #b4b4b4;
-}
-
-/* ------------------------------------------------------------------------------------------------------------------- */
-/* Font awesome icons banner */
-
-.banner {
+.no-issues-banner {
     padding: 30px;
-    color: #009688;
-    font-size: 100px;
+    fill: #009688;
+    height: 200px;
+    width: 200px;
+}
+
+.info-page-decorator {
+    fill: #b4b4b4;
+    height: 16px;
+    width: 16px;
 }
 
 /* ------------------------------------------------------------------------------------------------------------------- */

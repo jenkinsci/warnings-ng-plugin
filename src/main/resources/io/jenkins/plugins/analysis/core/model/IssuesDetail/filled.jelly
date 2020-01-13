@@ -6,7 +6,7 @@
     <!-- A carousel with all pie charts on small screens -->
     <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 d-none d-block d-lg-block d-xl-none d-xxl-none">
 
-      <bs:card title="${%Overview}" fontAwesomeIcon="fa-bell">
+      <bs:card title="${%Overview}" fontAwesomeIcon="bell">
         <div id="overview-carousel" class="carousel slide" data-interval="false">
           <div class="carousel-inner">
             <div class="carousel-item active">
@@ -32,7 +32,7 @@
     <!-- A single trend chart with the severities pie chart on large screens -->
     <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
 
-      <bs:card title="${%Severities Distribution}" fontAwesomeIcon="fa-chart-pie">
+      <bs:card title="${%Severities Distribution}" fontAwesomeIcon="chart-pie">
         <c:pie-chart id="severities-solo" model="${it.severityModel}" height="256" />
       </bs:card>
 
@@ -41,7 +41,7 @@
     <!-- A single trend chart with the reference pie chart on large screens -->
     <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
 
-      <bs:card title="${%Reference Comparison}" fontAwesomeIcon="fa-bell">
+      <bs:card title="${%Reference Comparison}" fontAwesomeIcon="bell">
         <c:pie-chart id="trend-solo" model="${it.trendModel}" height="256" />
       </bs:card>
 

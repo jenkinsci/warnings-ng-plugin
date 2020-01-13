@@ -5,7 +5,7 @@
     Renders a chart with the build history in a bootstrap card.
   </st:documentation>
 
-  <bs:card title="${%History}" fontAwesomeIcon="fa-chart-line">
+  <bs:card title="${%History}" fontAwesomeIcon="chart-line">
 
     <div id="trend-carousel" class="carousel slide" data-interval="false">
       <div class="carousel-inner">

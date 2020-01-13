@@ -9,14 +9,13 @@
     <l:main-panel>
 
       <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
-      <st:adjunct includes="io.jenkins.plugins.font-awesome"/>
       <st:adjunct includes="io.jenkins.plugins.data-tables"/>
 
       <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
       <div class="fluid-container">
 
-        <bs:card title="${it.displayName}" fontAwesomeIcon="fa-award">
+        <bs:card title="${it.displayName}" fontAwesomeIcon="award">
 
           <div class="table-responsive">
             <table class="table table-hover table-striped display" id="fixed">
@@ -62,7 +61,13 @@
 
       </div>
 
-      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/fixed-detail.js"/>
+      <script type="text/javascript">
+        /* global jQuery3 */
+        jQuery3('#fixed').DataTable({
+            pagingType: 'numbers', // Page number button only
+            order: [[0, 'asc'], [1, 'asc']] // Sort by file name and line number
+            });
+      </script>
 
     </l:main-panel>
   </l:layout>

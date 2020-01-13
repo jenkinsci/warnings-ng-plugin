@@ -22,6 +22,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.util.JenkinsFacade;
 
+import static io.jenkins.plugins.fontawesome.api.SvgTag.*;
 import static j2html.TagCreator.*;
 
 /**
@@ -208,11 +209,12 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the title div
      */
     public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
-        String icon = hasErrors ? "fa-exclamation-triangle" : "fa-info-circle";
+        String icon = hasErrors ? "exclamation-triangle" : "info-circle";
         return div(join(getName() + ": ",
                 getWarningsCount(result),
-                a().withHref(getId() + "/info").with(i().withClasses("fa", icon))))
-                .withId(id + "-title");
+                a().withHref(getId() + "/info")
+                        .withId(id + "-title")
+                        .with(new UnescapedText(fontAwesomeSvgIcon(icon).withClasses("info-page-decorator").render()))));
     }
 
     /**

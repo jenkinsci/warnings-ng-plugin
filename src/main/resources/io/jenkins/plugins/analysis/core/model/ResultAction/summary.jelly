@@ -1,7 +1,6 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:st="jelly:stapler">
 
-  <st:adjunct includes="io.jenkins.plugins.font-awesome"/>
   <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
   <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">

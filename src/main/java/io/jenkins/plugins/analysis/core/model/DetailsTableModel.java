@@ -19,6 +19,7 @@ import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.datatables.TableModel;
 
 import static edu.hm.hafner.util.IntegerParser.*;
+import static io.jenkins.plugins.fontawesome.api.SvgTag.*;
 import static j2html.TagCreator.*;
 
 /**
@@ -174,7 +175,15 @@ public abstract class DetailsTableModel extends TableModel {
             else {
                 details = join(p(strong().with(new UnescapedText(issue.getMessage()))), additionalDescription);
             }
-            return div().withClass("details-control").attr("data-description", render(details)).render();
+            return createDetailsColumn(details);
+        }
+
+        private String createDetailsColumn(final UnescapedText details) {
+            return div()
+                    .withClass("details-control")
+                    .attr("data-description", render(details))
+                    .with(new UnescapedText(fontAwesomeSvgIcon("plus-circle").withClasses("details-icon").render()))
+                    .render();
         }
 
         /**
