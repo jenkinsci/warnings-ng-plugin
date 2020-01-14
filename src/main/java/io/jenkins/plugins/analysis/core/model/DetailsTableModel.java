@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.UnescapedText;
 
@@ -151,14 +150,9 @@ public abstract class DetailsTableModel extends TableModel {
          *         renders the description text
          * @param issue
          *         the issue to show in the row
+         * @param jenkinsFacade
+         *         Jenkins facade to replaced with a stub during unit tests
          */
-        protected TableRow(final AgeBuilder ageBuilder,
-                final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue) {
-            this(ageBuilder, fileNameRenderer, descriptionProvider, issue, new JenkinsFacade());
-        }
-
-        @VisibleForTesting
         protected TableRow(final AgeBuilder ageBuilder,
                 final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider,
