@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.assertj.core.data.MapEntry;
 import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -33,13 +32,12 @@ import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssueRow.IssueColumn;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SummaryBox;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
+import io.jenkins.plugins.datatables.TablePageObject;
+import io.jenkins.plugins.datatables.TableRowPageObject;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -53,6 +51,13 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
+    static final String DETAILS = "Details";
+    static final String AFFECTED_FILE = "File";
+    static final String CATEGORY = "Category";
+    static final String TYPE = "Type";
+    static final String SEVERITY = "Severity";
+    static final String AGE = "Age";
+
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
      */
@@ -481,37 +486,36 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 new PropertyRow("LineLengthCheck", 1, 50),
                 new PropertyRow("RightCurlyCheck", 2, 100));
 
-        IssuesTable issues = new IssuesTable(details);
-        assertThat(issues.getColumns()).containsExactly(IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.CATEGORY,
-                IssueColumn.TYPE, IssueColumn.SEVERITY, IssueColumn.AGE);
+        TablePageObject issues = new TablePageObject(details, "issues");
+        assertThat(issues.getColumnHeaders())
+                .containsExactly(DETAILS, AFFECTED_FILE, CATEGORY, TYPE, SEVERITY, AGE);
 
-        assertThat(issues.getTitle()).isEqualTo("Issues");
-        List<IssueRow> rows = issues.getRows();
+        List<TableRowPageObject> rows = issues.getRows();
         assertThat(rows).hasSize(4);
-        assertThat(rows.get(0).getValuesByColumn()).contains(
-                file("CsharpNamespaceDetector.java:22"),
-                category("Design"),
-                type("DesignForExtensionCheck"),
-                error(),
-                age("2"));
-        assertThat(rows.get(1).getValuesByColumn()).contains(
-                file("CsharpNamespaceDetector.java:29"),
-                category("Sizes"),
-                type("LineLengthCheck"),
-                error(),
-                age("1"));
-        assertThat(rows.get(2).getValuesByColumn()).contains(
-                file("CsharpNamespaceDetector.java:30"),
-                category("Blocks"),
-                type("RightCurlyCheck"),
-                error(),
-                age("1"));
-        assertThat(rows.get(3).getValuesByColumn()).contains(
-                file("CsharpNamespaceDetector.java:37"),
-                category("Blocks"),
-                type("RightCurlyCheck"),
-                error(),
-                age("1"));
+        assertThat(rows.get(0).getValuesByColumnLabel()).contains(
+                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:22"),
+                entry(CATEGORY, "Design"),
+                entry(TYPE, "DesignForExtensionCheck"),
+                entry(SEVERITY, "Error"),
+                entry(AGE, "2"));
+        assertThat(rows.get(1).getValuesByColumnLabel()).contains(
+                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:29"),
+                entry(CATEGORY, "Sizes"),
+                entry(TYPE, "LineLengthCheck"),
+                entry(SEVERITY, "Error"),
+                entry(AGE, "1"));
+        assertThat(rows.get(2).getValuesByColumnLabel()).contains(
+                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:30"),
+                entry(CATEGORY, "Blocks"),
+                entry(TYPE, "RightCurlyCheck"),
+                entry(SEVERITY, "Error"),
+                entry(AGE, "1"));
+        assertThat(rows.get(3).getValuesByColumnLabel()).contains(
+                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:37"),
+                entry(CATEGORY, "Blocks"),
+                entry(TYPE, "RightCurlyCheck"),
+                entry(SEVERITY, "Error"),
+                entry(AGE, "1"));
     }
 
     private void verifyBaselineDetails(final AnalysisResult baseline) {
@@ -534,51 +538,30 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
                 new PropertyRow("DesignForExtensionCheck", 2, 100),
                 new PropertyRow("LineLengthCheck", 1, 50));
 
-        IssuesTable issues = detailsTab.select(TabType.ISSUES);
+        TablePageObject issues = detailsTab.select(TabType.ISSUES);
 
-        assertThat(issues.getColumns()).containsExactly(IssueColumn.DETAILS, IssueColumn.FILE, IssueColumn.CATEGORY,
-                IssueColumn.TYPE, IssueColumn.SEVERITY, IssueColumn.AGE);
-        assertThat(issues.getTitle()).isEqualTo("Issues");
-        List<IssueRow> rows = issues.getRows();
+        assertThat(issues.getColumnHeaders())
+                .containsExactly(DETAILS, AFFECTED_FILE, CATEGORY, TYPE, SEVERITY, AGE);
+        List<TableRowPageObject> rows = issues.getRows();
         assertThat(rows).hasSize(3);
-        assertThat(rows.get(0).getValuesByColumn()).contains(
-                file("CsharpNamespaceDetector.java:17"),
-                category("Design"),
-                type("DesignForExtensionCheck"),
-                error(),
-                age("1"));
-        assertThat(rows.get(1).getValuesByColumn()).contains(
-                file("CsharpNamespaceDetector.java:22"),
-                category("Design"),
-                type("DesignForExtensionCheck"),
-                error(),
-                age("1"));
-        assertThat(rows.get(2).getValuesByColumn()).contains(
-                file("CsharpNamespaceDetector.java:42"),
-                category("Sizes"),
-                type("LineLengthCheck"),
-                error(),
-                age("1"));
-    }
-
-    private MapEntry<IssueColumn, String> age(final String age) {
-        return entry(IssueColumn.AGE, age);
-    }
-
-    private MapEntry<IssueColumn, String> error() {
-        return entry(IssueColumn.SEVERITY, "Error");
-    }
-
-    private MapEntry<IssueColumn, String> type(final String type) {
-        return entry(IssueColumn.TYPE, type);
-    }
-
-    private MapEntry<IssueColumn, String> category(final String category) {
-        return entry(IssueColumn.CATEGORY, category);
-    }
-
-    private MapEntry<IssueColumn, String> file(final String file) {
-        return entry(IssueColumn.FILE, file);
+        assertThat(rows.get(0).getValuesByColumnLabel()).contains(
+                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:17"),
+                entry(CATEGORY, "Design"),
+                entry(TYPE, "DesignForExtensionCheck"),
+                entry(SEVERITY, "Error"),
+                entry(AGE, "1"));
+        assertThat(rows.get(1).getValuesByColumnLabel()).contains(
+                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:22"),
+                entry(CATEGORY, "Design"),
+                entry(TYPE, "DesignForExtensionCheck"),
+                entry(SEVERITY, "Error"),
+                entry(AGE, "1"));
+        assertThat(rows.get(2).getValuesByColumnLabel()).contains(
+                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:42"),
+                entry(CATEGORY, "Sizes"),
+                entry(TYPE, "LineLengthCheck"),
+                entry(SEVERITY, "Error"),
+                entry(AGE, "1"));
     }
 
     /**

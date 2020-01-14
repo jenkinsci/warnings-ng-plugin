@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.SeriesBuilder;
 
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
@@ -12,7 +13,7 @@ import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
  *
  * @author Ullrich Hafner
  */
-public class SeveritySeriesBuilder extends SeriesBuilder {
+public class SeveritySeriesBuilder extends SeriesBuilder<AnalysisBuildResult> {
     @Override
     protected Map<String, Integer> computeSeries(final AnalysisBuildResult current) {
         Map<String, Integer> series = new HashMap<>();

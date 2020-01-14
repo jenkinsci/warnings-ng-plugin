@@ -20,7 +20,7 @@
   </description>
 
   <properties>
-    <revision>7.3.1</revision>
+    <revision>8.0.0-beta3</revision>
     <changelist>-SNAPSHOT</changelist>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -30,13 +30,21 @@
     <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
-    <codingstyle.version>0.3.0</codingstyle.version>
-    <analysis-model-api.version>7.0.3</analysis-model-api.version>
-    <analysis-model.version>7.0.3</analysis-model.version>
-    <forensics-api-plugin.version>0.6.1</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.6.0</git-forensics-plugin.version>
-
     <module.name>${project.groupId}.warnings.ng</module.name>
+
+    <codingstyle.version>0.3.2</codingstyle.version>
+    <analysis-model-api.version>8.0.0-beta2</analysis-model-api.version>
+    <analysis-model.version>8.0.0-beta2</analysis-model.version>
+    <forensics-api-plugin.version>0.7.0-beta5</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.7.0-beta2</git-forensics-plugin.version>
+    <plugin-util-api.version>0.1.0-beta5</plugin-util-api.version>
+
+    <font-awesome-api.version>5.12.0-1-beta1</font-awesome-api.version>
+    <jquery3-api.version>3.4.1-3-beta1</jquery3-api.version>
+    <popper-api.version>1.15.0-2-beta1</popper-api.version>
+    <bootstrap4-api.version>4.4.1-4-beta1</bootstrap4-api.version>
+    <data-tables-api.version>1.10.20-6-beta1</data-tables-api.version>
+    <echarts-api.version>4.4.0-7-beta1</echarts-api.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
@@ -50,8 +58,7 @@
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
     <json.version>20190722</json.version>
     <jackson-databind.version>2.9.10.1</jackson-databind.version>
-    <slf4j.version>1.7.29</slf4j.version>
-    <prettytime.version>4.0.2.Final</prettytime.version>
+    <slf4j.version>1.7.30</slf4j.version>
 
     <!-- Test Library Dependencies Versions -->
     <junit.version>5.5.2</junit.version>
@@ -65,22 +72,36 @@
     <json-smart.version>2.3</json-smart.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <token-macro.version>2.5</token-macro.version>
+    <token-macro.version>2.8</token-macro.version>
     <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
-    <matrix-project.version>1.13</matrix-project.version>
+    <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
-    <git-plugin.version>3.9.1</git-plugin.version>
-    <workflow-api.version>2.34</workflow-api.version>
-    <workflow-cps.version>2.67</workflow-cps.version>
-    <workflow-step.version>2.19</workflow-step.version>
-    <workflow-job.version>2.32</workflow-job.version>
-    <structs.version>1.19</structs.version>
+    <git-plugin.version>4.0.0</git-plugin.version>
+    <workflow-api.version>2.37</workflow-api.version>
+    <workflow-cps.version>2.74</workflow-cps.version>
+    <workflow-step-api.version>2.20</workflow-step-api.version>
+    <workflow-job.version>2.35</workflow-job.version>
+    <structs.version>1.20</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
-    <script-security.version>1.58</script-security.version>
+    <script-security.version>1.62</script-security.version>
     <folder-plugin.version>6.1.2</folder-plugin.version>
-    <credentials.version>2.1.14</credentials.version>
-    <httpcomponents-client.version>4.5.3-2.1</httpcomponents-client.version>
+    <credentials.version>2.3.0</credentials.version>
+    <httpcomponents-client.version>4.5.10-1.0</httpcomponents-client.version>
+    <configuration-as-code.version>1.30</configuration-as-code.version>
+    <job-dsl.version>1.76</job-dsl.version>
+    <timestamper.version>1.9</timestamper.version>
+    <envinject.version>2.1.6</envinject.version>
+    <flexible-publish.version>0.15.2</flexible-publish.version>
+    <pipeline-stage-step.version>2.3</pipeline-stage-step.version>
+    <workflow-durable-task-step.version>2.15</workflow-durable-task-step.version>
+    <workflow-basic-steps.version>2.7</workflow-basic-steps.version>
+    <docker-fixtures.version>1.8</docker-fixtures.version>
+    <ssh-slaves.version>1.25</ssh-slaves.version>
+    <jdk-tool.version>1.2</jdk-tool.version>
+    <workflow-support.version>3.3</workflow-support.version>
+    <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
+    <form-element-path.version>1.8</form-element-path.version>
 
     <!-- Maven plug-in versions -->
     <maven-pmd-plugin.version>3.12.0</maven-pmd-plugin.version>
@@ -89,10 +110,10 @@
     <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
     <checkstyle.version>8.27</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.12.2</spotbugs-maven-plugin.version>
+    <findsecbugs-plugin.version>1.10.1</findsecbugs-plugin.version>
     <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
     <maven-surefire.plugin>3.0.0-M4</maven-surefire.plugin>
     <maven-failsafe.plugin>3.0.0-M4</maven-failsafe.plugin>
-    <jar.maven.plugin>3.0.2</jar.maven.plugin>
     <maven-error-prone-plugin.version>2.8.5</maven-error-prone-plugin.version>
     <error-prone.version>2.3.1</error-prone.version>
     <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
@@ -137,7 +158,7 @@
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>credentials</artifactId>
-        <version>2.1.16</version>
+        <version>2.3.0</version>
       </dependency>
       <dependency>
         <groupId>com.google.code.gson</groupId>
@@ -157,17 +178,17 @@
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>mailer</artifactId>
-        <version>1.20</version>
+        <version>1.23</version>
       </dependency>
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>scm-api</artifactId>
-        <version>2.2.7</version>
+        <version>2.6.3</version>
       </dependency>
       <dependency>
         <groupId>org.jenkins-ci.plugins.workflow</groupId>
         <artifactId>workflow-scm-step</artifactId>
-        <version>2.6</version>
+        <version>2.9</version>
       </dependency>
       <dependency>
         <groupId>commons-net</groupId>
@@ -182,7 +203,7 @@
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>ssh-credentials</artifactId>
-        <version>1.13</version>
+        <version>1.17.2</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -194,27 +215,17 @@
         <artifactId>hamcrest-core</artifactId>
         <version>2.2</version>
       </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>jsch</artifactId>
+        <version>0.1.55.1</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
   <dependencies>
 
     <!-- Project Library Dependencies -->
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>analysis-model-api</artifactId>
-      <version>${analysis-model-api.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.ocpsoft.prettytime</groupId>
-      <artifactId>prettytime</artifactId>
-      <version>${prettytime.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-nop</artifactId>
-      <version>${slf4j.version}</version>
-    </dependency>
     <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
@@ -302,6 +313,41 @@
 
     <!-- Required Jenkins Plug-in Dependencies -->
     <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>analysis-model-api</artifactId>
+      <version>${analysis-model-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>font-awesome-api</artifactId>
+      <version>${font-awesome-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>bootstrap4-api</artifactId>
+      <version>${bootstrap4-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>jquery3-api</artifactId>
+      <version>${jquery3-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>echarts-api</artifactId>
+      <version>${echarts-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>data-tables-api</artifactId>
+      <version>${data-tables-api.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>script-security</artifactId>
       <version>${script-security.version}</version>
@@ -319,7 +365,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-step-api</artifactId>
-      <version>${workflow-step.version}</version>
+      <version>${workflow-step-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -486,31 +532,70 @@
       <scope>test</scope>
     </dependency>
 
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>plugin-util-api</artifactId>
+      <version>${plugin-util-api.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>edu.hm.hafner</groupId>
+      <artifactId>codingstyle</artifactId>
+      <version>${codingstyle.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>data-tables-api</artifactId>
+      <version>${data-tables-api.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+    </dependency>
+
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>form-element-path</artifactId>
-      <version>1.8</version>
+      <version>${form-element-path.version}</version>
       <scope>test</scope>
     </dependency>
 
     <!-- Jenkins Plug-in Dependencies required for integration tests -->
     <dependency>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-test-harness</artifactId>
+      <version>${jenkins-test-harness.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.jenkins-ci.main</groupId>
+          <artifactId>jenkins-test-harness-htmlunit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.main</groupId>
+      <artifactId>jenkins-test-harness-htmlunit</artifactId>
+      <version>2.36.0-1</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>flexible-publish</artifactId>
-      <version>0.15.2</version>
+      <version>${flexible-publish.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>envinject</artifactId>
-      <version>2.1.6</version>
+      <version>${envinject.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>timestamper</artifactId>
-      <version>1.9</version>
+      <version>${timestamper.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -522,13 +607,13 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>job-dsl</artifactId>
-      <version>1.76</version>
+      <version>${job-dsl.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>io.jenkins</groupId>
       <artifactId>configuration-as-code</artifactId>
-      <version>1.18</version>
+      <version>${configuration-as-code.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -542,40 +627,40 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>pipeline-stage-step</artifactId>
-      <version>2.3</version>
+      <version>${pipeline-stage-step.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- node -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-durable-task-step</artifactId>
-      <version>2.15</version>
+      <version>${workflow-durable-task-step.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- recorder -> step -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-basic-steps</artifactId>
-      <version>2.7</version>
+      <version>${workflow-basic-steps.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- Docker Agents -->
     <dependency>
       <groupId>org.jenkins-ci.test</groupId>
       <artifactId>docker-fixtures</artifactId>
-      <version>1.8</version>
+      <version>${docker-fixtures.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ssh-slaves</artifactId>
-      <version>1.25</version>
+      <version>${ssh-slaves.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jdk-tool</artifactId>
-      <version>1.2</version>
+      <version>${jdk-tool.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -599,13 +684,13 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-support</artifactId>
-      <version>3.2</version>
+      <version>${workflow-support.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.jenkinsci.plugins</groupId>
       <artifactId>pipeline-model-definition</artifactId>
-      <version>1.2</version>
+      <version>${pipeline-model-definition.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -865,6 +950,13 @@
           <fork>true</fork>
           <excludeFilterFile>spotbugs-exclusion-filter.xml</excludeFilterFile>
           <includeTests>true</includeTests>
+          <plugins>
+            <plugin>
+              <groupId>com.h3xstream.findsecbugs</groupId>
+              <artifactId>findsecbugs-plugin</artifactId>
+              <version>${findsecbugs-plugin.version}</version>
+            </plugin>
+          </plugins>
         </configuration>
         <dependencies>
           <dependency>
@@ -891,6 +983,7 @@
           </dependency>
         </dependencies>
         <configuration>
+          <oldVersion>7.2.2</oldVersion>
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
           <checkDependencies>false</checkDependencies>
@@ -1014,18 +1107,15 @@
 
   <profiles>
     <profile>
-      <id>skip-javadoc-with-tests</id>
-      <activation>
-        <property>
-          <name>skipTests</name>
-          <value>true</value>
-        </property>
-      </activation>
+      <id>skip</id>
       <properties>
         <maven.javadoc.skip>true</maven.javadoc.skip>
+        <pmd.skip>true</pmd.skip>
         <spotbugs.skip>true</spotbugs.skip>
         <checkstyle.skip>true</checkstyle.skip>
-        <pmd.skip>true</pmd.skip>
+        <skipTests>true</skipTests>
+        <skipITs>true</skipITs>
+        <revapi.skip>true</revapi.skip>
       </properties>
     </profile>
   </profiles>

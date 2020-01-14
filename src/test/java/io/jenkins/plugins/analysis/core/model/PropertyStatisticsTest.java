@@ -6,9 +6,10 @@ import java.util.function.Function;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.NoSuchElementException;
+
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
@@ -82,6 +83,19 @@ class PropertyStatisticsTest {
         String actualDisplayName = statistics.getDisplayName("name");
 
         assertThat(actualDisplayName).isEqualTo("name");
+        assertThat(statistics.getToolTip("name")).isEmpty();
+    }
+
+    @Test
+    void shouldReturnToolTip() {
+        PropertyStatistics statistics = new PropertyStatistics(
+                new Report(), "category", string -> string.equals(KEY) ? KEY : "tooltip");
+
+        assertThat(statistics.getDisplayName(KEY)).isEqualTo(KEY);
+        assertThat(statistics.getToolTip(KEY)).isEmpty();
+
+        assertThat(statistics.getDisplayName("name")).isEqualTo("tooltip");
+        assertThat(statistics.getToolTip("name")).isEqualTo("name");
     }
 
     /**

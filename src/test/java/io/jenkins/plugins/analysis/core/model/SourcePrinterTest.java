@@ -10,7 +10,11 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.util.ResourceTest;
 
+import io.jenkins.plugins.util.JenkinsFacade;
+
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link SourcePrinter}.
@@ -45,7 +49,7 @@ class SourcePrinterTest extends ResourceTest {
         IssueBuilder builder = new IssueBuilder();
         Issue issue = builder.setLineStart(7).setMessage(MESSAGE).build();
 
-        SourcePrinter printer = new SourcePrinter();
+        SourcePrinter printer = new SourcePrinter(createJenkinsFacade());
 
         Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
                 DESCRIPTION, ICON_URL));
@@ -55,8 +59,6 @@ class SourcePrinterTest extends ResourceTest {
         assertThat(document.getElementsByClass("analysis-warning-title").text())
                 .isEqualTo(MESSAGE);
         assertThat(document.getElementsByClass("analysis-detail").text())
-                .isEqualTo(DESCRIPTION);
-        assertThat(document.getElementsByClass("collapse-panel").text())
                 .isEqualTo(DESCRIPTION);
     }
 
@@ -103,7 +105,7 @@ class SourcePrinterTest extends ResourceTest {
         IssueBuilder builder = new IssueBuilder();
         Issue issue = builder.setLineStart(7).setMessage("Hello <b>Message</b> <script>execute</script>").build();
 
-        SourcePrinter printer = new SourcePrinter();
+        SourcePrinter printer = new SourcePrinter(createJenkinsFacade());
 
         Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
                 "Hello <b>Description</b> <script>execute</script>", ICON_URL));
@@ -131,5 +133,11 @@ class SourcePrinterTest extends ResourceTest {
 
         Elements pre = document.getElementsByTag("pre");
         assertThat(pre.text()).isEqualToIgnoringWhitespace(expectedFile);
+    }
+
+    private JenkinsFacade createJenkinsFacade() {
+        JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
+        when(jenkinsFacade.getImagePath(anyString())).thenReturn("/path/to/icon");
+        return jenkinsFacade;
     }
 }

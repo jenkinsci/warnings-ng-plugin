@@ -1,14 +1,18 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Provides the dynamic model for the details table that shows the source control blames.
@@ -29,53 +33,63 @@ import io.jenkins.plugins.forensics.blame.FileBlame;
  */
 public class BlamesModel extends DetailsTableModel {
     static final String UNDEFINED = "-";
+    static final int UNDEFINED_DATE = 0;
 
     private final Blames blames;
 
-    BlamesModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-            final DescriptionProvider descriptionProvider, final Blames blames) {
-        super(ageBuilder, fileNameRenderer, descriptionProvider);
+    BlamesModel(final Report report, final Blames blames, final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder, final DescriptionProvider labelProvider) {
+        this(report, blames, fileNameRenderer, ageBuilder, labelProvider, new JenkinsFacade());
+    }
+
+    @VisibleForTesting
+    BlamesModel(final Report report, final Blames blames, final FileNameRenderer fileNameRenderer,
+            final AgeBuilder ageBuilder, final DescriptionProvider labelProvider, final JenkinsFacade jenkinsFacade) {
+        super(report, fileNameRenderer, ageBuilder, labelProvider, jenkinsFacade);
 
         this.blames = blames;
     }
 
     @Override
-    public List<String> getHeaders(final Report report) {
-        return Arrays.asList(
-                Messages.Table_Column_Details(),
-                Messages.Table_Column_File(),
-                Messages.Table_Column_Age(),
-                Messages.Table_Column_Author(),
-                Messages.Table_Column_Email(),
-                Messages.Table_Column_Commit());
+    public String getId() {
+        return "blames";
     }
 
     @Override
-    public List<Integer> getWidths(final Report report) {
-        return Arrays.asList(1, 1, 1, 1, 1, 1);
+    public List<TableColumn> getColumns() {
+        List<TableColumn> columns = new ArrayList<>();
+
+        columns.add(createDetailsColumn());
+        columns.add(createFileColumn());
+        columns.add(createAgeColumn());
+        columns.add(new TableColumn(Messages.Table_Column_Author(), "author"));
+        columns.add(new TableColumn(Messages.Table_Column_Email(), "email"));
+        columns.add(new TableColumn(Messages.Table_Column_Commit(), "commit"));
+        columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedAt")
+                .setHeaderClass(ColumnCss.DATE));
+
+        return columns;
     }
 
     @Override
-    public BlamesRow getRow(final Report report, final Issue issue) {
-        BlamesRow row = new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue);
+    protected BlamesRow getRow(final Issue issue) {
+        BlamesRow row = new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+                issue, getJenkinsFacade());
         if (blames.contains(issue.getFileName())) {
             FileBlame blameRequest = blames.getBlame(issue.getFileName());
             int line = issue.getLineStart();
             row.setAuthor(blameRequest.getName(line));
             row.setEmail(blameRequest.getEmail(line));
             row.setCommit(blameRequest.getCommit(line));
+            row.setAddedAt(blameRequest.getTime(line));
         }
         else {
             row.setAuthor(UNDEFINED);
             row.setEmail(UNDEFINED);
             row.setCommit(UNDEFINED);
+            row.setAddedAt(UNDEFINED_DATE);
         }
         return row;
-    }
-
-    @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder, final Report report) {
-        builder.add("description").add("fileName", "string").add("age").add("author").add("email").add("commit");
     }
 
     /**
@@ -86,10 +100,11 @@ public class BlamesModel extends DetailsTableModel {
         private String author;
         private String email;
         private String commit;
+        private int addedAt;
 
         BlamesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue) {
-            super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
+                final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
         }
 
         public String getAuthor() {
@@ -104,6 +119,10 @@ public class BlamesModel extends DetailsTableModel {
             return commit;
         }
 
+        public int getAddedAt() {
+            return addedAt;
+        }
+
         void setAuthor(final String author) {
             this.author = author;
         }
@@ -114,6 +133,10 @@ public class BlamesModel extends DetailsTableModel {
 
         void setCommit(final String commit) {
             this.commit = commit;
+        }
+
+        public void setAddedAt(final int addedAt) {
+            this.addedAt = addedAt;
         }
     }
 }

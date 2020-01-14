@@ -5,12 +5,15 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.echarts.BuildResult;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import hudson.model.Result;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 
@@ -182,7 +185,7 @@ public class AnalysisHistory implements History {
 
     @Override
     public boolean hasMultipleResults() {
-        Iterator<AnalysisResult> iterator = iterator();
+        Iterator<BuildResult<AnalysisBuildResult>> iterator = iterator();
         for (int count = 1; iterator.hasNext(); count++) {
             if (count >= MIN_BUILDS) {
                 return true;
@@ -199,14 +202,14 @@ public class AnalysisHistory implements History {
 
     @Override
     @NonNull
-    public Iterator<AnalysisResult> iterator() {
+    public Iterator<BuildResult<AnalysisBuildResult>> iterator() {
         return new AnalysisResultIterator(baseline, selector);
     }
 
     /**
      * Provides an iterator of analysis results starting from a baseline and going back in history.
      */
-    private static class AnalysisResultIterator implements Iterator<AnalysisResult> {
+    private static class AnalysisResultIterator implements Iterator<BuildResult<AnalysisBuildResult>> {
         @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
         private Optional<Run<?, ?>> cursor;
         private final ResultSelector selector;
@@ -230,19 +233,19 @@ public class AnalysisHistory implements History {
         }
 
         @Override
-        public AnalysisResult next() {
+        public BuildResult<AnalysisBuildResult> next() {
             if (cursor.isPresent()) {
                 Run<?, ?> run = cursor.get();
                 Optional<ResultAction> resultAction = selector.get(run);
 
                 cursor = getRunWithResult(run.getPreviousBuild(), selector, IGNORE_QUALITY_GATE, IGNORE_JOB_RESULT);
 
-                //noinspection OptionalGetWithoutIsPresent (result action is guaranteed to have a result, see getRunWithResult)
-                return resultAction.get().getResult();
+                if (resultAction.isPresent()) {
+                    return new BuildResult<>(new JenkinsBuild(run), resultAction.get().getResult());
+                }
             }
-            else {
-                throw new NoSuchElementException("No more runs available.");
-            }
+
+            throw new NoSuchElementException("No more runs with an analysis result available: " + cursor);
         }
     }
 }

@@ -8,6 +8,8 @@ import edu.hm.hafner.analysis.Report;
 
 import hudson.model.TaskListener;
 
+import io.jenkins.plugins.util.PluginLogger;
+
 /**
  * Handles logging of issues log and error messages to a {@link TaskListener} instance.
  *
@@ -15,8 +17,8 @@ import hudson.model.TaskListener;
  */
 @SuppressWarnings("PMD.LoggerIsNotStaticFinal")
 public class LogHandler {
-    private final ToolLogger errorLogger;
-    private final ToolLogger logger;
+    private final PluginLogger errorLogger;
+    private final PluginLogger logger;
     private int infoPosition = 0;
     private int errorPosition = 0;
 
@@ -54,12 +56,12 @@ public class LogHandler {
         this.errorPosition = errorPosition;
     }
 
-    private ToolLogger createErrorLogger(final TaskListener listener, final String name) {
+    private PluginLogger createErrorLogger(final TaskListener listener, final String name) {
         return createLogger(listener, String.format("[%s] [-ERROR-]", name));
     }
 
-    private ToolLogger createLogger(final TaskListener listener, final String name) {
-        return new ToolLogger(listener.getLogger(), name);
+    private PluginLogger createLogger(final TaskListener listener, final String name) {
+        return new PluginLogger(listener.getLogger(), name);
     }
 
     /**

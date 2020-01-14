@@ -42,9 +42,9 @@ import hudson.util.Secret;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
+import io.jenkins.plugins.util.EnvironmentResolver;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /** Provides a parser and customized messages for the Axivion Suite. */
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.DataClass"})

@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import org.apache.commons.text.StringEscapeUtils;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,10 +10,16 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Severity;
 
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer.BuildFolderFacade;
+import hudson.model.Run;
+
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
+import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableModel.DetailedColumnDefinition;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static j2html.TagCreator.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -26,8 +33,11 @@ public abstract class AbstractDetailsModelTest {
             = join("Hello description with", a().withHref("url").withText("link")).render();
     private static final String MESSAGE
             = join("Hello message with", a().withHref("url").withText("link")).render();
+    /** Details icon that opens a new row. */
+    protected static final String DETAILS_ICON = "<svg class=\"details-icon svg-icon\"><use href=\"/path/to/icon\"></use></svg>";
     static final String EXPECTED_DESCRIPTION = String.format(
-            "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt; %s\"></div>",
+            "<div class=\"details-control\" data-description=\"&lt;p&gt;&lt;strong&gt;%s&lt;/strong&gt;&lt;/p&gt; %s\">"
+                    + DETAILS_ICON + "</div>",
             StringEscapeUtils.escapeHtml4(MESSAGE), StringEscapeUtils.escapeHtml4(DESCRIPTION));
 
     private IssueBuilder createBuilder() {
@@ -60,7 +70,7 @@ public abstract class AbstractDetailsModelTest {
      * @return the file name column
      */
     protected String createExpectedFileName(final Issue issue) {
-        return String.format("<a href=\"source.%s/#15\">file-1:15</a>", issue.getId().toString());
+        return String.format("<a href=\"source.%s/#15\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"/path/to/file-1\">file-1:15</a>", issue.getId().toString());
     }
 
     /**
@@ -70,8 +80,8 @@ public abstract class AbstractDetailsModelTest {
      */
     protected FileNameRenderer createFileNameRenderer() {
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
-        when(buildFolder.canAccessAffectedFileOf(any())).thenReturn(true);
-        return new FileNameRenderer(buildFolder);
+        when(buildFolder.canAccessAffectedFileOf(any(), any())).thenReturn(true);
+        return new FileNameRenderer(mock(Run.class), buildFolder);
     }
 
     /**
@@ -81,5 +91,25 @@ public abstract class AbstractDetailsModelTest {
      */
     protected DefaultAgeBuilder createAgeBuilder() {
         return new DefaultAgeBuilder(1, "url");
+    }
+
+    protected void assertThatDetailedColumnContains(final DetailedColumnDefinition actualColumn,
+            final String expectedDisplayName, final String expectedSortOrder) {
+        assertThat(actualColumn.getDisplay()).isEqualTo(expectedDisplayName);
+        assertThat(actualColumn.getSort()).isEqualTo(expectedSortOrder);
+    }
+
+    protected Stream<String> getLabels(final DetailsTableModel model) {
+        return model.getColumns().stream().map(TableColumn::getHeaderLabel);
+    }
+
+    protected Stream<Integer> getWidths(final DetailsTableModel model) {
+        return model.getColumns().stream().map(TableColumn::getWidth);
+    }
+
+    protected JenkinsFacade createJenkinsFacade() {
+        JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
+        when(jenkinsFacade.getImagePath(anyString())).thenReturn("/path/to/icon");
+        return jenkinsFacade;
     }
 }

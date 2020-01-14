@@ -32,7 +32,7 @@ import hudson.util.FormValidation.Kind;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Defines the properties of a warnings parser that uses a Groovy script to parse the warnings log.

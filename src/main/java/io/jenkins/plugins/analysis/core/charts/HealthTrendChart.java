@@ -1,7 +1,14 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
-import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.LineSeries;
+import edu.hm.hafner.echarts.LineSeries.FilledMode;
+import edu.hm.hafner.echarts.LineSeries.StackedMode;
+import edu.hm.hafner.echarts.LinesChartModel;
+import edu.hm.hafner.echarts.LinesDataSet;
+import edu.hm.hafner.echarts.Palette;
+
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 
@@ -25,13 +32,13 @@ public class HealthTrendChart implements TrendChart {
     }
 
     @Override
-    public LinesChartModel create(final Iterable<? extends AnalysisBuildResult> results,
+    public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
         HealthSeriesBuilder builder = new HealthSeriesBuilder(healthDescriptor);
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
         LinesChartModel model = new LinesChartModel();
-        model.setXAxisLabels(dataSet.getXAxisLabels());
+        model.setDomainAxisLabels(dataSet.getDomainAxisLabels());
 
         if (healthDescriptor.isEnabled()) {
             LineSeries healthy = createSeries(Messages.Healthy_Name(), Palette.GREEN);

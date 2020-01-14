@@ -37,7 +37,9 @@
               <j:set var="count" value="${t.getCount(key)}"/>
               <tr>
                 <td>
-                  <a href="${t.property}.${key.hashCode()}/">${t.getDisplayName(key)}</a>
+                  <a href="${t.property}.${key.hashCode()}/"
+                     data-toggle="tooltip" data-placement="bottom" title="${t.getToolTip(key)}">
+                    ${t.getDisplayName(key)}</a>
                 </td>
                 <td>${count}</td>
                 <td>

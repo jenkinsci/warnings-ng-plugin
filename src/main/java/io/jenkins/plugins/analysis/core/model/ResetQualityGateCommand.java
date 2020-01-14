@@ -9,8 +9,8 @@ import edu.hm.hafner.util.VisibleForTesting;
 import hudson.model.Item;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Resets the quality gate of a static analysis tool to a clean state. Provides a manual way to restart the new warnings

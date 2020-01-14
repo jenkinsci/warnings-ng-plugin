@@ -24,6 +24,7 @@ import edu.hm.hafner.analysis.ModuleResolver;
 import edu.hm.hafner.analysis.PackageNameResolver;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
+import edu.hm.hafner.util.FilteredLog;
 
 import hudson.FilePath;
 import hudson.model.Computer;
@@ -50,7 +51,6 @@ import io.jenkins.plugins.forensics.miner.MinerFactory;
 import io.jenkins.plugins.forensics.miner.RepositoryMiner;
 import io.jenkins.plugins.forensics.miner.RepositoryMiner.NullMiner;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
-import io.jenkins.plugins.forensics.util.FilteredLog;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 
@@ -148,37 +148,45 @@ class IssuesScanner {
     }
 
     private Blamer createBlamer(final Report report, final VirtualChannel channel) {
-        Blamer blamer;
         if (blameMode == BlameMode.DISABLED) {
             report.logInfo("Skipping SCM blames as requested");
-            blamer = new NullBlamer();
+            return new NullBlamer();
         }
         else {
             FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
-            blamer = BlamerFactory.findBlamer(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
+            report.logInfo("Creating SCM blamer to obtain author and commit information for affected files");
+            Blamer blamer = BlamerFactory.findBlamer(run, getSourceDirectoriesAsFilePaths(report, channel),
+                    listener, log);
             log.logSummary();
             log.getInfoMessages().forEach(report::logInfo);
             log.getErrorMessages().forEach(report::logError);
 
+            return blamer;
         }
-        return blamer;
     }
 
     private List<FilePath> getSourceDirectoriesAsFilePaths(final Report report, final VirtualChannel channel) {
         return getPermittedSourceDirectories(report).stream()
-                        .map(path -> new FilePath(channel, path))
-                        .collect(Collectors.toList());
+                .map(path -> new FilePath(channel, path))
+                .collect(Collectors.toList());
     }
 
     private RepositoryMiner createMiner(final Report report, final VirtualChannel channel) {
         if (forensicsMode == ForensicsMode.ENABLED) {
-            FilteredLog log = new FilteredLog("Errors while mining source code repository for "
+            FilteredLog log = new FilteredLog("Errors while determining a supported SCM miner for "
                     + run.getFullDisplayName());
-            return MinerFactory.findMiner(run, getSourceDirectoriesAsFilePaths(report, channel), listener, log);
+            report.logInfo("Creating SCM miner to obtain statistics for affected repository files");
+            RepositoryMiner miner = MinerFactory.findMiner(run, getSourceDirectoriesAsFilePaths(report, channel),
+                    listener, log);
+            log.logSummary();
+            log.getInfoMessages().forEach(report::logInfo);
+            log.getErrorMessages().forEach(report::logError);
+
+            return miner;
         }
         else {
-            report.logInfo("Skipping SCM forensics as requested");
+            report.logInfo("Skipping SCM repository mining as requested");
 
             return new NullMiner();
         }
@@ -280,10 +288,6 @@ class IssuesScanner {
             createFingerprints(filtered);
 
             FileLocations fileLocations = new ReportLocations().toFileLocations(filtered);
-            fileLocations.logSummary();
-            fileLocations.getInfoMessages().forEach(filtered::logInfo);
-            fileLocations.getErrorMessages().forEach(filtered::logError);
-
             return new AnnotatedReport(id, filtered,
                     blame(filtered, fileLocations),
                     mineRepository(filtered, fileLocations));
@@ -293,10 +297,11 @@ class IssuesScanner {
             if (fileLocations.isEmpty()) {
                 return new Blames();
             }
-            Blames blames = blamer.blame(fileLocations);
-            blames.logSummary();
-            blames.getInfoMessages().forEach(filtered::logInfo);
-            blames.getErrorMessages().forEach(filtered::logError);
+            FilteredLog log = new FilteredLog("Errors while extracting author and commit information from Git:");
+            Blames blames = blamer.blame(fileLocations, log);
+            log.logSummary();
+            log.getInfoMessages().forEach(filtered::logInfo);
+            log.getErrorMessages().forEach(filtered::logError);
             return blames;
         }
 
@@ -306,10 +311,11 @@ class IssuesScanner {
                 return new RepositoryStatistics();
             }
 
-            RepositoryStatistics statistics = miner.mine(fileLocations.getFiles());
-            statistics.logSummary();
-            statistics.getInfoMessages().forEach(filtered::logInfo);
-            statistics.getErrorMessages().forEach(filtered::logError);
+            FilteredLog log = new FilteredLog("Errors while mining source control repository:");
+            RepositoryStatistics statistics = miner.mine(fileLocations.getFiles(), log);
+            log.logSummary();
+            log.getInfoMessages().forEach(filtered::logInfo);
+            log.getErrorMessages().forEach(filtered::logError);
             return statistics;
         }
 

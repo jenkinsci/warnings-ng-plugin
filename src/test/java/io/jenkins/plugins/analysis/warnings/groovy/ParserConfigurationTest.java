@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.util.GlobalConfigurationFacade;
+import io.jenkins.plugins.util.GlobalConfigurationFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;

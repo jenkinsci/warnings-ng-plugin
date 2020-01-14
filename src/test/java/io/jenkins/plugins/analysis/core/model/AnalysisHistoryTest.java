@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import edu.hm.hafner.echarts.BuildResult;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.Result;
@@ -68,7 +69,7 @@ class AnalysisHistoryTest {
 
         AnalysisHistory history = new AnalysisHistory(last, resultSelector);
 
-        assertThat(history.iterator()).toIterable().containsExactly(lastResult, middleResult, firstResult);
+        assertThat(history.iterator()).toIterable().extracting(BuildResult::getResult).containsExactly(lastResult, middleResult, firstResult);
         assertThat(history.hasMultipleResults()).isTrue();
     }
 

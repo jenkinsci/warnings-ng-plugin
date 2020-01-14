@@ -13,7 +13,8 @@
     </tr>
   </dp:decorate>
 
-  <script src="${resURL}/plugin/warnings-ng/js/libs/echarts.common.min.js"/>
+  <st:adjunct includes="io.jenkins.plugins.echarts"/>
+
   <script src="${resURL}/plugin/warnings-ng/js/simple-trend-chart.js"/>
 
   <script>

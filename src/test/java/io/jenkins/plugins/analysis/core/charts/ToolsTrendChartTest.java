@@ -7,12 +7,17 @@ import java.util.List;
 import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult.BuildProperties;
-import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
+import edu.hm.hafner.echarts.Build;
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.LineSeries;
+import edu.hm.hafner.echarts.LinesChartModel;
+import edu.hm.hafner.echarts.Palette;
+
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
+import static io.jenkins.plugins.analysis.core.charts.BuildResultStubs.*;
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static java.util.Arrays.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
 
@@ -26,24 +31,21 @@ class ToolsTrendChartTest {
     private static final String SPOT_BUGS = "spotBugs";
 
     @Test
-    void shouldCreatePriorityChartForJobAndMultipleActions() {
+    void shouldCreateToolsChartForMultipleActions() {
         ToolsTrendChart chart = new ToolsTrendChart();
 
-        List<AnalysisBuildResult> resultsCheckStyle = new ArrayList<>();
-        resultsCheckStyle.add(createResult(1, CHECK_STYLE, 1));
-        resultsCheckStyle.add(createResult(2, CHECK_STYLE, 2));
+        List<BuildResult<AnalysisBuildResult>> compositeResults = new ArrayList<>();
+        compositeResults.add(new BuildResult<>(new Build(1), new CompositeBuildResult()
+                .add(createAnalysisBuildResult(CHECK_STYLE, 1), createAnalysisBuildResult(SPOT_BUGS, 3))));
+        compositeResults.add(new BuildResult<>(new Build(2), new CompositeBuildResult()
+                .add(createAnalysisBuildResult(CHECK_STYLE, 2), createAnalysisBuildResult(SPOT_BUGS, 4))));
 
-        List<AnalysisBuildResult> resultsSpotBugs = new ArrayList<>();
-        resultsSpotBugs.add(createResult(1, SPOT_BUGS, 3));
-        resultsSpotBugs.add(createResult(2, SPOT_BUGS, 4));
-
-        LinesChartModel model = chart.create(
-                new CompositeResult(asList(resultsCheckStyle, resultsSpotBugs)), new ChartModelConfiguration());
+        LinesChartModel model = chart.create(compositeResults, new ChartModelConfiguration());
 
         verifySeries(model.getSeries().get(0), CHECK_STYLE, 1, 2);
         verifySeries(model.getSeries().get(1), SPOT_BUGS, 3, 4);
 
-        assertThatJson(model).node("xAxisLabels")
+        assertThatJson(model).node("domainAxisLabels")
                 .isArray().hasSize(2).containsExactly("#1", "#2");
         assertThatJson(model).node("series")
                 .isArray().hasSize(2);
@@ -56,14 +58,12 @@ class ToolsTrendChartTest {
         }
     }
 
-    private AnalysisBuildResult createResult(final int buildNumber, final String toolId, final int total) {
+    private BuildResult<AnalysisBuildResult> createResult(final int buildNumber, final String toolId, final int total) {
         AnalysisBuildResult buildResult = mock(AnalysisBuildResult.class);
 
         when(buildResult.getSizePerOrigin()).thenReturn(Maps.mutable.of(toolId, total));
 
-        AnalysisBuild build = new BuildProperties(buildNumber, "#" + buildNumber, 10);
-        when(buildResult.getBuild()).thenReturn(build);
-        return buildResult;
+        return createBuildResult(buildNumber, buildResult);
     }
 
     /**
@@ -75,7 +75,7 @@ class ToolsTrendChartTest {
         ToolsTrendChart chart = new ToolsTrendChart();
         int availableColors = Palette.values().length;
 
-        List<AnalysisBuildResult> results = new ArrayList<>();
+        List<BuildResult<AnalysisBuildResult>> results = new ArrayList<>();
         for (int i = 0; i < (availableColors + 1); i++) {
             results.add(createResult(i, Integer.toString(i), 1));
         }
@@ -96,5 +96,4 @@ class ToolsTrendChartTest {
         int sizeWithoutDuplicate = new HashSet<>(list).size();
         return list.size() > sizeWithoutDuplicate;
     }
-
 }

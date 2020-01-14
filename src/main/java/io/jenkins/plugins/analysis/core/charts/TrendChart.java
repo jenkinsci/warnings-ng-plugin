@@ -1,5 +1,9 @@
 package io.jenkins.plugins.analysis.core.charts;
 
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.LinesChartModel;
+
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 /**
@@ -16,5 +20,6 @@ public interface TrendChart {
      *
      * @return the chart model
      */
-    LinesChartModel create(Iterable<? extends AnalysisBuildResult> results, ChartModelConfiguration configuration);
+    LinesChartModel create(Iterable<? extends BuildResult<AnalysisBuildResult>> results,
+            ChartModelConfiguration configuration);
 }

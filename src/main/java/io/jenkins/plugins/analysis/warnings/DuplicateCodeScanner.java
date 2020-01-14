@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.UnescapedText;
 
@@ -24,6 +25,8 @@ import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider.*;
 import static j2html.TagCreator.*;
@@ -112,8 +115,9 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         }
 
         @Override
-        public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url) {
-            return new DryModel(getAgeBuilder(build, url), getFileNameRenderer(build), this);
+        public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url,
+                final Report report) {
+            return new DryModel(report, getFileNameRenderer(build), getAgeBuilder(build, url), this);
         }
 
         static String formatTargets(final FileNameRenderer fileNameRenderer, final Issue issue) {
@@ -287,60 +291,47 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
      * Provides a table that contains the duplication references as well.
      */
     static class DryModel extends DetailsTableModel {
-        DryModel(final AgeBuilder ageBuilder,
-                final FileNameRenderer fileNameRenderer,
+        DryModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
                 final DescriptionProvider descriptionProvider) {
-            super(ageBuilder, fileNameRenderer, descriptionProvider);
+            super(report, fileNameRenderer, ageBuilder, descriptionProvider, new JenkinsFacade());
+        }
+
+        @VisibleForTesting
+        DryModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+                final DescriptionProvider descriptionProvider, final JenkinsFacade jenkinsFacade) {
+            super(report, fileNameRenderer, ageBuilder, descriptionProvider, jenkinsFacade);
         }
 
         @Override
-        public List<String> getHeaders(final Report report) {
-            List<String> headers = new ArrayList<>();
-            headers.add(Messages.DRY_Table_Column_Details());
-            headers.add(Messages.DRY_Table_Column_File());
-            if (report.hasPackages()) {
-                headers.add(Messages.DRY_Table_Column_Package());
+        public String getId() {
+            return "issues";
+        }
+
+        @Override
+        public List<TableColumn> getColumns() {
+            List<TableColumn> columns = new ArrayList<>();
+
+            columns.add(new TableColumn(Messages.DRY_Table_Column_Details(), "description"));
+            columns.add(new TableColumn(Messages.DRY_Table_Column_File(), "fileName", "string").setWidth(2));
+            if (getReport().hasPackages()) {
+                columns.add(new TableColumn(Messages.DRY_Table_Column_Package(), "packageName").setWidth(2));
             }
-            headers.add(Messages.DRY_Table_Column_Severity());
-            headers.add(Messages.DRY_Table_Column_LinesCount());
-            headers.add(Messages.DRY_Table_Column_DuplicatedIn());
-            headers.add(Messages.DRY_Table_Column_Age());
-            return headers;
+            columns.add(new TableColumn(Messages.DRY_Table_Column_Severity(), "severity"));
+            columns.add(new TableColumn(Messages.DRY_Table_Column_LinesCount(), "linesCount"));
+            columns.add(new TableColumn(Messages.DRY_Table_Column_DuplicatedIn(), "duplicatedIn").setWidth(3));
+            columns.add(new TableColumn(Messages.DRY_Table_Column_Age(), "age"));
+            return columns;
         }
 
         @Override
-        public List<Integer> getWidths(final Report report) {
-            List<Integer> widths = new ArrayList<>();
-            widths.add(1);
-            widths.add(2);
-            if (report.hasPackages()) {
-                widths.add(2);
-            }
-            widths.add(1);
-            widths.add(1);
-            widths.add(3);
-            widths.add(1);
-            return widths;
-        }
-
-        @Override
-        public DuplicationRow getRow(final Report report, final Issue issue) {
+        public DuplicationRow getRow(final Issue issue) {
             DuplicationRow row = new DuplicationRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                    issue);
+                    issue, getJenkinsFacade());
             row.setPackageName(issue);
             row.setSeverity(issue);
             row.setLinesCount(String.valueOf(issue.getLineEnd() - issue.getLineStart() + 1));
             row.setDuplicatedIn(formatTargets(getFileNameRenderer(), issue));
             return row;
-        }
-
-        @Override
-        public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
-            builder.add("description").add("fileName", "string");
-            if (report.hasPackages()) {
-                builder.add("packageName");
-            }
-            builder.add("severity").add("linesCount").add("duplicatedIn").add("age");
         }
 
         /**
@@ -354,8 +345,9 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
             private String duplicatedIn;
 
             DuplicationRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                    final DescriptionProvider descriptionProvider, final Issue issue) {
-                super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
+                    final DescriptionProvider descriptionProvider,
+                    final Issue issue, final JenkinsFacade jenkinsFacade) {
+                super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
             }
 
             public String getPackageName() {

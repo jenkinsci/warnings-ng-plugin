@@ -3,9 +3,14 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.util.List;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.LineSeries;
+import edu.hm.hafner.echarts.LineSeries.FilledMode;
+import edu.hm.hafner.echarts.LineSeries.StackedMode;
+import edu.hm.hafner.echarts.LinesChartModel;
+import edu.hm.hafner.echarts.LinesDataSet;
 
-import io.jenkins.plugins.analysis.core.charts.LineSeries.FilledMode;
-import io.jenkins.plugins.analysis.core.charts.LineSeries.StackedMode;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
@@ -16,13 +21,35 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
  */
 public class SeverityTrendChart implements TrendChart {
     @Override
-    public LinesChartModel create(final Iterable<? extends AnalysisBuildResult> results,
+    public LinesChartModel create(final Iterable<? extends BuildResult<AnalysisBuildResult>> results,
             final ChartModelConfiguration configuration) {
         SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
         LinesDataSet dataSet = builder.createDataSet(configuration, results);
 
+        return createChartFromDataSet(dataSet);
+    }
+
+    /**
+     * Creates the chart for the specified list of results.
+     *
+     * @param results
+     *         the analysis results to render
+     * @param configuration
+     *         the chart configuration to be used
+     *
+     * @return the chart model
+     */
+    public LinesChartModel aggregate(final List<Iterable<? extends BuildResult<AnalysisBuildResult>>> results,
+            final ChartModelConfiguration configuration) {
+        SeveritySeriesBuilder builder = new SeveritySeriesBuilder();
+        LinesDataSet dataSet = builder.createAggregatedDataSet(configuration, results);
+
+        return createChartFromDataSet(dataSet);
+    }
+
+    private LinesChartModel createChartFromDataSet(final LinesDataSet dataSet) {
         LinesChartModel model = new LinesChartModel();
-        model.setXAxisLabels(dataSet.getXAxisLabels());
+        model.setDomainAxisLabels(dataSet.getDomainAxisLabels());
         model.setBuildNumbers(dataSet.getBuildNumbers());
 
         Severity[] visibleSeverities

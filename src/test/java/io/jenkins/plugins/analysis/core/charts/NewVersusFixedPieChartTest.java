@@ -5,6 +5,9 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.echarts.Palette;
+import edu.hm.hafner.echarts.PieChartModel;
+import edu.hm.hafner.echarts.PieData;
 
 import static io.jenkins.plugins.analysis.core.charts.Messages.*;
 import static org.assertj.core.api.Assertions.*;

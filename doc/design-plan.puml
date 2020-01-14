@@ -1,0 +1,61 @@
+@startuml
+
+skinparam componentStyle uml2
+
+skinparam component {
+  BackgroundColor<<optional>> beige
+  BackgroundColor<<test>> lightGreen
+  BackgroundColor<<runtime>> lightBlue
+  BackgroundColor<<provided>> lightGray
+}
+
+component [analysis-model] #beige
+component [codingstyle] #beige
+
+[analysis-model] ...> [codingstyle]
+
+component [analysis-model-api-plugin] #lightBlue
+
+component [boostrap4-api-plugin] #lightGreen
+component [datatables-api-plugin] #lightGreen
+component [jquery3-api-plugin] #lightGreen
+component [font-awseome-api-plugin] #lightGreen
+component [echarts-api-plugin] #lightGreen
+component [plugin-util-api-plugin] #lightGreen
+
+component [echarts-api-plugin] #lightGreen
+
+component [warnings-ng] #lightBlue
+
+component [forensics-api-plugin] #lightBlue
+
+component [git-forensics-plugin] #lightBlue
+
+[git-forensics-plugin] .> [forensics-api-plugin]
+[analysis-model-api-plugin] .> [analysis-model]
+[warnings-ng] .> [analysis-model-api-plugin]
+[warnings-ng] .left.> [forensics-api-plugin]
+
+[warnings-ng] ..> [jquery3-api-plugin]
+[warnings-ng] ..> [datatables-api-plugin]
+[warnings-ng] ..> [boostrap4-api-plugin]
+[warnings-ng] ..> [font-awseome-api-plugin]
+[warnings-ng] ..> [echarts-api-plugin]
+[warnings-ng] ..> [plugin-util-api-plugin]
+
+[forensics-api-plugin] ..> [jquery3-api-plugin]
+[forensics-api-plugin] ..> [datatables-api-plugin]
+[forensics-api-plugin] ..> [boostrap4-api-plugin]
+[forensics-api-plugin] ..> [font-awseome-api-plugin]
+[forensics-api-plugin] ..> [echarts-api-plugin]
+[forensics-api-plugin] ..> [plugin-util-api-plugin]
+
+[plugin-util-api-plugin] .> [codingstyle]
+[datatables-api-plugin] .> [jquery3-api-plugin]
+[jquery3-api-plugin] <. [boostrap4-api-plugin]
+
+[datatables-api-plugin] ..> [datatables-api]
+[echarts-api-plugin] ..> [echarts-build-trends]
+[echarts-api-plugin] .> [plugin-util-api-plugin]
+
+@enduml

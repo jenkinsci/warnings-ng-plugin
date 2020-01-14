@@ -32,8 +32,6 @@ import static org.assertj.core.api.Assertions.*;
  * @author Veronika Zwickenpflug
  */
 public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
-    private static final String RELATIVE_URL_JAVA = "/java";
-
     /**
      * Checks the summary box is still correct when in a single folder.
      *
@@ -153,7 +151,7 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
     private void buildJobAndVerifySeverityDistribution(final FreeStyleProject project) {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JS_ENABLED, result, RELATIVE_URL_JAVA));
+        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JS_ENABLED, result));
         JSONArray severity = charts.getSeveritiesDistributionPieChart()
                 .getJSONArray("series")
                 .getJSONObject(0)
@@ -210,7 +208,7 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
     private void buildJobAndVerifyReferenceComparison(final FreeStyleProject project) {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JS_ENABLED, result, RELATIVE_URL_JAVA));
+        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JS_ENABLED, result));
         JSONArray references = charts.getReferenceComparisonPieChart()
                 .getJSONArray("series")
                 .getJSONObject(0)
@@ -267,7 +265,7 @@ public class FolderITest extends IntegrationTestWithJenkinsPerSuite {
     private void buildAndVerifyToolTrend(final FreeStyleProject project) {
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JS_ENABLED, result, RELATIVE_URL_JAVA));
+        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JS_ENABLED, result));
         JSONObject chart = charts.getToolsTrendChart()
                 .getJSONArray("series")
                 .getJSONObject(0);

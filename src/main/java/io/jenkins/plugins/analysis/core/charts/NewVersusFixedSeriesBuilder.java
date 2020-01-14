@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core.charts;
 import java.util.HashMap;
 import java.util.Map;
 
+import edu.hm.hafner.echarts.SeriesBuilder;
+
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 
 /**
@@ -11,7 +13,7 @@ import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
  *
  * @author Ullrich Hafner
  */
-public class NewVersusFixedSeriesBuilder extends SeriesBuilder {
+public class NewVersusFixedSeriesBuilder extends SeriesBuilder<AnalysisBuildResult> {
     static final String NEW = "new";
     static final String FIXED = "fixed";
 
@@ -22,5 +24,4 @@ public class NewVersusFixedSeriesBuilder extends SeriesBuilder {
         series.put(FIXED, current.getFixedSize());
         return series;
     }
-
 }

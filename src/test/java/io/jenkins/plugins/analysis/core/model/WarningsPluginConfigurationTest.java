@@ -11,7 +11,7 @@ import edu.hm.hafner.util.PathUtil;
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
 
-import io.jenkins.plugins.analysis.core.util.GlobalConfigurationFacade;
+import io.jenkins.plugins.util.GlobalConfigurationFacade;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;

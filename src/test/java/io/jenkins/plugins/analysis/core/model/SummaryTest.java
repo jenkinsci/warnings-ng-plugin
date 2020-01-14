@@ -12,13 +12,14 @@ import org.eclipse.collections.impl.factory.Maps;
 import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
+import edu.hm.hafner.echarts.Build;
+
 import hudson.model.BallColor;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.Summary.LabelProviderFactoryFacade;
-import io.jenkins.plugins.analysis.core.util.AnalysisBuild;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -60,7 +61,7 @@ class SummaryTest {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 Lists.immutable.of("Error 1", "Error 2"), 0);
         String createdHtml = createSummary(analysisResult).create();
-        assertThat(createdHtml).contains("class=\"fa fa-exclamation-triangle\"");
+        assertThat(createdHtml).contains("<svg class=\"info-page-decorator svg-icon\"><use href=\"/path/to/error\"></use></svg>");
     }
 
     /**
@@ -71,7 +72,7 @@ class SummaryTest {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0);
         String createdHtml = createSummary(analysisResult).create();
-        assertThat(createdHtml).contains("<a href=\"test/info\"><i class=\"fa fa-info-circle\"></i>");
+        assertThat(createdHtml).contains("<svg class=\"info-page-decorator svg-icon\"><use href=\"/path/to/info\"></use></svg>");
     }
 
     /**
@@ -83,7 +84,7 @@ class SummaryTest {
                 EMPTY_ERRORS, 0);
         String createdHtml = createSummary(analysisResult).create();
         assertThat(createdHtml).contains("<div id=\"test-summary\">");
-        assertThat(createdHtml).contains("<div id=\"test-title\">");
+        assertThat(createdHtml).contains("id=\"test-title\"");
     }
 
     /**
@@ -156,9 +157,7 @@ class SummaryTest {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0);
         when(analysisResult.getTotalSize()).thenReturn(0);
-        AnalysisBuild build = mock(AnalysisBuild.class);
-        when(build.getNumber()).thenReturn(1);
-        when(analysisResult.getBuild()).thenReturn(build);
+        when(analysisResult.getBuild()).thenReturn(new Build(1));
         when(analysisResult.getNoIssuesSinceBuild()).thenReturn(3);
         String createdHtml = createSummary(analysisResult).create();
         assertThat(createdHtml).doesNotContain("No warnings for");
@@ -343,9 +342,7 @@ class SummaryTest {
         when(run.getUrl()).thenReturn("job/my-job/15");
         when(analysisRun.getReferenceBuild()).thenReturn(Optional.of(run));
 
-        AnalysisBuild build = mock(AnalysisBuild.class);
-        when(build.getNumber()).thenReturn(2);
-        when(analysisRun.getBuild()).thenReturn(build);
+        when(analysisRun.getBuild()).thenReturn(new Build(2));
 
         return analysisRun;
     }
@@ -353,6 +350,8 @@ class SummaryTest {
     private StaticAnalysisLabelProvider createLabelProvider(final String id, final String name) {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getImagePath(any(BallColor.class))).thenReturn("color");
+        when(jenkins.getImagePath(contains(StaticAnalysisLabelProvider.ERROR_ICON))).thenReturn("/path/to/error");
+        when(jenkins.getImagePath(contains(StaticAnalysisLabelProvider.INFO_ICON))).thenReturn("/path/to/info");
         when(jenkins.getAbsoluteUrl(any())).thenReturn("absoluteUrl");
         return new StaticAnalysisLabelProvider(id, name, jenkins);
     }

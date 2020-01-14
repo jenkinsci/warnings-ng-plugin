@@ -54,7 +54,7 @@ public class DetailsViewCharts {
      * @return the severities chart
      */
     public JSONObject getSeveritiesDistributionPieChart() {
-        return getChartModel("single-severities-chart");
+        return getChartModel("severities-solo-chart");
     }
 
     /**
@@ -63,7 +63,7 @@ public class DetailsViewCharts {
      * @return the reference comparison chart
      */
     public JSONObject getReferenceComparisonPieChart() {
-        return getChartModel("single-trend-chart");
+        return getChartModel("trend-solo-chart");
     }
 
     /**

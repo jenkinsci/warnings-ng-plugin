@@ -10,6 +10,8 @@ import org.junit.Test;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
+import edu.hm.hafner.echarts.TimeFacade;
+
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
@@ -19,7 +21,6 @@ import hudson.model.Result;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.core.util.TimeFacade;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsViewCharts;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.OverviewCarousel;

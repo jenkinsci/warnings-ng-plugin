@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
+
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.NoSuchElementException;
@@ -66,6 +68,21 @@ public class PropertyStatistics {
      */
     public String getDisplayName(final String key) {
         return propertyFormatter.apply(key);
+    }
+
+    /**
+     * Returns a display name for the specified property instance.
+     *
+     * @param key
+     *         the property instance
+     *
+     * @return the display name
+     */
+    public String getToolTip(final String key) {
+        if (getDisplayName(key).equals(key)) {
+            return StringUtils.EMPTY;
+        }
+        return key;
     }
 
     /**

@@ -17,7 +17,7 @@ import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.ComboBoxModel;
 
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * UI proxy to let users select a static analysis report based on the UI.

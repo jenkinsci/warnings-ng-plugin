@@ -17,13 +17,6 @@ public interface AnalysisBuildResult {
     Map<String, Integer> getSizePerOrigin();
 
     /**
-     * Returns the associated build that this run was part of.
-     *
-     * @return the associated build
-     */
-    AnalysisBuild getBuild();
-
-    /**
      * Returns the number of fixed issues in this analysis run.
      *
      * @return number of fixed issues

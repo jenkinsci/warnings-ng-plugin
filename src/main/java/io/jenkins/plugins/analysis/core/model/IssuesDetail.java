@@ -15,6 +15,8 @@ import java.util.function.Function;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -23,8 +25,6 @@ import hudson.model.Api;
 import hudson.model.ModelObject;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration;
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
 import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedPieChart;
 import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
@@ -39,6 +39,8 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.datatables.DefaultAsyncTableContentProvider;
+import io.jenkins.plugins.datatables.TableModel;
 
 /**
  * Build view that shows the details for a subset of issues.
@@ -46,7 +48,7 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
  * @author Ullrich Hafner
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
-public class IssuesDetail implements ModelObject {
+public class IssuesDetail extends DefaultAsyncTableContentProvider implements ModelObject {
     private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
 
@@ -222,38 +224,6 @@ public class IssuesDetail implements ModelObject {
     }
 
     /**
-     * Returns the model for the details table that shows the overall list of issues.
-     *
-     * @return the table model
-     */
-    public DetailsTableModel getIssuesModel() {
-        return labelProvider.getIssuesModel(owner, getUrl());
-    }
-
-    /**
-     * Returns the model for the details table that shows the SCM blames.
-     *
-     * @return the table model
-     */
-    public DetailsTableModel getBlamesModel() {
-        return labelProvider.getBlamesModel(owner, getUrl(), result.getBlames());
-    }
-
-    /**
-     * Returns the model for the details table that shows the SCM respository statistics.
-     *
-     * @return the table model
-     */
-    public DetailsTableModel getForensicsModel() {
-        return labelProvider.getForensicsModel(owner, getUrl(), result.getForensics());
-    }
-
-    private String toJsonArray(final List<Object> rows) {
-        JacksonFacade facade = new JacksonFacade();
-        return facade.toJson(rows);
-    }
-
-    /**
      * Returns the UI model for the specified table.
      *
      * @param id
@@ -261,24 +231,26 @@ public class IssuesDetail implements ModelObject {
      *
      * @return the UI model as JSON
      */
-    @JavaScriptMethod
-    @SuppressWarnings("unused") // Called by jelly view
-    public String getTableModel(final String id) {
-        List<Object> rows;
-        if ("#issues".equals(id)) {
-            rows = getIssuesModel().getContent(getIssues());
+    @Override
+    public TableModel getTableModel(final String id) {
+        if ("issues".equals(id)) {
+            return labelProvider.getIssuesModel(owner, getUrl(), report);
         }
-        else if ("#blames".equals(id)) {
-            rows = getBlamesModel().getContent(getIssues());
+        else if ("blames".equals(id)) {
+            return new BlamesModel(report, result.getBlames(),
+                    labelProvider.getFileNameRenderer(owner),
+                    labelProvider.getAgeBuilder(owner,  getUrl()),
+                    labelProvider);
         }
-        else if ("#forensics".equals(id)) {
-            rows = getForensicsModel().getContent(getIssues());
+        else if ("forensics".equals(id)) {
+            return new ForensicsModel(report, result.getForensics(),
+                    labelProvider.getFileNameRenderer(owner),
+                    labelProvider.getAgeBuilder(owner,  getUrl()),
+                    labelProvider);
         }
         else {
             throw new NoSuchElementException("No such table model: " + id);
         }
-
-        return toJsonArray(rows);
     }
 
     /**

@@ -18,9 +18,9 @@ import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
-import io.jenkins.plugins.analysis.core.util.GlobalConfigurationFacade;
-import io.jenkins.plugins.analysis.core.util.GlobalConfigurationItem;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
+import io.jenkins.plugins.util.GlobalConfigurationFacade;
+import io.jenkins.plugins.util.GlobalConfigurationItem;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Global configuration of Groovy based parsers. These parsers are dynamically registered.

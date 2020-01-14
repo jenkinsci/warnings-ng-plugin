@@ -1,19 +1,18 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
-
-import org.ocpsoft.prettytime.PrettyTime;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Provides the dynamic model for the details table that shows the source control file statistics.
@@ -38,55 +37,63 @@ public class ForensicsModel extends DetailsTableModel {
 
     private final RepositoryStatistics statistics;
 
-    ForensicsModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-            final DescriptionProvider descriptionProvider, final RepositoryStatistics statistics) {
-        super(ageBuilder, fileNameRenderer, descriptionProvider);
+    ForensicsModel(final Report report, final RepositoryStatistics statistics,
+            final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+            final DescriptionProvider labelProvider) {
+        this(report, statistics, fileNameRenderer, ageBuilder, labelProvider, new JenkinsFacade());
+    }
+
+    @VisibleForTesting
+    ForensicsModel(final Report report, final RepositoryStatistics statistics,
+            final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+            final DescriptionProvider labelProvider, final JenkinsFacade jenkinsFacade) {
+        super(report, fileNameRenderer, ageBuilder, labelProvider, jenkinsFacade);
 
         this.statistics = statistics;
     }
 
     @Override
-    public List<String> getHeaders(final Report report) {
-        return Arrays.asList(
-                Messages.Table_Column_Details(),
-                Messages.Table_Column_File(),
-                Messages.Table_Column_Age(),
-                Messages.Table_Column_AuthorsSize(),
-                Messages.Table_Column_CommitsSize(),
-                Messages.Table_Column_LastCommit(),
-                Messages.Table_Column_AddedAt());
+    public String getId() {
+        return "forensics";
     }
 
     @Override
-    public List<Integer> getWidths(final Report report) {
-        return Arrays.asList(1, 1, 1, 1, 1, 2, 2);
+    public List<TableColumn> getColumns() {
+        List<TableColumn> columns = new ArrayList<>();
+
+        columns.add(createDetailsColumn());
+        columns.add(createFileColumn().setWidth(2));
+        columns.add(createAgeColumn());
+        columns.add(new TableColumn(Messages.Table_Column_AuthorsSize(), "authorsSize"));
+        columns.add(new TableColumn(Messages.Table_Column_CommitsSize(), "commitsSize"));
+        columns.add(new TableColumn(Messages.Table_Column_LastCommit(), "modifiedAt")
+                .setWidth(2)
+                .setHeaderClass(ColumnCss.DATE));
+        columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedAt")
+                .setWidth(2)
+                .setHeaderClass(ColumnCss.DATE));
+
+        return columns;
     }
 
     @Override
-    public ForensicsRow getRow(final Report report, final Issue issue) {
+    public ForensicsRow getRow(final Issue issue) {
         ForensicsRow row = new ForensicsRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                issue);
+                issue, getJenkinsFacade());
         if (statistics.contains(issue.getFileName())) {
             FileStatistics result = statistics.get(issue.getFileName());
             row.setAuthorsSize(String.valueOf(result.getNumberOfAuthors()));
             row.setCommitsSize(String.valueOf(result.getNumberOfCommits()));
-            row.setModifiedDays(result.getLastModifiedInDays());
-            row.setAddedDays(result.getAgeInDays());
+            row.setModifiedAt(result.getLastModificationTime());
+            row.setAddedAt(result.getCreationTime());
         }
         else {
             row.setAuthorsSize(UNDEFINED);
             row.setCommitsSize(UNDEFINED);
-            row.setModifiedDays(0);
-            row.setAddedDays(0);
+            row.setModifiedAt(0);
+            row.setAddedAt(0);
         }
         return row;
-    }
-
-    @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder, final Report report) {
-        builder.add("description").add("fileName", "string").add("age").add("authorsSize").add("commitsSize")
-                .add("modifiedDays", "num")
-                .add("addedDays", "num");
     }
 
     /**
@@ -96,12 +103,12 @@ public class ForensicsModel extends DetailsTableModel {
     public static class ForensicsRow extends TableRow {
         private String authorsSize;
         private String commitsSize;
-        private DetailedColumnDefinition modifiedDays;
-        private DetailedColumnDefinition addedDays;
+        private int modifiedAt;
+        private int addedAt;
 
         ForensicsRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue) {
-            super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
+                final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
         }
 
         public String getAuthorsSize() {
@@ -112,12 +119,12 @@ public class ForensicsModel extends DetailsTableModel {
             return commitsSize;
         }
 
-        public DetailedColumnDefinition getModifiedDays() {
-            return modifiedDays;
+        public int getModifiedAt() {
+            return modifiedAt;
         }
 
-        public DetailedColumnDefinition getAddedDays() {
-            return addedDays;
+        public int getAddedAt() {
+            return addedAt;
         }
 
         void setAuthorsSize(final String authorsSize) {
@@ -128,19 +135,12 @@ public class ForensicsModel extends DetailsTableModel {
             this.commitsSize = commitsSize;
         }
 
-        void setModifiedDays(final long modifiedDays) {
-            this.modifiedDays = new DetailedColumnDefinition(getElapsedTime(modifiedDays),
-                    String.valueOf(modifiedDays));
+        void setModifiedAt(final int modifiedAt) {
+            this.modifiedAt = modifiedAt;
         }
 
-        void setAddedDays(final long addedDays) {
-            this.addedDays = new DetailedColumnDefinition(getElapsedTime(addedDays), String.valueOf(addedDays));
-        }
-
-        private String getElapsedTime(final long days) {
-            PrettyTime prettyTime = new PrettyTime();
-            return prettyTime.format(
-                    Date.from(LocalDate.now().minusDays(days).atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        void setAddedAt(final int addedAt) {
+            this.addedAt = addedAt;
         }
     }
 }

@@ -6,8 +6,6 @@ import edu.hm.hafner.analysis.Issue;
 
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel.TableRow;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-
 /**
  * Tests the class {@link DetailsTableModel}.
  *
@@ -19,11 +17,11 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
         Issue issue = createIssue(1);
         TableRow model = createRow(issue);
 
-        assertThat(model.getFileName()).hasDisplay(createExpectedFileName(issue));
-        assertThat(model.getFileName()).hasSort("/path/to/file-1:0000015");
+        assertThatDetailedColumnContains(model.getFileName(),
+                createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     private TableRow createRow(final Issue issue) {
-        return new TableRow(createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue);
+        return new TableRow(createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue, createJenkinsFacade());
     }
 }

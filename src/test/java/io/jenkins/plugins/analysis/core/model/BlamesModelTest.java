@@ -21,8 +21,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
     private static final String COMMIT = "commit";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
-
-    private static final int EXPECTED_COLUMNS_SIZE = 6;
+    private static final int TIME = 12_345;
 
     @Test
     void shouldConvertIssueToArrayWithAllColumnsAndRows() {
@@ -31,11 +30,8 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         report.add(createIssue(2));
         Blames blames = mock(Blames.class);
 
-        BlamesModel model = createModel(blames);
-
-        assertThat(model.getHeaders(report)).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getWidths(report)).hasSize(EXPECTED_COLUMNS_SIZE);
-        assertThat(model.getColumnsDefinition(report)).isEqualTo("["
+        BlamesModel model = createModel(report, blames);
+        assertThat(model.getColumnsDefinition()).isEqualTo("["
                 + "{\"data\": \"description\"},"
                 + "{"
                 + "  \"type\": \"string\","
@@ -48,9 +44,15 @@ class BlamesModelTest extends AbstractDetailsModelTest {
                 + "{\"data\": \"age\"},"
                 + "{\"data\": \"author\"},"
                 + "{\"data\": \"email\"},"
-                + "{\"data\": \"commit\"}"
+                + "{\"data\": \"commit\"},"
+                + "{\"data\": \"addedAt\"}"
                 + "]");
-        assertThat(model.getContent(report)).hasSize(2);
+        assertThat(getLabels(model))
+                .containsExactly("Details", "File", "Age", "Author", "Email", "Commit", "Added");
+        assertThat(getWidths(model))
+                .containsExactly(1, 1, 1, 1, 1, 1, 1);
+
+        assertThat(model.getRows()).hasSize(2);
     }
 
     @Test
@@ -63,20 +65,23 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         when(blameRequest.getCommit(issue.getLineStart())).thenReturn(COMMIT);
         when(blameRequest.getEmail(issue.getLineStart())).thenReturn(EMAIL);
         when(blameRequest.getName(issue.getLineStart())).thenReturn(NAME);
+        when(blameRequest.getTime(issue.getLineStart())).thenReturn(TIME);
 
         Blames blames = mock(Blames.class);
         when(blames.contains(issue.getFileName())).thenReturn(true);
         when(blames.getBlame(issue.getFileName())).thenReturn(blameRequest);
 
-        BlamesModel model = createModel(blames);
+        BlamesModel model = createModel(report, blames);
 
-        BlamesRow actualRow = model.getRow(report, issue);
+        BlamesRow actualRow = model.getRow(issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(COMMIT)
                 .hasAuthor(NAME)
-                .hasEmail(EMAIL);
-        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
+                .hasEmail(EMAIL)
+                .hasAddedAt(TIME);
+        assertThatDetailedColumnContains(actualRow.getFileName(),
+                createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
     @Test
@@ -87,18 +92,21 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
         Blames blames = mock(Blames.class);
 
-        BlamesModel model = createModel(blames);
+        BlamesModel model = createModel(report, blames);
 
-        BlamesRow actualRow = model.getRow(report, issue);
+        BlamesRow actualRow = model.getRow(issue);
         assertThat(actualRow).hasDescription(EXPECTED_DESCRIPTION)
                 .hasAge("1")
                 .hasCommit(BlamesModel.UNDEFINED)
                 .hasAuthor(BlamesModel.UNDEFINED)
                 .hasEmail(BlamesModel.UNDEFINED);
-        assertThat(actualRow.getFileName()).hasDisplay(createExpectedFileName(issue)).hasSort("/path/to/file-1:0000015");
+
+        assertThatDetailedColumnContains(actualRow.getFileName(),
+                createExpectedFileName(issue), "/path/to/file-1:0000015");
     }
 
-    private BlamesModel createModel(final Blames blames) {
-        return new BlamesModel(createAgeBuilder(), createFileNameRenderer(), issue -> DESCRIPTION, blames);
+    private BlamesModel createModel(final Report report, final Blames blames) {
+        return new BlamesModel(report, blames, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION,
+                createJenkinsFacade());
     }
 }

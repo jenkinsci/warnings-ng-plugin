@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:issues="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:bs="/bootstrap">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
   <l:layout title="${it.displayName}" norefresh="true">
@@ -8,29 +8,17 @@
 
     <l:main-panel>
 
-      <issues:bootstrap-css/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/datatables.min.css"/>
-      <issues:fontawesome-css/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+      <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+      <st:adjunct includes="io.jenkins.plugins.data-tables"/>
 
-      <script src="${resURL}/plugin/warnings-ng/js/libs/jquery.min.js"/>
-      <script src="${resURL}/plugin/warnings-ng/js/libs/popper.min.js"/>
-      <script src="${resURL}/plugin/warnings-ng/js/libs/bootstrap.min.js"/>
-      <script src="${resURL}/plugin/warnings-ng/js/libs/datatables.min.js"/>
+      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
       <div class="fluid-container">
 
+        <bs:card title="${it.displayName}" fontAwesomeIcon="award">
 
-        <div class="card card-marg-bot">
-          <div data-role="page" class="card-body">
-
-            <h5 class="card-title">
-              ${it.displayName}
-              <i class="fa fa-award icon-right fa-2x" aria-hidden="true"/>
-            </h5>
-
-            <div class="table-responsive">
-              <table class="table table-hover table-striped display" id="fixed">
+          <div class="table-responsive">
+            <table class="table table-hover table-striped display" id="fixed">
               <thead>
                 <tr>
                   <th>${%File}</th>
@@ -67,13 +55,19 @@
                 </j:forEach>
               </tbody>
             </table>
-            </div>
           </div>
-        </div>
+
+        </bs:card>
 
       </div>
-      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/no-prototype.js"/>
-      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/fixed-detail.js"/>
+
+      <script type="text/javascript">
+        /* global jQuery3 */
+        jQuery3('#fixed').DataTable({
+            pagingType: 'numbers', // Page number button only
+            order: [[0, 'asc'], [1, 'asc']] // Sort by file name and line number
+            });
+      </script>
 
     </l:main-panel>
   </l:layout>

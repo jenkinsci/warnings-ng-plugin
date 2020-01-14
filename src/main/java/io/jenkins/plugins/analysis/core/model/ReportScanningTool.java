@@ -24,9 +24,9 @@ import hudson.util.FormValidation;
 
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
-import io.jenkins.plugins.analysis.core.util.EnvironmentResolver;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.util.EnvironmentResolver;
 
 /**
  * Describes a static analysis tool that reports issues by scanning a report file. Report files are identified using an
@@ -172,6 +172,12 @@ public abstract class ReportScanningTool extends Tool {
 
         Report report = createParser().parse(new ConsoleLogReaderFactory(run));
 
+        report.logInfo("Successfully parsed console log");
+        report.logInfo("-> found %s (skipped %s)",
+                plural(report.getSize(), "issue"),
+                plural(report.getDuplicatesSize(), "duplicate"));
+
+
         if (getDescriptor().isConsoleLog()) {
             report.stream().filter(issue -> !issue.hasFileName())
                     .forEach(issue -> issue.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID));
@@ -182,6 +188,17 @@ public abstract class ReportScanningTool extends Tool {
         logger.log(consoleReport);
 
         return consoleReport;
+    }
+
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
+    private String plural(final int count, final String itemName) {
+        StringBuilder builder = new StringBuilder(itemName);
+        if (count != 1) {
+            builder.append('s');
+        }
+        builder.insert(0, ' ');
+        builder.insert(0, count);
+        return builder.toString();
     }
 
     private void waitForConsoleToFlush(final LogHandler logger) {

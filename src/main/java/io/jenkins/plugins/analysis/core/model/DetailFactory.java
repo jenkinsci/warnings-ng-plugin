@@ -21,9 +21,10 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Creates detail objects for the selected link in the issues detail view. Each link might be visualized by a
@@ -37,17 +38,19 @@ public class DetailFactory {
     private static final String LINK_SEPARATOR = ".";
 
     private final JenkinsFacade jenkins;
+    private final BuildFolderFacade buildFolder;
 
     /**
      * Creates a new instance of {@link DetailFactory}.
      */
     public DetailFactory() {
-        this(new JenkinsFacade());
+        this(new JenkinsFacade(), new BuildFolderFacade());
     }
 
     @VisibleForTesting
-    DetailFactory(final JenkinsFacade jenkinsFacade) {
+    DetailFactory(final JenkinsFacade jenkinsFacade, final BuildFolderFacade buildFolder) {
         jenkins = jenkinsFacade;
+        this.buildFolder = buildFolder;
     }
 
     /**
@@ -100,14 +103,14 @@ public class DetailFactory {
         if (link.startsWith("source.")) {
             Issue issue = allIssues.findById(UUID.fromString(plainLink));
             if (ConsoleLogHandler.isInConsoleLog(issue.getFileName())) {
-                try (Stream<String> consoleLog = jenkins.readConsoleLog(owner)) {
+                try (Stream<String> consoleLog = buildFolder.readConsoleLog(owner)) {
                     return new ConsoleDetail(owner, consoleLog, issue.getLineStart(), issue.getLineEnd());
                 }
             }
             else {
                 String description = labelProvider.getSourceCodeDescription(owner, issue);
                 String icon = jenkins.getImagePath(labelProvider.getSmallIconUrl());
-                try (Reader affectedFile = jenkins.readBuildFile(owner, issue.getFileName(), sourceEncoding)) {
+                try (Reader affectedFile = buildFolder.readFile(owner, issue.getFileName(), sourceEncoding)) {
                     return new SourceDetail(owner, affectedFile, issue, description, icon);
                 }
                 catch (IOException e) {

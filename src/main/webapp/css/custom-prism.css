@@ -8,10 +8,6 @@ pre > code.highlight {
     display: block;
 }
 
-.fa-exclamation-triangle  {
-    color: #b4b4b4;
-}
-
 .analysis-warning {
     white-space: normal;
     border-radius: 4px;
@@ -34,8 +30,17 @@ pre > code.highlight {
 
 .analysis-detail {
     margin:0;
-    padding:0;
     white-space: normal;
+    padding:10px;
+}
+
+.analysis-title {
+    display: block;
+    padding: 15px 10px;
+    margin-bottom: 0;
+    background: #FFF9C4;
+    font-weight: normal;
+    transition: background-color .2s ease;
 }
 
 .analysis-detail > pre {
@@ -51,57 +56,28 @@ pre > code.highlight {
     border-radius: 4px;
 }
 
-/** Collapse style **/
-
-.collapse-open {
-    display: none;
-}
-
-.collapse-panel {
-    display:none;
-    visibility: hidden;
-    max-height: 0;
-    opacity: 0;
-    transition: max-height .1s,
-    visibility .3s,
-    opacity .3s;
-}
-
-.collapse-open:checked ~ .collapse-panel {
-    max-height: 100%;
-    opacity: 100;
-    visibility: visible;
-    display:block;
-}
-
-.collapse-btn {
+.analysis-collapse-button {
     cursor: pointer;
-    display: block;
-    padding: 15px 10px;
-    margin-bottom: 0;
-    background: #FFF9C4;
-    font-weight: normal;
-    transition: background-color .2s ease;
 }
 
-.collapse-btn:hover {
+.analysis-collapse-button:hover {
     background-color: #FFF59D;
 }
 
-.collapse-open ~ .collapse-btn:before {
-    font-family: 'Font Awesome 5 Free';
-    font-weight: 900;
-    content: "\f13a"; /* https://fontawesome.com/icons/chevron-circle-down */
+.analysis-collapse-button svg {
+    transition: .3s transform ease-in-out;
+}
+
+.analysis-collapse-button.open svg {
+    transform: rotate(180deg);
+}
+
+.analysis-collapse-icon {
     float: right;
-    padding-top: 6px;
-    font-size: 16px;
-    color: #b4b4b4;
-}
-
-.collapse-open:checked ~ .collapse-btn:before {
-    content: "\f139"; /* https://fontawesome.com/icons/chevron-circle-down */
-}
-
-.collapse-inner {
-    padding:10px;
+    fill: #b4b4b4;
+    height: 24px;
+    width: 24px;
+    position: absolute;
+    right: 25px;
+    vertical-align: center;
 }

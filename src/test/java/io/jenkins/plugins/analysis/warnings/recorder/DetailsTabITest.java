@@ -10,8 +10,8 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTe
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.IssuesTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
+import io.jenkins.plugins.datatables.TablePageObject;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -35,7 +35,7 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(detailsTab.getTabTypes()).containsOnlyOnce(TabType.ISSUES);
         assertThat(detailsTab.getActiveTabType()).isEqualTo(TabType.ISSUES);
 
-        IssuesTable active = detailsTab.getActive();
+        TablePageObject active = detailsTab.getActive();
         assertThat(active.getRows()).hasSize(1);
     }
 
@@ -61,7 +61,7 @@ public class DetailsTabITest extends IntegrationTestWithJenkinsPerTest {
         detailsTab.select(TabType.ISSUES);
         assertThat(detailsTab.getActiveTabType()).isEqualTo(TabType.ISSUES);
 
-        IssuesTable issues = detailsTab.getActive();
+        TablePageObject issues = detailsTab.getActive();
         assertThat(issues.getRows()).hasSize(2);
 
         detailsTab.select(TabType.FILES);

@@ -5,8 +5,11 @@ import java.util.List;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Provides the dynamic model for the details table that shows the issue properties.
@@ -27,72 +30,51 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBui
  * @author Ullrich Hafner
  */
 public class IssuesModel extends DetailsTableModel {
-    IssuesModel(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
+    IssuesModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
             final DescriptionProvider descriptionProvider) {
-        super(ageBuilder, fileNameRenderer, descriptionProvider);
+        this(report, fileNameRenderer, ageBuilder, descriptionProvider, new JenkinsFacade());
+    }
+
+    @VisibleForTesting
+    IssuesModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+            final DescriptionProvider descriptionProvider, final JenkinsFacade jenkinsFacade) {
+        super(report, fileNameRenderer, ageBuilder, descriptionProvider, jenkinsFacade);
     }
 
     @Override
-    public List<String> getHeaders(final Report report) {
-        List<String> visibleColumns = new ArrayList<>();
-        visibleColumns.add(Messages.Table_Column_Details());
-        visibleColumns.add(Messages.Table_Column_File());
-        if (report.hasPackages()) {
-            visibleColumns.add(Messages.Table_Column_Package());
-        }
-        if (report.hasCategories()) {
-            visibleColumns.add(Messages.Table_Column_Category());
-        }
-        if (report.hasTypes()) {
-            visibleColumns.add(Messages.Table_Column_Type());
-        }
-        visibleColumns.add(Messages.Table_Column_Severity());
-        visibleColumns.add(Messages.Table_Column_Age());
-        return visibleColumns;
+    public String getId() {
+        return "issues";
     }
 
     @Override
-    public List<Integer> getWidths(final Report report) {
-        List<Integer> widths = new ArrayList<>();
-        widths.add(1);
-        widths.add(1);
-        if (report.hasPackages()) {
-            widths.add(2);
+    public List<TableColumn> getColumns() {
+        List<TableColumn> columns = new ArrayList<>();
+
+        columns.add(createDetailsColumn());
+        columns.add(createFileColumn());
+        if (getReport().hasPackages()) {
+            columns.add(new TableColumn(Messages.Table_Column_Package(), "packageName").setWidth(2));
         }
-        if (report.hasCategories()) {
-            widths.add(1);
+        if (getReport().hasCategories()) {
+            columns.add(new TableColumn(Messages.Table_Column_Category(), "category"));
         }
-        if (report.hasTypes()) {
-            widths.add(1);
+        if (getReport().hasTypes()) {
+            columns.add(new TableColumn(Messages.Table_Column_Type(), "type"));
         }
-        widths.add(1);
-        widths.add(1);
-        return widths;
+        columns.add(createSeverityColumn());
+        columns.add(createAgeColumn());
+        return columns;
     }
 
     @Override
-    public IssuesRow getRow(final Report report, final Issue issue) {
-        IssuesRow row = new IssuesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(), issue);
+    public IssuesRow getRow(final Issue issue) {
+        IssuesRow row = new IssuesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+                issue, getJenkinsFacade());
         row.setPackageName(issue);
         row.setCategory(issue);
         row.setType(issue);
         row.setSeverity(issue);
         return row;
-    }
-
-    @Override
-    public void configureColumns(final ColumnDefinitionBuilder builder,  final Report report) {
-        builder.add("description").add("fileName", "string");
-        if (report.hasPackages()) {
-            builder.add("packageName");
-        }
-        if (report.hasCategories()) {
-            builder.add("category");
-        }
-        if (report.hasTypes()) {
-            builder.add("type");
-        }
-        builder.add("severity").add("age");
     }
 
     /**
@@ -106,8 +88,8 @@ public class IssuesModel extends DetailsTableModel {
         private String severity;
 
         IssuesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue) {
-            super(ageBuilder, fileNameRenderer, descriptionProvider, issue);
+                final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade) {
+            super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
         }
 
         public String getPackageName() {

@@ -19,6 +19,8 @@ import hudson.util.ComboBoxModel;
 import hudson.util.ListBoxModel;
 import hudson.util.ListBoxModel.Option;
 
+import io.jenkins.plugins.util.JenkinsFacade;
+
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static io.jenkins.plugins.analysis.core.testutil.SoftAssertions.*;
 import static io.jenkins.plugins.analysis.core.util.ModelValidation.*;

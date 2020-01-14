@@ -6,6 +6,7 @@ import java.util.function.Function;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -17,11 +18,10 @@ import org.jvnet.localizer.Localizable;
 import hudson.model.BallColor;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.util.JenkinsFacade;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
-import io.jenkins.plugins.forensics.blame.Blames;
-import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
+import io.jenkins.plugins.fontawesome.api.SvgTag;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static j2html.TagCreator.*;
 
@@ -38,6 +38,10 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     private static final String ICONS_PREFIX = "/plugin/warnings-ng/icons/";
     private static final String SMALL_ICON_URL = ICONS_PREFIX + "analysis-24x24.png";
     private static final String LARGE_ICON_URL = ICONS_PREFIX + "analysis-48x48.png";
+    @VisibleForTesting
+    static final String ERROR_ICON = "exclamation-triangle";
+    @VisibleForTesting
+    static final String INFO_ICON = "info-circle";
 
     private final String id;
     @Nullable
@@ -80,47 +84,13 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the build of the results
      * @param url
      *         the URL of the results
+     * @param report
+     *         the report to show
      *
      * @return the table model
      */
-    public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url) {
-        return new IssuesModel(getAgeBuilder(build, url),
-                getFileNameRenderer(build), this);
-    }
-
-    /**
-     * Returns the model for the SCM blames table.
-     *
-     * @param build
-     *         the build of the results
-     * @param url
-     *         the URL of the results
-     * @param blames
-     *         the SCM blames
-     *
-     * @return the table model
-     */
-    public DetailsTableModel getBlamesModel(final Run<?, ?> build, final String url, final Blames blames) {
-        return new BlamesModel(getAgeBuilder(build, url),
-                getFileNameRenderer(build), this, blames);
-    }
-
-    /**
-     * Returns the model for the SCM forensics table.
-     *
-     * @param build
-     *         the build of the results
-     * @param url
-     *         the URL of the results
-     * @param statistics
-     *         the SCM statistics
-     *
-     * @return the table model
-     */
-    public DetailsTableModel getForensicsModel(final Run<?, ?> build, final String url,
-            final RepositoryStatistics statistics) {
-        return new ForensicsModel(getAgeBuilder(build, url),
-                getFileNameRenderer(build), this, statistics);
+    public DetailsTableModel getIssuesModel(final Run<?, ?> build, final String url, final Report report) {
+        return new IssuesModel(report, getFileNameRenderer(build), getAgeBuilder(build, url), this);
     }
 
     /**
@@ -243,11 +213,12 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the title div
      */
     public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
-        String icon = hasErrors ? "fa-exclamation-triangle" : "fa-info-circle";
+        String icon = hasErrors ? ERROR_ICON : INFO_ICON;
         return div(join(getName() + ": ",
                 getWarningsCount(result),
-                a().withHref(getId() + "/info").with(i().withClasses("fa", icon))))
-                .withId(id + "-title");
+                a().withHref(getId() + "/info")
+                        .withId(id + "-title")
+                        .with(new UnescapedText(new SvgTag(icon, jenkins).withClasses("info-page-decorator").render()))));
     }
 
     /**

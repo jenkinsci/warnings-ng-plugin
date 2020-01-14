@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.core.model;
 import java.io.IOException;
 import java.util.Optional;
 
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.LinesChartModel;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -13,12 +15,11 @@ import hudson.model.Job;
 import hudson.model.Run;
 import jenkins.model.Jenkins;
 
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration;
-import io.jenkins.plugins.analysis.core.charts.LinesChartModel;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.echarts.AsyncTrendChart;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -26,7 +27,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  *
  * @author Ullrich Hafner
  */
-public class JobAction implements Action {
+public class JobAction implements Action, AsyncTrendChart {
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
     private final int numberOfTools;
@@ -175,14 +176,9 @@ public class JobAction implements Action {
         return createBuildHistory().getBaselineAction();
     }
 
-    /**
-     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
-     *
-     * @return the UI model as JSON
-     */
     @JavaScriptMethod
-    @SuppressWarnings("unused") // Called by jelly view
-    public String getBuildTrend() {
+    @Override
+    public String getBuildTrendModel() {
         return new JacksonFacade().toJson(createChartModel());
     }
 

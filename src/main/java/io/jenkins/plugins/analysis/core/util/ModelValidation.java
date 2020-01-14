@@ -22,6 +22,8 @@ import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
+import io.jenkins.plugins.util.JenkinsFacade;
+
 /**
  * Validates all properties of a configuration of a static analysis tool in a job.
  *

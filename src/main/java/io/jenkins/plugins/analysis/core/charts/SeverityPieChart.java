@@ -4,6 +4,8 @@ import org.eclipse.collections.api.set.ImmutableSet;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.PieChartModel;
+import edu.hm.hafner.echarts.PieData;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 

@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import edu.hm.hafner.echarts.BuildResult;
+import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -14,9 +17,6 @@ import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.plugins.view.dashboard.DashboardPortlet;
 
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration;
-import io.jenkins.plugins.analysis.core.charts.ChartModelConfiguration.AxisType;
-import io.jenkins.plugins.analysis.core.charts.CompositeResult;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
@@ -127,7 +127,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
     public String getTrend() {
         SeverityTrendChart severityChart = new SeverityTrendChart();
 
-        List<Iterable<? extends AnalysisBuildResult>> histories = jobs.stream()
+        List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
                 .filter(job -> job.getLastCompletedBuild() != null)
                 .map(Job::getLastCompletedBuild)
                 .flatMap(build -> build.getActions(ResultAction.class)
@@ -136,7 +136,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
                 .map(ResultAction::createBuildHistory).collect(Collectors.toList());
 
         return new JacksonFacade().toJson(
-                severityChart.create(new CompositeResult(histories), new ChartModelConfiguration(AxisType.DATE)));
+                severityChart.aggregate(histories, new ChartModelConfiguration(AxisType.DATE)));
     }
 
     /**
