@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import hudson.model.BallColor;
 import hudson.model.Result;
 
@@ -43,6 +44,7 @@ public enum QualityGateStatus {
      *
      * @return {@code true} if the quality gate has been passed, {@code false}  otherwise
      */
+    @Whitelisted
     public boolean isSuccessful() {
         return this == PASSED || this == INACTIVE;
     }

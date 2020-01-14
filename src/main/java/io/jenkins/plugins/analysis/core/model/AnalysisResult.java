@@ -26,6 +26,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
@@ -534,6 +535,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return new JenkinsFacade().getBuild(referenceBuildId);
     }
 
+    @Whitelisted
     public IssuesStatistics getTotals() {
         return totals;
     }

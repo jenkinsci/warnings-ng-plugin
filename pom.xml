@@ -1000,23 +1000,9 @@
             </revapi.ignore>
             <revapi.ignore>
               <item>
-                <code>java.annotation.removed</code>
-                <classSimpleName>IssuesDetail</classSimpleName>
-                <justification>Annotation was just wrong.</justification>
-              </item>
-            </revapi.ignore>
-            <revapi.ignore>
-              <item>
-                <code>java.method.added</code>
-                <methodName>clearRepeatableProperties</methodName>
-                <justification>Required for bug fix.</justification>
-              </item>
-            </revapi.ignore>
-            <revapi.ignore>
-              <item>
-                <code>java.method.added</code>
-                <classSimpleName>GlobalConfigurationItem</classSimpleName>
-                <justification>Required for bug fix.</justification>
+                <code>java.annotation.added</code>
+                <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
+                <justification>Annotation should be save to add.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>

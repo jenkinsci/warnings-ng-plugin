@@ -819,8 +819,10 @@ public abstract class IntegrationTest extends ResourceTest {
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock"})
     protected Run<?, ?> buildWithResult(final ParameterizedJob<?, ?> job, final Result expectedResult) {
         try {
-            return getJenkins().assertBuildStatus(expectedResult,
+            Run<?, ?> build = getJenkins().assertBuildStatus(expectedResult,
                     Objects.requireNonNull(job.scheduleBuild2(0, new Action[0])));
+            printConsoleLog(build);
+            return build;
         }
         catch (Exception e) {
             throw new AssertionError(e);
@@ -840,9 +842,6 @@ public abstract class IntegrationTest extends ResourceTest {
         Run<?, ?> run = buildSuccessfully(job);
 
         ResultAction action = getResultAction(run);
-
-        System.out.println("---------------------------------- Console Log ---------------------------------");
-        logConsole(run);
         System.out.println("------------------------------------- Infos ------------------------------------");
         action.getResult().getInfoMessages().forEach(System.out::println);
         System.out.println("------------------------------------ Errors ------------------------------------");
@@ -850,17 +849,6 @@ public abstract class IntegrationTest extends ResourceTest {
         System.out.println("--------------------------------------------------------------------------------");
 
         return action.getResult();
-    }
-
-    private void logConsole(final Run<?, ?> run) {
-        try (Reader reader = run.getLogReader()) {
-            try (BufferedReader bufferedReader = new BufferedReader(reader)) {
-                bufferedReader.lines().forEach(System.out::println);
-            }
-        }
-        catch (IOException exception) {
-            throw new AssertionError(exception);
-        }
     }
 
     /**
@@ -940,11 +928,11 @@ public abstract class IntegrationTest extends ResourceTest {
     protected AnalysisResult getAnalysisResult(final Run<?, ?> build) {
         List<AnalysisResult> analysisResults = getAnalysisResults(build);
 
+        printConsoleLog(build);
+
         assertThat(analysisResults).hasSize(1);
 
         AnalysisResult result = analysisResults.get(0);
-        System.out.println("----- Console Log -----");
-        System.out.println(getConsoleLog(result));
         System.out.println("----- Error Messages -----");
         result.getErrorMessages().forEach(System.out::println);
         System.out.println("----- Info Messages -----");
@@ -952,6 +940,18 @@ public abstract class IntegrationTest extends ResourceTest {
         System.out.println("-------------------------");
 
         return result;
+    }
+
+    private void printConsoleLog(final Run<?, ?> build) {
+        System.out.println("----- Console Log -----");
+        try (Reader reader = build.getLogReader()) {
+            try (BufferedReader bufferedReader = new BufferedReader(reader)) {
+                bufferedReader.lines().forEach(System.out::println);
+            }
+        }
+        catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
     }
 
     /**
@@ -1287,8 +1287,20 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the console log
      */
     protected String getConsoleLog(final AnalysisResult result) {
+        return getConsoleLog(result.getOwner());
+    }
+
+    /**
+     * Returns the console log as a String.
+     *
+     * @param build
+     *         the build to get the log for
+     *
+     * @return the console log
+     */
+    protected String getConsoleLog(final Run<?, ?> build) {
         try {
-            return JenkinsRule.getLog(result.getOwner());
+            return JenkinsRule.getLog(build);
         }
         catch (IOException e) {
             throw new AssertionError(e);
