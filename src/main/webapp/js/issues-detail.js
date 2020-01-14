@@ -1,4 +1,4 @@
-/* global jQuery, view, renderZoomableTrendChart */
+/* global jQuery3, view, renderZoomableTrendChart */
 (function ($) {
     redrawTrendCharts();
     storeAndRestoreCarousel('trend-carousel');
@@ -118,5 +118,4 @@
             carousel.carousel(parseInt(activeCarousel));
         }
     }
-
 })(jQuery3);
