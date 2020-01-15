@@ -108,7 +108,7 @@
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <pmd.version>6.20.0</pmd.version>
     <maven-checkstyle-plugin.version>3.1.0</maven-checkstyle-plugin.version>
-    <checkstyle.version>8.27</checkstyle.version>
+    <checkstyle.version>8.28</checkstyle.version>
     <spotbugs-maven-plugin.version>3.1.12.2</spotbugs-maven-plugin.version>
     <findsecbugs-plugin.version>1.10.1</findsecbugs-plugin.version>
     <jacoco-maven-plugin.version>0.8.5</jacoco-maven-plugin.version>
