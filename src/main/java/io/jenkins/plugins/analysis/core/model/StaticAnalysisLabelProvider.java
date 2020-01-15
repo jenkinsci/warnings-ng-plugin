@@ -216,9 +216,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         String icon = hasErrors ? ERROR_ICON : INFO_ICON;
         return div(join(getName() + ": ",
                 getWarningsCount(result),
-                a().withHref(getId() + "/info")
-                        .withId(id + "-title")
-                        .with(new UnescapedText(new SvgTag(icon, jenkins).withClasses("info-page-decorator").render()))));
+                a().withHref(getId() + "/info").with(
+                        new UnescapedText(new SvgTag(icon, jenkins).withClasses("info-page-decorator").render())))).withId(
+                id + "-title");
     }
 
     /**
