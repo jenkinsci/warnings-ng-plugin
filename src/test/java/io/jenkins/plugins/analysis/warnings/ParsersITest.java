@@ -418,6 +418,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
     }
 
+    /** Runs the Clang-Analyzer parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllClangAnalyzerIssues() {
+        shouldFindIssuesOfTool(3, new ClangAnalyzer(), "ClangAnalyzer.txt");
+    }
+
     /** Runs the Clang-Tidy parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllClangTidyIssues() {
