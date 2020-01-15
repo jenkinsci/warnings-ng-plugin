@@ -27,7 +27,7 @@
     <!-- Override properties defined in parent POM -->
     <jenkins.version>2.138.4</jenkins.version>
     <java.level>8</java.level>
-    <jenkins-test-harness.version>2.49</jenkins-test-harness.version>
+    <jenkins-test-harness.version>2.59</jenkins-test-harness.version>
 
     <!-- Project Dependencies Configuration -->
     <module.name>${project.groupId}.warnings.ng</module.name>
