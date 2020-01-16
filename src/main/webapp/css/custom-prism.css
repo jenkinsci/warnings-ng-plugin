@@ -22,6 +22,7 @@ pre > code.highlight {
 .analysis-warning-title {
     color: black;
     padding-left: 0.25em;
+    padding-right: 1em;
 }
 
 .analysis-title-column {
