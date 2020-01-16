@@ -77,7 +77,7 @@
     <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>4.0.0</git-plugin.version>
-    <workflow-api.version>2.37</workflow-api.version>
+    <workflow-api.version>2.38</workflow-api.version>
     <workflow-cps.version>2.74</workflow-cps.version>
     <workflow-step-api.version>2.20</workflow-step-api.version>
     <workflow-job.version>2.35</workflow-job.version>
