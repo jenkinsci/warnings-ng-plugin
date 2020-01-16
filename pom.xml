@@ -35,7 +35,7 @@
     <codingstyle.version>0.3.2</codingstyle.version>
     <analysis-model-api.version>8.0.0-beta2</analysis-model-api.version>
     <analysis-model.version>8.0.0-beta2</analysis-model.version>
-    <forensics-api-plugin.version>0.7.0-beta5</forensics-api-plugin.version>
+    <forensics-api-plugin.version>0.20.3-alpha-SNAPSHOT</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta3</git-forensics-plugin.version>
     <plugin-util-api.version>0.1.0-beta5</plugin-util-api.version>
 
