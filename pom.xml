@@ -88,7 +88,7 @@
     <folder-plugin.version>6.1.2</folder-plugin.version>
     <credentials.version>2.3.0</credentials.version>
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
-    <configuration-as-code.version>1.30</configuration-as-code.version>
+    <configuration-as-code.version>1.35</configuration-as-code.version>
     <job-dsl.version>1.76</job-dsl.version>
     <timestamper.version>1.9</timestamper.version>
     <envinject.version>2.1.6</envinject.version>
