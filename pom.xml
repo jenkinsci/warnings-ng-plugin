@@ -99,7 +99,7 @@
     <docker-fixtures.version>1.8</docker-fixtures.version>
     <ssh-slaves.version>1.25</ssh-slaves.version>
     <jdk-tool.version>1.2</jdk-tool.version>
-    <workflow-support.version>3.3</workflow-support.version>
+    <workflow-support.version>3.4</workflow-support.version>
     <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
     <form-element-path.version>1.8</form-element-path.version>
 
