@@ -44,7 +44,7 @@
     <popper-api.version>1.15.0-2-beta1</popper-api.version>
     <bootstrap4-api.version>4.4.1-4-beta1</bootstrap4-api.version>
     <data-tables-api.version>1.10.20-6-beta1</data-tables-api.version>
-    <echarts-api.version>4.4.0-7-beta1</echarts-api.version>
+    <echarts-api.version>4.4.0-8-beta1</echarts-api.version>
 
     <spotbugs.annotations>3.1.12</spotbugs.annotations>
     <commons.lang.version>3.9</commons.lang.version>
