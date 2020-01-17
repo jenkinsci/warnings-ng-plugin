@@ -66,7 +66,7 @@
     <mockito.version>3.2.4</mockito.version>
     <assertj.version>3.14.0</assertj.version>
     <archunit.version>0.13.0</archunit.version>
-    <json-unit-fluent.version>2.11.1</json-unit-fluent.version>
+    <json-unit-fluent.version>2.12.0</json-unit-fluent.version>
     <xmlunit.version>1.6</xmlunit.version>
     <jsoup.version>1.12.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
