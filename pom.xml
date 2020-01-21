@@ -19,6 +19,7 @@
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
     (including several compilers), see the list of supported report formats.
   </description>
+  <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
     <revision>8.0.0-beta4</revision>
