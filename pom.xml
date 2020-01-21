@@ -77,14 +77,10 @@
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
     <configuration-as-code.version>1.30</configuration-as-code.version>
     <job-dsl.version>1.76</job-dsl.version>
-    <timestamper.version>1.9</timestamper.version>
     <envinject.version>2.1.6</envinject.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <pipeline-stage-step.version>2.3</pipeline-stage-step.version>
-    <workflow-durable-task-step.version>2.15</workflow-durable-task-step.version>
-    <workflow-basic-steps.version>2.7</workflow-basic-steps.version>
     <docker-fixtures.version>1.8</docker-fixtures.version>
-    <ssh-slaves.version>1.25</ssh-slaves.version>
     <jdk-tool.version>1.2</jdk-tool.version>
     <workflow-support.version>3.3</workflow-support.version>
     <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
@@ -281,11 +277,6 @@
       <version>${data-tables-api.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>script-security</artifactId>
-      <version>${script-security.version}</version>
-    </dependency>
-    <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-api</artifactId>
       <version>${workflow-api.version}</version>
@@ -445,7 +436,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>timestamper</artifactId>
-      <version>${timestamper.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -484,14 +474,12 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-durable-task-step</artifactId>
-      <version>${workflow-durable-task-step.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- recorder -> step -->
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-basic-steps</artifactId>
-      <version>${workflow-basic-steps.version}</version>
       <scope>test</scope>
     </dependency>
     <!-- Docker Agents -->
@@ -504,7 +492,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ssh-slaves</artifactId>
-      <version>${ssh-slaves.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
