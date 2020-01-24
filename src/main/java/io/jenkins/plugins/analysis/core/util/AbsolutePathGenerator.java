@@ -16,8 +16,10 @@ import java.util.stream.Stream;
 import org.eclipse.collections.impl.factory.Lists;
 
 import edu.hm.hafner.analysis.FilteredLog;
+import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.PathUtil;
+import edu.hm.hafner.util.TreeStringBuilder;
 import edu.hm.hafner.util.VisibleForTesting;
 
 /**
@@ -25,6 +27,7 @@ import edu.hm.hafner.util.VisibleForTesting;
  *
  * @author Ullrich Hafner
  */
+// FIXME: move to analysis-model
 public class AbsolutePathGenerator {
     static final String NOTHING_TO_DO = "-> none of the issues requires resolving of absolute path";
 
@@ -62,21 +65,33 @@ public class AbsolutePathGenerator {
                 .filter(this::isInterestingFileName)
                 .collect(Collectors.toSet());
 
-        PathUtil pathUtil = new PathUtil();
         if (filesToProcess.isEmpty()) {
             report.logInfo(NOTHING_TO_DO);
-            report.stream().forEach(issue -> issue.setFileName(pathUtil.getAbsolutePath(issue.getFileName())));
+            resolvePathNames(report);
             return;
         }
 
         FilteredLog log = new FilteredLog(report, "Can't resolve absolute paths for some files:");
 
+        IssueBuilder builder = new IssueBuilder();
         Map<String, String> pathMapping = resolveAbsoluteNames(filesToProcess, sourceDirectories, log);
         report.stream()
                 .filter(issue -> pathMapping.containsKey(issue.getFileName()))
-                .forEach(issue -> issue.setFileName(pathMapping.get(issue.getFileName())));
+                .forEach(issue -> issue.setFileName(builder.internFileName(pathMapping.get(issue.getFileName()))));
 
         log.logSummary();
+    }
+
+    /**
+     * Resolves all filenames: since we might compare the absolute filename later on it makes sense to store the
+     * correct absolute path.
+     *
+     * @param report the report
+     */
+    private void resolvePathNames(final Report report) {
+        PathUtil pathUtil = new PathUtil();
+        TreeStringBuilder builder = new TreeStringBuilder();
+        report.stream().forEach(issue -> issue.setFileName(builder.intern(pathUtil.getAbsolutePath(issue.getFileName()))));
     }
 
     private boolean isInterestingFileName(final String fileName) {

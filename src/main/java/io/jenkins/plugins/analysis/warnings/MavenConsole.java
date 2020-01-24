@@ -47,11 +47,6 @@ public class MavenConsole extends ReportScanningTool {
         }
 
         @Override
-        protected boolean isConsoleLog() {
-            return true;
-        }
-
-        @Override
         public boolean isPostProcessingEnabled() {
             return false;
         }

@@ -10,6 +10,7 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
+import edu.hm.hafner.util.TreeString;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.AncestorInPath;
@@ -36,6 +37,8 @@ import io.jenkins.plugins.util.EnvironmentResolver;
  */
 public abstract class ReportScanningTool extends Tool {
     private static final long serialVersionUID = -1962476812276437235L;
+
+    private static final TreeString CONSOLE_LOG = TreeString.valueOf(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID);
 
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
@@ -180,7 +183,7 @@ public abstract class ReportScanningTool extends Tool {
 
         if (getDescriptor().isConsoleLog()) {
             report.stream().filter(issue -> !issue.hasFileName())
-                    .forEach(issue -> issue.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID));
+                    .forEach(issue -> issue.setFileName(CONSOLE_LOG));
         }
 
         consoleReport.addAll(report);
@@ -292,7 +295,11 @@ public abstract class ReportScanningTool extends Tool {
          * the UI.
          *
          * @return {@code true} if the issues reference the console log, {@code false} otherwise
+         * @deprecated not used anymore
          */
+        // FIXME: check this??
+        @SuppressWarnings("DeprecatedIsStillUsed")
+        @Deprecated
         protected boolean isConsoleLog() {
             return false;
         }

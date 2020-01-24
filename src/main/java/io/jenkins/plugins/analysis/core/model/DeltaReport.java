@@ -123,8 +123,8 @@ public class DeltaReport {
     }
 
     /**
-     * Returns statistics about the number of issues (total, new, delta).
-     *
+     * Returns statistics for the number of issues (total, new, delta).
+     * 
      * @return the issues statistics
      */
     public IssuesStatistics getStatistics() {
