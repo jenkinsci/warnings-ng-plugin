@@ -86,7 +86,7 @@
     <workflow-support.version>3.3</workflow-support.version>
     <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
     <form-element-path.version>1.8</form-element-path.version>
-    <folder.version>6.9</folder.version>
+    <folder.version>6.11</folder.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
