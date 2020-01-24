@@ -1,0 +1,10 @@
+addReviewers: false
+addAssignees: true
+
+assignees:
+  - uhafner
+
+skipKeywords:
+  - wip
+
+numberOfAssignees: 0
