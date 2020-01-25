@@ -295,11 +295,7 @@ public abstract class ReportScanningTool extends Tool {
          * the UI.
          *
          * @return {@code true} if the issues reference the console log, {@code false} otherwise
-         * @deprecated not used anymore
          */
-        // FIXME: check this??
-        @SuppressWarnings("DeprecatedIsStillUsed")
-        @Deprecated
         protected boolean isConsoleLog() {
             return false;
         }
