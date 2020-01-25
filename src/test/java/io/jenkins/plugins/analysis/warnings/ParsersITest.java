@@ -247,8 +247,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllJUnitIssues() {
-        shouldFindIssuesOfTool(2,new JUnit(),"junit.xml");
-        shouldFindIssuesOfTool(1,new JUnit(),"TEST-org.jenkinsci.plugins.jvctb.perform.JvctbPerformerTest.xml");
+        shouldFindIssuesOfTool(2, new JUnit(), "junit.xml");
+        shouldFindIssuesOfTool(1, new JUnit(), "TEST-org.jenkinsci.plugins.jvctb.perform.JvctbPerformerTest.xml");
     }
 
     /** Runs the Klocwork parser on an output file that contains 2 issues. */
