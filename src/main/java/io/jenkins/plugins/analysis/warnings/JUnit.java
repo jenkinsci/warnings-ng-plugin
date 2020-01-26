@@ -8,7 +8,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides a parser and customized messages for JUnit.
@@ -32,7 +34,7 @@ public class JUnit extends ReportScanningTool {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("jUnit")
+    @Symbol("junitParser")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
@@ -44,6 +46,16 @@ public class JUnit extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Violations_JUnit();
+        }
+
+        @Override
+        public String getUrl() {
+            return "https://junit.org";
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new IconLabelProvider(getId(), getDisplayName());
         }
     }
 }
