@@ -104,6 +104,7 @@ class IssuesScanner {
 
         if (tool.getDescriptor().isPostProcessingEnabled()) {
             if (report.hasErrors()) {
+                // FIXME: check if it makes sense to continue with post processing
                 report.logInfo("Skipping post processing due to errors");
 
                 return createAnnotatedReport(report);
