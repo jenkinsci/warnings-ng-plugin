@@ -22,7 +22,7 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.PathUtil;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 
 /**

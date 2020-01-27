@@ -5,8 +5,9 @@ import org.junit.jupiter.api.Test;
 import edu.hm.hafner.analysis.AbstractParserTest;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
-import edu.hm.hafner.analysis.assertj.SoftAssertions;
+import edu.hm.hafner.analysis.assertions.SoftAssertions;
+
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 /**
  * Test the class {@link DynamicLineParser}. Creates a new Pep8 parser in Groovy. All Pep8 test cases are reused.
@@ -22,8 +23,8 @@ class DynamicLineParserTest extends AbstractParserTest {
 
     @Override
     protected void assertThatIssuesArePresent(final Report report, final SoftAssertions softly) {
-        softly.assertThat(report)
-                .hasSize(8).hasSeverities(0, 0, 6, 2);
+        softly.assertThat(report).hasSize(8);
+        assertThatReportHasSeverities(report, 0, 0, 6, 2);
 
         softly.assertThat(report.get(0))
                 .hasFileName("optparse.py")

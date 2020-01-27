@@ -14,7 +14,7 @@ import io.jenkins.plugins.analysis.core.model.IssuesDetail;
  * @author Ullrich Hafner
  */
 @SuppressFBWarnings("NM")
-public class Assertions extends edu.hm.hafner.analysis.assertj.Assertions {
+public class Assertions extends edu.hm.hafner.analysis.assertions.Assertions {
     /**
      * An entry point for {@link CategoryDatasetAssertions} to follow AssertJ standard {@code assertThat()}. With a static import,
      * one can write directly {@code assertThat(dataSet)} and get a specific assertion with code completion.

@@ -16,7 +16,7 @@ import edu.hm.hafner.util.ResourceTest;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 /**
  * Tests the class {@link TaskScanner}.
@@ -144,8 +144,9 @@ class TaskScannerTest extends ResourceTest {
                 .build()
                 .scanTasks(read("tasks-words-test.txt"), ISSUE_BUILDER);
 
-        assertThat(tasks).hasSize(12)
-                .hasSeverities(0, 0, 7, 5);
+        assertThat(tasks).hasSize(12);
+        assertThatReportHasSeverities(tasks,
+                0, 0, 7, 5);
     }
 
     /**
@@ -216,8 +217,8 @@ class TaskScannerTest extends ResourceTest {
                 .build()
                 .scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
-        assertThat(tasks).hasSize(2)
-                .hasSeverities(0, 1, 1, 0);
+        assertThat(tasks).hasSize(2);
+        assertThatReportHasSeverities(tasks, 0, 1, 1, 0);
         assertThat(tasks.get(0)).hasMessage(PRIORITY_NORMAL_MESSAGE);
         assertThat(tasks.get(1)).hasMessage(PRIORITY_HIGH_MESSAGE);
     }
@@ -233,8 +234,8 @@ class TaskScannerTest extends ResourceTest {
                 .build()
                 .scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
-        assertThat(tasks).hasSize(1)
-                .hasSeverities(0, 1, 0, 0);
+        assertThat(tasks).hasSize(1);
+        assertThatReportHasSeverities(tasks, 0, 1, 0, 0);
     }
 
     /**
@@ -248,8 +249,8 @@ class TaskScannerTest extends ResourceTest {
                 .build()
                 .scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
-        assertThat(tasks).hasSize(2)
-                .hasSeverities(0, 2, 0, 0);
+        assertThat(tasks).hasSize(2);
+        assertThatReportHasSeverities(tasks, 0, 2, 0, 0);
     }
 
     /**
@@ -263,8 +264,8 @@ class TaskScannerTest extends ResourceTest {
                 .build()
                 .scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
-        assertThat(tasks).hasSize(2)
-                .hasSeverities(0, 2, 0, 0);
+        assertThat(tasks).hasSize(2);
+        assertThatReportHasSeverities(tasks, 0, 2, 0, 0);
     }
 
     /**
@@ -311,8 +312,8 @@ class TaskScannerTest extends ResourceTest {
                 .build()
                 .scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
-        assertThat(tasks).hasSize(4)
-                .hasSeverities(0, 1, 2, 1);
+        assertThat(tasks).hasSize(4);
+        assertThatReportHasSeverities(tasks, 0, 1, 2, 1);
     }
 
     /**
@@ -337,6 +338,14 @@ class TaskScannerTest extends ResourceTest {
 
     private Iterator<String> read(final String fileName, final String charset) {
         return asStream(fileName, Charset.forName(charset)).iterator();
+    }
+
+    private void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
+            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+        assertThat(report.getSizeOf(Severity.ERROR)).isEqualTo(expectedSizeError);
+        assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
+        assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);
+        assertThat(report.getSizeOf(Severity.WARNING_LOW)).isEqualTo(expectedSizeLow);
     }
 }
 

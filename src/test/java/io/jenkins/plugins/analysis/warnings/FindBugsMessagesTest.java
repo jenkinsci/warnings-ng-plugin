@@ -10,7 +10,7 @@ import org.xml.sax.SAXException;
 
 import io.jenkins.plugins.analysis.warnings.FindBugsMessages.Pattern;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 /**
  * Tests the class {@link FindBugsMessages}.
