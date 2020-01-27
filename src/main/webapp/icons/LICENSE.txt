@@ -159,3 +159,14 @@ PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
 LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+------------------------------------------------------------------------------
+
+License for the JUnit icons:
+
+https://github.com/junit-team/junit5/issues/2165#issuecomment-578806575
+
+Original file: https://camo.githubusercontent.com/049cbfc3f4c820fe5aa0b376a703a975ab75181a/68747470733a2f2f6a756e69
+742e6f72672f6a756e6974352f6173736574732f696d672f6a756e6974352d6c6f676f2e706e67
+The 24x24 and 48x48 icons were created from this file. No modifications were made, except
+the scale that was changed.
