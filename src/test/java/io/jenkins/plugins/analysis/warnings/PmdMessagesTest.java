@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.junit.jupiter.api.Test;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 /**
  * Tests the class {@link PmdMessages}.
