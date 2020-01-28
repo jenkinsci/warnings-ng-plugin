@@ -27,7 +27,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.assertj.core.api.Assumptions.*;
 
 /**
- * Integration tests for the class {@link AbsolutePathGenerator}.
+ * Integration tests that resolve absolute paths.
  *
  * @author Ullrich Hafner
  */

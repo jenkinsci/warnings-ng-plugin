@@ -12,7 +12,7 @@ import io.jenkins.plugins.analysis.core.steps.RecordIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SnippetGenerator;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 
 /**
  * Integration test of the {@link SnippetGenerator}.

@@ -6,7 +6,7 @@ import edu.hm.hafner.analysis.Severity;
 
 import io.jenkins.plugins.analysis.core.testutil.LocalizedMessagesTest;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static edu.hm.hafner.analysis.assertions.Assertions.*;
 import static io.jenkins.plugins.analysis.core.util.LocalizedSeverity.*;
 import static org.mockito.Mockito.*;
 

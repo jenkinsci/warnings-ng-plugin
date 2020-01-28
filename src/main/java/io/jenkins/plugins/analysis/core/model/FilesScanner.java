@@ -104,6 +104,7 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
         try {
             Report fileReport = parser.parse(new FileReaderFactory(file, new ModelValidation().getCharset(encoding)));
             aggregatedReport.addAll(fileReport);
+            aggregatedReport.addFileName(file.toString());
             aggregatedReport.logInfo("Successfully parsed file %s", file);
             aggregatedReport.logInfo("-> found %s (skipped %s)",
                     plural(fileReport.getSize(), "issue"),

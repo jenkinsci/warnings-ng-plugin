@@ -16,6 +16,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.errorprone.annotations.MustBeClosed;
 
+import edu.hm.hafner.analysis.AbsolutePathGenerator;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.ModuleDetector;
@@ -37,8 +38,8 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.ReportLocations;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
-import io.jenkins.plugins.analysis.core.util.AbsolutePathGenerator;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
+import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.SourceDirectoryResolver;
@@ -103,6 +104,7 @@ class IssuesScanner {
 
         if (tool.getDescriptor().isPostProcessingEnabled()) {
             if (report.hasErrors()) {
+                // FIXME: check if it makes sense to continue with post processing
                 report.logInfo("Skipping post processing due to errors");
 
                 return createAnnotatedReport(report);
@@ -324,7 +326,7 @@ class IssuesScanner {
                     sourceDirectories);
 
             AbsolutePathGenerator generator = new AbsolutePathGenerator();
-            generator.run(report, sourceDirectories);
+            generator.run(report, sourceDirectories, ConsoleLogHandler::isInConsoleLog);
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {
