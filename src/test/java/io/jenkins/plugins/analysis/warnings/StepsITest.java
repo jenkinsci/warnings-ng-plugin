@@ -826,7 +826,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob reference = createPipeline("reference");
         copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start-rev0.txt");
         reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
-        AnalysisResult firstReferenceResult = scheduleSuccessfulBuild(reference);
+        scheduleSuccessfulBuild(reference);
         cleanWorkspace(reference);
 
         WorkflowJob job = createPipelineWithWorkspaceFiles("java-start.txt");

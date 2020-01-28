@@ -871,7 +871,7 @@ public class RecordIssuesStep extends Step implements Serializable {
         }
         else {
             this.referenceBuildId = referenceBuildId;
-	}
+        }
     }
 
     /**
