@@ -202,11 +202,11 @@ class IssuesPublisher {
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
             if (referenceJob.isPresent()) {
-                if (referenceBuildId != null) {
-                    baseline = referenceJob.get().getBuild(referenceBuildId);
+                if (referenceBuildId == null) {
+                    baseline = referenceJob.get().getLastBuild();
                 }
                 else {
-                    baseline = referenceJob.get().getLastBuild();
+                    baseline = referenceJob.get().getBuild(referenceBuildId);
                 }
                 if (baseline == null) {
                     return new NullAnalysisHistory();
