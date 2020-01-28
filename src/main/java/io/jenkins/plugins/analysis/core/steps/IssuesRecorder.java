@@ -468,11 +468,11 @@ public class IssuesRecorder extends Recorder {
      * @param referenceBuildId
      *         the build id of the reference job
      */
-    @DataBoundSetter
     public void setReferenceBuildId(final String referenceBuildId) {
         if (NO_REFERENCE_BUILD.equals(referenceBuildId)) {
             this.referenceBuildId = StringUtils.EMPTY;
-        } else {
+        }
+        else {
             this.referenceBuildId = referenceBuildId;
         }
     }
@@ -1198,10 +1198,6 @@ public class IssuesRecorder extends Recorder {
          */
         public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
             return model.validateJob(referenceJobName);
-        }
-
-        public FormValidation doCheckReferenceBuildId(@QueryParameter final String referenceBuildId) {
-            return model.validateBuild(referenceBuildId);
         }
 
         /**

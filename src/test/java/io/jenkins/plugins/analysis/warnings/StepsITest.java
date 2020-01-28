@@ -818,6 +818,51 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
+     * Creates a reference job without builds, then builds the job, referring to a non-existant build
+     * in the reference job.
+     */
+    @Test
+    public void shouldHandleMissingJobBuildAsReference() {
+        WorkflowJob reference = createPipeline("reference");
+        copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start-rev0.txt");
+        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
+        AnalysisResult firstReferenceResult = scheduleSuccessfulBuild(reference);
+        cleanWorkspace(reference);
+
+        WorkflowJob job = createPipelineWithWorkspaceFiles("java-start.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
+                "publishIssues issues:[issues], referenceJobName:'reference', referenceBuildId: '2'"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(not(result.getReferenceBuild().isPresent()));
+
+        assertThat(result.getNewIssues()).hasSize(0);
+        assertThat(result.getOutstandingIssues()).hasSize(2);
+    }
+
+    /**
+     * Creates a reference job with a build, then builds the job, referring to a non-existant build
+     * in the reference job.
+     */
+    @Test
+    public void shouldHandleMissingJobBuildIdAsReference() {
+        WorkflowJob reference = createPipeline("reference");
+        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
+
+        WorkflowJob job = createPipelineWithWorkspaceFiles("java-start.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
+                "publishIssues issues:[issues], referenceJobName:'reference', referenceBuildId: '1'"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(not(result.getReferenceBuild().isPresent()));
+
+        assertThat(result.getNewIssues()).hasSize(0);
+        assertThat(result.getOutstandingIssues()).hasSize(2);
+    }
+
+    /**
      * Verifies that when publishIssues marks the build as unstable it also marks the step with
      * WarningAction so that visualizations can display the step as unstable rather than just
      * the whole build.

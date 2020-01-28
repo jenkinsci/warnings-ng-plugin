@@ -13,6 +13,7 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AggregationAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
+import io.jenkins.plugins.analysis.core.model.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -203,8 +204,12 @@ class IssuesPublisher {
             if (referenceJob.isPresent()) {
                 if (referenceBuildId != null) {
                     baseline = referenceJob.get().getBuild(referenceBuildId);
-                } else {
+                }
+                else {
                     baseline = referenceJob.get().getLastBuild();
+                }
+                if (baseline == null) {
+                    return new NullAnalysisHistory();
                 }
             }
         }

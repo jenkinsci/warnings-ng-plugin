@@ -27,9 +27,6 @@
   <f:entry title="${%title.referenceJob}" field="referenceJobName" description="${%description.referenceJob}">
     <f:combobox/>
   </f:entry>
-  <f:entry title="${%title.referenceBuildId}" field="referenceBuildId" description="${%description.referenceBuildId}">
-    <f:textbox/>
-  </f:entry>
   <f:entry title="${%title.ignoreQualityGate}" description="${%description.ignoreQualityGate}"
            field="ignoreQualityGate">
     <f:checkbox/>

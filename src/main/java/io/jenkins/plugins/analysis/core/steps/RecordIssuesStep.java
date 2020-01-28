@@ -69,8 +69,8 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
-    private String referenceJobName;
-    private String referenceBuildId;
+    private String referenceJobName = StringUtils.EMPTY;
+    private String referenceBuildId = StringUtils.EMPTY;
 
     private int healthy;
     private int unhealthy;
@@ -868,8 +868,9 @@ public class RecordIssuesStep extends Step implements Serializable {
     public void setReferenceBuildId(final String referenceBuildId) {
         if (IssuesRecorder.NO_REFERENCE_BUILD.equals(referenceBuildId)) {
             this.referenceBuildId = StringUtils.EMPTY;
-        } else {
-	    this.referenceBuildId = referenceBuildId;
+        }
+        else {
+            this.referenceBuildId = referenceBuildId;
 	}
     }
 

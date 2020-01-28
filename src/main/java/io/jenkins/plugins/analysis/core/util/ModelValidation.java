@@ -33,7 +33,6 @@ public class ModelValidation {
 
     @VisibleForTesting
     static final String NO_REFERENCE_JOB = "-";
-    @VisibleForTesting
     static final String NO_REFERENCE_BUILD = "-";
 
     private final JenkinsFacade jenkins;
@@ -186,10 +185,6 @@ public class ModelValidation {
             return FormValidation.ok();
         }
         return FormValidation.error(Messages.FieldValidator_Error_ReferenceJobDoesNotExist());
-    }
-
-    public FormValidation validateBuild(final String referenceBuildId) {
-        return FormValidation.ok();
     }
 
     @VisibleForTesting
