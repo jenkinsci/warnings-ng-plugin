@@ -253,12 +253,22 @@ class DetailFactoryTest {
 
     private void assertThatPrioritiesAreCorrectlySet(final IssuesDetail issuesDetail,
             final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
-        assertThat(issuesDetail.getIssues()).hasSeverities(0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
-        assertThat(issuesDetail.getOutstandingIssues()).hasSeverities(0, expectedSizeHigh, expectedSizeNormal,
-                expectedSizeLow);
-        assertThat(issuesDetail.getFixedIssues()).hasSeverities(0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow
-        );
-        assertThat(issuesDetail.getNewIssues()).hasSeverities(0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThatReportHasSeverities(issuesDetail.getIssues(),
+                0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThatReportHasSeverities(issuesDetail.getOutstandingIssues(),
+                0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThatReportHasSeverities(issuesDetail.getFixedIssues(),
+                0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+        assertThatReportHasSeverities(issuesDetail.getNewIssues(),
+                0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+    }
+
+    private void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
+            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+        assertThat(report.getSizeOf(Severity.ERROR)).isEqualTo(expectedSizeError);
+        assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
+        assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);
+        assertThat(report.getSizeOf(Severity.WARNING_LOW)).isEqualTo(expectedSizeLow);
     }
 
     private AnalysisResult createResult() {

@@ -4,8 +4,8 @@ import edu.hm.hafner.analysis.AbstractParserTest;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.analysis.assertj.Assertions;
-import edu.hm.hafner.analysis.assertj.SoftAssertions;
+import edu.hm.hafner.analysis.assertions.Assertions;
+import edu.hm.hafner.analysis.assertions.SoftAssertions;
 
 /**
  * Tests the class {@link DynamicDocumentParser}. Creates a new Eclipse parser in Groovy. All Eclipse test cases are

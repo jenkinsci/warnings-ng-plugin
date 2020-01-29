@@ -40,6 +40,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
+import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.ResourceTest;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -76,7 +78,7 @@ import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
-import static edu.hm.hafner.analysis.assertj.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assumptions.*;
 
 /**
@@ -273,6 +275,28 @@ public abstract class IntegrationTest extends ResourceTest {
         FilePath workspace = getJenkins().jenkins.getWorkspaceFor(job);
         assertThat(workspace).isNotNull();
         return workspace;
+    }
+
+    /**
+     * Asserts that the severity distribution or the specified report has been correctly created.
+     *
+     * @param report
+     *         the report
+     * @param expectedSizeError
+     *         expected number of errors
+     * @param expectedSizeHigh
+     *         expected number of warnings with severity high
+     * @param expectedSizeNormal
+     *         expected number of warnings with severity normal
+     * @param expectedSizeLow
+     *         expected number of warnings with severity low
+     */
+    protected void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
+            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+        assertThat(report.getSizeOf(Severity.ERROR)).isEqualTo(expectedSizeError);
+        assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
+        assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);
+        assertThat(report.getSizeOf(Severity.WARNING_LOW)).isEqualTo(expectedSizeLow);
     }
 
     /**

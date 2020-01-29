@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>2.1.0</version>
+    <version>2.1.1</version>
     <relativePath/>
   </parent>
 
@@ -27,18 +27,18 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>8.0.0-beta5</analysis-model-api.version>
-    <analysis-model.version>8.0.0-beta5</analysis-model.version>
+    <analysis-model-api.version>8.0.0-beta6-rc212.aaa6323b9d41</analysis-model-api.version>
+    <analysis-model-tests.version>8.0.0-beta6-rc3299.52f8ad873d0d</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0-beta5</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta3</git-forensics-plugin.version>
-    <plugin-util-api.version>0.1.0-beta6-rc66.cd0637fbf786</plugin-util-api.version>
+    <plugin-util-api.version>0.1.0-beta6-rc74.807b71f3775a</plugin-util-api.version>
 
-    <font-awesome-api.version>5.12.0-1-beta1</font-awesome-api.version>
+    <font-awesome-api.version>5.12.0-2-beta1-rc95.517f66d79aa0</font-awesome-api.version>
     <jquery3-api.version>3.4.1-4-beta1-rc83.0571fba8f864</jquery3-api.version>
     <popper-api.version>1.15.0-2-beta1</popper-api.version>
     <bootstrap4-api.version>4.4.1-5-beta1-rc118.241724a95779</bootstrap4-api.version>
     <data-tables-api.version>1.10.20-6-beta1</data-tables-api.version>
-    <echarts-api.version>4.4.0-9-beta1-rc136.3d2e652f0255</echarts-api.version>
+    <echarts-api.version>4.6.0-1-beta1-rc142.e39c8262bc82</echarts-api.version>
 
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -52,7 +52,7 @@
     <json.version>20190722</json.version>
     <jackson-databind.version>2.9.10.1</jackson-databind.version>
 
-    <pmd.version>6.20.0</pmd.version>
+    <pmd.version>6.21.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>1.6</xmlunit.version>
@@ -367,7 +367,7 @@
     <dependency>
       <groupId>edu.hm.hafner</groupId>
       <artifactId>analysis-model</artifactId>
-      <version>${analysis-model.version}</version>
+      <version>${analysis-model-tests.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>

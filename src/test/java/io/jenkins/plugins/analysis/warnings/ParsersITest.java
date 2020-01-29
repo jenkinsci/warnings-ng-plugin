@@ -171,7 +171,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
         assertThat(result.getTotalSize()).isEqualTo(2);
-        assertThat(result.getIssues()).hasSize(2).hasSeverities(0, 1, 1, 0);
+        Report report = result.getIssues();
+        assertThat(report).hasSize(2);
+        assertThatReportHasSeverities(report,
+                0, 1, 1, 0);
     }
 
     /** Runs the SonarQube parsers on two files that contains 6 and 31 issues. */
