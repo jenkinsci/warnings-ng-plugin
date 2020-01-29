@@ -11,6 +11,7 @@ import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -29,21 +30,15 @@ class IssuesModelTest extends AbstractDetailsModelTest {
         report.add(createIssue(2));
 
         IssuesModel model = createModel(report);
-        assertThat(model.getColumnsDefinition()).isEqualTo("["
-                + "{\"data\": \"description\"},"
-                + "{"
-                + "  \"type\": \"string\","
-                + "  \"data\": \"fileName\","
-                + "  \"render\": {"
-                + "     \"_\": \"display\","
-                + "     \"sort\": \"sort\""
-                + "  }"
-                + "},"
-                + "{\"data\": \"packageName\"},"
-                + "{\"data\": \"category\"},"
-                + "{\"data\": \"type\"},"
-                + "{\"data\": \"severity\"},"
-                + "{\"data\": \"age\"}]");
+
+        String columnDefinitions = model.getColumnsDefinition();
+        assertThatJson(columnDefinitions).isArray().hasSize(7);
+
+        String[] columns = {"description", "fileName", "packageName", "category", "type", "severity", "age"};
+        for (int column = 0; column < columns.length; column++) {
+            verifyColumnProperty(model, column, columns[column]);
+        }
+        verifyFileNameColumn(columnDefinitions);
 
         assertThat(model.getRows()).hasSize(2);
 

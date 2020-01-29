@@ -19,6 +19,7 @@ import io.jenkins.plugins.datatables.TableModel.DetailedColumnDefinition;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static j2html.TagCreator.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -111,5 +112,21 @@ public abstract class AbstractDetailsModelTest {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.getImagePath(anyString())).thenReturn("/path/to/icon");
         return jenkinsFacade;
+    }
+
+    protected void verifyColumnProperty(final DetailsTableModel model, final int column, final String property) {
+        assertThatJson(model.getColumnsDefinition())
+                .node("[" + column + "]")
+                .node("data")
+                .isEqualTo(property);
+    }
+
+    protected void verifyFileNameColumn(final String columnDefinitions) {
+        assertThatJson(columnDefinitions).node("[1].type")
+                .isEqualTo("string");
+        assertThatJson(columnDefinitions).node("[1].render._")
+                .isEqualTo("display");
+        assertThatJson(columnDefinitions).node("[1].render.sort")
+                .isEqualTo("sort");
     }
 }

@@ -10,6 +10,7 @@ import io.jenkins.plugins.forensics.miner.FileStatistics;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -29,22 +30,15 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
 
         ForensicsModel model = createModel(report, statistics);
 
-        assertThat(model.getColumnsDefinition()).isEqualTo("["
-                + "{\"data\": \"description\"},"
-                + "{"
-                + "  \"type\": \"string\","
-                + "  \"data\": \"fileName\","
-                + "  \"render\": {"
-                + "     \"_\": \"display\","
-                + "     \"sort\": \"sort\""
-                + "  }"
-                + "},"
-                + "{\"data\": \"age\"},"
-                + "{\"data\": \"authorsSize\"},"
-                + "{\"data\": \"commitsSize\"},"
-                + "{\"data\": \"modifiedAt\"},"
-                + "{\"data\": \"addedAt\"}"
-                + "]");
+        String columnDefinitions = model.getColumnsDefinition();
+        assertThatJson(columnDefinitions).isArray().hasSize(7);
+
+        String[] columns = {"description", "fileName", "age", "authorsSize", "commitsSize", "modifiedAt", "addedAt"};
+        for (int column = 0; column < columns.length; column++) {
+            verifyColumnProperty(model, column, columns[column]);
+        }
+        verifyFileNameColumn(columnDefinitions);
+
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
         assertThat(getWidths(model))

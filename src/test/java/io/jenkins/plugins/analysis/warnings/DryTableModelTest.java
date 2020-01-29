@@ -15,6 +15,7 @@ import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.DuplicationRow;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Tests the class {@link DryModel}.
@@ -50,20 +51,16 @@ class DryTableModelTest extends AbstractDetailsModelTest {
         report.add(issue).add(duplicate);
 
         DryModel model = createModel(report);
-        assertThat(model.getColumnsDefinition()).isEqualTo("["
-                + "{\"data\": \"description\"},"
-                + "{"
-                + "  \"type\": \"string\","
-                + "  \"data\": \"fileName\","
-                + "  \"render\": {"
-                + "     \"_\": \"display\","
-                + "     \"sort\": \"sort\""
-                + "  }"
-                + "},"
-                + "{\"data\": \"severity\"},"
-                + "{\"data\": \"linesCount\"},"
-                + "{\"data\": \"duplicatedIn\"},"
-                + "{\"data\": \"age\"}]");
+
+        String columnDefinitions = model.getColumnsDefinition();
+        assertThatJson(columnDefinitions).isArray().hasSize(6);
+
+        String[] columns = {"description", "fileName", "severity", "linesCount", "duplicatedIn", "age"};
+        for (int column = 0; column < columns.length; column++) {
+            verifyColumnProperty(model, column, columns[column]);
+        }
+        verifyFileNameColumn(columnDefinitions);
+
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Severity", "#Lines", "Duplicated In", "Age");
         assertThat(getWidths(model))

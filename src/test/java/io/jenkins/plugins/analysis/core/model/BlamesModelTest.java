@@ -10,6 +10,7 @@ import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -31,22 +32,16 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         Blames blames = mock(Blames.class);
 
         BlamesModel model = createModel(report, blames);
-        assertThat(model.getColumnsDefinition()).isEqualTo("["
-                + "{\"data\": \"description\"},"
-                + "{"
-                + "  \"type\": \"string\","
-                + "  \"data\": \"fileName\","
-                + "  \"render\": {"
-                + "     \"_\": \"display\","
-                + "     \"sort\": \"sort\""
-                + "  }"
-                + "},"
-                + "{\"data\": \"age\"},"
-                + "{\"data\": \"author\"},"
-                + "{\"data\": \"email\"},"
-                + "{\"data\": \"commit\"},"
-                + "{\"data\": \"addedAt\"}"
-                + "]");
+
+        String columnDefinitions = model.getColumnsDefinition();
+        assertThatJson(columnDefinitions).isArray().hasSize(7);
+
+        String[] columns = {"description", "fileName", "age", "author", "email", "commit", "addedAt"};
+        for (int column = 0; column < columns.length; column++) {
+            verifyColumnProperty(model, column, columns[column]);
+        }
+        verifyFileNameColumn(columnDefinitions);
+
         assertThat(getLabels(model))
                 .containsExactly("Details", "File", "Age", "Author", "Email", "Commit", "Added");
         assertThat(getWidths(model))
