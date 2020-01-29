@@ -34,7 +34,7 @@
     <plugin-util-api.version>0.1.0-beta6-rc74.807b71f3775a</plugin-util-api.version>
 
     <font-awesome-api.version>5.12.0-2-beta1-rc95.517f66d79aa0</font-awesome-api.version>
-    <jquery3-api.version>3.4.1-4-beta1-rc83.0571fba8f864</jquery3-api.version>
+    <jquery3-api.version>3.4.1-4-beta1-rc86.fcebead0d4e8</jquery3-api.version>
     <popper-api.version>1.15.0-2-beta1</popper-api.version>
     <bootstrap4-api.version>4.4.1-5-beta1-rc133.a3bc7af7670d</bootstrap4-api.version>
     <data-tables-api.version>1.10.20-6-beta1</data-tables-api.version>
