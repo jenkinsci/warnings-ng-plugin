@@ -36,9 +36,9 @@
     <font-awesome-api.version>5.12.0-2-beta1-rc96.f17cd69f26d2</font-awesome-api.version>
     <jquery3-api.version>3.4.1-4-beta1-rc86.fcebead0d4e8</jquery3-api.version>
     <popper-api.version>1.15.0-3-beta1-rc77.305ecea7cb5a</popper-api.version>
-    <bootstrap4-api.version>4.4.1-5-beta1-rc139.685fb1720361</bootstrap4-api.version>
+    <bootstrap4-api.version>4.4.1-5-beta1-rc140.995256c58ea2</bootstrap4-api.version>
     <data-tables-api.version>1.10.20-7-beta1-rc171.6ef0cd8d08cd</data-tables-api.version>
-    <echarts-api.version>4.6.0-1-beta1-rc142.e39c8262bc82</echarts-api.version>
+    <echarts-api.version>4.6.0-1-beta1-rc144.bd7b82c61db2</echarts-api.version>
 
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
