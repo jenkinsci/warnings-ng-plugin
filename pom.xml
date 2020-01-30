@@ -29,7 +29,7 @@
 
     <analysis-model-api.version>8.0.0-beta6-rc212.aaa6323b9d41</analysis-model-api.version>
     <analysis-model-tests.version>8.0.0-beta6-rc3299.52f8ad873d0d</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.7.0-beta6-rc402.2e0cdb09280f</forensics-api-plugin.version>
+    <forensics-api-plugin.version>0.7.0-beta6-rc405.88de3146cd8b</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta3</git-forensics-plugin.version>
     <plugin-util-api.version>0.1.0-beta6-rc74.807b71f3775a</plugin-util-api.version>
 
