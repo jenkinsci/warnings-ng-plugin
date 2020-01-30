@@ -65,7 +65,7 @@
     <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
     <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
-    <git-plugin.version>4.0.0</git-plugin.version>
+    <git-plugin.version>4.1.1</git-plugin.version>
     <workflow-step-api.version>2.20</workflow-step-api.version>
     <structs.version>1.20</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
