@@ -27,18 +27,17 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>8.0.0-beta6-rc212.aaa6323b9d41</analysis-model-api.version>
-    <analysis-model-tests.version>8.0.0-beta6-rc3299.52f8ad873d0d</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.7.0-beta6-rc405.88de3146cd8b</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.7.0-beta3</git-forensics-plugin.version>
-    <plugin-util-api.version>0.1.0-beta6-rc74.807b71f3775a</plugin-util-api.version>
+    <analysis-model-api.version>8.0.0-beta7</analysis-model-api.version>
+    <analysis-model-tests.version>8.0.0-beta7</analysis-model-tests.version>
+    <forensics-api-plugin.version>0.7.0-beta6</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.7.0-beta4</git-forensics-plugin.version>
+    <plugin-util-api.version>0.1.0-beta6</plugin-util-api.version>
 
-    <font-awesome-api.version>5.12.0-2-beta1-rc97.025f08459005</font-awesome-api.version>
-    <jquery3-api.version>3.4.1-4-beta1-rc86.fcebead0d4e8</jquery3-api.version>
-    <popper-api.version>1.15.0-3-beta1-rc77.305ecea7cb5a</popper-api.version>
-    <bootstrap4-api.version>4.4.1-5-beta1-rc141.5f2325bc5541</bootstrap4-api.version>
-    <data-tables-api.version>1.10.20-7-beta1-rc178.ae6525bf987c</data-tables-api.version>
-    <echarts-api.version>4.6.0-1-beta1-rc145.b9d22efb27bd</echarts-api.version>
+    <font-awesome-api.version>5.12.0-2-beta1</font-awesome-api.version>
+    <jquery3-api.version>3.4.1-4-beta1</jquery3-api.version>
+    <bootstrap4-api.version>4.4.1-5-beta1</bootstrap4-api.version>
+    <data-tables-api.version>1.10.20-7-beta1</data-tables-api.version>
+    <echarts-api.version>4.6.0-1-beta1</echarts-api.version>
 
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
