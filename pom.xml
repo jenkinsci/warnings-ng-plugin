@@ -32,7 +32,7 @@
     <git-forensics-plugin.version>0.7.0-beta4</git-forensics-plugin.version>
     <plugin-util-api.version>0.1.0-beta6</plugin-util-api.version>
 
-    <font-awesome-api.version>5.12.0-2-beta1</font-awesome-api.version>
+    <font-awesome-api.version>5.12.0-3-beta1-rc100.f78ad1207a9d</font-awesome-api.version>
     <jquery3-api.version>3.4.1-4-beta1</jquery3-api.version>
     <bootstrap4-api.version>4.4.1-5-beta1</bootstrap4-api.version>
     <data-tables-api.version>1.10.20-7-beta1</data-tables-api.version>
