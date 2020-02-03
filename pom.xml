@@ -35,7 +35,7 @@
     <font-awesome-api.version>5.12.0-2-beta1</font-awesome-api.version>
     <jquery3-api.version>3.4.1-4-beta1</jquery3-api.version>
     <bootstrap4-api.version>4.4.1-5-beta1</bootstrap4-api.version>
-    <data-tables-api.version>1.10.20-7-beta1</data-tables-api.version>
+    <data-tables-api.version>1.10.20-8-beta1-rc181.c487db878e7c</data-tables-api.version>
     <echarts-api.version>4.6.0-1-beta1</echarts-api.version>
 
     <commons.lang.version>3.9</commons.lang.version>
