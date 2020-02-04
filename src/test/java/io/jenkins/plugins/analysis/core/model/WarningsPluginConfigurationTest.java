@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
@@ -38,12 +37,14 @@ class WarningsPluginConfigurationTest {
         WarningsPluginConfiguration configuration = createConfiguration();
 
         assertThat(configuration.getSourceDirectories()).isEmpty();
-        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE, Collections.emptyList()))
-                .containsExactly(WORKSPACE_PATH);
-        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE, asList(ABSOLUTE)))
-                .containsExactly(WORKSPACE_PATH);
-        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE, asList(RELATIVE)))
-                .containsExactly(WORKSPACE_PATH, getWorkspacePath(RELATIVE));
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, ""))
+                .isEqualTo(WORKSPACE_PATH);
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, "-"))
+                .isEqualTo(WORKSPACE_PATH);
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, ABSOLUTE))
+                .isEqualTo(WORKSPACE_PATH);
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, RELATIVE))
+                .isEqualTo(getWorkspacePath(RELATIVE));
     }
 
     @Test
@@ -55,14 +56,12 @@ class WarningsPluginConfigurationTest {
 
         verify(facade).save();
         assertThat(configuration.getSourceDirectories()).isEqualTo(SOURCE_ROOTS);
-        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE, asList(FIRST)))
-                .containsExactly(WORKSPACE_PATH, FIRST);
-        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE, asList(FIRST, SECOND)))
-                .containsExactly(WORKSPACE_PATH, FIRST, SECOND);
-        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE, asList(FIRST, SECOND, ABSOLUTE)))
-                .containsExactly(WORKSPACE_PATH, FIRST, SECOND);
-        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE, asList(FIRST, SECOND, RELATIVE)))
-                .containsExactly(WORKSPACE_PATH, FIRST, SECOND, getWorkspacePath(RELATIVE));
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, FIRST))
+                .isEqualTo(FIRST);
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, ABSOLUTE))
+                .isEqualTo(WORKSPACE_PATH);
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, RELATIVE))
+                .isEqualTo(getWorkspacePath(RELATIVE));
     }
 
     @Test
@@ -78,10 +77,21 @@ class WarningsPluginConfigurationTest {
         String absoluteUnix = "/absolute/unix";
         String absoluteWindows = "C:\\absolute\\windows";
         String absoluteWindowsNormalized = "C:/absolute/windows";
-        assertThat(configuration.getPermittedSourceDirectories(WORKSPACE,
-                asList(relativeUnix, relativeWindows, absoluteUnix, absoluteWindows, absoluteWindowsNormalized)))
-                .containsExactly(WORKSPACE_PATH, getWorkspacePath(relativeUnix), getWorkspacePath(relativeWindows),
-                        absoluteUnix, PATH_UTIL.getAbsolutePath(absoluteWindows), absoluteWindowsNormalized);
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
+                relativeUnix))
+                .isEqualTo(getWorkspacePath(relativeUnix));
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
+                relativeWindows))
+                .isEqualTo(getWorkspacePath(relativeWindows));
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
+                absoluteUnix))
+                .isEqualTo(absoluteUnix);
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
+                absoluteWindows))
+                .isEqualTo(PATH_UTIL.getAbsolutePath(absoluteWindows));
+        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
+                absoluteWindowsNormalized))
+                .isEqualTo(absoluteWindowsNormalized);
     }
 
     private String getWorkspacePath(final String relative) {

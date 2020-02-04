@@ -183,8 +183,8 @@ public abstract class ReportScanningTool extends Tool {
         report.addFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
 
         if (getDescriptor().isConsoleLog()) {
-            report.stream().filter(issue -> !issue.hasFileName())
-                    .forEach(issue -> issue.setFileName(CONSOLE_LOG));
+//            report.stream().filter(issue -> !issue.hasFileName())
+//                    .forEach(issue -> issue.setFileName(StringUtils.EMPTY, CONSOLE_LOG));
         }
 
         consoleReport.addAll(report);

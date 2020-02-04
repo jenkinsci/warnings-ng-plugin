@@ -43,10 +43,17 @@ public class TimestamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasNoErrorMessages();
 
         Issue issue = result.getIssues().get(0);
-        assertThat(issue).hasFileName(getWorkspacePath(project, "Test.java"));
+        assertFileName(project, issue, "Test.java");
         assertThat(issue).hasLineStart(39);
         assertThat(issue).hasMessage("Test Warning");
         assertThat(issue).hasSeverity(Severity.WARNING_NORMAL);
+    }
+
+    private void assertFileName(final WorkflowJob project, final Issue issue, final String fileName) {
+        assertThat(issue)
+                .hasAbsolutePath(getWorkspacePath(project, fileName))
+                .hasPath(getWorkspace(project).getRemote())
+                .hasFileName(fileName);
     }
 
     private String getWorkspacePath(final WorkflowJob project, final String fileName) {
@@ -75,7 +82,7 @@ public class TimestamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result).hasNoErrorMessages();
 
         Issue issue = result.getIssues().get(0);
-        assertThat(issue).hasFileName(getWorkspacePath(project, "test.c"));
+        assertFileName(project, issue, "test.c");
         assertThat(issue).hasLineStart(1);
         assertThat(issue).hasMessage("This is an error.");
         assertThat(issue).hasSeverity(Severity.WARNING_HIGH);

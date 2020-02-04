@@ -106,7 +106,7 @@ class AffectedFilesResolverTest {
         RemoteFacade remoteFacade = mock(RemoteFacade.class);
         when(remoteFacade.exists(FILE_NAME)).thenReturn(true);
         when(remoteFacade.isInWorkspace(FILE_NAME)).thenReturn(true);
-        doThrow(IOException.class).when(remoteFacade).copy(FILE_NAME);
+        doThrow(IOException.class).when(remoteFacade).copy(FILE_NAME, FILE_NAME);
 
         resolver.copyAffectedFilesToBuildFolder(report, remoteFacade);
 
@@ -165,15 +165,11 @@ class AffectedFilesResolverTest {
         void shouldFindFileInSourceFolder() throws IOException {
             FilePath buildFolderStub = createWorkspaceStub();
             FilePath workspaceStub = createWorkspaceStub();
-            FilePath sourceFolderStub = createWorkspaceStub();
 
-            RemoteFacade remoteFacade = new RemoteFacade(buildFolderStub, workspaceStub, sourceFolderStub);
+            RemoteFacade remoteFacade = new RemoteFacade(buildFolderStub, workspaceStub);
 
             assertThat(remoteFacade.isInWorkspace(workspaceStub.getRemote())).isTrue();
             assertThat(remoteFacade.isInWorkspace(workspaceStub.child(FILE_NAME).getRemote())).isTrue();
-
-            assertThat(remoteFacade.isInWorkspace(sourceFolderStub.getRemote())).isTrue();
-            assertThat(remoteFacade.isInWorkspace(sourceFolderStub.child(FILE_NAME).getRemote())).isTrue();
         }
     }
 }
