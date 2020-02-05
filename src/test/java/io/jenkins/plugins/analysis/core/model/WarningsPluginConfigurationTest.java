@@ -21,91 +21,76 @@ import static org.mockito.Mockito.*;
  * @author Ullrich Hafner
  */
 class WarningsPluginConfigurationTest {
+    private static final PathUtil PATH_UTIL = new PathUtil();
+
     private static final String FIRST = "/One";
     private static final String SECOND = "/Two";
-    private static final String ABSOLUTE = "/Three";
+    private static final String ABSOLUTE_NOT_EXISTING = "/Three";
     private static final String RELATIVE = "Relative";
-    private static final String WORKSPACE_PATH = "/workspace";
-    private static final FilePath WORKSPACE_FILE_PATH = createPath(WORKSPACE_PATH);
-    private static final FilePath WORKSPACE = WORKSPACE_FILE_PATH;
 
-    private static FilePath createPath(final String path) {
-        return new FilePath((VirtualChannel) null, path);
-    }
+    private static final String NORMALIZED = PATH_UTIL.getAbsolutePath("/workspace");
 
     private static final List<SourceDirectory> SOURCE_ROOTS
-            = asList(new SourceDirectory(FIRST), new SourceDirectory(SECOND));
-    private static final PathUtil PATH_UTIL = new PathUtil();
+            = Arrays.asList(new SourceDirectory(FIRST), new SourceDirectory(SECOND));
 
     @Test
     void shouldHaveNoRootFoldersWhenCreated() {
         WarningsPluginConfiguration configuration = createConfiguration();
 
         assertThat(configuration.getSourceDirectories()).isEmpty();
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, ""))
-                .isEqualTo(WORKSPACE_FILE_PATH);
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, "-"))
-                .isEqualTo(WORKSPACE_FILE_PATH);
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, ABSOLUTE))
-                .isEqualTo(WORKSPACE_FILE_PATH);
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, RELATIVE))
-                .isEqualTo(getWorkspacePath(RELATIVE));
+
+        assertThat(get(configuration, "")).isEqualTo(NORMALIZED);
+        assertThat(get(configuration, "-")).isEqualTo(NORMALIZED);
+        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING)).isEqualTo(NORMALIZED);
+        assertThat(get(configuration, RELATIVE)).isEqualTo(getWorkspaceChild(RELATIVE));
     }
 
     @Test
     void shouldSaveConfigurationIfFoldersAreAdded() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
-
         WarningsPluginConfiguration configuration = new WarningsPluginConfiguration(facade);
+
         configuration.setSourceDirectories(SOURCE_ROOTS);
 
         verify(facade).save();
         assertThat(configuration.getSourceDirectories()).isEqualTo(SOURCE_ROOTS);
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, FIRST))
-                .isEqualTo(createPath(FIRST));
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, ABSOLUTE))
-                .isEqualTo(WORKSPACE_FILE_PATH);
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, RELATIVE))
-                .isEqualTo(getWorkspacePath(RELATIVE));
+
+        assertThat(get(configuration, FIRST)).isEqualTo(FIRST);
+        assertThat(get(configuration, RELATIVE)).isEqualTo(getWorkspaceChild(RELATIVE));
+        assertThat(get(configuration, ABSOLUTE_NOT_EXISTING)).isEqualTo(NORMALIZED);
     }
 
     @Test
     void shouldNormalizePath() {
         WarningsPluginConfiguration configuration = createConfiguration();
 
-        configuration.setSourceDirectories(asList(
-                new SourceDirectory("/absolute/unix"),
-                new SourceDirectory("C:\\absolute\\windows")));
+        configuration.setSourceDirectories(
+                Arrays.asList(new SourceDirectory("/absolute/unix"), new SourceDirectory("C:\\absolute\\windows")));
 
         String relativeUnix = "relative/unix";
         String relativeWindows = "relative\\windows";
         String absoluteUnix = "/absolute/unix";
         String absoluteWindows = "C:\\absolute\\windows";
         String absoluteWindowsNormalized = "C:/absolute/windows";
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
-                relativeUnix))
-                .isEqualTo(getWorkspacePath(relativeUnix));
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
-                relativeWindows))
-                .isEqualTo(getWorkspacePath(relativeWindows));
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
-                absoluteUnix))
-                .isEqualTo(createPath(absoluteUnix));
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
-                absoluteWindows))
-                .isEqualTo(createPath(PATH_UTIL.getAbsolutePath(absoluteWindows)));
-        assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
-                absoluteWindowsNormalized))
-                .isEqualTo(createPath(absoluteWindowsNormalized));
+
+        assertThat(get(configuration, relativeUnix)).isEqualTo(getWorkspaceChild(relativeUnix));
+        assertThat(get(configuration, relativeWindows)).isEqualTo(getWorkspaceChild(relativeWindows));
+        assertThat(get(configuration, absoluteUnix)).isEqualTo(absoluteUnix);
+        assertThat(get(configuration, absoluteWindows)).isEqualTo(normalize(absoluteWindows));
+        assertThat(get(configuration, absoluteWindowsNormalized)).isEqualTo(absoluteWindowsNormalized);
     }
 
-    private FilePath getWorkspacePath(final String relative) {
-        return createPath(PATH_UTIL.getAbsolutePath(WORKSPACE_PATH + "/" + relative));
+    private String getWorkspaceChild(final String expected) {
+        return PATH_UTIL.createAbsolutePath(NORMALIZED, expected);
     }
 
-    @SafeVarargs
-    private static <T> List<T> asList(final T... paths) {
-        return Arrays.asList(paths);
+    private String normalize(final String remote) {
+        return PATH_UTIL.getAbsolutePath(remote);
+    }
+
+    private String get(final WarningsPluginConfiguration configuration, final String absoluteUnix) {
+        FilePath path = new FilePath((VirtualChannel) null, NORMALIZED);
+        return normalize(configuration.getPermittedSourceDirectory(path, absoluteUnix).getRemote());
     }
 
     private WarningsPluginConfiguration createConfiguration() {
