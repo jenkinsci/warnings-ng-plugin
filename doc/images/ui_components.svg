@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" contentScriptType="application/ecmascript" contentStyleType="text/css"
+     height="391px" preserveAspectRatio="none" style="width:903px;height:391px;" version="1.1" viewBox="0 0 903 391"
+     width="903px" zoomAndPan="magnify"><defs><filter height="300%" id="f1f77wrw64n7dj" width="300%" x="-1" y="-1"><feGaussianBlur result="blurOut" stdDeviation="2.0"/><feColorMatrix in="blurOut" result="blurOut2" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .4 0"/><feOffset dx="4.0" dy="4.0" in="blurOut2" result="blurOut3"/><feBlend in="SourceGraphic" in2="blurOut3" mode="normal"/></filter><filter height="1" id="b1f77wrw64n7dj0" width="1" x="0" y="0"><feFlood flood-color="#ADD8E6" result="flood"/><feComposite in="SourceGraphic" in2="flood" operator="over"/></filter><filter height="1" id="b1f77wrw64n7dj1" width="1" x="0" y="0"><feFlood flood-color="#90EE90" result="flood"/><feComposite in="SourceGraphic" in2="flood" operator="over"/></filter><filter height="1" id="b1f77wrw64n7dj2" width="1" x="0" y="0"><feFlood flood-color="#F5F5DC" result="flood"/><feComposite in="SourceGraphic" in2="flood" operator="over"/></filter></defs><g><!--MD5=[18e59f0a92f476380cfa0e5522f3c0c0]
+entity boostrap4-api--><rect fill="#90EE90" filter="url(#f1f77wrw64n7dj)" height="46.4883" style="stroke: #A80036; stroke-width: 1.5;" width="140" x="547.5" y="114"/><rect fill="#90EE90" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="667.5" y="119"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="665.5" y="121"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="665.5" y="125"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="100" x="562.5" y="147.5352">boostrap4-api</text><!--MD5=[31985fcb658741654f0cd57742cc85b1]
+entity datatables-api--><rect fill="#90EE90" filter="url(#f1f77wrw64n7dj)" height="46.4883" style="stroke: #A80036; stroke-width: 1.5;" width="140" x="215.5" y="114"/><rect fill="#90EE90" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="335.5" y="119"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="333.5" y="121"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="333.5" y="125"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="100" x="230.5" y="147.5352">datatables-api</text><!--MD5=[4cbb0e49a767b0ff652a6b796918a215]
+entity jquery3-api--><rect fill="#90EE90" filter="url(#f1f77wrw64n7dj)" height="46.4883" style="stroke: #A80036; stroke-width: 1.5;" width="121" x="391" y="114"/><rect fill="#90EE90" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="492" y="119"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="490" y="121"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="490" y="125"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="81" x="406" y="147.5352">jquery3-api</text><!--MD5=[a556d2e10cb329a761d08fb170deb74f]
+entity font-awesome-api--><rect fill="#90EE90" filter="url(#f1f77wrw64n7dj)" height="46.4883" style="stroke: #A80036; stroke-width: 1.5;" width="169" x="723" y="114"/><rect fill="#90EE90" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="872" y="119"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="870" y="121"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="870" y="125"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="129" x="738" y="147.5352">font-awesome-api</text><!--MD5=[8367e42b50c5f3a8fff30e1e58cf5cea]
+entity echarts-api--><rect fill="#90EE90" filter="url(#f1f77wrw64n7dj)" height="46.4883" style="stroke: #A80036; stroke-width: 1.5;" width="119" x="61" y="114"/><rect fill="#90EE90" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="160" y="119"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="158" y="121"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="158" y="125"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="79" x="76" y="147.5352">echarts-api</text><!--MD5=[ed360a6a2db13ad32c89f4b8a17443d7]
+entity plugin-util-api--><rect fill="#90EE90" filter="url(#f1f77wrw64n7dj)" height="46.4883" style="stroke: #A80036; stroke-width: 1.5;" width="143" x="129" y="8"/><rect fill="#90EE90" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="252" y="13"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="250" y="15"/><rect fill="#90EE90" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="250" y="19"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="103" x="144" y="41.5352">plugin-util-api</text><!--MD5=[f80caf1e9846eec8abac37375503e64f]
+entity warnings-ng--><rect fill="#ADD8E6" filter="url(#f1f77wrw64n7dj)" height="46.4883" style="stroke: #A80036; stroke-width: 1.5;" width="129" x="347" y="8"/><rect fill="#ADD8E6" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="456" y="13"/><rect fill="#ADD8E6" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="454" y="15"/><rect fill="#ADD8E6" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="454" y="19"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="89" x="362" y="41.5352">warnings-ng</text><!--MD5=[509c5857fda3214765c7775b9833f866]
+entity datatables-model--><rect fill="#FEFECE" filter="url(#f1f77wrw64n7dj)" height="46.4883" style="stroke: #A80036; stroke-width: 1.5;" width="162" x="226.5" y="220"/><rect fill="#FEFECE" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="368.5" y="225"/><rect fill="#FEFECE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="366.5" y="227"/><rect fill="#FEFECE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="366.5" y="231"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="122" x="241.5" y="253.5352">datatables-model</text><!--MD5=[4ad4d819b111f2601e9859bffb1701ee]
+entity echarts-build-trends--><rect fill="#FEFECE" filter="url(#f1f77wrw64n7dj)" height="46.4883" style="stroke: #A80036; stroke-width: 1.5;" width="185" x="6" y="220"/><rect fill="#FEFECE" height="10" style="stroke: #A80036; stroke-width: 1.5;" width="15" x="171" y="225"/><rect fill="#FEFECE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="169" y="227"/><rect fill="#FEFECE" height="2" style="stroke: #A80036; stroke-width: 1.5;" width="4" x="169" y="231"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="145" x="21" y="253.5352">echarts-build-trends</text><!--MD5=[25b704512921f574146ebbf7d95d42f6]
+link warnings-ng to jquery3-api--><path d="M419.98,54.06 C426.19,70.19 434.64,92.15 441.22,109.28 " fill="none" id="warnings-ng-&gt;jquery3-api" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="443.03,113.98,443.5265,104.1437,441.2322,109.3144,436.0615,107.0201,443.03,113.98" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[9b97f02119d5ef9d12676295ddaac604]
+link warnings-ng to datatables-api--><path d="M384.78,54.06 C364.73,70.6 337.25,93.28 316.29,110.59 " fill="none" id="warnings-ng-&gt;datatables-api" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="312.18,113.98,321.6664,111.3328,316.0351,110.796,316.572,105.1646,312.18,113.98" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[f90a3de97a0f6f08d7f1c042b2695cc6]
+link warnings-ng to boostrap4-api--><path d="M455.19,54.06 C488.64,70.95 534.77,94.23 569.3,111.66 " fill="none" id="warnings-ng-&gt;boostrap4-api" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="573.88,113.98,567.658,106.3454,569.4194,111.7211,564.0437,113.4825,573.88,113.98" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[039b8ecd7abc7d92356ba06da6f11399]
+link warnings-ng to font-awesome-api--><path d="M476.01,48.94 C541.93,66.25 644.8,93.27 718.46,112.61 " fill="none" id="warnings-ng-&gt;font-awesome-api" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="723.71,113.99,716.0207,107.8357,718.8739,112.7203,713.9893,115.5735,723.71,113.99" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[44ca9475e70f6602427fc05195e84a4f]
+link boostrap4-api to font-awesome-api--><path d="M687.64,137 C697.6,137 707.57,137 717.54,137 " fill="none" id="boostrap4-api-&gt;font-awesome-api" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="722.75,137,713.75,133,717.75,137,713.75,141,722.75,137" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[8ebebf6e36bf0b55fe47bfe5539c2784]
+link warnings-ng to echarts-api--><path d="M349.79,54.06 C301.4,71.35 234.25,95.35 185.13,112.9 " fill="none" id="warnings-ng-&gt;echarts-api" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="180.13,114.69,189.952,115.4167,184.8364,113.002,187.2512,107.8864,180.13,114.69" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[29be46adaff7696bcbdba8e1cd53ba0b]
+reverse link plugin-util-api to warnings-ng--><path d="M277.45,31 C300.55,31 323.65,31 346.75,31 " fill="none" id="plugin-util-api&lt;-warnings-ng" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="272.21,31,281.21,35,277.21,31,281.21,27,272.21,31" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[c2991a04d0bfed605d3b4e084e65055a]
+link datatables-api to jquery3-api--><path d="M355.53,137 C365.53,137 375.54,137 385.54,137 " fill="none" id="datatables-api-&gt;jquery3-api" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="390.77,137,381.77,133,385.77,137,381.77,141,390.77,137" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[5dd1902ceacd1bea536625d44dadf522]
+reverse link jquery3-api to boostrap4-api--><path d="M517.32,137 C527.25,137 537.18,137 547.12,137 " fill="none" id="jquery3-api&lt;-boostrap4-api" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="512.13,137,521.13,141,517.13,137,521.13,133,512.13,137" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[a557a45dc2b1cbd76b699212c0fd147f]
+link datatables-api to datatables-model--><path d="M290.17,160.06 C293.55,176.05 298.15,197.78 301.75,214.84 " fill="none" id="datatables-api-&gt;datatables-model" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="302.84,219.98,304.8789,210.3445,301.7992,215.0895,297.0541,212.0098,302.84,219.98" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[d048ef6f5af07cedbb83a4ee2f766368]
+link echarts-api to echarts-build-trends--><path d="M115.83,160.06 C112.45,176.05 107.85,197.78 104.25,214.84 " fill="none" id="echarts-api-&gt;echarts-build-trends" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="103.16,219.98,108.9459,212.0098,104.2008,215.0895,101.1211,210.3445,103.16,219.98" style="stroke: #A80036; stroke-width: 1.0;"/><!--MD5=[66f68a2f35895cf730d540c807fdff08]
+link echarts-api to plugin-util-api--><path d="M137.44,113.98 C149.95,97.71 167.03,75.51 180.26,58.31 " fill="none" id="echarts-api-&gt;plugin-util-api" style="stroke: #A80036; stroke-width: 1.0; stroke-dasharray: 7.0,7.0;"/><polygon fill="#A80036" points="183.53,54.06,174.8623,58.7367,180.4732,58.0167,181.1931,63.6276,183.53,54.06" style="stroke: #A80036; stroke-width: 1.0;"/><rect fill="#FFFFFF" height="96.4414" rx="5" ry="5" style="stroke: #000000; stroke-width: 1.0;" width="144" x="382.5" y="284"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="0" x="393.5" y="304.5352"/><text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacingAndGlyphs" textLength="89" x="405.5" y="304.5352">Module type</text><text fill="#000000" filter="url(#b1f77wrw64n7dj0)" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="0" x="400.5" y="321.0234"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="112" x="404.5" y="321.0234">Warnings plugin</text><text fill="#000000" filter="url(#b1f77wrw64n7dj1)" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="0" x="400.5" y="337.5117"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="101" x="404.5" y="337.5117">New UI Plugins</text><text fill="#000000" filter="url(#b1f77wrw64n7dj2)" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="0" x="400.5" y="354"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="90" x="404.5" y="354">Java Libraries</text><line style="stroke: #000000; stroke-width: 1.0;" x1="388.5" x2="520.5" y1="291" y2="291"/><line style="stroke: #000000; stroke-width: 1.0;" x1="388.5" x2="520.5" y1="307.4883" y2="307.4883"/><line style="stroke: #000000; stroke-width: 1.0;" x1="388.5" x2="520.5" y1="323.9766" y2="323.9766"/><line style="stroke: #000000; stroke-width: 1.0;" x1="388.5" x2="520.5" y1="340.4648" y2="340.4648"/><line style="stroke: #000000; stroke-width: 1.0;" x1="388.5" x2="520.5" y1="356.9531" y2="356.9531"/><line style="stroke: #000000; stroke-width: 1.0;" x1="388.5" x2="388.5" y1="291" y2="356.9531"/><line style="stroke: #000000; stroke-width: 1.0;" x1="400.5" x2="400.5" y1="291" y2="356.9531"/><line style="stroke: #000000; stroke-width: 1.0;" x1="520.5" x2="520.5" y1="291" y2="356.9531"/><text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacingAndGlyphs" textLength="0" x="392.5" y="372.4883"/><!--MD5=[cacc723403f73bf100271d20351c1517]
+@startuml
+
+skinparam componentStyle uml2
+
+skinparam component {
+  BackgroundColor<<optional>> beige
+  BackgroundColor<<test>> lightGreen
+  BackgroundColor<<runtime>> lightBlue
+  BackgroundColor<<provided>> lightGray
+}
+
+component [boostrap4-api] #lightGreen
+component [datatables-api] #lightGreen
+component [jquery3-api] #lightGreen
+component [font-awesome-api] #lightGreen
+component [echarts-api] #lightGreen
+component [plugin-util-api] #lightGreen
+
+component [echarts-api] #lightGreen
+
+component [warnings-ng] #lightBlue
+
+[warnings-ng] ..> [jquery3-api]
+[warnings-ng] ..> [datatables-api]
+[warnings-ng] ..> [boostrap4-api]
+[warnings-ng] .right.> [font-awesome-api]
+[boostrap4-api] .right.> [font-awesome-api]
+[warnings-ng] ..> [echarts-api]
+[warnings-ng] .left.> [plugin-util-api]
+
+[datatables-api] .> [jquery3-api]
+[jquery3-api] <. [boostrap4-api]
+
+[datatables-api] ..> [datatables-model]
+[echarts-api] ..> [echarts-build-trends]
+[echarts-api] .> [plugin-util-api]
+
+skinparam legendBackgroundColor white
+
+legend
+|= |= Module type |
+|<back:lightBlue>   </back>| Warnings plugin |
+|<back:lightGreen>   </back>| New UI Plugins |
+|<back:beige>   </back>| Java Libraries |
+
+endlegend
+
+@enduml
+
+PlantUML version 1.2019.11(Sun Sep 22 12:02:15 CEST 2019)
+(GPL source distribution)
+Java Runtime: OpenJDK Runtime Environment
+JVM: OpenJDK 64-Bit Server VM
+Java Version: 11.0.4+10-b520.11
+Operating System: Mac OS X
+Default Encoding: UTF-8
+Language: de
+Country: DE
+--></g></svg>
