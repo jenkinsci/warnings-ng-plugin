@@ -26,7 +26,12 @@ class WarningsPluginConfigurationTest {
     private static final String ABSOLUTE = "/Three";
     private static final String RELATIVE = "Relative";
     private static final String WORKSPACE_PATH = "/workspace";
-    private static final FilePath WORKSPACE = new FilePath((VirtualChannel) null, WORKSPACE_PATH);
+    private static final FilePath WORKSPACE_FILE_PATH = createPath(WORKSPACE_PATH);
+    private static final FilePath WORKSPACE = WORKSPACE_FILE_PATH;
+
+    private static FilePath createPath(final String path) {
+        return new FilePath((VirtualChannel) null, path);
+    }
 
     private static final List<SourceDirectory> SOURCE_ROOTS
             = asList(new SourceDirectory(FIRST), new SourceDirectory(SECOND));
@@ -38,11 +43,11 @@ class WarningsPluginConfigurationTest {
 
         assertThat(configuration.getSourceDirectories()).isEmpty();
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, ""))
-                .isEqualTo(WORKSPACE_PATH);
+                .isEqualTo(WORKSPACE_FILE_PATH);
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, "-"))
-                .isEqualTo(WORKSPACE_PATH);
+                .isEqualTo(WORKSPACE_FILE_PATH);
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, ABSOLUTE))
-                .isEqualTo(WORKSPACE_PATH);
+                .isEqualTo(WORKSPACE_FILE_PATH);
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, RELATIVE))
                 .isEqualTo(getWorkspacePath(RELATIVE));
     }
@@ -57,9 +62,9 @@ class WarningsPluginConfigurationTest {
         verify(facade).save();
         assertThat(configuration.getSourceDirectories()).isEqualTo(SOURCE_ROOTS);
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, FIRST))
-                .isEqualTo(FIRST);
+                .isEqualTo(createPath(FIRST));
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, ABSOLUTE))
-                .isEqualTo(WORKSPACE_PATH);
+                .isEqualTo(WORKSPACE_FILE_PATH);
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE, RELATIVE))
                 .isEqualTo(getWorkspacePath(RELATIVE));
     }
@@ -85,17 +90,17 @@ class WarningsPluginConfigurationTest {
                 .isEqualTo(getWorkspacePath(relativeWindows));
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
                 absoluteUnix))
-                .isEqualTo(absoluteUnix);
+                .isEqualTo(createPath(absoluteUnix));
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
                 absoluteWindows))
-                .isEqualTo(PATH_UTIL.getAbsolutePath(absoluteWindows));
+                .isEqualTo(createPath(PATH_UTIL.getAbsolutePath(absoluteWindows)));
         assertThat(configuration.getPermittedSourceDirectory(WORKSPACE,
                 absoluteWindowsNormalized))
-                .isEqualTo(absoluteWindowsNormalized);
+                .isEqualTo(createPath(absoluteWindowsNormalized));
     }
 
-    private String getWorkspacePath(final String relative) {
-        return PATH_UTIL.getAbsolutePath(WORKSPACE_PATH + "/" + relative);
+    private FilePath getWorkspacePath(final String relative) {
+        return createPath(PATH_UTIL.getAbsolutePath(WORKSPACE_PATH + "/" + relative));
     }
 
     @SafeVarargs

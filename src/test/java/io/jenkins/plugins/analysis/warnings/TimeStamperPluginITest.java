@@ -20,7 +20,9 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Fabian Janker
  * @author Andreas Pabst
  */
-public class TimestamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
+public class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
+    private static final PathUtil PATH_UTIL = new PathUtil();
+
     /**
      * Tests for the correct parsing of javac warnings with enabled timestamper plugin.
      */
@@ -52,12 +54,12 @@ public class TimestamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
     private void assertFileName(final WorkflowJob project, final Issue issue, final String fileName) {
         assertThat(issue)
                 .hasAbsolutePath(getWorkspacePath(project, fileName))
-                .hasPath(getWorkspace(project).getRemote())
+                .hasPath(PATH_UTIL.getAbsolutePath(getWorkspace(project).getRemote()))
                 .hasFileName(fileName);
     }
 
     private String getWorkspacePath(final WorkflowJob project, final String fileName) {
-        return new PathUtil().getAbsolutePath(getWorkspace(project).child(fileName).getRemote());
+        return PATH_UTIL.getAbsolutePath(getWorkspace(project).child(fileName).getRemote());
     }
 
     /**
