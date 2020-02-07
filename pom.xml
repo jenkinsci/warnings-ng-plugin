@@ -26,10 +26,8 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <assertj.version>3.14.0</assertj.version>
-
-    <analysis-model-api.version>8.0.0-beta8-rc224.3223ce968690</analysis-model-api.version>
-    <analysis-model-tests.version>8.0.0-beta8-rc3326.e99681ab820f</analysis-model-tests.version>
+    <analysis-model-api.version>8.0.0-beta8-rc225.d5d1561f3456</analysis-model-api.version>
+    <analysis-model-tests.version>8.0.0-beta8-rc3350.d91ed946c1e0</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0-beta6</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta5-rc362.2d7d94678955</git-forensics-plugin.version>
     <plugin-util-api.version>0.1.0-beta6</plugin-util-api.version>
