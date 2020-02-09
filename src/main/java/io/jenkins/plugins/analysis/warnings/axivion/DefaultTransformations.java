@@ -27,7 +27,7 @@ final class DefaultTransformations {
         final String description = createDescription(rawIssue, payload);
 
         return new IssueBuilder()
-                .setDirectory(rawIssue.getProjectDir())
+                .setPathName(rawIssue.getProjectDir())
                 .setFileName(getString(payload, "sourcePath"))
                 .setLineStart(getString(payload, "sourceLine"))
                 .setType(getString(payload, "violationType"))
@@ -98,7 +98,7 @@ final class DefaultTransformations {
                         + "LOC"
                         + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
-                .setDirectory(rawIssue.getProjectDir())
+                .setPathName(rawIssue.getProjectDir())
                 .setFileName(getString(payload, "leftPath"))
                 .setLineStart(getInt(payload, "leftLine"))
                 .setLineEnd(getInt(payload, "leftEndLine"))
@@ -120,7 +120,7 @@ final class DefaultTransformations {
                         + getString(payload, "targetEntity")
                         + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
-                .setDirectory(rawIssue.getProjectDir())
+                .setPathName(rawIssue.getProjectDir())
                 .setFileName(getString(payload, "sourcePath"))
                 .setLineStart(getInt(payload, "sourceLine"))
                 .setType("Cycle")
@@ -146,7 +146,7 @@ final class DefaultTransformations {
                         + "</i>"
                         + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
-                .setDirectory(rawIssue.getProjectDir())
+                .setPathName(rawIssue.getProjectDir())
                 .setFileName(getString(payload, "path"))
                 .setLineStart(getInt(payload, "line"))
                 .setType("Dead Entity")
@@ -179,7 +179,7 @@ final class DefaultTransformations {
                         + getInt(payload, "min")
                         + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
-                .setDirectory(rawIssue.getProjectDir())
+                .setPathName(rawIssue.getProjectDir())
                 .setFileName(getString(payload, "path"))
                 .setLineStart(getInt(payload, "line"))
                 .setType(getString(payload, "description"))
@@ -205,7 +205,7 @@ final class DefaultTransformations {
                         + "</i>"
                         + createLink(rawIssue, getInt(payload, "id"));
         return new IssueBuilder()
-                .setDirectory(rawIssue.getProjectDir())
+                .setPathName(rawIssue.getProjectDir())
                 .setFileName(getString(payload, "path"))
                 .setLineStart(getInt(payload, "line"))
                 .setType(getString(payload, "errorNumber"))

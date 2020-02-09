@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>2.1.3</version>
+    <version>2.1.4</version>
     <relativePath />
   </parent>
 
@@ -26,19 +26,18 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>8.0.0-beta8-rc225.d5d1561f3456</analysis-model-api.version>
-    <analysis-model-tests.version>8.0.0-beta8-rc3350.d91ed946c1e0</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.7.0-beta6</forensics-api-plugin.version>
+    <analysis-model-api.version>8.0.0-beta8-rc228.99baf10e4d1e</analysis-model-api.version>
+    <analysis-model-tests.version>8.0.0-beta9-rc3355.c6af25965736</analysis-model-tests.version>
+    <forensics-api-plugin.version>0.7.0-beta7-rc413.12d1f0c9d047</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta5-rc362.2d7d94678955</git-forensics-plugin.version>
-    <plugin-util-api.version>0.1.0-beta6</plugin-util-api.version>
+    <plugin-util-api.version>0.1.0-beta7</plugin-util-api.version>
+    <codingstyle.library.version>0.4.4</codingstyle.library.version>
 
-    <codingstyle.library.version>0.3.3</codingstyle.library.version>
-
-    <font-awesome-api.version>5.12.0-2-beta1</font-awesome-api.version>
-    <jquery3-api.version>3.4.1-4-beta1</jquery3-api.version>
-    <bootstrap4-api.version>4.4.1-5-beta1</bootstrap4-api.version>
-    <data-tables-api.version>1.10.20-7-beta1</data-tables-api.version>
-    <echarts-api.version>4.6.0-1-beta1</echarts-api.version>
+    <font-awesome-api.version>5.12.0-3-beta1</font-awesome-api.version>
+    <jquery3-api.version>3.4.1-5-beta1</jquery3-api.version>
+    <bootstrap4-api.version>4.4.1-6-beta1</bootstrap4-api.version>
+    <data-tables-api.version>1.10.20-8-beta1</data-tables-api.version>
+    <echarts-api.version>4.6.0-3-beta1</echarts-api.version>
 
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -148,12 +147,6 @@
         <artifactId>jsch</artifactId>
         <version>0.1.55.1</version>
       </dependency>
-      <dependency>
-        <groupId>edu.hm.hafner</groupId>
-        <artifactId>codingstyle</artifactId>
-        <version>${codingstyle.library.version}</version>
-      </dependency>
-
     </dependencies>
   </dependencyManagement>
 
@@ -405,7 +398,7 @@
     <dependency>
       <groupId>edu.hm.hafner</groupId>
       <artifactId>codingstyle</artifactId>
-      <version>${codingstyle.version}</version>
+      <version>${codingstyle.library.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
