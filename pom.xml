@@ -57,14 +57,14 @@
     <xmlunit.version>1.6</xmlunit.version>
     <jsoup.version>1.12.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
-    <git-client.version>3.0.0</git-client.version>
+    <git-client.version>3.1.1</git-client.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <token-macro.version>2.8</token-macro.version>
     <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
     <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
-    <git-plugin.version>4.0.0</git-plugin.version>
+    <git-plugin.version>4.1.1</git-plugin.version>
     <workflow-step-api.version>2.20</workflow-step-api.version>
     <structs.version>1.20</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
