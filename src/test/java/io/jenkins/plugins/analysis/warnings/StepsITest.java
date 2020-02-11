@@ -826,12 +826,10 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob reference = createPipeline("reference");
         copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start-rev0.txt");
         reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
-        scheduleSuccessfulBuild(reference);
-        cleanWorkspace(reference);
 
         WorkflowJob job = createPipelineWithWorkspaceFiles("java-start.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java()),
-                "publishIssues issues:[issues], referenceJobName:'reference', referenceBuildId: '2'"));
+                "publishIssues issues:[issues], referenceJobName:'reference'"));
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
@@ -839,6 +837,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(result.getNewIssues()).hasSize(0);
         assertThat(result.getOutstandingIssues()).hasSize(2);
+        assertThat(result.getErrorMessages()).contains(
+                "Reference job 'reference' does not contain any valid build");
     }
 
     /**
@@ -860,6 +860,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(result.getNewIssues()).hasSize(0);
         assertThat(result.getOutstandingIssues()).hasSize(2);
+        assertThat(result.getErrorMessages()).contains(
+                "Reference job 'reference' does not contain build '1'");
     }
 
     /**

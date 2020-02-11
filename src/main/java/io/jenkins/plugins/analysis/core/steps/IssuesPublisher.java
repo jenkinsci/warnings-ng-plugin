@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Report;
 
@@ -202,13 +203,17 @@ class IssuesPublisher {
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
             if (referenceJob.isPresent()) {
-                if (referenceBuildId == null) {
+                if (StringUtils.isBlank(referenceBuildId)) {
                     baseline = referenceJob.get().getLastBuild();
                 }
                 else {
                     baseline = referenceJob.get().getBuild(referenceBuildId);
                 }
                 if (baseline == null) {
+                    filtered.logError("Reference job '%s' does not contain %s", referenceJob.get().getName(), 
+                            StringUtils.isBlank(referenceBuildId) ? 
+                                "any valid build" : 
+                                String.format("build '%s'", referenceBuildId));
                     return new NullAnalysisHistory();
                 }
             }
