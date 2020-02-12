@@ -100,21 +100,27 @@ class IssuesScanner {
         LogHandler logger = new LogHandler(listener, tool.getActualName());
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
+        AnnotatedReport annotatedReport = postProcessReport(report);
+        logger.log(annotatedReport.getReport());
+
+        return annotatedReport;
+    }
+
+    private AnnotatedReport postProcessReport(final Report report) throws IOException, InterruptedException {
         if (tool.getDescriptor().isPostProcessingEnabled()) {
             if (report.hasErrors()) {
-                // FIXME: check if it makes sense to continue with post processing
-                report.logInfo("Skipping post processing due to errors");
+                report.logInfo("Skipping post processing due to errors reported in previous steps");
 
                 return createAnnotatedReport(report);
             }
-            return postProcess(report, logger);
+            return postProcess(report);
         }
         else {
             return createAnnotatedReport(filter(report, filters, tool.getActualId()));
         }
     }
 
-    private AnnotatedReport postProcess(final Report report, final LogHandler logger)
+    private AnnotatedReport postProcess(final Report report)
             throws IOException, InterruptedException {
         AnnotatedReport result;
         if (report.isEmpty()) {
@@ -128,7 +134,6 @@ class IssuesScanner {
                     getPermittedSourceDirectory(report).getRemote()));
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()));
         }
-        logger.log(result.getReport());
         return result;
     }
 
