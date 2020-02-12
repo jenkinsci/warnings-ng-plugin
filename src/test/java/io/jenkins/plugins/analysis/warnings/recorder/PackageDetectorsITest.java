@@ -28,6 +28,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
+import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
 
@@ -48,6 +49,51 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String DEFAULT_ENTRY_PATH = "eclipse/";
     private static final String DEFAULT_TAB_TO_INVESTIGATE = "packageName";
     private static final String DEFAULT_DEBUG_LOG_LINE = "Resolving package names (or namespaces) by parsing the affected files";
+
+    /**
+     * Verifies that the output is correct if there exist various namespaces (C#) and packages (Java) at the same time
+     * in the expected HTML output.
+     */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-58538")
+    public void shouldShowFolderDistributionRatherThanPackageDistribution() {
+        FreeStyleProject project = createFreeStyleProject();
+
+        createFileInWorkspace(project, "java-issues.txt",
+                createJavaWarning("one/SampleClassWithoutPackage.java", 1)
+                        + createJavaWarning("two/SampleClassWithUnconventionalPackageNaming.java", 2)
+                        + createJavaWarning("three/SampleClassWithBrokenPackageNaming.java", 3)
+                        + createJavaWarning("four/SampleClassWithoutNamespace.cs", 4)
+        );
+
+        copySingleFileToWorkspace(project, PACKAGE_WITH_FILES_JAVA + "SampleClassWithoutPackage.java",
+                "one/SampleClassWithoutPackage.java");
+        copySingleFileToWorkspace(project, PACKAGE_WITH_FILES_JAVA + "SampleClassWithUnconventionalPackageNaming.java",
+                "two/SampleClassWithUnconventionalPackageNaming.java");
+        copySingleFileToWorkspace(project, PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java",
+                "three/SampleClassWithBrokenPackageNaming.java");
+        copySingleFileToWorkspace(project, PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs",
+                "four/SampleClassWithoutNamespace.cs");
+
+        enableGenericWarnings(project, new Java());
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_DISABLED, result);
+
+        PropertyTable propertyTable = new PropertyTable(details, "folder");
+        assertThat(propertyTable.getTitle()).isEqualTo("Folders");
+        assertThat(propertyTable.getColumnName()).isEqualTo("Source Folder");
+        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(
+                new PropertyRow("four", 1),
+                new PropertyRow("one", 1),
+                new PropertyRow("three", 1),
+                new PropertyRow("two", 1));
+    }
+
+    private String createJavaWarning(final String fileName, final int lineNumber) {
+        return String.format(
+                "[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated%n", fileName,
+                lineNumber);
+    }
 
     /**
      * Verifies that the output is correct if there exist various namespaces (C#) and packages (Java) at the same time
@@ -230,11 +276,10 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldRunTwoIndependentBuildsWithTwoDifferentParsersAndCheckForCorrectPackageHandling() {
-        FreeStyleProject jobWithFindBugsParser = createJobWithWorkspaceFile(
+        FreeStyleProject jobWithFindBugsParser = createJobWithWorkspaceFiles(
                 PACKAGE_FILE_PATH + "various/findbugs-packages.xml");
         enableGenericWarnings(jobWithFindBugsParser, new FindBugs());
         AnalysisResult resultWithFindBugsParser = scheduleBuildAndAssertStatus(jobWithFindBugsParser, Result.SUCCESS);
-
 
         AnalysisResult resultWithEclipseParser = buildProject(
                 PACKAGE_WITH_FILES_JAVA + "eclipseForJavaVariousClasses.txt",
@@ -255,7 +300,8 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
             softly.assertThat(findBugsTotalByPackageName).hasSize(3);
             softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.123")).isEqualTo(1L);
             softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis._test")).isEqualTo(1L);
-            softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.int.naming.structure")).isEqualTo(1L);
+            softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.int.naming.structure"))
+                    .isEqualTo(1L);
 
             String findBugsConsoleLog = getConsoleLog(resultWithFindBugsParser);
             softly.assertThat(findBugsConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
@@ -376,7 +422,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private AnalysisResult buildProject(final String... files) {
-        FreeStyleProject project = createJobWithWorkspaceFile(files);
+        FreeStyleProject project = createJobWithWorkspaceFiles(files);
         enableGenericWarnings(project, new Eclipse());
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
     }
@@ -390,7 +436,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      *
      * @return the created job
      */
-    private FreeStyleProject createJobWithWorkspaceFile(final String... fileNames) {
+    private FreeStyleProject createJobWithWorkspaceFiles(final String... fileNames) {
         FreeStyleProject job = createFreeStyleProject();
         copyMultipleFilesToWorkspaceWithSuffix(job, fileNames);
         return job;

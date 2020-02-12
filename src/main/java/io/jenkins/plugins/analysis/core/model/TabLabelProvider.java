@@ -56,6 +56,10 @@ public class TabLabelProvider {
         return Messages.Tab_Folder();
     }
 
+    public String getFolder() {
+        return Messages.Tab_Folder();
+    }
+
     public String getFileName() {
         return Messages.Tab_File();
     }
