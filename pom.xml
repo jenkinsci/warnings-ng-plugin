@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>2.1.1</version>
+    <version>2.1.4</version>
     <relativePath />
   </parent>
 
@@ -26,17 +26,18 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>8.0.0-beta7</analysis-model-api.version>
-    <analysis-model-tests.version>8.0.0-beta7</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.7.0-beta6</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.7.0-beta4</git-forensics-plugin.version>
-    <plugin-util-api.version>0.1.0-beta6</plugin-util-api.version>
+    <analysis-model-api.version>8.0.0-beta8-rc229.aea5c9ea599a</analysis-model-api.version>
+    <analysis-model-tests.version>8.0.0-beta9-rc3357.fd378b8f48a4</analysis-model-tests.version>
+    <forensics-api-plugin.version>0.7.0-beta7-rc413.12d1f0c9d047</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.7.0-beta5-rc370.4d4cc497227a</git-forensics-plugin.version>
+    <plugin-util-api.version>0.1.0-beta7</plugin-util-api.version>
+    <codingstyle.library.version>0.4.4</codingstyle.library.version>
 
-    <font-awesome-api.version>5.12.0-2-beta1</font-awesome-api.version>
-    <jquery3-api.version>3.4.1-4-beta1</jquery3-api.version>
-    <bootstrap4-api.version>4.4.1-5-beta1</bootstrap4-api.version>
-    <data-tables-api.version>1.10.20-7-beta1</data-tables-api.version>
-    <echarts-api.version>4.6.0-1-beta1</echarts-api.version>
+    <font-awesome-api.version>5.12.0-3-beta1</font-awesome-api.version>
+    <jquery3-api.version>3.4.1-5-beta1</jquery3-api.version>
+    <bootstrap4-api.version>4.4.1-6-beta1</bootstrap4-api.version>
+    <data-tables-api.version>1.10.20-8-beta1</data-tables-api.version>
+    <echarts-api.version>4.6.0-3-beta1</echarts-api.version>
 
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
@@ -56,14 +57,14 @@
     <xmlunit.version>1.6</xmlunit.version>
     <jsoup.version>1.12.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
-    <git-client.version>3.0.0</git-client.version>
+    <git-client.version>3.1.1</git-client.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <token-macro.version>2.8</token-macro.version>
+    <token-macro.version>2.10</token-macro.version>
     <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
     <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
-    <git-plugin.version>4.0.0</git-plugin.version>
+    <git-plugin.version>4.1.1</git-plugin.version>
     <workflow-step-api.version>2.20</workflow-step-api.version>
     <structs.version>1.20</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
@@ -71,7 +72,7 @@
     <script-security.version>1.62</script-security.version>
     <credentials.version>2.3.0</credentials.version>
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
-    <configuration-as-code.version>1.30</configuration-as-code.version>
+    <configuration-as-code.version>1.35</configuration-as-code.version>
     <job-dsl.version>1.76</job-dsl.version>
     <envinject.version>2.1.6</envinject.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
@@ -146,7 +147,6 @@
         <artifactId>jsch</artifactId>
         <version>0.1.55.1</version>
       </dependency>
-
     </dependencies>
   </dependencyManagement>
 
@@ -398,7 +398,7 @@
     <dependency>
       <groupId>edu.hm.hafner</groupId>
       <artifactId>codingstyle</artifactId>
-      <version>${codingstyle.version}</version>
+      <version>${codingstyle.library.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>

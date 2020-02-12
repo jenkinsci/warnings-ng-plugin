@@ -1,11 +1,12 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -28,6 +29,7 @@ import io.jenkins.plugins.util.GlobalConfigurationItem;
 @Extension
 @Symbol("warningsPlugin")
 public class WarningsPluginConfiguration extends GlobalConfigurationItem {
+    private static final PathUtil PATH_UTIL = new PathUtil();
     private List<SourceDirectory> sourceDirectories = Collections.emptyList();
     private Set<String> normalizedSourceDirectories = Collections.emptySet();
 
@@ -80,10 +82,9 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
     public void setSourceDirectories(final List<SourceDirectory> sourceDirectories) {
         this.sourceDirectories = new ArrayList<>(sourceDirectories);
 
-        PathUtil pathUtil = new PathUtil();
         normalizedSourceDirectories = sourceDirectories.stream()
                 .map(SourceDirectory::getPath)
-                .map(pathUtil::getAbsolutePath)
+                .map(PATH_UTIL::getAbsolutePath)
                 .collect(Collectors.toSet());
 
         save();
@@ -96,30 +97,22 @@ public class WarningsPluginConfiguration extends GlobalConfigurationItem {
      *
      * @param workspace
      *         the workspace containing the affected files
-     * @param additionalPaths
-     *         additional paths that may contain the affected files
+     * @param sourceDirectory
+     *         additional source directly (might be empty): a relative path in the workspace or an absolute path
      *
-     * @return Permitted source directories including the workspace, all relative paths in the workspace, and all
-     *         registered permitted absolute paths. The elements in the collection are converted to normalized Unix
-     *         paths - relative paths are resolved to absolute paths in the workspace.
+     * @return the permitted source directory - or as a fallback the the workspace path
      */
-    public Collection<String> getPermittedSourceDirectories(final FilePath workspace,
-            final Collection<String> additionalPaths) {
-        List<String> permitted = new ArrayList<>();
-        permitted.add(workspace.getRemote());
-
+    public FilePath getPermittedSourceDirectory(final FilePath workspace, final String sourceDirectory) {
         PathUtil pathUtil = new PathUtil();
-        for (String path : additionalPaths) {
-            String normalized = pathUtil.getAbsolutePath(path);
-            if (pathUtil.isAbsolute(normalized)) {
-                if (normalizedSourceDirectories.contains(normalized)) { // skip not registered absolute paths
-                    permitted.add(normalized);
-                }
-            }
-            else {
-                permitted.add(pathUtil.getAbsolutePath(workspace.child(normalized).getRemote()));
+        String normalized = pathUtil.getAbsolutePath(sourceDirectory);
+        if (pathUtil.isAbsolute(normalized)) {
+            if (normalizedSourceDirectories.contains(normalized)) { // skip not registered absolute paths
+                return workspace.child(normalized);
             }
         }
-        return permitted;
+        else if (StringUtils.isNotBlank(sourceDirectory) && !"-".equals(sourceDirectory)) {
+            return workspace.child(normalized);
+        }
+        return workspace;
     }
 }

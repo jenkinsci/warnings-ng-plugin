@@ -8,15 +8,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.google.errorprone.annotations.MustBeClosed;
 
-import edu.hm.hafner.analysis.AbsolutePathGenerator;
+import edu.hm.hafner.analysis.FileNameResolver;
 import edu.hm.hafner.analysis.FingerprintGenerator;
 import edu.hm.hafner.analysis.FullTextFingerprint;
 import edu.hm.hafner.analysis.ModuleDetector;
@@ -42,7 +40,6 @@ import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
 import io.jenkins.plugins.analysis.core.util.FileFinder;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
-import io.jenkins.plugins.analysis.core.util.SourceDirectoryResolver;
 import io.jenkins.plugins.forensics.blame.Blamer;
 import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
 import io.jenkins.plugins.forensics.blame.BlamerFactory;
@@ -54,6 +51,7 @@ import io.jenkins.plugins.forensics.miner.RepositoryMiner.NullMiner;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
+import static java.util.Collections.*;
 
 /**
  * Scans report files or the console log for issues.
@@ -63,7 +61,7 @@ import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
 @SuppressWarnings("PMD.ExcessiveImports")
 class IssuesScanner {
     private final FilePath workspace;
-    private final Collection<String> sourceDirectories;
+    private final String sourceDirectory;
     private final Run<?, ?> run;
     private final FilePath jenkinsRootDir;
     private final Charset sourceCodeEncoding;
@@ -83,14 +81,14 @@ class IssuesScanner {
 
     @SuppressWarnings("checkstyle:ParameterNumber")
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
-            final FilePath workspace, final Collection<String> sourceDirectories, final Run<?, ?> run,
+            final FilePath workspace, final String sourceDirectory, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
             final BlameMode blameMode, final ForensicsMode forensicsMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
         this.workspace = workspace;
-        this.sourceDirectories = sourceDirectories;
+        this.sourceDirectory = sourceDirectory;
         this.run = run;
         this.jenkinsRootDir = jenkinsRootDir;
         this.listener = listener;
@@ -102,21 +100,27 @@ class IssuesScanner {
         LogHandler logger = new LogHandler(listener, tool.getActualName());
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
 
+        AnnotatedReport annotatedReport = postProcessReport(report);
+        logger.log(annotatedReport.getReport());
+
+        return annotatedReport;
+    }
+
+    private AnnotatedReport postProcessReport(final Report report) throws IOException, InterruptedException {
         if (tool.getDescriptor().isPostProcessingEnabled()) {
             if (report.hasErrors()) {
-                // FIXME: check if it makes sense to continue with post processing
-                report.logInfo("Skipping post processing due to errors");
+                report.logInfo("Skipping post processing due to errors reported in previous steps");
 
                 return createAnnotatedReport(report);
             }
-            return postProcess(report, logger);
+            return postProcess(report);
         }
         else {
             return createAnnotatedReport(filter(report, filters, tool.getActualId()));
         }
     }
 
-    private AnnotatedReport postProcess(final Report report, final LogHandler logger)
+    private AnnotatedReport postProcess(final Report report)
             throws IOException, InterruptedException {
         AnnotatedReport result;
         if (report.isEmpty()) {
@@ -126,11 +130,10 @@ class IssuesScanner {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
                     getAgentName(), sourceCodeEncoding);
             result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                    createBlamer(report, workspace.getChannel()), createMiner(report, workspace.getChannel()), filters,
-                    new SourceDirectoryResolver().toAbsolutePaths(workspace.getRemote(), sourceDirectories)));
+                    createBlamer(report), createMiner(report), filters,
+                    getPermittedSourceDirectory(report).getRemote()));
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()));
         }
-        logger.log(result.getReport());
         return result;
     }
 
@@ -138,18 +141,17 @@ class IssuesScanner {
         return new AnnotatedReport(tool.getActualId(), report);
     }
 
-    private Collection<String> getPermittedSourceDirectories(final Report report) {
-        Collection<String> permittedSourceDirectories = WarningsPluginConfiguration.getInstance()
-                .getPermittedSourceDirectories(workspace, sourceDirectories);
-        if (!sourceDirectories.isEmpty()
-                && sourceDirectories.size() != permittedSourceDirectories.size() - 1) { // do not count workspace
-            report.logError("Additional source directories '%s' must be registered in Jenkins system configuration",
-                    sourceDirectories);
+    private FilePath getPermittedSourceDirectory(final Report report) {
+        FilePath permittedSourceDirectory = WarningsPluginConfiguration.getInstance()
+                .getPermittedSourceDirectory(workspace, sourceDirectory);
+        if (StringUtils.isNotBlank(sourceDirectory) && permittedSourceDirectory.equals(workspace)) {
+            report.logError("Additional source directory '%s' must be registered in Jenkins system configuration",
+                    sourceDirectory);
         }
-        return permittedSourceDirectories;
+        return permittedSourceDirectory;
     }
 
-    private Blamer createBlamer(final Report report, final VirtualChannel channel) {
+    private Blamer createBlamer(final Report report) {
         if (blameMode == BlameMode.DISABLED) {
             report.logInfo("Skipping SCM blames as requested");
             return new NullBlamer();
@@ -158,8 +160,8 @@ class IssuesScanner {
             FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
             report.logInfo("Creating SCM blamer to obtain author and commit information for affected files");
-            Blamer blamer = BlamerFactory.findBlamer(run, getSourceDirectoriesAsFilePaths(report, channel),
-                    listener, log);
+            Blamer blamer = BlamerFactory.findBlamer(run,
+                    singleton(getPermittedSourceDirectory(report)), listener, log);
             log.logSummary();
             log.getInfoMessages().forEach(report::logInfo);
             log.getErrorMessages().forEach(report::logError);
@@ -168,19 +170,13 @@ class IssuesScanner {
         }
     }
 
-    private List<FilePath> getSourceDirectoriesAsFilePaths(final Report report, final VirtualChannel channel) {
-        return getPermittedSourceDirectories(report).stream()
-                .map(path -> new FilePath(channel, path))
-                .collect(Collectors.toList());
-    }
-
-    private RepositoryMiner createMiner(final Report report, final VirtualChannel channel) {
+    private RepositoryMiner createMiner(final Report report) {
         if (forensicsMode == ForensicsMode.ENABLED) {
             FilteredLog log = new FilteredLog("Errors while determining a supported SCM miner for "
                     + run.getFullDisplayName());
             report.logInfo("Creating SCM miner to obtain statistics for affected repository files");
-            RepositoryMiner miner = MinerFactory.findMiner(run, getSourceDirectoriesAsFilePaths(report, channel),
-                    listener, log);
+            RepositoryMiner miner = MinerFactory.findMiner(run,
+                    singleton(getPermittedSourceDirectory(report)), listener, log);
             log.logSummary();
             log.getInfoMessages().forEach(report::logInfo);
             log.getErrorMessages().forEach(report::logError);
@@ -194,12 +190,12 @@ class IssuesScanner {
         }
     }
 
-    private void copyAffectedFiles(final Report report, final FilePath affectedFilesFolder)
+    private void copyAffectedFiles(final Report report, final FilePath buildFolder)
             throws InterruptedException {
-        report.logInfo("Copying affected files to Jenkins' build folder '%s'", affectedFilesFolder);
+        report.logInfo("Copying affected files to Jenkins' build folder '%s'", buildFolder);
 
-        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, affectedFilesFolder, workspace,
-                getPermittedSourceDirectories(report));
+        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(
+                report, buildFolder, getPermittedSourceDirectory(report));
     }
 
     private FilePath createAffectedFilesFolder(final Report report) throws InterruptedException {
@@ -262,12 +258,12 @@ class IssuesScanner {
         private final String sourceCodeEncoding;
         private final Blamer blamer;
         private final RepositoryMiner miner;
-        private final Collection<String> sourceDirectories;
+        private final String sourceDirectory;
         private final List<RegexpFilter> filters;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
                 final Blamer blamer, final RepositoryMiner miner, final List<RegexpFilter> filters,
-                final Collection<String> sourceDirectories) {
+                final String sourceDirectory) {
             super();
 
             this.id = id;
@@ -276,12 +272,12 @@ class IssuesScanner {
             this.blamer = blamer;
             this.filters = filters;
             this.miner = miner;
-            this.sourceDirectories = sourceDirectories;
+            this.sourceDirectory = sourceDirectory;
         }
 
         @Override
         public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) throws InterruptedException {
-            resolveAbsolutePaths(originalReport);
+            resolvePaths(originalReport);
             resolveModuleNames(originalReport, workspace);
             resolvePackageNames(originalReport);
 
@@ -321,12 +317,11 @@ class IssuesScanner {
             return statistics;
         }
 
-        private void resolveAbsolutePaths(final Report report) {
-            report.logInfo("Resolving absolute file names for all issues in source directories '%s'",
-                    sourceDirectories);
+        private void resolvePaths(final Report report) {
+            report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
 
-            AbsolutePathGenerator generator = new AbsolutePathGenerator();
-            generator.run(report, sourceDirectories, ConsoleLogHandler::isInConsoleLog);
+            FileNameResolver generator = new FileNameResolver();
+            generator.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {

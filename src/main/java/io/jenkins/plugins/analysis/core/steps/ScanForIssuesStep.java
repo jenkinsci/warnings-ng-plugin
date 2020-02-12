@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -27,7 +26,6 @@ import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
-import io.jenkins.plugins.analysis.core.util.SourceDirectoryResolver;
 
 /**
  * Scan files or the console log for issues.
@@ -156,7 +154,7 @@ public class ScanForIssuesStep extends Step {
         private final boolean isBlameDisabled;
         private final boolean isForensicsDisabled;
         private final List<RegexpFilter> filters;
-        private final Collection<String> sourceDirectories;
+        private final String sourceDirectory;
 
         /**
          * Creates a new instance of the step execution object.
@@ -174,7 +172,7 @@ public class ScanForIssuesStep extends Step {
             isBlameDisabled = step.getBlameDisabled();
             isForensicsDisabled = step.getForensicsDisabled();
             filters = step.getFilters();
-            sourceDirectories = new SourceDirectoryResolver().asCollection(step.getSourceDirectory());
+            sourceDirectory = step.getSourceDirectory();
         }
 
         @Override
@@ -183,7 +181,7 @@ public class ScanForIssuesStep extends Step {
             TaskListener listener = getTaskListener();
 
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
-                    getCharset(sourceCodeEncoding), workspace, sourceDirectories,
+                    getCharset(sourceCodeEncoding), workspace, sourceDirectory,
                     getRun(), new FilePath(getRun().getRootDir()), listener,
                     isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
                     isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);

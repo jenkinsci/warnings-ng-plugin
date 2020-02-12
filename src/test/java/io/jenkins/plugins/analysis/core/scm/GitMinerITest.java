@@ -42,10 +42,9 @@ public class GitMinerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(job);
         RepositoryStatistics statistics = result.getForensics();
         assertThat(statistics).isNotEmpty();
-        String absoluteFileName = getAbsolutePathOfWorkspaceFile(job, FILE_NAME);
-        assertThat(statistics).hasFiles(absoluteFileName);
+        assertThat(statistics).hasFiles(FILE_NAME);
 
-        FileStatistics fileStatistics = statistics.get(absoluteFileName);
+        FileStatistics fileStatistics = statistics.get(FILE_NAME);
         assertThat(fileStatistics).hasNumberOfCommits(1);
         assertThat(fileStatistics).hasNumberOfAuthors(1);
         assertThat(fileStatistics).hasNumberOfAuthors(1);

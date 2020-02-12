@@ -1,0 +1,65 @@
+@startuml
+
+skinparam componentStyle uml2
+
+skinparam component {
+  BackgroundColor<<optional>> beige
+  BackgroundColor<<test>> lightGreen
+  BackgroundColor<<runtime>> lightBlue
+  BackgroundColor<<provided>> lightGray
+}
+
+component [analysis-model] #beige
+component [codingstyle] #beige
+
+[analysis-model] .left.> [codingstyle]
+
+component [analysis-model-api] #lightBlue
+
+component [boostrap4-api] #lightGreen
+component [datatables-api] #lightGreen
+component [jquery3-api] #lightGreen
+component [font-awesome-api] #lightGreen
+component [echarts-api] #lightGreen
+component [plugin-util-api] #lightGreen
+
+component [echarts-api] #lightGreen
+
+component [warnings-ng] #lightBlue
+component [forensics] #lightBlue
+component [git-forensics] #lightBlue
+
+component [git-client] #lightGreen
+
+[analysis-model-api] .up.> [analysis-model]
+[warnings-ng] .up.> [analysis-model-api]
+[warnings-ng] .right.> [forensics]
+[git-forensics] .left.> [forensics]
+[git-client] <.left. [git-forensics]
+
+[warnings-ng] ..> [jquery3-api]
+[warnings-ng] ..> [datatables-api]
+[warnings-ng] ..> [boostrap4-api]
+[warnings-ng] ..> [font-awesome-api]
+[warnings-ng] ..> [echarts-api]
+[warnings-ng] .left.> [plugin-util-api]
+
+[plugin-util-api] .up.> [codingstyle]
+[datatables-api] .> [jquery3-api]
+[jquery3-api] <. [boostrap4-api]
+
+[datatables-api] ..> [datatables-model]
+[echarts-api] ..> [echarts-build-trends]
+[echarts-api] .> [plugin-util-api]
+
+skinparam legendBackgroundColor white
+
+legend
+|= |= Module type |
+|<back:lightBlue>   </back>| Warnings plugin |
+|<back:lightGreen>   </back>| New UI Plugins |
+|<back:beige>   </back>| Java Libraries |
+
+endlegend
+
+@enduml

@@ -51,7 +51,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     private static final String SOURCE_AFFECTED_FILE = FOLDER + "/Main.java";
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
-    private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 0;
+    private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 1;
 
     /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
@@ -174,7 +174,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     /**
-     * Verifies that the AffectedFilesResolver produces an I/O error, when the affected files cannot copied.
+     * Verifies that the AffectedFilesResolver produces an I/O error, when the affected files could not be copied.
      */
     @Test
     public void shouldGetIoErrorBySearchingForAffectedFiles() {
@@ -186,7 +186,12 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         String consoleLog = getConsoleLog(result);
         assertThat(consoleLog).contains("0 copied");
-        assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
+        if (isWindows()) { // In Windows a file does not exist if it is unreadable
+            assertThat(consoleLog).contains("4 not-found", "0 with I/O error");
+        }
+        else {
+            assertThat(consoleLog).contains("3 not-found", "1 with I/O error");
+        }
     }
 
     /**
@@ -232,7 +237,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         AnalysisResult result = getAnalysisResult(job.getLastCompletedBuild());
         assertThat(result.getErrorMessages()).contains(
-                String.format("Additional source directories '[%s]' must be registered in Jenkins system configuration",
+                String.format("Additional source directory '%s' must be registered in Jenkins system configuration",
                         buildsFolder));
 
         assertThat(unresolvedRow.hasLink(AFFECTED_FILE)).isFalse();

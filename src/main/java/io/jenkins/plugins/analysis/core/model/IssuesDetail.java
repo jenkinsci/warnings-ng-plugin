@@ -439,7 +439,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
     public boolean canDisplayFile(final Issue issue) {
         return ConsoleLogHandler.isInConsoleLog(issue.getFileName())
                 || AffectedFilesResolver.hasAffectedFile(owner, issue)
-                || new File(issue.getFileName()).exists();
+                || new File(issue.getAbsolutePath()).exists();
     }
 
     /**

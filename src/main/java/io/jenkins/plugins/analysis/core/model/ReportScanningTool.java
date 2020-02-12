@@ -182,11 +182,6 @@ public abstract class ReportScanningTool extends Tool {
                 plural(report.getDuplicatesSize(), "duplicate"));
         report.addFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
 
-        if (getDescriptor().isConsoleLog()) {
-            report.stream().filter(issue -> !issue.hasFileName())
-                    .forEach(issue -> issue.setFileName(CONSOLE_LOG));
-        }
-
         consoleReport.addAll(report);
 
         logger.log(consoleReport);
@@ -288,17 +283,6 @@ public abstract class ReportScanningTool extends Tool {
          */
         public boolean canScanConsoleLog() {
             return true;
-        }
-
-        /**
-         * Returns whether the issues reported by this tool reference a location in the report itself (and not in an
-         * external file). Then all these issues will get a synthetic file name so that the console log will be shown in
-         * the UI.
-         *
-         * @return {@code true} if the issues reference the console log, {@code false} otherwise
-         */
-        protected boolean isConsoleLog() {
-            return false;
         }
     }
 }

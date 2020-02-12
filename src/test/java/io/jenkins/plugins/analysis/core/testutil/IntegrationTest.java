@@ -9,7 +9,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -297,29 +296,6 @@ public abstract class IntegrationTest extends ResourceTest {
         assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
         assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);
         assertThat(report.getSizeOf(Severity.WARNING_LOW)).isEqualTo(expectedSizeLow);
-    }
-
-    /**
-     * Returns the absolute path of the specified file.
-     *
-     * @param job
-     *         the job with the workspace that contains the file
-     * @param fileName
-     *         the file name
-     *
-     * @return the workspace
-     */
-    protected String getAbsolutePathOfWorkspaceFile(final TopLevelItem job, final String fileName) {
-        try {
-            return Paths.get(getWorkspace(job).child(fileName).getRemote())
-                    .toAbsolutePath()
-                    .toRealPath(LinkOption.NOFOLLOW_LINKS)
-                    .toString()
-                    .replace('\\', '/');
-        }
-        catch (IOException e) {
-            throw new AssertionError(e);
-        }
     }
 
     private void copySingleFileToWorkspace(final FilePath workspace, final String from, final String to) {
