@@ -13,6 +13,8 @@ import org.eclipse.collections.impl.factory.Lists;
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
+
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
@@ -41,6 +43,8 @@ import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
+import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -519,7 +523,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         verifyCustomIdsForOrigin(asStage(
                 "def java = scanForIssues tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id1', name:'name1')",
                 "def javaDoc = scanForIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id2', name:'name2')",
-                "publishIssues issues:[java, javaDoc], aggregatingResults: 'true'"));
+                "publishIssues issues:[java, javaDoc]"));
     }
 
     /**
@@ -548,11 +552,24 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(action.getDisplayName()).contains("Static Analysis");
 
         AnalysisResult result = action.getResult();
+        assertThat(result.getIssues()).hasSize(2 + 6);
+        assertThat(result.getSizePerOrigin()).contains(entry("id1", 2), entry("id2", 6));
+
         Report report = result.getIssues();
         assertThat(report.filter(issue -> "id1".equals(issue.getOrigin()))).hasSize(2);
         assertThat(report.filter(issue -> "id2".equals(issue.getOrigin()))).hasSize(6);
-        assertThat(result.getIssues()).hasSize(2 + 6);
-        assertThat(result.getSizePerOrigin()).contains(entry("id1", 2), entry("id2", 6));
+        assertThat(report.getNameOfOrigin("id1")).isEqualTo("name1");
+        assertThat(report.getNameOfOrigin("id2")).isEqualTo("name2");
+
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_DISABLED, result);
+
+        PropertyTable propertyTable = new PropertyTable(details, "origin");
+        assertThat(propertyTable.getTitle()).isEqualTo("Tools");
+        assertThat(propertyTable.getColumnName()).isEqualTo("Static Analysis Tool");
+        assertThat(propertyTable.getRows()).containsExactlyInAnyOrder(
+                new PropertyRow("name2", 6, 100),
+                new PropertyRow("name1", 2, 33));
+
     }
 
     /**
