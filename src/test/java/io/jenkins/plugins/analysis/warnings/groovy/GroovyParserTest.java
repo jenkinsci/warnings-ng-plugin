@@ -72,6 +72,12 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
         return createParser(multiLineRegexp, "empty");
     }
 
+    @Test @Issue("JENKINS-60154")
+    void shouldThrowExceptionDueToBrokenId() {
+        assertThatIllegalArgumentException().isThrownBy(() ->
+                new GroovyParser("broken id", "name", MULTI_LINE_REGEXP, "empty", "example"));
+    }
+
     @Test
     void shouldDetectMultiLineRegularExpression() {
         GroovyParser parser = createParser(MULTI_LINE_REGEXP);

@@ -32,6 +32,7 @@ import hudson.util.FormValidation.Kind;
 import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -70,6 +71,8 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
     public GroovyParser(final String id, final String name,
             final String regexp, final String script, final String example) {
         super();
+
+        new ModelValidation().ensureValidId(id);
 
         this.id = id;
         this.name = name;
@@ -242,10 +245,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          * @return the validation result
          */
         public FormValidation doCheckId(@QueryParameter(required = true) final String id) {
-            if (StringUtils.isBlank(id)) {
-                return FormValidation.error(Messages.GroovyParser_Error_Id_isEmpty());
-            }
-            return FormValidation.ok();
+            return new ModelValidation().validateId(id);
         }
 
         /**
