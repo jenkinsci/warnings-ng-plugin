@@ -2,8 +2,8 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
+
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Report;
@@ -14,13 +14,13 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AggregationAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
-import io.jenkins.plugins.analysis.core.model.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ByIdResultSelector;
 import io.jenkins.plugins.analysis.core.model.DeltaReport;
 import io.jenkins.plugins.analysis.core.model.History;
+import io.jenkins.plugins.analysis.core.model.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
@@ -30,8 +30,6 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
-import io.jenkins.plugins.forensics.blame.Blames;
-import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
@@ -62,7 +60,8 @@ class IssuesPublisher {
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
-            final String name, final String referenceJobName, final String referenceBuildId, final boolean ignoreQualityGate,
+            final String name, final String referenceJobName, final String referenceBuildId,
+            final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
             final StageResultHandler stageResultHandler, final boolean failOnErrors) {
 
@@ -105,16 +104,19 @@ class IssuesPublisher {
      * @return the created result action
      */
     ResultAction attachAction(final TrendChartType trendChartType) {
-        logger.log("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
-
         ResultSelector selector = ensureThatIdIsUnique();
-        AnalysisResult result = createAnalysisResult(report.getReport(), selector, report.getBlames(),
-                report.getStatistics(), report.getSizeOfOrigin());
-        logger.log("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
-                result.getTotalSize(), result.getNewSize(), result.getFixedSize());
+
+        Report filtered = report.getReport();
+        DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector, filtered), run.getNumber());
+        QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
+        reportHealth(filtered);
+
+        report.logInfo("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
+                deltaReport.getAllIssues().size(), deltaReport.getNewIssues().size(),
+                deltaReport.getFixedIssues().size());
 
         if (failOnErrors && report.getReport().hasErrors()) {
-            logger.log("Failing build because analysis result contains errors");
+            report.logInfo("Failing build because analysis result contains errors");
             stageResultHandler.setResult(Result.FAILURE,
                     "Some errors have been logged during recording of issues");
         }
@@ -125,13 +127,24 @@ class IssuesPublisher {
                 run.addAction(new AggregationAction());
             }
         }
-        ResultAction action = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding,
-                trendChartType);
+
+        report.logInfo("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
+        logger.log(filtered);
+
+        AnalysisResult result = new AnalysisHistory(run, selector).getResult()
+                .map(previous -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
+                        report.getStatistics(), qualityGateStatus, report.getSizeOfOrigin(),
+                        previous))
+                .orElseGet(() -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
+                        report.getStatistics(), qualityGateStatus, report.getSizeOfOrigin()));
+        ResultAction action
+                = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding, trendChartType);
         run.addAction(action);
 
         if (trendChartType == TrendChartType.TOOLS_AGGREGATION) {
             run.addOrReplaceAction(new AggregationAction());
         }
+
         return action;
     }
 
@@ -143,21 +156,6 @@ class IssuesPublisher {
                     String.format("ID %s is already used by another action: %s%n", getId(), other.get()));
         }
         return selector;
-    }
-
-    @SuppressWarnings("PMD.PrematureDeclaration")
-    private AnalysisResult createAnalysisResult(final Report filtered, final ResultSelector selector,
-            final Blames blames, final RepositoryStatistics statistics, final Map<String, Integer> sizeOfOrigin) {
-        DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector, filtered), run.getNumber());
-        QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
-        reportHealth(filtered);
-        logger.log(filtered);
-        return new AnalysisHistory(run, selector).getResult()
-                .map(previous -> new AnalysisResult(run, getId(),
-                        deltaReport, blames, statistics, qualityGateStatus, sizeOfOrigin, previous))
-                .orElseGet(
-                        () -> new AnalysisResult(run, getId(),
-                                deltaReport, blames, statistics, qualityGateStatus, sizeOfOrigin));
     }
 
     private void reportHealth(final Report filtered) {
@@ -203,23 +201,32 @@ class IssuesPublisher {
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
             if (referenceJob.isPresent()) {
-                if (StringUtils.isBlank(referenceBuildId)) {
-                    baseline = referenceJob.get().getLastBuild();
-                }
-                else {
-                    baseline = referenceJob.get().getBuild(referenceBuildId);
-                }
+                Job<?, ?> job = referenceJob.get();
+                baseline = obtainReferenceBuild(job);
                 if (baseline == null) {
-                    filtered.logError("Reference job '%s' does not contain %s", referenceJob.get().getName(), 
-                            StringUtils.isBlank(referenceBuildId) ? 
-                                "any valid build" : 
-                                String.format("build '%s'", referenceBuildId));
+                    filtered.logError("Reference job '%s' does not contain %s", job.getName(), getReferenceName());
                     return new NullAnalysisHistory();
                 }
             }
         }
         return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(filtered),
                 jobResultEvaluationMode);
+    }
+
+    private Run<?, ?> obtainReferenceBuild(final Job<?, ?> job) {
+        if (StringUtils.isBlank(referenceBuildId)) {
+            return job.getLastBuild();
+        }
+        else {
+            return job.getBuild(referenceBuildId);
+        }
+    }
+
+    private String getReferenceName() {
+        if (StringUtils.isBlank(referenceBuildId)) {
+            return "any valid build";
+        }
+        return String.format("build '%s'", referenceBuildId);
     }
 
     private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {
