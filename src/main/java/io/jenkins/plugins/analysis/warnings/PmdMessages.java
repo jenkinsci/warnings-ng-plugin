@@ -11,8 +11,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleSet;
-import net.sourceforge.pmd.RuleSetFactory;
 import net.sourceforge.pmd.RuleSetNotFoundException;
+import net.sourceforge.pmd.RulesetsFactoryUtils;
 
 import static j2html.TagCreator.*;
 
@@ -34,7 +34,7 @@ public class PmdMessages {
      */
     public int initialize() {
         try {
-            Iterator<RuleSet> ruleSets = new RuleSetFactory().getRegisteredRuleSets();
+            Iterator<RuleSet> ruleSets = RulesetsFactoryUtils.defaultFactory().getRegisteredRuleSets();
             while (ruleSets.hasNext()) {
                 RuleSet ruleSet = ruleSets.next();
                 rules.put(ruleSet.getName(), ruleSet);

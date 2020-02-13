@@ -157,7 +157,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         Path buildFolderCopy = AffectedFilesResolver.getFile(owner, issue.getFileName());
         if (issue.getFileName().contains(SOURCE_AFFECTED_FILE)) {
             assertThat(buildFolderCopy).exists();
-            assertThat(buildFolderCopy).hasSameContentAs(getSourceInWorkspace(project));
+            assertThat(buildFolderCopy).hasSameTextualContentAs(getSourceInWorkspace(project));
         }
     }
 

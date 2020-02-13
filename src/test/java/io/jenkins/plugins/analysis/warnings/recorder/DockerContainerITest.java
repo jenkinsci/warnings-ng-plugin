@@ -113,7 +113,7 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
      *
      * @return A docker container agent.
      */
-    @SuppressWarnings("IllegalCatch")
+    @SuppressWarnings({"IllegalCatch", "deprecation"})
     private DumbSlave createDockerContainerAgent(final DockerContainer dockerContainer) {
         try {
             DumbSlave agent = new DumbSlave("docker", "/home/test",
