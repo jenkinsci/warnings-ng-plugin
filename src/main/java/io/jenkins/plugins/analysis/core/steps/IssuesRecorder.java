@@ -60,8 +60,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
- * issues in an {@link AnalysisResult}. The result is attached to a {@link Run} by registering a {@link
- * ResultAction}.
+ * issues in an {@link AnalysisResult}. The result is attached to a {@link Run} by registering a {@link ResultAction}.
  * <p>
  * Additional features:
  * <ul>
@@ -477,8 +476,8 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns the reference build id to get the results for the issue difference computation.  If the build id not defined,
-     * then {@link #NO_REFERENCE_BUILD} is returned.
+     * Returns the reference build id to get the results for the issue difference computation.  If the build id not
+     * defined, then {@link #NO_REFERENCE_BUILD} is returned.
      *
      * @return the build id of the reference job, or {@link #NO_REFERENCE_BUILD} if undefined.
      */
@@ -586,6 +585,15 @@ public class IssuesRecorder extends Recorder {
     /**
      * Executes the build step. Used from {@link RecordIssuesStep} to provide a {@link StageResultHandler} that has
      * Pipeline-specific behavior.
+     *
+     * @param run
+     *         the run of the pipeline or freestyle job
+     * @param workspace
+     *         workspace of the build
+     * @param listener
+     *         the logger
+     * @param statusHandler
+     *         reports the status for the build or for the stage
      */
     void perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final StageResultHandler statusHandler) throws InterruptedException, IOException {
@@ -680,6 +688,8 @@ public class IssuesRecorder extends Recorder {
      *         the analysis report to publish
      * @param reportName
      *         the name of the report (might be empty)
+     * @param statusHandler
+     *         the status handler to use
      */
     void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
             final AnnotatedReport report, final String reportName, final StageResultHandler statusHandler) {
@@ -690,7 +700,8 @@ public class IssuesRecorder extends Recorder {
         qualityGate.addAll(qualityGates);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
-                reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
+                reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds,
+                getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
         publisher.attachAction(trendChartType);
     }

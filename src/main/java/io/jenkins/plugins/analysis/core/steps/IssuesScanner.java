@@ -108,33 +108,23 @@ class IssuesScanner {
     }
 
     private AnnotatedReport postProcessReport(final Report report) throws IOException, InterruptedException {
-        if (tool.getDescriptor().isPostProcessingEnabled()) {
-            return postProcess(report);
-        }
-        else {
-            return createAnnotatedReport(filter(report, filters, tool.getActualId()));
-        }
-    }
-
-    private AnnotatedReport postProcess(final Report report)
-            throws IOException, InterruptedException {
-        AnnotatedReport result;
-        if (report.isEmpty()) {
-            result = createAnnotatedReport(report); // nothing to post process
-        }
-        else {
+        if (tool.getDescriptor().isPostProcessingEnabled() && report.isNotEmpty()) {
             report.logInfo("Post processing issues on '%s' with source code encoding '%s'",
                     getAgentName(), sourceCodeEncoding);
-            result = workspace.act(new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                    createBlamer(report), createMiner(report), filters,
-                    getPermittedSourceDirectory(report).getRemote()));
+            AnnotatedReport result = workspace.act(createPostProcessor(report));
             copyAffectedFiles(result.getReport(), createAffectedFilesFolder(result.getReport()));
+            return result;
         }
-        return result;
+        else {
+            report.logInfo("Skipping post processing");
+            return new AnnotatedReport(tool.getActualId(), filter(report, filters, tool.getActualId()));
+        }
     }
 
-    private AnnotatedReport createAnnotatedReport(final Report report) {
-        return new AnnotatedReport(tool.getActualId(), report);
+    private ReportPostProcessor createPostProcessor(final Report report) {
+        return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
+                createBlamer(report), createMiner(report), filters,
+                getPermittedSourceDirectory(report).getRemote());
     }
 
     private FilePath getPermittedSourceDirectory(final Report report) {
