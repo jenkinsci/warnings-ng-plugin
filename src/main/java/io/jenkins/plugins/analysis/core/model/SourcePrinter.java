@@ -68,7 +68,7 @@ public class SourcePrinter {
             String language = selectLanguageClass(issue);
             String code = asCode(before, language, "line-numbers")
                     + asCode(marked, language, "highlight")
-                    + createInfoPanel(issue, description, start, iconUrl)
+                    + createInfoPanel(issue, description, iconUrl)
                     + asCode(after, language);
 
             return pre().with(new UnescapedText(code)).renderFormatted();
@@ -84,7 +84,7 @@ public class SourcePrinter {
         return marked;
     }
 
-    private String createInfoPanel(final Issue issue, final String description, final int start,
+    private String createInfoPanel(final Issue issue, final String description,
             final String iconUrl) {
         return createIssueBox(issue, description, iconUrl).withClass("analysis-warning").render();
     }

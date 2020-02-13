@@ -46,10 +46,12 @@ public class AggregatedTrendAction implements Action, AsyncTrendChart {
         this.owner = owner;
     }
 
+    @Override
     public String getIconFileName() {
         return null;
     }
 
+    @Override
     public String getDisplayName() {
         return null;
     }

@@ -29,6 +29,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.GodClass")
 public class ModelValidation {
     private static final Set<String> ALL_CHARSETS = Charset.availableCharsets().keySet();
     private static final Pattern VALID_ID_PATTERN = Pattern.compile("\\p{Alnum}[\\p{Alnum}-_]*");

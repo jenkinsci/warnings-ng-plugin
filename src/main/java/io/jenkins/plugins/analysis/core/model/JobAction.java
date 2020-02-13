@@ -197,6 +197,7 @@ public class JobAction implements Action, AsyncTrendChart {
      * @return {@code true} if the trend is visible, false otherwise
      */
     @SuppressWarnings("unused") // Called by jelly view
+    @Override
     public boolean isTrendVisible() {
         return trendChartType != TrendChartType.NONE && createBuildHistory().hasMultipleResults();
     }
