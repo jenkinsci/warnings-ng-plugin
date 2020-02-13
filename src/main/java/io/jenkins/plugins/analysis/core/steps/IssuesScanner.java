@@ -109,11 +109,6 @@ class IssuesScanner {
 
     private AnnotatedReport postProcessReport(final Report report) throws IOException, InterruptedException {
         if (tool.getDescriptor().isPostProcessingEnabled()) {
-            if (report.hasErrors()) {
-                report.logInfo("Skipping post processing due to errors reported in previous steps");
-
-                return createAnnotatedReport(report);
-            }
             return postProcess(report);
         }
         else {
