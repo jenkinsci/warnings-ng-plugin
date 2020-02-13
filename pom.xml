@@ -26,8 +26,8 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>8.0.0-beta8-rc229.aea5c9ea599a</analysis-model-api.version>
-    <analysis-model-tests.version>8.0.0-beta9-rc3357.fd378b8f48a4</analysis-model-tests.version>
+    <analysis-model-api.version>8.0.0-beta8</analysis-model-api.version>
+    <analysis-model-tests.version>8.0.0-beta9</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0-beta7-rc413.12d1f0c9d047</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta5-rc370.4d4cc497227a</git-forensics-plugin.version>
     <plugin-util-api.version>0.1.0-beta7</plugin-util-api.version>

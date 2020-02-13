@@ -493,7 +493,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
             propertyFormatter = new BaseNameMapper();
         }
         else if ("origin".equals(propertyName)) {
-            propertyFormatter = origin -> new LabelProviderFactory().create(origin).getName();
+            propertyFormatter = origin -> new LabelProviderFactory().create(origin, getIssues().getNameOfOrigin(origin)).getName();
         }
         else {
             propertyFormatter = Function.identity();
