@@ -904,7 +904,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Creates a reference job with a build, then builds the job, referring to a non-existant build
+     * Creates a reference job with a build, then builds the job, referring to a non-existing build
      * in the reference job.
      */
     @Test

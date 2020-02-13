@@ -310,6 +310,15 @@ An example pipeline with these options is shown in the following snippet:
 recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true, referenceJobName: 'my-project/master'
 ```
 
+In pipelines you also have the additional option to specify a specific build that should be used as reference. Such
+a build needs to be computed in your pipeline before you call the `recordIssues`  step. 
+
+```groovy
+recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true, 
+        referenceJobName: 'my-project/master', referenceBuildId: '1'
+```
+
+
 ### Filtering issues
 
 The created report of issues can be filtered afterwards. You can specify an arbitrary number of include or exclude 
