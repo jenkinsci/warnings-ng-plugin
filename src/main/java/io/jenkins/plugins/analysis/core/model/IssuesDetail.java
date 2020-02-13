@@ -136,6 +136,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
             final Report outstandingIssues, final Report fixedIssues,
             final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
             final Charset sourceEncoding, final HealthDescriptor healthDescriptor) {
+        super();
+
         this.owner = owner;
         this.result = result;
 
