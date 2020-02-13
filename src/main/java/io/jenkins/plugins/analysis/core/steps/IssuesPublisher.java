@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Report;
 
@@ -13,6 +14,7 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AggregationAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
+import io.jenkins.plugins.analysis.core.model.NullAnalysisHistory;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGateEvaluationMode;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -50,6 +52,7 @@ class IssuesPublisher {
     private final Charset sourceCodeEncoding;
     private final QualityGateEvaluator qualityGate;
     private final String referenceJobName;
+    private final String referenceBuildId;
     private final QualityGateEvaluationMode qualityGateEvaluationMode;
     private final JobResultEvaluationMode jobResultEvaluationMode;
     private final LogHandler logger;
@@ -59,7 +62,7 @@ class IssuesPublisher {
     @SuppressWarnings("ParameterNumber")
     IssuesPublisher(final Run<?, ?> run, final AnnotatedReport report,
             final HealthDescriptor healthDescriptor, final QualityGateEvaluator qualityGate,
-            final String name, final String referenceJobName, final boolean ignoreQualityGate,
+            final String name, final String referenceJobName, final String referenceBuildId, final boolean ignoreQualityGate,
             final boolean ignoreFailedBuilds, final Charset sourceCodeEncoding, final LogHandler logger,
             final StageResultHandler stageResultHandler, final boolean failOnErrors) {
 
@@ -70,6 +73,7 @@ class IssuesPublisher {
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.qualityGate = qualityGate;
         this.referenceJobName = referenceJobName;
+        this.referenceBuildId = referenceBuildId;
         qualityGateEvaluationMode = ignoreQualityGate ? IGNORE_QUALITY_GATE : SUCCESSFUL_QUALITY_GATE;
         jobResultEvaluationMode = ignoreFailedBuilds ? NO_JOB_FAILURE : IGNORE_JOB_RESULT;
         this.logger = logger;
@@ -199,7 +203,19 @@ class IssuesPublisher {
         if (referenceJobName != null) {
             Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
             if (referenceJob.isPresent()) {
-                baseline = referenceJob.get().getLastBuild();
+                if (StringUtils.isBlank(referenceBuildId)) {
+                    baseline = referenceJob.get().getLastBuild();
+                }
+                else {
+                    baseline = referenceJob.get().getBuild(referenceBuildId);
+                }
+                if (baseline == null) {
+                    filtered.logError("Reference job '%s' does not contain %s", referenceJob.get().getName(), 
+                            StringUtils.isBlank(referenceBuildId) ? 
+                                "any valid build" : 
+                                String.format("build '%s'", referenceBuildId));
+                    return new NullAnalysisHistory();
+                }
             }
         }
         return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(filtered),

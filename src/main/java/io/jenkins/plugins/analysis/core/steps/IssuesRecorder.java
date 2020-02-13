@@ -78,6 +78,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder {
     static final String NO_REFERENCE_JOB = "-";
+    static final String NO_REFERENCE_BUILD = "-";
     static final String DEFAULT_ID = "analysis";
 
     private List<Tool> analysisTools = new ArrayList<>();
@@ -88,6 +89,7 @@ public class IssuesRecorder extends Recorder {
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
     private String referenceJobName;
+    private String referenceBuildId;
 
     private boolean failOnError = false;
 
@@ -459,6 +461,34 @@ public class IssuesRecorder extends Recorder {
         return referenceJobName;
     }
 
+    /**
+     * Sets the reference build id to get the results for the issue difference computatation.
+     *
+     * @param referenceBuildId
+     *         the build id of the reference job
+     */
+    public void setReferenceBuildId(final String referenceBuildId) {
+        if (NO_REFERENCE_BUILD.equals(referenceBuildId)) {
+            this.referenceBuildId = StringUtils.EMPTY;
+        }
+        else {
+            this.referenceBuildId = referenceBuildId;
+        }
+    }
+
+    /**
+     * Returns the reference build id to get the results for the issue difference computation.  If the build id not defined,
+     * then {@link #NO_REFERENCE_BUILD} is returned.
+     *
+     * @return the build id of the reference job, or {@link #NO_REFERENCE_BUILD} if undefined.
+     */
+    public String getReferenceBuildId() {
+        if (StringUtils.isBlank(referenceBuildId)) {
+            return NO_REFERENCE_BUILD;
+        }
+        return referenceBuildId;
+    }
+
     public int getHealthy() {
         return healthy;
     }
@@ -660,7 +690,7 @@ public class IssuesRecorder extends Recorder {
         qualityGate.addAll(qualityGates);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
-                reportName, referenceJobName, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
+                reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds, getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
         publisher.attachAction(trendChartType);
     }

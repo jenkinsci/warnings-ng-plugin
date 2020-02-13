@@ -35,6 +35,7 @@ public class ModelValidation {
 
     @VisibleForTesting
     static final String NO_REFERENCE_JOB = "-";
+    static final String NO_REFERENCE_BUILD = "-";
 
     private final JenkinsFacade jenkins;
 
