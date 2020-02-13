@@ -99,7 +99,7 @@ class TaskScanner {
             StringBuilder builder = new StringBuilder("Using the following tasks patterns:\n");
             for (Severity severity : Severity.getPredefinedValues()) {
                 if (patterns.containsKey(severity)) {
-                    builder.append(String.format("-> %s : %s%n", LocalizedSeverity.getLocalizedString(severity),
+                    builder.append(String.format("-> %s: %s%n", LocalizedSeverity.getLocalizedString(severity),
                             patterns.get(severity)));
                 }
             }
