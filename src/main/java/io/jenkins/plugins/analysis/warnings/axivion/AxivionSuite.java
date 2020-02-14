@@ -24,6 +24,7 @@ import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -100,8 +101,7 @@ public final class AxivionSuite extends Tool {
 
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
-            final LogHandler logger)
-            throws ParsingException, ParsingCanceledException {
+            final LogHandler logger) throws ParsingException, ParsingCanceledException {
 
         AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials());
         AxivionParser parser = new AxivionParser(projectUrl, expandBaseDir(run, basedir));
@@ -201,6 +201,7 @@ public final class AxivionSuite extends Tool {
          *
          * @return {@link FormValidation#ok()} is a valid url
          */
+        @SuppressFBWarnings("PATH_TRAVERSAL_IN")
         public FormValidation doCheckBasedir(@QueryParameter final String basedir) {
             try {
                 if (!basedir.contains("$")) {

@@ -47,7 +47,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
-@SuppressFBWarnings(value = "SE", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
+@SuppressFBWarnings(value = "SE, DESERIALIZATION_GADGET", justification = "transient fields are restored using a Jenkins callback (or are checked for null)")
 @SuppressWarnings({"PMD.TooManyFields", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassFanOutComplexity"})
 public class AnalysisResult implements Serializable, StaticAnalysisRun {
     private static final long serialVersionUID = 1110545450292087475L;

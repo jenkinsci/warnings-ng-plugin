@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;
 
 import edu.hm.hafner.analysis.SecureDigester;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Parses the FindBugs pattern descriptions and provides access to these HTML messages.
@@ -34,6 +35,7 @@ public final class FindBugsMessages {
      * Initializes the messages map.
      */
     @SuppressWarnings("all")
+    @SuppressFBWarnings("DE_MIGHT_IGNORE")
     public void initialize() {
         try {
             loadMessages("messages.xml", messages, shortMessages);
