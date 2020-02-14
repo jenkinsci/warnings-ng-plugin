@@ -61,9 +61,9 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         assertThat(saved.isBlameDisabled()).isTrue();
         assertThat(saved.isForensicsDisabled()).isTrue();
         assertThat(saved.isEnabledForFailure()).isTrue();
-        assertThat(saved.canIgnoreQualityGate()).isTrue();
-        assertThat(saved.canIgnoreFailedBuilds()).isTrue();
-        assertThat(saved.mustFailOnError()).isTrue();
+        assertThat(saved.isIgnoreQualityGateEnabled()).isTrue();
+        assertThat(saved.isIgnoreFailedBuildsEnabled()).isTrue();
+        assertThat(saved.isFailOnErrorEnabled()).isTrue();
         assertThat(saved.getReferenceJobName()).isEqualTo(REFERENCE);
         assertThat(saved.getHealthy()).isEqualTo("1");
         assertThat(saved.getUnhealthy()).isEqualTo("9");
@@ -103,8 +103,8 @@ public class RecorderConfigurationITest extends IntegrationTestWithJenkinsPerSui
         assertThat(inverted.isBlameDisabled()).isFalse();
         assertThat(inverted.isForensicsDisabled()).isFalse();
         assertThat(inverted.isEnabledForFailure()).isFalse();
-        assertThat(inverted.canIgnoreQualityGate()).isFalse();
-        assertThat(inverted.canIgnoreFailedBuilds()).isFalse();
+        assertThat(inverted.isIgnoreQualityGateEnabled()).isFalse();
+        assertThat(inverted.isIgnoreFailedBuildsEnabled()).isFalse();
 
         scheduleSuccessfulBuild(job);
     }

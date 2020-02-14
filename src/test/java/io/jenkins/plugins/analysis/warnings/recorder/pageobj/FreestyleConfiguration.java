@@ -167,7 +167,7 @@ public class FreestyleConfiguration extends PageObject {
         return this;
     }
 
-    public boolean mustFailOnError() {
+    public boolean isFailOnErrorEnabled() {
         return isChecked(FAIL_ON_ERROR);
     }
 
@@ -207,7 +207,7 @@ public class FreestyleConfiguration extends PageObject {
         return this;
     }
 
-    public boolean canIgnoreQualityGate() {
+    public boolean isIgnoreQualityGateEnabled() {
         return isChecked(IGNORE_QUALITY_GATE);
     }
 
@@ -227,7 +227,7 @@ public class FreestyleConfiguration extends PageObject {
         return this;
     }
 
-    public boolean canIgnoreFailedBuilds() {
+    public boolean isIgnoreFailedBuildsEnabled() {
         return isChecked(IGNORE_FAILED_BUILDS);
     }
 
@@ -345,6 +345,14 @@ public class FreestyleConfiguration extends PageObject {
         return TrendChartType.valueOf(getSelectValue(TREND_CHART_TYPE));
     }
 
+    /**
+     * Sets the trend chart position.
+     *
+     * @param trendChartType
+     *         the trend type
+     *
+     * @return this
+     */
     public FreestyleConfiguration setTrendChartType(final TrendChartType trendChartType) {
         select(TREND_CHART_TYPE, trendChartType.name());
 

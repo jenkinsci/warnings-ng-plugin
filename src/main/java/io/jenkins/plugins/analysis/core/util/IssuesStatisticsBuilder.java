@@ -6,7 +6,7 @@ package io.jenkins.plugins.analysis.core.util;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("JavaDocMethod")
+@SuppressWarnings("checkstyle:MissingJavadocMethod")
 public class IssuesStatisticsBuilder {
     private int totalErrorSize;
     private int newErrorSize;

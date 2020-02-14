@@ -32,7 +32,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("ParameterNumber")
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 public class DetailFactory {
     private static final Report EMPTY = new Report();
     private static final String LINK_SEPARATOR = ".";
@@ -77,7 +77,7 @@ public class DetailFactory {
      *
      * @return the dynamic result of this module detail view
      */
-    @SuppressWarnings({"npathcomplexity", "PMD.CyclomaticComplexity"})
+    @SuppressWarnings({"PMD.CyclomaticComplexity", "checkstyle:ParameterNumber"})
     Object createTrendDetails(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues,
             final Report outstandingIssues, final Report fixedIssues,
@@ -96,6 +96,7 @@ public class DetailFactory {
         }
     }
 
+    @SuppressWarnings("checkstyle:ParameterNumber")
     private Object createFilteredView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
             final Charset sourceEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
@@ -130,8 +131,9 @@ public class DetailFactory {
                 selectedIssues, newIssues.filter(filter), outstandingIssues.filter(filter),
                 fixedIssues.filter(filter), getDisplayNameOfDetails(property, selectedIssues), url,
                 labelProvider, sourceEncoding);
-    } 
+    }
 
+    @SuppressWarnings("checkstyle:ParameterNumber")
     private Object createNewDetailView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
             final Charset sourceEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
@@ -184,7 +186,7 @@ public class DetailFactory {
         if ("fileName".equals(property)) {
             return selectedIssues.get(0).getBaseName();
         }
-        
+
         return Issue.getPropertyValueAsString(selectedIssues.get(0), property);
     }
 
@@ -195,6 +197,8 @@ public class DetailFactory {
     /**
      * Returns the localized column header of the specified property name.
      *
+     * @param report
+     *         the report to get the header for
      * @param propertyName
      *         the name of the property
      *
