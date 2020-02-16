@@ -10,9 +10,9 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Kezhi Xiong
  */
 class IconLabelProviderTest {
-    private static final String iconId = "icon-id";
-    private static final String toolName = "tool-name";
-    private static final String iconName = "icon-name";
+    private static final String ICON_ID = "icon-id";
+    private static final String TOOL_NAME = "tool-name";
+    private static final String ICON_NAME = "icon-name";
 
     /**
      * This field has to be the same as in IconLabelProvider. Create this
@@ -20,8 +20,8 @@ class IconLabelProviderTest {
      */
     private static final String ICONS_URL = "/plugin/warnings-ng/icons/";
 
-    private static final String smallIconUrlSuffix = "-24x24.png";
-    private static final String largeIconUrlSuffix = "-48x48.png";
+    private static final String SMALL_ICON_URL_SUFFIX = "-24x24.png";
+    private static final String LARGE_ICON_URL_SUFFIX = "-48x48.png";
 
     /**
      * Verifies that the name of the icon in URL is obtained from the icon id, if
@@ -29,11 +29,11 @@ class IconLabelProviderTest {
      */
     @Test
     void shouldUseIdIfParameterIconNameIsBlank() {
-        IconLabelProvider iconLabelProvider = new IconLabelProvider(iconId, toolName);
+        IconLabelProvider iconLabelProvider = new IconLabelProvider(ICON_ID, TOOL_NAME);
 
-        assertThat(iconLabelProvider).hasId(iconId).hasName(toolName)
-                .hasSmallIconUrl(ICONS_URL + iconId + smallIconUrlSuffix)
-                .hasLargeIconUrl(ICONS_URL + iconId + largeIconUrlSuffix);
+        assertThat(iconLabelProvider).hasId(ICON_ID).hasName(TOOL_NAME)
+                .hasSmallIconUrl(ICONS_URL + ICON_ID + SMALL_ICON_URL_SUFFIX)
+                .hasLargeIconUrl(ICONS_URL + ICON_ID + LARGE_ICON_URL_SUFFIX);
     }
 
     /**
@@ -42,10 +42,10 @@ class IconLabelProviderTest {
      */
     @Test
     void shouldParameterNameIfNotBlank() {
-        IconLabelProvider iconLabelProvider = new IconLabelProvider(iconId, toolName, iconName);
+        IconLabelProvider iconLabelProvider = new IconLabelProvider(ICON_ID, TOOL_NAME, ICON_NAME);
 
-        assertThat(iconLabelProvider).hasId(iconId).hasName(toolName)
-                .hasSmallIconUrl(ICONS_URL + iconName + smallIconUrlSuffix)
-                .hasLargeIconUrl(ICONS_URL + iconName + largeIconUrlSuffix);
+        assertThat(iconLabelProvider).hasId(ICON_ID).hasName(TOOL_NAME)
+                .hasSmallIconUrl(ICONS_URL + ICON_NAME + SMALL_ICON_URL_SUFFIX)
+                .hasLargeIconUrl(ICONS_URL + ICON_NAME + LARGE_ICON_URL_SUFFIX);
     }
 }
