@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 import java.io.IOException;
 import java.util.Collections;
 
+import org.junit.AssumptionViolatedException;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -126,7 +127,7 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
             return agent;
         }
         catch (Exception e) {
-            throw new AssertionError(e);
+            throw new AssumptionViolatedException("Failed to create docker container", e);
         }
     }
 
