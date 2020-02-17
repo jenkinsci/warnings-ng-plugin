@@ -32,8 +32,8 @@ class IconLabelProviderTest {
         IconLabelProvider iconLabelProvider = new IconLabelProvider(ICON_ID, TOOL_NAME);
 
         assertThat(iconLabelProvider).hasId(ICON_ID).hasName(TOOL_NAME)
-                .hasSmallIconUrl(ICONS_URL + ICON_ID + SMALL_ICON_URL_SUFFIX)
-                .hasLargeIconUrl(ICONS_URL + ICON_ID + LARGE_ICON_URL_SUFFIX);
+                .hasSmallIconUrl("/plugin/warnings-ng/icons/icon-id-24x24.png")
+                .hasLargeIconUrl("/plugin/warnings-ng/icons/icon-id-48x48.png");
     }
 
     /**
@@ -45,7 +45,7 @@ class IconLabelProviderTest {
         IconLabelProvider iconLabelProvider = new IconLabelProvider(ICON_ID, TOOL_NAME, ICON_NAME);
 
         assertThat(iconLabelProvider).hasId(ICON_ID).hasName(TOOL_NAME)
-                .hasSmallIconUrl(ICONS_URL + ICON_NAME + SMALL_ICON_URL_SUFFIX)
-                .hasLargeIconUrl(ICONS_URL + ICON_NAME + LARGE_ICON_URL_SUFFIX);
+                .hasSmallIconUrl("/plugin/warnings-ng/icons/icon-name-24x24.png")
+                .hasLargeIconUrl("/plugin/warnings-ng/icons/icon-name-48x48.png");
     }
 }
