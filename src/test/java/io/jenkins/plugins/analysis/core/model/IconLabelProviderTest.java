@@ -15,15 +15,6 @@ class IconLabelProviderTest {
     private static final String ICON_NAME = "icon-name";
 
     /**
-     * This field has to be the same as in IconLabelProvider. Create this
-     * to avoid using reflection or adding getters in the origin class.
-     */
-    private static final String ICONS_URL = "/plugin/warnings-ng/icons/";
-
-    private static final String SMALL_ICON_URL_SUFFIX = "-24x24.png";
-    private static final String LARGE_ICON_URL_SUFFIX = "-48x48.png";
-
-    /**
      * Verifies that the name of the icon in URL is obtained from the icon id, if
      * the {@code iconName} parameter is empty.
      */
