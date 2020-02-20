@@ -38,7 +38,7 @@
     <jquery3-api.version>3.4.1-6-beta1</jquery3-api.version>
     <bootstrap4-api.version>4.4.1-7-beta1</bootstrap4-api.version>
     <data-tables-api.version>1.10.20-9-beta1</data-tables-api.version>
-    <echarts-api.version>4.6.0-3-beta1</echarts-api.version>
+    <echarts-api.version>4.6.0-4-beta1-rc156.17304b3c31fa</echarts-api.version>
 
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
