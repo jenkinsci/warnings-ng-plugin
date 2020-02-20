@@ -31,7 +31,7 @@
     <analysis-model-tests.version>8.0.0-beta9</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0-beta7-rc413.12d1f0c9d047</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta5-rc370.4d4cc497227a</git-forensics-plugin.version>
-    <plugin-util-api.version>0.1.0-beta7</plugin-util-api.version>
+    <plugin-util-api.version>0.1.0-beta9</plugin-util-api.version>
     <codingstyle.library.version>0.4.4</codingstyle.library.version>
 
     <font-awesome-api.version>5.12.0-3-beta1</font-awesome-api.version>
