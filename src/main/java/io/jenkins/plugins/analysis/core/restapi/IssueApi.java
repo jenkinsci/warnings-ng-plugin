@@ -1,8 +1,5 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -115,19 +112,41 @@ public class IssueApi {
     }
 
     /**
-     * Creates {@link BlameApi} for this issue. Note that an issue contains
-     * multiple lines may contain multiple blames
+     * Returns the author's name of the blame.
      *
-     * @return The BlameApi(s) for this issue
+     * @return the name of the author
      */
-    @Exported(inline = true)
-    public List<BlameApi> getBlames() {
-        if (fileBlame == null) {
-            return null;
+    @Exported
+    public String getAuthor() {
+        if (fileBlame != null) {
+            return fileBlame.getName(getLineStart());
         }
-        return fileBlame.getLines().stream()
-                .filter(line -> line >= getLineStart() && line <= getLineEnd())
-                .map(line -> new BlameApi(fileBlame, line))
-                .collect(Collectors.toList());
+        return "";
+    }
+
+    /**
+     * Returns the author's email of the blame.
+     *
+     * @return the email of the author
+     */
+    @Exported
+    public String getEmail() {
+        if (fileBlame != null) {
+            return fileBlame.getEmail(getLineStart());
+        }
+        return "";
+    }
+
+    /**
+     * Returns the commit's sha1 of the blame.
+     *
+     * @return the commit's sha1 of the blame
+     */
+    @Exported
+    public String getCommit() {
+        if (fileBlame != null) {
+            return fileBlame.getCommit(getLineStart());
+        }
+        return "";
     }
 }
