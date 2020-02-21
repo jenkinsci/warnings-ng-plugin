@@ -47,7 +47,7 @@ public class ReportApi {
         if (blames.contains(issue.getFileName())) {
             return new IssueApi(issue, blames.getBlame(issue.getFileName()));
         }
-        return new IssueApi(issue);
+        return new IssueApi(issue, null);
     }
 
     @Exported

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
@@ -25,20 +26,10 @@ public class IssueApi {
      *
      * @param issue
      *         the issue to expose the properties from
-     */
-    public IssueApi(final Issue issue) {
-        this.issue = issue;
-        this.fileBlame = null;
-    }
-    /**
-     * Creates a new {@link IssueApi}.
-     *
-     * @param issue
-     *         the issue to expose the properties from
      * @param fileBlame
      *          the blame of the issue file
      */
-    public IssueApi(final Issue issue, final FileBlame fileBlame) {
+    public IssueApi(final Issue issue, @Nullable final FileBlame fileBlame) {
         this.issue = issue;
         this.fileBlame = fileBlame;
     }
