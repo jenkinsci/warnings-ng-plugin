@@ -12,8 +12,8 @@ import io.jenkins.plugins.forensics.blame.FileBlame;
  */
 @ExportedBean
 public class BlameApi {
-    private FileBlame fileBlame;
-    private int line;
+    private final FileBlame fileBlame;
+    private final int line;
 
     /**
      * Creates a new {@link IssueApi}.

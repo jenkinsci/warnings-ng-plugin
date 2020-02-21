@@ -43,7 +43,7 @@ public class ReportApi {
         return report.stream().map(this::createIssueApi).collect(Collectors.toList());
     }
 
-    private IssueApi createIssueApi(Issue issue) {
+    private IssueApi createIssueApi(final Issue issue) {
         if (blames.contains(issue.getFileName())) {
             return new IssueApi(issue, blames.getBlame(issue.getFileName()));
         }
