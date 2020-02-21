@@ -4,6 +4,7 @@ import edu.hm.hafner.analysis.Issue;
 
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
+import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
 /**
  * Remote API for an {@link Issue}. Simple Java Bean that exposes several methods of an {@link Issue} instance.
@@ -24,83 +25,89 @@ public class IssueApi {
         this.issue = issue;
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getFileName() {
         return issue.getFileName();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getBaseName() {
         return issue.getBaseName();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getCategory() {
         return issue.getCategory();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getType() {
         return issue.getType();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getSeverity() {
         return issue.getSeverity().getName();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getMessage() {
         return issue.getMessage();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getDescription() {
         return issue.getDescription();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public int getLineStart() {
         return issue.getLineStart();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public int getLineEnd() {
         return issue.getLineEnd();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public int getColumnStart() {
         return issue.getColumnStart();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public int getColumnEnd() {
         return issue.getColumnEnd();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getPackageName() {
         return issue.getPackageName();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getModuleName() {
         return issue.getModuleName();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getOrigin() {
         return issue.getOrigin();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getReference() {
         return issue.getReference();
     }
 
-    @Exported
+    @Exported @Whitelisted
     public String getFingerprint() {
         return issue.getFingerprint();
+    }
+
+    @Exported @Whitelisted
+    @Override
+    public String toString() {
+        return issue.toString();
     }
 }

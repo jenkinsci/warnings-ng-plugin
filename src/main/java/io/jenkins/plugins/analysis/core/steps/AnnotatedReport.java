@@ -13,6 +13,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
+import io.jenkins.plugins.analysis.core.restapi.IssueApi;
+import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
@@ -117,6 +119,16 @@ public class AnnotatedReport implements Serializable {
      */
     public Map<String, Integer> getSizeOfOrigin() {
         return new HashMap<>(sizeOfOrigin);
+    }
+
+    /**
+     * Returns a read only view for the issues of this report.
+     *
+     * @return the issues
+     */
+    @Whitelisted
+    public List<IssueApi> getIssues() {
+        return new ReportApi(getReport()).getIssues();
     }
 
     /**

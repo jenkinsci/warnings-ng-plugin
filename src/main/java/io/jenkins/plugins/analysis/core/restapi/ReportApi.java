@@ -40,4 +40,10 @@ public class ReportApi {
     public int getSize() {
         return report.getSize();
     }
+
+    @Exported
+    @Override
+    public String toString() {
+        return report.toString();
+    }
 }
