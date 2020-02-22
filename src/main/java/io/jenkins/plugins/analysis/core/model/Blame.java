@@ -11,6 +11,7 @@ import io.jenkins.plugins.forensics.blame.FileBlame;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.DataClass")
 public class Blame {
     static final String UNDEFINED = "-";
     static final int UNDEFINED_DATE = 0;
