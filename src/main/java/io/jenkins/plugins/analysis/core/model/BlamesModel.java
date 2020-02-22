@@ -11,7 +11,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBui
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.forensics.blame.Blames;
-import io.jenkins.plugins.forensics.blame.FileBlame;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -73,23 +72,8 @@ public class BlamesModel extends DetailsTableModel {
 
     @Override
     protected BlamesRow getRow(final Issue issue) {
-        BlamesRow row = new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                issue, getJenkinsFacade());
-        if (blames.contains(issue.getFileName())) {
-            FileBlame blameRequest = blames.getBlame(issue.getFileName());
-            int line = issue.getLineStart();
-            row.setAuthor(blameRequest.getName(line));
-            row.setEmail(blameRequest.getEmail(line));
-            row.setCommit(blameRequest.getCommit(line));
-            row.setAddedAt(blameRequest.getTime(line));
-        }
-        else {
-            row.setAuthor(UNDEFINED);
-            row.setEmail(UNDEFINED);
-            row.setCommit(UNDEFINED);
-            row.setAddedAt(UNDEFINED_DATE);
-        }
-        return row;
+        return new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
+                issue, getJenkinsFacade(), new Blame(issue, blames));
     }
 
     /**
@@ -97,46 +81,30 @@ public class BlamesModel extends DetailsTableModel {
      */
     @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
     public static class BlamesRow extends TableRow {
-        private String author;
-        private String email;
-        private String commit;
-        private int addedAt;
+        private final Blame blame;
 
         BlamesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
-                final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade) {
+                final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade,
+                final Blame blame) {
             super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
+
+            this.blame = blame;
         }
 
         public String getAuthor() {
-            return author;
+            return blame.getAuthor();
         }
 
         public String getEmail() {
-            return email;
+            return blame.getEmail();
         }
 
         public String getCommit() {
-            return commit;
+            return blame.getCommit();
         }
 
         public int getAddedAt() {
-            return addedAt;
-        }
-
-        void setAuthor(final String author) {
-            this.author = author;
-        }
-
-        void setEmail(final String email) {
-            this.email = email;
-        }
-
-        void setCommit(final String commit) {
-            this.commit = commit;
-        }
-
-        public void setAddedAt(final int addedAt) {
-            this.addedAt = addedAt;
+            return blame.getAddedAt();
         }
     }
 }
