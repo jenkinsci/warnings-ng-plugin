@@ -9,6 +9,7 @@ import edu.hm.hafner.analysis.Report;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
+import io.jenkins.plugins.analysis.core.model.Blame;
 import io.jenkins.plugins.forensics.blame.Blames;
 
 /**
@@ -44,10 +45,7 @@ public class ReportApi {
     }
 
     private IssueApi createIssueApi(final Issue issue) {
-        if (blames.contains(issue.getFileName())) {
-            return new IssueApi(issue, blames.getBlame(issue.getFileName()));
-        }
-        return new IssueApi(issue, null);
+        return new IssueApi(issue, new Blame(issue, blames));
     }
 
     @Exported

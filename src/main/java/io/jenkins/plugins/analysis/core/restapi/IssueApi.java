@@ -1,12 +1,11 @@
 package io.jenkins.plugins.analysis.core.restapi;
 
 import edu.hm.hafner.analysis.Issue;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import io.jenkins.plugins.forensics.blame.FileBlame;
+import io.jenkins.plugins.analysis.core.model.Blame;
 
 /**
  * Remote API for an {@link Issue}. Simple Java Bean that exposes several methods of an {@link Issue} instance.
@@ -16,19 +15,18 @@ import io.jenkins.plugins.forensics.blame.FileBlame;
 @ExportedBean
 public class IssueApi {
     private final Issue issue;
-    private final FileBlame fileBlame;
+    private final Blame blame;
 
     /**
      * Creates a new {@link IssueApi}.
-     *
-     * @param issue
+     *  @param issue
      *         the issue to expose the properties from
-     * @param fileBlame
-     *          the blame of the issue file
+     * @param blame
+     *          the blame which contains this issue
      */
-    public IssueApi(final Issue issue, @Nullable final FileBlame fileBlame) {
+    public IssueApi(final Issue issue, final Blame blame) {
         this.issue = issue;
-        this.fileBlame = fileBlame;
+        this.blame = blame;
     }
 
     @Exported
@@ -118,10 +116,7 @@ public class IssueApi {
      */
     @Exported
     public String getAuthor() {
-        if (fileBlame != null) {
-            return fileBlame.getName(getLineStart());
-        }
-        return "";
+        return blame.getAuthor();
     }
 
     /**
@@ -131,22 +126,26 @@ public class IssueApi {
      */
     @Exported
     public String getEmail() {
-        if (fileBlame != null) {
-            return fileBlame.getEmail(getLineStart());
-        }
-        return "";
+        return blame.getEmail();
     }
 
     /**
-     * Returns the commit's sha1 of the blame.
+     * returns the commit's sha1 of the blame.
      *
      * @return the commit's sha1 of the blame
      */
     @Exported
     public String getCommit() {
-        if (fileBlame != null) {
-            return fileBlame.getCommit(getLineStart());
-        }
-        return "";
+        return blame.getCommit();
+    }
+
+    /**
+     * returns the time of the blame been added.
+     *
+     * @return the time of the blame been added.
+     */
+    @Exported
+    public int getAddedAt() {
+        return blame.getAddedAt();
     }
 }
