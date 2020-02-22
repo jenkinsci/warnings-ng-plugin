@@ -1,22 +1,21 @@
-<reportApi _class='io.jenkins.plugins.analysis.core.restapi.ReportApi'>
+<reportApi _class="io.jenkins.plugins.analysis.core.restapi.ReportApi">
   <issue>
     <baseName>CsharpNamespaceDetector.java</baseName>
     <category>Sizes</category>
     <columnEnd>0</columnEnd>
     <columnStart>0</columnStart>
-    <description></description>
-    <fileName>
-      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
-    </fileName>
+    <description/>
+    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</fileName>
     <fingerprint>FALLBACK-19b1fd71</fingerprint>
     <lineEnd>29</lineEnd>
     <lineStart>29</lineStart>
     <message>Zeile länger als 80 Zeichen</message>
-    <moduleName></moduleName>
+    <moduleName/>
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>2</reference>
     <severity>ERROR</severity>
+    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(29,0): LineLengthCheck: Sizes: Zeile länger als 80 Zeichen</toString>
     <type>LineLengthCheck</type>
   </issue>
   <issue>
@@ -24,19 +23,18 @@
     <category>Blocks</category>
     <columnEnd>21</columnEnd>
     <columnStart>21</columnStart>
-    <description></description>
-    <fileName>
-      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
-    </fileName>
+    <description/>
+    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</fileName>
     <fingerprint>FALLBACK-15af470f</fingerprint>
     <lineEnd>30</lineEnd>
     <lineStart>30</lineStart>
     <message>'}' sollte in derselben Zeile stehen.</message>
-    <moduleName></moduleName>
+    <moduleName/>
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>2</reference>
     <severity>ERROR</severity>
+    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(30,21): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.</toString>
     <type>RightCurlyCheck</type>
   </issue>
   <issue>
@@ -44,20 +42,20 @@
     <category>Blocks</category>
     <columnEnd>9</columnEnd>
     <columnStart>9</columnStart>
-    <description></description>
-    <fileName>
-      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
-    </fileName>
+    <description/>
+    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</fileName>
     <fingerprint>FALLBACK-15af4716</fingerprint>
     <lineEnd>37</lineEnd>
     <lineStart>37</lineStart>
     <message>'}' sollte in derselben Zeile stehen.</message>
-    <moduleName></moduleName>
+    <moduleName/>
     <origin>checkstyle</origin>
     <packageName>-</packageName>
     <reference>2</reference>
     <severity>ERROR</severity>
+    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(37,9): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.</toString>
     <type>RightCurlyCheck</type>
   </issue>
   <size>3</size>
+  <toString>3 issues</toString>
 </reportApi>

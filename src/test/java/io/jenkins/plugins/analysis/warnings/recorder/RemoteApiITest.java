@@ -9,14 +9,12 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.jvnet.hudson.test.JenkinsRule.JSONWebResponse;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+import org.xmlunit.builder.Input;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -34,8 +32,9 @@ import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
-import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.assertj.core.api.Assertions.*;
+import static org.xmlunit.assertj.XmlAssert.assertThat;
 
 /**
  * Integration tests of the remote API.
@@ -48,12 +47,6 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String RESULT_REMOTE_API_EXPECTED_XML = "result.xml";
     private static final String ISSUES_REMOTE_API_EXPECTED_XML = "issues.xml";
     private static final String FOLDER_PREFIX = "rest-api/";
-
-    /** Ensures that XML unit does ignore white space. */
-    @BeforeClass
-    public static void initXmlUnit() {
-        XMLUnit.setIgnoreWhitespace(true);
-    }
 
     /**
      * Verifies a top-level REST API call that returns a representation of {@link AnalysisResultApi}.
@@ -82,11 +75,9 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void assertThatRemoteApiEquals(final Run<?, ?> build, final String url, final String expectedXml) {
-        Document actualDocument = callXmlRemoteApi(build.getUrl() + url);
-        Document expectedDocument = readExpectedXml(FOLDER_PREFIX + expectedXml);
-        Diff diff = XMLUnit.compareXML(expectedDocument, actualDocument);
-
-        assertThat(diff.identical()).as(diff.toString()).isTrue();
+        assertThat(callXmlRemoteApi(build.getUrl() + url))
+                .and(Input.from(readAllBytes(FOLDER_PREFIX + expectedXml))).normalizeWhitespace()
+                .areIdentical();
     }
 
     /**

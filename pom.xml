@@ -54,7 +54,7 @@
     <pmd.version>6.21.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
-    <xmlunit.version>1.6</xmlunit.version>
+    <xmlunit.version>2.6.3</xmlunit.version>
     <jsoup.version>1.12.2</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
     <git-client.version>3.1.1</git-client.version>
@@ -387,8 +387,8 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>xmlunit</groupId>
-      <artifactId>xmlunit</artifactId>
+      <groupId>org.xmlunit</groupId>
+      <artifactId>xmlunit-assertj</artifactId>
       <version>${xmlunit.version}</version>
       <scope>test</scope>
     </dependency>
@@ -452,6 +452,12 @@
       <artifactId>job-dsl</artifactId>
       <version>${job-dsl.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>xmlunit</artifactId>
+          <groupId>xmlunit</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins</groupId>
