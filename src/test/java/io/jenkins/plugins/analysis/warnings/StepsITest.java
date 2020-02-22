@@ -147,7 +147,6 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 + "}", true));
     }
 
-
     /** Verifies that a {@link Tool} defines a {@link Symbol}. */
     @Test
     public void shouldProvideSymbol() {
