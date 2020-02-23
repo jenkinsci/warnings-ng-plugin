@@ -5,7 +5,7 @@ import edu.hm.hafner.analysis.Issue;
 import org.kohsuke.stapler.export.Exported;
 import org.kohsuke.stapler.export.ExportedBean;
 
-import io.jenkins.plugins.analysis.core.model.Blame;
+import io.jenkins.plugins.analysis.core.util.Blame;
 
 /**
  * Remote API for an {@link Issue}. Simple Java Bean that exposes several methods of an {@link Issue} instance.
