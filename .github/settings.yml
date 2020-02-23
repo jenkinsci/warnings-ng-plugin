@@ -1,0 +1,29 @@
+# Labels: define labels for Issues and Pull Requests
+labels:
+  - name: bug
+    description: Bugs or performance problems
+    color: CC0000
+  - name: dependencies
+    description: Update of dependencies
+    color: 0366d6
+  - name: feature
+    color: a4c6fb
+    description: New features
+  - name: enhancement
+    description: Enhancement of existing functionality
+    color: 94a6eb
+  - name: deprecated
+    description: Deprecating API
+    color: f4c21d
+  - name: removed
+    description: Removing API
+    color: e4b21d
+  - name: tests
+    description: Enhancement of tests
+    color: 30cc62
+  - name: documentation
+    description: Enhancement of documentation
+    color: bfafea
+  - name: internal
+    description: Internal changes without user or API impact
+    color: e6e6e6
