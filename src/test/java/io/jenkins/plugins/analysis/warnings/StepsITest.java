@@ -88,6 +88,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 + "         issues.each { issue ->\n"
                 + "             echo issue.toString()\n"
                 + "             echo issue.getOrigin()\n"
+                + "             echo issue.getAuthorName()\n"
                 + "         }"
                 + "  }\n"
                 + "}", true));
