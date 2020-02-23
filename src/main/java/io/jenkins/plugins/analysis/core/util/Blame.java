@@ -46,11 +46,11 @@ public class Blame {
         }
     }
 
-    public String getAuthor() {
+    public String getAuthorName() {
         return author;
     }
 
-    public String getEmail() {
+    public String getAuthorEmail() {
         return email;
     }
 

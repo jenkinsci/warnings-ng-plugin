@@ -93,11 +93,11 @@ public class BlamesModel extends DetailsTableModel {
         }
 
         public String getAuthor() {
-            return blame.getAuthor();
+            return blame.getAuthorName();
         }
 
         public String getEmail() {
-            return blame.getEmail();
+            return blame.getAuthorEmail();
         }
 
         public String getCommit() {

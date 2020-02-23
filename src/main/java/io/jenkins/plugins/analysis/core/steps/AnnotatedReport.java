@@ -128,7 +128,7 @@ public class AnnotatedReport implements Serializable {
      */
     @Whitelisted
     public List<IssueApi> getIssues() {
-        return new ReportApi(getReport()).getIssues();
+        return new ReportApi(getReport(), getBlames()).getIssues();
     }
 
     /**

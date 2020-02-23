@@ -110,42 +110,22 @@ public class IssueApi {
         return issue.getFingerprint();
     }
 
-    /**
-     * Returns the author's name of the blame.
-     *
-     * @return the name of the author
-     */
-    @Exported
-    public String getAuthor() {
-        return blame.getAuthor();
+    @Exported @Whitelisted
+    public String getAuthorName() {
+        return blame.getAuthorName();
     }
 
-    /**
-     * Returns the author's email of the blame.
-     *
-     * @return the email of the author
-     */
-    @Exported
-    public String getEmail() {
-        return blame.getEmail();
+    @Exported @Whitelisted
+    public String getAuthorEmail() {
+        return blame.getAuthorEmail();
     }
 
-    /**
-     * returns the commit's sha1 of the blame.
-     *
-     * @return the commit's sha1 of the blame
-     */
-    @Exported
+    @Exported @Whitelisted
     public String getCommit() {
         return blame.getCommit();
     }
 
-    /**
-     * returns the time of the blame been added.
-     *
-     * @return the time of the blame been added.
-     */
-    @Exported
+    @Exported @Whitelisted
     public int getAddedAt() {
         return blame.getAddedAt();
     }

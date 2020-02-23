@@ -76,7 +76,9 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void assertThatRemoteApiEquals(final Run<?, ?> build, final String url, final String expectedXml) {
         assertThat(callXmlRemoteApi(build.getUrl() + url))
-                .and(Input.from(readAllBytes(FOLDER_PREFIX + expectedXml))).normalizeWhitespace()
+                .and(Input.from(readAllBytes(FOLDER_PREFIX + expectedXml)))
+                .ignoreChildNodesOrder()
+                .normalizeWhitespace()
                 .areIdentical();
     }
 
