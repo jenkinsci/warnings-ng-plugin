@@ -25,9 +25,9 @@ class BlameTest {
     void shouldCreateEmptyBlame() {
         Blame blame = new Blame(new IssueBuilder().build(), new Blames());
 
-        assertThat(blame).hasAuthor(Blame.UNDEFINED);
+        assertThat(blame).hasAuthorName(Blame.UNDEFINED);
         assertThat(blame).hasCommit(Blame.UNDEFINED);
-        assertThat(blame).hasEmail(Blame.UNDEFINED);
+        assertThat(blame).hasAuthorEmail(Blame.UNDEFINED);
         assertThat(blame).hasAddedAt(Blame.UNDEFINED_DATE);
     }
 
@@ -35,9 +35,9 @@ class BlameTest {
     void shouldCreateBlameForIssue() {
         Blame blame = new Blame(new IssueBuilder().build(), createBlames());
 
-        assertThat(blame).hasAuthor(AUTHOR);
+        assertThat(blame).hasAuthorName(AUTHOR);
         assertThat(blame).hasCommit(COMMIT);
-        assertThat(blame).hasEmail(EMAIL);
+        assertThat(blame).hasAuthorEmail(EMAIL);
         assertThat(blame).hasAddedAt(ADDED_AT);
     }
 
