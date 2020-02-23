@@ -84,6 +84,11 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
                 + "         def report = scanForIssues tool: checkStyle(pattern: '**/" + fileName + "*')\n"
                 + "         echo '[total=' + report.size() + ']' \n"
                 + "         echo '[id=' + report.getId() + ']' \n"
+                + "         def issues = report.getIssues()\n"
+                + "         issues.each { issue ->\n"
+                + "             echo issue.toString()\n"
+                + "             echo issue.getOrigin()\n"
+                + "         }"
                 + "  }\n"
                 + "}", true));
     }
