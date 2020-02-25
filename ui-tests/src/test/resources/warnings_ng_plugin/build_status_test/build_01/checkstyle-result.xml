@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.0">
+  <file name="/mnt/hudson_workspace/workspace/HTS-CheckstyleTest/ssh-slaves/src/main/java/hudson/plugins/sshslaves/RemoteLauncher.java">
+    <error line="0" severity="error" message="Missing package-info.java file."
+           source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocPackageCheck"/>
+  </file>
+</checkstyle>

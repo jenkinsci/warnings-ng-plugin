@@ -1,0 +1,111 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.jenkins.plugins</groupId>
+  <artifactId>warnings-ng-uit-tests</artifactId>
+  <packaging>jar</packaging>
+  <version>1.0-SNAPSHOT</version>
+
+  <properties>
+    <jenkins.version>2.138.4</jenkins.version>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
+
+    <assertj.version>3.15.0</assertj.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.jenkins-ci</groupId>
+      <artifactId>acceptance-test-harness</artifactId>
+      <version>1.70</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.10</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <version>${assertj.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <repositories>
+    <repository>
+      <id>maven.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/releases/</url>
+    </repository>
+    <repository>
+      <id>maven.jenkins-ci.org-sn</id>
+      <url>https://repo.jenkins-ci.org/snapshots/</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
+  <profiles>
+    <profile>
+      <id>no-ath-on-win</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+    </profile>
+  </profiles>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
+        <version>2.1.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>generate-assertions</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <packages>
+            <package>org.jenkinsci.test.acceptance.plugins.warnings_ng</package>
+          </packages>
+          <entryPointClassPackage>org.jenkinsci.test.acceptance.plugins.warnings_ng</entryPointClassPackage>
+          <cleanTargetDir>true</cleanTargetDir>
+          <hierarchical>false</hierarchical>
+          <generateBddAssertions>false</generateBddAssertions>
+          <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
+          <templates>
+            <templatesDirectory>${project.basedir}/etc/templates/</templatesDirectory>
+            <assertionsEntryPointClass>assertions_entry_point_class_template.txt</assertionsEntryPointClass>
+          </templates>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M4</version>
+        <configuration>
+          <reuseForks>false</reuseForks>
+          <environmentVariables>
+            <!-- Read by ATH -->
+            <PLUGINS_DIR>../../docker/volumes/jenkins-home/plugins</PLUGINS_DIR>
+            <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
+            <LOCAL_JARS>../target/warnings-ng.hpi</LOCAL_JARS>
+            <BROWSER>firefox</BROWSER>
+          </environmentVariables>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
