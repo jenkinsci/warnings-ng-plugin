@@ -35,7 +35,7 @@
 
     <font-awesome-api.version>5.12.0-5-beta1</font-awesome-api.version>
     <jquery3-api.version>3.4.1-7-beta1</jquery3-api.version>
-    <bootstrap4-api.version>4.4.1-7-beta1</bootstrap4-api.version>
+    <bootstrap4-api.version>4.4.1-8-beta1</bootstrap4-api.version>
     <data-tables-api.version>1.10.20-9-beta1</data-tables-api.version>
     <echarts-api.version>4.6.0-3-beta1</echarts-api.version>
 
@@ -106,11 +106,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <dependency>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-annotations</artifactId>
-        <version>4.0.0</version>
-      </dependency>
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>git-client</artifactId>
