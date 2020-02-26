@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.DuplicationGroup;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.UnescapedText;
