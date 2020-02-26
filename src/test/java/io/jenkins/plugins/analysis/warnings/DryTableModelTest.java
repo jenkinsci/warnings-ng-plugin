@@ -4,10 +4,10 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Test;
 
+import edu.hm.hafner.analysis.DuplicationGroup;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.parser.dry.DuplicationGroup;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import io.jenkins.plugins.analysis.core.model.AbstractDetailsModelTest;
