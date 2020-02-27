@@ -9,6 +9,7 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
+import edu.hm.hafner.analysis.DuplicationGroup;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.LineRange;
 import edu.hm.hafner.analysis.LineRangeList;
@@ -42,6 +43,7 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
         xStream.registerConverter(new LineRangeListConverter(xStream));
         xStream.registerConverter(new SeverityConverter());
         xStream.alias("lineRange", LineRange.class);
+        xStream.alias("edu.hm.hafner.analysis.parser.dry.DuplicationGroup", DuplicationGroup.class);
         xStream.alias("treeString", TreeString.class);
         xStream.alias("issue", Issue.class);
         xStream.alias("analysisReport", Report.class);
