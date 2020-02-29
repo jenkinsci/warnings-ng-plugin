@@ -30,12 +30,12 @@
     <analysis-model-tests.version>8.0.0-beta20</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0-beta8</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta6</git-forensics-plugin.version>
-    <plugin-util-api.version>0.1.0-beta10</plugin-util-api.version>
+    <plugin-util-api.version>1.0.0</plugin-util-api.version>
     <codingstyle.library.version>1.0.0</codingstyle.library.version>
 
-    <font-awesome-api.version>5.12.0-5-beta1</font-awesome-api.version>
-    <jquery3-api.version>3.4.1-7-beta1</jquery3-api.version>
-    <bootstrap4-api.version>4.4.1-8-beta1</bootstrap4-api.version>
+    <font-awesome-api.version>5.12.0-7</font-awesome-api.version>
+    <jquery3-api.version>3.4.1-10</jquery3-api.version>
+    <bootstrap4-api.version>4.4.1-10</bootstrap4-api.version>
     <data-tables-api.version>1.10.20-10-beta1</data-tables-api.version>
     <echarts-api.version>4.6.0-5-beta1</echarts-api.version>
 
