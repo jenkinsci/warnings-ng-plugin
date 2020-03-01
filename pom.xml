@@ -31,7 +31,6 @@
     <forensics-api-plugin.version>0.7.0-beta8</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta6</git-forensics-plugin.version>
     <plugin-util-api.version>1.0.0</plugin-util-api.version>
-    <codingstyle.library.version>1.0.1</codingstyle.library.version>
 
     <font-awesome-api.version>5.12.0-7</font-awesome-api.version>
     <jquery3-api.version>3.4.1-10</jquery3-api.version>
@@ -397,13 +396,6 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>plugin-util-api</artifactId>
       <version>${plugin-util-api.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency>
-    <dependency>
-      <groupId>edu.hm.hafner</groupId>
-      <artifactId>codingstyle</artifactId>
-      <version>${codingstyle.library.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
