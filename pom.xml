@@ -31,13 +31,13 @@
     <forensics-api-plugin.version>0.7.0-beta8</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0-beta6</git-forensics-plugin.version>
     <plugin-util-api.version>1.0.0</plugin-util-api.version>
-    <codingstyle.library.version>1.0.0</codingstyle.library.version>
+    <codingstyle.library.version>1.0.1</codingstyle.library.version>
 
     <font-awesome-api.version>5.12.0-7</font-awesome-api.version>
     <jquery3-api.version>3.4.1-10</jquery3-api.version>
     <bootstrap4-api.version>4.4.1-10</bootstrap4-api.version>
     <data-tables-api.version>1.10.20-13</data-tables-api.version>
-    <echarts-api.version>4.6.0-5-beta1</echarts-api.version>
+    <echarts-api.version>4.6.0-7</echarts-api.version>
 
     <commons.lang.version>3.9</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
