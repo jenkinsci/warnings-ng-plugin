@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
+import edu.hm.hafner.echarts.JacksonFacade;
 import edu.hm.hafner.echarts.LinesChartModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -21,7 +22,6 @@ import io.jenkins.plugins.analysis.core.charts.CompositeBuildResult;
 import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.analysis.core.util.JacksonFacade;
 import io.jenkins.plugins.echarts.AsyncTrendChart;
 
 /**
