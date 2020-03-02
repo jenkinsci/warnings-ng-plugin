@@ -7,10 +7,13 @@ import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
 import hudson.model.Job;
+import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn.AnalysisResultDescription;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Result;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
@@ -153,8 +156,14 @@ class IssuesTotalColumnTest {
         assertThat(column.getTotal(job)).hasValue(1 + 2);
         assertThat(column.getUrl(job)).isEmpty();
 
+        for (ResultAction resultAction : job.getLastCompletedBuild().getActions(ResultAction.class)) {
+            when(resultAction.getOwner()).thenReturn(mock(Run.class));
+        }
+
         assertThat(column.getDetails(job)).containsExactly(
-                new AnalysisResultDescription("checkstyle.png", CHECK_STYLE_NAME, 1, CHECK_STYLE_ID),
-                new AnalysisResultDescription("spotbugs.png", SPOT_BUGS_NAME, 2, SPOT_BUGS_ID));
+                new AnalysisResultDescription("checkstyle.png", CHECK_STYLE_NAME, 1,
+                        "0/" + CHECK_STYLE_ID + "/"),
+                new AnalysisResultDescription("spotbugs.png", SPOT_BUGS_NAME, 2,
+                        "0/" + SPOT_BUGS_ID + "/"));
     }
 }

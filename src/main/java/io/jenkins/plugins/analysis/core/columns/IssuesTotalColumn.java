@@ -180,7 +180,7 @@ public class IssuesTotalColumn extends ListViewColumn {
 
         return lastCompletedBuild.getActions(ResultAction.class).stream()
                 .filter(createToolFilter(selectTools, tools))
-                .map(result -> new AnalysisResultDescription(result, getLabelProviderFactory()))
+                .map(result -> new AnalysisResultDescription(result, getLabelProviderFactory(), type))
                 .collect(Collectors.toList());
     }
 
@@ -264,12 +264,18 @@ public class IssuesTotalColumn extends ListViewColumn {
             this.url = url;
         }
 
-        AnalysisResultDescription(final ResultAction result, final LabelProviderFactory labelProviderFactory) {
+        AnalysisResultDescription(final ResultAction result, final LabelProviderFactory labelProviderFactory,
+                final StatisticProperties type) {
             StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(result.getId(), result.getName());
             name = labelProvider.getLinkName();
             icon = labelProvider.getSmallIconUrl();
             total = result.getResult().getTotalSize();
-            url = result.getUrlName();
+
+            String typeUrl = type.name().split("_")[0].toLowerCase();
+            if (!typeUrl.matches("new|fixed")) {
+                typeUrl = "";
+            }
+            url = result.getOwner().getNumber() + "/" + result.getUrlName() + "/" + typeUrl;
         }
 
         public String getIcon() {
@@ -319,3 +325,4 @@ public class IssuesTotalColumn extends ListViewColumn {
         }
     }
 }
+
