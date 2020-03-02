@@ -13,7 +13,6 @@ import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn.AnalysisResult
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.portlets.IssuesTablePortlet.Result;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
