@@ -271,8 +271,8 @@ public class IssuesTotalColumn extends ListViewColumn {
             icon = labelProvider.getSmallIconUrl();
             total = result.getResult().getTotalSize();
 
-            String typeUrl = type.name().split("_")[0].toLowerCase();
-            if (!typeUrl.matches("new|fixed")) {
+            String typeUrl = type.name().split("_")[0];
+            if (!typeUrl.matches("NEW|FIXED")) {
                 typeUrl = "";
             }
             url = result.getOwner().getNumber() + "/" + result.getUrlName() + "/" + typeUrl;
