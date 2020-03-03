@@ -54,7 +54,7 @@
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.6.3</xmlunit.version>
-    <jsoup.version>1.12.2</jsoup.version>
+    <jsoup.version>1.13.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
     <git-client.version>3.1.1</git-client.version>
 
