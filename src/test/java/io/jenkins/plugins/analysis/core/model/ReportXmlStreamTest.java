@@ -26,7 +26,7 @@ class ReportXmlStreamTest extends ResourceTest {
         Object restored = reportXmlStream.read(getResourceAsFile("npe.xml"));
         assertThat(restored).isInstanceOfSatisfying(Report.class,
                 report -> {
-                    assertThat(report).hasSize(9);
+                    assertThat(report).hasSize(2); // Duplicate issues will be skipped
                 });
     }
 
