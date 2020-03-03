@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.Issue;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
@@ -18,6 +19,17 @@ import static edu.hm.hafner.analysis.assertions.Assertions.*;
  * @author Ullrich Hafner
  */
 class ReportXmlStreamTest extends ResourceTest {
+    @Test @Issue("JENKINS-61293")
+    void shouldMapDescriptionsToCorrectType() {
+        ReportXmlStream reportXmlStream = new ReportXmlStream();
+
+        Object restored = reportXmlStream.read(getResourceAsFile("npe.xml"));
+        assertThat(restored).isInstanceOfSatisfying(Report.class,
+                report -> {
+                    assertThat(report).hasSize(2); // Duplicate issues will be skipped
+                });
+    }
+
     @Test
     void shouldReadIssues() {
         ReportXmlStream reportXmlStream = new ReportXmlStream();
