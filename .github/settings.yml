@@ -13,10 +13,10 @@ labels:
     description: Enhancement of existing functionality
     color: 94a6eb
   - name: deprecated
-    description: Deprecating API
+    description: API Deprecation
     color: f4c21d
   - name: removed
-    description: Removing API
+    description: API Removal
     color: e4b21d
   - name: tests
     description: Enhancement of tests
