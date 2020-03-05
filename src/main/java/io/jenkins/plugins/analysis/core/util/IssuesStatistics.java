@@ -7,6 +7,7 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.api.map.ImmutableMap;
 import org.eclipse.collections.impl.factory.Maps;
 
@@ -232,32 +233,35 @@ public class IssuesStatistics implements Serializable {
      * Available report statistics.
      */
     public enum StatisticProperties {
-        TOTAL(Messages._Statistics_Total(), IssuesStatistics::getTotalSize),
-        TOTAL_ERROR(Messages._Statistics_Total_Error(), IssuesStatistics::getTotalErrorSize),
-        TOTAL_HIGH(Messages._Statistics_Total_High(), IssuesStatistics::getTotalHighSize),
-        TOTAL_NORMAL(Messages._Statistics_Total_Normal(), IssuesStatistics::getTotalNormalSize),
-        TOTAL_LOW(Messages._Statistics_Total_Low(), IssuesStatistics::getTotalLowSize),
+        TOTAL(Messages._Statistics_Total(), IssuesStatistics::getTotalSize, StringUtils.EMPTY),
+        TOTAL_ERROR(Messages._Statistics_Total_Error(), IssuesStatistics::getTotalErrorSize, "error"),
+        TOTAL_HIGH(Messages._Statistics_Total_High(), IssuesStatistics::getTotalHighSize, "high"),
+        TOTAL_NORMAL(Messages._Statistics_Total_Normal(), IssuesStatistics::getTotalNormalSize, "normal"),
+        TOTAL_LOW(Messages._Statistics_Total_Low(), IssuesStatistics::getTotalLowSize, "low"),
 
-        NEW(Messages._Statistics_New(), IssuesStatistics::getNewSize),
-        NEW_ERROR(Messages._Statistics_New_Error(), IssuesStatistics::getNewErrorSize),
-        NEW_HIGH(Messages._Statistics_New_High(), IssuesStatistics::getNewHighSize),
-        NEW_NORMAL(Messages._Statistics_New_Normal(), IssuesStatistics::getNewNormalSize),
-        NEW_LOW(Messages._Statistics_New_Low(), IssuesStatistics::getNewLowSize),
+        NEW(Messages._Statistics_New(), IssuesStatistics::getNewSize, "new"),
+        NEW_ERROR(Messages._Statistics_New_Error(), IssuesStatistics::getNewErrorSize, "new/error"),
+        NEW_HIGH(Messages._Statistics_New_High(), IssuesStatistics::getNewHighSize, "new/high"),
+        NEW_NORMAL(Messages._Statistics_New_Normal(), IssuesStatistics::getNewNormalSize, "new/normal"),
+        NEW_LOW(Messages._Statistics_New_Low(), IssuesStatistics::getNewLowSize, "new/low"),
 
-        DELTA(Messages._Statistics_Delta(), IssuesStatistics::getDeltaSize),
-        DELTA_ERROR(Messages._Statistics_Delta_Error(), IssuesStatistics::getDeltaErrorSize),
-        DELTA_HIGH(Messages._Statistics_Delta_High(), IssuesStatistics::getDeltaHighSize),
-        DELTA_NORMAL(Messages._Statistics_Delta_Normal(), IssuesStatistics::getDeltaNormalSize),
-        DELTA_LOW(Messages._Statistics_Delta_Low(), IssuesStatistics::getDeltaLowSize),
+        DELTA(Messages._Statistics_Delta(), IssuesStatistics::getDeltaSize, StringUtils.EMPTY),
+        DELTA_ERROR(Messages._Statistics_Delta_Error(), IssuesStatistics::getDeltaErrorSize, StringUtils.EMPTY),
+        DELTA_HIGH(Messages._Statistics_Delta_High(), IssuesStatistics::getDeltaHighSize, StringUtils.EMPTY),
+        DELTA_NORMAL(Messages._Statistics_Delta_Normal(), IssuesStatistics::getDeltaNormalSize, StringUtils.EMPTY),
+        DELTA_LOW(Messages._Statistics_Delta_Low(), IssuesStatistics::getDeltaLowSize, StringUtils.EMPTY),
 
-        FIXED(Messages._Statistics_Fixed(), IssuesStatistics::getFixedSize);
+        FIXED(Messages._Statistics_Fixed(), IssuesStatistics::getFixedSize, "fixed");
 
         private final Localizable displayName;
         private final Function<IssuesStatistics, Integer> sizeGetter;
+        private final String url;
 
-        StatisticProperties(final Localizable displayName, final Function<IssuesStatistics, Integer> sizeGetter) {
+        StatisticProperties(final Localizable displayName, final Function<IssuesStatistics, Integer> sizeGetter,
+                final String url) {
             this.displayName = displayName;
             this.sizeGetter = sizeGetter;
+            this.url = url;
         }
 
         /**
@@ -276,6 +280,21 @@ public class IssuesStatistics implements Serializable {
          */
         public Function<IssuesStatistics, Integer> getSizeGetter() {
             return sizeGetter;
+        }
+
+        /**
+         * Returns the relative url of this statistics.
+         *
+         * @param prefix
+         *         the prefix added to the url
+         *
+         * @return the relative url
+         */
+        public String getUrl(final String prefix) {
+            if (StringUtils.isEmpty(url)) {
+                return prefix;
+            }
+            return prefix + "/" + url;
         }
 
         /**

@@ -180,7 +180,7 @@ public class IssuesTotalColumn extends ListViewColumn {
 
         return lastCompletedBuild.getActions(ResultAction.class).stream()
                 .filter(createToolFilter(selectTools, tools))
-                .map(result -> new AnalysisResultDescription(result, getLabelProviderFactory()))
+                .map(result -> new AnalysisResultDescription(result, getLabelProviderFactory(), type))
                 .collect(Collectors.toList());
     }
 
@@ -198,21 +198,22 @@ public class IssuesTotalColumn extends ListViewColumn {
             return StringUtils.EMPTY;
         }
 
-        Set<String> actualIds = lastCompletedBuild.getActions(ResultAction.class)
-                .stream()
-                .map(ResultAction::getId)
-                .collect(Collectors.toSet());
+        List<ResultAction> actions = lastCompletedBuild.getActions(ResultAction.class);
+        Set<String> actualIds = actions.stream().map(ResultAction::getId).collect(Collectors.toSet());
 
         String[] selectedIds = getIds(tools);
         if (selectedIds.length == 1) {
-            String url = selectedIds[0];
-            if (actualIds.contains(url)) {
-                return url;
+            String selectedId = selectedIds[0];
+            if (actualIds.contains(selectedId)) {
+                ResultAction result = actions.stream().filter(action -> action.getId().equals(selectedId))
+                        .findFirst().get(); // We are sure it contains the selected id
+                return type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
             }
         }
 
         if (actualIds.size() == 1) {
-            return actualIds.iterator().next();
+            ResultAction result = actions.iterator().next();
+            return type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
         }
 
         return StringUtils.EMPTY;
@@ -264,12 +265,13 @@ public class IssuesTotalColumn extends ListViewColumn {
             this.url = url;
         }
 
-        AnalysisResultDescription(final ResultAction result, final LabelProviderFactory labelProviderFactory) {
+        AnalysisResultDescription(final ResultAction result, final LabelProviderFactory labelProviderFactory,
+                final StatisticProperties type) {
             StaticAnalysisLabelProvider labelProvider = labelProviderFactory.create(result.getId(), result.getName());
             name = labelProvider.getLinkName();
             icon = labelProvider.getSmallIconUrl();
             total = result.getResult().getTotalSize();
-            url = result.getUrlName();
+            url = type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
         }
 
         public String getIcon() {
@@ -319,3 +321,4 @@ public class IssuesTotalColumn extends ListViewColumn {
         }
     }
 }
+
