@@ -198,21 +198,22 @@ public class IssuesTotalColumn extends ListViewColumn {
             return StringUtils.EMPTY;
         }
 
-        Set<String> actualIds = lastCompletedBuild.getActions(ResultAction.class)
-                .stream()
-                .map(ResultAction::getId)
-                .collect(Collectors.toSet());
+        List<ResultAction> actions = lastCompletedBuild.getActions(ResultAction.class);
+        Set<String> actualIds = actions.stream().map(ResultAction::getId).collect(Collectors.toSet());
 
         String[] selectedIds = getIds(tools);
         if (selectedIds.length == 1) {
-            String url = selectedIds[0];
-            if (actualIds.contains(url)) {
-                return url;
+            String selectedId = selectedIds[0];
+            if (actualIds.contains(selectedId)) {
+                ResultAction result = actions.stream().filter(action -> action.getId().equals(selectedId))
+                        .findFirst().get(); // We are sure it contains the selected id
+                return type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
             }
         }
 
         if (actualIds.size() == 1) {
-            return actualIds.iterator().next();
+            ResultAction result = actions.iterator().next();
+            return type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
         }
 
         return StringUtils.EMPTY;
@@ -270,12 +271,7 @@ public class IssuesTotalColumn extends ListViewColumn {
             name = labelProvider.getLinkName();
             icon = labelProvider.getSmallIconUrl();
             total = result.getResult().getTotalSize();
-
-            String typeUrl = type.name().split("_")[0];
-            if (!typeUrl.matches("NEW|FIXED")) {
-                typeUrl = "";
-            }
-            url = result.getOwner().getNumber() + "/" + result.getUrlName() + "/" + typeUrl;
+            url = type.getUrl(result.getOwner().getNumber() + "/" + result.getUrlName());
         }
 
         public String getIcon() {

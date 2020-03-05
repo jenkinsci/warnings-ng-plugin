@@ -6,7 +6,6 @@ import hudson.model.Job;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -180,6 +179,9 @@ public final class JobStubs {
         when(resultAction.getName()).thenReturn(name);
         when(resultAction.getRelativeUrl()).thenReturn(url(id));
         when(resultAction.getUrlName()).thenReturn(id);
+
+        Run<?, ?> build = mock(Run.class);
+        doReturn(build).when(resultAction).getOwner();
         return resultAction;
     }
 

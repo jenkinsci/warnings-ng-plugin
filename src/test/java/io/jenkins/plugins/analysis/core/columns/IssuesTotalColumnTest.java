@@ -7,12 +7,10 @@ import org.junit.jupiter.api.Test;
 import org.jvnet.hudson.test.Issue;
 
 import hudson.model.Job;
-import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.columns.IssuesTotalColumn.AnalysisResultDescription;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
-import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
 
 import static io.jenkins.plugins.analysis.core.testutil.JobStubs.*;
@@ -66,7 +64,7 @@ class IssuesTotalColumnTest {
 
         assertThat(column.getTotal(job)).isNotEmpty();
         assertThat(column.getTotal(job)).hasValue(1);
-        assertThat(column.getUrl(job)).isEqualTo(CHECK_STYLE_ID);
+        assertThat(column.getUrl(job)).isEqualTo("0/" + CHECK_STYLE_ID);
     }
 
     @Test @Issue("JENKINS-57312")
@@ -82,7 +80,7 @@ class IssuesTotalColumnTest {
                 createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 3, 1, 2));
 
         assertThat(column.getTotal(job)).isNotEmpty().hasValue(1);
-        assertThat(column.getUrl(job)).isEqualTo(CHECK_STYLE_ID);
+        assertThat(column.getUrl(job)).isEqualTo("0/" + CHECK_STYLE_ID + "/new");
 
         column.setType(StatisticProperties.FIXED);
         assertThat(column.getTotal(job)).isNotEmpty().hasValue(2);
@@ -117,13 +115,13 @@ class IssuesTotalColumnTest {
 
         assertThat(column.getTotal(job)).isNotEmpty();
         assertThat(column.getTotal(job)).hasValue(1);
-        assertThat(column.getUrl(job)).isEqualTo(CHECK_STYLE_ID);
+        assertThat(column.getUrl(job)).isEqualTo("0/" + CHECK_STYLE_ID);
 
         column.setTools(Collections.singletonList(createTool(SPOT_BUGS_ID)));
 
         assertThat(column.getTotal(job)).isNotEmpty();
         assertThat(column.getTotal(job)).hasValue(2);
-        assertThat(column.getUrl(job)).isEqualTo(SPOT_BUGS_ID);
+        assertThat(column.getUrl(job)).isEqualTo("0/" + SPOT_BUGS_ID);
 
         column.setTools(Collections.singletonList(createTool("unknown")));
 
@@ -134,6 +132,48 @@ class IssuesTotalColumnTest {
 
         assertThat(column.getTotal(job)).isEmpty();
         assertThat(column.getUrl(job)).isEmpty();
+    }
+
+    @Test
+    void shouldLinkToAllWhenSelectingTotalIssues() {
+        IssuesTotalColumn column = createColumn();
+        column.setSelectTools(false);
+
+        column.setType(StatisticProperties.TOTAL);
+        verifyUrlOfChecksSytleAndSpotBugs(column, "");
+        column.setType(StatisticProperties.TOTAL_ERROR);
+        verifyUrlOfChecksSytleAndSpotBugs(column, "/error");
+    }
+
+    @Test
+    void shouldLinkToNewWhenSelectingNewIssues() {
+        IssuesTotalColumn column = createColumn();
+        column.setSelectTools(false);
+
+        column.setType(StatisticProperties.NEW);
+        verifyUrlOfChecksSytleAndSpotBugs(column, "/new");
+        column.setType(StatisticProperties.NEW_ERROR);
+        verifyUrlOfChecksSytleAndSpotBugs(column, "/new/error");
+    }
+
+    @Test
+    void shouldLinkToOverallWhenSelectingDeltaIssues() {
+        IssuesTotalColumn column = createColumn();
+        column.setSelectTools(false);
+
+        column.setType(StatisticProperties.DELTA);
+        verifyUrlOfChecksSytleAndSpotBugs(column, "");
+        column.setType(StatisticProperties.DELTA_ERROR);
+        verifyUrlOfChecksSytleAndSpotBugs(column, "");
+    }
+
+    @Test
+    void shouldLinkToFixedWhenSelectingFixedIssues() {
+        IssuesTotalColumn column = createColumn();
+        column.setSelectTools(false);
+
+        column.setType(StatisticProperties.FIXED);
+        verifyUrlOfChecksSytleAndSpotBugs(column, "/fixed");
     }
 
     private IssuesTotalColumn createColumn() {
@@ -155,14 +195,22 @@ class IssuesTotalColumnTest {
         assertThat(column.getTotal(job)).hasValue(1 + 2);
         assertThat(column.getUrl(job)).isEmpty();
 
-        for (ResultAction resultAction : job.getLastCompletedBuild().getActions(ResultAction.class)) {
-            when(resultAction.getOwner()).thenReturn(mock(Run.class));
-        }
-
         assertThat(column.getDetails(job)).containsExactly(
                 new AnalysisResultDescription("checkstyle.png", CHECK_STYLE_NAME, 1,
-                        "0/" + CHECK_STYLE_ID + "/"),
+                        "0/" + CHECK_STYLE_ID),
                 new AnalysisResultDescription("spotbugs.png", SPOT_BUGS_NAME, 2,
-                        "0/" + SPOT_BUGS_ID + "/"));
+                        "0/" + SPOT_BUGS_ID));
+    }
+
+    private void verifyUrlOfChecksSytleAndSpotBugs(final IssuesTotalColumn column, final String url) {
+        Job<?, ?> job = createJobWithActions(
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 0),
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 0));
+
+        assertThat(column.getDetails(job)).containsExactly(
+                new AnalysisResultDescription("checkstyle.png", CHECK_STYLE_NAME, 0,
+                        "0/" + CHECK_STYLE_ID + url),
+                new AnalysisResultDescription("spotbugs.png", SPOT_BUGS_NAME, 0,
+                        "0/" + SPOT_BUGS_ID + url));
     }
 }
