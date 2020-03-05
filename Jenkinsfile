@@ -14,6 +14,7 @@ node ('maven') {
             String command
             List<String> mavenOptions = [
                     '--batch-mode',
+                    '-ntp',
                     '--errors',
                     '--update-snapshots',
                     '-Dmaven.test.failure.ignore',
