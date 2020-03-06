@@ -6,6 +6,7 @@ import hudson.model.Job;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @see JobAction
  * @see ResultAction
  */
+@SuppressWarnings("rawtypes")
 public final class JobStubs {
     /** ID of SpotBugs actions. */
     public static final String SPOT_BUGS_ID = "spotbugs";
@@ -45,6 +47,7 @@ public final class JobStubs {
      */
     public static void registerTool(final LabelProviderFactory factory, final String id, final String name) {
         StaticAnalysisLabelProvider tool = mock(StaticAnalysisLabelProvider.class);
+
         when(factory.create(id, name)).thenReturn(tool);
         when(factory.create(id)).thenReturn(tool);
         when(tool.getSmallIconUrl()).thenReturn(id + ".png");
@@ -73,13 +76,16 @@ public final class JobStubs {
      * @return the job stub
      */
     public static Job<?, ?> createJobWithActions(final ResultAction... actions) {
-        @SuppressWarnings("rawtypes")
-        Job job = mock(Job.class);
+        Job job = createJob();
 
         Run<?, ?> build = createBuildWithActions(actions);
         when(job.getLastCompletedBuild()).thenReturn(build);
 
         return job;
+    }
+
+    private static Job createJob() {
+        return mock(Job.class);
     }
 
     /**
@@ -91,9 +97,15 @@ public final class JobStubs {
      * @return the run stub
      */
     public static Run<?, ?> createBuildWithActions(final ResultAction... actions) {
-        Run<?, ?> build = mock(Run.class);
+        Run<?, ?> build = createBuild();
+
         when(build.getActions(ResultAction.class)).thenReturn(Lists.fixedSize.of(actions));
+
         return build;
+    }
+
+    private static Run createBuild() {
+        return mock(Run.class);
     }
 
     /**
@@ -174,14 +186,15 @@ public final class JobStubs {
      */
     public static ResultAction createAction(final String id, final String name, final AnalysisResult result) {
         ResultAction resultAction = mock(ResultAction.class);
+
         when(resultAction.getResult()).thenReturn(result);
         when(resultAction.getId()).thenReturn(id);
         when(resultAction.getName()).thenReturn(name);
         when(resultAction.getRelativeUrl()).thenReturn(url(id));
         when(resultAction.getUrlName()).thenReturn(id);
+        Run build = createBuild();
+        when(resultAction.getOwner()).thenReturn(build);
 
-        Run<?, ?> build = mock(Run.class);
-        doReturn(build).when(resultAction).getOwner();
         return resultAction;
     }
 
