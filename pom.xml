@@ -48,7 +48,7 @@
 
     <bridge-method-annotation.version>1.18</bridge-method-annotation.version>
     <json.version>20190722</json.version>
-    <jackson-databind.version>2.9.10.1</jackson-databind.version>
+    <jackson-databind.version>2.9.10.3</jackson-databind.version>
 
     <pmd.version>6.21.0</pmd.version>
 
