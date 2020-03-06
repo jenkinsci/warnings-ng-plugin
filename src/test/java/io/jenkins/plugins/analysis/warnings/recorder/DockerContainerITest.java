@@ -126,7 +126,7 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
 
             return agent;
         }
-        catch (Exception e) {
+        catch (Throwable e) {
             throw new AssumptionViolatedException("Failed to create docker container", e);
         }
     }
