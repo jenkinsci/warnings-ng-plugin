@@ -1,4 +1,5 @@
-name: 'Auto Assign'
+name: 'Auto Assign PR'
+
 on:
   pull_request:
 
