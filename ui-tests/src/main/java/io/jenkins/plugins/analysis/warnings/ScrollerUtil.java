@@ -1,4 +1,4 @@
-package org.jenkinsci.test.acceptance.plugins.warnings_ng;
+package io.jenkins.plugins.analysis.warnings;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;

@@ -1,4 +1,4 @@
-package org.jenkinsci.test.acceptance.plugins.warnings_ng;
+package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -103,7 +103,7 @@ public class AnalysisSummary extends PageObject {
      * @return the type of the icon that links to the info messages view
      */
     public InfoType getInfoType() {
-        String iconName = find(by.xpath("//a[@href='" + id + "/info']/i")).getAttribute("class");
+        String iconName = find(by.xpath("//a[@href='" + id + "/info']")).findElements(by.css("*")).get(1).getAttribute("href");
 
         return InfoType.valueOfClass(iconName);
     }
@@ -312,9 +312,9 @@ public class AnalysisSummary extends PageObject {
      */
     public enum InfoType {
         /** Info messages only. */
-        INFO("fa-info-circle"),
+        INFO("info-circle"),
         /** Info and error messages. */
-        ERROR("fa-exclamation-triangle");
+        ERROR("exclamation-triangle");
 
         private String iconName;
 

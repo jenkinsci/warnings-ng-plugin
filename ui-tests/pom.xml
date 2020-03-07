@@ -1,17 +1,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>edu.hm.hafner</groupId>
+    <artifactId>codingstyle-pom</artifactId>
+    <version>1.0.2</version>
+    <relativePath />
+  </parent>
+
   <groupId>io.jenkins.plugins</groupId>
-  <artifactId>warnings-ng-uit-tests</artifactId>
+  <artifactId>warnings-ng-ui-tests</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
 
   <properties>
-    <jenkins.version>2.138.4</jenkins.version>
+    <jenkins.version>2.204.4</jenkins.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.compiler.source>1.8</maven.compiler.source>
-
     <assertj.version>3.15.0</assertj.version>
   </properties>
 
@@ -68,7 +74,6 @@
       <plugin>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
-        <version>2.1.0</version>
         <executions>
           <execution>
             <goals>
@@ -77,14 +82,10 @@
           </execution>
         </executions>
         <configuration>
-          <packages>
-            <package>org.jenkinsci.test.acceptance.plugins.warnings_ng</package>
+          <packages combine.children="append">
+            <package>io.jenkins.plugins.analysis.warnings</package>
           </packages>
-          <entryPointClassPackage>org.jenkinsci.test.acceptance.plugins.warnings_ng</entryPointClassPackage>
-          <cleanTargetDir>true</cleanTargetDir>
-          <hierarchical>false</hierarchical>
-          <generateBddAssertions>false</generateBddAssertions>
-          <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
+          <entryPointClassPackage>io.jenkins.plugins.analysis.warnings</entryPointClassPackage>
           <templates>
             <templatesDirectory>${project.basedir}/etc/templates/</templatesDirectory>
             <assertionsEntryPointClass>assertions_entry_point_class_template.txt</assertionsEntryPointClass>
@@ -98,7 +99,6 @@
         <configuration>
           <reuseForks>false</reuseForks>
           <environmentVariables>
-            <!-- Read by ATH -->
             <PLUGINS_DIR>../../docker/volumes/jenkins-home/plugins</PLUGINS_DIR>
             <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
             <LOCAL_JARS>../target/warnings-ng.hpi</LOCAL_JARS>

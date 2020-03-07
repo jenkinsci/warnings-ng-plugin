@@ -1,4 +1,4 @@
-package plugins;
+package io.jenkins.plugins.analysis.warnings;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -21,21 +21,6 @@ import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenModuleSet;
 import org.jenkinsci.test.acceptance.plugins.ssh_slaves.SshSlaveLauncher;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.AnalysisResult;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.AnalysisResult.Tab;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.AnalysisSummary;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.AnalysisSummary.InfoType;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.ConsoleLogView;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.DefaultWarningsTableRow;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.DetailsTableRow;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.DryIssuesTableRow;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.InfoView;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.IssuesRecorder;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.IssuesRecorder.QualityGateBuildResult;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.IssuesRecorder.QualityGateType;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.IssuesTable;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.ScrollerUtil;
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.SourceView;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.DumbSlave;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
@@ -43,7 +28,12 @@ import org.jenkinsci.test.acceptance.po.Job;
 import org.jenkinsci.test.acceptance.po.Slave;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
-import static org.jenkinsci.test.acceptance.plugins.warnings_ng.Assertions.*;
+import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
+
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Acceptance tests for the Warnings Next Generation Plugin.

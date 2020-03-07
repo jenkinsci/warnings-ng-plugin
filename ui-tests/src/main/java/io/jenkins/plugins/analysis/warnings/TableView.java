@@ -1,4 +1,4 @@
-package org.jenkinsci.test.acceptance.plugins.warnings_ng;
+package io.jenkins.plugins.analysis.warnings;
 
 import org.jenkinsci.test.acceptance.po.AbstractStep;
 import org.jenkinsci.test.acceptance.po.Control;

@@ -1,4 +1,4 @@
-package org.jenkinsci.test.acceptance.plugins.warnings_ng;
+package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
 import java.util.Objects;

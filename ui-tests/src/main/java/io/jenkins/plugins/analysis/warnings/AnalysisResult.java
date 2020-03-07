@@ -1,4 +1,4 @@
-package org.jenkinsci.test.acceptance.plugins.warnings_ng;
+package io.jenkins.plugins.analysis.warnings;
 
 import java.net.URL;
 import java.util.Collection;
@@ -12,9 +12,10 @@ import org.openqa.selenium.WebElement;
 
 import com.google.inject.Injector;
 
-import org.jenkinsci.test.acceptance.plugins.warnings_ng.IssuesTable.IssuesTableRowType;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
+
+import io.jenkins.plugins.analysis.warnings.IssuesTable.IssuesTableRowType;
 
 /**
  * {@link PageObject} representing the details page of the static analysis tool results.
@@ -165,7 +166,8 @@ public class AnalysisResult extends PageObject {
     // FIXME: IssuesTable should not depend on AnalysisResult
     public AnalysisResult openFilterLinkOnSite(final WebElement element) {
         String link = element.getAttribute("href");
-        AnalysisResult retVal = newInstance(AnalysisResult.class, injector, url(link), id);
+        AnalysisResult retVal = newInstance(
+                AnalysisResult.class, injector, url(link), id);
         element.click();
         return retVal;
     }
