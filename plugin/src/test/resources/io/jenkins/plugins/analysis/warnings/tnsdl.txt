@@ -1,0 +1,5 @@
+tnsdlx:(W) tstmasgx.sdl (398):unused variable sender_pid
+tnsdlx:(E) tstmasgx.sdl (399):unused variable a_sender_pid
+
+tnsdl:(W) s_dat:dty0132c.sdt (3):Id. length is reserved in PL/M 386 intrinsics
+tnsdl:(E) s_dat:dty0132c.sdt (4):Id. length is reserved in PL/M 386 intrinsics

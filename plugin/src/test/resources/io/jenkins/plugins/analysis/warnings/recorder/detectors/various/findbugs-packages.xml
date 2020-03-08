@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BugCollection version="1.2.1" sequence="0" timestamp="1186259374191" analysisTimestamp="1186259377278" release="">
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC" priority="2" abbrev="SIC" category="PERFORMANCE"
+               instanceHash="f32497e4bd8c80ef6228f10bd3363f52" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <Class classname="edu.hm.hafner.analysis.123.StreamJob$MultiPropertyOption">
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC" priority="2" abbrev="SIC" category="PERFORMANCE"
+               instanceHash="f32497e4bd8c80ef6228f10bd3363f52" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <Class classname="edu.hm.hafner.analysis._test.StreamJob$MultiPropertyOption">
+    </Class>
+  </BugInstance>
+  <BugInstance type="SIC_INNER_SHOULD_BE_STATIC" priority="2" abbrev="SIC" category="PERFORMANCE"
+               instanceHash="f32497e4bd8c80ef6228f10bd3363f52" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <Class classname="edu.hm.hafner.analysis.int.naming.structure.StreamJob$MultiPropertyOption">
+    </Class>
+  </BugInstance>
+</BugCollection>

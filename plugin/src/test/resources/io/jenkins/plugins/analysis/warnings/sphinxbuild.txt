@@ -1,0 +1,6 @@
+/src/be/doc/_sub/00_outline.rst:12: ERROR: Unknown directive type "blockdiag".
+/src/infrastructure/jenkins-obs/jenkins-obs.rst:10: WARNING: unknown document: ../builder/builder
+/src/infrastructure/sphinx/plantuml.rst:26: WARNING: undefined label: building_documentation_with_the_sphinx_container (if the link has no caption the label must precede a section header)
+/src/feblock/doc/3_3_6_2_WriteCommandCallbackIF.rst:None: WARNING: Could not obtain image size. :scale: option is ignored.
+/src/infrastructure/self-test/self-test-vault/src/self-test/index.rst:: WARNING: document isn't included in any toctree
+/src/be/doc/_sub/_classThread/04_Interface.rst:21: ERROR: Unknown target name: "threadid".

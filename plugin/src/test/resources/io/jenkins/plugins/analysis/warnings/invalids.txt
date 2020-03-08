@@ -1,0 +1,15 @@
+OWNER,OBJECT_NAME,OBJECT_TYPE,STATUS,LINE,POSITION,TEXT,MESSAGE_NUMBER
+E,ENV_UTIL#,PACKAGE BODY,INVALID,45,1,PLW-05004: Encountered the symbol "END" when expecting one of the following:
+
+   ;
+The symbol ";" was substituted for "END" to continue.,103
+
+E,ENV_ABBR#B,TRIGGER,INVALID,5,1,PLW-07202: Encountered the symbol "END" when expecting one of the following:
+
+   ;
+The symbol ";" was substituted for "END" to continue.,103
+
+0 rows affected
+
+
+E,/b77ce675_LoggerDynamicMBean,JAVA CLASS,INVALID,0,0,ORA-29521: referenced name javax/management/MBeanConstructorInfo could not be found

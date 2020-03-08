@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle>
+<file name="src\Controller\IndexController.php">
+  <error line="297" column="1" severity="error" message="Call to an undefined method Zend\Stdlib\RequestInterface::getQuery()." />
+  <error line="347" column="1" severity="error" message="Call to an undefined method Zend\Stdlib\RequestInterface::getQuery()." />
+  <error line="348" column="1" severity="error" message="Call to an undefined method Zend\Stdlib\RequestInterface::getQuery()." />
+  <error line="353" column="1" severity="error" message="Call to an undefined method Zend\Stdlib\RequestInterface::getQuery()." />
+  <error line="389" column="1" severity="error" message="Cannot call method convertType() on array|object." />
+  <error line="496" column="1" severity="error" message="Call to an undefined method Zend\Stdlib\RequestInterface::getPost()." />
+  <error line="499" column="1" severity="error" message="Call to an undefined method Zend\Stdlib\RequestInterface::getPost()." />
+  <error line="500" column="1" severity="error" message="Call to an undefined method Zend\Stdlib\RequestInterface::getPost()." />
+  <error line="701" column="1" severity="error" message="Access to protected property Product::$_id." />
+  <error line="713" column="1" severity="error" message="Result of method Stock::setProduct() (void) is used." />
+</file>
+<file name="src\Controller\ProductController.php">
+  <error line="293" column="1" severity="error" message="Access to protected property Product::$category." />
+</file>
+</checkstyle>

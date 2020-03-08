@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<problems>
+    <problem>
+        <file>file//$PROJECT_DIR$/src/main/java/org/lopashev/Test.java</file>
+        <line>42</line>
+        <module>tests</module>
+        <package>org.lopashev</package>
+        <entry_point TYPE="method" FQNAME="org.lopashev.Test java.lang.Object getInspection(java.lang.String intentionallyUnusedString)" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Unused method parameters</problem_class>
+        <hints>
+            <hint value="response" />
+        </hints>
+        <description>Parameter &lt;code&gt;intentionallyUnusedString&lt;/code&gt; is not used  in either this method or any of its derived methods</description>
+    </problem>
+</problems>
+

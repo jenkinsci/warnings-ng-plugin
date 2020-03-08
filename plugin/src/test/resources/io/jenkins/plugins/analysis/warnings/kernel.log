@@ -1,0 +1,184 @@
+[    0.000000] ACPI: RSDP 0x00000000000F68D0 000014 (v00 BOCHS )
+
+[    0.000000] ACPI: RSDT 0x0000000007FE18DC 000030 (v01 BOCHS  BXPCRSDT 00000001 BXPC 00000001)
+
+[    0.000000] ACPI: FACP 0x0000000007FE17B8 000074 (v01 BOCHS  BXPCFACP 00000001 BXPC 00000001)
+
+[    0.000000] ACPI: DSDT 0x0000000007FE0040 001778 (v01 BOCHS  BXPCDSDT 00000001 BXPC 00000001)
+
+[    0.000000] ACPI: FACS 0x0000000007FE0000 000040
+
+[    0.000000] ACPI: APIC 0x0000000007FE182C 000078 (v01 BOCHS  BXPCAPIC 00000001 BXPC 00000001)
+
+[    0.000000] ACPI: HPET 0x0000000007FE18A4 000038 (v01 BOCHS  BXPCHPET 00000001 BXPC 00000001)
+
+[    0.003121] ACPI: 1 ACPI AML tables successfully acquired and loaded
+
+[    0.038642] kworker/u2:0 (32) used greatest stack depth: 14256 bytes left
+
+[    0.040025] kworker/u2:0 (26) used greatest stack depth: 13920 bytes left
+
+[    0.062404] acpi PNP0A03:00: fail to add MMCONFIG information, can't access extended PCI configuration space under this bridge.
+
+[    0.086551] ACPI: Enabled 3 GPEs in block 00 to 0F
+
+[    0.235151] ACPI: PCI Interrupt Link [LNKC] enabled at IRQ 11
+
+[    0.577643] mdev (949) used greatest stack depth: 13888 bytes left
+
+udhcpc: started, v1.27.0.git
+
+Setting IP address 0.0.0.0 on eth0
+
+udhcpc: sending discover
+
+udhcpc: sending discover
+
+udhcpc: sending select for 10.0.2.15
+
+udhcpc: lease of 10.0.2.15 obtained, lease time 86400
+
+Setting IP address 10.0.2.15 on eth0
+
+Deleting routers
+
+route: SIOCDELRT: No such process
+
+Adding router 10.0.2.2
+
+Recreating /etc/resolv.conf
+
+ Adding DNS server 10.0.2.3
+
+[    3.635335] KABOOM: kaboom_init: WARNING
+
+[    3.635981] ------------[ cut here ]------------
+
+[    3.636783] WARNING: CPU: 0 PID: 983 at /home/bene/work/rtl/test-description/tmp/linux-stable-rt/drivers/misc/kaboom.c:26 kaboom_init+0x79/0xd0 [kaboom]()
+
+[    3.639116] Modules linked in: kaboom(+)
+
+[    3.639770] CPU: 0 PID: 983 Comm: modprobe Not tainted 4.4.47-rt58+ #21
+
+[    3.639770] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.1-1 04/01/2014
+
+[    3.639773]  0000000000000000 ffff8800072c3ca0 ffffffff8132b4be 0000000000000000
+
+[    3.639774]  0000000000000009 ffff8800072c3cd8 ffffffff8105571d ffffffff81e1d040
+
+[    3.639775]  ffff880007247ea0 0000000000000000 ffffffffa0000000 ffffffffa0000300
+
+[    3.639775] Call Trace:
+
+[    3.639779]  [<ffffffff8132b4be>] dump_stack+0x4f/0x71
+
+[    3.639782]  [<ffffffff8105571d>] warn_slowpath_common+0x7d/0xd0
+
+[    3.639784]  [<ffffffffa0000000>] ? 0xffffffffa0000000
+
+[    3.639786]  [<ffffffff81055825>] warn_slowpath_null+0x15/0x30
+
+[    3.639787]  [<ffffffffa0000079>] kaboom_init+0x79/0xd0 [kaboom]
+
+[    3.639788]  [<ffffffff810003b1>] do_one_initcall+0x81/0x1a0
+
+[    3.639791]  [<ffffffff81127491>] do_init_module+0x5a/0x1bf
+
+[    3.639793]  [<ffffffff810d155a>] load_module+0x1d8a/0x2200
+
+[    3.639794]  [<ffffffff810cdc10>] ? m_show+0x190/0x190
+
+[    3.639796]  [<ffffffff810d1b8f>] SYSC_finit_module+0x8f/0xa0
+
+[    3.639798]  [<ffffffff810d1bb9>] SyS_finit_module+0x9/0x10
+
+[    3.639799]  [<ffffffff818f6c97>] entry_SYSCALL_64_fastpath+0x12/0x66
+
+[    3.639801] ---[ end trace 0000000000000002 ]---
+
+[    3.652237] KABOOM: kaboom_init: ERR
+
+[    3.652614] KABOOM: kaboom_init: CRIT
+
+[    3.652976] KABOOM: kaboom_init: ALERT
+
+[    3.653399] KABOOM: kaboom_init: EMERG
+
+[    3.653804] ------------[ cut here ]------------
+
+[    3.653805] kernel BUG at /home/bene/work/rtl/test-description/tmp/linux-stable-rt/drivers/misc/kaboom.c:39!
+
+[    3.653807] invalid opcode: 0000 [#1] PREEMPT SMP 
+
+[    3.653808] Modules linked in: kaboom(+)
+
+[    3.653810] CPU: 0 PID: 983 Comm: modprobe Tainted: G        W       4.4.47-rt58+ #21
+
+[    3.653811] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.1-1 04/01/2014
+
+[    3.653812] task: ffff8800065ea640 ti: ffff8800072c0000 task.ti: ffff8800072c0000
+
+[    3.653816] RIP: 0010:[<ffffffffa000008e>]  [<ffffffffa000008e>] kaboom_init+0x8e/0xd0 [kaboom]
+
+[    3.653817] RSP: 0018:ffff8800072c3cf8  EFLAGS: 00010292
+
+[    3.653817] RAX: 000000000000001a RBX: ffffffff81e1d040 RCX: 0000000000000001
+
+[    3.653818] RDX: 0000000000000000 RSI: ffffffff81bc9b60 RDI: 00000000ffffffff
+
+[    3.653819] RBP: ffff8800072c3cf8 R08: 0000000000000002 R09: 000000000000017a
+
+[    3.653819] R10: 0000000000000004 R11: ffffffffffffffff R12: ffff880007247ea0
+
+[    3.653820] R13: 0000000000000000 R14: ffffffffa0000000 R15: ffffffffa0000300
+
+[    3.653821] FS:  00007f6b8a2b8700(0000) GS:ffff880007c00000(0000) knlGS:0000000000000000
+
+[    3.653822] CS:  0010 DS: 0000 ES: 0000 CR0: 000000008005003b
+
+[    3.653824] CR2: 000055ab8c3ec008 CR3: 0000000006b75000 CR4: 00000000000006f0
+
+[    3.653825] Stack:
+
+[    3.653826]  ffff8800072c3d68 ffffffff810003b1 ffff8800072c6040 0000000000000002
+
+[    3.653827]  ffff8800072c6040 0000000000000001 ffff8800064cc5a0 0000000000000002
+
+[    3.653829]  0000000000000018 ffffffffa0000300 ffffffffa0000300 ffffffffa0000350
+
+[    3.653829] Call Trace:
+
+[    3.653832]  [<ffffffff810003b1>] do_one_initcall+0x81/0x1a0
+
+[    3.653834]  [<ffffffff81127491>] do_init_module+0x5a/0x1bf
+
+[    3.653836]  [<ffffffff810d155a>] load_module+0x1d8a/0x2200
+
+[    3.653837]  [<ffffffff810cdc10>] ? m_show+0x190/0x190
+
+[    3.653839]  [<ffffffff810d1b8f>] SYSC_finit_module+0x8f/0xa0
+
+[    3.653841]  [<ffffffff810d1bb9>] SyS_finit_module+0x9/0x10
+
+[    3.653843]  [<ffffffff818f6c97>] entry_SYSCALL_64_fastpath+0x12/0x66
+
+[    3.653855] Code: e8 d2 71 12 e1 be 1a 00 00 00 48 c7 c7 c0 01 00 a0 e8 97 57 05 e1 eb c4 48 c7 c6 20 02 00 a0 48 c7 c7 96 01 00 a0 e8 ac 71 12 e1 <0f> 0b 48 c7 c6 20 02 00 a0 48 c7 c7 5a 01 00 a0 e8 97 71 12 e1 
+
+[    3.653857] RIP  [<ffffffffa000008e>] kaboom_init+0x8e/0xd0 [kaboom]
+
+[    3.653857]  RSP <ffff8800072c3cf8>
+
+[    3.676097] ---[ end trace 0000000000000003 ]---
+
+Segmentation fault
+
+[    3.677067] sysrq: SysRq : Emergency Sync
+
+[    3.677532] sysrq: SysRq : Emergency Remount R/O
+
+[    3.678035] Emergency Sync complete
+
+[    3.678437] Emergency Remount complete
+
+[    3.678851] sysrq: SysRq : Resetting
+

@@ -1,0 +1,42 @@
+<div>
+    <p>
+        The Groovy script works on the
+        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html">Matcher</a>
+        instance that is passed to the script in the variable <code>matcher</code>. The script must have a single return
+        value of type <code>Optional&lt;edu.hm.hafner.analysis.Issue&gt;</code>. Use the
+        <code>edu.hm.hafner.analysis.IssueBuilder</code> instance that is passed to the script in the variable
+        <code>builder</code> to create a new issue instance. Note that the method <code>buildOptional()</code> creates an
+        <code>Optional</code> with a wrapped <code>Issue</code> instance, you rarely need to call the
+        <code>build()</code> method that directly creates an <code>Issue</code>. If a false positive has been detected
+        by the regular expression, you must return <code>Optional.empty()</code>.
+
+        Additional available variables:
+    <dl>
+        <dt>fileName</dt>
+        <dd>the name of the parsed report file</dd>
+        <dt>lineNumber</dt>
+        <dd>the current line number</dd>
+    </dl>
+    </p>
+
+    <h4> Example </h4>
+
+    <p>
+        Here is an example that you can use as a starting point for your script. It composes a new warning using
+        the matcher of the regular expression <code>^\s*(.*):(\d+):(.*):\s*(.*)$</code>.
+    </p>
+    <hr/>
+    <pre>
+import edu.hm.hafner.analysis.Severity
+
+builder.setFileName(matcher.group(1))
+        .setLineStart(Integer.parseInt(matcher.group(2)))
+        .setSeverity(Severity.WARNING_NORMAL)
+        .setCategory(matcher.group(3))
+        .setMessage(matcher.group(4))
+
+return builder.buildOptional();
+  </pre>
+    <hr/>
+
+</div>

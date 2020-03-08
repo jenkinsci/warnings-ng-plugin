@@ -1,0 +1,22 @@
+{
+  "rows": [
+    {
+      "id": 476033,
+      "state": "added",
+      "suppressed": false,
+      "cloneType": 2,
+      "leftPath": "projects/plugins/dg_scripting/generated/dg.cpp",
+      "leftLine": 70608,
+      "leftEndLine": 70661,
+      "leftLength": 54,
+      "leftWeight": 40,
+      "rightPath": "projects/plugins/dg_scripting/src/dg_scripting.cpp",
+      "rightLine": 282,
+      "rightEndLine": 321,
+      "rightLength": 40,
+      "rightWeight": 40,
+      "justification": "",
+      "tags": []
+    }
+  ]
+}

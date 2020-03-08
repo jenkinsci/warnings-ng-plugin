@@ -1,0 +1,10 @@
++ ./Login_to_web.robot
+W: 25, 100: Line is too long (exceeds 100 characters) (LineTooLong)
+E: 40, 0: No keyword documentation (RequireKeywordDocumentation)
++ ./Merchant_Signup.robot
+W: 24, 100: Line is too long (exceeds 100 characters) (LineTooLong)
+E: 378, 0: No keyword documentation (RequireKeywordDocumentation)
++ ./merchant_common_keyword.txt
+W: 73, 0: Too few steps (1) in keyword (TooFewKeywordSteps)
+I: 123, 0: Ignore Error (Ignore Error)
+K: 222, 0: Invalid Warning Type (Invalid Warning)

@@ -1,0 +1,23 @@
+ -------------------------------------------------------------------------------
+| Linux |
+ -------
+
+failtest.pp:1:autoloader_layout:ERROR:failtest not in autoload module layout
+./modules/test/manifests/init.pp:3:80chars:WARNING:line has more than 80 characters
+./modules/test/manifests/sub/class/morefail.pp:10:80chars:WARNING:line has more than 80 characters
+
+Ubuntu
+
+    ubuntu-server-1404-x64 executed in 0.14 seconds
+    localhost $ scp /var/lib/jenkins/jobs/puppet-bind/workspace ubuntu-server-1404-x64:/etc/puppet/modules/bind {}
+
+    ubuntu-server-1404-x64 13:48:01$ env PATH="/usr/bin:/opt/puppet-git-repos/hiera/bin:${PATH}" RUBYLIB="/opt/puppet-git-repos/hiera/lib:/opt/puppet-git-repos/hiera-puppet/lib:${RUBYLIB}" facter  osfamily
+    Debian
+
+
+ -------------------------------------------------------------------------------
+| Windows |
+ ---------
+
+C:\ProgramData\PuppetLabs\puppet\etc\manifests\site.pp:4:hard_tabs:ERROR:tab character found
+C:\CI CD\puppet\modules\jenkins\init.pp:15:80chars:WARNING:line has more than 80 characters

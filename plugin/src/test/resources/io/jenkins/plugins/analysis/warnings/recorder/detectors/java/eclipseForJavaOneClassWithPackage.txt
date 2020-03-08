@@ -1,0 +1,15 @@
+init:
+
+compile-warning:
+    [mkdir] Created dir: /Users/build/warning
+    [javac] Compiling 42 source files to /Users/build/warning
+    [javac] ----------
+    [javac] 1. WARNING in SampleClassWithPackage.java (at line 42)
+    [javac] 	Sample Message1
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] Sample Message1
+    [javac] ----------
+    [javac] 1 problem (1 warning)
+
+BUILD SUCCESSFUL
+Total time: 1 second

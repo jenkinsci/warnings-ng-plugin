@@ -1,0 +1,45 @@
+================ From Gcc.txt
+testhist.l:451: warning: 'void yyunput(int, char*)' defined but not used
+
+/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc:73: error: implicit typename is deprecated, please see the documentation for details
+
+foo.cc:4:39: error: foo.h: No such file or directory
+
+../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp:678: warning: missing initializer for member sigaltstack::ss_sp
+../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp:678: warning: missing initializer for member sigaltstack::ss_flags
+../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp:678: warning: missing initializer for member sigaltstack::ss_size
+
+src/test_simple_sgs_message.cxx:52: warning: large integer implicitly truncated to unsigned type
+
+================ Issue 3897 (not valid gcc4 errors -> should be undetected)
+/dir1/dir2/file.c:12:15: file.h: No such file or directory
+/dir1/dir2/file.cpp:20:2: invalid preprocessing directive #include
+
+================ Issue 4712
+Notes from the gcc compiler output are reported as an gcc error with priority high.
+See this example:
+main/mep.cpp:352: warning: 's2.mepSector2::lubrications' may be used uninitialized in this function
+main/mep.cpp:1477: note: 's2.mepSector2::lubrications' was declared here
+
+=============== Issue 4753
+warnings.cc: In function 'void print(T) [with T = Test]':
+warnings.cc:9:   instantiated from 'void out(T) [with T = Test]'
+warnings.cc:14:   instantiated from here
+warnings.cc:6: warning: passing 'Test' chooses 'int' over 'unsigned int'
+warnings.cc:6: warning:   in call to 'std::basic_ostream<_CharT, _Traits>& std::basic_ostream<_CharT, _Traits>::operator<<(int) [with _CharT = char, _Traits = std::char_traits<char>]'
+
+=============== Issue 5605
+In file included from /usr/include/c++/4.3/backward/hash_set:64,
+                 from /usr/include/boost/graph/adjacency_list.hpp:25,
+                 from Node.cpp:51:
+/usr/include/c++/4.3/backward/backward_warning.h:33:2: warning: #warning This file includes at least one deprecated or antiquated header which may be removed without further notice at a future date. Please use a non-deprecated interface with equivalent functionality instead. For a listing of replacement headers and interfaces, consult the file backward_warning.h. To disable this warning use -Wno-deprecated.
+
+=============== Checking uncommon file names
+fo:oo.cpp: In function 'int main()':
+fo:oo.cpp:8: error: 'bar' was not declared in this scope
+fo:oo.cpp:12: error: expected ';' before 'return'
+foo bar.hello*world:12:
+
+=============== Check with a category - -fdiagnostics-show-option
+warner.cpp: In function 'void dispatcher(int)':
+warner.cpp:23: warning: unused variable 'j' [-Wunused-variable]

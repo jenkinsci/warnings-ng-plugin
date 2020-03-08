@@ -1,0 +1,45 @@
+init:
+
+compile-warning:
+    [mkdir] Created dir: /Users/build/warning
+    [javac] Compiling 42 source files to /Users/build/warning
+    [javac] ----------
+    [javac] 1. WARNING in SampleClassWithoutPackage.java (at line 42)
+    [javac] 	Sample Message1
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] Sample Message1
+    [javac] ----------
+    [javac] ----------
+    [javac] 2. WARNING in SampleClassWithPackage.java (at line 42)
+    [javac] 	Sample Message2
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] Sample Message2
+    [javac] ----------
+    [javac] ----------
+    [javac] 3. WARNING in SampleClassWithBrokenPackageNaming.java (at line 42)
+    [javac] 	Sample Message3
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] Sample Message3
+    [javac] ----------
+    [javac] ----------
+    [javac] 4. WARNING in SampleClassWithUnconventionalPackageNaming.java (at line 42)
+    [javac] 	Sample Message4
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] Sample Message4
+    [javac] ----------
+    [javac] ----------
+    [javac] 5. WARNING in UnknownFileType.txt (at line 42)
+    [javac] 	Sample Message5
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] Sample Message5
+    [javac] ----------
+    [javac] ----------
+    [javac] 6. WARNING in /NOT/EXISTING/PATH/TO/NOT_EXISTING_FILE (at line 42)
+    [javac] 	Sample Message6
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] Sample Message6
+    [javac] ----------
+    [javac] 6 problems (6 warnings)
+
+BUILD SUCCESSFUL
+Total time: 1 second

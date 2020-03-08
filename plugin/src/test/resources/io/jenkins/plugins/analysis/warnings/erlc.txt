@@ -1,0 +1,3 @@
+
+./test.erl:125: Warning: variable 'Name' is unused
+./test2.erl:175: record 'Extension' undefined

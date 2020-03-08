@@ -1,0 +1,16 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Provides entries for the custom properties (id, name) of a static analysis tool.
+  </st:documentation>
+
+  <f:entry title="${%title.id}" description="${%description.id(descriptor.id)}" field="id">
+    <f:textbox/>
+  </f:entry>
+
+  <f:entry title="${%title.name}" description="${%description.name(descriptor.name)}" field="name">
+    <f:textbox/>
+  </f:entry>
+
+</j:jelly>

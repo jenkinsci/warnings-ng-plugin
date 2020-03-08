@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:i="/issues" xmlns:f="/lib/form">
+
+  <f:entry title="${%title.tool}" description="${%description.tool(rootURL)}" field="parserId">
+    <f:select/>
+  </f:entry>
+
+  <f:entry title="${%title.pattern}" field="pattern"
+           description="${%description.pattern('http://ant.apache.org/manual/Types/fileset.html')}">
+    <f:textbox/>
+  </f:entry>
+
+  <f:entry title="${%title.reportEncoding}" field="reportEncoding"
+           description="${%description.reportEncoding}">
+    <f:combobox/>
+  </f:entry>
+
+  <i:tool-defaults/>
+
+</j:jelly>

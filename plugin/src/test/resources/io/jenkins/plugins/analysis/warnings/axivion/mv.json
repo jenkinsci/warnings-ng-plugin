@@ -1,0 +1,21 @@
+{
+  "rows": [
+    {
+      "id": 55,
+      "state": "added",
+      "metric": "Metric.Maximum_Nesting",
+      "description": "Maximum nesting",
+      "entity": "operator()",
+      "linkName": "R MainWindow:setupConnections():ur@QtPrivate:QFunctorSlotObject<,1,!33+9!List<(QString-c&)>,v>:function:operator()(!77+10!)-c",
+      "entityType": "Method",
+      "path": "src/mainwindow.cpp",
+      "line": 111,
+      "value": 0.0,
+      "min": 1.0,
+      "max": 5.0,
+      "severity": "",
+      "justification": "",
+      "tags": []
+    }
+  ]
+}

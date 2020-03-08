@@ -1,0 +1,10 @@
+Compiling: C:\Documents and Settings\xxxx\GNT\aaa.GNT...
+   [ccbl] COPY\zzz.CPY, line 39: Warning: Imperative statement required
+Build failed (warning only): C:\Documents and Settings\xxxx\COB\aaa.COB
+Compiling: C:\Documents and Settings\xxxx\GNT\bbb.GNT...
+   [ccbl] C:\Documents and Settings\xxxx\COB\bbb.COB, line 111: Warning: Don't run with knives
+   [ccbl] C:\Documents and Settings\xxxx\COB\bbb.COB, line 115: Warning: Don't run with knives
+Build failed (warning only): C:\Documents and Settings\xxxx\COB\bbb.COB
+Compiling: C:\Documents and Settings\xxxx\GNT\ccc.GNT...
+   C:\Documents and Settings\xxxx\COB\ccc.COB, line 123: Warning: I'm a green banana
+

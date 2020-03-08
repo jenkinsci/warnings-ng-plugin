@@ -1,0 +1,21 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" >
+
+  <st:documentation>
+    Renders a number as link if the number if greater than zero. Otherwise a plain zero is rendered.
+    <st:attribute name="value" use="required" type="int">
+      The value to render.
+    </st:attribute>
+    <st:attribute name="url" use="required" type="String">
+      The url of the link.
+    </st:attribute>
+  </st:documentation>
+
+  <j:if test="${value == 0}">
+    0
+  </j:if>
+  <j:if test="${value != 0}">
+    <a href="${url}">${value}</a>
+  </j:if>
+
+</j:jelly>

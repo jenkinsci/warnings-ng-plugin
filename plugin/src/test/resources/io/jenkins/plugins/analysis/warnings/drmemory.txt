@@ -1,0 +1,74 @@
+Dr. Memory version 1.10.1 build 3 built on Jan 10 2010 10:10:10
+Dr. Memory results for pid 5759: "test_open_address_hash"
+Recorded 3 suppression(s) from default /Applications/DrMemory/bin/suppress-default.txt
+
+Error #1: LEAK 150 direct bytes 0x005a2540-0x005a25d6 + 0 indirect bytes
+# 0 replace_malloc                                     [/drmemory_package/common/alloc_replace.c:2576]
+# 1 test_open_address_hashmap_initialize               [/open_address_hash/test_open_address_hash.c:84]
+# 2 main                                               [/open_address_hash/run_open_address_hash.c:7]
+
+Error #2: POSSIBLE LEAK 150 direct bytes 0x005a25f8-0x005a268e + 0 indirect bytes
+# 0 replace_malloc                                              [/drmemory_package/common/alloc_replace.c:2576]
+# 1 test_open_address_hashmap_compute_simple_hash               [/open_address_hash/test_open_address_hash.c:107]
+# 2 main                                                        [/open_address_hash/run_open_address_hash.c:7]
+
+Error #3: LEAK 150 direct bytes 0x005a25f8-0x005a268e + 0 indirect bytes
+# 0 replace_malloc
+# 1 test_open_address_hashmap_compute_complex_hash
+# 2 main
+
+Error #4: UNINITIALIZED READ: reading 0xb741b004-0xb741b012 14 byte(s) within 0xb741b000-0xb741b012
+# 0 system call write parameter #1
+# 1 libc.so.6!__GI___libc_write                    [../sysdeps/unix/syscall-template.S:81]
+# 2 libc.so.6!_IO_new_file_write                   [/build/eglibc-X4bnBz/eglibc-2.19/libio/fileops.c:1261]
+# 3 libc.so.6!new_do_write                         [/build/eglibc-X4bnBz/eglibc-2.19/libio/fileops.c:538]
+# 4 libc.so.6!_IO_new_do_write                     [/build/eglibc-X4bnBz/eglibc-2.19/libio/fileops.c:511]
+# 5 libc.so.6!__GI__IO_file_sync                   [/build/eglibc-X4bnBz/eglibc-2.19/libio/fileops.c:892]
+# 6 libc.so.6!__GI__IO_fflush                      [/build/eglibc-X4bnBz/eglibc-2.19/libio/iofflush.c:41]
+# 7 fll_write_node                                 [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:16]
+# 8 fll_create                                     [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:16]
+# 9 create_test_linked_list                        [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/test_file_linked_list.c:24]
+#10 test_file_linked_list_initialize               [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/test_file_linked_list.c:55]
+#11 planck_unit_run_suite                          [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:16]
+#12 runalltests_file_linked_list                   [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/test_file_linked_list.c:776]
+#13 main                                           [/var/lib/jenkins/jobs/jobs_name/workspace/jenkins_config/iondb/src/tests/unit/dictionary/linear_hash/run_linear_hash.c:11]
+Note: @0:00:01.247 in thread 7601
+
+Error #5: INVALID HEAP ARGUMENT: free 0x00001234
+Elapsed time = 0:00:00.180 in thread 21848
+# 0 malloc!main                                     [/var/lib/jenkins/jobs/drmemory/workspace/git/src/tests/malloc.c:164]
+# 1 libc.so.6!__libc_start_main                     [/build/buildd/eglibc-2.11.1/csu/libc-start.c:226]
+# 2 malloc!_start
+
+Error #6: INVALID HEAP ARGUMENT: allocated with operator new[], freed with operator delete
+# 0 test_mismatch                   [cs2::bug.cpp:122]
+# 1 main                            [cs2::bug.cpp:139]
+Note: memory was allocated here:
+Note: # 0 test_mismatch                   [cs2::bug.cpp:121]
+Note: # 1 main                            [cs2::bug.cpp:139]
+
+Error #7: UNADDRESSABLE ACCESS of freed memory: reading 0x001338a8-0x001338ac 4 byte(s)
+
+Error #8: INVALID HEAP ARGUMENT: allocated with operator new[], freed with operator delete
+Note: memory was allocated here:
+Note: # 0 test_mismatch                   [test/cs2::bug.cpp:121]
+Note: # 1 main                            [test/cs2::bug.cpp:139]
+
+===========================================================================
+FINAL SUMMARY:
+
+DUPLICATE ERROR COUNTS:
+
+SUPPRESSIONS USED:
+
+ERRORS FOUND:
+      1 unique,     1 total unaddressable access(es)
+      1 unique,     1 total uninitialized access(es)
+      2 unique,     2 total invalid heap argument(s)
+      0 unique,     0 total warning(s)
+      2 unique,     2 total,    300 byte(s) of leak(s)
+      1 unique,     1 total,    150 byte(s) of possible leak(s)
+ERRORS IGNORED:
+      1 unique,     1 total,   4096 byte(s) of still-reachable allocation(s)
+         (re-run with "-show_reachable" for details)
+Details: /Applications/DrMemory/drmemory/logs/DrMemory-test_open_address_hash.5759.000/results.txt

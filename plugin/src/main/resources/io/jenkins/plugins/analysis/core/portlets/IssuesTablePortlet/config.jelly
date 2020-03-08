@@ -1,0 +1,15 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
+
+  <f:entry title="${%Name}" field="name">
+    <f:textbox default="${descriptor.getDisplayName()}"/>
+  </f:entry>
+  <f:entry title="${%hide.title}" description="${%hide.description}" field="hideCleanJobs">
+    <f:checkbox />
+  </f:entry>
+  <f:entry title="${%icons.title}" description="${%icons.description}" field="showIcons">
+    <f:checkbox />
+  </f:entry>
+  <i:select-tools/>
+
+</j:jelly>

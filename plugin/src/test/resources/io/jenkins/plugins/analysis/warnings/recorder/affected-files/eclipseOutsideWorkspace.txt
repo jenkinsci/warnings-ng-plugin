@@ -1,0 +1,14 @@
+init:
+
+compile-warning:
+    [mkdir] Created dir: /Users/build/warning
+    [javac] Compiling 1 source files to /Users/build/warning
+    [javac] ----------
+    [javac] 1. WARNING in Main.java (at line 3)
+    [javac] 	public class AttributeException extends RuntimeException
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] The serializable class AttributeException does not declare a static final serialVersionUID field of type long
+    [javac] ----------
+
+BUILD SUCCESSFUL
+Total time: 1 second

@@ -1,0 +1,8 @@
+ctc W549: ["C:\Projects\a\b\c\d\e\f\g\h\i\src\StbM.c" 8796/7] condition is always true
+ctc I801: ["C:\Projects\a\b\c\d\e\f\g\TcpIp_Int.h" 50/9] previous definition of macro "TS_RELOCATABLE_CFG_ENABLE"
+ctc W504: ["C:\Projects\a\b\c\d\e\f\g\h\include\ComM_Types_Int.h" 36/9] macro "TS_RELOCATABLE_CFG_ENABLE" redefined
+ctc W524: ["C:\Projects\a\b\c\d\e\f\g\h\src\SoAd.c" 2221/35] conversion of integer to pointer at argument #3
+ctc W536: ["C:\Projects\a\b\c\d\e\f\g\TcpIp_Tcp.c" 860/41] unused static function "TcpIp_Tcp_checkRemoteAddr"
+ctc E208: ["C:\Projects\a\b\c\DmaLib.h" 380/1] syntax error - token ";" inserted before "{"
+ctc I805: ["BswM_UserCallouts.c" 42/1] start of current function definition
+ctc F104: protection error: No license key found for product code SW160800

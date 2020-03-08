@@ -1,0 +1,15 @@
+
+testhist.l:451: warning: `void yyunput(int, char*)' defined but not used
+
+/u1/drjohn/bfdist/packages/RegrTest/V00-03-01/RgtAddressLineScan.cc:73: error: implicit typename is deprecated, please see the documentation for details
+
+foo.cc:4:39: error: foo.h: No such file or directory
+
+foo.so: undefined reference to 'missing_symbol'
+
+../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp:678: warning: missing initializer for member sigaltstack::ss_sp
+../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp:678: warning: missing initializer for member sigaltstack::ss_flags
+../../lib/linux-i686/include/boost/test/impl/execution_monitor.ipp:678: warning: missing initializer for member sigaltstack::ss_size
+
+src/test_simple_sgs_message.cxx:52: warning: large integer implicitly truncated to unsigned type
+

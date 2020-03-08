@@ -1,0 +1,10 @@
+"usi_plugin.cpp", line 212: Warning, badargtypel2w: String literal converted to char* in formal argument 1 in call to userlog(char*, ...).
+"usi_plugin.cpp", line 224: Warning, badargtypel2w: String literal converted to char* in formal argument msg in call to except(char*).
+
+"ServerList.cpp", line 8: Error : String literal converted to char* in formal argument 1 in call to userlog(char*, ...).
+"ServerList.cpp", line 44: Warning, badargtypel2w: String literal converted to char* in formal argument 1 in call to userlog(char*, ...).
+"ServerList.cpp", line 50: Warning, badargtypel2w: String literal converted to char* in formal argument 1 in call to userlog(char*, ...).
+
+"warner.cpp", line 19: Warning, hidef: Child::operator== hides the function Parent::operator==(Parent&) const.
+"warner.cpp", line 30: Warning (Anachronism), wbadlkgasg: Assigning void(*)(int) to extern "C" void(*)(int).
+"warner.cpp", line 32: Warning: statement is unreachable.

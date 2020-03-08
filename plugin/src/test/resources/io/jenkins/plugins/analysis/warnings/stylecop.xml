@@ -1,0 +1,27 @@
+<StyleCopViolations>
+  <Violation Section="Root.ListViewProblem.Form1.Dispose%bool" LineNumber="18" Source="Form1.Designer.cs"
+             RuleNamespace="Microsoft.StyleCop.CSharp.ReadabilityRules" Rule="PrefixLocalCallsWithThis" RuleId="SA1101">
+    The call to components must begin with the 'this.' prefix to indicate that the item is a member of the class.
+  </Violation>
+  <Violation
+          Section="Root.ListViewProblem.Form1.Dispose%bool"
+          LineNumber="16"
+          Source="Form1.Designer.cs"
+          RuleNamespace="Microsoft.StyleCop.CSharp.ReadabilityRules"
+          Rule="PrefixLocalCallsWithThis"
+          RuleId="SA1101">
+    The call to components must begin with the 'this.' prefix to indicate that the item is a member of the class.
+  </Violation>
+  <Violation Section="Root.UnitTests.MainClass" LineNumber="7" Source="MainClass.cs"
+             RuleNamespace="Microsoft.SourceAnalysis.CSharp.DocumentationRules" Rule="ElementsMustBeDocumented"
+             RuleId="SA1600">The class must have a documentation header.
+  </Violation>
+  <Violation Section="Root.UnitTests.MainClass.m_Value" LineNumber="9" Source="MainClass.cs"
+             RuleNamespace="Microsoft.SourceAnalysis.CSharp.DocumentationRules" Rule="ElementsMustBeDocumented"
+             RuleId="SA1600">The field must have a documentation header.
+  </Violation>
+  <Violation Section="Root.UnitTests.MainClass.Value" LineNumber="10" Source="MainClass.cs"
+             RuleNamespace="Microsoft.SourceAnalysis.CSharp.DocumentationRules" Rule="ElementsMustBeDocumented"
+             RuleId="SA1600">The property must have a documentation header.
+  </Violation>
+</StyleCopViolations>

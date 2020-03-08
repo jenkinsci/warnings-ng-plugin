@@ -1,0 +1,9 @@
+# Linux
+"/home/test/main.cpp", line 21: Error:  #5: cannot open source input file "somefile.h": No such file or directory
+
+# Windows
+"C:\home\test\main.cpp ", line 23: Error:  #5: cannot open source input file "somefile.h": No such file or directory
+
+# Warning
+"/home/test/main.cpp", line 25: Warning:  #550-D: something bad happened here
+

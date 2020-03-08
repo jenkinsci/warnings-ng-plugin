@@ -1,0 +1,29 @@
+{
+  "rows": [
+    {
+      "id": 26941,
+      "state": "added",
+      "suppressed": false,
+      "violationType": "Divergence",
+      "architectureSource": "gravis2:main",
+      "architectureSourceLinkName": "83de10c2-a032-446f-a3f9-0aa981793708",
+      "architectureSourceType": "Cluster",
+      "architectureTarget": "gravis2:dg model",
+      "architectureTargetLinkName": "ebaeb5af-6c13-4185-99e6-9cbefdb42edc",
+      "architectureTargetType": "Cluster",
+      "sourceEntity": "open_file_dialog",
+      "sourceLinkName": "R projects/tools/gravis2/src/mainwindow.cpp:Basepath_Dialog:open_file_dialog()",
+      "sourceEntityType": "Method",
+      "sourcePath": "projects/tools/gravis2/src/mainwindow.cpp",
+      "sourceLine": 3406,
+      "dependencyType": "Static_Call",
+      "targetEntity": "get_basepath",
+      "targetLinkName": "R projects/tools/gravis2/src/gravis_graph.h:Gravis_Graph:get_basepath()-c",
+      "targetEntityType": "Method",
+      "targetPath": "projects/tools/gravis2/src/gravis_graph.h",
+      "targetLine": 135,
+      "justification": "",
+      "tags": []
+    }
+  ]
+}

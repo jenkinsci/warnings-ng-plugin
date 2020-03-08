@@ -1,0 +1,8 @@
+unclassified:
+  warningsParsers:
+    parsers:
+    - name: "my-name"
+      id: "my-id"
+      regexp: ".*"
+      script: "script"
+      example: "example"

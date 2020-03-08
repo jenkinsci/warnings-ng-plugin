@@ -1,0 +1,2 @@
+/home/jenkins/agent/workspace/aaa/myProject/src/main/java/xxx/art/beans/MyServicesImpl.java:323: warning: [unchecked] unchecked call to put(K,V) as a member of the raw type Hashtable
+             desiredElements.put("Adresse", "");

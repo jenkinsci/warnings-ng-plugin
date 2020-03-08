@@ -1,0 +1,19 @@
+Compiling TestCase_0101.cpp because TestCase_0101.o does not exist
+".\maindir\tests\TestCase_0101.cpp", line 37: warning #546-D: 
+          transfer of control bypasses initialization of:
+            variable "CF_TRY_FLAG" (declared at line 42)
+            variable "CF_EXCEPTION_NOT_CAUGHT" (declared at line 42)
+        CF_TRY_CHECK_EX(ex2);
+        ^
+
+".\maindir\tests\TestCase_0101.cpp", line 29: warning #177-D: label
+          "CF_TRY_LABELex1" was declared but never referenced
+     CF_TRY_EX(ex1)
+     ^
+Compiling TestCase_1601.cpp because TestCase_1601.o does not exist
+".\maindir\tests\TestCase_1601.cpp", line 9: warning #381-D: extra
+          ";" ignored
+  TEST_DSS( CHECK_4TH_CONFIG_DATA, 18, 142, 'F');
+                                                                  ^
+Integrating TestExec1601 because it does not exist
+Done

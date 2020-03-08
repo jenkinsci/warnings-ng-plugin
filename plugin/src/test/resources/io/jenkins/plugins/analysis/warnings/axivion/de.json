@@ -1,0 +1,15 @@
+{
+  "rows": [
+    {
+      "id": 7,
+      "state": "added",
+      "entity": "rowCount",
+      "linkName": "R PointModel:rowCount(QModelIndex-c&)-c",
+      "entityType": "Method",
+      "path": "src/pointmodel.cpp",
+      "line": 10,
+      "justification": "",
+      "tags": []
+    }
+  ]
+}

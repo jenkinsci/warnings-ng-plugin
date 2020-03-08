@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<BugCollection version="1.2.1" sequence="0" timestamp="1186259374191" analysisTimestamp="1186259377278" release="">
+  <Project filename="&lt;&lt;unnamed project&gt;&gt;" projectName="sampleFindBugsParserModule">
+  </Project>
+  <BugInstance type="IS2_INCONSISTENT_SYNC" priority="2" abbrev="IS" category="MT_CORRECTNESS"
+               instanceHash="4d839755cabf60eacc6438ac77ac5104" instanceOccurrenceNum="0" instanceOccurrenceMax="0">
+    <Class classname="edu.hm.hafner.irrelevant.ClassName">
+    </Class>
+  </BugInstance>
+</BugCollection>

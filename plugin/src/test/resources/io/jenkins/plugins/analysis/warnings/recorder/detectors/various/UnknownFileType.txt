@@ -1,0 +1,4 @@
+package edu.hm.hafner.simple.name;
+
+This file should be used as an unknown file type for the package detector and should not be detected as a valid
+file with a package and/or namespace.

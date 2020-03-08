@@ -1,0 +1,15 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
+
+  <f:entry title="${%High severity threshold}"
+           description="${%Minimum number of duplicated lines for high severity warnings.}"
+           field="highThreshold">
+    <f:number default="50"/>
+  </f:entry>
+  <f:entry title="${%Normal severity threshold}"
+           description="${%Minimum number of duplicated lines for normal severity warnings.}"
+           field="normalThreshold">
+    <f:number default="25"/>
+  </f:entry>
+
+</j:jelly>

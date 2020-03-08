@@ -1,0 +1,4 @@
+//eng/Tools/Hudson/instances/PCFARM08/.owner - can't add existing file
+//eng/Tools/Hudson/instances/PCFARM08/jobs/EASW-FIFA DailyTasks/config.xml - warning: add of existing file
+//eng/Tools/Hudson/instances/PCFARM08/jobs/BFBC2-DailyTasksEurope/config.xml - can't add (already opened for edit)
+//eng/Tools/Hudson/instances/PCFARM08/config.xml#8 - nothing changed

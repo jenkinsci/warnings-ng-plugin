@@ -1,0 +1,6 @@
+MSBUILD : warning : CA1823 : Microsoft.Performance : It appears that field 'Program.a' is never used or is only ever assigned to. Use this field or remove it. [C:\Src\Parser\CSharp\Test.csproj]
+
+MSBUILD : warning CA1502: Microsoft.Maintainability : 'CanvasHandler.Canvas.CreateImage(out bool, out ImageFormat)' has a cyclomatic complexity of 53. Rewrite or refactor the method to reduce complexity to 25. [D:\somefolder\someproject.csproj]
+
+C:\Src\Parser\CSharp\test.cs(140): warning : CA1031 : Microsoft.Design : Modify 'AccountController.ChangePassword(ChangePasswordModel)' to catch a more specific exception than 'Exception' or rethrow the exception. [C:\Src\Parser\CSharp\Test.csproj]
+ 

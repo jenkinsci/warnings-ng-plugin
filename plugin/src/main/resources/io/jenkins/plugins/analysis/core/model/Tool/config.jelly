@@ -1,0 +1,6 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues">
+
+  <i:tool-defaults/>
+  
+</j:jelly>

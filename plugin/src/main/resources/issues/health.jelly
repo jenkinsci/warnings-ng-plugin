@@ -1,0 +1,23 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Configures the health report.
+  </st:documentation>
+
+  <i:hr title="${%Health Report Configuration}"/>
+
+  <j:set var="healthyIcon" value="${resURL}/images/24x24/health-80plus.png"/>
+  <j:set var="unhealthyIcon" value="${resURL}/images/24x24/health-00to19.png"/>
+
+  <f:entry title="${%Healthy threshold}" description="${%description.healthy(healthyIcon)}" field="healthy">
+    <i:number/>
+  </f:entry>
+  <f:entry title="${%Unhealthy threshold}" description="${%description.unhealthy(unhealthyIcon)}" field="unhealthy">
+    <i:number/>
+  </f:entry>
+  <f:entry title="${%Health severities}" description="${%description.health.severities}" field="minimumSeverity">
+    <f:select default="LOW"/>
+  </f:entry>
+
+</j:jelly>

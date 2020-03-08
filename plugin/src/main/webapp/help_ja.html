@@ -1,0 +1,56 @@
+<div>
+  <p>
+    Jenkins がコンパイラの警告を集計します。 
+    このオプションを設定すると、警告数の推移や Web UIでの結果の参照など、警告に関する有益な情報が提供されます。 
+    この機能を利用するには、すべての警告をログファイルに出力するよう設定を変更してください。
+  </p>
+  <h4>Ant出の設定</h4>
+  <p>
+    Ant の javac タスクで、コンパイラの警告を出力するには、 (a) nowarn="on" と指定しない（デフォルトは"off"です） 
+    (b) コンパイラの引数などに -Xlint を追加する の２つが必要になります。 例：
+  </p>
+  <pre>
+    <code>
+&lt;javac deprecation="true" destdir="classes"&gt;
+  &lt;compilerarg value="-Xlint"/&gt;
+&lt;/javac&gt;
+    </code>
+  </pre>
+  
+  <h4>Maven での設定</h4>
+  <p>
+    mavenでコンパイルを行う場合、以下をpom.xmlに追加して、コンパイラの警告を有効にしてください。
+  </p>
+  <pre>
+    <code>
+
+&lt;plugins&gt;
+  [...]
+  &lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+      &lt;showDeprecation&gt;true&lt;/showDeprecation&gt;
+      &lt;showWarnings&gt;true&lt;/showWarnings&gt;
+    &lt;/configuration&gt;
+  &lt;/plugin&gt;
+[...]
+
+&lt;/plugins&gt;
+    </code>
+  </pre>
+  <h4>Oracleの無効な設定</h4>
+  Oracleデータベースの無効なオブジェクトをビジュアル化するには、次のSQL文の出力をコンソールログに出力します。
+  <pre>
+    <code>
+SELECT   dao.owner, dao.object_name, dao.object_type, dao.status, dae.line, dae.position, dae.text
+    FROM dba_objects dao, dba_errors dae
+   WHERE dao.status = 'INVALID'
+     AND dao.owner = dae.owner(+)
+     AND dao.object_name = dae.name(+)
+     AND dao.object_type = dae.type(+)
+ORDER BY object_type, object_name;
+    </code>
+  </pre>
+
+</div>

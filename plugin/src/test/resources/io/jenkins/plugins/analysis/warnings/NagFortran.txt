@@ -1,0 +1,13 @@
+nagfor file.f90 > not_a_message_line
+Info: C:\file1.inc, line 1: Unterminated last line of INCLUDE file
+Warning: C:/file2.f90, line 5: Procedure pointer F pointer-assigned but otherwise unused
+Questionable: /file3.f90, line 12: Array constructor has polymorphic element P(5) (but the constructor value will not be polymorphic)
+Extension: file4.f90, line 9: Left-hand side of intrinsic assignment is allocatable polymorphic variable X
+Obsolescent: file5.f, line 1: Fixed source form
+Deleted feature used: file6.f90, line 4: assigned GOTO statement
+Error: file7.f90: Character function length 7 is not same as argument F (no. 1) in reference to SUB from O8K (expected length 6)
+Runtime Error: file8.f90, line 7: Reference to undefined POINTER P
+Fatal Error: file9.f90, line 5: SAME_NAME is not a derived type
+             detected at ::@N
+Panic: file10.f90, line 1: User requested panic
+[NAG Fortran Compiler - not a message line]

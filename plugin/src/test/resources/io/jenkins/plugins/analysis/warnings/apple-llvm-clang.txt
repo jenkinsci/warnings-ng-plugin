@@ -1,0 +1,17 @@
+test.c:28:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]
+
+/path/to/test.c:28:8: warning: extra tokens at end of #endif directive [-Wextra-tokens]
+
+test.c:128: warning: extra tokens at end of #endif directive [-Wextra-tokens]
+
+test.c:28:8: warning: extra tokens at end of #endif directive
+
+t.c:3:11: warning: conversion specifies type 'char *' but the argument has type 'int' [-Wformat]
+
+t.c:3:11: warning: conversion specifies type 'char *' but the argument has type 'int' [-Wformat,1]
+
+t.c:3:11: warning: conversion specifies type 'char *' but the argument has type 'int' [-Wformat,Format String]
+
+exprs.c:47:15:{47:8-47:14}{47:17-47:24}: warning: invalid operands to binary expression ('int *' and '_Complex float')
+
+t.c:103:55: warning: passing 'uint8_t [11]' to parameter of type 'const char *' converts between pointers to integer types with different sign [-Wpointer-sign]

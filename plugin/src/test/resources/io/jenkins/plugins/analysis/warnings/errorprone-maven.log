@@ -1,0 +1,19 @@
+[WARNING] /Users/hafner/Development/git/analysis-model/src/main/java/edu/hm/hafner/analysis/IssueBuilder.java:[86,74] [NullAway] passing @Nullable parameter 'fileName' where @NonNull is required
+    (see http://t.uber.com/nullaway )
+[WARNING] /Users/hafner/Development/git/analysis-model/src/main/java/edu/hm/hafner/analysis/FilteredLog.java:[112,107] [FormatStringAnnotation] Format strings must be compile time constants or parameters annotated @FormatString: s
+    (see https://errorprone.info/bugpattern/FormatStringAnnotation)
+[WARNING] /Users/hafner/Development/git/analysis-model/src/main/java/edu/hm/hafner/analysis/parser/DrMemoryParser.java:[193,44] [StringSplitter] String.split(String) has surprising behavior
+    (see https://errorprone.info/bugpattern/StringSplitter)
+  Did you mean 'for (String line : Splitter.onPattern("\\r?\\n").split(stackTrace)) {'?
+[WARNING] /Users/hafner/Development/git/analysis-model/src/main/java/edu/hm/hafner/util/Ensure.java:[233,22] [NullAway] dereferenced expression value is @Nullable
+    (see http://t.uber.com/nullaway )
+[WARNING] /Users/hafner/Development/git/analysis-model/src/main/java/edu/hm/hafner/util/Ensure.java:[298,23] [NullAway] dereferenced expression value is @Nullable
+    (see http://t.uber.com/nullaway )
+[WARNING] /Users/hafner/Development/git/analysis-model/src/main/java/edu/hm/hafner/util/Ensure.java:[335,22] [NullAway] dereferenced expression value is @Nullable
+    (see http://t.uber.com/nullaway )
+[WARNING] /Users/hafner/Development/git/analysis-model/src/main/java/edu/hm/hafner/util/Ensure.java:[391,23] [NullAway] dereferenced expression values is @Nullable
+    (see http://t.uber.com/nullaway )
+[WARNING] /Users/hafner/Development/git/analysis-model/src/main/java/edu/hm/hafner/util/Ensure.java:[450,22] [NullAway] dereferenced expression value is @Nullable
+    (see http://t.uber.com/nullaway )
+[WARNING] /Users/hafner/Development/git/analysis-model/src/main/java/edu/hm/hafner/util/Ensure.java:[488,22] [NullAway] dereferenced expression value is @Nullable
+    (see http://t.uber.com/nullaway )

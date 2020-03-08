@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="simian.xsl" type="text/xsl"?>
+<simian version="2.5.10">
+    <check failOnDuplication="true" ignoreCharacterCase="true" ignoreCurlyBraces="true" ignoreIdentifierCase="true" ignoreModifiers="true" ignoreStringCase="true" reportDuplicateText="true" threshold="1">
+        <set lineCount="2" fingerprint="846729312888ddede2c079f9a36e4f2c">
+            <block sourceFile="./Main.java" startLineNumber="10" endLineNumber="13"/>
+            <block sourceFile="./Main.java" startLineNumber="19" endLineNumber="22"/>
+            <block sourceFile="./Main.java" startLineNumber="28" endLineNumber="31"/>
+            <text>
+<![CDATA[    System.out.println("testfile for redundancy");
+    for(int i = 0; i < 10; i++)
+    {
+      System.out.println(i);
+]]>
+            </text>
+        </set>
+        <summary duplicateFileCount="1" duplicateLineCount="6" duplicateBlockCount="3" totalFileCount="1" totalRawLineCount="35" totalSignificantLineCount="17" processingTime="94"/>
+    </check>
+</simian>

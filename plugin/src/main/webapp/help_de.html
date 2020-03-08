@@ -1,0 +1,56 @@
+<div>
+  <p>
+    Jenkins kann die Compiler Warnungen aus dem Log File einlesen und darstellen.
+    Wenn dies aktiviert wird, analysiert Jenkins nach jedem Build das erzeugte Log File und
+    stellt die Informationen in verschiedenen Ansichten dar: Trend Anzeige, Projekt Statistik und Package Statistik.
+    Zudem zeigt Jenkins die jeweiligen Warnungen direkt in der betroffen Datei an. Damit das Plug-in korrekt funktioniert,
+    muss im Build der Compiler so konfiguriert werden, dass er Warnungen im Log File erzeugt.
+  </p>
+  <h4>Ant Konfiguration</h4>
+  <p>
+    Wird Ant zum Bauen verwendet, dann darf die Option <code>nowarn="on"</code> nicht gesetzt werden (<code>"off"</code> ist die Standardeinstellung).
+    Zusätzlich muss der <code>-Xlint</code> Compiler Parameter gesetzt sein. Beispiel:
+  </p>
+  <pre>
+    <code>
+&lt;javac deprecation="true" destdir="classes"&gt;
+  &lt;compilerarg value="-Xlint"/&gt;
+&lt;/javac&gt;
+    </code>
+  </pre>
+  <h4>Maven Konfiguration</h4>
+  <p>
+    Wird maven zum Bauen verwendet, dann werden die Warnungen mit folgender Option aktiviert:
+  </p>
+  <pre>
+	<code>
+&lt;plugins&gt;
+  [...]
+  &lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+      &lt;showDeprecation&gt;true&lt;/showDeprecation&gt;
+      &lt;showWarnings&gt;true&lt;/showWarnings&gt;
+    &lt;/configuration&gt;
+  &lt;/plugin&gt;
+[...]
+&lt;/plugins&gt;
+  </code>
+  </pre>
+
+    <h4>Oracle Invalids Konfiguration</h4>
+  Um die Invalids einer Oracle Datenbank anzuzeigen, muss das Ergebnis des folgenden SQL Kommandos
+  auf der Konsole ausgegeben werden.
+  <pre>
+	  <code>
+SELECT   dao.owner, dao.object_name, dao.object_type, dao.status, dae.line, dae.position, dae.text
+    FROM dba_objects dao, dba_errors dae
+   WHERE dao.status = 'INVALID'
+     AND dao.owner = dae.owner(+)
+     AND dao.object_name = dae.name(+)
+     AND dao.object_type = dae.type(+)
+ORDER BY object_type, object_name;
+	  </code>
+  </pre>
+</div>

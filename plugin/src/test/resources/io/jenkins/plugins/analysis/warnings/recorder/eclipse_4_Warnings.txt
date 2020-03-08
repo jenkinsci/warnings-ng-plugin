@@ -1,0 +1,32 @@
+Buildfile: build.xml
+
+init:
+
+compile-warning:
+    [mkdir] Created dir: C:\Desenvolvimento\Java\jfg\build\build\warning
+    [javac] Compiling 34 source files to C:\Desenvolvimento\Java\jfg\build\build\warning
+    [javac] ----------
+    [javac] 1. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\AttributeException.java (at line 3)
+    [javac] 	public class AttributeException extends RuntimeException
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] The serializable class AttributeException does not declare a static final serialVersionUID field of type long
+    [javac] ----------
+    [javac] 2. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 85)
+    [javac] 	protected void addValidation(Text text, Object type)
+    [javac] 	                                  ^^^^
+    [javac] The parameter text is never read
+    [javac] ----------
+    [javac] 5. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\reflect\ObjectReflectionException.java (at line 5)
+    [javac] 	public class ObjectReflectionException extends AttributeException
+    [javac] 	             ^^^^^^^^^^^^^^^^^^^^^^^^^
+    [javac] The serializable class ObjectReflectionException does not declare a static final serialVersionUID field of type long
+    [javac] ----------
+    [javac] 4. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\reflect\ObjectReflectionGroup.java (at line 31)
+    [javac] 	int x = 0;
+    [javac] 	    ^
+    [javac] The local variable x is never read
+    [javac] ----------
+    [javac] 4 problems (4 warnings)
+
+BUILD SUCCESSFUL
+Total time: 1 second

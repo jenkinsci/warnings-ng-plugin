@@ -1,0 +1,77 @@
+started
+[workspace] $ mvn.bat clean compile -DeclipseTarget=C:/Build/Results/jobs/ADT-Base-Target/workspace/eclipse
+[INFO] [clean:clean]
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\test-classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\site
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [psteclipse:update {execution: update}]
+[INFO] Defaulting prefixes to the single prefix 'com.avaloq.'.
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant/1.7.0/org.apache.ant-1.7.0.jar
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant/1.7.0/org.apache.ant-1.7.0.jar
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant/1.7.0/org.apache.ant.ant-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant/1.7.0/org.apache.ant.ant-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-antlr/1.7.0/org.apache.ant.ant-antlr-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-antlr/1.7.0/org.apache.ant.ant-antlr-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-bcel/1.7.0/org.apache.ant.ant-apache-bcel-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-bcel/1.7.0/org.apache.ant.ant-apache-bcel-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-bsf/1.7.0/org.apache.ant.ant-apache-bsf-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-bsf/1.7.0/org.apache.ant.ant-apache-bsf-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-log4j/1.7.0/org.apache.ant.ant-apache-log4j-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-log4j/1.7.0/org.apache.ant.ant-apache-log4j-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-oro/1.7.0/org.apache.ant.ant-apache-oro-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-oro/1.7.0/org.apache.ant.ant-apache-oro-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-regexp/1.7.0/org.apache.ant.ant-apache-regexp-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-regexp/1.7.0/org.apache.ant.ant-apache-regexp-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-apache-resolver/1.7.0/org.apache.ant.ant-apache-resolver-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-apache-resolver/1.7.0/org.apache.ant.ant-apache-resolver-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-commons-logging/1.7.0/org.apache.ant.ant-commons-logging-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-commons-logging/1.7.0/org.apache.ant.ant-commons-logging-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-commons-net/1.7.0/org.apache.ant.ant-commons-net-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-commons-net/1.7.0/org.apache.ant.ant-commons-net-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-jai/1.7.0/org.apache.ant.ant-jai-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-jai/1.7.0/org.apache.ant.ant-jai-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-javamail/1.7.0/org.apache.ant.ant-javamail-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-javamail/1.7.0/org.apache.ant.ant-javamail-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-jdepend/1.7.0/org.apache.ant.ant-jdepend-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-jdepend/1.7.0/org.apache.ant.ant-jdepend-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-jmf/1.7.0/org.apache.ant.ant-jmf-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-jmf/1.7.0/org.apache.ant.ant-jmf-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-jsch/1.7.0/org.apache.ant.ant-jsch-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-jsch/1.7.0/org.apache.ant.ant-jsch-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-junit/1.7.0/org.apache.ant.ant-junit-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-junit/1.7.0/org.apache.ant.ant-junit-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-launcher/1.7.0/org.apache.ant.ant-launcher-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-launcher/1.7.0/org.apache.ant.ant-launcher-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-netrexx/1.7.0/org.apache.ant.ant-netrexx-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-netrexx/1.7.0/org.apache.ant.ant-netrexx-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-nodeps/1.7.0/org.apache.ant.ant-nodeps-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-nodeps/1.7.0/org.apache.ant.ant-nodeps-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-starteam/1.7.0/org.apache.ant.ant-starteam-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-starteam/1.7.0/org.apache.ant.ant-starteam-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-stylebook/1.7.0/org.apache.ant.ant-stylebook-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-stylebook/1.7.0/org.apache.ant.ant-stylebook-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-swing/1.7.0/org.apache.ant.ant-swing-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-swing/1.7.0/org.apache.ant.ant-swing-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-trax/1.7.0/org.apache.ant.ant-trax-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-trax/1.7.0/org.apache.ant.ant-trax-1.7.0.pom
+Downloading: http://download.java.net/maven/2//com/avaloq/adt/org.apache.ant.ant-weblogic/1.7.0/org.apache.ant.ant-weblogic-1.7.0.pom
+Downloading: http://repo1.maven.org/maven2/com/avaloq/adt/org.apache.ant.ant-weblogic/1.7.0/org.apache.ant.ant-weblogic-1.7.0.pom
+[INFO] [compiler:compile]
+[INFO] Compiling 981 source files to C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\target\classes
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[12,39] [deprecation] org.eclipse.jface.contentassist.SubjectControlContentAssistant in org.eclipse.jface.contentassist has been deprecated
+
+[WARNING] C:\Build\Results\jobs\ADT-Base\workspace\com.avaloq.adt.ui\src\main\java\com\avaloq\adt\ui\elements\AvaloqDialog.java:[40,36] [deprecation] org.eclipse.ui.contentassist.ContentAssistHandler in org.eclipse.ui.contentassist has been deprecated
+
+[FINDBUGS] Collecting findbugs analysis files...
+[FINDBUGS] No annotations have been found.
+[PMD] Collecting pmd analysis files...
+[PMD] No annotations have been found.
+[TASKS] Scanning workspace files for tasks...
+[TASKS] A total of 555 annotations have been found.
+[WARNINGS] Parsing warnings of log file...
+[WARNINGS] A total of 105 annotations have been found.
+finished: SUCCESS

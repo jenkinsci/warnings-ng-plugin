@@ -1,0 +1,6 @@
+This is a text
+
+here we do not have a task with priority NORMAL
+
+here another line with no task
+

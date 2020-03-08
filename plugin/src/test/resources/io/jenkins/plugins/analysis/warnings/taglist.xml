@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report xmlns="org.codehaus.mojo.taglist-maven-plugin">
+  <tags>
+    <tag name="@todo" count="1">
+      <files>
+        <file name="y.Z" count="1">
+          <comments>
+            <comment>
+              <lineNumber>6</lineNumber>
+              <comment>main</comment>
+            </comment>
+          </comments>
+        </file>
+      </files>
+    </tag>
+    <tag name="TODO" count="3">
+      <files>
+        <file name="y.Z" count="2">
+          <comments>
+            <comment>
+              <lineNumber>3</lineNumber>
+              <comment>todo</comment>
+            </comment>
+            <comment>
+              <lineNumber>8</lineNumber>
+              <comment>main method</comment>
+            </comment>
+          </comments>
+        </file>
+        <file name="y.Z2" count="1">
+          <comments>
+            <comment>
+              <lineNumber>3</lineNumber>
+              <comment>todo</comment>
+            </comment>
+          </comments>
+        </file>
+      </files>
+    </tag>
+  </tags>
+</report>

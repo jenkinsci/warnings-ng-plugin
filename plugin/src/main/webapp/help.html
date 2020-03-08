@@ -1,0 +1,96 @@
+<div>
+  <p>
+    Jenkins understands the format of compiler warnings. When this option is configured, Jenkins can provide useful
+    information about the compiler warnings, such as historical result trend, web UI for viewing analysis reports, and so on.
+    To use this feature, configure your compiler to write all warnings to the log file.
+  </p>
+  <h4>Ant Configuration</h4>
+  <p>
+    To get the Ant javac task to include compiler warnings in the build output you must
+    (a) avoid specifying <code>nowarn="on"</code> (<code>"off"</code> is the default) and
+    (b) include the <code>-Xlint</code> compiler argument (or some variant thereof). Example:
+  </p>
+  <pre>
+    <code>
+&lt;javac deprecation="true" destdir="classes"&gt;
+  &lt;compilerarg value="-Xlint"/&gt;
+&lt;/javac&gt;
+    </code>
+  </pre>
+  <h4>Maven Configuration</h4>
+  <p>
+    If you are using maven to compile your sources, place the following snippet into your pom.xml to enable the compiler warnings.
+  </p>
+  <pre>
+    <code>
+
+&lt;plugins&gt;
+  [...]
+  &lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-compiler-plugin&lt;/artifactId&gt;
+    &lt;configuration&gt;
+      &lt;showDeprecation&gt;true&lt;/showDeprecation&gt;
+      &lt;showWarnings&gt;true&lt;/showWarnings&gt;
+    &lt;/configuration&gt;
+  &lt;/plugin&gt;
+[...]
+
+&lt;/plugins&gt;
+    </code>
+  </pre>
+  <h4>Oracle Invalids Configuration</h4>
+  In order to visualize the invalids of your Oracle database you need to copy the
+  output of the following SQL statement to the console log.
+  <pre>
+    <code>
+SELECT   dao.owner, dao.object_name, dao.object_type, dao.status, dae.line, dae.position, dae.text
+    FROM dba_objects dao, dba_errors dae
+   WHERE dao.status = 'INVALID'
+     AND dao.owner = dae.owner(+)
+     AND dao.object_name = dae.name(+)
+     AND dao.object_type = dae.type(+)
+ORDER BY object_type, object_name;
+    </code>
+  </pre>
+
+  <h4>Puppet-Lint</h4>
+  <p>
+    To be able to grab puppet-lint output, you will need a recent enough version that supports
+    the <code>--log-format flag</code>.<br/>
+    When running puppet-lint, make sure you use the following log format:
+  </p>
+  <pre>
+    <code>%{path}:%{line}:%{check}:%{KIND}:%{message}</code>
+  </pre>
+  <p>Complete example:</p>
+  <pre>
+      <code>find . -iname *.pp -exec puppet-lint --log-format "%{path}:%{line}:%{check}:%{KIND}:%{message}" {} \;</code>
+  </pre>
+
+  <h4>Ansible Lint</h4>
+  <p>
+    To be able to grab ansible lint output, you will need to add
+    the <code>-p flag</code>.<br/>
+  </p>
+  <p>Example:</p>
+  <pre>
+      <code>ansible-lint -p example_file.yml</code>
+  </pre>
+  
+  <h4>JSLint</h4>
+  <p>
+  Various versions/forks of jslint are supported. So far tested with:
+  <ul>
+    <li>
+    <a href="https://github.com/jshint/node-jshint">node-jshint</a> <b>(Prefered)</b> <br />
+      Install: <code>npm install jshint</code> <br />
+      Run as: <code> jshint --jslint-reporter *.js &gt; jslint.xml || true</code>
+    </li>
+    <li>
+      <a href="http://code.google.com/p/jslint4java/">jslint4java</a><br/>
+      Run as: <code>java -jar jslint4java-2.0.2.jar --report xml *.js &gt; jslint.xml</code>
+    </li>
+  </ul>
+
+</div>

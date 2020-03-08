@@ -1,0 +1,55 @@
+[8mha:-2042673881[0mBuildfile: build.xml
+[8mha:0[0m
+[8mha:100351274[0minit:
+[8mha:0[0m
+[8mha:1029125752[0mcompile-warning:
+[8mha:-988843924[0m    [mkdir] Created dir: C:\Desenvolvimento\Java\jfg\build\build\warning
+[8mha:233209107[0m    [javac] Compiling 34 source files to C:\Desenvolvimento\Java\jfg\build\build\warning
+[8mha:1344389577[0m    [javac] ----------
+[8mha:1889421508[0m    [javac] 1. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\AttributeException.java (at line 3)
+[8mha:-300443124[0m    [javac] 	public class AttributeException extends RuntimeException
+[8mha:-455333472[0m    [javac] 	             ^^^^^^^^^^^^^^^^^^
+[8mha:927213572[0m    [javac] The serializable class AttributeException does not declare a static final serialVersionUID field of type long
+[8mha:1344389577[0m    [javac] ----------
+[8mha:1344389577[0m    [javac] ----------
+[8mha:629711157[0m    [javac] 2. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 85)
+[8mha:1105560314[0m    [javac] 	protected void addValidation(Text text, Object type)
+[8mha:1211487168[0m    [javac] 	                                  ^^^^
+[8mha:-769406500[0m    [javac] The parameter text is never read
+[8mha:1344389577[0m    [javac] ----------
+[8mha:1568242772[0m    [javac] 3. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 85)
+[8mha:1105560314[0m    [javac] 	protected void addValidation(Text text, Object type)
+[8mha:1316830048[0m    [javac] 	                                               ^^^^
+[8mha:-822150871[0m    [javac] The parameter type is never read
+[8mha:1344389577[0m    [javac] ----------
+[8mha:-1788192785[0m    [javac] 4. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 89)
+[8mha:187583808[0m    [javac] 	protected String convertToString(Text text, Object value, Object type)
+[8mha:1750121408[0m    [javac] 	                                      ^^^^
+[8mha:-769406500[0m    [javac] The parameter text is never read
+[8mha:1344389577[0m    [javac] ----------
+[8mha:-849661170[0m    [javac] 5. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 89)
+[8mha:187583808[0m    [javac] 	protected String convertToString(Text text, Object value, Object type)
+[8mha:-84007072[0m    [javac] 	                                                                 ^^^^
+[8mha:-822150871[0m    [javac] The parameter type is never read
+[8mha:1344389577[0m    [javac] ----------
+[8mha:88871344[0m    [javac] 6. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 97)
+[8mha:1232071894[0m    [javac] 	protected Object convertToObject(String value, Object type, boolean canBeNull)
+[8mha:1068784576[0m    [javac] 	                                                      ^^^^
+[8mha:-822150871[0m    [javac] The parameter type is never read
+[8mha:1344389577[0m    [javac] ----------
+[8mha:1344389577[0m    [javac] ----------
+[8mha:-1135765739[0m    [javac] 7. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\reflect\ObjectReflectionException.java (at line 5)
+[8mha:1018341396[0m    [javac] 	public class ObjectReflectionException extends AttributeException
+[8mha:987355006[0m    [javac] 	             ^^^^^^^^^^^^^^^^^^^^^^^^^
+[8mha:2030302100[0m    [javac] The serializable class ObjectReflectionException does not declare a static final serialVersionUID field of type long
+[8mha:1344389577[0m    [javac] ----------
+[8mha:1344389577[0m    [javac] ----------
+[8mha:1601416923[0m    [javac] 8. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\reflect\ObjectReflectionGroup.java (at line 31)
+[8mha:1234292999[0m    [javac] 	int x = 0;
+[8mha:-33585122[0m    [javac] 	    ^
+[8mha:-2120516735[0m    [javac] The local variable x is never read
+[8mha:1344389577[0m    [javac] ----------
+[8mha:715677085[0m    [javac] 8 problems (8 warnings)
+[8mha:0[0m
+[8mha:-846216276[0mBUILD SUCCESSFUL
+[8mha:-1869485198[0mTotal time: 1 second

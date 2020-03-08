@@ -1,0 +1,21 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Provides the advanced settings of a Groovy parser that are hidden by default.
+  </st:documentation>
+
+  <f:entry field="id" title="${%ID}" description="${%id.description}">
+    <f:textbox/>
+  </f:entry>
+  <f:entry field="regexp" title="${%Regular Expression}" description="${%regexp.description}">
+    <f:textbox/>
+  </f:entry>
+  <f:entry field="script" title="${%Mapping Script}" description="${%script.description}">
+    <f:textarea checkMethod="post"/>
+  </f:entry>
+  <f:entry field="example" title="${%Example Log Message}" description="${%example.description}">
+    <f:textarea checkMethod="post"/>
+  </f:entry>
+
+</j:jelly>

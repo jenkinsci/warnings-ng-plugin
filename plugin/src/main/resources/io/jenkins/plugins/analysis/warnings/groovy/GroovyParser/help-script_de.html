@@ -1,0 +1,42 @@
+<div>
+    <p>
+        Das Groovy Skript arbeitet mit der
+        <a href="https://docs.oracle.com/javase/8/docs/api/java/util/regex/Matcher.html">Matcher</a>
+        Instanz, die in der Variablen <code>matcher</code> an das Skript übergeben wird.
+        Das Skript muss einen Rückgabewert vom Typ <code>Optional&lt;edu.hm.hafner.analysis.Issue&gt;</code> haben.
+        Eine <code>Issue</code> Instanz muss mit dem <code>edu.hm.hafner.analysis.IssueBuilder</code> erstellt werden,
+        der in der Variablen <code>builder</code> an das Skript übergeben wird. Hinweis: der Rückgabewert der Methode
+        ist vom Typ<code>Optional&lt;Issue&gt;</code>, d.h. im Falle einer Falschmeldung muss
+        <code>Optional.empty()</code> zurückgeliefert werden.
+    </p>
+    <p>
+        Folgende Variablen stehen außerdem zur Verfügung:
+    <dl>
+        <dt>fileName</dt>
+        <dd>der Name der analysierten Report Datei</dd>
+        <dt>lineNumber</dt>
+        <dd>die aktuelle Zeilennummer</dd>
+    </dl>
+    </p>
+
+    <h4> Beispiel </h4>
+
+    <p>
+        Hier folgt ein Beispiel, das als Ausgangsbasis für das Skript verwendet werden kann. Es erzeugt eine neue
+        Warnung für den regulären Ausdruck <code>^\s*(.*):(\d+):(.*):\s*(.*)$</code>.
+    </p>
+    <hr/>
+    <pre>
+import edu.hm.hafner.analysis.Severity
+
+builder.setFileName(matcher.group(1))
+        .setLineStart(Integer.parseInt(matcher.group(2)))
+        .setSeverity(Severity.WARNING_NORMAL)
+        .setCategory(matcher.group(3))
+        .setMessage(matcher.group(4))
+
+return builder.buildOptional();
+  </pre>
+    <hr/>
+
+</div>

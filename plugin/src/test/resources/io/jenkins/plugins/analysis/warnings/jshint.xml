@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jslint>
+	<file name="../../../web/js-file.js">
+		<issue line="4" char="8" reason="Use &apos;===&apos; to compare with &apos;null&apos;." evidence=" if (a == null)" severity="W" />
+		<issue line="6" char="6" reason="&apos;c&apos; is not defined." evidence=" if (c)" severity="W" />
+		<issue line="7" char="10" reason="&apos;c&apos; is not defined." evidence="  return c;" severity="W" />
+		<issue line="1" char="10" reason="&apos;funk&apos; is defined but never used." evidence="function funk(a,b) {" severity="W" />
+	</file>
+	<file name="../../../web/js-file2.js">
+		<issue line="1" char="10" reason="&apos;f&apos; is defined but never used." evidence="function f() {" severity="W" />
+		<issue line="2" char="6" reason="&apos;notBeingUsed&apos; is defined but never used." evidence=" var notBeingUsed;" severity="W" />
+	</file>
+</jslint>
+

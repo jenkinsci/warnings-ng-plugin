@@ -1,0 +1,19 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form">
+
+  <f:section title="${%Groovy Based Warnings Parsers}">
+    <j:choose>
+      <j:when test="${descriptor.canEditParsers()}">
+        <f:entry title="${%Parsers}" description="${%title.description}">
+          <i:repeatable field="parsers"/>
+        </f:entry>
+      </j:when>
+      <j:otherwise>
+        <f:block>
+          You have no permission to edit this section (required permission: RUN_SCRIPTS).
+        </f:block>
+      </j:otherwise>
+    </j:choose>
+  </f:section>
+
+</j:jelly>

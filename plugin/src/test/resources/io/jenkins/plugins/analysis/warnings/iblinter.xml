@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<checkstyle version="4.3">
+	<file name="/Users/nysander/XcodeProjects/FamilyGravesMap/FamilyGravesMap/Views/Base.lproj/Main.storyboard">
+		<error severity="error" message="Optional(&quot;CemeteriesListViewController&quot;) should have the same Storyboard Id"/>
+	</file>
+</checkstyle>

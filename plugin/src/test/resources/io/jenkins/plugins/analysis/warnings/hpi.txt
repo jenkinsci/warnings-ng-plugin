@@ -1,0 +1,50 @@
+[INFO] [clean:clean]
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\tasks\target
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\tasks\target\classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\tasks\target\test-classes
+[INFO] Deleting directory C:\Build\Results\jobs\ADT-Base\workspace\tasks\target\site
+[INFO] [enforcer:display-info {execution: default}]
+[INFO] Maven Version: 2.0.8
+[INFO] JDK Version: 1.5.0_11 normalized as: 1.5.0-11
+[INFO] OS Info: Arch: x86 Family: windows Name: windows xp Version: 5.1
+[INFO] [localizer:generate {execution: default}]
+[INFO] [resources:resources]
+[INFO] Using default encoding to copy filtered resources.
+[INFO] [hpi:apt-compile]
+[INFO] Compiling 65 source files to C:\Build\Results\jobs\ADT-Base\workspace\tasks\target\classes
+Note: Generating hudson\plugins\tasks\TasksPublisher.stapler
+Note: Generating hudson\plugins\tasks\TasksReporter.stapler
+C:\Build\Results\jobs\ADT-Base\workspace\tasks\src\main\java\hudson\plugins\tasks\TasksDescriptor.java:46: warning: [deprecation] newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated
+    public TasksPublisher newInstance(final StaplerRequest request) throws FormException {
+                          ^
+C:\Build\Results\jobs\ADT-Base\workspace\tasks\src\main\java\hudson\plugins\tasks\TasksReporterDescriptor.java:34: warning: [deprecation] newInstance(org.kohsuke.stapler.StaplerRequest) in hudson.model.Descriptor has been deprecated
+    public MavenReporter newInstance(final StaplerRequest request) throws FormException {
+                         ^
+2 warnings
+[INFO]
+[INFO]
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] ------------------------------------------------------------------------
+[INFO] Base Plug-ins of ADT .................................. SUCCESS [1.359s]
+[INFO] Unnamed - com.avaloq.adt:com.avaloq.util:source-plugin:1.2.0-SNAPSHOT  SUCCESS [6.078s]
+[INFO] com.avaloq.adt.core ................................... SUCCESS [19.032s]
+[INFO] com.avaloq.adt.ui ..................................... SUCCESS [1:01.656s]
+[INFO] Hudson Task Scanner Plug-in ........................... SUCCESS [15.094s]
+[INFO] ------------------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESSFUL
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 1 minute 44 seconds
+[INFO] Finished at: Sun May 11 16:14:37 CEST 2008
+[INFO] Final Memory: 24M/88M
+[INFO] ------------------------------------------------------------------------
+[FINDBUGS] Collecting findbugs analysis files...
+[FINDBUGS] No annotations have been found.
+[PMD] Collecting pmd analysis files...
+[PMD] No annotations have been found.
+[TASKS] Scanning workspace files for tasks...
+[TASKS] A total of 555 annotations have been found.
+[WARNINGS] Parsing warnings of log file...
+[WARNINGS] A total of 105 annotations have been found.
+finished: SUCCESS

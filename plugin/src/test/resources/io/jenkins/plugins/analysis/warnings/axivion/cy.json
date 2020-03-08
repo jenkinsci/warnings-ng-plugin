@@ -1,0 +1,21 @@
+{
+  "rows": [
+    {
+      "id": 1471,
+      "state": "added",
+      "sourceEntity": "codecvt",
+      "sourceLinkName": "TC std:codecvt<T1,T2,T3>",
+      "sourceEntityType": "Class_Template",
+      "dependencyType": "Instantiate",
+      "sourcePath": "/usr/include/c++/4.9/bits/codecvt.h",
+      "sourceLine": 277,
+      "targetEntity": "__codecvt_abstract_base",
+      "targetLinkName": "TC std:__codecvt_abstract_base<T1,T2,T3>",
+      "targetEntityType": "Class_Template",
+      "targetPath": "/usr/include/c++/4.9/bits/codecvt.h",
+      "targetLine": 68,
+      "justification": "",
+      "tags": []
+    }
+  ]
+}

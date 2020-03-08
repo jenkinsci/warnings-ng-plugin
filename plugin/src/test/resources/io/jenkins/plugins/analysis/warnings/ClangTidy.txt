@@ -1,0 +1,111 @@
+# run-clang-tidy outputs check list - Don't match
+Enabled checks:
+    clang-analyzer-apiModeling.google.GTest
+    clang-analyzer-core.CallAndMessage
+    clang-analyzer-core.DivideZero
+    clang-analyzer-core.DynamicTypePropagation
+    clang-analyzer-core.NonNullParamChecker
+    clang-analyzer-core.NullDereference
+    clang-analyzer-core.StackAddressEscape
+    clang-analyzer-core.UndefinedBinaryOperatorResult
+    clang-analyzer-core.VLASize
+    clang-analyzer-core.builtin.BuiltinFunctions
+    clang-analyzer-core.builtin.NoReturnFunctions
+    clang-analyzer-core.uninitialized.ArraySubscript
+    clang-analyzer-core.uninitialized.Assign
+    clang-analyzer-core.uninitialized.Branch
+    clang-analyzer-core.uninitialized.CapturedBlockVariable
+    clang-analyzer-core.uninitialized.UndefReturn
+    clang-analyzer-cplusplus.NewDelete
+    clang-analyzer-cplusplus.NewDeleteLeaks
+    clang-analyzer-cplusplus.SelfAssignment
+    clang-analyzer-deadcode.DeadStores
+    clang-analyzer-llvm.Conventions
+    clang-analyzer-nullability.NullPassedToNonnull
+    clang-analyzer-nullability.NullReturnedFromNonnull
+    clang-analyzer-nullability.NullableDereferenced
+    clang-analyzer-nullability.NullablePassedToNonnull
+    clang-analyzer-nullability.NullableReturnedFromNonnull
+    clang-analyzer-optin.cplusplus.VirtualCall
+    clang-analyzer-optin.mpi.MPI-Checker
+    clang-analyzer-optin.osx.cocoa.localizability.EmptyLocalizationContextChecker
+    clang-analyzer-optin.osx.cocoa.localizability.NonLocalizedStringChecker
+    clang-analyzer-optin.performance.Padding
+    clang-analyzer-optin.portability.UnixAPI
+    clang-analyzer-osx.API
+    clang-analyzer-osx.NumberObjectConversion
+    clang-analyzer-osx.ObjCProperty
+    clang-analyzer-osx.SecKeychainAPI
+    clang-analyzer-osx.cocoa.AtSync
+    clang-analyzer-osx.cocoa.ClassRelease
+    clang-analyzer-osx.cocoa.Dealloc
+    clang-analyzer-osx.cocoa.IncompatibleMethodTypes
+    clang-analyzer-osx.cocoa.Loops
+    clang-analyzer-osx.cocoa.MissingSuperCall
+    clang-analyzer-osx.cocoa.NSAutoreleasePool
+    clang-analyzer-osx.cocoa.NSError
+    clang-analyzer-osx.cocoa.NilArg
+    clang-analyzer-osx.cocoa.NonNilReturnValue
+    clang-analyzer-osx.cocoa.ObjCGenerics
+    clang-analyzer-osx.cocoa.RetainCount
+    clang-analyzer-osx.cocoa.SelfInit
+    clang-analyzer-osx.cocoa.SuperDealloc
+    clang-analyzer-osx.cocoa.UnusedIvars
+    clang-analyzer-osx.cocoa.VariadicMethodTypes
+    clang-analyzer-osx.coreFoundation.CFError
+    clang-analyzer-osx.coreFoundation.CFNumber
+    clang-analyzer-osx.coreFoundation.CFRetainRelease
+    clang-analyzer-osx.coreFoundation.containers.OutOfBounds
+    clang-analyzer-osx.coreFoundation.containers.PointerSizedValues
+    clang-analyzer-security.FloatLoopCounter
+    clang-analyzer-security.insecureAPI.UncheckedReturn
+    clang-analyzer-security.insecureAPI.getpw
+    clang-analyzer-security.insecureAPI.gets
+    clang-analyzer-security.insecureAPI.mkstemp
+    clang-analyzer-security.insecureAPI.mktemp
+    clang-analyzer-security.insecureAPI.rand
+    clang-analyzer-security.insecureAPI.strcpy
+    clang-analyzer-security.insecureAPI.vfork
+    clang-analyzer-unix.API
+    clang-analyzer-unix.Malloc
+    clang-analyzer-unix.MallocSizeof
+    clang-analyzer-unix.MismatchedDeallocator
+    clang-analyzer-unix.StdCLibraryFunctions
+    clang-analyzer-unix.Vfork
+    clang-analyzer-unix.cstring.BadSizeArg
+    clang-analyzer-unix.cstring.NullArg
+    clang-analyzer-valist.CopyToSelf
+    clang-analyzer-valist.Uninitialized
+    clang-analyzer-valist.Unterminated
+
+
+# Okay File - No warnings created
+clang-tidy-5.0 -header-filter=src/,include/ -p=/path/to/project /path/to/project/src/tests/main.cpp
+
+# Warnings to not match
+warning: /path/to/project/tools/yocto-toolchain/sysroots/core2-64-fslc-linux/usr/include/qt5/QtQml: 'linker' input unused [clang-diagnostic-unused-command-line-argument]
+
+# Relative File
+clang-tidy-5.0 -header-filter=src/,include/ -p=/path/to/project src/../src/main.cpp:1:8: warning: implicit conversion changes signedness: 'int' to 'uint32_t' (aka 'unsigned int') [clang-diagnostic-sign-conversion]
+    case 6: return static_cast<int>(phase); break;
+
+# Absolute File
+clang-tidy-5.0 -header-filter=src/,include/ -p=/path/to/project /src/main.cpp:10:20: warning: implicit conversion changes signedness: 'int' to 'uint32_t' (aka 'unsigned int') [clang-diagnostic-sign-conversion]
+    case 6: return static_cast<int>(phase); break;
+
+# File with multiple errors - Warning for each instance
+clang-tidy-5.0 -header-filter=src/,include/ -p=/path/to/project /path/to/project/src/test2.cpp:83:20: warning: implicit conversion changes signedness: 'int' to 'uint32_t' (aka 'unsigned int') [clang-diagnostic-sign-conversion]
+    case 6: return static_cast<int>(phase); break;
+                   ^
+/path/to/project/src/test2.cpp:25:15: warning: suggest braces around initialization of subobject [clang-diagnostic-missing-braces]
+            { 0, 1, 2, 3, 4, 5, 6, 7 }
+              ^
+              {                     }
+/path/to/project/src/test2.cpp:29:15: warning: suggest braces around initialization of subobject [clang-diagnostic-missing-braces]
+            { 0, 1, 2, 3, 4, 5, 6, 7 }
+              ^
+              {                     }
+
+# Error Test
+/path/to/project/src/error_test.cpp:4:10: error: 'dbus/dbus.h' file not found [clang-diagnostic-error]
+#include <dbus/dbus.h>

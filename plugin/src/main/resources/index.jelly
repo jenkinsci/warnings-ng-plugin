@@ -1,0 +1,8 @@
+<?jelly escape-by-default='true'?>
+
+<div>
+  This plugin collects compiler warnings or issues reported by static analysis tools and 
+  visualizes the results. It has built-in support for numerous static analysis tools 
+  (including several compilers), see the list of 
+  <a href="https://github.com/jenkinsci/warnings-ng-plugin/blob/master/SUPPORTED-FORMATS.md">supported report formats</a>.
+</div>

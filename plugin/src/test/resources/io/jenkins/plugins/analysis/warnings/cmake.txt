@@ -1,0 +1,22 @@
+[step1] CMake Warning:
+[step1]   Manually-specified variables were not used by the project
+
+[step2] CMake Warning in CMakeLists.txt:
+[step2]   The build directory is a subdirectory of the source directory.
+
+CMake Warning (dev) at tools/gtest-1.8/googlemock/CMakeLists.txt:10 (option):
+  I'm the message
+
+CMake Warning at project/utils/fancy.cmake:423 (message):
+  Special workaround applied
+
+CMake Error at error.cmake:2 (message):
+  Uh oh !$%@!
+
+CMake Deprecation Warning at legacy.cmake:23 (message):
+  function foo is deprecated, use bar instead
+
+CMake Warning at unlikely.cmake:357 nonexistingcategory:
+  strange things can happen
+
+CMake Warning at unlikely.cmake:362 (message):

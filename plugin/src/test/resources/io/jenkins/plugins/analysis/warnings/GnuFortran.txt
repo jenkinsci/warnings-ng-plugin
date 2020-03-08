@@ -1,0 +1,28 @@
+C:/zlaror.f:318:
+
+      IF( XABS.NE.ZERO ) THEN                                           
+          1
+Warning: Inequality comparison for REAL(8) at (1)
+gfortran  -O2 -frecursive -W -Wall -c zlarot.f -o zlarot.o
+gfortran  -O2 -frecursive -W -Wall -c zlatm1.f -o zlatm1.o
+gfortran  -O2 -frecursive -W -Wall -c zlarnd.f -o zlarnd.o
+zlarnd.f: In function ‘zlarnd’:
+zlarnd.f:76:0: warning: ‘__result_zlarnd’ may be used uninitialized in this function [-Wmaybe-uninitialized]
+       COMPLEX*16   FUNCTION ZLARND( IDIST, ISEED )
+ ^
+/path/to/file.f90:7.10:
+
+      Use ieee_arithmetic, Only: ieee_value
+          1
+Fatal Error: Can't open module file 'ieee_arithmetic.mod' for reading at (1): No such file or directory
+generic2.f90:81.24-26:
+
+call d_vode(istate, lambda_fcn, dummy_jac, lambda, x_tmp, x_end, tol, pm)
+                    1
+Error: Interface mismatch in dummy procedure 'f' at (1): Shape mismatch in dimension 1 of argument 'y'
+linear_algebra_mod.f90:5.8:
+
+use csr_matrix_mod
+    1
+Internal Error at (1):
+free_pi_tree(): Unresolved fixup

@@ -1,0 +1,11 @@
+//error_reporting=2
+PHP Warning:  include_once(): Failed opening 'RegexpLineParser.php' for inclusion (include_path='.:/usr/share/pear') in PhpParser.php on line 25
+//error_reporting=8
+PHP Notice:  Undefined index:  SERVER_NAME in /path/to/file/Settings.php on line 25
+
+PHP Fatal error:  Undefined class constant 'MESSAGE' in /MyPhpFile.php on line 35
+
+PHP Parse error:  Undefined class constant 'MESSAGE' in /MyPhpFile.php on line 35
+
+From Apache log
+[Tue Mar 02 08:22:40 2010] [error] [client 192.168.1.172] PHP Warning:  Missing argument 1 for Title::getText(), called in Title.php on line 22 and defined in Category.php on line 34

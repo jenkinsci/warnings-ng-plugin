@@ -1,0 +1,25 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Provides an entry to select a number of static analysis tools by ID.
+  </st:documentation>
+
+  <f:block>
+    <table>
+      <f:optionalBlock name="selectTools" title="${%selectTools.title}" inline="true" checked="${instance.selectTools}">
+        <f:entry title="${%tool.title}">
+          <div id="tools">
+            <f:repeatableProperty minimum="1" field="tools" add="${%Add Tool}"/>
+          </div>
+        </f:entry>
+        <f:entry title="">
+          <div align="right">
+            <f:repeatableDeleteButton/>
+          </div>
+        </f:entry>
+      </f:optionalBlock>
+    </table>
+  </f:block>
+
+</j:jelly>

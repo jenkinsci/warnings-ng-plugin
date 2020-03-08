@@ -1,0 +1,201 @@
+<?xml version='1.0'?>
+<CodeNarc url='http://www.codenarc.org' version='0.10'>
+  <Report timestamp='Oct 28, 2010 4:10:38 PM'/>
+  <Project title=''>
+    <SourceDirectory></SourceDirectory>
+  </Project>
+  <PackageSummary totalFiles='192' filesWithViolations='100' priority1='0' priority2='359'
+                  priority3='163'></PackageSummary>
+  <Package path='foo/bar' totalFiles='11' filesWithViolations='8'
+           priority1='0' priority2='17' priority3='10'>
+    <File name='Test.groovy'>
+      <Violation ruleName='EmptyCatchBlock' priority='2' lineNumber='192'>
+        <SourceLine><![CDATA[} catch (Exception e) {]]></SourceLine>
+      </Violation>
+      <Violation ruleName='CatchException' priority='2' lineNumber='192'>
+        <SourceLine><![CDATA[} catch (Exception e) {]]></SourceLine>
+      </Violation>
+      <Violation ruleName='CatchException' priority='2' lineNumber='218'>
+        <SourceLine><![CDATA[} catch (Exception directoryNotFound) {]]></SourceLine>
+      </Violation>
+      <Violation ruleName='CatchException' priority='2' lineNumber='431'>
+        <SourceLine><![CDATA[} catch (Exception e) {]]></SourceLine>
+      </Violation>
+      <Violation ruleName='CatchException' priority='2' lineNumber='551'>
+        <SourceLine><![CDATA[} catch (Exception ioe) {]]></SourceLine>
+      </Violation>
+      <Violation ruleName='CatchException' priority='2' lineNumber='829'>
+        <SourceLine><![CDATA[} catch (Exception e) {]]></SourceLine>
+      </Violation>
+      <Violation ruleName='ThrowException' priority='2' lineNumber='552'>
+        <SourceLine><![CDATA[throw new Exception("An error occurred while loading the packages" +]]></SourceLine>
+      </Violation>
+      <Violation ruleName='UnnecessaryGroovyImport' priority='3' lineNumber='28'>
+        <SourceLine><![CDATA[import java.io.File;]]></SourceLine>
+      </Violation>
+      <Violation ruleName='UnnecessaryGroovyImport' priority='3' lineNumber='29'>
+        <SourceLine><![CDATA[import java.io.FileNotFoundException;]]></SourceLine>
+      </Violation>
+      <Violation ruleName='UnnecessaryGroovyImport' priority='3' lineNumber='30'>
+        <SourceLine><![CDATA[import java.net.NoRouteToHostException;]]></SourceLine>
+      </Violation>
+      <Violation ruleName='UnnecessaryGroovyImport' priority='3' lineNumber='31'>
+        <SourceLine><![CDATA[import java.net.URL;]]></SourceLine>
+      </Violation>
+    </File>
+  </Package>
+  <Rules>
+    <Rule name='BigDecimalInstantiation'>
+      <Description>
+        <![CDATA[Checks for calls to the BigDecimal constructors that take a double parameter, which may result in an unexpected BigDecimal value.]]></Description>
+    </Rule>
+    <Rule name='BooleanInstantiation'>
+      <Description>
+        <![CDATA[Use Boolean.valueOf() for variable values or Boolean.TRUE and Boolean.FALSE for constant values instead of calling the Boolean() constructor directly or calling Boolean.valueOf(true) or Boolean.valueOf(false).]]></Description>
+    </Rule>
+    <Rule name='CatchError'>
+      <Description>
+        <![CDATA[Catching Error is dangerous; it can catch exceptions such as ThreadDeath and OutOfMemoryError.]]></Description>
+    </Rule>
+    <Rule name='CatchException'>
+      <Description>
+        <![CDATA[Catching Exception is often too broad or general. It should usually be restricted to framework or infrastructure code, rather than application code.]]></Description>
+    </Rule>
+    <Rule name='CatchNullPointerException'>
+      <Description>
+        <![CDATA[Catching NullPointerException is never appropriate. It should be avoided in the first place with proper null checking, and it can mask underlying errors.]]></Description>
+    </Rule>
+    <Rule name='CatchRuntimeException'>
+      <Description>
+        <![CDATA[Catching RuntimeException is often too broad or general. It should usually be restricted to framework or infrastructure code, rather than application code.]]></Description>
+    </Rule>
+    <Rule name='CatchThrowable'>
+      <Description>
+        <![CDATA[Catching Throwable is dangerous; it can catch exceptions such as ThreadDeath and OutOfMemoryError.]]></Description>
+    </Rule>
+    <Rule name='CloneableWithoutClone'>
+      <Description><![CDATA[A class that implements java.lang.Cloneable should define a clone() method.]]></Description>
+    </Rule>
+    <Rule name='ConstantIfExpression'>
+      <Description>
+        <![CDATA[Checks for if statements with a constant value for the if expression, such as true, false, null, or a literal constant value.]]></Description>
+    </Rule>
+    <Rule name='ConstantTernaryExpression'>
+      <Description>
+        <![CDATA[Checks for ternary expressions with a constant value for the boolean expression, such as true, false, null, or a literal constant value.]]></Description>
+    </Rule>
+    <Rule name='DuplicateImport'>
+      <Description><![CDATA[Duplicate import statements are unnecessary.]]></Description>
+    </Rule>
+    <Rule name='EmptyCatchBlock'>
+      <Description><![CDATA[In most cases, exceptions should not be caught and ignored (swallowed).]]></Description>
+    </Rule>
+    <Rule name='EmptyElseBlock'>
+      <Description><![CDATA[Empty else blocks are confusing and serve no purpose.]]></Description>
+    </Rule>
+    <Rule name='EmptyFinallyBlock'>
+      <Description><![CDATA[Empty finally blocks are confusing and serve no purpose.]]></Description>
+    </Rule>
+    <Rule name='EmptyForStatement'>
+      <Description><![CDATA[Empty for statements are confusing and serve no purpose.]]></Description>
+    </Rule>
+    <Rule name='EmptyIfStatement'>
+      <Description><![CDATA[Empty if statements are confusing and serve no purpose.]]></Description>
+    </Rule>
+    <Rule name='EmptySwitchStatement'>
+      <Description><![CDATA[Empty switch statements are confusing and serve no purpose.]]></Description>
+    </Rule>
+    <Rule name='EmptySynchronizedStatement'>
+      <Description><![CDATA[Empty synchronized statements are confusing and serve no purpose.]]></Description>
+    </Rule>
+    <Rule name='EmptyTryBlock'>
+      <Description><![CDATA[Empty try blocks are confusing and serve no purpose.]]></Description>
+    </Rule>
+    <Rule name='EmptyWhileStatement'>
+      <Description><![CDATA[Empty while statements are confusing and serve no purpose.]]></Description>
+    </Rule>
+    <Rule name='EqualsAndHashCode'>
+      <Description>
+        <![CDATA[If either the equals(Object) or the hashCode() methods are overridden within a class, then both must be overridden.]]></Description>
+    </Rule>
+    <Rule name='GrailsPublicControllerMethod'>
+      <Description>
+        <![CDATA[Checks for public methods on Grails controller classes. Static methods are ignored.]]></Description>
+    </Rule>
+    <Rule name='GrailsServletContextReference'>
+      <Description>
+        <![CDATA[Checks for references to the servletContext object from within Grails controller and taglib classes.]]></Description>
+    </Rule>
+    <Rule name='GrailsStatelessService'>
+      <Description>
+        <![CDATA[Checks for fields on Grails service classes. Grails service classes are singletons, by default, and so they should be reentrant and typically stateless. The ignoreFieldNames property specifies one or more field names that should be ignored. The ignoreFieldTypes property specifies one or more field type names that should be ignored. Both can optionally contain wildcard characters ('*' or '?').]]></Description>
+    </Rule>
+    <Rule name='ImportFromSamePackage'>
+      <Description><![CDATA[An import of a class that is within the same package is unnecessary.]]></Description>
+    </Rule>
+    <Rule name='ReturnFromFinallyBlock'>
+      <Description>
+        <![CDATA[Returning from a finally block is confusing and can hide the original exception.]]></Description>
+    </Rule>
+    <Rule name='StringInstantiation'>
+      <Description>
+        <![CDATA[Use a String literal (e.g., "...") instead of calling the corresponding String constructor (new String("..")) directly.]]></Description>
+    </Rule>
+    <Rule name='ThrowError'>
+      <Description><![CDATA[Checks for throwing an instance of java.lang.Error.]]></Description>
+    </Rule>
+    <Rule name='ThrowException'>
+      <Description><![CDATA[Checks for throwing an instance of java.lang.Exception.]]></Description>
+    </Rule>
+    <Rule name='ThrowExceptionFromFinallyBlock'>
+      <Description>
+        <![CDATA[Throwing an exception from a finally block is confusing and can hide the original exception.]]></Description>
+    </Rule>
+    <Rule name='ThrowNullPointerException'>
+      <Description><![CDATA[Checks for throwing an instance of java.lang.NullPointerException.]]></Description>
+    </Rule>
+    <Rule name='ThrowRuntimeException'>
+      <Description><![CDATA[Checks for throwing an instance of <em>java.lang.RuntimeException</em>.]]></Description>
+    </Rule>
+    <Rule name='ThrowThrowable'>
+      <Description><![CDATA[Checks for throwing an instance of java.lang.Throwable.]]></Description>
+    </Rule>
+    <Rule name='UnnecessaryBooleanExpression'>
+      <Description>
+        <![CDATA[Checks for unnecessary boolean expressions, including ANDing (&&) or ORing (||) with true, false, null, or a Map/List/String/Number literal. Also checks for negation (!) of true, false, null, or a Map/List/String/Number literal.]]></Description>
+    </Rule>
+    <Rule name='UnnecessaryGroovyImport'>
+      <Description>
+        <![CDATA[A Groovy file does not need to include an import for classes from java.lang, java.util, java.io, java.net, groovy.lang and groovy.util, as well as the classes java.math.BigDecimal and java.math.BigInteger.]]></Description>
+    </Rule>
+    <Rule name='UnnecessaryIfStatement'>
+      <Description>
+        <![CDATA[Checks for if statements where the if and else blocks are merely returning true and false constants. These cases can be replaced by a simple return statement.]]></Description>
+    </Rule>
+    <Rule name='UnnecessaryTernaryExpression'>
+      <Description>
+        <![CDATA[Checks for ternary expressions where the conditional expression always evaluates to a boolean and the true and false expressions are merely returning true and false constants. Also checks for ternary expressions where both expressions are the same constant or variable.]]></Description>
+    </Rule>
+    <Rule name='UnusedArray'>
+      <Description>
+        <![CDATA[Checks for array allocations that are not assigned or used, unless it is the last statement within a block.]]></Description>
+    </Rule>
+    <Rule name='UnusedImport'>
+      <Description>
+        <![CDATA[Imports for a class that is never referenced within the source file is unnecessary.]]></Description>
+    </Rule>
+    <Rule name='UnusedObject'>
+      <Description>
+        <![CDATA[Checks for object allocations that are not assigned or used, unless it is the last statement within a block.]]></Description>
+    </Rule>
+    <Rule name='UnusedPrivateField'>
+      <Description><![CDATA[Checks for private fields that are not referenced within the same class.]]></Description>
+    </Rule>
+    <Rule name='UnusedPrivateMethod'>
+      <Description><![CDATA[Checks for private methods that are not referenced within the same class.]]></Description>
+    </Rule>
+    <Rule name='UnusedVariable'>
+      <Description><![CDATA[Checks for variables that are never referenced.]]></Description>
+    </Rule>
+  </Rules>
+</CodeNarc>

@@ -1,0 +1,13 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout">
+  <st:header name="Content-Type" value="text/html;charset=UTF-8" />
+  <l:layout title="${it.displayName}" norefresh="true">
+    <st:include it="${it.owner}" page="sidepanel.jelly" />
+    <l:main-panel>
+      <h1>Console Details</h1>
+
+      <j:out value="${it.sourceCode}" />
+
+    </l:main-panel>
+  </l:layout>
+</j:jelly>

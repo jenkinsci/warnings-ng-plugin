@@ -1,0 +1,20 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:st="jelly:stapler">
+
+  <st:documentation>
+    Provides a horizontal rule <hr/> with a caption.
+    <st:attribute name="title" use="optional" type="String">
+      The caption of the horizontal rule.
+    </st:attribute>
+  </st:documentation>
+
+  <f:block><div class="subsection-header"/></f:block>
+
+  <tr>
+    <td/>
+    <td colspan="3">
+      <strong>${title}</strong>
+    </td>
+  </tr>
+
+</j:jelly>

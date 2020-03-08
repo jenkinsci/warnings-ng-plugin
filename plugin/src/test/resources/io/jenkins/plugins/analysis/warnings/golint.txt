@@ -1,0 +1,7 @@
+conn.go:64:2: exported var ErrCloseSent should have comment or be unexported
+conn.go:104:3: should replace pos += 1 with pos++
+conn.go:305:3: should replace c.writeSeq += 1 with c.writeSeq++
+conn.go:360:3: should replace c.writeSeq += 1 with c.writeSeq++
+conn.go:669:2: should replace c.readSeq += 1 with c.readSeq++
+conn.go:706:4: should replace r.c.readSeq += 1 with r.c.readSeq++
+conn_test.go:18:34: should omit type net.Error from declaration of var timeoutErrImplementsNetError; it will be inferred from the right-hand side

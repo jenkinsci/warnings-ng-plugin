@@ -1,0 +1,7 @@
+[exec] D:\continuousIntegration\modifiedcomps\forcedproduct\MHSM-Cascade\Cascade-Config\config\src\RDR_Config.c(3767) : Warning[Pe188]: enumerated type mixed with another type
+[exec] D:\continuousIntegration\modifiedcomps\forcedproduct\MHSM-Cascade\Cascade-Config\config\src\RDR_Config.c(3767) : Warning[Pe188]: enumerated type mixed with another type
+[exec] D:\continuousIntegration\modifiedcomps\forcedproduct\MHSM-Cascade\Cascade-Config\config\src\RDR_Config.c(3918) : Warning[Pe188]: enumerated type mixed with another type
+c:\JenkinsJobs\900ZH\Workspace\Product.900ZH\Src\System\AdditionalResources.h(17) : Fatal Error[Pe1696]: cannot open source file "System/ProcDef_LPC17xx.h"
+C:\dev\bsc\daqtask.c(43) : Warning[Pe177]: variable "pgMsgEnv" was declared but never referenced
+Fatal Error[Pe1696]: cannot open source file "c:\JenkinsJobs\900ZH\Workspace\Lib\Drivers\_Obsolete\Uart\UartInterface.c"
+"d:\jenkins\workspace\Nightly\src\flash\flashdrv.c",861  Warning[Pe177]: function "FlashErase" was declared but never referenced

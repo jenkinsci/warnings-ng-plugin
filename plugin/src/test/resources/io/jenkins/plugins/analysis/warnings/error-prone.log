@@ -1,0 +1,32 @@
+:googleErrorProne UP-TO-DATE
+:googleJavaFormat NO-SOURCE
+:compileJava/home/bjerre/workspace/git-changelog/git-changelog-lib/src/main/java/se/bjurr/gitchangelog/internal/integrations/github/GitHubHelper.java:51: warning: [StringSplitter] Prefer Splitter to String.split
+          for (final String part : link.split(",")) {
+                                             ^
+    (see http://errorprone.info/bugpattern/StringSplitter)
+  Did you mean 'for (final String part : Splitter.on(",").split(link)) {'?
+/home/bjerre/workspace/git-changelog/git-changelog-lib/src/main/java/se/bjurr/gitchangelog/internal/integrations/github/GitHubHelper.java:52: warning: [StringSplitter] Prefer Splitter to String.split
+            for (final String piece : part.split(";")) {
+                                                ^
+    (see http://errorprone.info/bugpattern/StringSplitter)
+  Did you mean 'for (final String piece : Splitter.on(";").split(part)) {'?
+/home/bjerre/workspace/git-changelog/git-changelog-lib/src/main/java/se/bjurr/gitchangelog/api/model/Commit.java:24: warning: [StringSplitter] Prefer Splitter to String.split
+    for (String part : message.split("\n")) {
+                                    ^
+    (see http://errorprone.info/bugpattern/StringSplitter)
+  Did you mean 'for (String part : Splitter.on("\n").split(message)) {'?
+/home/bjerre/workspace/git-changelog/git-changelog-lib/src/main/java/se/bjurr/gitchangelog/internal/git/GitRepoData.java:76: warning: [StringSplitter] Prefer Splitter to String.split
+            .split("[/:\\.]");
+                  ^
+    (see http://errorprone.info/bugpattern/StringSplitter)
+  Did you mean 'List<String> parts ='?
+/home/bjerre/workspace/git-changelog/git-changelog-lib/src/main/java/se/bjurr/gitchangelog/internal/git/TraversalWork.java:73: warning: [BoxedPrimitiveConstructor] valueOf or autoboxing provides better time and space performance
+    return new Integer(selfCommitTime) //
+           ^
+    (see http://errorprone.info/bugpattern/BoxedPrimitiveConstructor)
+  Did you mean 'return Integer.compare(selfCommitTime, otherCommitTime);'?
+5 warnings
+
+
+BUILD SUCCESSFUL in 5s
+1 actionable task: 1 executed

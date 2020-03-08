@@ -1,0 +1,12 @@
+javac:
+
+    [javac] Compiling 5 source files to C:\Users\tiliven\.hudson\jobs\Hello THS Trunk - compile\workspace\HelloTHSTest\build\classes
+
+    [javac] C:\Users\tiliven\.hudson\jobs\Hello THS Trunk - compile\workspace\HelloTHSTest\src\ths\Hallo.java:28: warning: begrussen() in ths.types.IGruss has been deprecated
+
+    [javac]                     System.out.println(grussen[i].begrussen());
+
+    [javac]                                                   ^
+
+    [javac] 1 warning
+

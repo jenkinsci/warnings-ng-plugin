@@ -1,0 +1,11 @@
+<analysisResultApi _class='io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi'>
+  <fixedSize>0</fixedSize>
+  <newSize>0</newSize>
+  <noIssuesSinceBuild>-1</noIssuesSinceBuild>
+  <owner _class='hudson.model.FreeStyleBuild'>
+    <number>1</number>
+  </owner>
+  <qualityGateStatus>INACTIVE</qualityGateStatus>
+  <successfulSinceBuild>-1</successfulSinceBuild>
+  <totalSize>7</totalSize>
+</analysisResultApi>

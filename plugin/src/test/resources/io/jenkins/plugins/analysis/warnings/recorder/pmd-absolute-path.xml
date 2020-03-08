@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd"
+    version="6.5.0" timestamp="2018-07-14T15:09:48.870">
+<file name="/private/tmp/node2/workspace/New - Freestyle - Model/src/main/java/edu/hm/hafner/analysis/parser/AjcParser.java">
+<violation beginline="29" endline="75" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design" package="edu.hm.hafner.analysis.parser" class="AjcParser" method="parse" externalInfoUrl="https://pmd.github.io/pmd-6.5.0/pmd_rules_java_design.html#cyclomaticcomplexity" priority="3">
+The method 'parse(Reader, Function)' has a cyclomatic complexity of 11.
+</violation>
+<violation beginline="38" endline="38" begincolumn="20" endcolumn="49" rule="AssignmentInOperand" ruleset="Error Prone" package="edu.hm.hafner.analysis.parser" class="AjcParser" method="parse" externalInfoUrl="https://pmd.github.io/pmd-6.5.0/pmd_rules_java_errorprone.html#assignmentinoperand" priority="3">
+Avoid assignments in operands
+</violation>
+</file>
+<file name="/private/tmp/node2/workspace/New - Freestyle - Model/src/main/java/edu/hm/hafner/analysis/parser/FindBugsParser.java">
+<violation beginline="229" endline="229" begincolumn="78" endcolumn="92" rule="UseProperClassLoader" ruleset="Error Prone" package="edu.hm.hafner.analysis.parser" class="FindBugsParser" method="readXml" externalInfoUrl="https://pmd.github.io/pmd-6.5.0/pmd_rules_java_errorprone.html#useproperclassloader" priority="3">
+In J2EE, getClassLoader() might not work as expected.  Use Thread.currentThread().getContextClassLoader() instead.
+</violation>
+</file>
+<file name="/private/tmp/node2/workspace/New - Freestyle - Model/src/main/java/edu/hm/hafner/analysis/parser/SonarQubeParser.java">
+<violation beginline="81" endline="83" begincolumn="21" endcolumn="21" rule="AvoidDeeplyNestedIfStmts" ruleset="Design" package="edu.hm.hafner.analysis.parser" class="SonarQubeParser" method="parse" externalInfoUrl="https://pmd.github.io/pmd-6.5.0/pmd_rules_java_design.html#avoiddeeplynestedifstmts" priority="3">
+Deeply nested if..then statements are hard to read
+</violation>
+<violation beginline="200" endline="200" begincolumn="51" endcolumn="55" rule="UnusedFormalParameter" ruleset="Best Practices" package="edu.hm.hafner.analysis.parser" class="SonarQubeParser" method="parseCategory" variable="issue" externalInfoUrl="https://pmd.github.io/pmd-6.5.0/pmd_rules_java_bestpractices.html#unusedformalparameter" priority="3">
+Avoid unused method parameters such as 'issue'.
+</violation>
+</file>
+</pmd>

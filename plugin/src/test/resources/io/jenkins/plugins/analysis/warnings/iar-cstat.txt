@@ -1,0 +1,6 @@
+"src\main\hal\HalAdc.c",129 Severity-Low[MISRAC2012-Rule-14.4_c]:Type of if condition is not boolean.  MISRAC2012-Rule-14.4
+"src\main\hal\HalAdcLS.c",145 Severity-Low[MISRAC2012-Rule-8.4]:Definition of externally-linked `ADC0_IRQHandler()' has no compatible declaration.  MISRAC2012-Rule-8.4
+"src\main\pal\PalLog.c",131 Severity-Medium[MISRAC2012-Rule-14.3_a]:Conditional expression `0!=PalLog_GetUpdateRate()' is always true.  CERT-EXP17-C,MISRAC2012-Rule-14.3
+"cstat1.c",15 Severity-High[PTR-null-fun-pos]: Function call `f1()' is immediately dereferenced, without checking for NULL. CERT-EXP34-C,CWE-476
+"cstat1.c",18 Severity-Low[RED-unused-assign]: Value assigned to variable `ch' is never used. CERT-MSC13-C,CWE-563
+"cstat2.c",16 Severity-High[ARR-inv-index]: Array `arr' 1st subscript 20 is out of bounds [0,9]. CERT-ARR33-C,CWE-119,CWE-120,CWE-121,CWE-124,CWE-126,CWE-127,CWE-129,MISRAC++2008-5-0-16,MISRAC2012-Rule-18.1
