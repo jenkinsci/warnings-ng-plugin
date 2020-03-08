@@ -48,7 +48,7 @@ node ('maven') {
                 sh "curl -s https://codecov.io/bash | bash -s - -t c4071f73-a222-43ff-a41b-a6c8c118e242"
             }
 
-            dir('ui-test') {
+            dir('ui-tests') {
                 env << "BROWSER='firefox-container'"
                 withEnv(env) {
                     sh 'mvn clean test'
