@@ -561,6 +561,7 @@
           <excludes combine.children="append">
             <exclude>.*Thresholds</exclude>
           </excludes>
+          <quiet>true</quiet>
           <entryPointClassPackage>io.jenkins.plugins.analysis.core.assertions</entryPointClassPackage>
         </configuration>
       </plugin>

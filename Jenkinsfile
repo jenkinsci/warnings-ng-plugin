@@ -24,7 +24,7 @@ node ('maven') {
                 writeFile file: settingsXml, text: libraryResource('settings-azure.xml')
                 mavenOptions += "-s $settingsXml"
             }
-            mavenOptions += "clean install -Pskip"
+            mavenOptions += "-ntp clean install -DskipITs"
 //             mavenOptions += "clean verify jacoco:prepare-agent test integration-test jacoco:report -Djenkins.test.timeout=1000"
             command = "mvn ${mavenOptions.join(' ')}"
             env << "PATH+MAVEN=${tool 'mvn'}/bin"
@@ -49,6 +49,7 @@ node ('maven') {
             }
 
             dir('plugin') {
+                env << "BROWSER='firefox-container'"
                 withEnv(env) {
                     sh 'mvn clean test'
                 }
