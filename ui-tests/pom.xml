@@ -11,7 +11,8 @@
   <groupId>io.jenkins.plugins</groupId>
   <artifactId>warnings-ng-ui-tests</artifactId>
   <packaging>jar</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>UNVERSIONED</version>
+  <name>UI Tests of Warnings Next Generation Plugin</name>
 
   <properties>
     <jenkins.version>2.204.4</jenkins.version>
@@ -36,18 +37,6 @@
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
       <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.13</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
-      <version>${assertj.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -102,6 +91,13 @@
             <assertionsEntryPointClass>assertions_entry_point_class_template.txt</assertionsEntryPointClass>
           </templates>
         </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13</version>
+          </dependency>
+        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

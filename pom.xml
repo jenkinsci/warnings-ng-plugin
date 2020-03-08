@@ -2,9 +2,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>io.jenkins.plugins</groupId>
-  <artifactId>parent</artifactId>
+  <artifactId>warnings-ng-parent</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>UNVERSIONED</version>
+
+  <name>Aggregator for Warnings Next Generation Plugin</name>
 
   <modules>
     <module>plugin</module>
