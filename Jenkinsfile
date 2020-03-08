@@ -49,10 +49,12 @@ node ('maven') {
             }
 
             dir('ui-tests') {
-                env << "BROWSER='firefox-container'"
+                env << "BROWSER=firefox-container"
                 withEnv(env) {
-                    sh 'mvn clean test'
+                    sh 'mvn -Dmaven.test.failure.ignore -ntp clean test'
                 }
+
+                junit testResults: '**/target/*-reports/TEST-*.xml'
             }
         }
     }
