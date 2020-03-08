@@ -1,3 +1,0 @@
-    *EXTRA File                  0        b           Unknown Task
-   100%        New File                   0        a.log
-                 same                 0        a.log

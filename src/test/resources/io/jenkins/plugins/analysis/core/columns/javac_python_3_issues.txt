@@ -1,3 +1,0 @@
-trunk/src/python/cachedhttp.py:3: [C] Line too long (85/80)
-trunk/src/python/cachedhttp.py:4: [C] Line too long (85/80)
-[WARNING] C:\File.java:[40,36] [deprecation] something has been deprecated

@@ -1,5 +1,0 @@
-unclassified:
-  warningsPlugin:
-    sourceDirectories:
-    - path: "C:\\Windows"
-    - path: "/absolute"

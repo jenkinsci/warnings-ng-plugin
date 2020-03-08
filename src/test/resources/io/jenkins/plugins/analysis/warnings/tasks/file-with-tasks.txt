@@ -1,6 +1,0 @@
-This is a text
-
-TODO: here we have a task with priority NORMAL
-
-FIXME here another task with priority HIGH
-

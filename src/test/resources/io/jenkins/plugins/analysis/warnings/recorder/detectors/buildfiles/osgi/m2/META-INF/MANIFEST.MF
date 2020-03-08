@@ -1,2 +1,0 @@
-Bundle-Name: Test-Bundle-Name
-Bundle-Vendor: %Bundle-Vendor

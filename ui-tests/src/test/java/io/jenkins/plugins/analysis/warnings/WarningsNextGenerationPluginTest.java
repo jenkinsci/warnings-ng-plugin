@@ -55,7 +55,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 public class WarningsNextGenerationPluginTest extends AbstractJUnitTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/warnings_ng_plugin/";
+    private static final String WARNINGS_PLUGIN_PREFIX = "/";
 
     private static final String CHECKSTYLE_ID = "checkstyle";
     private static final String ANALYSIS_ID = "analysis";
@@ -279,8 +279,7 @@ public class WarningsNextGenerationPluginTest extends AbstractJUnitTest {
                 .hasInfoMessages("-> found 1 file",
                         "-> found 2 issues (skipped 0 duplicates)",
                         "Issues delta (vs. reference build): outstanding: 2, new: 0, fixed: 1")
-                .hasErrorMessages("Can't resolve absolute paths for some files:",
-                        "Can't create fingerprints for some files:");
+                .hasErrorMessages("Can't create fingerprints for some files:");
     }
 
     private void verifyCheckStyle(final Build build) {
@@ -314,8 +313,7 @@ public class WarningsNextGenerationPluginTest extends AbstractJUnitTest {
                 .hasInfoMessages("-> found 1 file",
                         "-> found 3 issues (skipped 0 duplicates)",
                         "Issues delta (vs. reference build): outstanding: 0, new: 3, fixed: 1")
-                .hasErrorMessages("Can't resolve absolute paths for some files:",
-                        "Can't create fingerprints for some files:");
+                .hasErrorMessages("Can't create fingerprints for some files:");
     }
 
     private InfoView openInfoView(final Build build, final String toolId) {
@@ -428,19 +426,24 @@ public class WarningsNextGenerationPluginTest extends AbstractJUnitTest {
 
         job.save();
 
-        Build build = buildFailingJob(job);
+        Build build = buildJob(job).shouldSucceed();
+
+        System.out.println("-------------- Console Log ----------------");
+        System.out.println(build.getConsole());
+        System.out.println("-------------------------------------------");
+
         build.open();
 
         AnalysisSummary summary = new AnalysisSummary(build, MAVEN_ID);
         assertThat(summary).isDisplayed()
-                .hasTitleText("Maven: 2 warnings")
+                .hasTitleText("Maven: 4 warnings")
                 .hasNewSize(0)
                 .hasFixedSize(0)
                 .hasReferenceBuild(0);
 
         AnalysisResult mavenDetails = summary.openOverallResult();
         assertThat(mavenDetails).hasActiveTab(Tab.MODULES)
-                .hasTotal(2)
+                .hasTotal(4)
                 .hasOnlyAvailableTabs(Tab.MODULES, Tab.TYPES, Tab.ISSUES);
 
         IssuesTable issuesTable = mavenDetails.openIssuesTable();

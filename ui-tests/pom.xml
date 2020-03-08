@@ -27,6 +27,12 @@
       <version>1.70</version>
     </dependency>
     <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>4.5.10</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.junit.vintage</groupId>
       <artifactId>junit-vintage-engine</artifactId>
       <version>${junit.version}</version>
@@ -106,7 +112,7 @@
           <environmentVariables>
             <PLUGINS_DIR>../../docker/volumes/jenkins-home/plugins</PLUGINS_DIR>
             <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
-            <LOCAL_JARS>../target/warnings-ng.hpi</LOCAL_JARS>
+            <LOCAL_JARS>../plugin/target/warnings-ng.hpi</LOCAL_JARS>
             <BROWSER>firefox</BROWSER>
           </environmentVariables>
         </configuration>
