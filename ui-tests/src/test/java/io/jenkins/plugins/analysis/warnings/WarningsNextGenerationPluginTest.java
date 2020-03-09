@@ -465,8 +465,8 @@ public class WarningsNextGenerationPluginTest extends AbstractJUnitTest {
      * Verifies that warnings can be parsed on a agent as well.
      */
     @Test
-    @WithDocker
     @WithPlugins("ssh-slaves")
+    @WithDocker
     @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {CREDENTIALS_ID, CREDENTIALS_KEY})
     public void should_parse_warnings_on_agent() {
         DumbSlave dockerAgent = createDockerAgent();
