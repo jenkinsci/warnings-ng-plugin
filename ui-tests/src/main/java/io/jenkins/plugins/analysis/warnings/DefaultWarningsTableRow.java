@@ -35,7 +35,9 @@ public class DefaultWarningsTableRow extends AbstractNonDetailsIssuesTableRow {
     }
 
     /**
-     * Opens the source code of the affected file.
+     * Opens the console log view to show the warning.
+     *
+     * @return the console log view
      */
     public ConsoleLogView openConsoleLog() {
         return clickOnLink(getFileLink(), ConsoleLogView.class);

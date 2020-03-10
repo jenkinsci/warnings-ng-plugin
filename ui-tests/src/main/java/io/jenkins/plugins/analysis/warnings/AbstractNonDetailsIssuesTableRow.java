@@ -204,6 +204,8 @@ public abstract class AbstractNonDetailsIssuesTableRow extends AbstractIssuesTab
 
     /**
      * Opens the source code of the affected file.
+     *
+     * @return the source code view
      */
     public SourceView openSourceCode() {
         return clickOnLink(getFileLink(), SourceView.class);

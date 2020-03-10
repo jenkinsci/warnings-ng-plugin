@@ -33,7 +33,8 @@ public class IssuesTable {
      * @param type
      *         the type of the issues-table (e.g. Default or DRY)
      */
-    public IssuesTable(final WebElement issuesTab, final AnalysisResult resultDetailsPage, final IssuesTableRowType type) {
+    public IssuesTable(final WebElement issuesTab, final AnalysisResult resultDetailsPage,
+            final IssuesTableRowType type) {
         this.issuesTab = issuesTab;
         this.resultDetailsPage = resultDetailsPage;
         this.type = type;
@@ -53,7 +54,9 @@ public class IssuesTable {
      * @param link
      *         the WebElement representing the link
      * @param targetPageClass
-     *         the class of the PageObject representing the target page
+     *         the class of the {@link PageObject} representing the target page
+     * @param <T>
+     *         actual type of the page object
      *
      * @return the PageObject representing the target page
      */
@@ -61,6 +64,11 @@ public class IssuesTable {
         return resultDetailsPage.openLinkOnSite(link, targetPageClass);
     }
 
+    /**
+     * Returns the totals value of the table.
+     *
+     * @return the totals
+     */
     public int getTotal() {
         String tableInfo = issuesTab.findElement(By.id("issues_info")).getText();
         String total = StringUtils.substringAfter(tableInfo, "of ");
@@ -142,6 +150,8 @@ public class IssuesTable {
      *         the number of the row to be returned
      * @param expectedClass
      *         the expected type of the row
+     * @param <T>
+     *         actual type of the row
      *
      * @return the row
      */
@@ -161,6 +171,9 @@ public class IssuesTable {
         return resultDetailsPage.openFilterLinkOnSite(element);
     }
 
+    /**
+     * Supported element types of the issues table.
+     */
     public enum IssuesTableRowType {
         DEFAULT,
         DRY

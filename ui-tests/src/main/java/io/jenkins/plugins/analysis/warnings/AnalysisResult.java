@@ -147,6 +147,8 @@ public class AnalysisResult extends PageObject {
      * @param type
      *         the class of the PageObject which represents the page to which the link leads to
      *
+     * @param <T>
+     *         actual type of the page object
      * @return the instance of the PageObject to which the link leads to
      */
     // FIXME: IssuesTable should not depend on AnalysisResult

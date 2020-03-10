@@ -55,6 +55,7 @@ import static org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation.*;
  * @author Veronika Zwickenpflug
  */
 @WithPlugins("warnings-ng")
+@SuppressWarnings("checkstyle:ClassFanOutComplexity")
 public class WarningsPluginUiTest extends AbstractJUnitTest {
     private static final String WARNINGS_PLUGIN_PREFIX = "/";
 
@@ -95,7 +96,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      */
     @Test
     @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
-    public void should_record_issues_in_pipeline_and_expand_tokens() {
+    public void shouldRecordIssuesInPipelineAndExpandTokens() {
         WorkflowJob job = jenkins.jobs.create(WorkflowJob.class);
         job.sandbox.check();
 
@@ -162,7 +163,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      * Runs a freestyle job with all tools two times. Verifies the analysis results in several views.
      */
     @Test
-    public void should_show_build_summary_and_link_to_details() {
+    public void shouldShowBuildSummaryAndLinkToDetails() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
         addRecorder(job);
         job.save();
@@ -326,7 +327,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      * result. Checks the contents of the result summary.
      */
     @Test
-    public void should_aggregate_tools_into_single_result() {
+    public void shouldAggregateToolsIntoSingleResult() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
         IssuesRecorder recorder = addRecorder(job);
         recorder.setEnabledForAggregation(true);
@@ -385,7 +386,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      * Test to check that the issue filter can be configured and is applied.
      */
     @Test
-    public void should_filter_issues_by_include_and_exclude_filters() {
+    public void shouldFilterIssuesByIncludeAndExcludeFilters() {
         FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-result.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("CheckStyle");
@@ -417,7 +418,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      */
     @Test
     @WithPlugins({"maven-plugin", "analysis-model-api@7.0.4"})
-    public void should_show_maven_warnings_in_maven_project() {
+    public void shouldShowMavenWarningsInMavenProject() {
         MavenModuleSet job = createMavenProject();
         copyResourceFilesToWorkspace(job, SOURCE_VIEW_FOLDER + "pom.xml");
 
@@ -469,12 +470,10 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
     @WithDocker
     @WithPlugins("ssh-slaves")
     @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {CREDENTIALS_ID, CREDENTIALS_KEY})
-    public void should_parse_warnings_on_agent() {
+    public void shouldParseWarningsOnAgent() {
         DumbSlave dockerAgent = createDockerAgent();
         FreeStyleJob job = createFreeStyleJobForDockerAgent(dockerAgent, "issue_filter/checkstyle-result.xml");
-        job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("CheckStyle", "**/checkstyle-result.xml");
-        });
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle", "**/checkstyle-result.xml"));
         job.save();
 
         Build build = buildJob(job);
@@ -576,7 +575,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      * {@link ClassLoader#getSystemResource}.
      * <p>
      * Before delegation, an absolute resource name is constructed from the given resource name using this algorithm:
-     * <p>
+     * </p>
      * <ul>
      * <li> If the {@code name} begins with a {@code '/'} (<tt>'&#92;u002f'</tt>), then the absolute name of the
      * resource is the portion of the {@code name} following the {@code '/'}.</li>
