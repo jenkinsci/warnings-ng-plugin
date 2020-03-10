@@ -18,6 +18,8 @@ public class DetailsTableRow extends AbstractIssuesTableRow {
      *         the WebElement representing the row.
      */
     DetailsTableRow(final WebElement row) {
+        super();
+
         this.details = row.getText();
     }
 

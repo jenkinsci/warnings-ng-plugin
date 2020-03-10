@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -321,11 +320,15 @@ public class AnalysisSummary extends PageObject {
             this.iconName = iconName;
         }
 
+        private String getIconName() {
+            return iconName;
+        }
+
         static InfoType valueOfClass(final String iconName) {
-            if (iconName.contains(INFO.iconName)) {
+            if (iconName.contains(INFO.getIconName())) {
                 return INFO;
             }
-            if (iconName.contains(ERROR.iconName)) {
+            if (iconName.contains(ERROR.getIconName())) {
                 return ERROR;
             }
             throw new NoSuchElementException("No such info type with classes " + iconName);

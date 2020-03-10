@@ -78,7 +78,7 @@ public class IssuesTable {
     /**
      * Updates the table rows. E.g. if they are changed by toggling a details-row.
      */
-    public void updateTableRows() {
+    public final void updateTableRows() {
         tableRows.clear();
         List<WebElement> tableRowsAsWebElements = tableElement.findElements(By.xpath(".//tbody/tr"));
         tableRowsAsWebElements.forEach(element -> tableRows.add(getRightTableRow(element)));

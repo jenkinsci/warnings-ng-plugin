@@ -24,7 +24,6 @@ import org.jenkinsci.test.acceptance.po.PageObject;
 public class InfoView extends PageObject {
     private final Control errors = control(By.id("errors"));
     private final Control info = control(By.id("info"));
-    private final String id;
 
     /**
      * Creates a new info and error view.
@@ -36,8 +35,6 @@ public class InfoView extends PageObject {
      */
     public InfoView(final Build build, final String id) {
         super(build, build.url(id + "/info/"));
-
-        this.id = id;
     }
 
     /**
@@ -53,7 +50,6 @@ public class InfoView extends PageObject {
     @SuppressWarnings("unused") // Required to dynamically create page object using reflection
     public InfoView(final Injector injector, final URL url, final String id) {
         super(injector, url);
-        this.id = id;
     }
 
     /**
