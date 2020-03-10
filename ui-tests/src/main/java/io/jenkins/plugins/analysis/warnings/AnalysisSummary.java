@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -223,7 +224,7 @@ public class AnalysisSummary extends PageObject {
         for (WebElement result : results) {
             if (result.getText().contains("Quality gate")) {
                 return QualityGateResult.valueOf(
-                        result.findElement(by.tagName("img")).getAttribute("title").toUpperCase());
+                        result.findElement(by.tagName("img")).getAttribute("title").toUpperCase(Locale.ENGLISH));
             }
         }
         return QualityGateResult.INACTIVE;

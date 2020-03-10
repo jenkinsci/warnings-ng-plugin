@@ -56,7 +56,7 @@ import static org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation.*;
  * @author Veronika Zwickenpflug
  */
 @WithPlugins("warnings-ng")
-@SuppressWarnings("checkstyle:ClassFanOutComplexity")
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.SystemPrintln"})
 public class WarningsPluginUiTest extends AbstractJUnitTest {
     private static final String WARNINGS_PLUGIN_PREFIX = "/";
 

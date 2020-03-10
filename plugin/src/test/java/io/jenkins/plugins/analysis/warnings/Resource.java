@@ -19,7 +19,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Kohsuke Kawaguchi
  */
 @SuppressWarnings("all")
-@SuppressFBWarnings("DM")
+@SuppressFBWarnings({"DM", "URLCONNECTION_SSRF_FD"})
 public class Resource {
     public final URL url;
 

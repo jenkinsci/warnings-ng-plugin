@@ -29,6 +29,8 @@ public abstract class AbstractNonDetailsIssuesTableRow extends AbstractIssuesTab
     private final IssuesTable issuesTable;
 
     AbstractNonDetailsIssuesTableRow(final WebElement rowElement, final IssuesTable table) {
+        super();
+
         this.row = rowElement;
         this.issuesTable = table;
     }
