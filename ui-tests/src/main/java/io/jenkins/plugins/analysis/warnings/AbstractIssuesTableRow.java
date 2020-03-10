@@ -16,7 +16,6 @@ public abstract class AbstractIssuesTableRow {
      *
      * @return the row
      */
-    @SuppressWarnings("unchecked")
     public <T extends AbstractIssuesTableRow> T getAs(final Class<T> actualClass) {
         return actualClass.cast(this);
     }

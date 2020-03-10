@@ -91,6 +91,8 @@ public class AnalysisResult extends PageObject {
     /**
      * Returns the total number of issues. This method requires that one of the tabs is shown that shows the total
      * number of issues in the footer. I.e. the {@link Tab#ISSUES} and {@link Tab#BLAMES}.
+     *
+     * @return the total number of issues
      */
     public int getTotal() {
         String total = find(By.tagName("tfoot")).getText();
@@ -166,8 +168,7 @@ public class AnalysisResult extends PageObject {
     // FIXME: IssuesTable should not depend on AnalysisResult
     public AnalysisResult openFilterLinkOnSite(final WebElement element) {
         String link = element.getAttribute("href");
-        AnalysisResult retVal = newInstance(
-                AnalysisResult.class, injector, url(link), id);
+        AnalysisResult retVal = newInstance(AnalysisResult.class, injector, url(link), id);
         element.click();
         return retVal;
     }

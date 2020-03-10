@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -27,8 +28,8 @@ public class AnalysisSummary extends PageObject {
     private static final String UNDEFINED = "-";
 
     private final WebElement summary;
-    private WebElement title;
-    private List<WebElement> results;
+    private final WebElement title;
+    private final List<WebElement> results;
     private final String id;
 
     /**
@@ -44,10 +45,8 @@ public class AnalysisSummary extends PageObject {
 
         this.id = id;
         summary = getElement(By.id(id + "-summary"));
-        if (summary != null) {
-            title = find(By.id(id + "-title"));
-            results = summary.findElements(by.xpath("./ul/li"));
-        }
+        title = find(By.id(id + "-title"));
+        results = summary.findElements(by.xpath("./ul/li"));
     }
 
     /**
@@ -103,7 +102,9 @@ public class AnalysisSummary extends PageObject {
      * @return the type of the icon that links to the info messages view
      */
     public InfoType getInfoType() {
-        String iconName = find(by.xpath("//a[@href='" + id + "/info']")).findElements(by.css("*")).get(1).getAttribute("href");
+        String iconName = find(by.xpath("//a[@href='" + id + "/info']")).findElements(by.css("*"))
+                .get(1)
+                .getAttribute("href");
 
         return InfoType.valueOfClass(iconName);
     }
@@ -111,6 +112,8 @@ public class AnalysisSummary extends PageObject {
     /**
      * Returns the tools that are part of the aggregated results. If aggregation is disabled, then {@link #UNDEFINED} is
      * returned.
+     *
+     * @return the tools that participate in the aggregation
      */
     public String getAggregation() {
         for (WebElement result : results) {
@@ -228,8 +231,9 @@ public class AnalysisSummary extends PageObject {
     }
 
     /**
-     * Gets the Webelement of the reset button.
+     * Gets the {@link WebElement} of the reset button.
      *
+     * @return the button
      * @throws org.openqa.selenium.NoSuchElementException
      *         When there is no quality gate reset button.
      */
@@ -252,7 +256,10 @@ public class AnalysisSummary extends PageObject {
             if (getQualityGateResetButton() != null) {
                 return true;
             }
-        } catch (org.openqa.selenium.NoSuchElementException ignored) { }
+        }
+        catch (org.openqa.selenium.NoSuchElementException ignored) {
+            // ignore and continue
+        }
 
         return false;
     }

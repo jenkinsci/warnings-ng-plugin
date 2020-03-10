@@ -78,6 +78,9 @@ public class AffectedFilesResolver {
     /**
      * Returns a file name for a temporary file that will hold the contents of the source.
      *
+     * @param fileName
+     *         the file name to convert
+     *
      * @return the temporary name
      */
     private static String getTempName(final String fileName) {
@@ -92,7 +95,7 @@ public class AffectedFilesResolver {
      * @param buildFolder
      *         directory to store the copied files in
      * @param affectedFilesFolder
-     *          paths to the affected files on the agent
+     *         paths to the affected files on the agent
      *
      * @throws InterruptedException
      *         if the user cancels the processing
@@ -121,7 +124,8 @@ public class AffectedFilesResolver {
                             copied++;
                         }
                         catch (IOException exception) {
-                            log.logError("- '%s', IO exception has been thrown: %s", issue.getAbsolutePath(), exception);
+                            log.logError("- '%s', IO exception has been thrown: %s", issue.getAbsolutePath(),
+                                    exception);
                         }
                     }
                     else {

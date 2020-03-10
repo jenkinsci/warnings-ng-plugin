@@ -15,6 +15,7 @@ import org.jenkinsci.test.acceptance.po.PostBuildStep;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings({"unused", "UnusedReturnValue"})
 @Describable("Record compiler warnings and static analysis results")
 public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private Control toolsRepeatable = findRepeatableAddButtonFor("tools");
@@ -28,7 +29,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private Control aggregatingResultsCheckBox = control("aggregatingResults");
     private Control sourceCodeEncoding = control("sourceCodeEncoding");
 
-    public enum QualityGateBuildResult {UNSTABLE, FAILED}
+    /**
+     * Determines the result of the quality gate.
+     */
+    public enum QualityGateBuildResult {
+        UNSTABLE,
+        FAILED
+    }
 
     /**
      * Returns the repeatable add button for the specified property.

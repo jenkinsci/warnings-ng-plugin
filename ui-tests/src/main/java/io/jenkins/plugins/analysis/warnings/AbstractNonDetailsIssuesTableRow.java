@@ -85,6 +85,8 @@ public abstract class AbstractNonDetailsIssuesTableRow extends AbstractIssuesTab
      *         the WebElement representing the link
      * @param targetPageClass
      *         the PageObject class representing the target page
+     * @param <T>
+     *         type of the target class
      *
      * @return the PageObject representing the target page
      */
