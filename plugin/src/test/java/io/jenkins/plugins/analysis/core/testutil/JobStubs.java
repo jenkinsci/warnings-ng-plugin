@@ -184,6 +184,7 @@ public final class JobStubs {
      *
      * @return the {@link ResultAction} stub
      */
+    @SuppressWarnings("unchecked")
     public static ResultAction createAction(final String id, final String name, final AnalysisResult result) {
         ResultAction resultAction = mock(ResultAction.class);
 
