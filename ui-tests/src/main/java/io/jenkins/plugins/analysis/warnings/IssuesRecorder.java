@@ -18,16 +18,16 @@ import org.jenkinsci.test.acceptance.po.PostBuildStep;
 @SuppressWarnings({"unused", "UnusedReturnValue"})
 @Describable("Record compiler warnings and static analysis results")
 public class IssuesRecorder extends AbstractStep implements PostBuildStep {
-    private Control toolsRepeatable = findRepeatableAddButtonFor("tools");
-    private Control filtersRepeatable = findRepeatableAddButtonFor("filters");
-    private Control qualityGatesRepeatable = findRepeatableAddButtonFor("qualityGates");
-    private Control advancedButton = control("advanced-button");
-    private Control enabledForFailureCheckBox = control("enabledForFailure");
-    private Control ignoreQualityGate = control("ignoreQualityGate");
-    private Control overallResultMustBeSuccessCheckBox = control("overallResultMustBeSuccess");
-    private Control referenceJobField = control("referenceJob");
-    private Control aggregatingResultsCheckBox = control("aggregatingResults");
-    private Control sourceCodeEncoding = control("sourceCodeEncoding");
+    private final Control toolsRepeatable = findRepeatableAddButtonFor("tools");
+    private final Control filtersRepeatable = findRepeatableAddButtonFor("filters");
+    private final Control qualityGatesRepeatable = findRepeatableAddButtonFor("qualityGates");
+    private final Control advancedButton = control("advanced-button");
+    private final Control enabledForFailureCheckBox = control("enabledForFailure");
+    private final Control ignoreQualityGate = control("ignoreQualityGate");
+    private final Control overallResultMustBeSuccessCheckBox = control("overallResultMustBeSuccess");
+    private final Control referenceJobField = control("referenceJob");
+    private final Control aggregatingResultsCheckBox = control("aggregatingResults");
+    private final Control sourceCodeEncoding = control("sourceCodeEncoding");
 
     /**
      * Determines the result of the quality gate.
