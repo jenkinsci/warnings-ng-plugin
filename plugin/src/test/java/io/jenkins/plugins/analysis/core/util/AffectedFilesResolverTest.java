@@ -32,7 +32,12 @@ class AffectedFilesResolverTest {
     private static final FilePath BUILD_ROOT = new FilePath(new File("builds"));
     private static final String FILE_NAME = "file.txt";
 
-    /** Ensures that illegal file names are processed without problems. */
+    /**
+     * Ensures that illegal file names are processed without problems.
+     *
+     * @param fileName
+     *         the file to process
+     */
     @ParameterizedTest(name = "[{index}] Illegal filename = {0}")
     @ValueSource(strings = {"/does/not/exist", "!<>$$&%/&(", "\0 Null-Byte"})
     @DisplayName("Should ignore illegal path names")

@@ -268,9 +268,11 @@ final class DefaultTransformations {
      * Creates a link to the issue instance inside the Axivion-Dashboard.
      *
      * @param issue
-     *         the issue to link
+     *         2    the issue to link
      * @param id
      *         the ID of the issue
+     *
+     * @return the link
      */
     private static String createLink(final AxRawIssue issue, final int id) {
         return "<p><a target=\"_blank\" rel=\"noopener noreferrer\" href=\""
