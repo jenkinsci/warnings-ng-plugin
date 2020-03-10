@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import com.google.inject.Inject;
 
+import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaGitContainer;
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
@@ -501,7 +502,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      *
      * @return the container
      */
-    private JavaGitContainer getDockerContainer() {
+    private DockerContainer getDockerContainer() {
         return dockerContainer.get();
     }
 
@@ -517,7 +518,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         agent.remoteFS.set("/tmp/");
         SshSlaveLauncher launcher = agent.setLauncher(SshSlaveLauncher.class);
 
-        JavaGitContainer container = getDockerContainer();
+        DockerContainer container = getDockerContainer();
         launcher.host.set(container.ipBound(22));
         launcher.port(container.port(22));
         launcher.setSshHostKeyVerificationStrategy(SshSlaveLauncher.NonVerifyingKeyVerificationStrategy.class);

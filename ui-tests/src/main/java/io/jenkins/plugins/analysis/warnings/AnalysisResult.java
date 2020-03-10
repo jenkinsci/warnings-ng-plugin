@@ -37,7 +37,7 @@ public class AnalysisResult extends PageObject {
      *         the type of the result page (e.g. simian, checkstyle, cpd, etc.)
      */
     public AnalysisResult(final Build parent, final String id) {
-        super(parent, parent.url(id.toLowerCase()));
+        super(parent, parent.url(id));
 
         this.id = id;
     }

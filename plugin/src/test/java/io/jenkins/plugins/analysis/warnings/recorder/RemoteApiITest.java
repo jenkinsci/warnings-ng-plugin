@@ -182,16 +182,4 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         enableCheckStyleWarnings(project);
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS).getOwner();
     }
-
-    private Document readExpectedXml(final String fileName) {
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-
-            return builder.parse(asInputStream(fileName));
-        }
-        catch (ParserConfigurationException | SAXException | IOException e) {
-            throw new AssertionError(e);
-        }
-    }
 }

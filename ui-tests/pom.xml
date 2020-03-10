@@ -71,6 +71,7 @@
 
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
@@ -86,6 +87,11 @@
             <package>io.jenkins.plugins.analysis.warnings</package>
           </packages>
           <entryPointClassPackage>io.jenkins.plugins.analysis.warnings</entryPointClassPackage>
+          <cleanTargetDir>true</cleanTargetDir>
+          <hierarchical>false</hierarchical>
+          <generateBddAssertions>false</generateBddAssertions>
+          <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
+          <generateSoftAssertions>false</generateSoftAssertions>
           <templates>
             <templatesDirectory>${project.basedir}/etc/templates/</templatesDirectory>
             <assertionsEntryPointClass>assertions_entry_point_class_template.txt</assertionsEntryPointClass>

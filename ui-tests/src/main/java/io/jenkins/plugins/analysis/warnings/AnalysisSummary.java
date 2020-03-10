@@ -41,7 +41,7 @@ public class AnalysisSummary extends PageObject {
      *         the type of the result page (e.g. simian, checkstyle, cpd, etc.)
      */
     public AnalysisSummary(final Build parent, final String id) {
-        super(parent, parent.url(id.toLowerCase()));
+        super(parent, parent.url(id));
 
         this.id = id;
         summary = getElement(By.id(id + "-summary"));
@@ -298,20 +298,12 @@ public class AnalysisSummary extends PageObject {
         return null;
     }
 
-    private WebElement getSummary() {
-        return summary;
-    }
-
     private WebElement getTitleResultLink() {
         return summary.findElement(by.href(id));
     }
 
     private WebElement getTitleResultInfoLink() {
         return summary.findElement(by.href(id + "/info"));
-    }
-
-    private WebElement getTitle() {
-        return title;
     }
 
     /**
