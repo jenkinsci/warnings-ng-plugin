@@ -34,6 +34,7 @@ import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResul
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation.*;
 
 /**
  * Acceptance tests for the Warnings Next Generation Plugin.
@@ -54,7 +55,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Veronika Zwickenpflug
  */
 @WithPlugins("warnings-ng")
-public class WarningsNextGenerationPluginTest extends AbstractJUnitTest {
+public class WarningsPluginUiTest extends AbstractJUnitTest {
     private static final String WARNINGS_PLUGIN_PREFIX = "/";
 
     private static final String CHECKSTYLE_ID = "checkstyle";
@@ -465,8 +466,8 @@ public class WarningsNextGenerationPluginTest extends AbstractJUnitTest {
      * Verifies that warnings can be parsed on a agent as well.
      */
     @Test
-    @WithPlugins("ssh-slaves")
     @WithDocker
+    @WithPlugins("ssh-slaves")
     @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {CREDENTIALS_ID, CREDENTIALS_KEY})
     public void should_parse_warnings_on_agent() {
         DumbSlave dockerAgent = createDockerAgent();
@@ -542,12 +543,8 @@ public class WarningsNextGenerationPluginTest extends AbstractJUnitTest {
     }
 
     private MavenModuleSet createMavenProject() {
-        MavenInstallation.installSomeMaven(jenkins);
+        MavenInstallation.installMaven(jenkins, DEFAULT_MAVEN_ID, "3.6.3");
         return jenkins.getJobs().create(MavenModuleSet.class);
-    }
-
-    private Build buildFailingJob(final Job job) {
-        return buildJob(job).shouldFail();
     }
 
     private Build buildJob(final Job job) {
