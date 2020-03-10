@@ -44,7 +44,8 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the first build is always considered stable if the quality gate is set up for delta warnings - even
      * if there is a warning.
      */
-    @Test @Issue("JENKINS-58635")
+    @Test
+    @Issue("JENKINS-58635")
     public void shouldBePassedForFirstBuildWithDelta() {
         FreeStyleProject project = createFreeStyleProject();
         enableAndConfigureCheckstyle(project,
@@ -476,11 +477,16 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
      * so the build always will be successful. In the second run, the file 'checkstyle-quality-gate.xml' is copied to
      * the workspace so that the project will contain new warnings. (In the first run, new warnings are suppressed
      * automatically, so at least two builds are required to fire the new warnings detection).
+     *
+     * @param project
+     *         the project to build
+     * @param expectedResult
+     *         the expected result of the build
      */
-    private void runJobTwice(final FreeStyleProject project, final Result result) {
+    private void runJobTwice(final FreeStyleProject project, final Result expectedResult) {
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, QualityGateStatus.PASSED);
         copyMultipleFilesToWorkspaceWithSuffix(project, REPORT_FILE);
-        scheduleBuildAndAssertStatus(project, result, RESULT_TO_STATUS_MAPPING.get(result));
+        scheduleBuildAndAssertStatus(project, expectedResult, RESULT_TO_STATUS_MAPPING.get(expectedResult));
     }
 
     @CanIgnoreReturnValue

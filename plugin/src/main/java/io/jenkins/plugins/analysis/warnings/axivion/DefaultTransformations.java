@@ -19,6 +19,11 @@ final class DefaultTransformations {
 
     /**
      * Converts architecture violations from json to {@link Issue}.
+     *
+     * @param rawIssue
+     *         the violation
+     *
+     * @return the converted issue
      */
     static Issue createAVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.AV));
@@ -83,6 +88,11 @@ final class DefaultTransformations {
 
     /**
      * Converts clones from json to {@link Issue}.
+     *
+     * @param rawIssue
+     *         the clone
+     *
+     * @return the converted issue
      */
     static Issue createCLIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.CL));
@@ -134,6 +144,11 @@ final class DefaultTransformations {
 
     /**
      * Converts dead entities from json to {@link Issue}.
+     *
+     * @param rawIssue
+     *         the violation
+     *
+     * @return the converted issue
      */
     static Issue createDEIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.DE));
@@ -160,6 +175,11 @@ final class DefaultTransformations {
 
     /**
      * Converts metric violations from json to {@link Issue}.
+     *
+     * @param rawIssue
+     *         the violation
+     *
+     * @return the converted issue
      */
     static Issue createMVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.MV));
@@ -193,6 +213,11 @@ final class DefaultTransformations {
 
     /**
      * Converts style violations from json to {@link Issue}.
+     *
+     * @param rawIssue
+     *         the violation
+     *
+     * @return the converted issue
      */
     static Issue createSVIssue(final AxRawIssue rawIssue) {
         Validate.isTrue(rawIssue.getKind().equals(AxIssueKind.SV));
@@ -219,6 +244,11 @@ final class DefaultTransformations {
 
     /**
      * Converts dashboard severity to a warnings-ng severity.
+     *
+     * @param payload
+     *         the severity as string
+     *
+     * @return the severity
      */
     private static Severity parsePriority(final JsonObject payload) {
         final String severity = getString(payload, "severity");
@@ -236,6 +266,11 @@ final class DefaultTransformations {
 
     /**
      * Creates a link to the issue instance inside the Axivion-Dashboard.
+     *
+     * @param issue
+     *         the issue to link
+     * @param id
+     *         the ID of the issue
      */
     private static String createLink(final AxRawIssue issue, final int id) {
         return "<p><a target=\"_blank\" rel=\"noopener noreferrer\" href=\""

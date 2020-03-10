@@ -152,20 +152,23 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Creates a {@link HealthReport} under test with checkstyle workspace file.
      *
+     * @param minimumSeverity
+     *         the minimum severity to select
+     *
      * @return a healthReport under test
      */
-    private HealthReport createHealthReportTestSetupCheckstyle(final Severity priority) {
+    private HealthReport createHealthReportTestSetupCheckstyle(final Severity minimumSeverity) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle-healthReport.xml");
         enableGenericWarnings(project, publisher -> {
                     publisher.setHealthy(10);
                     publisher.setUnhealthy(15);
-                    publisher.setMinimumSeverity(priority.getName());
+                    publisher.setMinimumSeverity(minimumSeverity.getName());
                 },
                 createTool(new CheckStyle(), "**/*issues.txt")
         );
         return scheduleBuildToGetHealthReportAndAssertStatus(project, Result.SUCCESS);
     }
-    
+
     /**
      * Schedules a new build for the specified job and returns the created {@link HealthReport} after the build has been
      * finished.
@@ -184,7 +187,7 @@ public class HealthReportITest extends IntegrationTestWithJenkinsPerSuite {
             FreeStyleBuild build = getJenkins().assertBuildStatus(status, job.scheduleBuild2(0));
 
             getAnalysisResult(build);
-            
+
             ResultAction action = build.getAction(ResultAction.class);
 
             assertThat(action).isNotNull();

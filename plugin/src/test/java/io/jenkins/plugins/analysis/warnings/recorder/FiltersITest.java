@@ -60,6 +60,8 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Provides a map, that contains the filters and the line numbers that are expected to remain after filtering.
+     *
+     * @return the mapping
      */
     private Map<RegexpFilter, Integer[]> setupModuleFilterForPmd() {
         /*
@@ -67,8 +69,8 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
         ChangeSelectionAction.java:14   com.avaloq.adt.env.internal.ui.actions.change   Import Statement Rules  UnusedImports   Normal  1
          */
         Map<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
-        filterResultMap.put(new ExcludeModule("m1"), new Integer[]{14});
-        filterResultMap.put(new IncludeModule("m1"), new Integer[]{54});
+        filterResultMap.put(new ExcludeModule("m1"), new Integer[] {14});
+        filterResultMap.put(new IncludeModule("m1"), new Integer[] {54});
 
         return filterResultMap;
     }
@@ -90,6 +92,8 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Provides a map, that contains the filters and the line numbers that are expected to remain after filtering.
+     *
+     * @return the mapping
      */
     private Map<RegexpFilter, Integer[]> setupCategoryFilterForCheckStyle() {
         /*
@@ -102,13 +106,12 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
           FileFinder.java:99                -Blocks RightCurlyCheck High 1
          */
         Map<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
-        filterResultMap.put(new IncludeCategory("Blocks"), new Integer[]{30, 37, 99});
-        filterResultMap.put(new ExcludeCategory("Blocks"), new Integer[]{17, 22, 42, 29});
-        filterResultMap.put(new ExcludeCategory("(Blocks|Design)"), new Integer[]{42, 29});
-        filterResultMap.put(new IncludeCategory("(Blocks|Design)"),
-                new Integer[]{30, 37, 17, 22, 99});
-        filterResultMap.put(new ExcludeFile(".*Csharp.*"), new Integer[]{99});
-        filterResultMap.put(new IncludeFile(".*Csharp.*"), new Integer[]{30, 37, 17, 22, 42, 29});
+        filterResultMap.put(new IncludeCategory("Blocks"), new Integer[] {30, 37, 99});
+        filterResultMap.put(new ExcludeCategory("Blocks"), new Integer[] {17, 22, 42, 29});
+        filterResultMap.put(new ExcludeCategory("(Blocks|Design)"), new Integer[] {42, 29});
+        filterResultMap.put(new IncludeCategory("(Blocks|Design)"), new Integer[] {30, 37, 17, 22, 99});
+        filterResultMap.put(new ExcludeFile(".*Csharp.*"), new Integer[] {99});
+        filterResultMap.put(new IncludeFile(".*Csharp.*"), new Integer[] {30, 37, 17, 22, 42, 29});
 
         return filterResultMap;
     }
@@ -130,6 +133,8 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Provides a map, that contains the filters and the line numbers that are expected to remain after filtering.
+     *
+     * @return the mapping
      */
     private Map<RegexpFilter, Integer[]> setupCategoryFilterForPmd() {
         /*
@@ -140,12 +145,12 @@ public class FiltersITest extends IntegrationTestWithJenkinsPerSuite {
          */
         HashMap<RegexpFilter, Integer[]> filterResultMap = new HashMap<>();
         filterResultMap.put(new IncludePackage(".*actions"), new Integer[] {54, 14});
-        filterResultMap.put(new IncludePackage(".*actions.*"), new Integer[]{54, 14});
-        filterResultMap.put(new ExcludePackage(".*actions.*"), new Integer[]{938, 980});
+        filterResultMap.put(new IncludePackage(".*actions.*"), new Integer[] {54, 14});
+        filterResultMap.put(new ExcludePackage(".*actions.*"), new Integer[] {938, 980});
         filterResultMap.put(new ExcludePackage(".*actions"), new Integer[] {938, 980});
 
-        filterResultMap.put(new IncludeType(".*EmptyCatchBlock"), new Integer[]{938, 980});
-        filterResultMap.put(new ExcludeType(".*EmptyCatchBlock"), new Integer[]{54, 14});
+        filterResultMap.put(new IncludeType(".*EmptyCatchBlock"), new Integer[] {938, 980});
+        filterResultMap.put(new ExcludeType(".*EmptyCatchBlock"), new Integer[] {54, 14});
 
         return filterResultMap;
     }

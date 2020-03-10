@@ -11,6 +11,7 @@ interface AxivionDashboard {
      *
      * @param kind
      *         kind to look for {@link AxIssueKind}
+     * @return the issues (as {@link JsonObject}
      */
     JsonObject getIssues(AxIssueKind kind);
 }
