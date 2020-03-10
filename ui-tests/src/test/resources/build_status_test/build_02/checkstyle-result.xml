@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.0">
+  <file name="/mnt/hudson_workspace/workspace/HTS-CheckstyleTest/ssh-slaves/src/main/java/hudson/plugins/sshslaves/RemoteLauncher.java">
+    <error line="59" column="50" severity="error" message="Parameter connection should be final."
+           source="com.puppycrawl.tools.checkstyle.checks.FinalParametersCheck"/>
+    <error line="139" column="5" severity="error" message="Missing a Javadoc comment."
+           source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
+    <error line="139" column="22" severity="error" message="Parameter modelEnvVars should be final."
+           source="com.puppycrawl.tools.checkstyle.checks.FinalParametersCheck"/>
+  </file>
+</checkstyle>

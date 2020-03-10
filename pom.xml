@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>io.jenkins.plugins</groupId>
+  <artifactId>warnings-ng-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>UNVERSIONED</version>
+
+  <name>Aggregator for Warnings Next Generation Plugin</name>
+
+  <modules>
+    <module>plugin</module>
+    <module>ui-tests</module>
+  </modules>
+
+  <build>
+    <plugins>
+      <!-- Do not deploy anything except for the plugin -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-deploy-plugin</artifactId>
+        <version>2.8.2</version>
+        <configuration>
+          <skip>true</skip>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
