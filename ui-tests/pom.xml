@@ -57,10 +57,21 @@
 
   <profiles>
     <profile>
-      <id>no-ath-on-win</id>
+      <id>no-ui-tests-on-windows</id>
       <activation>
         <os>
           <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <maven.test.skip>true</maven.test.skip>
+      </properties>
+    </profile>
+    <profile>
+      <id>no-ui-tests-on-mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
         </os>
       </activation>
       <properties>
@@ -93,7 +104,7 @@
           <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
           <generateSoftAssertions>false</generateSoftAssertions>
           <templates>
-            <templatesDirectory>${project.basedir}/etc/templates/</templatesDirectory>
+            <templatesDirectory>${project.basedir}/etc/assertj-templates/</templatesDirectory>
             <assertionsEntryPointClass>assertions_entry_point_class_template.txt</assertionsEntryPointClass>
           </templates>
         </configuration>
