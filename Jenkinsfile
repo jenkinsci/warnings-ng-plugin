@@ -120,6 +120,7 @@
 
                             if (first) {
                                 recordIssues enabledForFailure: true, tool: mavenConsole()
+                                recordIssues enabledForFailure: true, tool: errorProne()
                                 recordIssues enabledForFailure: true, tools: [java(), javaDoc()], sourceCodeEncoding: 'UTF-8'
                                 recordIssues tools: [spotBugs(), checkStyle(), pmdParser(), cpd()], sourceCodeEncoding: 'UTF-8'
                                 recordIssues enabledForFailure: true, tool: taskScanner(
