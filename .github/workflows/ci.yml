@@ -25,4 +25,4 @@ jobs:
     - name: Build with Maven
       env:
         BROWSER: firefox-container
-      run: mvn -V -ntp clean verify --file pom.xml  '-Djenkins.test.timeout=5000'
+      run: mvn -V -ntp clean verify --file pom.xml  '-Djenkins.test.timeout=5000' '-DElasticTime.factor=2' '-Dsurefire.rerunFailingTestsCount=2'

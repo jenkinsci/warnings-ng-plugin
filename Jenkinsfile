@@ -86,7 +86,7 @@
                                 if (skipTests) {
                                     mavenOptions += "-DskipTests -DskipITs"
                                 }
-                                mavenOptions += "clean install -npu -DskipITs"
+                                mavenOptions += "clean install -npu -DskipITs -DElasticTime.factor=2 -Dsurefire.rerunFailingTestsCount=2"
                                 infra.runMaven(mavenOptions, jdk, ["BROWSER=firefox-container"], null, addToolEnv)
                             } else {
                                 echo "WARNING: Gradle mode for buildPlugin() is deprecated, please use buildPluginWithGradle()"
