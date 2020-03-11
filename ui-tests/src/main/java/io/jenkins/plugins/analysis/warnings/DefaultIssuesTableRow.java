@@ -11,8 +11,8 @@ import org.openqa.selenium.WebElement;
  *
  * @author Stephan Plöderl
  */
-public class DefaultWarningsTableRow extends AbstractNonDetailsIssuesTableRow {
-    DefaultWarningsTableRow(final WebElement rowElement, final IssuesTable issuesTable) {
+public class DefaultIssuesTableRow extends IssuesTableRow {
+    DefaultIssuesTableRow(final WebElement rowElement, final IssuesTable issuesTable) {
         super(rowElement, issuesTable);
     }
 
@@ -54,7 +54,7 @@ public class DefaultWarningsTableRow extends AbstractNonDetailsIssuesTableRow {
         if (!super.equals(o)) {
             return false;
         }
-        DefaultWarningsTableRow that = (DefaultWarningsTableRow) o;
+        DefaultIssuesTableRow that = (DefaultIssuesTableRow) o;
 
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(getCategory(), that.getCategory())

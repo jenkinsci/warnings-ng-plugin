@@ -16,7 +16,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Anna-Maria Hardi
  * @author Elvira Hauer
  */
-public abstract class AbstractNonDetailsIssuesTableRow extends AbstractIssuesTableRow {
+public abstract class IssuesTableRow extends GenericTableRow {
     private static final String SEVERITY = "Severity";
     private static final String DETAILS = "Details";
     private static final String AGE = "Age";
@@ -28,7 +28,7 @@ public abstract class AbstractNonDetailsIssuesTableRow extends AbstractIssuesTab
     private final WebElement row;
     private final IssuesTable issuesTable;
 
-    AbstractNonDetailsIssuesTableRow(final WebElement rowElement, final IssuesTable table) {
+    IssuesTableRow(final WebElement rowElement, final IssuesTable table) {
         super();
 
         this.row = rowElement;
@@ -221,7 +221,7 @@ public abstract class AbstractNonDetailsIssuesTableRow extends AbstractIssuesTab
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        AbstractNonDetailsIssuesTableRow that = (AbstractNonDetailsIssuesTableRow) o;
+        IssuesTableRow that = (IssuesTableRow) o;
 
         EqualsBuilder builder = new EqualsBuilder();
         builder.append(this.getAge(), that.getAge())

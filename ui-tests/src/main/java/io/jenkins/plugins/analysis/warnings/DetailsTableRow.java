@@ -8,7 +8,7 @@ import org.openqa.selenium.WebElement;
  *
  * @author Stephan Plöderl
  */
-public class DetailsTableRow extends AbstractIssuesTableRow {
+public class DetailsTableRow extends GenericTableRow {
     private final String details;
 
     /**

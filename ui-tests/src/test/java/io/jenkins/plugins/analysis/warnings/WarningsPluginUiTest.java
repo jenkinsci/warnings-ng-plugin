@@ -35,7 +35,6 @@ import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResul
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
-import static org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation.*;
 
 /**
  * Acceptance tests for the Warnings Next Generation Plugin.
@@ -56,7 +55,7 @@ import static org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation.*;
  * @author Veronika Zwickenpflug
  */
 @WithPlugins("warnings-ng")
-@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.SystemPrintln"})
+@SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.SystemPrintln", "PMD.ExcessiveImports"})
 public class WarningsPluginUiTest extends AbstractJUnitTest {
     private static final String WARNINGS_PLUGIN_PREFIX = "/";
 
@@ -303,7 +302,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         IssuesTable issuesTable = checkstyleDetails.openIssuesTable();
         assertThat(issuesTable).hasSize(3).hasTotal(3);
 
-        DefaultWarningsTableRow tableRow = issuesTable.getRowAs(0, DefaultWarningsTableRow.class);
+        DefaultIssuesTableRow tableRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
         assertThat(tableRow).hasFileName("RemoteLauncher.java")
                 .hasLineNumber(59)
                 .hasCategory("Checks")
@@ -451,7 +450,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
 
         IssuesTable issuesTable = mavenDetails.openIssuesTable();
 
-        DefaultWarningsTableRow firstRow = issuesTable.getRowAs(0, DefaultWarningsTableRow.class);
+        DefaultIssuesTableRow firstRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
         assertThat(sourceView).hasTitle("Console Details")
                 .hasHighlightedText("[WARNING]\n"
@@ -543,7 +542,8 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
     }
 
     private MavenModuleSet createMavenProject() {
-        MavenInstallation.installMaven(jenkins, DEFAULT_MAVEN_ID, "3.6.3");
+        MavenInstallation.installMaven(jenkins, MavenInstallation.DEFAULT_MAVEN_ID, "3.6.3");
+
         return jenkins.getJobs().create(MavenModuleSet.class);
     }
 

@@ -5,9 +5,9 @@ package io.jenkins.plugins.analysis.warnings;
  *
  * @author Stephan Plöderl
  */
-public abstract class AbstractIssuesTableRow {
+public class GenericTableRow {
     /**
-     * Returns this row as an instance of a specific sub class of {@link AbstractIssuesTableRow}.
+     * Returns this row as an instance of a specific sub class of {@link GenericTableRow}.
      *
      * @param actualClass
      *         the class to which the table row shall be converted to
@@ -16,7 +16,7 @@ public abstract class AbstractIssuesTableRow {
      *
      * @return the row
      */
-    public <T extends AbstractIssuesTableRow> T getAs(final Class<T> actualClass) {
+    public <T extends GenericTableRow> T getAs(final Class<T> actualClass) {
         return actualClass.cast(this);
     }
 }

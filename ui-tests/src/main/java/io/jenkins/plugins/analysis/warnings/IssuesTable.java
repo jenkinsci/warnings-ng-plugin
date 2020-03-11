@@ -17,7 +17,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  */
 public class IssuesTable {
     private final AnalysisResult resultDetailsPage;
-    private final List<AbstractIssuesTableRow> tableRows = new ArrayList<>();
+    private final List<GenericTableRow> tableRows = new ArrayList<>();
     private final List<String> headers;
     private final WebElement tableElement;
     private final WebElement issuesTab;
@@ -85,21 +85,21 @@ public class IssuesTable {
     }
 
     /**
-     * Returns the table row as an object of the right sub class of {@link AbstractIssuesTableRow}.
+     * Returns the table row as an object of the right sub class of {@link GenericTableRow}.
      *
      * @param row
      *         the WebElement representing the specific row.
      *
      * @return the table row
      */
-    private AbstractIssuesTableRow getRightTableRow(final WebElement row) {
+    private GenericTableRow getRightTableRow(final WebElement row) {
         String rowType = row.getAttribute("role");
         if (StringUtils.equals(rowType, "row")) {
             if (type == IssuesTableRowType.DRY) {
                 return new DryIssuesTableRow(row, this);
             }
             else {
-                return new DefaultWarningsTableRow(row, this);
+                return new DefaultIssuesTableRow(row, this);
             }
         }
         else {
@@ -130,7 +130,7 @@ public class IssuesTable {
      *
      * @return the rows of the table
      */
-    public List<AbstractIssuesTableRow> getTableRows() {
+    public List<GenericTableRow> getTableRows() {
         return tableRows;
     }
 
@@ -155,7 +155,7 @@ public class IssuesTable {
      *
      * @return the row
      */
-    public <T extends AbstractIssuesTableRow> T getRowAs(final int row, final Class<T> expectedClass) {
+    public <T extends GenericTableRow> T getRowAs(final int row, final Class<T> expectedClass) {
         return getTableRows().get(row).getAs(expectedClass);
     }
 

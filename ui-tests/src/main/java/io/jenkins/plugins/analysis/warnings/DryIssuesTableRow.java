@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Class representing a duplicate code warnings issue table row in the issues table.
  */
-public class DryIssuesTableRow extends AbstractNonDetailsIssuesTableRow {
+public class DryIssuesTableRow extends IssuesTableRow {
     private static final String DUPLICATED_IN = "Duplicated In";
     private static final String AMOUNT_OF_LINES = "#Lines";
 
