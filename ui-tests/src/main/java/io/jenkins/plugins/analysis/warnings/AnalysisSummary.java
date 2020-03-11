@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.NoSuchElementException;
@@ -28,7 +29,7 @@ public class AnalysisSummary extends PageObject {
     private static final String UNDEFINED = "-";
 
     private final WebElement summary;
-    private final WebElement title;
+    private final String title;
     private final List<WebElement> results;
     private final String id;
 
@@ -45,8 +46,14 @@ public class AnalysisSummary extends PageObject {
 
         this.id = id;
         summary = getElement(By.id(id + "-summary"));
-        title = find(By.id(id + "-title"));
-        results = summary.findElements(by.xpath("./ul/li"));
+        if (summary == null) {
+            results = new ArrayList<>();
+            title = StringUtils.EMPTY;
+        }
+        else {
+            results = summary.findElements(by.xpath("./ul/li"));
+            title = find(By.id(id + "-title")).getText();
+        }
     }
 
     /**
@@ -64,7 +71,7 @@ public class AnalysisSummary extends PageObject {
      * @return the title text
      */
     public String getTitleText() {
-        return title.getText();
+        return title;
     }
 
     /**
