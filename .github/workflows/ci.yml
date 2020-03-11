@@ -23,4 +23,6 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
+      env:
+        BROWSER: firefox-container
       run: mvn -V -ntp clean verify --file pom.xml  '-Djenkins.test.timeout=5000'
