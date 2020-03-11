@@ -4,7 +4,7 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>1.0.3</version>
+    <version>1.0.4</version>
     <relativePath />
   </parent>
 
@@ -12,7 +12,7 @@
   <artifactId>warnings-ng-ui-tests</artifactId>
   <packaging>jar</packaging>
   <version>UNVERSIONED</version>
-  <name>UI Tests of Warnings Next Generation Plugin</name>
+  <name>UI Tests of Warnings Plugin</name>
 
   <properties>
     <jenkins.version>2.204.4</jenkins.version>
@@ -82,44 +82,19 @@
 
   <build>
     <plugins>
-
       <plugin>
         <groupId>org.assertj</groupId>
         <artifactId>assertj-assertions-generator-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>generate-assertions</goal>
-            </goals>
-          </execution>
-        </executions>
         <configuration>
           <packages combine.children="append">
             <package>io.jenkins.plugins.analysis.warnings</package>
           </packages>
           <entryPointClassPackage>io.jenkins.plugins.analysis.warnings</entryPointClassPackage>
-          <cleanTargetDir>true</cleanTargetDir>
-          <hierarchical>false</hierarchical>
-          <generateBddAssertions>false</generateBddAssertions>
-          <generateJUnitSoftAssertions>false</generateJUnitSoftAssertions>
-          <generateSoftAssertions>false</generateSoftAssertions>
-          <templates>
-            <templatesDirectory>${project.basedir}/etc/assertj-templates/</templatesDirectory>
-            <assertionsEntryPointClass>assertions_entry_point_class_template.txt</assertionsEntryPointClass>
-          </templates>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13</version>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M4</version>
         <configuration>
           <reuseForks>false</reuseForks>
           <environmentVariables>

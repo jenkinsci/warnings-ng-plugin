@@ -6,7 +6,7 @@
   <packaging>pom</packaging>
   <version>UNVERSIONED</version>
 
-  <name>Aggregator for Warnings Next Generation Plugin</name>
+  <name>Aggregator for Warnings Plugin</name>
 
   <modules>
     <module>plugin</module>

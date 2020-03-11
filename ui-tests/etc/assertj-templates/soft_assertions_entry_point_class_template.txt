@@ -1,0 +1,10 @@
+package ${package};
+
+/**
+ * Entry point for soft assertions of different data types.
+ */
+@edu.umd.cs.findbugs.annotations.SuppressFBWarnings("NM")
+@javax.annotation.Generated(value="assertj-assertions-generator")
+public class SoftAssertions extends org.assertj.core.api.AutoCloseableSoftAssertions {
+${all_assertions_entry_points}
+}
