@@ -7,6 +7,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -97,6 +98,8 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
     @Test
     @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldRecordIssuesInPipelineAndExpandTokens() {
+        waitUntilPluginsAreInstalled();
+
         WorkflowJob job = jenkins.jobs.create(WorkflowJob.class);
         job.sandbox.check();
 
@@ -128,6 +131,10 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+    }
+
+    private void waitUntilPluginsAreInstalled() {
+        jenkins.getLogger("all").waitForLogged(Pattern.compile("Completed installation of .*"), 1000);
     }
 
     private void createRecordIssuesStep(final WorkflowJob job, final int build) {
@@ -164,6 +171,8 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldShowBuildSummaryAndLinkToDetails() {
+        waitUntilPluginsAreInstalled();
+
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
         addRecorder(job);
         job.save();
@@ -328,6 +337,8 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldAggregateToolsIntoSingleResult() {
+        waitUntilPluginsAreInstalled();
+
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
         IssuesRecorder recorder = addRecorder(job);
         recorder.setEnabledForAggregation(true);
@@ -387,6 +398,8 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
      */
     @Test
     public void shouldFilterIssuesByIncludeAndExcludeFilters() {
+        waitUntilPluginsAreInstalled();
+
         FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-result.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("CheckStyle");
@@ -419,6 +432,8 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
     @Test
     @WithPlugins({"maven-plugin", "analysis-model-api@7.0.4"})
     public void shouldShowMavenWarningsInMavenProject() {
+        waitUntilPluginsAreInstalled();
+
         MavenModuleSet job = createMavenProject();
         copyResourceFilesToWorkspace(job, SOURCE_VIEW_FOLDER + "pom.xml");
 
@@ -471,6 +486,8 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
     @WithPlugins("ssh-slaves")
     @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {CREDENTIALS_ID, CREDENTIALS_KEY})
     public void shouldParseWarningsOnAgent() {
+        waitUntilPluginsAreInstalled();
+
         DumbSlave dockerAgent = createDockerAgent();
         FreeStyleJob job = createFreeStyleJobForDockerAgent(dockerAgent, "issue_filter/checkstyle-result.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle", "**/checkstyle-result.xml"));
