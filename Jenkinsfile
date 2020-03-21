@@ -86,7 +86,7 @@
                                 if (skipTests) {
                                     mavenOptions += "-DskipTests -DskipITs"
                                 }
-                                mavenOptions += "clean install -npu -DskipITs -DElasticTime.factor=2 -Dsurefire.rerunFailingTestsCount=2"
+                                mavenOptions += "clean install -npu -Djenkins.test.timeout=1000 -DElasticTime.factor=2 -Dsurefire.rerunFailingTestsCount=2"
                                 infra.runMaven(mavenOptions, jdk, ["BROWSER=firefox-container"], null, addToolEnv)
                             } else {
                                 echo "WARNING: Gradle mode for buildPlugin() is deprecated, please use buildPluginWithGradle()"
@@ -131,7 +131,6 @@
                                 if (failFast && currentBuild.result == 'UNSTABLE') {
                                     error 'There were static analysis warnings; halting early'
                                 }
-                                jacoco()
                             }
                             if (doArchiveArtifacts) {
                                 if (incrementals) {
