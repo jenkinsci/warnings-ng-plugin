@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<BugCollection version='3.0.1' threshold='low' effort='max'>
+  <file classname='edu.hm.hafner.analysis.AbstractParser'></file>
+  <Error></Error>
+  <Project>
+    <SrcDir>/Users/hafner/Development/jenkins/workspace/Model - Freestyle/src/main/java</SrcDir>
+    <SrcDir>/Users/hafner/Development/jenkins/workspace/Model - Freestyle/target/generated-sources/annotations</SrcDir>
+    <SrcDir>/Users/hafner/Development/jenkins/workspace/Model - Freestyle/src/test/java</SrcDir>
+    <SrcDir>/Users/hafner/Development/jenkins/workspace/Model -
+      Freestyle/target/generated-test-sources/test-annotations
+    </SrcDir>
+  </Project>
+</BugCollection>

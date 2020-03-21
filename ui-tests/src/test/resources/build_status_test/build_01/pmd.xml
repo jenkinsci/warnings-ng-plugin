@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd"
+     version="6.1.0" timestamp="2018-03-12T10:21:30.106">
+  <file name="/Users/hafner/Development/jenkins/workspace/Model - Freestyle/src/main/java/edu/hm/hafner/analysis/parser/AjcParser.java">
+    <violation beginline="30" endline="76" begincolumn="12" endcolumn="5" rule="CyclomaticComplexity" ruleset="Design"
+               package="edu.hm.hafner.analysis.parser" class="AjcParser" method="parse"
+               externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_design.html#cyclomaticcomplexity"
+               priority="3">
+      The method 'parse(Reader, Function)' has a cyclomatic complexity of 11.
+    </violation>
+    <violation beginline="39" endline="39" begincolumn="20" endcolumn="49" rule="AssignmentInOperand"
+               ruleset="Error Prone" package="edu.hm.hafner.analysis.parser" class="AjcParser" method="parse"
+               externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#assignmentinoperand"
+               priority="3">
+      Avoid assignments in operands
+    </violation>
+  </file>
+  <file name="/Users/hafner/Development/jenkins/workspace/Model - Freestyle/src/main/java/edu/hm/hafner/analysis/parser/FindBugsParser.java">
+    <violation beginline="238" endline="238" begincolumn="78" endcolumn="92" rule="UseProperClassLoader"
+               ruleset="Error Prone" package="edu.hm.hafner.analysis.parser" class="FindBugsParser" method="readXml"
+               externalInfoUrl="https://pmd.github.io/pmd-6.1.0/pmd_rules_java_errorprone.html#useproperclassloader"
+               priority="3">
+      In J2EE, getClassLoader() might not work as expected. Use Thread.currentThread().getContextClassLoader() instead.
+    </violation>
+  </file>
+</pmd>
