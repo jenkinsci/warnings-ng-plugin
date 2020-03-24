@@ -20,117 +20,139 @@ public class IssueApi {
 
     /**
      * Creates a new {@link IssueApi}.
-     *  @param issue
+     *
+     * @param issue
      *         the issue to expose the properties from
      * @param blame
-     *          the blame which contains this issue
+     *         the blame which contains this issue
      */
     public IssueApi(final Issue issue, final Blame blame) {
         this.issue = issue;
         this.blame = blame;
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getFileName() {
         return issue.getFileName();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getBaseName() {
         return issue.getBaseName();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getCategory() {
         return issue.getCategory();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getType() {
         return issue.getType();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getSeverity() {
         return issue.getSeverity().getName();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getMessage() {
         return issue.getMessage();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getDescription() {
         return issue.getDescription();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public int getLineStart() {
         return issue.getLineStart();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public int getLineEnd() {
         return issue.getLineEnd();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public int getColumnStart() {
         return issue.getColumnStart();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public int getColumnEnd() {
         return issue.getColumnEnd();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getPackageName() {
         return issue.getPackageName();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getModuleName() {
         return issue.getModuleName();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getOrigin() {
         return issue.getOrigin();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getReference() {
         return issue.getReference();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getFingerprint() {
         return issue.getFingerprint();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getAuthorName() {
         return blame.getAuthorName();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getAuthorEmail() {
         return blame.getAuthorEmail();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public String getCommit() {
         return blame.getCommit();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     public int getAddedAt() {
         return blame.getAddedAt();
     }
 
-    @Exported @Whitelisted
+    @Exported
+    @Whitelisted
     @Override
     public String toString() {
         return issue.toString();
