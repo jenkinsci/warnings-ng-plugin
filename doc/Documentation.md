@@ -903,7 +903,7 @@ Examples:
 
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
 - `${ANALYSIS_ISSUES_COUNT, tool="checkstyle"}`: expands to the total number of **CheckStyle** issues
-- `${ANALYSIS_ISSUES_COUNT, tool="checkstyle", type: "NEW"}`: expands to the number of new **CheckStyle** issues
+- `${ANALYSIS_ISSUES_COUNT, tool="checkstyle", type="NEW"}`: expands to the number of new **CheckStyle** issues
 
 ## Transition from the static analysis suite
 
