@@ -37,6 +37,43 @@ public class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
         verifyConsoleLog(result, 4, 3, 2);
     }
 
+    @Test
+    public void shouldExpandDifferentSeverities() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("all-severities.xml");
+
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         recordIssues tool: checkStyle(pattern: '**/" + "all-severities" + "*')\n"
+                + "         def total = tm('${ANALYSIS_ISSUES_COUNT}')\n"
+                + "         def error = tm('${ANALYSIS_ISSUES_COUNT, type=\"TOTAL_ERROR\"}')\n"
+                + "         def high = tm('${ANALYSIS_ISSUES_COUNT, type=\"TOTAL_HIGH\"}')\n"
+                + "         def normal = tm('${ANALYSIS_ISSUES_COUNT, type=\"TOTAL_NORMAL\"}')\n"
+                + "         def low = tm('${ANALYSIS_ISSUES_COUNT, type=\"TOTAL_LOW\"}')\n"
+                + "         echo '[total=' + total + ']' \n"
+                + "         echo '[error=' + error + ']' \n"
+                + "         echo '[high=' + high + ']' \n"
+                + "         echo '[normal=' + normal + ']' \n"
+                + "         echo '[low=' + low + ']' \n"
+                + "  }\n"
+                + "}", true));
+
+        AnalysisResult baseline = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
+
+        assertThat(baseline).hasTotalSize(3);
+
+        assertThat(baseline).hasTotalHighPrioritySize(0);
+        assertThat(baseline).hasTotalErrorsSize(1);
+        assertThat(baseline).hasTotalNormalPrioritySize(1);
+        assertThat(baseline).hasTotalLowPrioritySize(1);
+
+        assertThat(getConsoleLog(baseline)).contains("[total=" + 3 + "]");
+
+        assertThat(getConsoleLog(baseline)).contains("[error=" + 1 + "]");
+        assertThat(getConsoleLog(baseline)).contains("[high=" + 0 + "]");
+        assertThat(getConsoleLog(baseline)).contains("[normal=" + 1 + "]");
+        assertThat(getConsoleLog(baseline)).contains("[low=" + 1 + "]");
+    }
+
     private void verifyConsoleLog(final AnalysisResult baseline, final int totalSize, final int newSize,
             final int fixedSize) {
         assertThat(baseline).hasTotalSize(totalSize);
