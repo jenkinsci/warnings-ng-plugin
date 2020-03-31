@@ -882,22 +882,22 @@ steps, e.g. in the mailer. In order to use this token you need to install the
 The token has the following optional parameters:
 - `tool`: selects a particular analysis result, if not defined all results are summed up
 - `type`: selects the type of the counter to use, choose one of:
-  - Total (any severity)  
-  - Total (errors only)
-  - Total (severity high only)
-  - Total (severity normal only)
-  - Total (severity low only)
-  - New (any severity)
-  - New (errors only)
-  - New (severity high only)
-  - New (severity normal only)
-  - New (severity low only)
-  - Delta (any severity)
-  - Delta (errors only)
-  - Delta (severity high only)
-  - Delta (severity normal only)
-  - Delta (severity low only)
-  - Fixed (any severity)
+  - `TOTAL` - Total (any severity), this is the default 
+  - `TOTAL_ERROR` - Total (errors only)
+  - `TOTAL_HIGH` - Total (severity high only)
+  - `TOTAL_NORMAL` - Total (severity normal only)
+  - `TOTAL_LOW` - Total (severity low only)
+  - `NEW` - New (any severity)
+  - `NEW_ERROR` - New (errors only)
+  - `NEW_HIGH` - New (severity high only)
+  - `NEW_NORMAL` - New (severity normal only)
+  - `NEW_LOW` - New (severity low only)
+  - `DELTA` - Delta (any severity)
+  - `DELTA_ERROR` - Delta (errors only)
+  - `DELTA_HIGH` - Delta (severity high only)
+  - `DELTA_NORMAL` - Delta (severity normal only)
+  - `DELTA_LOW` - Delta (severity low only)
+  - `FIXED` - Fixed (any severity)
 
 Examples:
 
