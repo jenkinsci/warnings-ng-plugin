@@ -1,4 +1,4 @@
-    Map params = [platform: "docker && highmem", jdk: "8"]
+    Map params = [platform: "docker && highmem", jdk: "8", timeout: 120]
 
     // Faster build and reduces IO needs
     properties([
