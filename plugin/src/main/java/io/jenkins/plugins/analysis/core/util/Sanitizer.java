@@ -10,7 +10,7 @@ import hudson.markup.MarkupFormatter;
 import hudson.markup.RawHtmlMarkupFormatter;
 
 /**
- * Sanitizes a piece of unsafe HTML code so that it can be rendered in an UI view.
+ * Sanitizes a piece of unsafe HTML code so that it can be rendered in a UI view.
  *
  * @author Ullrich Hafner
  */

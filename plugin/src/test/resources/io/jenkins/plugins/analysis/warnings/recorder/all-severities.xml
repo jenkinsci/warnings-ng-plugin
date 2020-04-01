@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="5.0">
+  <file name="/testfile.java">
+    <error line="1" column="1" severity="error" message="This is a error message." source="source"/>
+    <error line="1" column="1" severity="warning" message="This is a warning message." source="source"/>
+    <error line="1" column="1" severity="info" message="This is a info message." source="source"/>
+   </file>
+</checkstyle>

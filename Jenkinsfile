@@ -1,4 +1,4 @@
-    Map params = [platform: "docker && highmem", jdk: "8"]
+    Map params = [platform: "docker && highmem", jdk: "8", timeout: 120]
 
     // Faster build and reduces IO needs
     properties([
@@ -119,15 +119,15 @@
                             }
 
                             if (first) {
-                                recordIssues enabledForFailure: true, tool: mavenConsole()
-                                recordIssues enabledForFailure: true, tool: errorProne()
-                                recordIssues enabledForFailure: true, tools: [java(), javaDoc()], sourceCodeEncoding: 'UTF-8'
-                                recordIssues tools: [spotBugs(), checkStyle(), pmdParser(), cpd()], sourceCodeEncoding: 'UTF-8'
+                                recordIssues enabledForFailure: true, tool: mavenConsole(), referenceJobName: 'Plugins/warnings-ng-plugin/master'
+                                recordIssues enabledForFailure: true, tool: errorProne(), referenceJobName: 'Plugins/warnings-ng-plugin/master'
+                                recordIssues enabledForFailure: true, tools: [java(), javaDoc()], sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
+                                recordIssues tools: [spotBugs(), checkStyle(), pmdParser(), cpd()], sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
                                 recordIssues enabledForFailure: true, tool: taskScanner(
                                         includePattern:'**/*.java',
                                         excludePattern:'target/**',
                                         highTags:'FIXME',
-                                        normalTags:'TODO'), sourceCodeEncoding: 'UTF-8'
+                                        normalTags:'TODO'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
                                 if (failFast && currentBuild.result == 'UNSTABLE') {
                                     error 'There were static analysis warnings; halting early'
                                 }
