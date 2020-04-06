@@ -38,7 +38,7 @@
     <data-tables-api.version>1.10.20-14</data-tables-api.version>
     <echarts-api.version>4.6.0-8</echarts-api.version>
 
-    <commons.lang.version>3.9</commons.lang.version>
+    <commons.lang.version>3.10</commons.lang.version>
     <commons.io.version>2.6</commons.io.version>
     <commons.digester.version>2.1</commons.digester.version>
     <commons.digester3.version>3.2</commons.digester3.version>
