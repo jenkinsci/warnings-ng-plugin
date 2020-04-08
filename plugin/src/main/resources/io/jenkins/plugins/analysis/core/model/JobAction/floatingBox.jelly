@@ -4,12 +4,12 @@
  <j:choose>
    <j:when test="${from.noWarnings()}">
 
-     <c:trend-chart it="${from}" title="${from.trendName}" enableLinks="true"/>
+     <i:zero-issues/>
 
    </j:when>
    <j:otherwise>
 
-     <i:zero-issues/>
+     <c:trend-chart it="${from}" title="${from.trendName}" enableLinks="true"/>
 
    </j:otherwise>
 
