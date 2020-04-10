@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.stream.Stream;
+import java.util.ArrayList;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -11,6 +12,7 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.ContainerTag;
 import j2html.tags.UnescapedText;
+import j2html.tags.DomContent;
 
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.fontawesome.api.SvgTag;
@@ -103,7 +105,7 @@ public class SourcePrinter {
         return div().with(table().withClass("analysis-title").with(tr().with(
                 td().with(img().withSrc(iconUrl)),
                 td().withClass("analysis-title-column")
-                        .with(div().withClass("analysis-warning-title").with(unescape(message))),
+                        .with(div().withClass("analysis-warning-title").with(replaceNewLine(message))),
                 createCollapseButton(isCollapseVisible)
         )));
     }
@@ -128,6 +130,20 @@ public class SourcePrinter {
 
     private UnescapedText unescape(final String message) {
         return new UnescapedText(SANITIZER.render(message));
+    }
+    
+    private ArrayList<DomContent> replaceNewLine(final String message) {
+    	ArrayList<DomContent> messageLines = new ArrayList<DomContent>();
+    	String[] messageDivided = message.split("\n");
+    	if(messageDivided.length > 1) {
+    		for(int i = 0; i < messageDivided.length; i++) {
+        		messageLines.add(pre(unescape(messageDivided[i])));
+        	}
+    	}else {
+    		messageLines.add(unescape(messageDivided[0]));
+    	}
+    	
+    	return messageLines;
     }
 
     @SuppressWarnings({"javancss", "PMD.CyclomaticComplexity"})
