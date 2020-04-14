@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.stream.Stream;
+import java.util.ArrayList;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -129,6 +130,20 @@ public class SourcePrinter {
 
     private UnescapedText unescape(final String message) {
         return new UnescapedText(SANITIZER.render(message));
+    }
+    
+    private ArrayList<DomContent> replaceNewLine(final String message) {
+    	ArrayList<DomContent> messageLines = new ArrayList<DomContent>();
+    	String[] messageDivided = message.split("\n");
+    	if(messageDivided.length > 1) {
+    		for(int i = 0; i < messageDivided.length; i++) {
+        		messageLines.add(pre(unescape(messageDivided[i])));
+        	}
+    	}else {
+    		messageLines.add(unescape(messageDivided[0]));
+    	}
+    	
+    	return messageLines;
     }
 
     private UnescapedText replaceNewLine(final String message) {
