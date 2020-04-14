@@ -103,7 +103,7 @@ public class SourcePrinter {
         return div().with(table().withClass("analysis-title").with(tr().with(
                 td().with(img().withSrc(iconUrl)),
                 td().withClass("analysis-title-column")
-                        .with(div().withClass("analysis-warning-title").with(unescape(message))),
+                        .with(div().withClass("analysis-warning-title").with(replaceNewLine(message))),
                 createCollapseButton(isCollapseVisible)
         )));
     }
@@ -124,6 +124,11 @@ public class SourcePrinter {
                 div().withClasses("collapse", "analysis-detail")
                         .with(unescape(description))
                         .withId("analysis-description"));
+    }
+
+    private UnescapedText replaceNewLine(final String message) {
+        String m = message.replace("\n", "<br>");
+        return unescape(m);
     }
 
     private UnescapedText unescape(final String message) {
