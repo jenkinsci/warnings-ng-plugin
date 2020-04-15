@@ -26,6 +26,8 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
+    <hpi-plugin.version>3.13</hpi-plugin.version> <!-- TODO pending 4.x parent in analysis-pom -->
+
     <analysis-model-api.version>8.0.1</analysis-model-api.version>
     <analysis-model-tests.version>8.0.1</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
