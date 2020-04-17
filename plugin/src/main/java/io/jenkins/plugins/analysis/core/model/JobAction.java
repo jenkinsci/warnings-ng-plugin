@@ -208,13 +208,11 @@ public class JobAction implements Action, AsyncTrendChart {
 
     public boolean hasNoIssues() {
         History results =createBuildHistory(); //Get past build history
-        if(results instanceof AnalysisHistory){
-            Iterator<BuildResult<AnalysisBuildResult>> it = results.iterator();
-            while(it.hasNext()) {
-                BuildResult<AnalysisBuildResult> nextResult = it.next();
-                if(nextResult.getResult().getTotalSize() - nextResult.getResult().getTotalSizeOf(Severity.ERROR) != 0){
-                    return false;
-                }
+        Iterator<BuildResult<AnalysisBuildResult>> it = results.iterator();
+        while(it.hasNext()) {
+            BuildResult<AnalysisBuildResult> nextResult = it.next();
+            if(nextResult.getResult().getTotalSize() != 0){
+                return false;
             }
         }
         return true;
