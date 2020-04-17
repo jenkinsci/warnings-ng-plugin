@@ -206,7 +206,7 @@ public class JobAction implements Action, AsyncTrendChart {
         return trendChartType != TrendChartType.NONE && createBuildHistory().hasMultipleResults();
     }
 
-    public boolean noWarnings(){
+    public boolean hasNoIssues() {
         History results =createBuildHistory(); //Get past build history
         if(results instanceof AnalysisHistory){
             Iterator<BuildResult<AnalysisBuildResult>> it = results.iterator();
