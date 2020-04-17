@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:c="/charts" xmlns:i="/issues">
 
  <j:choose>
-   <j:when test="${from.noWarnings()}">
+   <j:when test="${from.hasNoIssues()}">
 
      <i:zero-issues/>
 
