@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>2.3.0</version>
+    <version>4.0.0</version>
     <relativePath />
   </parent>
 
@@ -30,7 +30,7 @@
     <analysis-model-tests.version>8.0.1</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0</git-forensics-plugin.version>
-    <plugin-util-api.version>1.0.2</plugin-util-api.version>
+    <plugin-util-api.version>1.1.0</plugin-util-api.version>
 
     <font-awesome-api.version>5.13.0-1</font-awesome-api.version>
     <jquery3-api.version>3.4.1-10</jquery3-api.version>
@@ -42,6 +42,7 @@
     <commons.io.version>2.6</commons.io.version>
     <commons.digester.version>2.1</commons.digester.version>
     <commons.digester3.version>3.2</commons.digester3.version>
+    <commons.beanutils.version>1.9.3</commons.beanutils.version>
     <commons.text.version>1.8</commons.text.version>
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
@@ -63,7 +64,6 @@
     <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>4.1.1</git-plugin.version>
-    <workflow-step-api.version>2.20</workflow-step-api.version>
     <structs.version>1.20</structs.version>
     <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
@@ -125,11 +125,20 @@
         <version>${commons.digester.version}</version>
       </dependency>
       <dependency>
+        <groupId>commons-beanutils</groupId>
+        <artifactId>commons-beanutils</artifactId>
+        <version>${commons.beanutils.version}</version>
+      </dependency>
+      <dependency>
         <groupId>joda-time</groupId>
         <artifactId>joda-time</artifactId>
         <version>2.9.9</version>
       </dependency>
-
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>2.4.12</version>
+      </dependency>
       <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
@@ -291,7 +300,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
       <artifactId>workflow-step-api</artifactId>
-      <version>${workflow-step-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
