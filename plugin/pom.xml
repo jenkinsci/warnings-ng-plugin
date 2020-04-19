@@ -105,11 +105,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.github.spotbugs</groupId>
-        <artifactId>spotbugs-annotations</artifactId>
-        <version>4.0.1</version>
-      </dependency>
-      <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>git-client</artifactId>
         <version>${git-client.version}</version>
