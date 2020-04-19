@@ -117,8 +117,9 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
     @SuppressWarnings({"PMD.AvoidCatchingThrowable", "IllegalCatch", "deprecation"})
     private DumbSlave createDockerContainerAgent(final DockerContainer dockerContainer) {
         try {
+            // FIXME: check how to create credentials
             DumbSlave agent = new DumbSlave("docker", "/home/test",
-                    new SSHLauncher(dockerContainer.ipBound(22), dockerContainer.port(22), "test", "test", "", ""));
+                    new SSHLauncher(dockerContainer.ipBound(22), dockerContainer.port(22), "test"));
             agent.setNodeProperties(Collections.singletonList(new EnvironmentVariablesNodeProperty(
                     new Entry("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64/jre"))));
             getJenkins().jenkins.addNode(agent);
