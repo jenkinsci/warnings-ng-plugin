@@ -1,22 +1,16 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.io.IOException;
-import java.util.Collections;
 
-import org.junit.AssumptionViolatedException;
 import org.junit.Rule;
 import org.junit.Test;
 
-import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerRule;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaContainer;
 import hudson.model.FreeStyleBuild;
 import hudson.model.FreeStyleProject;
 import hudson.model.Node;
-import hudson.plugins.sshslaves.SSHLauncher;
 import hudson.slaves.DumbSlave;
-import hudson.slaves.EnvironmentVariablesNodeProperty;
-import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
 import hudson.tasks.Maven;
 import hudson.tasks.Shell;
 
@@ -104,32 +98,6 @@ public class DockerContainerITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThat(result).hasTotalSize(1);
         assertThat(lastBuild.getBuiltOn().getLabelString()).isEqualTo(((Node) agent).getLabelString());
-    }
-
-    /**
-     * Creates a docker container agent.
-     *
-     * @param dockerContainer
-     *         The docker container of the agent.
-     *
-     * @return A docker container agent.
-     */
-    @SuppressWarnings({"PMD.AvoidCatchingThrowable", "IllegalCatch", "deprecation"})
-    private DumbSlave createDockerContainerAgent(final DockerContainer dockerContainer) {
-        try {
-            // FIXME: check how to create credentials
-            DumbSlave agent = new DumbSlave("docker", "/home/test",
-                    new SSHLauncher(dockerContainer.ipBound(22), dockerContainer.port(22), "test"));
-            agent.setNodeProperties(Collections.singletonList(new EnvironmentVariablesNodeProperty(
-                    new Entry("JAVA_HOME", "/usr/lib/jvm/java-8-openjdk-amd64/jre"))));
-            getJenkins().jenkins.addNode(agent);
-            getJenkins().waitOnline(agent);
-
-            return agent;
-        }
-        catch (Throwable e) {
-            throw new AssumptionViolatedException("Failed to create docker container", e);
-        }
     }
 
     /**
