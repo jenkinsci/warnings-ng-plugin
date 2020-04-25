@@ -47,7 +47,7 @@
     <j2html.version>1.4.0</j2html.version>
 
     <json.version>20190722</json.version>
-    <jackson-databind.version>2.9.10.3</jackson-databind.version>
+    <jackson2-api.version>2.9.10</jackson2-api.version>
 
     <pmd.version>6.22.0</pmd.version>
 
@@ -211,11 +211,6 @@
         </exclusion>
       </exclusions>
     </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson-databind.version}</version>
-    </dependency>
 
     <!-- Required Jenkins Plug-in Dependencies -->
     <dependency>
@@ -252,6 +247,11 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>data-tables-api</artifactId>
       <version>${data-tables-api.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>jackson2-api</artifactId>
+      <version>${jackson2-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
