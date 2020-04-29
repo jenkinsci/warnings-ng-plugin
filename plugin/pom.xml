@@ -47,7 +47,7 @@
     <j2html.version>1.4.0</j2html.version>
 
     <json.version>20190722</json.version>
-    <jackson2-api.version>2.10.3</jackson2-api.version>
+    <jackson2-api.version>2.11.0</jackson2-api.version>
 
     <pmd.version>6.22.0</pmd.version>
 
