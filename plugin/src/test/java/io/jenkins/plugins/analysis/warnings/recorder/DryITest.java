@@ -90,27 +90,14 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         enableGenericWarnings(project, cpd);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
-        TablePageObject issues = getDuplicationTable(details);
-        assertThat(issues.getRows()).hasSize(10); // paging of 10 is activated by default
-        
-        assertSizeOfSeverity(issues, 4, 5); // HIGH
-        assertSizeOfSeverity(issues, 3, 9); // NORMAL
-        assertSizeOfSeverity(issues, 0, 6); // LOW
+        assertThat(result.getTotalHighPrioritySize()).isEqualTo(5);
+        assertThat(result.getTotalNormalPrioritySize()).isEqualTo(9);
+        assertThat(result.getTotalLowPrioritySize()).isEqualTo(6);
     }
 
     private TablePageObject getDuplicationTable(final HtmlPage details) {
         return new TablePageObject(details, "issues");
-    }
-
-    private void assertSizeOfSeverity(final TablePageObject table, final int row,
-            final int numberOfSelectedIssues) {
-        TableRowPageObject selectedRow = table.getRow(row);
-        HtmlPage detailsOfSeverity = selectedRow.clickColumnLink(SEVERITY);
-
-        TablePageObject issues = getDuplicationTable(detailsOfSeverity);
-        assertThat(issues.getRows()).hasSize(numberOfSelectedIssues);
     }
 
     /**
