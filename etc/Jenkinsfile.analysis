@@ -4,12 +4,8 @@ node {
     }
 
     stage ('Build and Analysis') {
-        environment {
-            BROWSER = 'firefox-container'
-        }
-
         withMaven(maven: 'mvn-default', mavenLocalRepo: '/var/data/m2repository', mavenOpts: '-Xmx768m -Xms512m') {
-            sh 'mvn -V -e clean verify -Dmaven.test.failure.ignore -DskipITs'
+            sh 'BROWSER=firefox-container mvn -V -e clean verify -Dmaven.test.failure.ignore -DskipITs'
         }
 
         recordIssues tools: [java(), javaDoc()], aggregatingResults: 'true', id: 'java', name: 'Java'
