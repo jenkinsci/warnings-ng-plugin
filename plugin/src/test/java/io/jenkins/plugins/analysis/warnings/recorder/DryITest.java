@@ -1,21 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
-import java.util.List;
-
 import org.junit.Test;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -25,28 +10,18 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
-import io.jenkins.plugins.datatables.TablePageObject;
-import io.jenkins.plugins.datatables.TableRowPageObject;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
 
 /**
  * Integration tests for the DRY parsers of the warnings plug-in in freestyle jobs.
  *
  * @author Stephan Plöderl
+ * @author Lukas Kirner
  */
 public class DryITest extends IntegrationTestWithJenkinsPerSuite {
-    private static final String DETAILS = "Details";
-    private static final String FILE = "File";
-    private static final String SEVERITY = "Severity";
-    private static final String LINES = "#Lines";
-    private static final String DUPLICATIONS = "Duplicated In";
-    private static final String AGE = "Age";
-
     private static final String FOLDER = "dry/";
     private static final String CPD_REPORT = FOLDER + "cpd.xml";
-    private static final int ROW_INDEX_OF_DUPLICATION_TO_INSPECT = 8;
 
     /**
      * Verifies that the right amount of duplicate code warnings are detected.
@@ -67,15 +42,58 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * cpd warnings.
      */
     @Test
-    public void shouldConfigureSeverityThresholdsInJobConfigurationForCpd() {
+    public void shouldConfigureSeverityThresholdTo2InJobConfigurationForCpd() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
         enableGenericWarnings(project, cpd);
 
-        setHighThresholdAndCheckPriority(2, "High", cpd, project);
-        setHighThresholdAndCheckPriority(5, "Normal", cpd, project);
-        setNormalThresholdAndCheckPriority(4, "Low", cpd, project);
+        cpd.setHighThreshold(2);
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result.getTotalHighPrioritySize()).isEqualTo(14);
+        assertThat(result.getTotalNormalPrioritySize()).isEqualTo(6);
+        assertThat(result.getTotalLowPrioritySize()).isEqualTo(0);
+        assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+    }
+
+    /**
+     * Verifies that the priority of the duplicate code warnings are changed corresponding to the defined thresholds for
+     * cpd warnings.
+     */
+    @Test
+    public void shouldConfigureSeverityThresholdTo5InJobConfigurationForCpd() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        Cpd cpd = new Cpd();
+        cpd.setNormalThreshold(1);
+        enableGenericWarnings(project, cpd);
+
+        cpd.setHighThreshold(5);
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result.getTotalHighPrioritySize()).isEqualTo(5);
+        assertThat(result.getTotalNormalPrioritySize()).isEqualTo(15);
+        assertThat(result.getTotalLowPrioritySize()).isEqualTo(0);
+        assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+    }
+
+    /**
+     * Verifies that the priority of the duplicate code warnings are changed corresponding to the defined thresholds for
+     * cpd warnings.
+     */
+    @Test
+    public void shouldConfigureSeverityNormalThresholdTo4InJobConfigurationForCpd() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        Cpd cpd = new Cpd();
+        cpd.setNormalThreshold(4);
+        enableGenericWarnings(project, cpd);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result.getTotalHighPrioritySize()).isEqualTo(0);
+        assertThat(result.getTotalNormalPrioritySize()).isEqualTo(5);
+        assertThat(result.getTotalLowPrioritySize()).isEqualTo(15);
+        assertThat(result.getTotalErrorsSize()).isEqualTo(0);
     }
 
     /**
@@ -140,90 +158,5 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalHighPrioritySize()).isEqualTo(high);
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(normal);
         assertThat(result.getTotalLowPrioritySize()).isEqualTo(low);
-    }
-
-    @SuppressFBWarnings("BC")
-    private HtmlTable getIssuesTable(final HtmlPage page) {
-        DomElement table = page.getElementById("issues");
-
-        assertThat(table).isInstanceOf(HtmlTable.class);
-
-        return (HtmlTable) table;
-    }
-
-    /**
-     * Helper-method which builds the result and returns a list of all {@link HtmlTableRow}-elements of the
-     * issues-table.
-     *
-     * @param project
-     *         the current {@link FreeStyleProject}.
-     * @return a list of #{@link HtmlTableRow}-elements displayed in the issues-table.
-     */
-    private List<HtmlTableRow> scheduleBuildAndGetRows(final FreeStyleProject project) {
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-        HtmlTable table = getIssuesTable(page);
-
-        List<HtmlTableBody> bodies = table.getBodies();
-        assertThat(bodies).hasSize(1);
-        
-        HtmlTableBody tableBody = bodies.get(0);
-        return tableBody.getRows();
-    }
-
-    /**
-     * Helper-method which builds the project and checks the priority of the warning in the first row of the
-     * issues-table.
-     *
-     * @param expectedPriority
-     *         the expected priority of the first warning.
-     * @param project
-     *         the current {@link FreeStyleProject}.
-     */
-    private void checkPriorityOfFirstWarningInTable(final String expectedPriority, final FreeStyleProject project) {
-        List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
-        HtmlTableRow firstRow = tableRows.get(ROW_INDEX_OF_DUPLICATION_TO_INSPECT);
-        List<HtmlTableCell> tableCells = firstRow.getCells();
-
-        assertThat(tableCells.get(2).getTextContent()).isEqualTo(expectedPriority);
-    }
-
-    /**
-     * Helper-method which sets the highThreshold, builds the project and checks the priority of the warning in the
-     * first row of the issues-table.
-     *
-     * @param highThreshold
-     *         the value for the normal threshold.
-     * @param expectedPriority
-     *         the expected priority of the first warning.
-     * @param scanner
-     *         the {@link DuplicateCodeScanner} for which the threshold shall be changed.
-     * @param project
-     *         the current {@link FreeStyleProject}.
-     */
-    private void setHighThresholdAndCheckPriority(final int highThreshold, final String expectedPriority,
-            final DuplicateCodeScanner scanner, final FreeStyleProject project) {
-        scanner.setHighThreshold(highThreshold);
-        checkPriorityOfFirstWarningInTable(expectedPriority, project);
-    }
-
-    /**
-     * Helper-method which sets the normalThreshold, builds the project and checks the priority of the warning in the
-     * first row of the issues-table.
-     *
-     * @param normalThreshold
-     *         the value for the normal threshold.
-     * @param expectedPriority
-     *         the expected priority of the first warning.
-     * @param scanner
-     *         the {@link DuplicateCodeScanner} for which the threshold shall be changed.
-     * @param project
-     *         the current {@link FreeStyleProject}.
-     */
-    private void setNormalThresholdAndCheckPriority(final int normalThreshold, final String expectedPriority,
-            final DuplicateCodeScanner scanner, final FreeStyleProject project) {
-        scanner.setNormalThreshold(normalThreshold);
-        checkPriorityOfFirstWarningInTable(expectedPriority, project);
     }
 }
