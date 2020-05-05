@@ -26,8 +26,7 @@ import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Integration tests for the class {@link AffectedFilesResolver}.
@@ -175,10 +174,10 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         Issue issue = result.getIssues().get(0);
         String filename = issue.getFileName().substring(issue.getFileName().lastIndexOf("/") + 1);
-        assertEquals("config.xml", filename);
-        assertEquals(451, issue.getLineStart());
-        assertEquals("foo defined but not used", issue.getMessage());
-        assertEquals(Severity.WARNING_NORMAL, issue.getSeverity());
+        assertThat(filename).isEqualTo("config.xml");
+        assertThat(issue.getLineStart()).isEqualTo(451);
+        assertThat(issue.getMessage()).isEqualTo("foo defined but not used");
+        assertThat(issue.getSeverity()).isEqualTo(Severity.WARNING_NORMAL);
     }
 
     private void prepareGccLog(final FreeStyleProject job) {
