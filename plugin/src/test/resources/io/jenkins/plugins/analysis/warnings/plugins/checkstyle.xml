@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="4.1">
+<file name="X:\Build\Results\jobs\Maven\workspace\tasks\src\main\java\hudson\plugins\tasks\util\model\package.html">
+<error line="0" severity="error" message="Fehlende Package-Dokumentation." source="com.puppycrawl.tools.checkstyle.checks.javadoc.PackageHtmlCheck"/>
+</file>
+<file name="X:\Build\Results\jobs\Maven\workspace\tasks\src\main\java\hudson\plugins\tasks\parser\CsharpNamespaceDetector.java">
+</file>
+<file name="X:\Build\Results\jobs\Maven\workspace\tasks\src\main\java\hudson\plugins\tasks\parser\CsharpNamespaceDetector.java">
+<error line="17" column="5" severity="error" message="Die Methode &apos;accepts&apos; ist nicht für Vererbung entworfen - muss abstract, final oder leer sein." source="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck"/>
+<error line="42" severity="error" message="Zeile länger als 80 Zeichen" source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+<error line="22" column="5" severity="error" message="Die Methode &apos;detectPackageName&apos; ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein." source="com.puppycrawl.tools.checkstyle.checks.design.DesignForExtensionCheck"/>
+<error line="29" severity="error" message="Zeile länger als 80 Zeichen" source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+<error line="30" column="21" severity="error" message="&apos;}&apos; sollte in derselben Zeile stehen." source="com.puppycrawl.tools.checkstyle.checks.blocks.RightCurlyCheck"/>
+<error line="37" column="9" severity="error" message="&apos;}&apos; sollte in derselben Zeile stehen." source="com.puppycrawl.tools.checkstyle.checks.blocks.RightCurlyCheck"/>
+</file>
+</checkstyle>
