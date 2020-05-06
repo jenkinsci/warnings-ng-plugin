@@ -10,11 +10,18 @@ import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import hudson.model.Action;
+import hudson.model.Actionable;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
+import hudson.model.Run.Artifact;
 
+import io.jenkins.plugins.analysis.core.model.AggregatedTrendAction;
+import io.jenkins.plugins.analysis.core.model.AggregationAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -23,8 +30,10 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+import io.jenkins.plugins.echarts.AsyncTrendChart;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+//import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -48,18 +57,22 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
-        HtmlPage jobPage = getWebPage(JavaScriptSupport.JS_DISABLED, project);
-        assertThatTrendChartIsHidden(jobPage); // trend chart requires at least two builds
+        project.getActions(JobAction.class);
+        List<JobAction> jobActions = project.getActions(JobAction.class);
 
-        assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
+        assertThatTrendChartIsHidden(jobActions.get(0)); // trend chart requires at least two builds
+
+        //TODO This should be done too. Not sure how to check sidebar links without UI
+        //assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
 
         build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
-        jobPage = getWebPage(JavaScriptSupport.JS_DISABLED, project);
-        assertThatTrendChartIsVisible(jobPage);
+        jobActions = project.getActions(JobAction.class);
 
-        assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
+        assertThatTrendChartIsVisible(jobActions.get(0));
+
+        //assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
     }
 
     /**
@@ -74,20 +87,21 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
-        assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, project)))
-                .hasSize(3).containsExactly(AGGREGATION, ECLIPSE, CHECKSTYLEW);
+        assertThatCheckstyleAndEclipseChartExist(project,true);
+        assertThatAggregationChartExists(project, true);
 
-        HtmlPage top = createAggregationJob(TrendChartType.AGGREGATION_TOOLS);
-        assertThat(getTrends(top)).hasSize(3).containsExactly(AGGREGATION, ECLIPSE, CHECKSTYLEW);
+        project = createAggregationJob(TrendChartType.TOOLS_AGGREGATION);
+        assertThatCheckstyleAndEclipseChartExist(project,true);
+        assertThatAggregationChartExists(project, true);
 
-        HtmlPage bottom = createAggregationJob(TrendChartType.TOOLS_AGGREGATION);
-        assertThat(getTrends(bottom)).hasSize(3).containsExactly(ECLIPSE, CHECKSTYLEW, AGGREGATION);
 
-        HtmlPage tools = createAggregationJob(TrendChartType.TOOLS_ONLY);
-        assertThat(getTrends(tools)).hasSize(2).containsExactly(ECLIPSE, CHECKSTYLEW);
+        project = createAggregationJob(TrendChartType.AGGREGATION_TOOLS);
+        assertThatCheckstyleAndEclipseChartExist(project,true);
+        assertThatAggregationChartExists(project, true);
 
-        HtmlPage none = createAggregationJob(TrendChartType.NONE);
-        assertThat(getTrends(none)).isEmpty();
+        project = createAggregationJob(TrendChartType.TOOLS_ONLY);
+        assertThatCheckstyleAndEclipseChartExist(project, true);
+        assertThatAggregationChartDoesNotExists(project);
     }
 
     /**
@@ -104,40 +118,38 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         buildSuccessfully(job);
         buildSuccessfully(job);
-        assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, job)))
-                .hasSize(3).containsExactly(CHECKSTYLEW, ECLIPSE, AGGREGATION);
+
+        assertThatAggregationChartExists(job, true);
+        assertThatCheckstyleAndEclipseChartExist(job, true);
 
         job.setDefinition(asStage("recordIssues tools: ["
-                        + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
-                        + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'TOOLS_ONLY'"
+                + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
+                + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'TOOLS_ONLY'"
         ));
 
         buildSuccessfully(job);
         buildSuccessfully(job);
-        assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, job)))
-                .hasSize(2).containsExactly(CHECKSTYLEW, ECLIPSE);
+        assertThatAggregationChartDoesNotExists(job);
+        assertThatCheckstyleAndEclipseChartExist(job, true);
 
         job.setDefinition(asStage("recordIssues tools: ["
-                        + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
-                        + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'NONE'"
+                + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
+                + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'NONE'"
         ));
 
         buildSuccessfully(job);
         buildSuccessfully(job);
-        assertThat(getTrends(getWebPage(JavaScriptSupport.JS_DISABLED, job)))
-                .isEmpty();
-
+        assertThatCheckstyleAndEclipseChartExist(job, false);
     }
 
-    private HtmlPage createAggregationJob(final TrendChartType chart) {
+    private FreeStyleProject createAggregationJob(final TrendChartType chart) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
         enableWarnings(project, r -> r.setTrendChartType(chart), new Eclipse(), new CheckStyle());
 
         buildWithResult(project, Result.SUCCESS);
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
-
-        return getWebPage(JavaScriptSupport.JS_DISABLED, project);
+        return project;
     }
 
     private List<String> getTrends(final HtmlPage jobPage) {
@@ -210,20 +222,57 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(results.getBaseURI()).endsWith(build.getUrl() + labelProvider.getId() + "/");
     }
 
-    private void assertThatTrendChartIsVisible(final HtmlPage jobPage) {
-        DomElement trendChart = jobPage.getElementById("eclipse-history-chart");
-        assertThat(trendChart).isNotNull();
-
-        List<DomElement> captions = jobPage.getByXPath("//div[contains(@class, 'test-trend-caption')]");
-        assertThat(captions).hasSize(1);
-        String title = captions.get(0).getTextContent();
-        assertThat(title).isEqualTo(new Eclipse().getLabelProvider().getTrendName());
+    private void assertThatTrendChartIsVisible(AsyncTrendChart trendChart) {
+        assertThat(trendChart.isTrendVisible()).isTrue();
     }
 
-    private void assertThatTrendChartIsHidden(final HtmlPage jobPage) {
-        DomElement trendChart = jobPage.getElementById("eclipse-history-chart");
+    private void assertThatTrendChartIsHidden(AsyncTrendChart trendChart) {
+        assertThat(trendChart.isTrendVisible()).isFalse();
+    }
 
-        assertThat(trendChart).isNull();
+    public void assertThatCheckstyleAndEclipseChartExist(Actionable actionable, boolean shouldChartBeVisible) {
+        List<JobAction> jobActions = actionable.getActions(JobAction.class);
+        assertThat(jobActions).hasSize(2);
+
+        JobAction checkstyle;
+        JobAction eclipse;
+
+        if ("checkstyle".equals(jobActions.get(0).getUrlName())) {
+            checkstyle = jobActions.get(0);
+            eclipse = jobActions.get(1);
+        }
+        else {
+            checkstyle = jobActions.get(1);
+            eclipse = jobActions.get(0);
+        }
+        assertThat(eclipse.getTrendName()).isEqualTo(ECLIPSE);
+        assertThat(checkstyle.getTrendName()).isEqualTo(CHECKSTYLEW);
+        if(shouldChartBeVisible){
+            assertThatTrendChartIsVisible(eclipse);
+            assertThatTrendChartIsVisible(checkstyle);
+        }
+        else {
+            assertThatTrendChartIsHidden(eclipse);
+            assertThatTrendChartIsHidden(checkstyle);
+        }
+    }
+
+    public void assertThatAggregationChartExists(Actionable actionable,  boolean shouldChartBeVisible){
+        List<AggregatedTrendAction> aggregatedTrendActions = actionable.getActions(AggregatedTrendAction.class);
+        assertThat(aggregatedTrendActions).hasSize(1);
+        //TODO maybe add getTrendName Methode to aggregatedTrendAction?
+        assertThat(aggregatedTrendActions.get(0).getUrlName()).isEqualTo("warnings-aggregation");
+        if(shouldChartBeVisible){
+            assertThatTrendChartIsVisible(aggregatedTrendActions.get(0));
+        }
+        else{
+            assertThatTrendChartIsHidden(aggregatedTrendActions.get(0));
+        }
+    }
+
+    public void assertThatAggregationChartDoesNotExists(Actionable actionable){
+        List<AggregatedTrendAction> aggregatedTrendActions = actionable.getActions(AggregatedTrendAction.class);
+        assertThat(aggregatedTrendActions).hasSize(0);
     }
 
     private void assertActionProperties(final FreeStyleProject project, final Run<?, ?> build) {
