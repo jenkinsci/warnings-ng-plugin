@@ -8,8 +8,6 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
@@ -30,14 +28,7 @@ import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.PropertyTable.PropertyRow;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SummaryBox;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
-import io.jenkins.plugins.datatables.TablePageObject;
-import io.jenkins.plugins.datatables.TableRowPageObject;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -53,8 +44,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     static final String DETAILS = "Details";
     static final String AFFECTED_FILE = "File";
-    static final String CATEGORY = "Category";
-    static final String TYPE = "Type";
     static final String SEVERITY = "Severity";
     static final String AGE = "Age";
 
@@ -331,12 +320,10 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         // First build: baseline
         AnalysisResult baselineResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage buildPage = getWebPage(JavaScriptSupport.JS_DISABLED, baselineResult.getOwner());
 
-        SummaryBox baselineSummary = new SummaryBox(buildPage, "eclipse");
-        assertThat(baselineSummary.exists()).isTrue();
-        assertThat(baselineSummary.getTitle()).isEqualTo("Eclipse ECJ: 8 warnings");
-        assertThat(baselineSummary.getItems()).isEmpty();
+        assertThat(baselineResult).hasNewSize(0);
+        assertThat(baselineResult).hasFixedSize(0);
+        assertThat(baselineResult).hasTotalSize(8);
 
         // Second build: actual result
         recorder.setTools(createEclipse("eclipse_5_Warnings-issues.txt"));
@@ -347,13 +334,6 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
-
-        SummaryBox resultSummary = new SummaryBox(getWebPage(JavaScriptSupport.JS_DISABLED, result.getOwner()),
-                "eclipse");
-        assertThat(resultSummary.exists()).isTrue();
-        assertThat(resultSummary.getTitle()).isEqualTo("Eclipse ECJ: 5 warnings");
-        assertThat(resultSummary.getItems()).containsExactly("3 fixed warnings",
-                "Reference build: " + project.getName() + " #1");
     }
 
     /**
@@ -468,100 +448,67 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     private void verifyDetails(final AnalysisResult result) {
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
+        Report issuesReport = result.getIssues();
 
-        PropertyTable categories = new PropertyTable(details, "category");
-        assertThat(categories.getTitle()).isEqualTo("Categories");
-        assertThat(categories.getColumnName()).isEqualTo("Category");
-        assertThat(categories.getRows()).containsExactly(
-                new PropertyRow("Blocks", 2, 100),
-                new PropertyRow("Design", 1, 50),
-                new PropertyRow("Sizes", 1, 50));
+        assertThat(issuesReport.findByProperty(Issue.byCategory("Blocks"))).hasSize(2);
+        assertThat(issuesReport.findByProperty(Issue.byCategory("Design"))).hasSize(1);
+        assertThat(issuesReport.findByProperty(Issue.byCategory("Sizes"))).hasSize(1);
 
-        PropertyTable types = new PropertyTable(details, "type");
-        assertThat(types.getTitle()).isEqualTo("Types");
-        assertThat(types.getColumnName()).isEqualTo("Type");
-        assertThat(types.getRows()).containsExactly(
-                new PropertyRow("DesignForExtensionCheck", 1, 50),
-                new PropertyRow("LineLengthCheck", 1, 50),
-                new PropertyRow("RightCurlyCheck", 2, 100));
+        assertThat(issuesReport.findByProperty(Issue.byType("DesignForExtensionCheck"))).hasSize(1);
+        assertThat(issuesReport.findByProperty(Issue.byType("LineLengthCheck"))).hasSize(1);
+        assertThat(issuesReport.findByProperty(Issue.byType("RightCurlyCheck"))).hasSize(2);
 
-        TablePageObject issues = new TablePageObject(details, "issues");
-        assertThat(issues.getColumnHeaders())
-                .containsExactly(DETAILS, AFFECTED_FILE, CATEGORY, TYPE, SEVERITY, AGE);
+        assertThat(issuesReport.get(0)).hasBaseName("CsharpNamespaceDetector.java");
+        assertThat(issuesReport.get(0)).hasLineStart(29);
+        assertThat(issuesReport.get(0)).hasCategory("Sizes");
+        assertThat(issuesReport.get(0)).hasType("LineLengthCheck");
+        assertThat(issuesReport.get(0)).hasSeverity(Severity.ERROR);
 
-        List<TableRowPageObject> rows = issues.getRows();
-        assertThat(rows).hasSize(4);
-        assertThat(rows.get(0).getValuesByColumnLabel()).contains(
-                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:22"),
-                entry(CATEGORY, "Design"),
-                entry(TYPE, "DesignForExtensionCheck"),
-                entry(SEVERITY, "Error"),
-                entry(AGE, "2"));
-        assertThat(rows.get(1).getValuesByColumnLabel()).contains(
-                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:29"),
-                entry(CATEGORY, "Sizes"),
-                entry(TYPE, "LineLengthCheck"),
-                entry(SEVERITY, "Error"),
-                entry(AGE, "1"));
-        assertThat(rows.get(2).getValuesByColumnLabel()).contains(
-                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:30"),
-                entry(CATEGORY, "Blocks"),
-                entry(TYPE, "RightCurlyCheck"),
-                entry(SEVERITY, "Error"),
-                entry(AGE, "1"));
-        assertThat(rows.get(3).getValuesByColumnLabel()).contains(
-                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:37"),
-                entry(CATEGORY, "Blocks"),
-                entry(TYPE, "RightCurlyCheck"),
-                entry(SEVERITY, "Error"),
-                entry(AGE, "1"));
+        assertThat(issuesReport.get(1)).hasBaseName("CsharpNamespaceDetector.java");
+        assertThat(issuesReport.get(1)).hasLineStart(30);
+        assertThat(issuesReport.get(1)).hasCategory("Blocks");
+        assertThat(issuesReport.get(1)).hasType("RightCurlyCheck");
+        assertThat(issuesReport.get(1)).hasSeverity(Severity.ERROR);
+
+        assertThat(issuesReport.get(2)).hasBaseName("CsharpNamespaceDetector.java");
+        assertThat(issuesReport.get(2)).hasLineStart(37);
+        assertThat(issuesReport.get(2)).hasCategory("Blocks");
+        assertThat(issuesReport.get(2)).hasType("RightCurlyCheck");
+        assertThat(issuesReport.get(2)).hasSeverity(Severity.ERROR);
+
+        assertThat(issuesReport.get(3)).hasBaseName("CsharpNamespaceDetector.java");
+        assertThat(issuesReport.get(3)).hasLineStart(22);
+        assertThat(issuesReport.get(3)).hasCategory("Design");
+        assertThat(issuesReport.get(3)).hasType("DesignForExtensionCheck");
+        assertThat(issuesReport.get(3)).hasSeverity(Severity.ERROR);
     }
 
     private void verifyBaselineDetails(final AnalysisResult baseline) {
-        HtmlPage baselineDetails = getWebPage(JavaScriptSupport.JS_ENABLED, baseline);
-        DetailsTab detailsTab = new DetailsTab(baselineDetails);
+        Report issuesReport = baseline.getIssues();
 
-        PropertyTable categories = detailsTab.select(TabType.CATEGORIES);
+        assertThat(issuesReport.findByProperty(Issue.byCategory("Design"))).hasSize(2);
+        assertThat(issuesReport.findByProperty(Issue.byCategory("Sizes"))).hasSize(1);
 
-        assertThat(categories.getTitle()).isEqualTo("Categories");
-        assertThat(categories.getColumnName()).isEqualTo("Category");
-        assertThat(categories.getRows()).containsExactly(
-                new PropertyRow("Design", 2, 100),
-                new PropertyRow("Sizes", 1, 50));
+        assertThat(issuesReport.findByProperty(Issue.byType("DesignForExtensionCheck"))).hasSize(2);
+        assertThat(issuesReport.findByProperty(Issue.byType("LineLengthCheck"))).hasSize(1);
 
-        PropertyTable types = detailsTab.select(TabType.TYPES);
+        assertThat(issuesReport.get(0)).hasBaseName("CsharpNamespaceDetector.java");
+        assertThat(issuesReport.get(0)).hasLineStart(17);
+        assertThat(issuesReport.get(0)).hasCategory("Design");
+        assertThat(issuesReport.get(0)).hasType("DesignForExtensionCheck");
+        assertThat(issuesReport.get(0)).hasSeverity(Severity.ERROR);
 
-        assertThat(types.getTitle()).isEqualTo("Types");
-        assertThat(types.getColumnName()).isEqualTo("Type");
-        assertThat(types.getRows()).containsExactly(
-                new PropertyRow("DesignForExtensionCheck", 2, 100),
-                new PropertyRow("LineLengthCheck", 1, 50));
+        assertThat(issuesReport.get(1)).hasBaseName("CsharpNamespaceDetector.java");
+        assertThat(issuesReport.get(1)).hasLineStart(42);
+        assertThat(issuesReport.get(1)).hasCategory("Sizes");
+        assertThat(issuesReport.get(1)).hasType("LineLengthCheck");
+        assertThat(issuesReport.get(1)).hasSeverity(Severity.ERROR);
 
-        TablePageObject issues = detailsTab.select(TabType.ISSUES);
-
-        assertThat(issues.getColumnHeaders())
-                .containsExactly(DETAILS, AFFECTED_FILE, CATEGORY, TYPE, SEVERITY, AGE);
-        List<TableRowPageObject> rows = issues.getRows();
-        assertThat(rows).hasSize(3);
-        assertThat(rows.get(0).getValuesByColumnLabel()).contains(
-                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:17"),
-                entry(CATEGORY, "Design"),
-                entry(TYPE, "DesignForExtensionCheck"),
-                entry(SEVERITY, "Error"),
-                entry(AGE, "1"));
-        assertThat(rows.get(1).getValuesByColumnLabel()).contains(
-                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:22"),
-                entry(CATEGORY, "Design"),
-                entry(TYPE, "DesignForExtensionCheck"),
-                entry(SEVERITY, "Error"),
-                entry(AGE, "1"));
-        assertThat(rows.get(2).getValuesByColumnLabel()).contains(
-                entry(AFFECTED_FILE, "CsharpNamespaceDetector.java:42"),
-                entry(CATEGORY, "Sizes"),
-                entry(TYPE, "LineLengthCheck"),
-                entry(SEVERITY, "Error"),
-                entry(AGE, "1"));
+        assertThat(issuesReport.get(2)).hasBaseName("CsharpNamespaceDetector.java");
+        assertThat(issuesReport.get(2)).hasLineStart(22);
+        assertThat(issuesReport.get(2)).hasCategory("Design");
+        assertThat(issuesReport.get(2)).hasType("DesignForExtensionCheck");
+        assertThat(issuesReport.get(2)).hasSeverity(Severity.ERROR);
     }
 
     /**
@@ -623,28 +570,5 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         addFailureStep(project);
 
         return project;
-    }
-
-    /**
-     * Verifies that the file names in the files tab use the base path.
-     */
-    @Test
-    public void shouldShowBaseNamesInFilesTab() {
-        FreeStyleProject job = createFreeStyleProjectWithWorkspaceFiles("pmd-absolute-path.xml");
-        enableGenericWarnings(job, new Pmd());
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
-
-        assertThat(result).hasTotalSize(5);
-
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-        PropertyTable categories = new PropertyTable(details, "fileName");
-        assertThat(categories.getTitle()).isEqualTo("Files");
-        assertThat(categories.getColumnName()).isEqualTo("File");
-        assertThat(categories.getRows()).containsExactly(
-                new PropertyRow("AjcParser.java", 2, 100),
-                new PropertyRow("FindBugsParser.java", 1, 50),
-                new PropertyRow("SonarQubeParser.java", 2, 100));
-
     }
 }
