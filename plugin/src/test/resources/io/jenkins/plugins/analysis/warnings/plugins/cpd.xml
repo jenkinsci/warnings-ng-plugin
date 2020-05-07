@@ -1,0 +1,3144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+   <duplication lines="419" tokens="594">
+      <file column="5" endcolumn="5" endline="754" line="336"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java"/>
+      <file column="5" endcolumn="5" endline="548" line="135"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalAll() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalHigh() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewAll() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalNormal() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalLow() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewHigh() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewNormal() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewLow() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalAll() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalHigh() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalNormal() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalLow() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewAll() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewHigh() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewNormal() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link PublishIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link PublishIssuesStep#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewLow() {
+        return 0;
+    }
+
+    @Override]]></codefragment>
+   </duplication>
+   <duplication lines="411" tokens="593">
+      <file column="5" endcolumn="5" endline="1136" line="726"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="5" endline="754" line="347"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java"/>
+      <file column="5" endcolumn="5" endline="548" line="145"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalAll() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalHigh() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewAll() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalNormal() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableTotalLow() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewHigh() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewNormal() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setUnstableNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.UNSTABLE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getUnstableNewLow() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalAll(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalAll() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalHigh(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalHigh() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalNormal(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalNormal() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedTotalLow(final int size) {
+        addQualityGate(size, QualityGateType.TOTAL_LOW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedTotalLow() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewAll(final int size) {
+        addQualityGate(size, QualityGateType.NEW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewAll() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewHigh(final int size) {
+        addQualityGate(size, QualityGateType.NEW_HIGH, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewHigh() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewNormal(final int size) {
+        addQualityGate(size, QualityGateType.NEW_NORMAL, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewNormal() {
+        return 0;
+    }
+
+    /**
+     * Sets the quality gate.
+     *
+     * @param size
+     *         number of issues
+     *
+     * @deprecated replaced by {@link IssuesRecorder#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
+     */
+    @Deprecated
+    @DataBoundSetter
+    public void setFailedNewLow(final int size) {
+        addQualityGate(size, QualityGateType.NEW_LOW, QualityGateResult.FAILURE);
+    }
+
+    /**
+     * Gets the quality gate.
+     *
+     * @return 0
+     * @deprecated replaced by {@link IssuesRecorder#getQualityGates()}
+     */
+    @Deprecated
+    public int getFailedNewLow() {
+        return 0;
+    }
+
+    /**
+     * Descriptor for this step: defines the context and the UI elements.
+     */
+    @Extension]]></codefragment>
+   </duplication>
+   <duplication lines="34" tokens="211">
+      <file column="91" endcolumn="60" endline="229" line="196"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <file column="96" endcolumn="60" endline="332" line="298"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <codefragment><![CDATA[    private static Iterable<Object> createTestDataForSuccessfulQualityGateAndNoFailedBuild() {
+        return asList(
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.INACTIVE)
+                        .setTestName("Job should have analysis result (SUCCESS, quality gate is not active)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.PASSED)
+                        .setTestName("Job should have analysis result (SUCCESS, quality gate has been passed)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.UNSTABLE)
+                        .setQualityGateStatus(QualityGateStatus.INACTIVE)
+                        .setTestName("Job should have analysis result (UNSTABLE, quality gate is not active)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.UNSTABLE)
+                        .setQualityGateStatus(QualityGateStatus.PASSED)
+                        .setTestName("Job should have analysis result (UNSTABLE, quality gate has been passed)")
+                        .build(),
+
+                new BuildHistoryBuilder().setExpectedResult(NONE)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.FAILED)
+                        .setTestName("Job should have no analysis result if quality gate has been missed (SUCCESS)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(NONE)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.WARNING)
+                        .setTestName("Job should have no analysis result if quality gate has a warning (SUCCESS)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(NONE)]]></codefragment>
+   </duplication>
+   <duplication lines="34" tokens="211">
+      <file column="93" endcolumn="60" endline="280" line="247"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <file column="88" endcolumn="60" endline="384" line="350"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <codefragment><![CDATA[    private static Iterable<Object> createTestDataForIgnoredQualityGateAndIgnoredBuildResult() {
+        return asList(
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.INACTIVE)
+                        .setTestName("Job should have analysis result (SUCCESS, quality gate is not active)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.PASSED)
+                        .setTestName("Job should have analysis result (SUCCESS, quality gate has been passed)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.UNSTABLE)
+                        .setQualityGateStatus(QualityGateStatus.INACTIVE)
+                        .setTestName("Job should have analysis result (UNSTABLE, quality gate is not active)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.UNSTABLE)
+                        .setQualityGateStatus(QualityGateStatus.PASSED)
+                        .setTestName("Job should have analysis result (UNSTABLE, quality gate has been passed)")
+                        .build(),
+
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.FAILED)
+                        .setTestName("Job should have analysis result if quality gate has been missed (SUCCESS)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.WARNING)
+                        .setTestName("Job should have analysis result if quality gate has a warning (SUCCESS)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)]]></codefragment>
+   </duplication>
+   <duplication lines="94" tokens="176">
+      <file column="5" endcolumn="74" endline="271" line="178"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="74" endline="632" line="535"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    }
+
+    /**
+     * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
+     * given, then the ID of the associated result object is used.
+     * <p>
+     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
+     * UI in order to simplify the user interface.
+     * </p>
+     *
+     * @param id
+     *         the ID of the results
+     */
+    @DataBoundSetter
+    public void setId(final String id) {
+        new ModelValidation().ensureValidId(id);
+
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
+     * the associated {@link StaticAnalysisLabelProvider} is used.
+     * <p>
+     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
+     * UI in order to simplify the user interface.
+     * </p>
+     *
+     * @param name
+     *         the name of the results
+     */
+    @DataBoundSetter
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Gets the static analysis tools that will scan files and create issues.
+     *
+     * @return the static analysis tools (wrapped as {@link ToolProxy})
+     * @see #getTools
+     * @deprecated this method is only intended to be called by the UI
+     */
+    @Nullable
+    @Deprecated
+    public List<ToolProxy> getToolProxies() {
+        return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
+    }
+
+    /**
+     * Sets the static analysis tools that will scan files and create issues.
+     *
+     * @param toolProxies
+     *         the static analysis tools (wrapped as {@link ToolProxy})
+     *
+     * @see #setTools(List)
+     * @deprecated this method is only intended to be called by the UI
+     */
+    @DataBoundSetter
+    @Deprecated
+    public void setToolProxies(final List<ToolProxy> toolProxies) {
+        analysisTools = toolProxies.stream().map(ToolProxy::getTool).collect(Collectors.toList());
+    }
+
+    /**
+     * Sets the static analysis tools that will scan files and create issues.
+     *
+     * @param tools
+     *         the static analysis tools
+     */
+    @DataBoundSetter
+    public void setTools(final List<Tool> tools) {
+        analysisTools = new ArrayList<>(tools);
+    }
+
+    /**
+     * Sets the static analysis tools that will scan files and create issues.
+     *
+     * @param tool
+     *         the static analysis tool
+     * @param additionalTools
+     *         additional static analysis tools (might be empty)
+     *
+     * @see #setTools(List)
+     */
+    public void setTools(final Tool tool, final Tool... additionalTools) {]]></codefragment>
+   </duplication>
+   <duplication lines="17" tokens="166">
+      <file column="73" endcolumn="8" endline="103" line="87"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/steps/IssuesAggregatorTest.java"/>
+      <file column="59" endcolumn="8" endline="127" line="111"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/steps/IssuesAggregatorTest.java"/>
+      <codefragment><![CDATA[        assertThat(aggregator.getNames()).containsExactly(AXIS_WINDOWS, AXIS_UNIX);
+
+        Map<String, RichIterable<AnnotatedReport>> results = aggregator.getResultsPerTool();
+        assertThat(results).containsOnlyKeys(PMD, SPOTBUGS);
+
+        assertThat(results.get(PMD)).hasSize(1)
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(warning));
+        assertThat(results.get(SPOTBUGS)).hasSize(1)
+                .satisfies(reports -> assertThat(reports.iterator().next().getReport()).hasSize(1).contains(bug));
+
+        aggregator.endBuild();
+
+        verify(recorder, times(2)).publishResult(any(), any(), anyString(), any(), anyString(), any());
+    }
+
+    @Test
+    void shouldCollectMultipleToolsOneAxis() {]]></codefragment>
+   </duplication>
+   <duplication lines="24" tokens="145">
+      <file column="91" endcolumn="60" endline="219" line="196"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <file column="93" endcolumn="60" endline="270" line="247"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <file column="96" endcolumn="60" endline="321" line="298"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <file column="88" endcolumn="60" endline="373" line="350"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <codefragment><![CDATA[    private static Iterable<Object> createTestDataForSuccessfulQualityGateAndNoFailedBuild() {
+        return asList(
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.INACTIVE)
+                        .setTestName("Job should have analysis result (SUCCESS, quality gate is not active)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.SUCCESS)
+                        .setQualityGateStatus(QualityGateStatus.PASSED)
+                        .setTestName("Job should have analysis result (SUCCESS, quality gate has been passed)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.UNSTABLE)
+                        .setQualityGateStatus(QualityGateStatus.INACTIVE)
+                        .setTestName("Job should have analysis result (UNSTABLE, quality gate is not active)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.UNSTABLE)
+                        .setQualityGateStatus(QualityGateStatus.PASSED)
+                        .setTestName("Job should have analysis result (UNSTABLE, quality gate has been passed)")
+                        .build(),
+
+                new BuildHistoryBuilder().setExpectedResult(NONE)]]></codefragment>
+   </duplication>
+   <duplication lines="89" tokens="143">
+      <file column="5" endcolumn="5" endline="372" line="284"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="5" endline="769" line="682"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    }
+
+    @Nullable
+    public String getSourceCodeEncoding() {
+        return sourceCodeEncoding;
+    }
+
+    /**
+     * Sets the encoding to use to read source files.
+     *
+     * @param sourceCodeEncoding
+     *         the encoding, e.g. "ISO-8859-1"
+     */
+    @DataBoundSetter
+    public void setSourceCodeEncoding(final String sourceCodeEncoding) {
+        this.sourceCodeEncoding = sourceCodeEncoding;
+    }
+
+    public String getSourceDirectory() {
+        return sourceDirectory;
+    }
+
+    /**
+     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * then this folder needs to be added in Jenkins global configuration.
+     *
+     * @param sourceDirectory
+     *         a folder containing the source code
+     */
+    @DataBoundSetter
+    public void setSourceDirectory(final String sourceDirectory) {
+        this.sourceDirectory = sourceDirectory;
+    }
+
+    /**
+     * Returns whether the results for each configured static analysis result should be aggregated into a single result
+     * or if every tool should get an individual result.
+     *
+     * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
+     *         {@code false} if every tool should get an individual result.
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getAggregatingResults() {
+        return isAggregatingResults;
+    }
+
+    @DataBoundSetter
+    public void setAggregatingResults(final boolean aggregatingResults) {
+        isAggregatingResults = aggregatingResults;
+    }
+
+    /**
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getBlameDisabled() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setBlameDisabled(final boolean blameDisabled) {
+        isBlameDisabled = blameDisabled;
+    }
+
+    /**
+     * Returns whether SCM forensics should be disabled.
+     *
+     * @return {@code true} if SCM forensics should be disabled
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getForensicsDisabled() {
+        return isForensicsDisabled;
+    }
+
+    @DataBoundSetter
+    public void setForensicsDisabled(final boolean forensicsDisabled) {
+        isForensicsDisabled = forensicsDisabled;
+    }
+
+    /**
+     * Determines whether to fail the build on errors during the step of recording issues.
+     *
+     * @param failOnError
+     *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
+     *         the UI
+     */
+    @DataBoundSetter]]></codefragment>
+   </duplication>
+   <duplication lines="22" tokens="135">
+      <file column="66" endcolumn="8" endline="233" line="212"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletTest.java"/>
+      <file column="48" endcolumn="8" endline="258" line="237"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletTest.java"/>
+      <codefragment><![CDATA[                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 0));
+        Job<?, ?> second = createJobWithActions(
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 3),
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
+
+        PortletTableModel model = portlet.getModel(list(first, second));
+
+        List<TableRow> rows = model.getRows();
+        assertThat(rows).hasSize(1);
+
+        TableRow actualRow = rows.get(0);
+        assertThat(actualRow.getJob()).isSameAs(second);
+
+        List<Result> results = actualRow.getResults();
+        assertThat(results).hasSize(2);
+
+        verifyResult(results.get(0), CHECK_STYLE_ID, 4);
+        verifyResult(results.get(1), SPOT_BUGS_ID, 3);
+    }
+
+    @Test
+    void shouldFilterNonActionJobs() {]]></codefragment>
+   </duplication>
+   <duplication lines="22" tokens="133">
+      <file column="43" endcolumn="36" endline="94" line="73"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/SnippetGeneratorITest.java"/>
+      <file column="61" endcolumn="36" endline="146" line="125"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/SnippetGeneratorITest.java"/>
+      <codefragment><![CDATA[                .setEnabledForFailure(true)
+                //.setHealthReport(null,null,Severity.WARNING_LOW)  // TODO: default int is not yet possible
+                .setIgnoreFailedBuilds(false)
+                .setIgnoreQualityGate(true)
+                .setPattern("firstText", 1)
+                .setReferenceJobName("someText")
+                .setSourceCodeEncoding("otherText");
+
+        String script = snippetGenerator.generateScript();
+
+        assertThat(script).contains("recordIssues");
+        assertThat(script).contains("aggregatingResults: true");
+        assertThat(script).contains("blameDisabled: true");
+        assertThat(script).contains("forensicsDisabled: true");
+        assertThat(script).contains("enabledForFailure: true");
+        assertThat(script).contains("ignoreFailedBuilds: false");
+        assertThat(script).contains("ignoreQualityGate: true");
+
+        assertThat(script).contains("pattern: 'firstText'");
+        assertThat(script).contains("referenceJobName: 'someText'");
+        assertThat(script).contains("sourceCodeEncoding: 'otherText'");
+        assertThat(script).contains("tools: [java(");]]></codefragment>
+   </duplication>
+   <duplication lines="19" tokens="125">
+      <file column="63" endcolumn="53" endline="54" line="36"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/JobDslITest.java"/>
+      <file column="55" endcolumn="53" endline="97" line="79"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/JobDslITest.java"/>
+      <codefragment><![CDATA[        configureJenkins("../job-dsl-warnings-ng-default.yaml");
+
+        TopLevelItem project = getJenkins().jenkins.getItem("dsl-freestyle-job");
+
+        assertThat(project).isNotNull();
+        assertThat(project).isInstanceOf(FreeStyleProject.class);
+
+        DescribableList<Publisher, Descriptor<Publisher>> publishers = ((FreeStyleProject) project).getPublishersList();
+        assertThat(publishers).hasSize(1);
+
+        Publisher publisher = publishers.get(0);
+        assertThat(publisher).isInstanceOf(IssuesRecorder.class);
+
+        HealthReport healthReport = ((FreeStyleProject) project).getBuildHealth();
+        assertThat(healthReport.getScore()).isEqualTo(100);
+
+        IssuesRecorder recorder = (IssuesRecorder) publisher;
+
+        assertThat(recorder.getAggregatingResults()).isFalse();]]></codefragment>
+   </duplication>
+   <duplication lines="30" tokens="125">
+      <file column="92" endcolumn="15" endline="137" line="108"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ModuleDetectorITest.java"/>
+      <file column="73" endcolumn="15" endline="228" line="199"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ModuleDetectorITest.java"/>
+      <codefragment><![CDATA[    public void shouldShowModulesForVariousModulesDetectedForOsgiMavenAndAntInTheHtmlOutput() {
+        String[] workspaceFiles = {
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "build.xml",
+                BUILD_FILE_PATH + ANT_BUILD_FILE_LOCATION + "m1/build.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m1/pom.xml",
+                BUILD_FILE_PATH + MAVEN_BUILD_FILE_LOCATION + "m2/pom.xml",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+
+        AnalysisResult result = createResult(
+                workspaceFiles.length - 1,
+                true,
+                workspaceFiles);
+
+        verifyModules(result,
+                new PropertyRow(EMPTY_MODULE_NAME, 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname (TestVendor)", 7),
+                new PropertyRow("Test-Bundle-Name", 1));
+    }
+
+    /**
+     * Verifies that the output is correct if there are only Maven modules in the expected HTML output.
+     */
+    @Test
+    public void shouldShowModulesForVariousMavenModulesInTheHtmlOutput() {]]></codefragment>
+   </duplication>
+   <duplication lines="15" tokens="112">
+      <file column="101" endcolumn="70" endline="189" line="175"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DetailFactoryTest.java"/>
+      <file column="112" endcolumn="70" endline="213" line="199"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DetailFactoryTest.java"/>
+      <codefragment><![CDATA[        when(buildFolder.readFile(any(), anyString(), any())).thenThrow(new IOException("file error"));
+
+        DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
+        Report report = new Report();
+
+        IssueBuilder issueBuilder = new IssueBuilder();
+        issueBuilder.setFileName("a-file");
+        Issue issue = issueBuilder.build();
+
+        report.add(issue);
+
+        Object details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
+                RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
+        assertThat(details).isInstanceOf(SourceDetail.class);
+        assertThat(((SourceDetail) details).getSourceCode()).contains("IOException: file error");]]></codefragment>
+   </duplication>
+   <duplication lines="31" tokens="112">
+      <file column="52" endcolumn="42" endline="170" line="140"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/scm/GitBlamerITest.java"/>
+      <file column="34" endcolumn="42" endline="247" line="217"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/scm/GitBlamerITest.java"/>
+      <codefragment><![CDATA[    public void shouldBlameElevenIssuesWithPipeline() throws Exception {
+        Map<String, String> commits = createGitRepository();
+
+        createAndCommitFile("Jenkinsfile", "node {\n"
+                + "  stage ('Checkout') {\n"
+                + "    checkout scm\n"
+                + "  }\n"
+                + "  stage ('Build and Analysis') {"
+                + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
+                + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
+                + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
+                + "    echo '[javac] Test.java:4: warning: Test Warning for Jenkins'\n"
+                + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
+                + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
+                + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
+                + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
+                + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
+                + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
+                + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
+                + "    recordIssues tools: [java()]\n"
+                + "  }\n"
+                + "}");
+
+        WorkflowJob project = createPipeline();
+        project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(project);
+        assertSuccessfulBlame(result, 11, 3);
+
+        TablePageObject table = getBlamesTable(result);
+        assertElevenIssues(commits, table);]]></codefragment>
+   </duplication>
+   <duplication lines="12" tokens="107">
+      <file column="63" endcolumn="47" endline="185" line="174"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <file column="59" endcolumn="47" endline="235" line="224"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <codefragment><![CDATA[        JSONObject chartModel = charts.getSeveritiesTrendChart();
+
+        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
+        // Make sure each of our builds is listed on the x axis
+        for (int build = 0; build < buildResults.size(); build++) {
+            String buildName = buildResults.get(build).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
+        }
+
+        JSONArray allSeries = chartModel.getJSONArray("series");
+        assertThat(allSeries.size()).isEqualTo(2);]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="105">
+      <file column="9" endcolumn="47" endline="142" line="133"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <file column="9" endcolumn="47" endline="185" line="176"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <file column="9" endcolumn="47" endline="235" line="226"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <codefragment><![CDATA[        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
+        // Make sure each of our builds is listed on the x axis
+        for (int build = 0; build < buildResults.size(); build++) {
+            String buildName = buildResults.get(build).getBuild().getDisplayName();
+            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
+        }
+
+        JSONArray allSeries = chartModel.getJSONArray("series");
+        assertThat(allSeries.size()).isEqualTo(1); // Only and tool was configured]]></codefragment>
+   </duplication>
+   <duplication lines="14" tokens="104">
+      <file column="9" endcolumn="105" endline="162" line="149"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/FilesScannerITest.java"/>
+      <file column="9" endcolumn="105" endline="202" line="189"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/FilesScannerITest.java"/>
+      <codefragment><![CDATA[        FreeStyleProject project = createJobWithWorkspaceFile(SYMLINKS_WORKSPACE);
+
+        FilePath workspace = getWorkspace(project);
+        Path path = Paths.get(workspace.getRemote());
+        Path realPath = path.resolve("actual_files");
+
+        assertThat(realPath.toFile().exists()).isTrue();
+
+        Path subdirPath = path.resolve("subdir");
+        assertThat(subdirPath.toFile().mkdirs()).isTrue();
+
+        createSymbolicLinkAssumingSupported(realPath, subdirPath.resolve("link_to_actual_files"));
+
+        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "subdir/**/*.xml", false));]]></codefragment>
+   </duplication>
+   <duplication lines="62" tokens="94">
+      <file column="5" endcolumn="20" endline="442" line="381"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="20" endline="823" line="761"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    }
+
+    /**
+     * Returns whether recording should be enabled for failed builds as well.
+     *
+     * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
+     *         enabled for successful or unstable builds only
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getEnabledForFailure() {
+        return isEnabledForFailure;
+    }
+
+    @DataBoundSetter
+    public void setEnabledForFailure(final boolean enabledForFailure) {
+        isEnabledForFailure = enabledForFailure;
+    }
+
+    /**
+     * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
+     * disabled by default so a failing quality gate will be passed from build to build until the original reason for
+     * the failure has been resolved.
+     *
+     * @param ignoreQualityGate
+     *         if {@code true} then the result of the quality gate is ignored, otherwise only build with a successful
+     *         quality gate are selected
+     */
+    @DataBoundSetter
+    public void setIgnoreQualityGate(final boolean ignoreQualityGate) {
+        this.ignoreQualityGate = ignoreQualityGate;
+    }
+
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getIgnoreQualityGate() {
+        return ignoreQualityGate;
+    }
+
+    /**
+     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
+     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
+     * contains a static analysis result is considered, even if the build failed.
+     *
+     * @param ignoreFailedBuilds
+     *         if {@code true} then a stable build is used as reference
+     */
+    @DataBoundSetter
+    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
+        this.ignoreFailedBuilds = ignoreFailedBuilds;
+    }
+
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getIgnoreFailedBuilds() {
+        return ignoreFailedBuilds;
+    }
+
+    /**
+     * Sets the reference job to get the results for the issue difference computation.
+     *
+     * @param referenceJobName
+     *         the name of reference job
+     */
+    @DataBoundSetter]]></codefragment>
+   </duplication>
+   <duplication lines="17" tokens="93">
+      <file column="90" endcolumn="8" endline="80" line="64"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletTest.java"/>
+      <file column="90" endcolumn="8" endline="155" line="139"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletTest.java"/>
+      <codefragment><![CDATA[        assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+
+        List<TableRow> rows = model.getRows();
+        assertThat(rows).hasSize(1);
+
+        TableRow actualRow = rows.get(0);
+        assertThat(actualRow.getJob()).isSameAs(job);
+
+        List<Result> results = actualRow.getResults();
+        assertThat(results).hasSize(2);
+
+        verifyResult(results.get(0), CHECK_STYLE_ID, 2);
+        verifyResult(results.get(1), SPOT_BUGS_ID, 1);
+    }
+
+    @Test
+    void shouldShowTableWithTwoSelectedTools() {]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="92">
+      <file column="73" endcolumn="5" endline="272" line="263"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DetailFactoryTest.java"/>
+      <file column="70" endcolumn="5" endline="349" line="340"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/tasks/TaskScannerTest.java"/>
+      <codefragment><![CDATA[                0, expectedSizeHigh, expectedSizeNormal, expectedSizeLow);
+    }
+
+    private void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
+            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+        assertThat(report.getSizeOf(Severity.ERROR)).isEqualTo(expectedSizeError);
+        assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
+        assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);
+        assertThat(report.getSizeOf(Severity.WARNING_LOW)).isEqualTo(expectedSizeLow);
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="14" tokens="91">
+      <file column="65" endcolumn="46" endline="190" line="177"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletTest.java"/>
+      <file column="65" endcolumn="46" endline="275" line="262"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletTest.java"/>
+      <codefragment><![CDATA[                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 4));
+
+        PortletTableModel model = createModel(list(first, second));
+
+        assertThat(model.getToolNames()).containsExactly(CHECK_STYLE_NAME, SPOT_BUGS_NAME);
+
+        List<TableRow> rows = model.getRows();
+        assertThat(rows).hasSize(2);
+
+        TableRow firstRow = rows.get(0);
+        assertThat(firstRow.getJob()).isSameAs(first);
+
+        List<Result> firstRowResults = firstRow.getResults();
+        assertThat(firstRowResults).hasSize(2);]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="90">
+      <file column="13" endcolumn="11" endline="274" line="266"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DetailFactoryTest.java"/>
+      <file column="15" endcolumn="11" endline="301" line="293"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/testutil/IntegrationTest.java"/>
+      <codefragment><![CDATA[    private void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
+            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+        assertThat(report.getSizeOf(Severity.ERROR)).isEqualTo(expectedSizeError);
+        assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
+        assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);
+        assertThat(report.getSizeOf(Severity.WARNING_LOW)).isEqualTo(expectedSizeLow);
+    }
+
+    private AnalysisResult createResult() {]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="89">
+      <file column="15" endcolumn="5" endline="299" line="293"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/testutil/IntegrationTest.java"/>
+      <file column="13" endcolumn="5" endline="349" line="343"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/tasks/TaskScannerTest.java"/>
+      <codefragment><![CDATA[    protected void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
+            final int expectedSizeHigh, final int expectedSizeNormal, final int expectedSizeLow) {
+        assertThat(report.getSizeOf(Severity.ERROR)).isEqualTo(expectedSizeError);
+        assertThat(report.getSizeOf(Severity.WARNING_HIGH)).isEqualTo(expectedSizeHigh);
+        assertThat(report.getSizeOf(Severity.WARNING_NORMAL)).isEqualTo(expectedSizeNormal);
+        assertThat(report.getSizeOf(Severity.WARNING_LOW)).isEqualTo(expectedSizeLow);
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="85">
+      <file column="38" endcolumn="75" endline="124" line="118"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/SeverityTrendChartTest.java"/>
+      <file column="38" endcolumn="75" endline="147" line="141"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/SeverityTrendChartTest.java"/>
+      <codefragment><![CDATA[        results.add(createResult(1, 0, 1, 2, 3));
+
+        LinesChartModel model = chart.create(results, new ChartModelConfiguration());
+
+        verifySeries(model.getSeries().get(0), Severity.WARNING_LOW, 3, 6);
+        verifySeries(model.getSeries().get(1), Severity.WARNING_NORMAL, 2, 4);
+        verifySeries(model.getSeries().get(2), Severity.WARNING_HIGH, 1, 2);]]></codefragment>
+   </duplication>
+   <duplication lines="12" tokens="81">
+      <file column="39" endcolumn="8" endline="44" line="33"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/columns/IssuesTotalColumnTest.java"/>
+      <file column="46" endcolumn="8" endline="59" line="48"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/columns/IssuesTotalColumnTest.java"/>
+      <codefragment><![CDATA[        Job<?, ?> job = mock(Job.class);
+
+        assertThat(column.getTotal(job)).isEmpty();
+        assertThat(column.getUrl(job)).isEmpty();
+        assertThat(column.getDetails(job)).isEmpty();
+        assertThat(column.getTools()).isEmpty();
+        assertThat(column.getSelectTools()).isFalse();
+        assertThat(column.getName()).isEqualTo(NAME);
+    }
+
+    @Test
+    void shouldShowNoResultIfNoAction() {]]></codefragment>
+   </duplication>
+   <duplication lines="12" tokens="81">
+      <file column="70" endcolumn="29" endline="113" line="102"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="71" endcolumn="29" endline="150" line="140"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[    public void shouldCreateSuccessResultWithIgnoredUnstableInBetween() {
+        // #1 SUCCESS
+        FreeStyleProject project = createJob(JOB_NAME, "eclipse2Warnings.txt");
+        enableWarnings(project, recorder -> recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE));
+        Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(2)
+                        .hasNewSize(0)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
+
+        // #2 UNSTABLE
+        cleanAndCopy(project, "eclipse8Warnings.txt");]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="79">
+      <file column="71" endcolumn="35" endline="37" line="28"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/HealthTrendChartTest.java"/>
+      <file column="72" endcolumn="35" endline="58" line="49"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/HealthTrendChartTest.java"/>
+      <codefragment><![CDATA[        HealthDescriptor healthDescriptor = new HealthDescriptor(5, 10, Severity.WARNING_NORMAL);
+        HealthTrendChart chart = new HealthTrendChart(healthDescriptor);
+
+        List<BuildResult<AnalysisBuildResult>> resultsCheckStyle = createBuildResults();
+        LinesChartModel model = chart.create(resultsCheckStyle, new ChartModelConfiguration());
+
+        assertThatJson(model).node("domainAxisLabels")
+                .isArray().containsExactly("#1", "#2", "#3", "#4");
+        assertThatJson(model).node("series")
+                .isArray().hasSize(3);]]></codefragment>
+   </duplication>
+   <duplication lines="21" tokens="79">
+      <file column="111" endcolumn="35" endline="298" line="278"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <file column="114" endcolumn="35" endline="350" line="329"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <codefragment><![CDATA[                        .setTestName("Job should have analysis result if quality gate has a warning (SUCCESS)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.FAILURE)
+                        .setQualityGateStatus(QualityGateStatus.INACTIVE)
+                        .setTestName("Job should have analysis result even if quality gate is not active (FAILED)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(FIRST)
+                        .setJobResult(Result.FAILURE)
+                        .setQualityGateStatus(QualityGateStatus.PASSED)
+                        .setTestName("Job should have analysis result even if quality gate has been passed (FAILED)")
+                        .build()
+        );
+    }
+
+    /**
+     * Method to provide test element that return an present optional.
+     *
+     * @return list of test data objects
+     */
+    private static Iterable<Object> createTestDataForSuccessfulQualityGateAndIgnoredBuildResult() {]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="78">
+      <file column="34" endcolumn="45" endline="56" line="47"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DeltaReportTest.java"/>
+      <file column="38" endcolumn="45" endline="86" line="77"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DeltaReportTest.java"/>
+      <codefragment><![CDATA[    void shouldHaveCorrectReports() {
+        Run<?, ?> run = mock(Run.class);
+        when(run.getExternalizableId()).thenReturn(REFERENCE_BUILD_ID);
+
+        History history = mock(History.class);
+        when(history.getBuild()).thenReturn(Optional.of(run));
+
+        Issue issue = getIssue("issue");
+        Issue fixedIssue = getIssue("fixedIssue");
+        Issue newIssue = getIssue("newIssue");]]></codefragment>
+   </duplication>
+   <duplication lines="48" tokens="76">
+      <file column="20" endcolumn="15" endline="533" line="486"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="35" endcolumn="15" endline="933" line="885"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[            return NO_REFERENCE_BUILD;
+        }
+        return referenceBuildId;
+    }
+
+    public int getHealthy() {
+        return healthy;
+    }
+
+    /**
+     * Sets the healthy threshold, i.e. the number of issues when health is reported as 100%.
+     *
+     * @param healthy
+     *         the number of issues when health is reported as 100%
+     */
+    @DataBoundSetter
+    public void setHealthy(final int healthy) {
+        this.healthy = healthy;
+    }
+
+    public int getUnhealthy() {
+        return unhealthy;
+    }
+
+    /**
+     * Sets the healthy threshold, i.e. the number of issues when health is reported as 0%.
+     *
+     * @param unhealthy
+     *         the number of issues when health is reported as 0%
+     */
+    @DataBoundSetter
+    public void setUnhealthy(final int unhealthy) {
+        this.unhealthy = unhealthy;
+    }
+
+    @Nullable
+    public String getMinimumSeverity() {
+        return minimumSeverity.getName();
+    }
+
+    /**
+     * Sets the type of the trend chart that should be shown on the job page.
+     *
+     * @param trendChartType
+     *         the type of the trend chart to use
+     */
+    @DataBoundSetter
+    public void setTrendChartType(final TrendChartType trendChartType) {]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="76">
+      <file column="24" endcolumn="63" endline="90" line="81"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="36" endcolumn="63" endline="140" line="131"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <codefragment><![CDATA[    void shouldCopyFile() throws InterruptedException {
+        AffectedFilesResolver resolver = new AffectedFilesResolver();
+
+        Report report = new Report();
+        Issue issue = new IssueBuilder().setFileName(FILE_NAME).build();
+        report.add(issue);
+
+        RemoteFacade remoteFacade = mock(RemoteFacade.class);
+        when(remoteFacade.exists(FILE_NAME)).thenReturn(true);
+        when(remoteFacade.isInWorkspace(FILE_NAME)).thenReturn(true);]]></codefragment>
+   </duplication>
+   <duplication lines="13" tokens="75">
+      <file column="47" endcolumn="15" endline="107" line="95"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletITest.java"/>
+      <file column="47" endcolumn="15" endline="138" line="125"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletITest.java"/>
+      <codefragment><![CDATA[                .containsEntry("CheckStyle", 6)
+                .containsEntry("Eclipse ECJ", 8);
+        assertThat(pageObject.getDashboardTableEntry(project).get("CheckStyle").getUrl())
+                .endsWith("job/" + project.getName() + "/2/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project.getName() + "/2/eclipse");
+    }
+
+    /**
+     * Dashboard Portlet should show job results when a tool is configured after first build.
+     */
+    @Test
+    public void showJobResultsWhenAToolIsConfiguredAfterFirstBuild() {]]></codefragment>
+   </duplication>
+   <duplication lines="13" tokens="75">
+      <file column="38" endcolumn="53" endline="643" line="631"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="38" endcolumn="53" endline="686" line="674"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[                        .hasNewSize(0)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
+        removeBuilder(reference, failureStep);
+
+        // #1 UNSTABLE (Reference #2)
+        FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
+        enableWarnings(project, recorder -> {
+            recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
+            recorder.setIgnoreFailedBuilds(false);
+            recorder.setEnabledForFailure(true);
+        });
+        scheduleBuildAndAssertStatus(project, Result.UNSTABLE,]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="74">
+      <file column="55" endcolumn="68" endline="90" line="81"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="80" endcolumn="68" endline="113" line="104"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <codefragment><![CDATA[    void shouldCopyFile() throws InterruptedException {
+        AffectedFilesResolver resolver = new AffectedFilesResolver();
+
+        Report report = new Report();
+        Issue issue = new IssueBuilder().setFileName(FILE_NAME).build();
+        report.add(issue);
+
+        RemoteFacade remoteFacade = mock(RemoteFacade.class);
+        when(remoteFacade.exists(FILE_NAME)).thenReturn(true);
+        when(remoteFacade.isInWorkspace(FILE_NAME)).thenReturn(true);]]></codefragment>
+   </duplication>
+   <duplication lines="15" tokens="73">
+      <file column="16" endcolumn="20" endline="53" line="39"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/model/IssuesModel.java"/>
+      <file column="17" endcolumn="24" endline="314" line="300"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/warnings/DuplicateCodeScanner.java"/>
+      <codefragment><![CDATA[    IssuesModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
+            final DescriptionProvider descriptionProvider, final JenkinsFacade jenkinsFacade) {
+        super(report, fileNameRenderer, ageBuilder, descriptionProvider, jenkinsFacade);
+    }
+
+    @Override
+    public String getId() {
+        return "issues";
+    }
+
+    @Override
+    public List<TableColumn> getColumns() {
+        List<TableColumn> columns = new ArrayList<>();
+
+        columns.add(createDetailsColumn());]]></codefragment>
+   </duplication>
+   <duplication lines="14" tokens="73">
+      <file column="114" endcolumn="5" endline="240" line="227"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <file column="111" endcolumn="5" endline="395" line="381"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/AnalysisHistoryTest.java"/>
+      <codefragment><![CDATA[                        .setTestName("Job should have no analysis result if quality gate has a warning (SUCCESS)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(NONE)
+                        .setJobResult(Result.FAILURE)
+                        .setQualityGateStatus(QualityGateStatus.INACTIVE)
+                        .setTestName("Job should have no analysis result even if quality gate is not active (FAILED)")
+                        .build(),
+                new BuildHistoryBuilder().setExpectedResult(NONE)
+                        .setJobResult(Result.FAILURE)
+                        .setQualityGateStatus(QualityGateStatus.PASSED)
+                        .setTestName("Job should have no analysis result even if quality gate has been passed (FAILED)")
+                        .build()
+        );
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="11" tokens="73">
+      <file column="57" endcolumn="76" endline="56" line="46"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/DetailsTabITest.java"/>
+      <file column="62" endcolumn="76" endline="89" line="79"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/DetailsTabITest.java"/>
+      <codefragment><![CDATA[    public void shouldPopulateDetailsTabMultipleWarnings() {
+        FreeStyleProject project = createFreeStyleJobWithWarnings();
+
+        copySingleFileToWorkspace(project, "../java2Warnings.txt", "java.txt");
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        DetailsTab detailsTab = createDetailsTab(analysisResult);
+        assertThat(detailsTab.getTabTypes())
+                .containsExactly(TabType.FOLDERS, TabType.FILES, TabType.ISSUES);
+
+        assertThat(detailsTab.getActiveTabType()).isEqualTo(TabType.FOLDERS);]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="72">
+      <file column="80" endcolumn="63" endline="113" line="104"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="67" endcolumn="63" endline="140" line="131"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <codefragment><![CDATA[    void shouldReportCopyExceptions() throws InterruptedException, IOException {
+        AffectedFilesResolver resolver = new AffectedFilesResolver();
+
+        Report report = new Report();
+        Issue issue = new IssueBuilder().setFileName(FILE_NAME).build();
+        report.add(issue);
+
+        RemoteFacade remoteFacade = mock(RemoteFacade.class);
+        when(remoteFacade.exists(FILE_NAME)).thenReturn(true);
+        when(remoteFacade.isInWorkspace(FILE_NAME)).thenReturn(true);]]></codefragment>
+   </duplication>
+   <duplication lines="49" tokens="71">
+      <file column="50" endcolumn="25" endline="128" line="80"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/AnalysisStepDescriptor.java"/>
+      <file column="60" endcolumn="29" endline="1282" line="1232"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <codefragment><![CDATA[        return model.validateJob(referenceJobName);
+    }
+
+    /**
+     * Performs on-the-fly validation of the health report thresholds.
+     *
+     * @param healthy
+     *         the healthy threshold
+     * @param unhealthy
+     *         the unhealthy threshold
+     *
+     * @return the validation result
+     */
+    public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        return model.validateHealthy(healthy, unhealthy);
+    }
+
+    /**
+     * Performs on-the-fly validation of the health report thresholds.
+     *
+     * @param healthy
+     *         the healthy threshold
+     * @param unhealthy
+     *         the unhealthy threshold
+     *
+     * @return the validation result
+     */
+    public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        return model.validateUnhealthy(healthy, unhealthy);
+    }
+
+    /**
+     * Returns a model with all aggregation trend chart positions.
+     *
+     * @return a model with all  aggregation trend chart positions
+     */
+    public ListBoxModel doFillTrendChartTypeItems() {
+        return model.getAllTrendChartTypes();
+    }
+
+    /**
+     * Performs on-the-fly validation of the ID.
+     *
+     * @param id
+     *         the ID of the tool
+     *
+     * @return the validation result
+     */
+    public FormValidation doCheckId(@QueryParameter final String id) {]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="70">
+      <file column="68" endcolumn="5" endline="55" line="47"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/SeverityTrendChartTest.java"/>
+      <file column="68" endcolumn="5" endline="157" line="148"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/SeverityTrendChartTest.java"/>
+      <codefragment><![CDATA[        verifySeries(model.getSeries().get(3), Severity.ERROR, 4, 0);
+
+        assertThatJson(model).node("domainAxisLabels")
+                .isArray().hasSize(2).containsExactly("#1", "#2");
+        assertThatJson(model).node("buildNumbers")
+                .isArray().hasSize(2).containsExactly(1, 2);
+        assertThatJson(model).node("series")
+                .isArray().hasSize(4);
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="69">
+      <file column="47" endcolumn="53" endline="63" line="57"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletITest.java"/>
+      <file column="42" endcolumn="53" endline="167" line="161"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletITest.java"/>
+      <codefragment><![CDATA[                .containsEntry("CheckStyle", 6);
+
+        assertThat(pageObject.getDashboardTableEntry(project1).get("CheckStyle").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project1).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/eclipse");
+        assertThat(pageObject.getDashboardTableEntry(project1).get("Maven").getUrl())]]></codefragment>
+   </duplication>
+   <duplication lines="11" tokens="68">
+      <file column="87" endcolumn="48" endline="96" line="86"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/DryITest.java"/>
+      <file column="79" endcolumn="48" endline="132" line="122"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/DryITest.java"/>
+      <codefragment><![CDATA[        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        Cpd cpd = new Cpd();
+        cpd.setNormalThreshold(2);
+        cpd.setHighThreshold(4);
+        enableGenericWarnings(project, cpd);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
+
+        TablePageObject issues = getDuplicationTable(details);
+        assertThat(issues.getRows()).hasSize(10); // paging of 10 is activated by default]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="67">
+      <file column="68" endcolumn="35" endline="54" line="47"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/SeverityTrendChartTest.java"/>
+      <file column="75" endcolumn="35" endline="132" line="124"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/SeverityTrendChartTest.java"/>
+      <file column="68" endcolumn="35" endline="156" line="148"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/SeverityTrendChartTest.java"/>
+      <codefragment><![CDATA[        verifySeries(model.getSeries().get(3), Severity.ERROR, 4, 0);
+
+        assertThatJson(model).node("domainAxisLabels")
+                .isArray().hasSize(2).containsExactly("#1", "#2");
+        assertThatJson(model).node("buildNumbers")
+                .isArray().hasSize(2).containsExactly(1, 2);
+        assertThatJson(model).node("series")
+                .isArray().hasSize(4);]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="67">
+      <file column="63" endcolumn="61" endline="201" line="192"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletTest.java"/>
+      <file column="63" endcolumn="61" endline="286" line="277"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletTest.java"/>
+      <codefragment><![CDATA[        verifyResult(firstRowResults.get(0), CHECK_STYLE_ID, 2);
+        verifyResult(firstRowResults.get(1), SPOT_BUGS_ID, 1);
+
+        TableRow secondRow = rows.get(1);
+        assertThat(secondRow.getJob()).isSameAs(second);
+
+        List<Result> secondRowResults = secondRow.getResults();
+        assertThat(secondRowResults).hasSize(2);
+
+        verifyResult(secondRowResults.get(0), CHECK_STYLE_ID, 4);]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="67">
+      <file column="61" endcolumn="42" endline="290" line="281"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <file column="70" endcolumn="42" endline="328" line="319"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <codefragment><![CDATA[        JSONObject chartModel = carousel.getActiveChartModel();
+
+        JSONArray allSeries = chartModel.getJSONArray("series");
+        assertThat(allSeries.size()).isEqualTo(1);
+
+        JSONObject series = allSeries.getJSONObject(0);
+        assertThat(series.getString("type")).isEqualTo("pie");
+
+        JSONArray data = series.getJSONArray("data");
+        assertThat(data.size()).isEqualTo(4);]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="66">
+      <file column="69" endcolumn="60" endline="41" line="33"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/TrendCarouselITest.java"/>
+      <file column="64" endcolumn="60" endline="69" line="61"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/TrendCarouselITest.java"/>
+      <codefragment><![CDATA[                .containsExactly(SEVERITIES, TOOLS, NEW_VERSUS_FIXED);
+
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
+        carousel.next();
+        assertThat(carousel.getActiveChartType()).isEqualTo(TOOLS);
+        carousel.next();
+        assertThat(carousel.getActiveChartType()).isEqualTo(NEW_VERSUS_FIXED);
+        carousel.next();
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="65">
+      <file column="108" endcolumn="37" endline="54" line="47"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="80" endcolumn="37" endline="76" line="69"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <codefragment><![CDATA[        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, BUILD_ROOT, createWorkspaceStub());
+
+        assertThat(report.getErrorMessages()).isEmpty();
+        assertThat(report.getInfoMessages()).hasSize(1);
+        String message = report.getInfoMessages().get(0);
+        assertThat(message).contains("0 copied");
+        assertThat(message).contains("0 not in workspace");
+        assertThat(message).contains("1 not-found");]]></codefragment>
+   </duplication>
+   <duplication lines="12" tokens="64">
+      <file column="5" endcolumn="5" endline="130" line="119"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/model/FilesScanner.java"/>
+      <file column="5" endcolumn="5" endline="198" line="187"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/model/ReportScanningTool.java"/>
+      <codefragment><![CDATA[    }
+
+    @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
+    private String plural(final int count, final String itemName) {
+        StringBuilder builder = new StringBuilder(itemName);
+        if (count != 1) {
+            builder.append('s');
+        }
+        builder.insert(0, ' ');
+        builder.insert(0, count);
+        return builder.toString();
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="18" tokens="64">
+      <file column="5" endcolumn="76" endline="112" line="95"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="76" endline="92" line="75"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    private int healthy;
+    private int unhealthy;
+    private Severity minimumSeverity = Severity.WARNING_LOW;
+
+    private List<RegexpFilter> filters = new ArrayList<>();
+
+    private boolean isEnabledForFailure;
+    private boolean isAggregatingResults;
+
+    private boolean isBlameDisabled;
+    private boolean isForensicsDisabled;
+
+    private String id;
+    private String name;
+
+    private List<QualityGate> qualityGates = new ArrayList<>();
+
+    private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;]]></codefragment>
+   </duplication>
+   <duplication lines="5" tokens="64">
+      <file column="60" endcolumn="32" endline="353" line="349"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <file column="63" endcolumn="32" endline="425" line="421"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <codefragment><![CDATA[        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+
+        long value = statistics.getNormalCount(KEY);]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="64">
+      <file column="59" endcolumn="53" endline="35" line="30"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/axivion/AxivionParserTest.java"/>
+      <file column="60" endcolumn="53" endline="56" line="51"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/axivion/AxivionParserTest.java"/>
+      <file column="59" endcolumn="53" endline="77" line="72"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/axivion/AxivionParserTest.java"/>
+      <codefragment><![CDATA[        assertThat(issue.getFingerprint()).isEqualTo("SV1");
+        assertThat(issue.getReference()).isEqualTo("");
+        assertThat(issue.getFolder()).isEqualTo("src");
+        assertThat(issue.getPackageName()).isEqualTo("-");
+        assertThat(issue.getModuleName()).isEqualTo("-");
+        assertThat(issue.getDescription()).isEqualTo(]]></codefragment>
+   </duplication>
+   <duplication lines="52" tokens="63">
+      <file column="5" endcolumn="5" endline="229" line="178"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="5" endline="139" line="96"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java"/>
+      <file column="5" endcolumn="5" endline="586" line="535"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    }
+
+    /**
+     * Defines the ID of the results. The ID is used as URL of the results and as name in UI elements. If no ID is
+     * given, then the ID of the associated result object is used.
+     * <p>
+     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
+     * UI in order to simplify the user interface.
+     * </p>
+     *
+     * @param id
+     *         the ID of the results
+     */
+    @DataBoundSetter
+    public void setId(final String id) {
+        new ModelValidation().ensureValidId(id);
+
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * Defines the name of the results. The name is used for all labels in the UI. If no name is given, then the name of
+     * the associated {@link StaticAnalysisLabelProvider} is used.
+     * <p>
+     * Note: this property is not used if {@link #isAggregatingResults} is {@code false}. It is also not visible in the
+     * UI in order to simplify the user interface.
+     * </p>
+     *
+     * @param name
+     *         the name of the results
+     */
+    @DataBoundSetter
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Gets the static analysis tools that will scan files and create issues.
+     *
+     * @return the static analysis tools (wrapped as {@link ToolProxy})
+     * @see #getTools
+     * @deprecated this method is only intended to be called by the UI
+     */
+    @Nullable]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="63">
+      <file column="47" endcolumn="69" endline="62" line="57"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletITest.java"/>
+      <file column="42" endcolumn="69" endline="166" line="161"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletITest.java"/>
+      <file column="75" endcolumn="69" endline="181" line="176"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletITest.java"/>
+      <codefragment><![CDATA[                .containsEntry("CheckStyle", 6);
+
+        assertThat(pageObject.getDashboardTableEntry(project1).get("CheckStyle").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/checkstyle");
+        assertThat(pageObject.getDashboardTableEntry(project1).get("Eclipse ECJ").getUrl())
+                .endsWith("job/" + project1.getName() + "/1/eclipse");]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="63">
+      <file column="24" endcolumn="54" endline="86" line="81"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletITest.java"/>
+      <file column="9" endcolumn="54" endline="129" line="123"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortletITest.java"/>
+      <codefragment><![CDATA[        DashboardTable pageObject = loadDashboardTable(dashboard);
+        assertThat(pageObject.getWarningCounts(project)).hasSize(2)
+                .containsEntry("CheckStyle", 7)
+                .containsEntry("Eclipse ECJ", 8);
+        assertThat(pageObject.getDashboardTableEntry(project).get("CheckStyle").getUrl())
+                .endsWith("job/" + project.getName() + "/1/checkstyle");]]></codefragment>
+   </duplication>
+   <duplication lines="29" tokens="61">
+      <file column="5" endcolumn="22" endline="175" line="147"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="22" endline="132" line="104"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    }
+
+    /**
+     * Defines the optional list of quality gates.
+     *
+     * @param qualityGates
+     *         the quality gates
+     */
+    @SuppressWarnings("unused") // used by Stapler view data binding
+    @DataBoundSetter
+    public void setQualityGates(final List<QualityGate> qualityGates) {
+        this.qualityGates = qualityGates;
+    }
+
+    /**
+     * Appends the specified quality gates to the end of the list of quality gates.
+     *
+     * @param size
+     *         the minimum number of issues that fails the quality gate
+     * @param type
+     *         the type of the quality gate
+     * @param result
+     *         determines whether the quality gate is a warning or failure
+     */
+    public void addQualityGate(final int size, final QualityGateType type, final QualityGateResult result) {
+        qualityGates.add(new QualityGate(size, type, result));
+    }
+
+    @SuppressWarnings("unused") // used by Stapler view data binding]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="61">
+      <file column="84" endcolumn="41" endline="164" line="157"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DetailFactoryTest.java"/>
+      <file column="42" endcolumn="41" endline="188" line="181"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DetailFactoryTest.java"/>
+      <file column="42" endcolumn="41" endline="212" line="205"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DetailFactoryTest.java"/>
+      <codefragment><![CDATA[        issueBuilder.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID);
+        Issue issue = issueBuilder.build();
+
+        report.add(issue);
+
+        Object details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
+                RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
+        assertThat(details).isInstanceOf(ConsoleDetail.class);]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="61">
+      <file column="55" endcolumn="37" endline="77" line="71"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="90" endcolumn="37" endline="127" line="121"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <codefragment><![CDATA[        assertThat(report.getErrorMessages()).isEmpty();
+        assertThat(report.getInfoMessages()).hasSize(1);
+        String message = report.getInfoMessages().get(0);
+        assertThat(message).contains("0 copied");
+        assertThat(message).contains("0 not in workspace");
+        assertThat(message).contains("0 not-found");
+        assertThat(message).contains("0 with I/O error");]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="61">
+      <file column="78" endcolumn="55" endline="906" line="898"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/StepsITest.java"/>
+      <file column="101" endcolumn="55" endline="929" line="921"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/StepsITest.java"/>
+      <codefragment><![CDATA[                "publishIssues issues:[issues], referenceJobName:'reference'"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(not(result.getReferenceBuild().isPresent()));
+
+        assertThat(result.getNewIssues()).hasSize(0);
+        assertThat(result.getOutstandingIssues()).hasSize(2);
+        assertThat(result.getErrorMessages()).contains(]]></codefragment>
+   </duplication>
+   <duplication lines="40" tokens="60">
+      <file column="5" endcolumn="5" endline="372" line="333"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="5" endline="769" line="731"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <file column="5" endcolumn="5" endline="109" line="77"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssuesStep.java"/>
+      <codefragment><![CDATA[    }
+
+    /**
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getBlameDisabled() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setBlameDisabled(final boolean blameDisabled) {
+        isBlameDisabled = blameDisabled;
+    }
+
+    /**
+     * Returns whether SCM forensics should be disabled.
+     *
+     * @return {@code true} if SCM forensics should be disabled
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getForensicsDisabled() {
+        return isForensicsDisabled;
+    }
+
+    @DataBoundSetter
+    public void setForensicsDisabled(final boolean forensicsDisabled) {
+        isForensicsDisabled = forensicsDisabled;
+    }
+
+    /**
+     * Determines whether to fail the build on errors during the step of recording issues.
+     *
+     * @param failOnError
+     *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
+     *         the UI
+     */
+    @DataBoundSetter]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="60">
+      <file column="34" endcolumn="32" endline="274" line="268"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <file column="34" endcolumn="32" endline="440" line="434"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <codefragment><![CDATA[    void shouldReturnHighCountOne() {
+        Report issues = new Report();
+        IssueBuilder builder = new IssueBuilder();
+        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).build());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+
+        long value = statistics.getHighCount(KEY);]]></codefragment>
+   </duplication>
+   <duplication lines="3" tokens="60">
+      <file column="93" endcolumn="104" endline="289" line="287"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <file column="92" endcolumn="104" endline="421" line="419"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <codefragment><![CDATA[        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="60">
+      <file column="35" endcolumn="32" endline="307" line="301"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <file column="37" endcolumn="32" endline="380" line="374"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <file column="33" endcolumn="32" endline="395" line="389"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <codefragment><![CDATA[    void shouldReturnHighCountZero() {
+        Report issues = new Report();
+        IssueBuilder builder = new IssueBuilder();
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+
+        long value = statistics.getHighCount(KEY);]]></codefragment>
+   </duplication>
+   <duplication lines="14" tokens="60">
+      <file column="17" endcolumn="32" endline="128" line="115"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ModuleDetectorITest.java"/>
+      <file column="17" endcolumn="32" endline="219" line="206"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ModuleDetectorITest.java"/>
+      <file column="17" endcolumn="32" endline="292" line="279"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ModuleDetectorITest.java"/>
+      <codefragment><![CDATA[                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+
+        AnalysisResult result = createResult(
+                workspaceFiles.length - 1,
+                true,
+                workspaceFiles);
+
+        verifyModules(result,
+                new PropertyRow(EMPTY_MODULE_NAME, 1),
+                new PropertyRow("edu.hm.hafner.osgi.symbolicname", 1),]]></codefragment>
+   </duplication>
+   <duplication lines="18" tokens="60">
+      <file column="72" endcolumn="15" endline="306" line="289"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="83" endcolumn="15" endline="379" line="362"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+
+        // #3 UNSTABLE (Reference #1)
+        cleanAndCopy(project, "eclipse6Warnings.txt");
+        removeBuilder(project, failureStep);
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
+                .hasTotalSize(6)
+                .hasNewSize(2)
+                .hasQualityGateStatus(QualityGateStatus.PASSED)
+                .hasReferenceBuild(Optional.of(expectedReference)));
+    }
+
+    /**
+     * Checks if the reference only looks at the eclipse result of a build and not the overall success. Should return an
+     * unstable result.
+     */
+    @Test
+    public void shouldCreateUnstableResultWithOverAllMustNotBeSuccess() {]]></codefragment>
+   </duplication>
+   <duplication lines="15" tokens="60">
+      <file column="71" endcolumn="15" endline="55" line="41"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/TrendCarouselITest.java"/>
+      <file column="67" endcolumn="15" endline="87" line="74"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/TrendCarouselITest.java"/>
+      <codefragment><![CDATA[        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
+
+        carousel.previous();
+        assertThat(carousel.getActiveChartType()).isEqualTo(NEW_VERSUS_FIXED);
+        carousel.previous();
+        assertThat(carousel.getActiveChartType()).isEqualTo(TOOLS);
+        carousel.previous();
+        assertThat(carousel.getActiveChartType()).isEqualTo(SEVERITIES);
+    }
+
+    /**
+     * Test that the four trend charts are shown in right order and the selected chart is remembered after a refresh.
+     */
+    @Test
+    public void shouldShowOnlyOneOfFourChartsAsActive() {]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="58">
+      <file column="25" endcolumn="25" endline="167" line="160"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/warnings/axivion/DefaultTransformations.java"/>
+      <file column="25" endcolumn="25" endline="236" line="229"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/warnings/axivion/DefaultTransformations.java"/>
+      <codefragment><![CDATA[                        + getString(payload, "entity")
+                        + "</i>"
+                        + createLink(rawIssue, getInt(payload, "id"));
+        return new IssueBuilder()
+                .setPathName(rawIssue.getProjectDir())
+                .setFileName(getString(payload, "path"))
+                .setLineStart(getInt(payload, "line"))
+                .setType("Dead Entity")]]></codefragment>
+   </duplication>
+   <duplication lines="15" tokens="58">
+      <file column="40" endcolumn="9" endline="961" line="947"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/StepsITest.java"/>
+      <file column="39" endcolumn="9" endline="982" line="968"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/StepsITest.java"/>
+      <codefragment><![CDATA[                node -> "publishIssues".equals(Objects.requireNonNull(node).getDisplayFunctionName()));
+        assertThat(publishIssuesNode).isNotNull();
+        WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
+        assertThat(warningAction).isNotNull();
+        assertThat(warningAction.getMessage()).isEqualTo("Some quality gates have been missed: overall result is UNSTABLE");
+    }
+
+    /**
+     * Verifies that when recordIssues marks the build as unstable it also marks the step with
+     * WarningAction so that visualizations can display the step as unstable rather than just
+     * the whole build.
+     *
+     * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-39203">Issue 39203</a>
+     */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-39203")]]></codefragment>
+   </duplication>
+   <duplication lines="5" tokens="57">
+      <file column="33" endcolumn="74" endline="193" line="189"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <file column="49" endcolumn="74" endline="209" line="205"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <codefragment><![CDATA[    void shouldReturnMaxValueTwo() {
+        Report issues = new Report();
+        IssueBuilder builder = new IssueBuilder();
+        issues.add(builder.setCategory("ab").setPackageName("P1").build());
+        issues.add(builder.setCategory("ab").setPackageName("P2").build());]]></codefragment>
+   </duplication>
+   <duplication lines="11" tokens="57">
+      <file column="45" endcolumn="53" endline="560" line="550"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="72" endcolumn="53" endline="601" line="591"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[        removeBuilder(reference, failureStep);
+
+        // #1 SUCCESS (Reference #1)
+        FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
+        enableWarnings(project, recorder -> {
+            recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
+            recorder.setIgnoreFailedBuilds(true);
+            recorder.setEnabledForFailure(true);
+        });
+        scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)]]></codefragment>
+   </duplication>
+   <duplication lines="42" tokens="56">
+      <file column="5" endcolumn="5" endline="325" line="284"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="5" endline="723" line="682"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <file column="5" endcolumn="5" endline="141" line="107"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssuesStep.java"/>
+      <codefragment><![CDATA[    }
+
+    @Nullable
+    public String getSourceCodeEncoding() {
+        return sourceCodeEncoding;
+    }
+
+    /**
+     * Sets the encoding to use to read source files.
+     *
+     * @param sourceCodeEncoding
+     *         the encoding, e.g. "ISO-8859-1"
+     */
+    @DataBoundSetter
+    public void setSourceCodeEncoding(final String sourceCodeEncoding) {
+        this.sourceCodeEncoding = sourceCodeEncoding;
+    }
+
+    public String getSourceDirectory() {
+        return sourceDirectory;
+    }
+
+    /**
+     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * then this folder needs to be added in Jenkins global configuration.
+     *
+     * @param sourceDirectory
+     *         a folder containing the source code
+     */
+    @DataBoundSetter
+    public void setSourceDirectory(final String sourceDirectory) {
+        this.sourceDirectory = sourceDirectory;
+    }
+
+    /**
+     * Returns whether the results for each configured static analysis result should be aggregated into a single result
+     * or if every tool should get an individual result.
+     *
+     * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
+     *         {@code false} if every tool should get an individual result.
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")]]></codefragment>
+   </duplication>
+   <duplication lines="12" tokens="56">
+      <file column="72" endcolumn="8" endline="72" line="61"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/HealthReportBuilderTest.java"/>
+      <file column="72" endcolumn="8" endline="145" line="134"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/HealthReportBuilderTest.java"/>
+      <codefragment><![CDATA[        HealthReport reportLowPriority = createValidHealthReport(15, 45, Severity.WARNING_LOW, 10, 20, 30, 0);
+
+        assertThat(reportHighPriority.getScore()).isEqualTo(0);
+        assertThat(reportNormalPriority.getScore()).isEqualTo(0);
+        assertThat(reportLowPriority.getScore()).isEqualTo(0);
+    }
+
+    /**
+     * Test whether the health descriptor is disabled.
+     */
+    @Test
+    void shouldBeNullForDisabledHealthDescriptor() {]]></codefragment>
+   </duplication>
+   <duplication lines="16" tokens="56">
+      <file column="48" endcolumn="15" endline="572" line="557"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="49" endcolumn="15" endline="655" line="640"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[            recorder.setIgnoreFailedBuilds(true);
+            recorder.setEnabledForFailure(true);
+        });
+        scheduleBuildAndAssertStatus(project, Result.UNSTABLE, analysisResult -> assertThat(analysisResult)
+                .hasTotalSize(6)
+                .hasNewSize(4)
+                .hasQualityGateStatus(QualityGateStatus.WARNING)
+                .hasReferenceBuild(Optional.of(expectedReference)));
+    }
+
+    /**
+     * Checks if the reference only looks at complete success builds instead of just looking at the eclipse result.
+     * Should return a success result. Uses a different freestyle project for the reference.
+     */
+    @Test
+    public void shouldCreateSuccessResultWithOverAllMustBeSuccessWithReferenceBuild() {]]></codefragment>
+   </duplication>
+   <duplication lines="33" tokens="55">
+      <file column="5" endcolumn="13" endline="521" line="489"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java"/>
+      <file column="5" endcolumn="13" endline="267" line="235"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java"/>
+      <file column="5" endcolumn="13" endline="920" line="888"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    }
+
+    public int getHealthy() {
+        return healthy;
+    }
+
+    /**
+     * Sets the healthy threshold, i.e. the number of issues when health is reported as 100%.
+     *
+     * @param healthy
+     *         the number of issues when health is reported as 100%
+     */
+    @DataBoundSetter
+    public void setHealthy(final int healthy) {
+        this.healthy = healthy;
+    }
+
+    public int getUnhealthy() {
+        return unhealthy;
+    }
+
+    /**
+     * Sets the healthy threshold, i.e. the number of issues when health is reported as 0%.
+     *
+     * @param unhealthy
+     *         the number of issues when health is reported as 0%
+     */
+    @DataBoundSetter
+    public void setUnhealthy(final int unhealthy) {
+        this.unhealthy = unhealthy;
+    }
+
+    @Nullable]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="55">
+      <file column="109" endcolumn="37" endline="53" line="47"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="81" endcolumn="37" endline="75" line="69"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="69" endcolumn="37" endline="148" line="142"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <codefragment><![CDATA[        new AffectedFilesResolver().copyAffectedFilesToBuildFolder(report, BUILD_ROOT, createWorkspaceStub());
+
+        assertThat(report.getErrorMessages()).isEmpty();
+        assertThat(report.getInfoMessages()).hasSize(1);
+        String message = report.getInfoMessages().get(0);
+        assertThat(message).contains("0 copied");
+        assertThat(message).contains("0 not in workspace");]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="55">
+      <file column="61" endcolumn="67" endline="112" line="106"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <file column="63" endcolumn="67" endline="179" line="174"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <file column="59" endcolumn="67" endline="229" line="224"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <codefragment><![CDATA[        JSONObject chartModel = carousel.getActiveChartModel();
+
+        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
+
+        // Make sure each of our builds is listed on the x axis
+        for (int build = 0; build < buildResults.size(); build++) {]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="55">
+      <file column="72" endcolumn="35" endline="55" line="46"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="83" endcolumn="35" endline="119" line="110"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+
+        // #2 UNSTABLE
+        cleanAndCopy(project, "eclipse8Warnings.txt");
+        Run<?, ?> unstable = scheduleBuildAndAssertStatus(project, Result.UNSTABLE,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(8)
+                        .hasNewSize(6)
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
+        createResetAction(unstable, "eclipse");]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="55">
+      <file column="42" endcolumn="29" endline="182" line="173"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="42" endcolumn="29" endline="357" line="348"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[            recorder.setIgnoreQualityGate(true);
+            recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+        });
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2)
+                        .hasNewSize(0)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+
+        // #2 UNSTABLE
+        cleanAndCopy(project, "eclipse6Warnings.txt");]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="55">
+      <file column="42" endcolumn="31" endline="467" line="458"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="42" endcolumn="31" endline="669" line="660"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[            recorder.setIgnoreQualityGate(true);
+            recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+        });
+        scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2)
+                        .hasNewSize(0)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED));
+
+        // #2 UNSTABLE
+        cleanAndCopy(reference, "eclipse6Warnings.txt");]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="55">
+      <file column="38" endcolumn="47" endline="478" line="470"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="38" endcolumn="47" endline="515" line="507"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[                        .hasNewSize(4)
+                        .hasQualityGateStatus(QualityGateStatus.WARNING)).getOwner();
+
+        // #1 SUCCESS (Reference #2)
+        FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
+        enableWarnings(project, recorder -> {
+            recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
+            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
+            recorder.setIgnoreQualityGate(true);]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="54">
+      <file column="9" endcolumn="51" endline="117" line="112"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/columns/IssuesTotalColumnTest.java"/>
+      <file column="9" endcolumn="51" endline="195" line="190"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/columns/IssuesTotalColumnTest.java"/>
+      <codefragment><![CDATA[        Job<?, ?> job = createJobWithActions(
+                createAction(CHECK_STYLE_ID, CHECK_STYLE_NAME, 1),
+                createAction(SPOT_BUGS_ID, SPOT_BUGS_NAME, 2));
+
+        assertThat(column.getTotal(job)).isNotEmpty();
+        assertThat(column.getTotal(job)).hasValue(1);]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="54">
+      <file column="68" endcolumn="37" endline="97" line="90"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="69" endcolumn="37" endline="147" line="140"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <codefragment><![CDATA[        when(remoteFacade.isInWorkspace(FILE_NAME)).thenReturn(true);
+
+        resolver.copyAffectedFilesToBuildFolder(report, remoteFacade);
+
+        assertThat(report.getErrorMessages()).isEmpty();
+        assertThat(report.getInfoMessages()).hasSize(1);
+        String message = report.getInfoMessages().get(0);
+        assertThat(message).contains("1 copied");]]></codefragment>
+   </duplication>
+   <duplication lines="15" tokens="54">
+      <file column="78" endcolumn="8" endline="260" line="246"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/tasks/TaskScannerTest.java"/>
+      <file column="74" endcolumn="8" endline="275" line="261"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/tasks/TaskScannerTest.java"/>
+      <codefragment><![CDATA[        Report tasks = new TaskScannerBuilder().setHighTasks(" FIXME , TODO ")
+                .setCaseMode(CaseMode.CASE_SENSITIVE)
+                .setMatcherMode(MatcherMode.STRING_MATCH)
+                .build()
+                .scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
+
+        assertThat(tasks).hasSize(2);
+        assertThatReportHasSeverities(tasks, 0, 2, 0, 0);
+    }
+
+    /**
+     * Checks whether we find two high priority tasks with different identifiers in the test file.
+     */
+    @Test
+    void shouldHaveTwoItemsWithHighPriority() {]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="53">
+      <file column="25" endcolumn="43" endline="205" line="200"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/warnings/axivion/DefaultTransformations.java"/>
+      <file column="25" endcolumn="43" endline="236" line="231"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/warnings/axivion/DefaultTransformations.java"/>
+      <codefragment><![CDATA[                        + createLink(rawIssue, getInt(payload, "id"));
+        return new IssueBuilder()
+                .setPathName(rawIssue.getProjectDir())
+                .setFileName(getString(payload, "path"))
+                .setLineStart(getInt(payload, "line"))
+                .setType(getString(payload, "description"))]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="53">
+      <file column="73" endcolumn="5" endline="52" line="47"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/HealthReportBuilderTest.java"/>
+      <file column="72" endcolumn="5" endline="121" line="116"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/HealthReportBuilderTest.java"/>
+      <codefragment><![CDATA[        HealthReport reportLowPriority = createValidHealthReport(65, 105, Severity.WARNING_LOW, 10, 20, 30, 0);
+
+        assertThat(reportHighPriority.getScore()).isEqualTo(100);
+        assertThat(reportNormalPriority.getScore()).isEqualTo(100);
+        assertThat(reportLowPriority.getScore()).isEqualTo(100);
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="3" tokens="53">
+      <file column="61" endcolumn="48" endline="289" line="287"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <file column="63" endcolumn="48" endline="350" line="348"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/PropertyStatisticsTest.java"/>
+      <codefragment><![CDATA[        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
+        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());]]></codefragment>
+   </duplication>
+   <duplication lines="5" tokens="53">
+      <file column="39" endcolumn="103" endline="163" line="159"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="36" endcolumn="103" endline="177" line="172"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <codefragment><![CDATA[            FilePath sourceFolderStub = createWorkspaceStub();
+            RemoteFacade remoteFacade = new RemoteFacade(buildFolderStub, workspaceStub);
+
+            assertThat(remoteFacade.isInWorkspace(workspaceStub.getRemote())).isTrue();
+            assertThat(remoteFacade.isInWorkspace(workspaceStub.child(FILE_NAME).getRemote())).isTrue();]]></codefragment>
+   </duplication>
+   <duplication lines="5" tokens="53">
+      <file column="9" endcolumn="67" endline="112" line="108"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <file column="9" endcolumn="67" endline="136" line="133"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ChartsITest.java"/>
+      <codefragment><![CDATA[        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
+
+        // Make sure each of our builds is listed on the x axis
+        for (int build = 0; build < buildResults.size(); build++) {]]></codefragment>
+   </duplication>
+   <duplication lines="15" tokens="53">
+      <file column="48" endcolumn="5" endline="612" line="598"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="49" endcolumn="5" endline="704" line="683"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[            recorder.setIgnoreFailedBuilds(true);
+            recorder.setEnabledForFailure(true);
+        });
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult).hasTotalSize(6)
+                        .hasNewSize(2)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)
+                        .hasReferenceBuild(Optional.of(expectedReference)));
+    }
+
+    /**
+     * Checks if the reference only looks at the eclipse result of a build and not the overall success. Should return an
+     * unstable result. Uses a different freestyle project for the reference.
+     */
+    @Test]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="52">
+      <file column="5" endcolumn="40" endline="102" line="97"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/model/IssuesDetail.java"/>
+      <file column="5" endcolumn="40" endline="138" line="133"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/model/IssuesDetail.java"/>
+      <codefragment><![CDATA[    @SuppressWarnings("ParameterNumber")
+    public IssuesDetail(final Run<?, ?> owner, final AnalysisResult result,
+            final Report report, final Report newIssues,
+            final Report outstandingIssues, final Report fixedIssues,
+            final String displayName, final String url, final StaticAnalysisLabelProvider labelProvider,
+            final Charset sourceEncoding) {]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="52">
+      <file column="45" endcolumn="28" endline="65" line="56"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DeltaReportTest.java"/>
+      <file column="67" endcolumn="28" endline="96" line="87"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/DeltaReportTest.java"/>
+      <codefragment><![CDATA[        Issue newIssue = getIssue("newIssue");
+
+        Report referenceIssues = new Report();
+        referenceIssues.add(issue);
+        referenceIssues.add(fixedIssue);
+        when(history.getIssues()).thenReturn(referenceIssues);
+
+        Report report = new Report();
+        report.add(issue);
+        report.add(newIssue);]]></codefragment>
+   </duplication>
+   <duplication lines="6" tokens="52">
+      <file column="55" endcolumn="37" endline="54" line="49"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <file column="90" endcolumn="37" endline="126" line="121"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/AffectedFilesResolverTest.java"/>
+      <codefragment><![CDATA[        assertThat(report.getErrorMessages()).isEmpty();
+        assertThat(report.getInfoMessages()).hasSize(1);
+        String message = report.getInfoMessages().get(0);
+        assertThat(message).contains("0 copied");
+        assertThat(message).contains("0 not in workspace");
+        assertThat(message).contains("1 not-found");]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="52">
+      <file column="31" endcolumn="36" endline="70" line="61"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/pageobj/OverviewCarousel.java"/>
+      <file column="33" endcolumn="36" endline="68" line="59"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/pageobj/TrendCarousel.java"/>
+      <codefragment><![CDATA[            for (PieChartType type : values()) {
+                if (convertDomIdToName(domId).equals(type.name())) {
+                    return type;
+                }
+            }
+            throw new NoSuchElementException("No such chart type found with div id '%s'", domId);
+        }
+
+        private static String convertDomIdToName(final String domId) {
+            return domId.replaceAll("-chart", StringUtils.EMPTY)]]></codefragment>
+   </duplication>
+   <duplication lines="7" tokens="51">
+      <file column="50" endcolumn="39" endline="52" line="46"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/ReportLocationsTest.java"/>
+      <file column="29" endcolumn="39" endline="67" line="61"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/ReportLocationsTest.java"/>
+      <codefragment><![CDATA[    void shouldConvertReportWithTwoLinesInOneFile() {
+        Report report = new Report();
+
+        IssueBuilder builder = new IssueBuilder();
+        builder.setDirectory(WORKSPACE);
+        report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
+        report.add(builder.setFileName(TXT_FILE).setLineStart(5).build());]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="51">
+      <file column="17" endcolumn="38" endline="48" line="39"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/TimeStamperPluginITest.java"/>
+      <file column="17" endcolumn="38" endline="87" line="78"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/TimeStamperPluginITest.java"/>
+      <codefragment><![CDATA[                + "    }\n"
+                + "}", true));
+
+        AnalysisResult result = scheduleSuccessfulBuild(project);
+
+        assertThat(result).hasTotalSize(1);
+        assertThat(result).hasNoErrorMessages();
+
+        Issue issue = result.getIssues().get(0);
+        assertFileName(project, issue, "Test.java");]]></codefragment>
+   </duplication>
+   <duplication lines="17" tokens="51">
+      <file column="57" endcolumn="15" endline="48" line="32"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/MavenIssuesRecorderITest.java"/>
+      <file column="77" endcolumn="15" endline="120" line="103"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/MiscIssuesRecorderITest.java"/>
+      <codefragment><![CDATA[        copyMultipleFilesToWorkspaceWithSuffix(project, "eclipse.txt");
+        enableEclipseWarnings(project);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result).hasTotalSize(8);
+        assertThat(result).hasNewSize(0);
+        assertThat(result).hasInfoMessages(
+                "-> resolved module names for 8 issues",
+                "-> resolved package names of 4 affected files");
+    }
+
+    /**
+     * Runs a maven build without a pom.xml. Enables reporting of maven warnings and errors. 
+     */
+    @Test
+    public void shouldParseMavenError() {]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="51">
+      <file column="53" endcolumn="53" endline="81" line="73"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="120" endcolumn="53" endline="113" line="105"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[        cleanAndCopy(project, "eclipse2Warnings.txt");
+        Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(2)
+                        .hasNewSize(0)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
+
+        // #5 UNSTABLE
+        cleanAndCopy(project, "eclipse8Warnings.txt");]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="51">
+      <file column="48" endcolumn="31" endline="428" line="420"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="87" endcolumn="31" endline="544" line="536"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[            recorder.setIgnoreQualityGate(false);
+        });
+        Run<?, ?> expectedReference = scheduleBuildAndAssertStatus(reference, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult).hasTotalSize(2)
+                        .hasNewSize(0)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)).getOwner();
+
+        // #2 UNSTABLE
+        cleanAndCopy(reference, "eclipse6Warnings.txt");]]></codefragment>
+   </duplication>
+   <duplication lines="23" tokens="50">
+      <file column="5" endcolumn="10" endline="104" line="82"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/columns/IssuesTotalColumn.java"/>
+      <file column="5" endcolumn="10" endline="105" line="83"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/portlets/IssuesChartPortlet.java"/>
+      <codefragment><![CDATA[    @DataBoundSetter
+    public void setSelectTools(final boolean selectTools) {
+        this.selectTools = selectTools;
+    }
+
+    public List<ToolSelection> getTools() {
+        return tools;
+    }
+
+    /**
+     * Returns the tools that should be taken into account when summing up the totals of a job.
+     *
+     * @param tools
+     *         the tools to select
+     *
+     * @see #setSelectTools(boolean)
+     */
+    @DataBoundSetter
+    public void setTools(final List<ToolSelection> tools) {
+        this.tools = tools;
+    }
+
+    public String getName() {]]></codefragment>
+   </duplication>
+   <duplication lines="22" tokens="50">
+      <file column="49" endcolumn="5" endline="103" line="82"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/portlets/IssuesChartPortlet.java"/>
+      <file column="37" endcolumn="5" endline="151" line="130"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/portlets/IssuesTablePortlet.java"/>
+      <codefragment><![CDATA[    @SuppressWarnings({"WeakerAccess", "unused"}) // called by Stapler
+    @DataBoundSetter
+    public void setSelectTools(final boolean selectTools) {
+        this.selectTools = selectTools;
+    }
+
+    public List<ToolSelection> getTools() {
+        return tools;
+    }
+
+    /**
+     * Returns the tools that should be taken into account when summing up the totals of a job.
+     *
+     * @param tools
+     *         the tools to select
+     *
+     * @see #setSelectTools(boolean)
+     */
+    @DataBoundSetter
+    public void setTools(final List<ToolSelection> tools) {
+        this.tools = tools;
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="18" tokens="50">
+      <file column="5" endcolumn="5" endline="305" line="288"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java"/>
+      <file column="5" endcolumn="5" endline="950" line="933"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/RecordIssuesStep.java"/>
+      <codefragment><![CDATA[    public void setMinimumSeverity(final String minimumSeverity) {
+        this.minimumSeverity = Severity.valueOf(minimumSeverity, Severity.WARNING_LOW);
+    }
+
+    /**
+     * Sets the type of the trend chart that should be shown on the job page.
+     *
+     * @param trendChartType
+     *         the type of the trend chart to use
+     */
+    @DataBoundSetter
+    public void setTrendChartType(final TrendChartType trendChartType) {
+        this.trendChartType = trendChartType;
+    }
+
+    public TrendChartType getTrendChartType() {
+        return trendChartType;
+    }]]></codefragment>
+   </duplication>
+   <duplication lines="5" tokens="50">
+      <file column="86" endcolumn="61" endline="47" line="43"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/SeverityPieChartTest.java"/>
+      <file column="86" endcolumn="61" endline="63" line="59"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/charts/SeverityPieChartTest.java"/>
+      <codefragment><![CDATA[        PieChartModel pieChartModel = severityPieChart.create(createReport(1, 0, 0, 0));
+        List<PieData> data = pieChartModel.getData();
+
+        assertThat(data.get(0)).isEqualTo(new PieData("Error", 1));
+        assertThat(data.get(1)).isEqualTo(new PieData("High", 0));]]></codefragment>
+   </duplication>
+   <duplication lines="8" tokens="50">
+      <file column="90" endcolumn="58" endline="46" line="39"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/BlamesModelTest.java"/>
+      <file column="105" endcolumn="58" endline="43" line="36"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/ForensicsModelTest.java"/>
+      <codefragment><![CDATA[        String[] columns = {"description", "fileName", "age", "author", "email", "commit", "addedAt"};
+        for (int column = 0; column < columns.length; column++) {
+            verifyColumnProperty(model, column, columns[column]);
+        }
+        verifyFileNameColumn(columnDefinitions);
+
+        assertThat(getLabels(model))
+                .containsExactly("Details", "File", "Age", "Author", "Email", "Commit", "Added");]]></codefragment>
+   </duplication>
+   <duplication lines="9" tokens="50">
+      <file column="84" endcolumn="8" endline="77" line="69"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/ResetQualityGateCommandTest.java"/>
+      <file column="90" endcolumn="8" endline="102" line="94"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/model/ResetQualityGateCommandTest.java"/>
+      <codefragment><![CDATA[        ResultAction resultAction = createResultAction(QualityGateStatus.PASSED, ID);
+        FreeStyleBuild selectedBuild = attachReferenceBuild(true, resultAction);
+        when(selectedBuild.getActions(ResultAction.class)).thenReturn(Lists.list(resultAction));
+
+        assertThat(command.isEnabled(selectedBuild, ID)).isFalse();
+    }
+
+    @Test
+    void shouldBeDisabledIfNoResultAction() {]]></codefragment>
+   </duplication>
+   <duplication lines="4" tokens="50">
+      <file column="77" endcolumn="105" endline="125" line="122"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/QualityGateEvaluatorTest.java"/>
+      <file column="76" endcolumn="105" endline="147" line="144"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/core/util/QualityGateEvaluatorTest.java"/>
+      <codefragment><![CDATA[        qualityGate.add(1, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
+        assertThat(qualityGate.evaluate(builder.setTotalNormalSize(1).build(), logger)).isEqualTo(QualityGateStatus.WARNING);
+        assertThat(logger.getMessages()).containsExactly(
+                "-> WARNING - " + QualityGateType.TOTAL.getDisplayName() + ": 1 - Quality QualityGate: 1");]]></codefragment>
+   </duplication>
+   <duplication lines="10" tokens="50">
+      <file column="70" endcolumn="42" endline="184" line="175"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ModuleDetectorITest.java"/>
+      <file column="76" endcolumn="42" endline="286" line="277"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ModuleDetectorITest.java"/>
+      <codefragment><![CDATA[    public void shouldShowModulesForVariousOsgiModulesInTheHtmlOutput() {
+        String[] workspaceFiles = {
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m1/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m2/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "m3/META-INF/MANIFEST.MF",
+                BUILD_FILE_PATH + OSGI_BUILD_FILE_LOCATION + "plugin.properties"};
+
+        AnalysisResult result = createResult(
+                workspaceFiles.length - 1,]]></codefragment>
+   </duplication>
+   <duplication lines="11" tokens="50">
+      <file column="73" endcolumn="5" endline="96" line="86"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <file column="47" endcolumn="5" endline="129" line="119"
+            path="/home/osboxes/Documents/Testen/warnings-ng-plugin-devenv/warnings-ng-plugin/plugin/src/test/java/io/jenkins/plugins/analysis/warnings/recorder/ReferenceFinderITest.java"/>
+      <codefragment><![CDATA[                        .hasQualityGateStatus(QualityGateStatus.WARNING));
+
+        // #6 SUCCESS (Reference #4)
+        cleanAndCopy(project, "eclipse4Warnings.txt");
+        scheduleBuildAndAssertStatus(project, Result.SUCCESS,
+                analysisResult -> assertThat(analysisResult)
+                        .hasTotalSize(4)
+                        .hasNewSize(2)
+                        .hasQualityGateStatus(QualityGateStatus.PASSED)
+                        .hasReferenceBuild(Optional.of(expectedReference)));
+    }]]></codefragment>
+   </duplication>
+</pmd-cpd>

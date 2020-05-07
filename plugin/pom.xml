@@ -377,6 +377,12 @@
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>metrics-aggregation-shaded-pmd</artifactId>
+      <version>6.21.0-3</version>
+      <scope>test</scope>
+    </dependency>
 
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
     <dependency>

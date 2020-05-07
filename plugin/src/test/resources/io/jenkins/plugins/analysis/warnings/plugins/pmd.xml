@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd"
+    version="6.21.0" timestamp="2020-04-10T14:28:47.705">
+<file name="/var/data/workspace/autograding-plugin/src/main/java/io/jenkins/plugins/grading/Score.java">
+<violation beginline="63" endline="63" begincolumn="26" endcolumn="27" rule="AvoidLiteralsInIfCondition" ruleset="Error Prone" package="io.jenkins.plugins.grading" class="Score" method="getStyle" externalInfoUrl="https://pmd.github.io/pmd-6.21.0/pmd_rules_java_errorprone.html#avoidliteralsinifcondition" priority="3">
+Avoid using Literals in Conditional Statements
+</violation>
+<violation beginline="66" endline="66" begincolumn="31" endcolumn="32" rule="AvoidLiteralsInIfCondition" ruleset="Error Prone" package="io.jenkins.plugins.grading" class="Score" method="getStyle" externalInfoUrl="https://pmd.github.io/pmd-6.21.0/pmd_rules_java_errorprone.html#avoidliteralsinifcondition" priority="3">
+Avoid using Literals in Conditional Statements
+</violation>
+</file>
+</pmd>
+
