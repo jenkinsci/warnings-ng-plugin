@@ -10,18 +10,13 @@ import com.gargoylesoftware.htmlunit.html.HtmlDivision;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-import hudson.model.Action;
 import hudson.model.Actionable;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
-import hudson.model.Run.Artifact;
 
 import io.jenkins.plugins.analysis.core.model.AggregatedTrendAction;
-import io.jenkins.plugins.analysis.core.model.AggregationAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.JobAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -33,7 +28,6 @@ import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.echarts.AsyncTrendChart;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-//import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -62,17 +56,16 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         assertThatTrendChartIsHidden(jobActions.get(0)); // trend chart requires at least two builds
 
-        //TODO This should be done too. Not sure how to check sidebar links without UI
-        //assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
-
+        assertThat(jobActions.get(0).getIconFileName()).contains("analysis-24x24");
+        assertThat(jobActions.get(0).getUrlName()).isEqualTo("eclipse");
         build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
         jobActions = project.getActions(JobAction.class);
 
         assertThatTrendChartIsVisible(jobActions.get(0));
-
-        //assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, build);
+        assertThat(jobActions.get(0).getIconFileName()).contains("analysis-24x24");
+        assertThat(jobActions.get(0).getUrlName()).isEqualTo("eclipse");
     }
 
     /**
@@ -150,11 +143,6 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
         return project;
-    }
-
-    private List<String> getTrends(final HtmlPage jobPage) {
-        List<HtmlDivision> divs = jobPage.getByXPath("//div[@class=\"test-trend-caption\"]");
-        return divs.stream().map(HtmlDivision::getTextContent).collect(Collectors.toList());
     }
 
     /**
@@ -246,7 +234,10 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
             eclipse = jobActions.get(0);
         }
         assertThat(eclipse.getTrendName()).isEqualTo(ECLIPSE);
+        assertThat(eclipse.getIconFileName()).contains("analysis-24x24");
         assertThat(checkstyle.getTrendName()).isEqualTo(CHECKSTYLEW);
+        assertThat(checkstyle.getIconFileName()).contains("checkstyle-24x24");
+
         if(shouldChartBeVisible){
             assertThatTrendChartIsVisible(eclipse);
             assertThatTrendChartIsVisible(checkstyle);
