@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+  <duplication lines="18" tokens="137">
+    <file column="34" endcolumn="5" endline="179" line="162"
+          path="/var/data/workspace/Autograding/src/main/java/io/jenkins/plugins/grading/AutoGrader.java"/>
+    <file column="27" endcolumn="5" endline="199" line="182"
+          path="/var/data/workspace/Autograding/src/main/java/io/jenkins/plugins/grading/AutoGrader.java"/>
+    <codefragment><![CDATA[    private void gradeTestResults(@NonNull final Run<?, ?> run,
+            final Score actualScore, final JSONObject testConfiguration, final LogHandler logHandler) {
+        TestResultAction action = run.getAction(TestResultAction.class);
+        if (action == null) {
+            throw new IllegalArgumentException(
+                    "Test scoring has been enabled, but no test results have been found.");
+        }
+
+        logHandler.log("Grading test results " + action.getDisplayName());
+        TestConfiguration testsConfiguration = TestConfiguration.from(testConfiguration);
+        TestScore score = new TestScore(testsConfiguration, action);
+        int total = actualScore.addTestsTotal(testsConfiguration, score);
+
+        logHandler.log("-> Score %d - from recorded test results: %d, %d, %d, %d",
+                score.getTotalImpact(), score.getTotalSize(), score.getPassedSize(),
+                score.getFailedSize(), score.getSkippedSize());
+        logHandler.log("Total score for test results: " + total);
+    }]]></codefragment>
+  </duplication>
+</pmd-cpd>
