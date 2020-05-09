@@ -159,6 +159,8 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldBlameElevenIssuesWithPipeline() throws Exception {
+        createGitRepository();
+
         createAndCommitFile("Jenkinsfile", "node {\n"
                 + "  stage ('Checkout') {\n"
                 + "    checkout scm\n"
@@ -207,6 +209,8 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldBlameElevenIssuesWithFreestyle() throws Exception {
+        createGitRepository();
+
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(gitRepo.toString()));
         project.getBuildersList()
@@ -252,6 +256,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldFilterTable() throws Exception {
+        createGitRepository();
         createAndCommitFile("Jenkinsfile", "node {\n"
                 + "  stage ('Checkout') {\n"
                 + "    checkout scm\n"
@@ -340,15 +345,6 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResultAssert.assertThat(result).hasNewSize(0);
 
         assertSuccessfulBlame(result, 1, 1);
-    }
-
-    private TablePageObject getBlamesTable(final AnalysisResult result) {
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-
-        DetailsTab detailsTab = new DetailsTab(page);
-        assertThat(detailsTab.getTabTypes()).contains(TabType.BLAMES);
-
-        return detailsTab.select(TabType.BLAMES);
     }
 
     private void assertSuccessfulBlame(final AnalysisResult result, final int numberOfIssues, final int numberOfFiles) {
