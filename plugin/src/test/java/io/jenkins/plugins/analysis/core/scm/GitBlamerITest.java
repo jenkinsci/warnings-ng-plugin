@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.scm;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -14,15 +15,20 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
+import hudson.model.Run;
 import hudson.plugins.git.GitSCM;
 import jenkins.plugins.git.GitSampleRepoRule;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.AnalysisResultAssert;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
 import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableModel;
 import io.jenkins.plugins.datatables.TablePageObject;
 import io.jenkins.plugins.datatables.TableRowPageObject;
 import io.jenkins.plugins.forensics.blame.Blamer;
@@ -59,10 +65,13 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldBlameOneIssueWithPipeline() throws Exception {
         WorkflowJob job = createJob("");
 
+        Run<?, ?> build = buildSuccessfully(job);
+        TableModel table = getBlamesTableModel(build);
         AnalysisResult result = scheduleSuccessfulBuild(job);
+
         assertSuccessfulBlame(result, 1, 1);
 
-        TablePageObject table = getBlamesTable(result);
+//        TablePageObject table = getBlamesTable(result);
         assertOneIssue(gitRepo.head(), table);
     }
 
@@ -327,6 +336,11 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         return detailsTab.select(TabType.BLAMES);
     }
 
+    private TableModel getBlamesTableModel(final Run<?, ?> build) {
+        IssuesDetail issuesDetail = (IssuesDetail) build.getAction(ResultAction.class).getTarget();
+        return issuesDetail.getTableModel("blames");
+    }
+
     private void assertSuccessfulBlame(final AnalysisResult result, final int numberOfIssues, final int numberOfFiles) {
         AnalysisResultAssert.assertThat(result).hasNoErrorMessages();
         AnalysisResultAssert.assertThat(result).hasTotalSize(numberOfIssues);
@@ -344,6 +358,17 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         List<TableRowPageObject> rows = table.getRows();
         assertThat(rows).hasSize(1);
         assertColumnsOfTest(rows.get(0), commit, 1);
+    }
+
+    private void assertOneIssue(final String commit, final TableModel table) {
+        List<String> columnHeaders = table.getColumns().stream().map(TableColumn::getHeaderLabel).collect(
+                Collectors.toList());
+
+        assertThat(columnHeaders)
+                .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT, ADDED);
+        List<Object> rows = table.getRows();
+        assertThat(rows).hasSize(1);
+        assertColumnsOfTest((TableRowPageObject) rows.get(0), commit, 1);
     }
 
     private void assertColumnsOfTest(final TableRowPageObject row, final String commit, final int lineNumber) {
