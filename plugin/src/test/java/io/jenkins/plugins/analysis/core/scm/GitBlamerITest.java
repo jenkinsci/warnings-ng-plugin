@@ -133,7 +133,9 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 1, 1);
 
-        TablePageObject table = getBlamesTable(result);
+        Run<?, ?> build = buildSuccessfully(project);
+
+        TableModel table = getBlamesTableModel(build);
         assertOneIssue(testCommit, table);
     }
 
