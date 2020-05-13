@@ -366,9 +366,11 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(columnHeaders)
                 .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT, ADDED);
-//        List<Object> rows = table.getRows();
-//        assertThat(rows).hasSize(1);
-//        assertColumnsOfTest((TableRowPageObject) rows.get(0), commit, 1);
+
+        // Throws Exception
+        List<Object> rows = table.getRows();
+        assertThat(rows).hasSize(1);
+        assertColumnsOfTest((TableRowPageObject) rows.get(0), commit, 1);
     }
 
     private void assertColumnsOfTest(final TableRowPageObject row, final String commit, final int lineNumber) {
