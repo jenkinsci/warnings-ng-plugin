@@ -56,7 +56,7 @@ class TaskScannerTest extends ResourceTest {
                 .build();
 
         File fileWithEmptyPath = new File("");
-        Report report = scanner.scan(fileWithEmptyPath.toPath(), Charset.defaultCharset());
+        Report report = scanner.scan(fileWithEmptyPath.toPath(), Charset.forName("UTF-8"));
 
         String errorMessage = "Exception while reading the source code file '':";
 
