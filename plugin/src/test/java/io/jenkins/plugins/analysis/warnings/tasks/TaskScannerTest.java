@@ -1,10 +1,12 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -31,9 +33,42 @@ class TaskScannerTest extends ResourceTest {
     private static final String FILE_WITH_TASKS = "file-with-tasks.txt";
     private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
 
+
+    @Test
+    void shouldReportWrongCharsetError() {
+        TaskScanner scanner = new TaskScannerBuilder().setHighTasks(" ")
+                .setMatcherMode(MatcherMode.STRING_MATCH)
+                .build();
+
+        File file = new File(Thread.currentThread().getContextClassLoader()
+                .getResource("io/jenkins/plugins/analysis/warnings/tasks/file-with-strange-characters.txt").getPath());
+        Report report = scanner.scan(file.toPath(), Charset.forName("windows-1252"));
+
+        assertThat(report.getErrorMessages()).isNotEmpty();
+        assertThat(report.getErrorMessages().get(0)).startsWith("Can't read source file ");
+        assertThat(report.getErrorMessages().get(0)).endsWith("file-with-strange-characters.txt', defined encoding 'windows-1252' seems to be wrong");
+    }
+
+    @Test
+    void shouldReportFileExceptionError() {
+        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\")
+                .setMatcherMode(MatcherMode.REGEXP_MATCH)
+                .build();
+
+        File fileWithEmptyPath = new File("");
+        Report report = scanner.scan(fileWithEmptyPath.toPath(), Charset.defaultCharset());
+
+        String errorMessage = "Exception while reading the source code file '':";
+
+        assertThat(report.getErrorMessages()).isNotEmpty();
+        assertThat(report.getErrorMessages().get(0)).startsWith(errorMessage);
+    }
+
     @Test
     void shouldReportErrorIfPatternIsInvalid() {
-        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\").setMatcherMode(MatcherMode.REGEXP_MATCH).build();
+        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\")
+                .setMatcherMode(MatcherMode.REGEXP_MATCH)
+                .build();
 
         Report report = scanner.scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
@@ -42,7 +77,7 @@ class TaskScannerTest extends ResourceTest {
                 + "'Unexpected internal error near index 1";
         assertThat(report.getErrorMessages()).hasSize(1);
         assertThat(report.getErrorMessages().get(0)).startsWith(errorMessage);
-        
+
         assertThat(scanner.isInvalidPattern()).isTrue();
         assertThat(scanner.getErrors()).startsWith(errorMessage);
     }
@@ -108,7 +143,8 @@ class TaskScannerTest extends ResourceTest {
         assertThat(tasks.get(1)).hasSeverity(Severity.WARNING_NORMAL)
                 .hasType("TODO")
                 .hasLineStart(5)
-                .hasMessage("\u043f\u0440\u0438\u043c\u0435\u0440 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c");
+                .hasMessage(
+                        "\u043f\u0440\u0438\u043c\u0435\u0440 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c");
     }
 
     /**
