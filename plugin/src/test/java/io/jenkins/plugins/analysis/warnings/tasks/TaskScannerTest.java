@@ -4,9 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
@@ -36,9 +36,7 @@ class TaskScannerTest extends ResourceTest {
 
     @Test
     void shouldReportWrongCharsetError() {
-        TaskScanner scanner = new TaskScannerBuilder().setHighTasks(" ")
-                .setMatcherMode(MatcherMode.STRING_MATCH)
-                .build();
+        TaskScanner scanner = new TaskScannerBuilder().build();
 
         File file = new File(Thread.currentThread().getContextClassLoader()
                 .getResource("io/jenkins/plugins/analysis/warnings/tasks/file-with-strange-characters.txt").getPath());
@@ -51,12 +49,10 @@ class TaskScannerTest extends ResourceTest {
 
     @Test
     void shouldReportFileExceptionError() {
-        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\")
-                .setMatcherMode(MatcherMode.REGEXP_MATCH)
-                .build();
+        TaskScanner scanner = new TaskScannerBuilder().build();
 
         File fileWithEmptyPath = new File("");
-        Report report = scanner.scan(fileWithEmptyPath.toPath(), Charset.defaultCharset());
+        Report report = scanner.scan(fileWithEmptyPath.toPath(), StandardCharsets.UTF_8);
 
         String errorMessage = "Exception while reading the source code file '':";
 
