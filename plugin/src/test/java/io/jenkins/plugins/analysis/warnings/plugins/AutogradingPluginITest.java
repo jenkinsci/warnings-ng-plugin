@@ -30,10 +30,11 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String AUTOGRADER_RESULT = "{\"analysis\":{\"maxScore\":100,\"errorImpact\":-10,\"highImpact\":-5,\"normalImpact\":-2,\"lowImpact\":-1}}";
 
     /**
-     * Ensures that the autographing plugin outputs the expected result after passing the checks.
+     * Ensures that the autographing plugin outputs the expected score after passing the checks.
+     * Used tools: checkstyle, spotbugs, cpd, pmd
      */
     @Test
-    public void shouldCheckCompatibility() {
+    public void checksCorrectGradingWithSeveralTools() {
         FreeStyleProject project = createJavaWarningsFreestyleProject("checkstyle.xml", "spotbugs.xml", "cpd.xml", "pmd.xml");
 
         IssuesRecorder recorder = new IssuesRecorder();
@@ -63,6 +64,31 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(actions).hasSize(1);
         AggregatedScore score = actions.get(0).getResult();
         assertThat(score.getAchieved()).isEqualTo(98);
+    }
+
+    /**
+     * Makes sure that the autograding plugin interrupts the grading if the configuration is empty.
+     */
+    @Test
+    public void interruptsGradingDueToEmptyConfiguration() {
+        FreeStyleProject project = createJavaWarningsFreestyleProject("checkstyle.xml");
+
+        IssuesRecorder recorder = new IssuesRecorder();
+
+        CheckStyle checkStyle = new CheckStyle();
+        checkStyle.setPattern("**/*checkstyle*");
+
+        recorder.setTools(checkStyle);
+
+        project.getPublishersList().add(recorder);
+        project.getPublishersList().add(new AutoGrader("{}"));
+
+        Run<?, ?> baseline = buildSuccessfully(project);
+
+        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping static analysis results");
+        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping test results");
+        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping coverage results");
+        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping mutation coverage results");
     }
 
     /**
