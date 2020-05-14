@@ -24,11 +24,4 @@ public class StaticAnalysisIssuesPerToolAndJobPortlet extends AbstractDashboardV
         this.find(by.name("_.showIcons")).click();
     }
 
-//    public void selectSubsetOfTool(final String toolId) {
-//        selectSubsetOfTools(Collections.singletonList(toolId));
-//    }
-//
-//    public void selectSubsetOfTools(final List<String> tools) {
-//
-//    }
 }
