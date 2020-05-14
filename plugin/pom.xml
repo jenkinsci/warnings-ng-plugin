@@ -72,6 +72,8 @@
     <configuration-as-code.version>1.36</configuration-as-code.version>
     <job-dsl.version>1.76</job-dsl.version>
     <envinject.version>2.1.6</envinject.version>
+<!--    <parasoft.version>10.4.4</parasoft.version>-->
+<!--    <xtest.version>10.2.2.20160315</xtest.version>-->
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <pipeline-stage-step.version>2.3</pipeline-stage-step.version>
     <docker-fixtures.version>1.10</docker-fixtures.version>
@@ -434,6 +436,19 @@
       <version>${folder.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>ansicolor</artifactId>
+      <version>0.4.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!--    <dependency>-->
+<!--      <groupId>com.parasoft</groupId>-->
+<!--      <artifactId>parasoft-findings</artifactId>-->
+<!--      <version>${parasoft.version}</version>-->
+<!--      <scope>test</scope>-->
+<!--    </dependency>-->
 
     <!-- stage -->
     <dependency>
