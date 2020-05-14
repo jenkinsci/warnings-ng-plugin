@@ -152,21 +152,27 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowSeveritiesTrendChart() {
+        int[] linesWithWarningsBuild0 = {1, 2};
+        int[] linesWithErrorsBuild0 = {12, 14, 16};
+        int[] linesWithWarningsBuild1 = {1, 2, 3, 4};
+        int[] linesWithErrorsBuild1 = {12};
+        int[] linesWithWarningsBuild2 = {3};
+
         FreeStyleProject project = createJob();
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparison
-        createFileWithJavaWarnings(project, 1, 2);
-        createFileWithJavaErrors(project, 12, 14, 16);
+        createFileWithJavaWarnings(project, linesWithWarningsBuild0);
+        createFileWithJavaErrors(project, linesWithErrorsBuild0);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createFileWithJavaWarnings(project, 1, 2, 3, 4);
-        createFileWithJavaErrors(project, 12);
+        createFileWithJavaWarnings(project, linesWithWarningsBuild1);
+        createFileWithJavaErrors(project, linesWithErrorsBuild1);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which resolves some of the warnings
-        createFileWithJavaWarnings(project, 3);
+        createFileWithJavaWarnings(project, linesWithWarningsBuild2);
         createFileWithJavaErrors(project);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
@@ -178,20 +184,21 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         // Make sure each of our builds is listed on the x axis
         for (int build = 0; build < buildResults.size(); build++) {
             String buildName = buildResults.get(build).getBuild().getDisplayName();
-            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
+            String expectedBuildName = "#" + (build + 1);
+            assertThat(expectedBuildName).isEqualTo(buildName);
         }
 
         JSONArray allSeries = chartModel.getJSONArray("series");
         assertThat(allSeries.size()).isEqualTo(2);
 
         // Check the series describing the java warnings is correctly shown
-        JSONObject seriesNormalTrend = allSeries.getJSONObject(0);
-        assertThat(seriesNormalTrend.getString("name")).isEqualTo("Normal");
-        assertThat(convertToIntArray(seriesNormalTrend.getJSONArray("data"))).isEqualTo(new int[] {2, 4, 1});
-
-        JSONObject seriesErrorTrend = allSeries.getJSONObject(1);
-        assertThat(seriesErrorTrend.getString("name")).isEqualTo("Error");
-        assertThat(convertToIntArray(seriesErrorTrend.getJSONArray("data"))).isEqualTo(new int[] {3, 1, 0});
+        assertThat(buildResults.size()).isEqualTo(3);
+        assertThat(buildResults.get(0).getTotalErrorsSize()).isEqualTo(linesWithErrorsBuild0.length);
+        assertThat(buildResults.get(1).getTotalErrorsSize()).isEqualTo(linesWithErrorsBuild1.length);
+        assertThat(buildResults.get(2).getTotalErrorsSize()).isEqualTo(0);
+        assertThat(buildResults.get(0).getTotalNormalPrioritySize()).isEqualTo(linesWithWarningsBuild0.length);
+        assertThat(buildResults.get(1).getTotalNormalPrioritySize()).isEqualTo(linesWithWarningsBuild1.length);
+        assertThat(buildResults.get(2).getTotalNormalPrioritySize()).isEqualTo(linesWithWarningsBuild2.length);
     }
 
     /**
