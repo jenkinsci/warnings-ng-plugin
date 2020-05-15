@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.Test;
@@ -38,9 +39,8 @@ class TaskScannerTest extends ResourceTest {
     void shouldReportWrongCharsetError() {
         TaskScanner scanner = new TaskScannerBuilder().build();
 
-        File file = new File(Thread.currentThread().getContextClassLoader()
-                .getResource("io/jenkins/plugins/analysis/warnings/tasks/file-with-strange-characters.txt").getPath());
-        Report report = scanner.scan(file.toPath(), Charset.forName("windows-1252"));
+        Path path = getResourceAsFile("file-with-strange-characters.txt");
+        Report report = scanner.scan(path, Charset.forName("windows-1252"));
 
         assertThat(report.getErrorMessages()).isNotEmpty();
         assertThat(report.getErrorMessages().get(0)).startsWith("Can't read source file ");
