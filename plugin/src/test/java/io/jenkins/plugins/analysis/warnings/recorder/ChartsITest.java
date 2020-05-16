@@ -19,6 +19,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
@@ -46,31 +47,15 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         initializeTimeFacade();
         List<AnalysisResult> buildResults = build3Times(project);
 
-        HtmlPage detailsPage = getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2));
+        IssuesDetail target = (IssuesDetail) getResultAction(buildResults.get(2).getOwner()).getTarget();
+        JSONObject chartModel = JSONObject.fromObject(target.getToolsTrend(true));
+        verifyToolsSeries(buildResults, chartModel);
 
-        TrendCarousel carousel = new TrendCarousel(detailsPage);
-        assertThat(carousel.getChartTypes())
-                .containsExactly(TrendChartType.SEVERITIES, TrendChartType.TOOLS, TrendChartType.NEW_VERSUS_FIXED);
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
+        chartModel = JSONObject.fromObject(target.getNewVersusFixedTrend(true));
+        verifyNewVsFixedSeries(buildResults, build -> buildResults.get(build).getBuild().getDisplayName(), chartModel);
 
-        carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.TOOLS);
-        verifyToolsSeries(buildResults, carousel.getActiveChartModel());
-
-        carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.NEW_VERSUS_FIXED);
-
-        verifyNewVsFixedSeries(buildResults, build -> buildResults.get(build).getBuild().getDisplayName(), carousel);
-
-        detailsPage.executeJavaScript(String.format("window.localStorage.setItem('#trendBuildAxis', '%s');", "date"));
-        detailsPage = getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2));
-
-        carousel = new TrendCarousel(detailsPage);
-        verifyNewVsFixedSeries(buildResults, build -> String.format("01-%02d", build + 1), carousel);
-        detailsPage.executeJavaScript(String.format("window.localStorage.setItem('#trendBuildAxis', '%s');", "build"));
-
-        carousel.next();
-        assertThat(carousel.getActiveChartType()).isEqualTo(TrendChartType.SEVERITIES);
+        chartModel = JSONObject.fromObject(target.getNewVersusFixedTrend(false));
+        verifyNewVsFixedSeries(buildResults, build -> String.format("01-%02d", build + 1), chartModel);
     }
 
     private void initializeTimeFacade() {
@@ -102,10 +87,8 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void verifyNewVsFixedSeries(final List<AnalysisResult> buildResults,
-            final Function<Integer, String> xAxisNameFunction, final TrendCarousel carousel) {
-        JSONObject chartModel = carousel.getActiveChartModel();
-
-        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+            final Function<Integer, String> xAxisNameFunction, final JSONObject chartModel) {
+        JSONArray xAxisNames = chartModel.getJSONArray("domainAxisLabels");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
 
         // Make sure each of our builds is listed on the x axis
@@ -130,7 +113,7 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void verifyToolsSeries(final List<AnalysisResult> buildResults, final JSONObject chartModel) {
-        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        JSONArray xAxisNames = chartModel.getJSONArray("domainAxisLabels");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
         // Make sure each of our builds is listed on the x axis
         for (int build = 0; build < buildResults.size(); build++) {
@@ -152,53 +135,46 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowSeveritiesTrendChart() {
-        int[] linesWithWarningsBuild0 = {1, 2};
-        int[] linesWithErrorsBuild0 = {12, 14, 16};
-        int[] linesWithWarningsBuild1 = {1, 2, 3, 4};
-        int[] linesWithErrorsBuild1 = {12};
-        int[] linesWithWarningsBuild2 = {3};
-
         FreeStyleProject project = createJob();
 
         List<AnalysisResult> buildResults = new ArrayList<>();
         // Create the initial workspace for comparison
-        createFileWithJavaWarnings(project, linesWithWarningsBuild0);
-        createFileWithJavaErrors(project, linesWithErrorsBuild0);
+        createFileWithJavaWarnings(project, 1, 2);
+        createFileWithJavaErrors(project, 12, 14, 16);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which adds more warnings
-        createFileWithJavaWarnings(project, linesWithWarningsBuild1);
-        createFileWithJavaErrors(project, linesWithErrorsBuild1);
+        createFileWithJavaWarnings(project, 1, 2, 3, 4);
+        createFileWithJavaErrors(project, 12);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
         // Schedule a build which resolves some of the warnings
-        createFileWithJavaWarnings(project, linesWithWarningsBuild2);
+        createFileWithJavaWarnings(project, 3);
         createFileWithJavaErrors(project);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2)));
-        JSONObject chartModel = charts.getSeveritiesTrendChart();
+        IssuesDetail target = (IssuesDetail) getResultAction(buildResults.get(2).getOwner()).getTarget();
+        JSONObject chartModel = JSONObject.fromObject(target.getBuildTrend(true));
 
-        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        JSONArray xAxisNames = chartModel.getJSONArray("domainAxisLabels");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
         // Make sure each of our builds is listed on the x axis
         for (int build = 0; build < buildResults.size(); build++) {
             String buildName = buildResults.get(build).getBuild().getDisplayName();
-            String expectedBuildName = "#" + (build + 1);
-            assertThat(expectedBuildName).isEqualTo(buildName);
+            assertThat(xAxisNames.get(build)).isEqualTo(buildName);
         }
 
         JSONArray allSeries = chartModel.getJSONArray("series");
         assertThat(allSeries.size()).isEqualTo(2);
 
         // Check the series describing the java warnings is correctly shown
-        assertThat(buildResults.size()).isEqualTo(3);
-        assertThat(buildResults.get(0).getTotalErrorsSize()).isEqualTo(linesWithErrorsBuild0.length);
-        assertThat(buildResults.get(1).getTotalErrorsSize()).isEqualTo(linesWithErrorsBuild1.length);
-        assertThat(buildResults.get(2).getTotalErrorsSize()).isEqualTo(0);
-        assertThat(buildResults.get(0).getTotalNormalPrioritySize()).isEqualTo(linesWithWarningsBuild0.length);
-        assertThat(buildResults.get(1).getTotalNormalPrioritySize()).isEqualTo(linesWithWarningsBuild1.length);
-        assertThat(buildResults.get(2).getTotalNormalPrioritySize()).isEqualTo(linesWithWarningsBuild2.length);
+        JSONObject seriesNormalTrend = allSeries.getJSONObject(0);
+        assertThat(seriesNormalTrend.getString("name")).isEqualTo("Normal");
+        assertThat(convertToIntArray(seriesNormalTrend.getJSONArray("data"))).isEqualTo(new int[] {2, 4, 1});
+
+        JSONObject seriesErrorTrend = allSeries.getJSONObject(1);
+        assertThat(seriesErrorTrend.getString("name")).isEqualTo("Error");
+        assertThat(convertToIntArray(seriesErrorTrend.getJSONArray("data"))).isEqualTo(new int[] {3, 1, 0});
     }
 
     /**
@@ -227,10 +203,10 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         createFileWithJavaWarnings(project, 1);
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2)));
-        JSONObject chartModel = charts.getHealthTrendChart();
+        IssuesDetail target = (IssuesDetail) getResultAction(buildResults.get(2).getOwner()).getTarget();
+        JSONObject chartModel = JSONObject.fromObject(target.getHealthTrend(true));
 
-        JSONArray xAxisNames = chartModel.getJSONArray("xAxis").getJSONObject(0).getJSONArray("data");
+        JSONArray xAxisNames = chartModel.getJSONArray("domainAxisLabels");
         assertThat(xAxisNames.size()).isEqualTo(buildResults.size());
         // Make sure each of our builds is listed on the x axis
         for (int build = 0; build < buildResults.size(); build++) {
@@ -280,20 +256,12 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
         );
         buildResults.add(scheduleBuildAndAssertStatus(project, Result.SUCCESS));
 
-        OverviewCarousel carousel = new OverviewCarousel(getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(1)));
-        assertThat(carousel.getChartTypes())
-                .containsExactly(PieChartType.SEVERITIES, PieChartType.TREND);
-        assertThat(carousel.getActiveChartType()).isEqualTo(PieChartType.SEVERITIES);
+        IssuesDetail target = (IssuesDetail) getResultAction(buildResults.get(1).getOwner()).getTarget();
+        JSONObject chartModel = JSONObject.fromObject(target.getSeverityModel());
 
-        JSONObject chartModel = carousel.getActiveChartModel();
+        assertThat(chartModel.getString("name")).isEqualTo("Severities Distribution");
 
-        JSONArray allSeries = chartModel.getJSONArray("series");
-        assertThat(allSeries.size()).isEqualTo(1);
-
-        JSONObject series = allSeries.getJSONObject(0);
-        assertThat(series.getString("type")).isEqualTo("pie");
-
-        JSONArray data = series.getJSONArray("data");
+        JSONArray data = chartModel.getJSONArray("data");
         assertThat(data.size()).isEqualTo(4);
 
         JSONObject error = data.getJSONObject(0);
@@ -322,16 +290,12 @@ public class ChartsITest extends IntegrationTestWithJenkinsPerSuite {
 
         List<AnalysisResult> buildResults = build3Times(project);
 
-        DetailsViewCharts charts = new DetailsViewCharts(getWebPage(JavaScriptSupport.JS_ENABLED, buildResults.get(2)));
-        JSONObject chartModel = charts.getReferenceComparisonPieChart();
+        IssuesDetail target = (IssuesDetail) getResultAction(buildResults.get(2).getOwner()).getTarget();
+        JSONObject chartModel = JSONObject.fromObject(target.getTrendModel());
 
-        JSONArray allSeries = chartModel.getJSONArray("series");
-        assertThat(allSeries.size()).isEqualTo(1);
+        assertThat(chartModel.getString("name")).isEqualTo("Reference Comparison");
 
-        JSONObject series = allSeries.getJSONObject(0);
-        assertThat(series.getString("type")).isEqualTo("pie");
-
-        JSONArray data = series.getJSONArray("data");
+        JSONArray data = chartModel.getJSONArray("data");
         assertThat(data.size()).isEqualTo(3);
 
         JSONObject high = data.getJSONObject(0);
