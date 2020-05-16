@@ -28,6 +28,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control referenceJobField = control("referenceJob");
     private final Control aggregatingResultsCheckBox = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
+    private final Control sourceDirectory = control("sourceDirectory");
+    private final Control blameDisabled = control("blameDisabled");
+    private final Control forensicsDisabled = control("forensicsDisabled");
+    private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
+    private final Control failOnError = control("failOnError");
+    private final Control reportFilePattern = control("/toolProxies/tool/pattern");
+
 
     /**
      * Determines the result of the quality gate.
@@ -151,6 +158,49 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
+     * Returns the value of the Source code encoding field
+     *
+     * @return the source code encoding
+     */
+    public String getSourceCodeEncoding(){return sourceCodeEncoding.get();}
+
+    /**
+     * Returns "on" if the run always / enabled for failure checkbox is checked
+     *
+     * @return the enabled for failure checkbox value
+     */
+    public String getEnabledForFailure(){return enabledForFailureCheckBox.get();}
+
+    /**
+     * Returns "on" if the aggregate results checkbox is checked
+     *
+     * @return the aggregate results checkbox value
+     */
+    public String getAggregatingResults(){return aggregatingResultsCheckBox.get();}
+
+    /**
+     * Returns "on" if the ignore quality gate checkbox is checked
+     *
+     * @return the ignore quality gate checkbox value
+     */
+    public String getIgnoreQualityGate(){return ignoreQualityGate.get();}
+
+    /**
+     * Returns "on" if
+     *  TODO What checkbox is this?
+     * @return
+     */
+    public String getOverallResultMustBeSuccess(){return overallResultMustBeSuccessCheckBox.get();}
+
+    /**
+     * Returns the value of the reference job field
+     *
+     * @return the reference job value
+     */
+    public String getReferenceJobField(){return referenceJobField.get();}
+
+
+    /**
      * Sets the source code encoding to the specified value.
      *
      * @param encoding
@@ -211,9 +261,44 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
+     * Sets the value of the input field 'Source Directory'.
+     *
+     * @param directory
+     *         the name of the sourceDirectory
+     */
+    public void setSourceDirectory(final String directory) {
+        sourceDirectory.set(directory);
+    }
+
+    public void setAggregatingResults(final boolean isChecked) {
+        aggregatingResultsCheckBox.check(isChecked);
+    }
+
+    public void setBlameDisabled(final boolean b) {
+        blameDisabled.check(b);
+    }
+
+    public void setForensicsDisabled(final boolean b) {
+        forensicsDisabled.check(b);
+    }
+
+    public void setIgnoreFailedBuilds(final boolean b) {
+        ignoreFailedBuilds.check(b);
+    }
+
+    public void setFailOnError(final boolean b) {
+        failOnError.check(b);
+    }
+
+    public void setReportFilePattern(final String pattern) {
+        reportFilePattern.set(pattern);
+    }
+
+
+    /**
      * Opens the advanced section.
      */
-    private void openAdvancedOptions() {
+    public void openAdvancedOptions() {
         if (advancedButton != null && advancedButton.exists()) {
             advancedButton.click();
         }
@@ -258,7 +343,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         qualityGate.setType(type);
         qualityGate.setUnstable(result == QualityGateBuildResult.UNSTABLE);
     }
-    
+
     /**
      * Adds a new issue filter.
      *
