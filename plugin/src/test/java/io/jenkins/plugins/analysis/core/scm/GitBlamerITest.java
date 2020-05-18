@@ -35,6 +35,7 @@ import io.jenkins.plugins.datatables.TableRowPageObject;
 import io.jenkins.plugins.forensics.blame.Blamer;
 
 import static io.jenkins.plugins.forensics.assertions.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the {@link Blamer GitBlamer} in several jobs that uses a real Git repository.
@@ -265,8 +266,6 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         TableModel tableModel = getBlamesTableModel(build);
         assertElevenIssues(commits, tableModel);
 
-        TableModel.DetailedColumnDefinition
-
         table.filter("LoremIpsum.java");
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 4 of 4 entries (filtered from 11 total entries)");
         List<TableRowPageObject> rows = table.getRows();
@@ -324,19 +323,19 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 1, 1);
 
-        TablePageObject table = getBlamesTable(result);
-        assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
-        assertThat(table.size()).isEqualTo(1);
-        
-        List<TableRowPageObject> rows = table.getRows();
+        Run<?, ?> build = buildSuccessfully(project);
+        TableModel table = getBlamesTableModel(build);
+        List<Object> rows = table.getRows();
+
         assertThat(rows).hasSize(1);
-        assertThat(rows.get(0).getValuesByColumnLabel()).contains(
-                entry(DETAILS, "Unexpected character"),
-                entry(FILE, "Test.h:1"),
-                entry(AUTHOR, "Git SampleRepoRule"),
-                entry(EMAIL, "gits@mplereporule"),
-                entry(COMMIT, firstCommit),
-                entry(AGE, "1"));
+        BlamesRow row = (BlamesRow) rows.get(0);
+
+        assertThat(row.getDescription()).contains("Unexpected character");
+        assertThat(row.getFileName().getSort()).isEqualTo("Test.java:0000001");
+        assertThat(row.getAuthor()).isEqualTo("Git SampleRepoRule");
+        assertThat(row.getEmail()).isEqualTo("gits@mplereporule");
+        assertThat(row.getCommit()).isEqualTo(firstCommit);
+        assertThat(row.getAge()).contains("1");
     }
 
     private TablePageObject getBlamesTable(final AnalysisResult result) {
@@ -395,6 +394,18 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(row.getCommit()).isEqualTo(commitId);
         assertThat(row.getAge()).contains("1");
     }
+
+    // For filtering
+    private void assertColumnsOfRowLoremIpsum(final TableRowPageObject row, final int lineNumber, final String commitId) {
+        assertThat(row.getValuesByColumnLabel()).contains(
+                entry(DETAILS, "Another Warning for Jenkins"),
+                entry(FILE, "LoremIpsum.java:" + lineNumber),
+                entry(AUTHOR, "John Doe"),
+                entry(EMAIL, "john@doe"),
+                entry(COMMIT, commitId),
+                entry(AGE, "1")).containsKey(ADDED);
+    }
+
 
     private void assertColumnsOfRowBob(final BlamesRow row, final String commitId, final int lineNumber) {
         assertThat(row.getDescription()).contains("Bobs Warning for Jenkins");
