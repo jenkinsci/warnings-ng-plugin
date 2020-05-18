@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.warnings.recorder;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +21,8 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -46,6 +50,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     static final String AFFECTED_FILE = "File";
     static final String SEVERITY = "Severity";
     static final String AGE = "Age";
+
+    private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
 
     /**
      * Verifies that {@link FindBugs} handles the different severity mapping modes ({@link PriorityProperty}).
@@ -458,29 +464,30 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(issuesReport.findByProperty(Issue.byType("LineLengthCheck"))).hasSize(1);
         assertThat(issuesReport.findByProperty(Issue.byType("RightCurlyCheck"))).hasSize(2);
 
-        assertThat(issuesReport.get(0)).hasBaseName("CsharpNamespaceDetector.java");
-        assertThat(issuesReport.get(0)).hasLineStart(29);
-        assertThat(issuesReport.get(0)).hasCategory("Sizes");
-        assertThat(issuesReport.get(0)).hasType("LineLengthCheck");
-        assertThat(issuesReport.get(0)).hasSeverity(Severity.ERROR);
-
-        assertThat(issuesReport.get(1)).hasBaseName("CsharpNamespaceDetector.java");
-        assertThat(issuesReport.get(1)).hasLineStart(30);
-        assertThat(issuesReport.get(1)).hasCategory("Blocks");
-        assertThat(issuesReport.get(1)).hasType("RightCurlyCheck");
-        assertThat(issuesReport.get(1)).hasSeverity(Severity.ERROR);
-
-        assertThat(issuesReport.get(2)).hasBaseName("CsharpNamespaceDetector.java");
-        assertThat(issuesReport.get(2)).hasLineStart(37);
-        assertThat(issuesReport.get(2)).hasCategory("Blocks");
-        assertThat(issuesReport.get(2)).hasType("RightCurlyCheck");
-        assertThat(issuesReport.get(2)).hasSeverity(Severity.ERROR);
-
-        assertThat(issuesReport.get(3)).hasBaseName("CsharpNamespaceDetector.java");
-        assertThat(issuesReport.get(3)).hasLineStart(22);
-        assertThat(issuesReport.get(3)).hasCategory("Design");
-        assertThat(issuesReport.get(3)).hasType("DesignForExtensionCheck");
-        assertThat(issuesReport.get(3)).hasSeverity(Severity.ERROR);
+        assertThatIssuesRowValuesAreCorrect(getIssuesModel(result, 0),
+                "CsharpNamespaceDetector.java:29",
+                "Error",
+                "Sizes",
+                "LineLengthCheck",
+                "1");
+        assertThatIssuesRowValuesAreCorrect(getIssuesModel(result, 1),
+                "CsharpNamespaceDetector.java:30",
+                "Error",
+                "Blocks",
+                "RightCurlyCheck",
+                "1");
+        assertThatIssuesRowValuesAreCorrect(getIssuesModel(result, 2),
+                "CsharpNamespaceDetector.java:37",
+                "Error",
+                "Blocks",
+                "RightCurlyCheck",
+                "1");
+        assertThatIssuesRowValuesAreCorrect(getIssuesModel(result, 3),
+                "CsharpNamespaceDetector.java:22",
+                "Error",
+                "Design",
+                "DesignForExtensionCheck",
+                "2");
     }
 
     private void verifyBaselineDetails(final AnalysisResult baseline) {
@@ -492,23 +499,24 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(issuesReport.findByProperty(Issue.byType("DesignForExtensionCheck"))).hasSize(2);
         assertThat(issuesReport.findByProperty(Issue.byType("LineLengthCheck"))).hasSize(1);
 
-        assertThat(issuesReport.get(0)).hasBaseName("CsharpNamespaceDetector.java");
-        assertThat(issuesReport.get(0)).hasLineStart(17);
-        assertThat(issuesReport.get(0)).hasCategory("Design");
-        assertThat(issuesReport.get(0)).hasType("DesignForExtensionCheck");
-        assertThat(issuesReport.get(0)).hasSeverity(Severity.ERROR);
-
-        assertThat(issuesReport.get(1)).hasBaseName("CsharpNamespaceDetector.java");
-        assertThat(issuesReport.get(1)).hasLineStart(42);
-        assertThat(issuesReport.get(1)).hasCategory("Sizes");
-        assertThat(issuesReport.get(1)).hasType("LineLengthCheck");
-        assertThat(issuesReport.get(1)).hasSeverity(Severity.ERROR);
-
-        assertThat(issuesReport.get(2)).hasBaseName("CsharpNamespaceDetector.java");
-        assertThat(issuesReport.get(2)).hasLineStart(22);
-        assertThat(issuesReport.get(2)).hasCategory("Design");
-        assertThat(issuesReport.get(2)).hasType("DesignForExtensionCheck");
-        assertThat(issuesReport.get(2)).hasSeverity(Severity.ERROR);
+        assertThatIssuesRowValuesAreCorrect(getIssuesModel(baseline, 0),
+                "CsharpNamespaceDetector.java:17",
+                "Error",
+                "Design",
+                "DesignForExtensionCheck",
+                "1");
+        assertThatIssuesRowValuesAreCorrect(getIssuesModel(baseline, 1),
+                "CsharpNamespaceDetector.java:42",
+                "Error",
+                "Sizes",
+                "LineLengthCheck",
+                "1");
+        assertThatIssuesRowValuesAreCorrect(getIssuesModel(baseline, 2),
+                "CsharpNamespaceDetector.java:22",
+                "Error",
+                "Design",
+                "DesignForExtensionCheck",
+                "1");
     }
 
     /**
@@ -570,5 +578,28 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         addFailureStep(project);
 
         return project;
+    }
+
+    private void assertThatIssuesRowValuesAreCorrect(IssuesRow row, final String fileDisplayName, final String severity,
+            final String category, final String type, final String age) {
+        assertThat(row.getFileName().getDisplay()).isEqualTo(fileDisplayName);
+        assertThat(getTagValues(row.getCategory())).isEqualTo(category);
+        assertThat(getTagValues(row.getSeverity())).isEqualTo(severity);
+        assertThat(getTagValues(row.getType())).isEqualTo(type);
+        assertThat(getTagValues(row.getAge())).isEqualTo(age);
+    }
+
+    private static String getTagValues(final String str) {
+        final Matcher matcher = TAG_REGEX.matcher(str);
+        if (matcher.find()) {
+            return matcher.group(1);
+        } 
+        return str;
+    }
+    private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
+        IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
+        Object row = issuesDetail.getTableModel("issues").getRows().get(rowNumber);
+
+        return (IssuesRow) row;
     }
 }
