@@ -331,7 +331,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         BlamesRow row = (BlamesRow) rows.get(0);
 
         assertThat(row.getDescription()).contains("Unexpected character");
-        assertThat(row.getFileName().getSort()).isEqualTo("Test.java:0000001");
+        assertThat(row.getFileName().getSort()).isEqualTo("Test.h:0000001");
         assertThat(row.getAuthor()).isEqualTo("Git SampleRepoRule");
         assertThat(row.getEmail()).isEqualTo("gits@mplereporule");
         assertThat(row.getCommit()).isEqualTo(firstCommit);
