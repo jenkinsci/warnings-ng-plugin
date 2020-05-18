@@ -21,6 +21,7 @@ import jenkins.plugins.git.GitSampleRepoRule;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.AnalysisResultAssert;
+import io.jenkins.plugins.analysis.core.model.BlamesModel.BlamesRow;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
@@ -66,10 +67,11 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         WorkflowJob job = createJob("");
 
         Run<?, ?> build = buildSuccessfully(job);
-        TableModel table = getBlamesTableModel(build);
-        AnalysisResult result = scheduleSuccessfulBuild(job);
 
+        AnalysisResult result = scheduleSuccessfulBuild(job);
         assertSuccessfulBlame(result, 1, 1);
+
+        TableModel table = getBlamesTableModel(build);
         assertOneIssue(gitRepo.head(), table);
     }
 
@@ -175,7 +177,9 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 11, 3);
 
-        TablePageObject table = getBlamesTable(result);
+        Run<?, ?> build = buildSuccessfully(project);
+
+        TableModel table = getBlamesTableModel(build);
         assertElevenIssues(commits, table);
     }
 
@@ -212,7 +216,10 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResult result = scheduleSuccessfulBuild(project);
         assertSuccessfulBlame(result, 11, 3);
 
-        TablePageObject table = getBlamesTable(result);
+        Run<?, ?> build = buildSuccessfully(project);
+
+        TableModel table = getBlamesTableModel(build);
+
         assertElevenIssues(commits, table);
     }
 
@@ -253,7 +260,12 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         assertSuccessfulBlame(result, 11, 3);
 
         TablePageObject table = getBlamesTable(result);
-        assertElevenIssues(commits, table);
+
+        Run<?, ?> build = buildSuccessfully(project);
+        TableModel tableModel = getBlamesTableModel(build);
+        assertElevenIssues(commits, tableModel);
+
+        TableModel.DetailedColumnDefinition
 
         table.filter("LoremIpsum.java");
         assertThat(table.getInfo()).isEqualTo("Showing 1 to 4 of 4 entries (filtered from 11 total entries)");
@@ -351,75 +363,67 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
                         "-> blamed authors of issues in " + numberOfFiles + " files");
     }
 
-    private void assertOneIssue(final String commit, final TablePageObject table) {
-        assertThat(table.getColumnHeaders())
+    private void assertColumnHeaders(final TableModel table) {
+        List<String> columnHeaders = table.getColumns().stream().map(TableColumn::getHeaderLabel).collect(
+                Collectors.toList());
+        assertThat(columnHeaders)
                 .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT, ADDED);
-        assertThat(table.getInfo()).isEqualTo("Showing 1 to 1 of 1 entries");
-        List<TableRowPageObject> rows = table.getRows();
-        assertThat(rows).hasSize(1);
-        assertColumnsOfTest(rows.get(0), commit, 1);
     }
 
     private void assertOneIssue(final String commit, final TableModel table) {
-        List<String> columnHeaders = table.getColumns().stream().map(TableColumn::getHeaderLabel).collect(
-                Collectors.toList());
+        assertColumnHeaders(table);
 
-        assertThat(columnHeaders)
-                .containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT, ADDED);
-
-        // Throws Exception
         List<Object> rows = table.getRows();
         assertThat(rows).hasSize(1);
-        assertColumnsOfTest((TableRowPageObject) rows.get(0), commit, 1);
+        assertColumnsOfTest((BlamesRow) rows.get(0), commit, 1);
     }
 
-    private void assertColumnsOfTest(final TableRowPageObject row, final String commit, final int lineNumber) {
-        assertThat(row.getValuesByColumnLabel()).contains(
-                entry(DETAILS, "Test Warning for Jenkins"),
-                entry(FILE, "Test.java:" + lineNumber),
-                entry(AUTHOR, "Git SampleRepoRule"),
-                entry(EMAIL, "gits@mplereporule"),
-                entry(COMMIT, commit),
-                entry(AGE, "1")).containsKey(ADDED);
+    private void assertColumnsOfTest(final BlamesRow row, final String commit, final int lineNumber) {
+        assertThat(row.getDescription()).contains("Test Warning for Jenkins");
+        assertThat(row.getFileName().getSort()).isEqualTo("Test.java:000000" + lineNumber);
+        assertThat(row.getAuthor()).isEqualTo("Git SampleRepoRule");
+        assertThat(row.getEmail()).isEqualTo("gits@mplereporule");
+        assertThat(row.getCommit()).isEqualTo(commit);
+        assertThat(row.getAge()).contains("1");
     }
 
-    private void assertColumnsOfRowLoremIpsum(final TableRowPageObject row, final int lineNumber, final String commitId) {
-        assertThat(row.getValuesByColumnLabel()).contains(
-                entry(DETAILS, "Another Warning for Jenkins"),
-                entry(FILE, "LoremIpsum.java:" + lineNumber),
-                entry(AUTHOR, "John Doe"),
-                entry(EMAIL, "john@doe"),
-                entry(COMMIT, commitId),
-                entry(AGE, "1")).containsKey(ADDED);
+    private void assertColumnsOfRowLoremIpsum(final BlamesRow row,  final String commitId, final int lineNumber) {
+        assertThat(row.getDescription()).contains("Another Warning for Jenkins");
+        assertThat(row.getFileName().getSort()).isEqualTo("LoremIpsum.java:000000" + lineNumber);
+        assertThat(row.getAuthor()).isEqualTo("John Doe");
+        assertThat(row.getEmail()).isEqualTo("john@doe");
+        assertThat(row.getCommit()).isEqualTo(commitId);
+        assertThat(row.getAge()).contains("1");
     }
 
-    private void assertColumnsOfRowBob(final TableRowPageObject row, final String commitId, final int lineNumber) {
-        assertThat(row.getValuesByColumnLabel()).contains(
-                entry(DETAILS, "Bobs Warning for Jenkins"),
-                entry(FILE, "Bob.java:" + lineNumber),
-                entry(AUTHOR, "Alice Miller"),
-                entry(EMAIL, "alice@miller"),
-                entry(COMMIT, commitId),
-                entry(AGE, "1")).containsKey(ADDED);
+    private void assertColumnsOfRowBob(final BlamesRow row, final String commitId, final int lineNumber) {
+        assertThat(row.getDescription()).contains("Bobs Warning for Jenkins");
+        assertThat(row.getFileName().getSort()).isEqualTo("Bob.java:000000" + lineNumber);
+        assertThat(row.getAuthor()).isEqualTo("Alice Miller");
+        assertThat(row.getEmail()).isEqualTo("alice@miller");
+        assertThat(row.getCommit()).isEqualTo(commitId);
+        assertThat(row.getAge()).contains("1");
     }
 
-    private void assertElevenIssues(final Map<String, String> commits, final TablePageObject table) {
-        assertThat(table.getColumnHeaders())
-                .containsExactly(DETAILS, FILE, AGE, AUTHOR,
-                        EMAIL, COMMIT, ADDED);
-        assertThat(table.getInfo()).isEqualTo("Showing 1 to 10 of 11 entries");
-        List<TableRowPageObject> rows = table.getRows();
-        assertThat(rows).hasSize(10);
-        assertColumnsOfRowBob(rows.get(0), commits.get("Bob"), 1);
-        assertColumnsOfRowBob(rows.get(1), commits.get("Bob"), 2);
-        assertColumnsOfRowBob(rows.get(2), commits.get("Bob"), 3);
-        assertColumnsOfRowLoremIpsum(rows.get(3), 1, commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(rows.get(4), 2, commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(rows.get(5), 3, commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(rows.get(6), 4, commits.get("LoremIpsum"));
-        assertColumnsOfTest(rows.get(7), commits.get("Test"), 1);
-        assertColumnsOfTest(rows.get(8), commits.get("Test"), 2);
-        assertColumnsOfTest(rows.get(9), commits.get("Test"), 3);
+    private void assertElevenIssues(final Map<String, String> commits, final TableModel table) {
+        assertColumnHeaders(table);
+
+        List<Object> rows = table.getRows();
+        assertThat(rows).hasSize(11);
+
+        assertColumnsOfTest((BlamesRow) rows.get(0), commits.get("Test"), 1);
+        assertColumnsOfTest((BlamesRow) rows.get(1), commits.get("Test"), 2);
+        assertColumnsOfTest((BlamesRow) rows.get(2), commits.get("Test"), 3);
+        assertColumnsOfTest((BlamesRow) rows.get(3), commits.get("Test"), 4);
+
+        assertColumnsOfRowLoremIpsum((BlamesRow) rows.get(4), commits.get("LoremIpsum"), 1);
+        assertColumnsOfRowLoremIpsum((BlamesRow) rows.get(5), commits.get("LoremIpsum"), 2);
+        assertColumnsOfRowLoremIpsum((BlamesRow) rows.get(6), commits.get("LoremIpsum"), 3);
+        assertColumnsOfRowLoremIpsum((BlamesRow) rows.get(7), commits.get("LoremIpsum"), 4);
+
+        assertColumnsOfRowBob((BlamesRow) rows.get(8), commits.get("Bob"), 1);
+        assertColumnsOfRowBob((BlamesRow) rows.get(9), commits.get("Bob"), 2);
+        assertColumnsOfRowBob((BlamesRow) rows.get(10), commits.get("Bob"), 3);
     }
 
     private Map<String, String> createGitRepository() throws Exception {
