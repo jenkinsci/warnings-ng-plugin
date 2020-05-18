@@ -580,13 +580,14 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         return project;
     }
 
-    private void assertThatIssuesRowValuesAreCorrect(IssuesRow row, final String fileDisplayName, final String severity,
-            final String category, final String type, final String age) {
-        assertThat(row.getFileName().getDisplay()).isEqualTo(fileDisplayName);
-        assertThat(getTagValues(row.getCategory())).isEqualTo(category);
-        assertThat(getTagValues(row.getSeverity())).isEqualTo(severity);
-        assertThat(getTagValues(row.getType())).isEqualTo(type);
-        assertThat(getTagValues(row.getAge())).isEqualTo(age);
+    private void assertThatIssuesRowValuesAreCorrect(IssuesRow row, final String expectedFileDisplayName,
+            final String expectedSeverity, final String expectedCategory, final String expectedType,
+            final String expectedAge) {
+        assertThat(row.getFileName().getDisplay()).isEqualTo(expectedFileDisplayName);
+        assertThat(getTagValues(row.getCategory())).isEqualTo(expectedCategory);
+        assertThat(getTagValues(row.getSeverity())).isEqualTo(expectedSeverity);
+        assertThat(getTagValues(row.getType())).isEqualTo(expectedType);
+        assertThat(getTagValues(row.getAge())).isEqualTo(expectedAge);
     }
 
     private static String getTagValues(final String str) {
