@@ -35,7 +35,6 @@ import io.jenkins.plugins.datatables.TableRowPageObject;
 import io.jenkins.plugins.forensics.blame.Blamer;
 
 import static io.jenkins.plugins.forensics.assertions.Assertions.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Tests the {@link Blamer GitBlamer} in several jobs that uses a real Git repository.
