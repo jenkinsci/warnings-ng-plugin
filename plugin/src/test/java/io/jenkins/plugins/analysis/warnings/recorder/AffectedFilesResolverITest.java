@@ -18,6 +18,9 @@ import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.SourceDirectory;
 import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -172,12 +175,23 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         assertThat(result.getIssues()).hasSize(1);
 
+        IssuesRow firstRow = getIssuesModel(result, 0);
+        assertThat(firstRow.getSeverity()).contains(Severity.WARNING_NORMAL.getName());
+        assertThat(firstRow.getFileName().getDisplay()).contains("config.xml:451");
+
         Issue issue = result.getIssues().get(0);
         String filename = issue.getFileName().substring(issue.getFileName().lastIndexOf("/") + 1);
         assertThat(filename).isEqualTo("config.xml");
         assertThat(issue.getLineStart()).isEqualTo(451);
         assertThat(issue.getMessage()).isEqualTo("foo defined but not used");
         assertThat(issue.getSeverity()).isEqualTo(Severity.WARNING_NORMAL);
+    }
+
+    private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
+        IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
+        Object row = issuesDetail.getTableModel("issues").getRows().get(rowNumber);
+
+        return (IssuesRow) row;
     }
 
     private void prepareGccLog(final FreeStyleProject job) {
