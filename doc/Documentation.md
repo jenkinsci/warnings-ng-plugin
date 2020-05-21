@@ -2,7 +2,7 @@
 
 The Jenkins Warnings Next Generation Plugin collects compiler warnings or issues reported by static analysis tools 
 and visualizes the results. It has built-in support for numerous static analysis tools (including several compilers), 
-see the list of [supported report formats](../plugin/SUPPORTED-FORMATS.md). 
+see the list of [supported report formats](../SUPPORTED-FORMATS.md). 
 
 ## Supported project types
 
@@ -21,7 +21,7 @@ The Warnings Next Generation Plugin provides the following features when added a
 to a job: 
 
 1. The plugin scans the console log of a Jenkins build or files in the workspace of your job for any kind of issues. 
-There are more than hundred [report formats](../plugin/SUPPORTED-FORMATS.md) supported. Among the problems it can detect:
+There are more than hundred [report formats](../SUPPORTED-FORMATS.md) supported. Among the problems it can detect:
     - errors from your compiler (C, C#, Java, etc.)
     - warnings from a static analysis tool (CheckStyle, StyleCop, SpotBugs, etc.)
     - duplications from a copy-and-paste detector (CPD, Simian, etc.)
