@@ -15,6 +15,7 @@ import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.grading.AggregatedScore;
+import io.jenkins.plugins.grading.AnalysisScore;
 import io.jenkins.plugins.grading.AutoGrader;
 import io.jenkins.plugins.grading.AutoGradingBuildAction;
 
@@ -49,11 +50,9 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
         cpd.setPattern("**/cpd*");
 
         Pmd pmd = new Pmd();
-        pmd.setPattern("**/pmd");
+        pmd.setPattern("**/pmd*");
 
-        recorder.setTools(checkStyle);
-        recorder.setTools(spotBugs);
-        recorder.setTools(cpd);
+        recorder.setTools(checkStyle, spotBugs, cpd, pmd);
 
         project.getPublishersList().add(recorder);
         project.getPublishersList().add(new AutoGrader(AUTOGRADER_RESULT));
@@ -63,32 +62,14 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
         List<AutoGradingBuildAction> actions = baseline.getActions(AutoGradingBuildAction.class);
         assertThat(actions).hasSize(1);
         AggregatedScore score = actions.get(0).getResult();
-        assertThat(score.getAchieved()).isEqualTo(98);
-    }
-
-    /**
-     * Makes sure that the autograding plugin interrupts the grading if the configuration is empty.
-     */
-    @Test
-    public void interruptsGradingDueToEmptyConfiguration() {
-        FreeStyleProject project = createJavaWarningsFreestyleProject("checkstyle.xml");
-
-        IssuesRecorder recorder = new IssuesRecorder();
-
-        CheckStyle checkStyle = new CheckStyle();
-        checkStyle.setPattern("**/*checkstyle*");
-
-        recorder.setTools(checkStyle);
-
-        project.getPublishersList().add(recorder);
-        project.getPublishersList().add(new AutoGrader("{}"));
-
-        Run<?, ?> baseline = buildSuccessfully(project);
-
-        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping static analysis results");
-        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping test results");
-        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping coverage results");
-        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping mutation coverage results");
+        List<AnalysisScore> analysisScore = score.getAnalysisScores();
+        assertThat(score.getAchieved()).isEqualTo(22);
+        assertThat(analysisScore).hasSize(5);
+        assertThat(analysisScore.get(0).getTotalImpact()).isEqualTo(0);
+        assertThat(analysisScore.get(1).getTotalImpact()).isEqualTo(-60);
+        assertThat(analysisScore.get(2).getTotalImpact()).isEqualTo(-4);
+        assertThat(analysisScore.get(3).getTotalImpact()).isEqualTo(-2);
+        assertThat(analysisScore.get(4).getTotalImpact()).isEqualTo(-12);
     }
 
     /**
