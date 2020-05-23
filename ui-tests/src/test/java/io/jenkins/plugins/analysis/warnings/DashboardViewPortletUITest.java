@@ -1,24 +1,14 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
-
-import org.junit.Before;
+import java.util.Map;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
-import org.openqa.selenium.WebElement;
-
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
-import org.jenkinsci.test.acceptance.plugins.dashboard_view.AbstractDashboardViewPortlet;
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Job;
-
-import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
-
+import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
@@ -38,14 +28,13 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
         Build build = shouldBuildJobSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url, "portlet-topPortlets-" + 0);
-        dashboardTable.open();
 
-        List<String> headers = dashboardTable.getPaneHeaders();
+        List<String> headers = dashboardTable.headers;
         assertThat(headers.get(0)).contains("Job");
-        assertThat(headers.get(1)).contains("CheckStyle Warnings");
+        assertThat(headers.get(1)).contains("");
 
-        List<List<String>> jobs = dashboardTable.getJobRows();
-        assertThat(jobs.get(0)).contains(job.name, "4");
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
+        assertThat(table.get(job.name).get("").getWarningsCount()).isEqualTo(4);
     }
 
     @Test
@@ -57,14 +46,27 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
         Build build = shouldBuildJobSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url, "portlet-topPortlets-" + 0);
-        dashboardTable.open();
 
-        List<String> headers = dashboardTable.getPaneHeaders();
+        List<String> headers = dashboardTable.headers;
         assertThat(headers.get(0)).contains("Job");
         assertThat(headers.get(1)).contains("CheckStyle");
 
-        List<List<String>> jobs = dashboardTable.getJobRows();
-        assertThat(jobs.get(0)).contains(job.name, "4");
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
+        assertThat(table.get(job.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
+    }
+
+    @Test
+    public void shouldNotShowCleanJobOnHideClean() {
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(true, false);
+        FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-clean.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
+        job.save();
+        Build build = shouldBuildJobSuccessfully(job);
+
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url, "portlet-topPortlets-" + 0);
+
+        assertThat(dashboardTable.headers).isEmpty();
+        assertThat(dashboardTable.table).isEmpty();
     }
 
     private Build shouldBuildJobSuccessfully(final Job job) {
