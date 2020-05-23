@@ -34,19 +34,6 @@ class TaskScannerTest extends ResourceTest {
     private static final String FILE_WITH_TASKS = "file-with-tasks.txt";
     private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
 
-
-    @Test
-    void shouldReportWrongCharsetError() {
-        TaskScanner scanner = new TaskScannerBuilder().build();
-
-        Path path = getResourceAsFile("file-with-strange-characters.txt");
-        Report report = scanner.scan(path, Charset.forName("windows-1252"));
-
-        assertThat(report.getErrorMessages()).isNotEmpty();
-        assertThat(report.getErrorMessages().get(0)).startsWith("Can't read source file ");
-        assertThat(report.getErrorMessages().get(0)).endsWith("file-with-strange-characters.txt', defined encoding 'windows-1252' seems to be wrong");
-    }
-
     @Test
     void shouldReportFileExceptionError() {
         TaskScanner scanner = new TaskScannerBuilder().build();

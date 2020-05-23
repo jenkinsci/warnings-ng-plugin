@@ -1,4 +1,4 @@
 Chinesische Zeichenkodierungen
-(chinesisch 漢字編碼方法 / 汉字编码方法, Pinyin Hànzì biānmǎ fāngfǎ)
+(chinesisch ?????? / ??????, Pinyin H�nz� bi?nm? f?ngf?)
 ordnen den chinesischen Schriftzeichen Bytefolgen zur Bearbeitung und Speicherung im Computer zu.
 Alle chinesischen Zeichenkodierungen enthalten auch eine Kodierung der ASCII-Zeichen.
