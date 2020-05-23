@@ -29,12 +29,12 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
-        List<String> headers = dashboardTable.headers;
+        List<String> headers = dashboardTable.getHeaders();
         assertThat(headers.get(0)).contains("Job");
         assertThat(headers.get(1)).contains("");
 
-        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
-        assertThat(table.get(job.name).get("").getWarningsCount()).isEqualTo(4);
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+        assertThat(table.get(job.name).get("")).hasWarningsCount(4);
     }
 
     @Test
@@ -47,12 +47,12 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
-        List<String> headers = dashboardTable.headers;
+        List<String> headers = dashboardTable.getHeaders();
         assertThat(headers.get(0)).contains("Job");
         assertThat(headers.get(1)).contains("CheckStyle");
 
-        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
-        assertThat(table.get(job.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+        assertThat(table.get(job.name).get("CheckStyle")).hasWarningsCount(4);
     }
 
     @Test
@@ -65,8 +65,8 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
-        assertThat(dashboardTable.headers).isEmpty();
-        assertThat(dashboardTable.table).isEmpty();
+        assertThat(dashboardTable.getHeaders()).isEmpty();
+        assertThat(dashboardTable.getTable()).isEmpty();
     }
 
     @Test
@@ -82,14 +82,14 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
-        List<String> headers = dashboardTable.headers;
+        List<String> headers = dashboardTable.getHeaders();
         assertThat(headers.get(0)).contains("Job");
         assertThat(headers.get(1)).contains("CheckStyle");
         assertThat(headers.get(2)).contains("Eclipse ECJ");
 
-        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
-        assertThat(table.get(job.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
-        assertThat(table.get(job.name).get("Eclipse ECJ").getWarningsCount()).isEqualTo(8);
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+        assertThat(table.get(job.name).get("CheckStyle")).hasWarningsCount(4);
+        assertThat(table.get(job.name).get("Eclipse ECJ")).hasWarningsCount(8);
     }
 
     @Test
@@ -106,16 +106,16 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
-        List<String> headers = dashboardTable.headers;
+        List<String> headers = dashboardTable.getHeaders();
         assertThat(headers.get(0)).contains("Job");
         assertThat(headers.get(1)).contains("CheckStyle");
         assertThat(headers.get(2)).contains("Eclipse ECJ");
         assertThat(headers.get(3)).contains("PMD");
 
-        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
-        assertThat(table.get(job.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
-        assertThat(table.get(job.name).get("Eclipse ECJ").getWarningsCount()).isEqualTo(8);
-        assertThat(table.get(job.name).get("PMD").getWarningsCount()).isEqualTo(4);
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+        assertThat(table.get(job.name).get("CheckStyle")).hasWarningsCount(4);
+        assertThat(table.get(job.name).get("Eclipse ECJ")).hasWarningsCount(8);
+        assertThat(table.get(job.name).get("PMD")).hasWarningsCount(4);
     }
 
     @Test
@@ -134,13 +134,13 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
-        List<String> headers = dashboardTable.headers;
+        List<String> headers = dashboardTable.getHeaders();
         assertThat(headers.get(0)).contains("Job");
         assertThat(headers.get(1)).contains("CheckStyle");
 
-        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
-        assertThat(table.get(job1.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
-        assertThat(table.get(job2.name).get("CheckStyle").getWarningsCount()).isEqualTo(0);
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+        assertThat(table.get(job1.name).get("CheckStyle")).hasWarningsCount(4);
+        assertThat(table.get(job2.name).get("CheckStyle")).hasWarningsCount(0);
     }
 
     @Test
@@ -159,13 +159,13 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
-        List<String> headers = dashboardTable.headers;
+        List<String> headers = dashboardTable.getHeaders();
         assertThat(headers.get(0)).contains("Job");
         assertThat(headers.get(1)).contains("CheckStyle");
 
-        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
         assertThat(table.size()).isEqualTo(1);
-        assertThat(table.get(job1.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
+        assertThat(table.get(job1.name).get("CheckStyle")).hasWarningsCount(4);
     }
 
 

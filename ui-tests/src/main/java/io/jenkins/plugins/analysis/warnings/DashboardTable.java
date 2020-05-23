@@ -13,8 +13,8 @@ import org.jenkinsci.test.acceptance.po.PageObject;
 public class DashboardTable extends PageObject {
     private static final String EMPTY = "-";
 
-    final List<String> headers;
-    final Map<String, Map<String, DashboardTableEntry>> table;
+    private final List<String> headers;
+    private final Map<String, Map<String, DashboardTableEntry>> table;
 
     public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
@@ -47,6 +47,10 @@ public class DashboardTable extends PageObject {
         table = lines.stream()
                 .collect(Collectors.toMap(entry -> entry.get(0).get(0), entry -> createPluginValueMapping(entry, headers)));
     }
+
+    public List<String> getHeaders() { return this.headers; }
+
+    public Map<String, Map<String, DashboardTableEntry>> getTable() { return this.table; }
 
     private Map<String, DashboardTableEntry> createPluginValueMapping(final List<List<String>> warnings, final List<String> plugins) {
         Map<String, DashboardTableEntry> valuePluginMapping = new HashMap<>();
