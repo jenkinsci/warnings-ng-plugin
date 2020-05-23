@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,14 +12,12 @@ import org.jenkinsci.test.acceptance.po.PageObject;
 
 public class DashboardTable extends PageObject {
     private static final String EMPTY = "-";
-    private final String portletId;
 
     final List<String> headers;
     final Map<String, Map<String, DashboardTableEntry>> table;
 
-    public DashboardTable(final Build parent, final URL url, final String portletId) {
+    public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
-        this.portletId = portletId;
         this.open();
 
         WebElement page = this.getElement(by.tagName("body"));

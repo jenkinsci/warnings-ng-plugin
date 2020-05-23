@@ -17,17 +17,17 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Lukas Kirner
  */
 public class DashboardViewPortletUITest extends AbstractJUnitTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/";
+    private static final String WARNINGS_PLUGIN_PREFIX = "/dashboard_test/";
 
     @Test
     public void shouldShowIcons() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
-        FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-result.xml");
+        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job.save();
         Build build = shouldBuildJobSuccessfully(job);
 
-        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url, "portlet-topPortlets-" + 0);
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
         List<String> headers = dashboardTable.headers;
         assertThat(headers.get(0)).contains("Job");
@@ -40,12 +40,12 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     @Test
     public void shouldNotShowIcons() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
-        FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-result.xml");
+        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job.save();
         Build build = shouldBuildJobSuccessfully(job);
 
-        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url, "portlet-topPortlets-" + 0);
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
         List<String> headers = dashboardTable.headers;
         assertThat(headers.get(0)).contains("Job");
@@ -56,18 +56,118 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     }
 
     @Test
-    public void shouldNotShowCleanJobOnHideClean() {
+    public void shouldHideCleanJob() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(true, false);
-        FreeStyleJob job = createFreeStyleJob("issue_filter/checkstyle-clean.xml");
+        FreeStyleJob job = createFreeStyleJob("checkstyle-clean.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job.save();
         Build build = shouldBuildJobSuccessfully(job);
 
-        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url, "portlet-topPortlets-" + 0);
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
         assertThat(dashboardTable.headers).isEmpty();
         assertThat(dashboardTable.table).isEmpty();
     }
+
+    @Test
+    public void shouldShow2Issues() {
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
+        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml", "eclipse.txt");
+        job.addPublisher(IssuesRecorder.class, recorder -> {
+            recorder.setTool("CheckStyle", "**/checkstyle-result.xml");
+            recorder.addTool("Eclipse ECJ", "**/eclipse.txt");
+        });
+        job.save();
+        Build build = shouldBuildJobSuccessfully(job);
+
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+
+        List<String> headers = dashboardTable.headers;
+        assertThat(headers.get(0)).contains("Job");
+        assertThat(headers.get(1)).contains("CheckStyle");
+        assertThat(headers.get(2)).contains("Eclipse ECJ");
+
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
+        assertThat(table.get(job.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
+        assertThat(table.get(job.name).get("Eclipse ECJ").getWarningsCount()).isEqualTo(8);
+    }
+
+    @Test
+    public void shouldShow3Issues() {
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
+        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml", "eclipse.txt", "pmd.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> {
+            recorder.setTool("CheckStyle", "**/checkstyle-result.xml");
+            recorder.addTool("Eclipse ECJ", "**/eclipse.txt");
+            recorder.addTool("PMD", "**/pmd.xml");
+        });
+        job.save();
+        Build build = shouldBuildJobSuccessfully(job);
+
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+
+        List<String> headers = dashboardTable.headers;
+        assertThat(headers.get(0)).contains("Job");
+        assertThat(headers.get(1)).contains("CheckStyle");
+        assertThat(headers.get(2)).contains("Eclipse ECJ");
+        assertThat(headers.get(3)).contains("PMD");
+
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
+        assertThat(table.get(job.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
+        assertThat(table.get(job.name).get("Eclipse ECJ").getWarningsCount()).isEqualTo(8);
+        assertThat(table.get(job.name).get("PMD").getWarningsCount()).isEqualTo(4);
+    }
+
+    @Test
+    public void shouldShowMultipleJobs() {
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
+
+        FreeStyleJob job1 = createFreeStyleJob("checkstyle-result.xml");
+        job1.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
+        job1.save();
+        shouldBuildJobSuccessfully(job1);
+
+        FreeStyleJob job2 = createFreeStyleJob("checkstyle-clean.xml");
+        job2.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
+        job2.save();
+        Build build = shouldBuildJobSuccessfully(job2);
+
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+
+        List<String> headers = dashboardTable.headers;
+        assertThat(headers.get(0)).contains("Job");
+        assertThat(headers.get(1)).contains("CheckStyle");
+
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
+        assertThat(table.get(job1.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
+        assertThat(table.get(job2.name).get("CheckStyle").getWarningsCount()).isEqualTo(0);
+    }
+
+    @Test
+    public void shouldHideCleanJobs() {
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(true, false);
+
+        FreeStyleJob job1 = createFreeStyleJob("checkstyle-result.xml");
+        job1.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
+        job1.save();
+        shouldBuildJobSuccessfully(job1);
+
+        FreeStyleJob job2 = createFreeStyleJob("checkstyle-clean.xml");
+        job2.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
+        job2.save();
+        Build build = shouldBuildJobSuccessfully(job2);
+
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+
+        List<String> headers = dashboardTable.headers;
+        assertThat(headers.get(0)).contains("Job");
+        assertThat(headers.get(1)).contains("CheckStyle");
+
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.table;
+        assertThat(table.size()).isEqualTo(1);
+        assertThat(table.get(job1.name).get("CheckStyle").getWarningsCount()).isEqualTo(4);
+    }
+
 
     private Build shouldBuildJobSuccessfully(final Job job) {
         Build build = job.startBuild().waitUntilFinished();
