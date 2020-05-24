@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.NoSuchElementException;
+import java.util.Set;
 
 import org.junit.Test;
 
@@ -45,6 +47,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     private static final String SOURCE_AFFECTED_FILE = FOLDER + "/Main.java";
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
+    private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 0;
 
     private FreeStyleProject createEclipseProject() {
         FreeStyleProject project = getJobWithWorkspaceFiles();
@@ -60,6 +63,66 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject job = createFreeStyleProject();
         copyMultipleFilesToWorkspace(job, ECLIPSE_REPORT, SOURCE_AFFECTED_FILE);
         return job;
+    }
+
+    /**
+     * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
+     * build folder, then the link to open the file disappears.
+     */
+    @Test
+    public void shouldShowNoLinkIfSourceCodeHasBeenDeleted() {
+        FreeStyleProject project = createEclipseProject();
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        IssuesRow row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).contains("<a href=");
+
+        deleteAffectedFilesInBuildFolder(result);
+
+        row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).isEqualTo("Main.java:3");
+    }
+
+    /**
+     * Verifies that the affected source code is copied and shown in the source code view. If the file is made
+     * unreadable in the build folder, then the link to open the file disappears.
+     */
+    @Test
+    public void shouldShowNoLinkIfSourceCodeHasBeenMadeUnreadable() {
+        FreeStyleProject project = createEclipseProject();
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        IssuesRow row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).contains("<a href=");
+
+        makeAffectedFilesInBuildFolderUnreadable(result);
+
+        row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).isEqualTo("Main.java:3");
+    }
+
+    private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
+        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result).getFileName()));
+    }
+
+    private Issue getIssueWithSource(final AnalysisResult result) {
+        return result.getIssues()
+                .stream()
+                .filter(issue -> issue.getFileName().endsWith("Main.java"))
+                .findFirst().orElseThrow(NoSuchElementException::new);
+    }
+
+    private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
+        Set<String> files = result.getIssues().getFiles();
+        for (String fileName : files) {
+            Path file = AffectedFilesResolver.getFile(result.getOwner(), fileName);
+            try {
+                Files.delete(file);
+            }
+            catch (IOException ignore) {
+                // ignore
+            }
+        }
     }
 
     /**
@@ -180,8 +243,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         assertThat(firstRow.getFileName().getDisplay()).contains("config.xml:451");
 
         Issue issue = result.getIssues().get(0);
-        String filename = issue.getFileName().substring(issue.getFileName().lastIndexOf("/") + 1);
-        assertThat(filename).isEqualTo("config.xml");
+        assertThat(issue.getBaseName()).isEqualTo("config.xml");
         assertThat(issue.getLineStart()).isEqualTo(451);
         assertThat(issue.getMessage()).isEqualTo("foo defined but not used");
         assertThat(issue.getSeverity()).isEqualTo(Severity.WARNING_NORMAL);
