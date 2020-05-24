@@ -28,7 +28,7 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
     public void shouldRunJobWithDifferentSourceCodeDirectory() throws IOException, URISyntaxException {
         String homeDir = getHomeDir();
 
-        FreeStyleJob job = initJob();
+        FreeStyleJob job = initJob(homeDir);
 
         // create dynamically built file in target workspace
         createFileInWorkspace(job, homeDir);
@@ -42,9 +42,9 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         verifyGcc(build);
     }
 
-    private FreeStyleJob initJob() {
+    private FreeStyleJob initJob(final String homeDir) {
         FreeStyleJob job = createFreeStyleJob();
-        addRecorder(job);
+        addRecorder(job, homeDir);
         job.save();
         return job;
     }
@@ -92,11 +92,12 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         return homeDir + File.separator + "jobs" + File.separator + job.name;
     }
 
-    private IssuesRecorder addRecorder(final FreeStyleJob job) {
+    private IssuesRecorder addRecorder(final FreeStyleJob job, final String homeDir) {
         return job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("GNU C Compiler (gcc)", gcc -> gcc.setPattern("**/gcc.log"));
             recorder.setEnabledForFailure(true);
             recorder.setSourceCodeEncoding("UTF-8");
+            recorder.setSourceDirectory(getJobDir(homeDir, job));
         });
     }
 

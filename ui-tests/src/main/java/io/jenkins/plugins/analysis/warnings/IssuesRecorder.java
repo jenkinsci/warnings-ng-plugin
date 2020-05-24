@@ -28,6 +28,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control referenceJobField = control("referenceJob");
     private final Control aggregatingResultsCheckBox = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
+    private final Control sourceDirectory = control("sourceDirectory");
 
     /**
      * Determines the result of the quality gate.
@@ -158,6 +159,19 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public void setSourceCodeEncoding(final String encoding) {
         sourceCodeEncoding.set(encoding);
+    }
+
+    /**
+     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
+     * then this folder needs to be added in Jenkins global configuration.
+     *
+     * @param sourceDirectory
+     *         a folder containing the source code
+     */
+    public void setSourceDirectory(final String sourceDirectory) {
+        openAdvancedOptions();
+
+        this.sourceDirectory.set(sourceDirectory);
     }
 
     /**
