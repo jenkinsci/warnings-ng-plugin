@@ -36,7 +36,7 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void checksCorrectGradingWithSeveralTools() {
-        FreeStyleProject project = createJavaWarningsFreestyleProject("checkstyle.xml", "spotbugs.xml", "cpd.xml", "pmd.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "spotbugs.xml", "cpd.xml", "pmd.xml");
 
         IssuesRecorder recorder = new IssuesRecorder();
 
@@ -64,29 +64,10 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
         AggregatedScore score = actions.get(0).getResult();
         List<AnalysisScore> analysisScore = score.getAnalysisScores();
         assertThat(score.getAchieved()).isEqualTo(22);
-        assertThat(analysisScore).hasSize(5);
-        assertThat(analysisScore.get(0).getTotalImpact()).isEqualTo(0);
-        assertThat(analysisScore.get(1).getTotalImpact()).isEqualTo(-60);
-        assertThat(analysisScore.get(2).getTotalImpact()).isEqualTo(-4);
-        assertThat(analysisScore.get(3).getTotalImpact()).isEqualTo(-2);
-        assertThat(analysisScore.get(4).getTotalImpact()).isEqualTo(-12);
-    }
-
-    /**
-     * Create a Freestyle Project with enabled Java warnings.
-     *
-     * @param files
-     *         The files to be imported into the Freestyle project.
-     *
-     * @return The created Freestyle Project.
-     */
-    private FreeStyleProject createJavaWarningsFreestyleProject(final String... files) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(files);
-        Java java = new Java();
-        for(String file: files) {
-            java.setPattern("**/*" + file + "*");
-        }
-        enableWarnings(project, java);
-        return project;
+        assertThat(analysisScore).hasSize(4);
+        assertThat(analysisScore.get(0).getTotalImpact()).isEqualTo(-60);
+        assertThat(analysisScore.get(1).getTotalImpact()).isEqualTo(-4);
+        assertThat(analysisScore.get(2).getTotalImpact()).isEqualTo(-2);
+        assertThat(analysisScore.get(3).getTotalImpact()).isEqualTo(-12);
     }
 }
