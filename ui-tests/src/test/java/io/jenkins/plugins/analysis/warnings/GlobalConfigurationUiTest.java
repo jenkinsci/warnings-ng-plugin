@@ -26,37 +26,70 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
 
     @Test
     public void shouldRunJobWithDifferentSourceCodeDirectory() throws IOException, URISyntaxException {
-        FreeStyleJob job = createFreeStyleJob();
-        addRecorder(job);
-        job.save();
+        String homeDir = getHomeDir();
 
-        // set global settings
-        GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
-        settings.configure();
-        String homeDir = settings.getHomeDirectory();
-        String jobDir = homeDir + File.separator + "jobs" + File.separator + job.name;
-        settings.enterSourceDirectoryPath(jobDir);
-        settings.save();
+        FreeStyleJob job = initJob();
 
         // create dynamically built file in target workspace
-        String content = String.format("%s/config.xml:451: warning: foo defined but not used%n", jobDir);
+        createFileInWorkspace(job, homeDir);
 
-        Path workspacePath = Paths.get(homeDir).resolve("workspace");
-        Files.createDirectory(workspacePath);
-        workspacePath = workspacePath.resolve(job.name);
-        Files.createDirectory(workspacePath);
-
-        File newFile = workspacePath.resolve("gcc.log").toFile();
-        boolean newFile1 = newFile.createNewFile();
-        FileWriter writer = new FileWriter(newFile);
-        writer.write(content);
-        writer.flush();
-        writer.close();
+        // set global settings
+        initGlobalSettings(job);
 
         // start building and verifying result
         Build build = buildJob(job);
 
         verifyGcc(build);
+    }
+
+    private FreeStyleJob initJob() {
+        FreeStyleJob job = createFreeStyleJob();
+        addRecorder(job);
+        job.save();
+        return job;
+    }
+
+    private void initGlobalSettings(final FreeStyleJob job) {
+        GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
+        settings.configure();
+        String homeDir = settings.getHomeDirectory();
+        String jobDir = getJobDir(homeDir, job);
+        settings.enterSourceDirectoryPath(jobDir);
+        settings.save();
+    }
+
+    private String getHomeDir() {
+        GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
+        settings.configure();
+        return settings.getHomeDirectory();
+    }
+
+    private void createFileInWorkspace(final FreeStyleJob job, final String homeDir) throws IOException {
+        String content = String.format("%s/config.xml:451: warning: foo defined but not used%n",
+                getJobDir(homeDir, job));
+
+        Path workspacePath = Paths.get(homeDir).resolve("workspace");
+        if (Files.notExists(workspacePath)) {
+            Files.createDirectory(workspacePath);
+        }
+        workspacePath = workspacePath.resolve(job.name);
+        if (Files.notExists(workspacePath)) {
+            Files.createDirectory(workspacePath);
+        }
+
+        File newFile = workspacePath.resolve("gcc.log").toFile();
+        boolean newFile1 = newFile.createNewFile();
+        if (!newFile1) {
+            return;
+        }
+        FileWriter writer = new FileWriter(newFile);
+        writer.write(content);
+        writer.flush();
+        writer.close();
+    }
+
+    private String getJobDir(final String homeDir, final FreeStyleJob job) {
+        return homeDir + File.separator + "jobs" + File.separator + job.name;
     }
 
     private IssuesRecorder addRecorder(final FreeStyleJob job) {
