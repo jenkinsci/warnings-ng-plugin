@@ -166,6 +166,32 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
+     * Opens the analysis details page, selects the tab {@link Tab#FOLDERS} and returns the {@link PageObject} of the
+     * folders table.
+     *
+     * @return page object of the types table.
+     */
+    public FoldersDetailsTable openFoldersTable() {
+        openTab(Tab.FOLDERS);
+
+        WebElement foldersTab = find(By.id("folderContent"));
+        return new FoldersDetailsTable(foldersTab, this);
+    }
+
+    /**
+     * Opens the analysis details page, selects the tab {@link Tab#FILES} and returns the {@link PageObject} of the
+     * files table.
+     *
+     * @return page object of the types table.
+     */
+    public FilesDetailsTable openFilesTable() {
+        openTab(Tab.FILES);
+
+        WebElement filesTab = find(By.id("fileNameContent"));
+        return new FilesDetailsTable(filesTab, this);
+    }
+
+    /**
      * Opens a link on the page leading to another page.
      *
      * @param element
