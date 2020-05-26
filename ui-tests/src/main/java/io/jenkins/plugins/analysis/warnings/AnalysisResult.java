@@ -140,6 +140,32 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
+     * Opens the analysis details page, selects the tab {@link Tab#CATEGORIES} and returns the {@link PageObject} of the
+     * categories table.
+     *
+     * @return page object of the categories table.
+     */
+    public DetailsTable openCategoriesTable() {
+        openTab(Tab.CATEGORIES);
+
+        WebElement categoriesTab = find(By.id("categoryContent"));
+        return new DetailsTable(categoriesTab, "category", this);
+    }
+
+    /**
+     * Opens the analysis details page, selects the tab {@link Tab#TYPES} and returns the {@link PageObject} of the
+     * types table.
+     *
+     * @return page object of the types table.
+     */
+    public DetailsTable openTypesTable() {
+        openTab(Tab.TYPES);
+
+        WebElement categoriesTab = find(By.id("typeContent"));
+        return new DetailsTable(categoriesTab, "type", this);
+    }
+
+    /**
      * Opens a link on the page leading to another page.
      *
      * @param element
