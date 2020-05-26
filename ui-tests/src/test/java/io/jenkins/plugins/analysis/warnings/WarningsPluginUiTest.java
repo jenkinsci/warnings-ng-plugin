@@ -194,23 +194,23 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         AnalysisResult cpdDetails = cpd.openOverallResult();
         assertThat(cpdDetails).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.ISSUES);
 
-        IssuesTable issuesTable = cpdDetails.openIssuesTable();
-        assertThat(issuesTable).hasSize(10).hasTotal(20);
+        IssuesDetailsTable issuesDetailsTable = cpdDetails.openIssuesTable();
+        assertThat(issuesDetailsTable).hasSize(10).hasTotal(20);
 
-        DryIssuesTableRow firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
-        DryIssuesTableRow secondRow = issuesTable.getRowAs(1, DryIssuesTableRow.class);
+        DryIssuesTableRow firstRow = issuesDetailsTable.getRowAs(0, DryIssuesTableRow.class);
+        DryIssuesTableRow secondRow = issuesDetailsTable.getRowAs(1, DryIssuesTableRow.class);
 
         firstRow.toggleDetailsRow();
-        assertThat(issuesTable).hasSize(11);
+        assertThat(issuesDetailsTable).hasSize(11);
 
-        DetailsTableRow detailsRow = issuesTable.getRowAs(1, DetailsTableRow.class);
+        DetailsTableRow detailsRow = issuesDetailsTable.getRowAs(1, DetailsTableRow.class);
         assertThat(detailsRow).hasDetails("Found duplicated code.\nfunctionOne();");
 
-        assertThat(issuesTable.getRowAs(2, DryIssuesTableRow.class)).isEqualTo(secondRow);
+        assertThat(issuesDetailsTable.getRowAs(2, DryIssuesTableRow.class)).isEqualTo(secondRow);
 
         firstRow.toggleDetailsRow();
-        assertThat(issuesTable).hasSize(10);
-        assertThat(issuesTable.getRowAs(1, DryIssuesTableRow.class)).isEqualTo(secondRow);
+        assertThat(issuesDetailsTable).hasSize(10);
+        assertThat(issuesDetailsTable.getRowAs(1, DryIssuesTableRow.class)).isEqualTo(secondRow);
 
         SourceView sourceView = firstRow.openSourceCode();
         assertThat(sourceView).hasFileName(CPD_SOURCE_NAME);
@@ -219,11 +219,11 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         assertThat(sourceView.getSourceCode()).isEqualToIgnoringWhitespace(expectedSourceCode);
 
         cpdDetails.open();
-        issuesTable = cpdDetails.openIssuesTable();
-        firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
+        issuesDetailsTable = cpdDetails.openIssuesTable();
+        firstRow = issuesDetailsTable.getRowAs(0, DryIssuesTableRow.class);
 
         AnalysisResult lowSeverity = firstRow.clickOnSeverityLink();
-        IssuesTable lowSeverityTable = lowSeverity.openIssuesTable();
+        IssuesDetailsTable lowSeverityTable = lowSeverity.openIssuesTable();
         assertThat(lowSeverityTable).hasSize(6).hasTotal(6);
 
         for (int i = 0; i < 6; i++) {
@@ -299,10 +299,10 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
                 .hasTotal(3)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
-        IssuesTable issuesTable = checkstyleDetails.openIssuesTable();
-        assertThat(issuesTable).hasSize(3).hasTotal(3);
+        IssuesDetailsTable issuesDetailsTable = checkstyleDetails.openIssuesTable();
+        assertThat(issuesDetailsTable).hasSize(3).hasTotal(3);
 
-        DefaultIssuesTableRow tableRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
+        DefaultIssuesTableRow tableRow = issuesDetailsTable.getRowAs(0, DefaultIssuesTableRow.class);
         assertThat(tableRow).hasFileName("RemoteLauncher.java")
                 .hasLineNumber(59)
                 .hasCategory("Checks")
@@ -405,8 +405,8 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         AnalysisResult resultPage = new AnalysisResult(build, "checkstyle");
         resultPage.open();
 
-        IssuesTable issuesTable = resultPage.openIssuesTable();
-        assertThat(issuesTable).hasSize(1);
+        IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
+        assertThat(issuesDetailsTable).hasSize(1);
     }
 
     private void reconfigureJobWithResource(final FreeStyleJob job, final String fileName) {
@@ -448,9 +448,9 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
                 .hasTotal(4)
                 .hasOnlyAvailableTabs(Tab.MODULES, Tab.TYPES, Tab.ISSUES);
 
-        IssuesTable issuesTable = mavenDetails.openIssuesTable();
+        IssuesDetailsTable issuesDetailsTable = mavenDetails.openIssuesTable();
 
-        DefaultIssuesTableRow firstRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
+        DefaultIssuesTableRow firstRow = issuesDetailsTable.getRowAs(0, DefaultIssuesTableRow.class);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
         assertThat(sourceView).hasTitle("Console Details")
                 .hasHighlightedText("[WARNING]\n"
