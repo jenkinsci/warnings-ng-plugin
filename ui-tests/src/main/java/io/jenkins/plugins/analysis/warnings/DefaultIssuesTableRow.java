@@ -12,8 +12,8 @@ import org.openqa.selenium.WebElement;
  * @author Stephan Plöderl
  */
 public class DefaultIssuesTableRow extends IssuesTableRow {
-    DefaultIssuesTableRow(final WebElement rowElement, final IssuesTable issuesTable) {
-        super(rowElement, issuesTable);
+    DefaultIssuesTableRow(final WebElement rowElement, final IssuesDetailsTable issuesDetailsTable) {
+        super(rowElement, issuesDetailsTable);
     }
 
     /**

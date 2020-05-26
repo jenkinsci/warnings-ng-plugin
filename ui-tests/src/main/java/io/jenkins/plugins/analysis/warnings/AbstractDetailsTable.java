@@ -10,7 +10,7 @@ import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.po.PageObject;
 
-public class DetailsTable {
+public abstract class AbstractDetailsTable {
     private final AnalysisResult resultDetailsPage;
     private final List<GenericTableRow> tableRows = new ArrayList<>();
     private final List<String> headers;
@@ -24,7 +24,7 @@ public class DetailsTable {
      * @param resultDetailsPage
      *         the AnalysisResult on which the issues-table is displayed on
      */
-    public DetailsTable(final WebElement tab, final String tabId, final AnalysisResult resultDetailsPage) {
+    public AbstractDetailsTable(final WebElement tab, final String tabId, final AnalysisResult resultDetailsPage) {
         this.tab = tab;
         this.resultDetailsPage = resultDetailsPage;
         this.tabId = tabId;
@@ -35,7 +35,6 @@ public class DetailsTable {
                 .map(WebElement::getText)
                 .collect(
                         Collectors.toList());
-        updateTableRows();
     }
 
     /**
@@ -82,7 +81,7 @@ public class DetailsTable {
      *
      * @return the table row
      */
-    private GenericTableRow getRightTableRow(final WebElement row) {
+    public GenericTableRow getRightTableRow(final WebElement row) {
         return new DetailsTableRow(row);
     }
 

@@ -15,7 +15,7 @@ import com.google.inject.Injector;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
-import io.jenkins.plugins.analysis.warnings.IssuesTable.IssuesTableRowType;
+import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.IssuesTableRowType;
 
 /**
  * {@link PageObject} representing the details page of the static analysis tool results.
@@ -132,11 +132,11 @@ public class AnalysisResult extends PageObject {
      *
      * @return page object of the issues table.
      */
-    public IssuesTable openIssuesTable() {
+    public IssuesDetailsTable openIssuesTable() {
         openTab(Tab.ISSUES);
 
         WebElement issuesTab = find(By.id("issuesContent"));
-        return new IssuesTable(issuesTab, this, getIssuesTableType());
+        return new IssuesDetailsTable(issuesTab, this, getIssuesTableType());
     }
 
     /**
@@ -145,11 +145,11 @@ public class AnalysisResult extends PageObject {
      *
      * @return page object of the categories table.
      */
-    public DetailsTable openCategoriesTable() {
+    public CategoriesDetailsTable openCategoriesTable() {
         openTab(Tab.CATEGORIES);
 
         WebElement categoriesTab = find(By.id("categoryContent"));
-        return new DetailsTable(categoriesTab, "category", this);
+        return new CategoriesDetailsTable(categoriesTab, this);
     }
 
     /**
@@ -158,11 +158,11 @@ public class AnalysisResult extends PageObject {
      *
      * @return page object of the types table.
      */
-    public DetailsTable openTypesTable() {
+    public TypesDetailsTable openTypesTable() {
         openTab(Tab.TYPES);
 
         WebElement categoriesTab = find(By.id("typeContent"));
-        return new DetailsTable(categoriesTab, "type", this);
+        return new TypesDetailsTable(categoriesTab, this);
     }
 
     /**
