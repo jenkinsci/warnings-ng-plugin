@@ -198,7 +198,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         prepareGccLog(job);
         enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
 
-        buildAndVerifyFilesResolving(job, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(job, false, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
     }
 
     /**
@@ -215,22 +215,21 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         recorder.setSourceDirectory(buildsFolder);
 
         // First build: copying the affected file is forbidden
-        buildAndVerifyFilesResolving(job,"0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(job, false,"0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
         AnalysisResult result = getAnalysisResult(job.getLastCompletedBuild());
         assertThat(result.getErrorMessages()).contains(
                 String.format("Additional source directory '%s' must be registered in Jenkins system configuration",
                         buildsFolder));
 
-
         WarningsPluginConfiguration.getInstance().setSourceDirectories(
                 Collections.singletonList(new SourceDirectory(buildsFolder)));
 
         // Second build: copying the affected file is permitted
-        buildAndVerifyFilesResolving(job,"1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(job,true, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
     }
 
-    private void buildAndVerifyFilesResolving(final FreeStyleProject job,
+    private void buildAndVerifyFilesResolving(final FreeStyleProject job, final boolean containsLink,
             final String... resolveMessages) {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
@@ -240,7 +239,12 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         IssuesRow firstRow = getIssuesModel(result, 0);
         assertThat(firstRow.getSeverity()).contains(Severity.WARNING_NORMAL.getName());
-        assertThat(firstRow.getFileName().getDisplay()).contains("config.xml:451");
+        if (containsLink) {
+            assertThat(firstRow.getFileName().getDisplay()).startsWith("<a href=\"");
+            assertThat(firstRow.getFileName().getDisplay()).contains("config.xml:451");
+        } else {
+            assertThat(firstRow.getFileName().getDisplay()).isEqualTo("config.xml:451");
+        }
 
         Issue issue = result.getIssues().get(0);
         assertThat(issue.getBaseName()).isEqualTo("config.xml");
