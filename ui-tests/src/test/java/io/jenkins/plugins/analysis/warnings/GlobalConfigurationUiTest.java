@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.warnings;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -25,10 +24,10 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
     private static final String GCC_ID = "gcc";
 
     @Test
-    public void shouldRunJobWithDifferentSourceCodeDirectory() throws IOException, URISyntaxException {
+    public void shouldRunJobWithDifferentSourceCodeDirectory() throws IOException {
         String homeDir = getHomeDir();
 
-        FreeStyleJob job = initJob();
+        FreeStyleJob job = initJob(homeDir);
 
         // create dynamically built file in target workspace
         createFileInWorkspace(job, homeDir);
@@ -42,9 +41,9 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         verifyGcc(build);
     }
 
-    private FreeStyleJob initJob() {
+    private FreeStyleJob initJob(final String homeDir) {
         FreeStyleJob job = createFreeStyleJob();
-        addRecorder(job);
+        addRecorder(job, homeDir);
         job.save();
         return job;
     }
@@ -92,11 +91,12 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         return homeDir + File.separator + "jobs" + File.separator + job.name;
     }
 
-    private IssuesRecorder addRecorder(final FreeStyleJob job) {
+    private IssuesRecorder addRecorder(final FreeStyleJob job, final String homeDir) {
         return job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("GNU C Compiler (gcc)", gcc -> gcc.setPattern("**/gcc.log"));
             recorder.setEnabledForFailure(true);
             recorder.setSourceCodeEncoding("UTF-8");
+            recorder.setSourceDirectory(getJobDir(homeDir, job));
         });
     }
 
