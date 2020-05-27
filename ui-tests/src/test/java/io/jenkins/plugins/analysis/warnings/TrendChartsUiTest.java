@@ -3,18 +3,31 @@ package io.jenkins.plugins.analysis.warnings;
 import org.junit.jupiter.api.Test;
 
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
+import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Job;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
-public class TrendChartsUiTest extends AbstractJUnitTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/trend_charts_tests/";
 
+/**
+ * Ui test for the Trend Chart Page.
+ *
+ * @author Mitja Oldenbourg
+ */
+@WithPlugins("warnings-ng")
+public class TrendChartsUiTest extends AbstractJUnitTest {
+    private static final String WARNINGS_PLUGIN_PREFIX = "/";
+    private static final String SOURCE_VIEW_FOLDER = WARNINGS_PLUGIN_PREFIX + "trend_charts_tests/";
+
+
+    /**
+     *  Shows new versus fixed TrendCharts.
+     */
     @Test
     public void shouldShowNewVersusFixedTrendChartWithBuildDomain() {
-        FreeStyleJob job = createFreeStyleJob("checkstyle.xml", "pmd.xml");
+        FreeStyleJob job = createFreeStyleJob();
         job.save();
         String jobName = job.name;
         Build build = shouldBuildJobSuccessfully(job);
@@ -23,10 +36,10 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
     }
 
     private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
-        FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
+        FreeStyleJob job = jenkins.jobs.create(FreeStyleJob.class);
         ScrollerUtil.hideScrollerTabBar(driver);
         for (String resource : resourcesToCopy) {
-            job.copyResource(WARNINGS_PLUGIN_PREFIX + resource);
+            job.copyResource(SOURCE_VIEW_FOLDER + resource);
         }
         return job;
     }
