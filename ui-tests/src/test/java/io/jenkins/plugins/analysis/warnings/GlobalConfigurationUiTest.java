@@ -23,6 +23,9 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
 
     private static final String GCC_ID = "gcc";
 
+    /**
+     * Verifies that a source code file will be copied from outside the workspace and linked in the open issues tab.
+     */
     @Test
     public void shouldRunJobWithDifferentSourceCodeDirectory() throws IOException {
         String homeDir = getHomeDir();
