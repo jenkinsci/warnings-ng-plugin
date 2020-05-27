@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd"
+     version="6.21.0" timestamp="2020-04-10T12:31:39.435">
+  <file name="/var/data/workspace/Autograding/src/main/java/io/jenkins/plugins/grading/Score.java">
+    <violation beginline="169" endline="169" begincolumn="32" endcolumn="59" rule="UseVarargs" ruleset="Best Practices" package="io.jenkins.plugins.grading" class="Score" method="aggregateDelta" variable="scores" externalInfoUrl="https://pmd.github.io/pmd-6.21.0/pmd_rules_java_bestpractices.html#usevarargs" priority="4">
+      Consider using varargs for methods or constructors which take an array the last parameter.
+    </violation>
+  </file>
+  <error filename="/var/data/workspace/Autograding/src/main/java/io/jenkins/plugins/grading/AnalysisConfiguration.java" msg="NullPointerException: null">
+    <![CDATA[java.lang.NullPointerException
+	at net.sourceforge.pmd.lang.java.multifile.signature.JavaSigMask.covers(JavaSigMask.java:58)
+	at net.sourceforge.pmd.lang.java.multifile.signature.JavaFieldSigMask.covers(JavaFieldSigMask.java:51)
+	at net.sourceforge.pmd.lang.java.metrics.impl.AbstractJavaClassMetric.countMatchingFieldSigs(AbstractJavaClassMetric.java:79)
+	at net.sourceforge.pmd.lang.java.metrics.impl.NopaMetric.computeFor(NopaMetric.java:33)
+	at net.sourceforge.pmd.lang.java.metrics.impl.NopaMetric.computeFor(NopaMetric.java:19)
+	at net.sourceforge.pmd.lang.metrics.AbstractMetricsComputer.computeForType(AbstractMetricsComputer.java:35)
+	at net.sourceforge.pmd.lang.metrics.AbstractMetricsFacade.computeForType(AbstractMetricsFacade.java:67)
+	at net.sourceforge.pmd.lang.java.metrics.JavaMetrics.get(JavaMetrics.java:59)
+	at net.sourceforge.pmd.lang.java.rule.design.DataClassRule.classRevealsDataAndLacksComplexity(DataClassRule.java:54)
+	at net.sourceforge.pmd.lang.java.rule.design.DataClassRule.visit(DataClassRule.java:30)
+	at net.sourceforge.pmd.lang.java.rule.AbstractJavaMetricsRule.visit(AbstractJavaMetricsRule.java:28)
+	at net.sourceforge.pmd.lang.java.ast.ASTClassOrInterfaceDeclaration.jjtAccept(ASTClassOrInterfaceDeclaration.java:55)
+	at net.sourceforge.pmd.lang.java.rule.AbstractJavaRule.visit(AbstractJavaRule.java:218)
+	at net.sourceforge.pmd.lang.java.rule.AbstractJavaRule.visit(AbstractJavaRule.java:415)
+	at net.sourceforge.pmd.lang.java.ast.ASTTypeDeclaration.jjtAccept(ASTTypeDeclaration.java:39)
+	at net.sourceforge.pmd.lang.java.rule.AbstractJavaRule.visit(AbstractJavaRule.java:218)
+	at net.sourceforge.pmd.lang.java.rule.AbstractJavaRule.visit(AbstractJavaRule.java:390)
+	at net.sourceforge.pmd.lang.java.rule.AbstractJavaRule.visitAll(AbstractJavaRule.java:161)
+	at net.sourceforge.pmd.lang.java.rule.AbstractJavaRule.apply(AbstractJavaRule.java:149)
+	at net.sourceforge.pmd.lang.rule.AbstractDelegateRule.apply(AbstractDelegateRule.java:336)
+	at net.sourceforge.pmd.RuleSet.apply(RuleSet.java:575)
+	at net.sourceforge.pmd.RuleSets.apply(RuleSets.java:143)
+	at net.sourceforge.pmd.SourceCodeProcessor.processSource(SourceCodeProcessor.java:194)
+	at net.sourceforge.pmd.SourceCodeProcessor.processSourceCodeWithoutCache(SourceCodeProcessor.java:107)
+	at net.sourceforge.pmd.SourceCodeProcessor.processSourceCode(SourceCodeProcessor.java:89)
+	at net.sourceforge.pmd.SourceCodeProcessor.processSourceCode(SourceCodeProcessor.java:51)
+	at net.sourceforge.pmd.processor.PmdRunnable.call(PmdRunnable.java:78)
+	at net.sourceforge.pmd.processor.PmdRunnable.call(PmdRunnable.java:24)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:748)
+]]>
+  </error>
+</pmd>
