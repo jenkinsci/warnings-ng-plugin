@@ -22,6 +22,9 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 public class GlobalConfigurationUiTest extends AbstractUiTest {
 
     private static final String GCC_ID = "gcc";
+    private static final String PEP8_ID = "pep8-groovy";
+
+    private static final String PEP_FILE = "pep8Test.txt";
 
     /**
      * Verifies that a source code file will be copied from outside the workspace and linked in the open issues tab.
@@ -30,33 +33,72 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
     public void shouldRunJobWithDifferentSourceCodeDirectory() throws IOException {
         String homeDir = getHomeDir();
 
-        FreeStyleJob job = initJob(homeDir);
+        FreeStyleJob job = createFreeStyleJob();
+        addGccRecorder(job, homeDir);
+        job.save();
 
-        // create dynamically built file in target workspace
         createFileInWorkspace(job, homeDir);
 
-        // set global settings
-        initGlobalSettings(job);
+        initGlobalSettingsForSourceDirectory(job);
 
-        // start building and verifying result
         Build build = buildJob(job);
 
         verifyGcc(build);
     }
 
-    private FreeStyleJob initJob(final String homeDir) {
-        FreeStyleJob job = createFreeStyleJob();
-        addRecorder(job, homeDir);
+    /**
+     * Verifies that a custom groovy script is correctly executed.
+     */
+    @Test
+    public void ShouldRunJobWithGroovyConfiguration() {
+        initGlobalSettingsForGroovyParser();
+
+        FreeStyleJob job = createFreeStyleJob("groovy_parser/" + PEP_FILE);
+        addGroovyRecorder(job);
         job.save();
-        return job;
+
+        Build build = buildJob(job);
+
+        verifyPep8(build);
     }
 
-    private void initGlobalSettings(final FreeStyleJob job) {
+    private void initGlobalSettingsForSourceDirectory(final FreeStyleJob job) {
         GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
         settings.configure();
         String homeDir = settings.getHomeDirectory();
         String jobDir = getJobDir(homeDir, job);
         settings.enterSourceDirectoryPath(jobDir);
+        settings.save();
+    }
+
+    private void initGlobalSettingsForGroovyParser() {
+        GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
+        settings.configure();
+        GroovyConfiguration groovyConfiguration = settings.openGroovyConfiguration();
+        groovyConfiguration.enterName("Pep8 Groovy Parser");
+        groovyConfiguration.enterId("pep8-groovy");
+        groovyConfiguration.enterRegex("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)");
+        groovyConfiguration.enterScript("import edu.hm.hafner.analysis.Severity\n"
+                + "\n"
+                + "String message = matcher.group(5)\n"
+                + "String category = matcher.group(4)\n"
+                + "Severity severity\n"
+                + "if (category.contains(\"E\")) {\n"
+                + "    severity = Severity.WARNING_NORMAL\n"
+                + "}else {\n"
+                + "    severity = Severity.WARNING_LOW\n"
+                + "}\n"
+                + "\n"
+                + "return builder.setFileName(matcher.group(1))\n"
+                + "    .setLineStart(Integer.parseInt(matcher.group(2)))\n"
+                + "    .setColumnStart(Integer.parseInt(matcher.group(3)))\n"
+                + "    .setCategory(category)\n"
+                + "    .setMessage(message)\n"
+                + "    .setSeverity(severity)\n"
+                + "    .buildOptional()");
+
+        groovyConfiguration.enterExampleLogMessage("optparse.py:69:11: E401 multiple imports on one line");
+
         settings.save();
     }
 
@@ -94,12 +136,20 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         return homeDir + File.separator + "jobs" + File.separator + job.name;
     }
 
-    private IssuesRecorder addRecorder(final FreeStyleJob job, final String homeDir) {
-        return job.addPublisher(IssuesRecorder.class, recorder -> {
+    private void addGccRecorder(final FreeStyleJob job, final String homeDir) {
+        job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("GNU C Compiler (gcc)", gcc -> gcc.setPattern("**/gcc.log"));
             recorder.setEnabledForFailure(true);
             recorder.setSourceCodeEncoding("UTF-8");
             recorder.setSourceDirectory(getJobDir(homeDir, job));
+        });
+    }
+
+    private void addGroovyRecorder(final FreeStyleJob job) {
+        job.addPublisher(IssuesRecorder.class, recorder -> {
+            recorder.setTool("Groovy Parser", gp -> gp.setPattern("**/*" + PEP_FILE));
+            recorder.setEnabledForFailure(true);
+            ;
         });
     }
 
@@ -112,9 +162,39 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
                 .hasInfoType(InfoType.INFO);
 
         AnalysisResult gccDetails = gcc.openOverallResult();
-        assertThat(gccDetails).hasActiveTab(Tab.ISSUES);
+        assertThat(gccDetails).hasActiveTab(Tab.ISSUES)
+                .hasOnlyAvailableTabs(Tab.ISSUES);
 
         IssuesTableRow row = gccDetails.openIssuesTable().getRowAs(0, IssuesTableRow.class);
         assertThat(row.getFileLink()).isNotNull();
+    }
+
+    private void verifyPep8(final Build build) {
+        build.open();
+        AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
+        assertThat(pep8).isDisplayed()
+                .hasTitleText("Pep8 Groovy Parser: 8 warnings")
+                .hasReferenceBuild(0)
+                .hasInfoType(InfoType.ERROR);
+
+        AnalysisResult pep8details = pep8.openOverallResult();
+        assertThat(pep8details).hasActiveTab(Tab.CATEGORIES)
+                .hasTotal(8)
+                .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
+
+        pep8details.openTab(Tab.ISSUES);
+        IssuesTable issuesTable = pep8details.openIssuesTable();
+        assertThat(issuesTable).hasSize(8);
+
+        long NormalIssueCount = issuesTable.getTableRows().stream()
+                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
+                .filter(severity -> severity.equals("Normal")).count();
+
+        long LowIssueCount = issuesTable.getTableRows().stream()
+                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
+                .filter(severity -> severity.equals("Low")).count();
+
+        assertThat(NormalIssueCount).isEqualTo(6);
+        assertThat(LowIssueCount).isEqualTo(2);
     }
 }
