@@ -4,10 +4,6 @@ import java.util.List;
 
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.google.inject.internal.cglib.core.$DefaultGeneratorStrategy;
-
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.Actionable;
 import hudson.model.FreeStyleProject;
@@ -17,6 +13,7 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.AggregatedTrendAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.JobAction;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -36,19 +33,20 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Ullrich Hafner
  */
 public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
-    private static final String AGGREGATION = "Aggregated Analysis Results";
     private static final String ECLIPSE = "Eclipse ECJ Warnings Trend";
-    private static final String CHECKSTYLEW = "CheckStyle Warnings Trend";
+    private static final String CHECKSTYLE = "CheckStyle Warnings Trend";
     private static final String ANALYSIS_ICON = "analysis-24x24";
     private static final String CHECKSTYLE_ICON = "checkstyle-24x24";
     private static final String ECLIPSE_URL_NAME = "eclipse";
+    private static final String ECLIPSE_LOG = "eclipse.txt";
+    private static final String CHECKSTYLE_XML = "checkstyle.xml";
 
     /**
      * Verifies that the trend chart is visible if there are two valid builds available.
      */
     @Test
     public void shouldShowTrendChart() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(ECLIPSE_LOG);
         enableEclipseWarnings(project);
 
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
@@ -58,9 +56,9 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         List<JobAction> jobActions = project.getActions(JobAction.class);
 
         assertThatTrendChartIsHidden(jobActions.get(0)); // trend chart requires at least two builds
-
         assertThat(jobActions.get(0).getIconFileName()).contains(ANALYSIS_ICON);
         assertThat(jobActions.get(0).getUrlName()).isEqualTo(ECLIPSE_URL_NAME);
+
         build = buildWithResult(project, Result.SUCCESS);
         assertActionProperties(project, build);
 
@@ -76,8 +74,8 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldShowTrendsAndAggregationFreestyle() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
-        enableWarnings(project, new Eclipse(), new CheckStyle());
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(ECLIPSE_LOG, CHECKSTYLE_XML);
+        enableWarnings(project, createEclipse(), createCheckStyle());
 
         buildWithResult(project, Result.SUCCESS);
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
@@ -99,12 +97,20 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatAggregationChartDoesNotExists(project);
     }
 
+    private ReportScanningTool createCheckStyle() {
+        return configurePattern(new CheckStyle());
+    }
+
+    private ReportScanningTool createEclipse() {
+        return configurePattern(new Eclipse());
+    }
+
     /**
      * Verifies that the aggregation trend chart is visible for a pipeline job at the top, or bottom, or hidden.
      */
     @Test
     public void shouldShowTrendsAndAggregationPipeline() {
-        WorkflowJob job = createPipelineWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
+        WorkflowJob job = createPipelineWithWorkspaceFiles(ECLIPSE_LOG, CHECKSTYLE_XML);
         job.setDefinition(
                 asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
                         "publishIssues issues:[checkstyle], trendChartType: 'TOOLS_AGGREGATION'",
@@ -139,8 +145,8 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private FreeStyleProject createAggregationJob(final TrendChartType chart) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt", "checkstyle.xml");
-        enableWarnings(project, r -> r.setTrendChartType(chart), new Eclipse(), new CheckStyle());
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(ECLIPSE_LOG, CHECKSTYLE_XML);
+        enableWarnings(project, r -> r.setTrendChartType(chart), createEclipse(), createCheckStyle());
 
         buildWithResult(project, Result.SUCCESS);
         Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
@@ -153,7 +159,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldHaveSidebarLinkEvenWhenLastActionHasNoResults() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(ECLIPSE_LOG);
         enableWarnings(project, createTool(new Eclipse(), "**/no-valid-pattern"));
 
         AnalysisResult emptyResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
@@ -161,67 +167,17 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
 
         JobAction jobAction = project.getAction(JobAction.class);
         assertThat(jobAction).isNotNull();
-
-        HtmlPage jobPage = getWebPage(JavaScriptSupport.JS_DISABLED, project);
-
-        assertThatSidebarLinkIsVisibleAndOpensLatestResults(jobPage, emptyResult.getOwner());
     }
 
-    /**
-     * Verifies that the actions are correctly picked if there are two different analysis tools used.
-     */
-    @Test
-    public void shouldChooseCorrectResultsForTwoTools() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        enableWarnings(project,
-                createTool(new CheckStyle(), "nothing.found"),
-                configurePattern(new Eclipse()));
-
-        Run<?, ?> build = buildWithResult(project, Result.SUCCESS);
-
-        List<ResultAction> resultActions = build.getActions(ResultAction.class);
-        assertThat(resultActions).hasSize(2);
-
-        List<JobAction> jobActions = project.getActions(JobAction.class);
-        assertThat(jobActions).hasSize(2);
-
-        JobAction checkstyle;
-        JobAction eclipse;
-
-        if ("checkstyle".equals(jobActions.get(0).getUrlName())) {
-            checkstyle = jobActions.get(0);
-            eclipse = jobActions.get(1);
-        }
-        else {
-            checkstyle = jobActions.get(1);
-            eclipse = jobActions.get(0);
-        }
-
-        assertThat(checkstyle.getOwner()).isSameAs(project);
-        assertThat(checkstyle.getIconFileName()).contains(CHECKSTYLE_ICON);
-
-        assertThat(eclipse.getOwner()).isSameAs(project);
-        assertThat(eclipse.getIconFileName()).contains(ANALYSIS_ICON);
-    }
-
-    private void assertThatSidebarLinkIsVisibleAndOpensLatestResults(final HtmlPage jobPage, final Run<?, ?> build) {
-        StaticAnalysisLabelProvider labelProvider = new Eclipse().getLabelProvider();
-        assertThat(findImageLinks(jobPage)).hasSize(1);
-        List<DomElement> sideBarLinks = findSideBarLinks(jobPage);
-        assertThat(sideBarLinks).hasSize(1);
-        HtmlPage results = clickOnLink(sideBarLinks.get(0));
-        assertThat(results.getBaseURI()).endsWith(build.getUrl() + labelProvider.getId() + "/");
-    }
-
-    private void assertThatTrendChartIsVisible(AsyncTrendChart trendChart) {
+    private void assertThatTrendChartIsVisible(final AsyncTrendChart trendChart) {
         assertThat(trendChart.isTrendVisible()).isTrue();
     }
 
-    private void assertThatTrendChartIsHidden(AsyncTrendChart trendChart) {
+    private void assertThatTrendChartIsHidden(final AsyncTrendChart trendChart) {
         assertThat(trendChart.isTrendVisible()).isFalse();
     }
 
-    private void assertThatCheckstyleAndEclipseChartExist(Actionable actionable, boolean shouldChartBeVisible) {
+    private void assertThatCheckstyleAndEclipseChartExist(final Actionable actionable, final boolean shouldChartBeVisible) {
         List<JobAction> jobActions = actionable.getActions(JobAction.class);
         assertThat(jobActions).hasSize(2);
 
@@ -238,7 +194,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         }
         assertThat(eclipse.getTrendName()).isEqualTo(ECLIPSE);
         assertThat(eclipse.getIconFileName()).contains(ANALYSIS_ICON);
-        assertThat(checkstyle.getTrendName()).isEqualTo(CHECKSTYLEW);
+        assertThat(checkstyle.getTrendName()).isEqualTo(CHECKSTYLE);
         assertThat(checkstyle.getIconFileName()).contains(CHECKSTYLE_ICON);
 
         if (shouldChartBeVisible) {
@@ -251,7 +207,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
-    private void assertThatAggregationChartExists(Actionable actionable, boolean shouldChartBeVisible) {
+    private void assertThatAggregationChartExists(final Actionable actionable, final boolean shouldChartBeVisible) {
         AggregatedTrendAction aggregatedTrendAction = actionable.getAction(AggregatedTrendAction.class);
         assertThat(aggregatedTrendAction.getUrlName()).isEqualTo("warnings-aggregation");
         if (shouldChartBeVisible) {
@@ -262,7 +218,7 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
-    private void assertThatAggregationChartDoesNotExists(Actionable actionable) {
+    private void assertThatAggregationChartDoesNotExists(final Actionable actionable) {
         List<AggregatedTrendAction> aggregatedTrendActions = actionable.getActions(AggregatedTrendAction.class);
         assertThat(aggregatedTrendActions).hasSize(0);
     }
@@ -280,17 +236,5 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction.getUrlName()).isEqualTo(labelProvider.getId());
         assertThat(jobAction.getOwner()).isEqualTo(project);
         assertThat(jobAction.getIconFileName()).endsWith(labelProvider.getSmallIconUrl());
-    }
-
-    private List<DomElement> findSideBarLinks(final HtmlPage jobPage) {
-        return findLinks(jobPage, "task-link");
-    }
-
-    private List<DomElement> findImageLinks(final HtmlPage jobPage) {
-        return findLinks(jobPage, "task-icon-link");
-    }
-
-    private List<DomElement> findLinks(final HtmlPage jobPage, final String classValue) {
-        return jobPage.getByXPath("//a[@class=\"" + classValue + "\" and contains(@href,\"eclipse\")]");
     }
 }
