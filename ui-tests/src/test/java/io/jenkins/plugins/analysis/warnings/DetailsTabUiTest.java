@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -17,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Integration tests for the details tab part of issue overview page.
  *
  * @author Kevin Richter
+ * @author Simon Schönwiese
  */
 @WithPlugins("warnings-ng")
 public class DetailsTabUiTest extends AbstractJUnitTest {
@@ -100,6 +102,60 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         // reload page
         resultPage.open();
         assertThat(resultPage.getActiveTab()).isEqualTo(Tab.TYPES);
+    }
+
+    /**
+     * When having a larger checkstyle result, the table should display all Tabs, tables and pages correctly and should
+     * be able to change the page.
+     */
+    @Test
+    public void shouldWorkWithMultipleTabsAndPages() {
+        FreeStyleJob job = createFreeStyleJob("../checkstyle-result.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
+        job.save();
+
+        Build build = job.startBuild().waitUntilFinished();
+        assertThat(build.isSuccess()).isTrue();
+
+        AnalysisResult resultPage = new AnalysisResult(build, "checkstyle");
+        resultPage.open();
+
+        Collection<Tab> tabs = resultPage.getAvailableTabs();
+        assertThat(tabs).containsExactlyInAnyOrder(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
+
+        CategoriesDetailsTable categoriesDetailsTable = resultPage.openCategoriesTable();
+        assertThat(categoriesDetailsTable.getHeaders()).containsExactlyInAnyOrder("Category", "Total", "Distribution");
+        assertThat(categoriesDetailsTable.getSize()).isEqualTo(5);
+        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(5);
+
+        TypesDetailsTable typesDetailsTable = resultPage.openTypesTable();
+        assertThat(typesDetailsTable.getHeaders()).containsExactlyInAnyOrder("Type", "Total", "Distribution");
+        assertThat(typesDetailsTable.getSize()).isEqualTo(7);
+        assertThat(typesDetailsTable.getTotal()).isEqualTo(7);
+
+        IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
+        assertThat(issuesDetailsTable.getHeaders()).containsExactlyInAnyOrder("Details", "File", "Category", "Type",
+                "Severity", "Age");
+        assertThat(issuesDetailsTable.getSize()).isEqualTo(10);
+        assertThat(issuesDetailsTable.getTotal()).isEqualTo(11);
+
+        List<GenericTableRow> tableRowListIssues = issuesDetailsTable.getTableRows();
+        IssuesTableRow firstRow = (IssuesTableRow) tableRowListIssues.get(0);
+        firstRow.toggleDetailsRow();
+
+        issuesDetailsTable.openTablePage(2);
+        assertThat(issuesDetailsTable.getSize()).isEqualTo(1);
+
+        tableRowListIssues = issuesDetailsTable.getTableRows();
+        IssuesTableRow lastIssueTableRow = (IssuesTableRow) tableRowListIssues.get(0);
+        assertThat(lastIssueTableRow.getSeverity()).isEqualTo("Error");
+        AnalysisResult analysisResult = lastIssueTableRow.clickOnSeverityLink();
+        IssuesDetailsTable errorIssuesDetailsTable = analysisResult.openIssuesTable();
+        assertThat(errorIssuesDetailsTable.getSize()).isEqualTo(6);
+        for (int i = 0; i < errorIssuesDetailsTable.getSize(); i++) {
+            IssuesTableRow row = (IssuesTableRow) errorIssuesDetailsTable.getTableRows().get(i);
+            assertThat(row.getSeverity()).isEqualTo("Error");
+        }
     }
 
     private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {

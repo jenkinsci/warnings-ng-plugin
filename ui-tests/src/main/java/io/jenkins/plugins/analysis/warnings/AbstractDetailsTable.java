@@ -148,4 +148,16 @@ public abstract class AbstractDetailsTable {
     public AnalysisResult clickFilterLinkOnSite(final WebElement element) {
         return resultDetailsPage.openFilterLinkOnSite(element);
     }
+
+    /**
+     * Performs a click on the page button to open the page of the table
+     *
+     * @param pageNumber
+     *         the number representing the page to open
+     *
+     */
+    public void openTablePage(final int pageNumber) {
+        resultDetailsPage.clickLink(String.valueOf(pageNumber));
+        this.updateTableRows();
+    }
 }
