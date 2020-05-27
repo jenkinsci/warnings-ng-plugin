@@ -10,8 +10,6 @@ import org.junit.Test;
 import org.jvnet.hudson.test.CreateFileBuilder;
 import org.jvnet.hudson.test.Issue;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
@@ -20,21 +18,16 @@ import hudson.plugins.git.GitSCM;
 import jenkins.plugins.git.GitSampleRepoRule;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.AnalysisResultAssert;
 import io.jenkins.plugins.analysis.core.model.BlamesModel.BlamesRow;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.warnings.Java;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
-import io.jenkins.plugins.datatables.TablePageObject;
-import io.jenkins.plugins.datatables.TableRowPageObject;
 import io.jenkins.plugins.forensics.blame.Blamer;
 
-import static io.jenkins.plugins.forensics.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Tests the {@link Blamer GitBlamer} in several jobs that uses a real Git repository.
@@ -48,8 +41,8 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     private static final String FILE = "File";
     private static final String AGE = "Age";
     private static final String AUTHOR = "Author";
-    private static final String EMAIL = "Email"; 
-    private static final String COMMIT = "Commit"; 
+    private static final String EMAIL = "Email";
+    private static final String COMMIT = "Commit";
     private static final String ADDED = "Added";
 
     /** The Git repository for the test. */
@@ -87,7 +80,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
-        assertThat(result.getBlames()).isEmpty();
+        assertThat(result.getBlames().getFiles()).isEmpty();
         assertThat(result.getInfoMessages()).contains("Skipping SCM blames as requested");
     }
 
@@ -224,64 +217,13 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Verifies that the table can be filtered by text.
-     *
-     * @throws Exception
-     *         if there is a problem with the git repository
-     */
-    @Test
-    public void shouldFilterTable() throws Exception {
-        Map<String, String> commits = createGitRepository();
-
-        createAndCommitFile("Jenkinsfile", "node {\n"
-                + "  stage ('Checkout') {\n"
-                + "    checkout scm\n"
-                + "  }\n"
-                + "  stage ('Build and Analysis') {"
-                + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] Test.java:4: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
-                + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
-                + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
-                + "    recordIssues tools: [java()]\n"
-                + "  }\n"
-                + "}");
-
-        WorkflowJob project = createPipeline();
-        project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
-
-        AnalysisResult result = scheduleSuccessfulBuild(project);
-        assertSuccessfulBlame(result, 11, 3);
-
-        TablePageObject table = getBlamesTable(result);
-
-        Run<?, ?> build = buildSuccessfully(project);
-        TableModel tableModel = getBlamesTableModel(build);
-        assertElevenIssues(commits, tableModel);
-
-        table.filter("LoremIpsum.java");
-        assertThat(table.getInfo()).isEqualTo("Showing 1 to 4 of 4 entries (filtered from 11 total entries)");
-        List<TableRowPageObject> rows = table.getRows();
-        assertThat(rows).hasSize(4);
-        assertColumnsOfRowLoremIpsum(rows.get(0), 1, commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(rows.get(1), 2, commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(rows.get(2), 3, commits.get("LoremIpsum"));
-        assertColumnsOfRowLoremIpsum(rows.get(3), 4, commits.get("LoremIpsum"));
-    }
-
-    /**
      * Test if blaming works on a build out of tree. See JENKINS-57260.
      *
      * @throws Exception
      *         if there is a problem with the git repository
      */
-    @Test @Issue("JENKINS-57260")
+    @Test
+    @Issue("JENKINS-57260")
     public void shouldBlameWithBuildOutOfTree() throws Exception {
         gitRepo.init();
         createAndCommitFile("Test.h", "#ifdef \"");
@@ -331,19 +273,11 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(row.getDescription()).contains("Unexpected character");
         assertThat(row.getFileName().getSort()).isEqualTo("Test.h:0000001");
-        assertThat(row.getAuthor()).isEqualTo("Git SampleRepoRule");
-        assertThat(row.getEmail()).isEqualTo("gits@mplereporule");
-        assertThat(row.getCommit()).isEqualTo(firstCommit);
         assertThat(row.getAge()).contains("1");
-    }
 
-    private TablePageObject getBlamesTable(final AnalysisResult result) {
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-
-        DetailsTab detailsTab = new DetailsTab(page);
-        assertThat(detailsTab.getTabTypes()).contains(TabType.BLAMES);
-
-        return detailsTab.select(TabType.BLAMES);
+        assertThat(row).hasAuthor("Git SampleRepoRule")
+                .hasEmail("gits@mplereporule")
+                .hasCommit(firstCommit);
     }
 
     private TableModel getBlamesTableModel(final Run<?, ?> build) {
@@ -352,13 +286,11 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     private void assertSuccessfulBlame(final AnalysisResult result, final int numberOfIssues, final int numberOfFiles) {
-        AnalysisResultAssert.assertThat(result).hasNoErrorMessages();
-        AnalysisResultAssert.assertThat(result).hasTotalSize(numberOfIssues);
-        AnalysisResultAssert.assertThat(result)
-                .hasInfoMessages(
-                        "Invoking Git blamer to create author and commit information for " + numberOfFiles
-                                + " affected files",
-                        "-> blamed authors of issues in " + numberOfFiles + " files");
+        assertThat(result).hasNoErrorMessages();
+        assertThat(result).hasTotalSize(numberOfIssues);
+        assertThat(result).hasInfoMessages(
+                "Invoking Git blamer to create author and commit information for " + numberOfFiles + " affected files",
+                "-> blamed authors of issues in " + numberOfFiles + " files");
     }
 
     private void assertColumnHeaders(final TableModel table) {
@@ -379,40 +311,22 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     private void assertColumnsOfTest(final BlamesRow row, final String commit, final int lineNumber) {
         assertThat(row.getDescription()).contains("Test Warning for Jenkins");
         assertThat(row.getFileName().getSort()).isEqualTo("Test.java:000000" + lineNumber);
-        assertThat(row.getAuthor()).isEqualTo("Git SampleRepoRule");
-        assertThat(row.getEmail()).isEqualTo("gits@mplereporule");
-        assertThat(row.getCommit()).isEqualTo(commit);
         assertThat(row.getAge()).contains("1");
+        assertThat(row).hasAuthor("Git SampleRepoRule").hasEmail("gits@mplereporule").hasCommit(commit);
     }
 
-    private void assertColumnsOfRowLoremIpsum(final BlamesRow row,  final String commitId, final int lineNumber) {
+    private void assertColumnsOfRowLoremIpsum(final BlamesRow row, final String commitId, final int lineNumber) {
         assertThat(row.getDescription()).contains("Another Warning for Jenkins");
         assertThat(row.getFileName().getSort()).isEqualTo("LoremIpsum.java:000000" + lineNumber);
-        assertThat(row.getAuthor()).isEqualTo("John Doe");
-        assertThat(row.getEmail()).isEqualTo("john@doe");
-        assertThat(row.getCommit()).isEqualTo(commitId);
         assertThat(row.getAge()).contains("1");
+        assertThat(row).hasAuthor("John Doe").hasEmail("john@doe").hasCommit(commitId);
     }
-
-    // For filtering
-    private void assertColumnsOfRowLoremIpsum(final TableRowPageObject row, final int lineNumber, final String commitId) {
-        assertThat(row.getValuesByColumnLabel()).contains(
-                entry(DETAILS, "Another Warning for Jenkins"),
-                entry(FILE, "LoremIpsum.java:" + lineNumber),
-                entry(AUTHOR, "John Doe"),
-                entry(EMAIL, "john@doe"),
-                entry(COMMIT, commitId),
-                entry(AGE, "1")).containsKey(ADDED);
-    }
-
 
     private void assertColumnsOfRowBob(final BlamesRow row, final String commitId, final int lineNumber) {
         assertThat(row.getDescription()).contains("Bobs Warning for Jenkins");
         assertThat(row.getFileName().getSort()).isEqualTo("Bob.java:000000" + lineNumber);
-        assertThat(row.getAuthor()).isEqualTo("Alice Miller");
-        assertThat(row.getEmail()).isEqualTo("alice@miller");
-        assertThat(row.getCommit()).isEqualTo(commitId);
         assertThat(row.getAge()).contains("1");
+        assertThat(row).hasAuthor("Alice Miller").hasEmail("alice@miller").hasCommit(commitId);
     }
 
     private void assertElevenIssues(final Map<String, String> commits, final TableModel table) {
