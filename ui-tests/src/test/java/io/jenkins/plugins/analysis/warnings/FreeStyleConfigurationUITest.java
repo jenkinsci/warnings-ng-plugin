@@ -8,7 +8,7 @@ import io.jenkins.plugins.analysis.warnings.IssuesRecorder.TrendChartType;
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
- * Acceptance tests for the Warnings Next Generation Plugin.
+ * Acceptance tests for the Freestyle configuration of the Warnings Next Generation Plugin.
 
  */
 @WithPlugins("warnings-ng")
@@ -19,7 +19,7 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
     private static final String ENCODING = "UTF-8";
     private static final String REFERENCE = "reference";
     private static final String SOURCE_DIRECTORY = "relative";
-    private static final String SERVERITY = "NORMAL";
+    private static final String SEVERITY = "NORMAL";
 
     /**
      * Verifies that job configuration screen correctly modifies the properties of an {@link IssuesRecorder} instance.
@@ -44,28 +44,28 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         issuesRecorder.setIgnoreFailedBuilds(true);
         issuesRecorder.setFailOnError(true);
         issuesRecorder.setReferenceJobField(REFERENCE);
-        issuesRecorder.setHealthReport(1, 9, SERVERITY);
+        issuesRecorder.setHealthReport(1, 9, SEVERITY);
         issuesRecorder.setReportFilePattern(PATTERN);
 
 
         job.save();
         job.configure();
         issuesRecorder.openAdvancedOptions();
-        assertThat(issuesRecorder.getSourceCodeEncoding()).isEqualTo(ENCODING);
-        assertThat(issuesRecorder.getSourceDirectory()).isEqualTo(SOURCE_DIRECTORY);
-        assertThat(issuesRecorder.getAggregatingResults()).isTrue();
-        assertThat(issuesRecorder.getTrendChartType()).isEqualTo(TrendChartType.TOOLS_ONLY.toString());
-        assertThat(issuesRecorder.getBlameDisabled()).isTrue();
-        assertThat(issuesRecorder.getForensicsDisabled()).isTrue();
-        assertThat(issuesRecorder.getEnabledForFailure()).isTrue();
-        assertThat(issuesRecorder.getIgnoreQualityGate()).isTrue();
-        assertThat(issuesRecorder.getIgnoreFailedBuilds()).isTrue();
-        assertThat(issuesRecorder.getFailOnError()).isTrue();
-        assertThat(issuesRecorder.getReferenceJobField()).isEqualTo(REFERENCE);
-        assertThat(issuesRecorder.getHealthThreshold()).isEqualTo("1");
-        assertThat(issuesRecorder.getUnhealthyThreshold()).isEqualTo("9");
-        assertThat(issuesRecorder.getHealthSeverity()).isEqualTo(SERVERITY);
-        assertThat(issuesRecorder.getReportFilePattern()).isEqualTo(PATTERN);
+        assertThat(issuesRecorder).hasSourceCodeEncoding(ENCODING);
+        assertThat(issuesRecorder).hasSourceDirectory(SOURCE_DIRECTORY);
+        assertThat(issuesRecorder).hasAggregatingResults(true);
+        assertThat(issuesRecorder).hasTrendChartType(TrendChartType.TOOLS_ONLY.toString());
+        assertThat(issuesRecorder).hasBlameDisabled(true);
+        assertThat(issuesRecorder).hasForensicsDisabled(true);
+        assertThat(issuesRecorder).hasEnabledForFailure(true);
+        assertThat(issuesRecorder).hasIgnoreQualityGate(true);
+        assertThat(issuesRecorder).hasIgnoreFailedBuilds(true);
+        assertThat(issuesRecorder).hasFailOnError(true);
+        assertThat(issuesRecorder).hasReferenceJobField(REFERENCE);
+        assertThat(issuesRecorder).hasHealthThreshold("1");
+        assertThat(issuesRecorder).hasUnhealthyThreshold("9");
+        assertThat(issuesRecorder).hasHealthSeverity(SEVERITY);
+        assertThat(issuesRecorder).hasReportFilePattern(PATTERN);
 
         // Now invert all booleans:
         issuesRecorder.setAggregatingResults(false);
@@ -79,14 +79,12 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         job.configure();
         issuesRecorder.openAdvancedOptions();
 
-        assertThat(issuesRecorder.getAggregatingResults()).isFalse();
-        assertThat(issuesRecorder.getBlameDisabled()).isFalse();
-        assertThat(issuesRecorder.getForensicsDisabled()).isFalse();
-        assertThat(issuesRecorder.getEnabledForFailure()).isFalse();
-        assertThat(issuesRecorder.getIgnoreQualityGate()).isFalse();
-        assertThat(issuesRecorder.getIgnoreFailedBuilds()).isFalse();
-        assertThat(issuesRecorder.getFailOnError()).isFalse();
+        assertThat(issuesRecorder).hasAggregatingResults(false);
+        assertThat(issuesRecorder).hasBlameDisabled(false);
+        assertThat(issuesRecorder).hasForensicsDisabled(false);
+        assertThat(issuesRecorder).hasEnabledForFailure(false);
+        assertThat(issuesRecorder).hasIgnoreQualityGate(false);
+        assertThat(issuesRecorder).hasIgnoreFailedBuilds(false);
+        assertThat(issuesRecorder).hasFailOnError(false);
     }
 }
-
-

@@ -162,47 +162,17 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return addTool(toolName, tool -> tool.setPattern(pattern));
     }
 
-    /**
-     * Returns the value of the Source code encoding field
-     *
-     * @return the source code encoding
-     */
-    public String getSourceCodeEncoding(){return sourceCodeEncoding.get();}
+    public String getSourceCodeEncoding(){return sourceCodeEncoding.get(); }
 
-    /**
-     * Returns if the run always / enabled for failure checkbox is checked
-     *
-     * @return the enabled for failure checkbox value
-     */
-    public boolean getEnabledForFailure(){return enabledForFailureCheckBox.resolve().isSelected();}
+    public boolean getEnabledForFailure(){return enabledForFailureCheckBox.resolve().isSelected(); }
 
-    /**
-     * Returns  if the aggregate results checkbox is checked
-     *
-     * @return the aggregate results checkbox value
-     */
-    public boolean getAggregatingResults(){return aggregatingResultsCheckBox.resolve().isSelected();}
+    public boolean getAggregatingResults(){return aggregatingResultsCheckBox.resolve().isSelected(); }
 
-    /**
-     * Returns if the ignore quality gate checkbox is checked
-     *
-     * @return the ignore quality gate checkbox value
-     */
-    public boolean getIgnoreQualityGate(){return ignoreQualityGate.resolve().isSelected();}
+    public boolean getIgnoreQualityGate(){return ignoreQualityGate.resolve().isSelected(); }
 
-    /**
-     * Returns if
-     *  TODO What checkbox is this?
-     * @return
-     */
-    public String getOverallResultMustBeSuccess(){return overallResultMustBeSuccessCheckBox.get();}
+    public String getOverallResultMustBeSuccess(){return overallResultMustBeSuccessCheckBox.get(); }
 
-    /**
-     * Returns the value of the reference job field
-     *
-     * @return the reference job value
-     */
-    public String getReferenceJobField(){return referenceJobField.get();}
+    public String getReferenceJobField(){return referenceJobField.get(); }
 
     public String getSourceDirectory() {
         return sourceDirectory.get();
