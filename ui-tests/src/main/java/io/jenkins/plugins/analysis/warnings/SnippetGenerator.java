@@ -3,8 +3,6 @@ package io.jenkins.plugins.analysis.warnings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import edu.hm.hafner.analysis.Severity;
-
 import org.jenkinsci.test.acceptance.po.Control;
 import org.jenkinsci.test.acceptance.po.PageAreaImpl;
 import org.jenkinsci.test.acceptance.po.PageObject;
@@ -218,10 +216,10 @@ public class SnippetGenerator extends PageObject {
          *         health severities
          */
         public IssuesRecorder setHealthReport(final int healthy, final int unhealthy,
-                final Severity minimumSeverity) {
+                final String minimumSeverity) {
             healthyThresholdInput.set(Integer.toString(healthy));
             unhealthyThresholdInput.set(Integer.toString(unhealthy));
-            minimumSeveritySelect.select(minimumSeverity.getName());
+            minimumSeveritySelect.select(minimumSeverity);
             return this;
         }
 

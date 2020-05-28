@@ -2,8 +2,6 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.junit.Test;
 
-import edu.hm.hafner.analysis.Severity;
-
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
@@ -98,7 +96,7 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
         snippetGenerator.selectRecordIssues().setTool("Java")
-                .setHealthReport(1, 9, Severity.WARNING_LOW);
+                .setHealthReport(1, 9, "LOW");
 
         String script = snippetGenerator.generateScript();
 
@@ -117,7 +115,7 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
                 .setBlameDisabled(true)
                 .setForensicsDisabled(true)
                 .setEnabledForFailure(true)
-                .setHealthReport(1, 9, Severity.WARNING_HIGH)
+                .setHealthReport(1, 9, "HIGH")
                 .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
                 .setReferenceJobName("someText")
