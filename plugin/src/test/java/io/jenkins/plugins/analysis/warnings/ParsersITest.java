@@ -72,32 +72,32 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the native parser on a file that contains 9 issues.. */
     @Test
     public void shouldReadNativeFormats() {
-        wrapShouldFindIssuesOfTool(9 + 5 + 5, new WarningsPlugin(), "warnings-issues.xml", "issues.json",
+        shouldFindIssuesOfTool(9 + 5 + 5, new WarningsPlugin(), "warnings-issues.xml", "issues.json",
                 "json-issues.log");
     }
 
     /** Runs the native parser on a file that contains 9 issues.. */
     @Test
     public void shouldReadNativeXmlFormat() {
-        wrapShouldFindIssuesOfTool(9, new WarningsPlugin(), "warnings-issues.xml");
+        shouldFindIssuesOfTool(9, new WarningsPlugin(), "warnings-issues.xml");
     }
 
     /** Runs the native parser on a file that contains 5 issues.. */
     @Test
     public void shouldReadNativeJsonFormat() {
-        wrapShouldFindIssuesOfTool(5, new WarningsPlugin(), "issues.json");
+        shouldFindIssuesOfTool(5, new WarningsPlugin(), "issues.json");
     }
 
     /** Runs the native parser on a file that contains 8 issues.. */
     @Test
     public void shouldReadNativeJsonLogFormat() {
-        wrapShouldFindIssuesOfTool(5, new WarningsPlugin(), "json-issues.log");
+        shouldFindIssuesOfTool(5, new WarningsPlugin(), "json-issues.log");
     }
 
     /** Verifies that a broken file does not fail. */
     @Test
     public void shouldSilentlyIgnoreWrongFile() {
-        wrapShouldFindIssuesOfTool(0, new CheckStyle(), "sun_checks.xml");
+        shouldFindIssuesOfTool(0, new CheckStyle(), "sun_checks.xml");
     }
 
     /**
@@ -108,56 +108,56 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindAllIssuesForCheckStyleAlias() {
         for (ReportScanningTool tool : Arrays.asList(new Detekt(), new EsLint(), new KtLint(), new PhpCodeSniffer(),
                 new SwiftLint(), new TsLint())) {
-            wrapShouldFindIssuesOfTool(6, tool, "checkstyle.xml");
+            shouldFindIssuesOfTool(6, tool, "checkstyle.xml");
         }
     }
 
     /** Runs the Iar parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllCmakeIssues() {
-        wrapShouldFindIssuesOfTool(8, new Cmake(), "cmake.txt");
+        shouldFindIssuesOfTool(8, new Cmake(), "cmake.txt");
     }
 
     /** Runs the Iar parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllCargoIssues() {
-        wrapShouldFindIssuesOfTool(2, new Cargo(), "CargoCheck.json");
+        shouldFindIssuesOfTool(2, new Cargo(), "CargoCheck.json");
     }
 
     /** Runs the Iar parser on an output file that contains 262 issues. */
     @Test
     public void shouldFindAllIssuesForPmdAlias() {
-        wrapShouldFindIssuesOfTool(262, new Infer(), "pmd-6.xml");
+        shouldFindIssuesOfTool(262, new Infer(), "pmd-6.xml");
     }
 
     /** Runs the Iar parser on an output file that contains 262 issues. */
     @Test
     public void shouldFindAllIssuesForMsBuildAlias() {
-        wrapShouldFindIssuesOfTool(6, new PcLint(), "msbuild.txt");
+        shouldFindIssuesOfTool(6, new PcLint(), "msbuild.txt");
     }
 
     /** Runs the Iar parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllYamlLintIssues() {
-        wrapShouldFindIssuesOfTool(4, new YamlLint(), "yamllint.txt");
+        shouldFindIssuesOfTool(4, new YamlLint(), "yamllint.txt");
     }
 
     /** Runs the Iar parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllIarIssues() {
-        wrapShouldFindIssuesOfTool(6, new Iar(), "iar.txt");
+        shouldFindIssuesOfTool(6, new Iar(), "iar.txt");
     }
 
     /** Runs the IbLinter parser on an output file that contains 1 issue. */
     @Test
     public void shouldFindAllIbLinterIssues() {
-        wrapShouldFindIssuesOfTool(1, new IbLinter(), "iblinter.xml");
+        shouldFindIssuesOfTool(1, new IbLinter(), "iblinter.xml");
     }
 
     /** Runs the IarCStat parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllIarCStatIssues() {
-        wrapShouldFindIssuesOfTool(6, new IarCstat(), "iar-cstat.txt");
+        shouldFindIssuesOfTool(6, new IarCstat(), "iar-cstat.txt");
     }
 
     /** Runs the TagList parser on an output file that contains 6 issues. */
@@ -181,69 +181,69 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the SonarQube parsers on two files that contains 6 and 31 issues. */
     @Test
     public void shouldFindAllSonarQubeIssues() {
-        wrapShouldFindIssuesOfTool(32, new SonarQube(), "sonarqube-api.json");
-        wrapShouldFindIssuesOfTool(6, new SonarQube(), "sonarqube-differential.json");
-        wrapShouldFindIssuesOfTool(38, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
+        shouldFindIssuesOfTool(32, new SonarQube(), "sonarqube-api.json");
+        shouldFindIssuesOfTool(6, new SonarQube(), "sonarqube-differential.json");
+        shouldFindIssuesOfTool(38, new SonarQube(), "sonarqube-api.json", "sonarqube-differential.json");
     }
 
     /** Runs the TagList parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllTagListIssues() {
-        wrapShouldFindIssuesOfTool(4, new TagList(), "taglist.xml");
+        shouldFindIssuesOfTool(4, new TagList(), "taglist.xml");
     }
 
     /** Runs the Ccm parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllCcmIssues() {
-        wrapShouldFindIssuesOfTool(6, new Ccm(), "ccm.xml");
+        shouldFindIssuesOfTool(6, new Ccm(), "ccm.xml");
     }
 
     /** Runs the ruboCop parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllRuboCopIssues() {
-        wrapShouldFindIssuesOfTool(2, new RuboCop(), "rubocop.log");
+        shouldFindIssuesOfTool(2, new RuboCop(), "rubocop.log");
     }
 
     /** Runs the Android Lint parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllAndroidLintIssues() {
-        wrapShouldFindIssuesOfTool(2, new AndroidLint(), "android-lint.xml");
+        shouldFindIssuesOfTool(2, new AndroidLint(), "android-lint.xml");
     }
 
     /** Runs the CodeNarc parser on an output file that contains 11 issues. */
     @Test
     public void shouldFindAllCodeNArcIssues() {
-        wrapShouldFindIssuesOfTool(11, new CodeNarc(), "codeNarc.xml");
+        shouldFindIssuesOfTool(11, new CodeNarc(), "codeNarc.xml");
     }
 
     /** Runs the Cppcheck parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllCppCheckIssues() {
-        wrapShouldFindIssuesOfTool(3, new CppCheck(), "cppcheck.xml");
+        shouldFindIssuesOfTool(3, new CppCheck(), "cppcheck.xml");
     }
 
     /** Runs the DocFx parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllDocFXIssues() {
-        wrapShouldFindIssuesOfTool(3, new DocFx(), "docfx.json");
+        shouldFindIssuesOfTool(3, new DocFx(), "docfx.json");
     }
 
     /** Runs the ErrorProne parser on output files that contain 9 + 2 issues. */
     @Test
     public void shouldFindAllErrorProneIssues() {
-        wrapShouldFindIssuesOfTool(9 + 2, new ErrorProne(), "errorprone-maven.log", "gradle-error-prone.log");
+        shouldFindIssuesOfTool(9 + 2, new ErrorProne(), "errorprone-maven.log", "gradle-error-prone.log");
     }
 
     /** Runs the Flake8 parser on an output file that contains 12 issues. */
     @Test
     public void shouldFindAllFlake8Issues() {
-        wrapShouldFindIssuesOfTool(12, new Flake8(), "flake8.txt");
+        shouldFindIssuesOfTool(12, new Flake8(), "flake8.txt");
     }
 
     /** Runs the JSHint parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllJsHintIssues() {
-        wrapShouldFindIssuesOfTool(6, new JsHint(), "jshint.xml");
+        shouldFindIssuesOfTool(6, new JsHint(), "jshint.xml");
     }
 
     /**
@@ -251,51 +251,51 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllJUnitIssues() {
-        wrapShouldFindIssuesOfTool(2, new JUnit(), "junit.xml");
+        shouldFindIssuesOfTool(2, new JUnit(), "junit.xml");
 
-        wrapShouldFindIssuesOfTool(1, new JUnit(), "TEST-org.jenkinsci.plugins.jvctb.perform.JvctbPerformerTest.xml");
+        shouldFindIssuesOfTool(1, new JUnit(), "TEST-org.jenkinsci.plugins.jvctb.perform.JvctbPerformerTest.xml");
     }
 
     /** Runs the Klocwork parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllKlocWorkIssues() {
-        wrapShouldFindIssuesOfTool(2, new KlocWork(), "klocwork.xml");
+        shouldFindIssuesOfTool(2, new KlocWork(), "klocwork.xml");
     }
 
     /** Runs the MyPy parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllMyPyIssues() {
-        wrapShouldFindIssuesOfTool(5, new MyPy(), "mypy.txt");
+        shouldFindIssuesOfTool(5, new MyPy(), "mypy.txt");
     }
 
     /** Runs the PIT parser on an output file that contains 25 issues. */
     @Test
     public void shouldFindAllPitIssues() {
-        wrapShouldFindIssuesOfTool(22, new Pit(), "pit.xml");
+        shouldFindIssuesOfTool(22, new Pit(), "pit.xml");
     }
 
     /** Runs the PyDocStyle parser on an output file that contains 33 issues. */
     @Test
     public void shouldFindAllPyDocStyleIssues() {
-        wrapShouldFindIssuesOfTool(33, new PyDocStyle(), "pydocstyle.txt");
+        shouldFindIssuesOfTool(33, new PyDocStyle(), "pydocstyle.txt");
     }
 
     /** Runs the XML Lint parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllXmlLintStyleIssues() {
-        wrapShouldFindIssuesOfTool(3, new XmlLint(), "xmllint.txt");
+        shouldFindIssuesOfTool(3, new XmlLint(), "xmllint.txt");
     }
 
     /** Runs the zptlint parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllZptLintStyleIssues() {
-        wrapShouldFindIssuesOfTool(2, new ZptLint(), "zptlint.log");
+        shouldFindIssuesOfTool(2, new ZptLint(), "zptlint.log");
     }
 
     /** Runs the CPD parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllCpdIssues() {
-        Report report = shouldFindIssuesOfTool(2, new Cpd(), "cpd.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new Cpd(), "cpd.xml");
         Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new Cpd(), "cpd.xml");
 
         assertThatDescriptionOfIssueIsSet(new Cpd(), report.get(0), CODE_FRAGMENT);
@@ -305,13 +305,13 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Simian parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllSimianIssues() {
-        wrapShouldFindIssuesOfTool(4, new Simian(), "simian.xml");
+        shouldFindIssuesOfTool(4, new Simian(), "simian.xml");
     }
 
     /** Runs the DupFinder parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllDupFinderIssues() {
-        Report report = shouldFindIssuesOfTool(2, new DupFinder(), "dupfinder.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
         Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
 
         assertThatDescriptionOfIssueIsSet(new DupFinder(), report.get(0),
@@ -323,31 +323,31 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Armcc parser on output files that contain 3 + 3 issues. */
     @Test
     public void shouldFindAllArmccIssues() {
-        wrapShouldFindIssuesOfTool(3 + 3, new ArmCc(), "armcc5.txt", "armcc.txt");
+        shouldFindIssuesOfTool(3 + 3, new ArmCc(), "armcc5.txt", "armcc.txt");
     }
 
     /** Runs the Buckminster parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllBuckminsterIssues() {
-        wrapShouldFindIssuesOfTool(3, new Buckminster(), "buckminster.txt");
+        shouldFindIssuesOfTool(3, new Buckminster(), "buckminster.txt");
     }
 
     /** Runs the Cadence parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllCadenceIssues() {
-        wrapShouldFindIssuesOfTool(3, new Cadence(), "CadenceIncisive.txt");
+        shouldFindIssuesOfTool(3, new Cadence(), "CadenceIncisive.txt");
     }
 
     /** Runs the Mentor parser on an output file that contains 12 issues. */
     @Test
     public void shouldFindAllMentorGraphicsIssues() {
-        wrapShouldFindIssuesOfTool(12, new MentorGraphics(), "MentorGraphics.log");
+        shouldFindIssuesOfTool(12, new MentorGraphics(), "MentorGraphics.log");
     }
 
     /** Runs the PMD parser on an output file that contains 262 issues (PMD 6.1.0). */
     @Test
     public void shouldFindAllPmdIssues() {
-        Report report = shouldFindIssuesOfTool(262, new Pmd(), "pmd-6.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
         Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
 
         assertThatDescriptionOfIssueIsSet(new Pmd(), report.get(0),
@@ -359,7 +359,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllCheckStyleIssues() {
-        Report report = shouldFindIssuesOfTool(6, new CheckStyle(), "checkstyle.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
         Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
 
         assertThatDescriptionOfIssueIsSet(new CheckStyle(), report.get(2),
@@ -384,7 +384,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the FindBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllFindBugsIssues() {
-        Report report = shouldFindIssuesOfTool(2, new FindBugs(), "findbugs-native.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
         Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
 
         assertThatDescriptionOfIssueIsSet(new FindBugs(), report.get(0),
@@ -442,7 +442,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllSpotBugsIssues() {
-        Report report = shouldFindIssuesOfTool(2, new SpotBugs(), "spotbugsXml.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
         Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
 
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), report.get(0),
@@ -476,7 +476,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldProvideMessagesAndDescriptionForSecurityIssuesWithSpotBugs() {
-        Report report = shouldFindIssuesOfTool(1, new SpotBugs(), "issue55707.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
         Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
 
         Issue issue = report.get(0);
@@ -498,133 +498,133 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Clang-Analyzer parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllClangAnalyzerIssues() {
-        wrapShouldFindIssuesOfTool(3, new ClangAnalyzer(), "ClangAnalyzer.txt");
+        shouldFindIssuesOfTool(3, new ClangAnalyzer(), "ClangAnalyzer.txt");
     }
 
     /** Runs the Clang-Tidy parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllClangTidyIssues() {
-        wrapShouldFindIssuesOfTool(6, new ClangTidy(), "ClangTidy.txt");
+        shouldFindIssuesOfTool(6, new ClangTidy(), "ClangTidy.txt");
     }
 
     /** Runs the Clang parser on an output file that contains 9 issues. */
     @Test
     public void shouldFindAllClangIssues() {
-        wrapShouldFindIssuesOfTool(9, new Clang(), "apple-llvm-clang.txt");
+        shouldFindIssuesOfTool(9, new Clang(), "apple-llvm-clang.txt");
     }
 
     /** Runs the Coolflux parser on an output file that contains 1 issues. */
     @Test
     public void shouldFindAllCoolfluxIssues() {
-        wrapShouldFindIssuesOfTool(1, new Coolflux(), "coolfluxchesscc.txt");
+        shouldFindIssuesOfTool(1, new Coolflux(), "coolfluxchesscc.txt");
     }
 
     /** Runs the CppLint parser on an output file that contains 1031 issues. */
     @Test
     public void shouldFindAllCppLintIssues() {
-        wrapShouldFindIssuesOfTool(1031, new CppLint(), "cpplint.txt");
+        shouldFindIssuesOfTool(1031, new CppLint(), "cpplint.txt");
     }
 
     /** Runs the CodeAnalysis parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllCodeAnalysisIssues() {
-        wrapShouldFindIssuesOfTool(3, new CodeAnalysis(), "codeanalysis.txt");
+        shouldFindIssuesOfTool(3, new CodeAnalysis(), "codeanalysis.txt");
     }
 
     /** Runs the DScanner parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllDScannerIssues() {
-        wrapShouldFindIssuesOfTool(4, new DScanner(), "dscanner-report.json");
+        shouldFindIssuesOfTool(4, new DScanner(), "dscanner-report.json");
     }
 
     /** Runs the GoLint parser on an output file that contains 7 issues. */
     @Test
     public void shouldFindAllGoLintIssues() {
-        wrapShouldFindIssuesOfTool(7, new GoLint(), "golint.txt");
+        shouldFindIssuesOfTool(7, new GoLint(), "golint.txt");
     }
 
     /** Runs the GoVet parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllGoVetIssues() {
-        wrapShouldFindIssuesOfTool(2, new GoVet(), "govet.txt");
+        shouldFindIssuesOfTool(2, new GoVet(), "govet.txt");
     }
 
     /** Runs the SunC parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllSunCIssues() {
-        wrapShouldFindIssuesOfTool(8, new SunC(), "sunc.txt");
+        shouldFindIssuesOfTool(8, new SunC(), "sunc.txt");
     }
 
     /** Runs the JcReport parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllJcReportIssues() {
-        wrapShouldFindIssuesOfTool(6, new JcReport(), "jcreport.xml");
+        shouldFindIssuesOfTool(6, new JcReport(), "jcreport.xml");
     }
 
     /** Runs the StyleCop parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllStyleCopIssues() {
-        wrapShouldFindIssuesOfTool(5, new StyleCop(), "stylecop.xml");
+        shouldFindIssuesOfTool(5, new StyleCop(), "stylecop.xml");
     }
 
     /** Runs the Tasking VX parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllTaskingVxIssues() {
-        wrapShouldFindIssuesOfTool(8, new TaskingVx(), "tasking-vx.txt");
+        shouldFindIssuesOfTool(8, new TaskingVx(), "tasking-vx.txt");
     }
 
     /** Runs the tnsdl translator parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllTnsdlIssues() {
-        wrapShouldFindIssuesOfTool(4, new Tnsdl(), "tnsdl.txt");
+        shouldFindIssuesOfTool(4, new Tnsdl(), "tnsdl.txt");
     }
 
     /** Runs the Texas Instruments Code Composer Studio parser on an output file that contains 10 issues. */
     @Test
     public void shouldFindAllTiCssIssues() {
-        wrapShouldFindIssuesOfTool(10, new TiCss(), "ticcs.txt");
+        shouldFindIssuesOfTool(10, new TiCss(), "ticcs.txt");
     }
 
     /** Runs the IBM XLC compiler and linker parser on an output file that contains 1 + 1 issues. */
     @Test
     public void shouldFindAllXlcIssues() {
-        wrapShouldFindIssuesOfTool(2, new Xlc(), "xlc.txt");
+        shouldFindIssuesOfTool(2, new Xlc(), "xlc.txt");
     }
 
     /** Runs the YIU compressor parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllYuiCompressorIssues() {
-        wrapShouldFindIssuesOfTool(3, new YuiCompressor(), "yui.txt");
+        shouldFindIssuesOfTool(3, new YuiCompressor(), "yui.txt");
     }
 
     /** Runs the Erlc parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllErlcIssues() {
-        wrapShouldFindIssuesOfTool(2, new Erlc(), "erlc.txt");
+        shouldFindIssuesOfTool(2, new Erlc(), "erlc.txt");
     }
 
     /** Runs the FlexSdk parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllFlexSDKIssues() {
-        wrapShouldFindIssuesOfTool(5, new FlexSdk(), "flexsdk.txt");
+        shouldFindIssuesOfTool(5, new FlexSdk(), "flexsdk.txt");
     }
 
     /** Runs the FxCop parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllFxcopSDKIssues() {
-        wrapShouldFindIssuesOfTool(2, new Fxcop(), "fxcop.xml");
+        shouldFindIssuesOfTool(2, new Fxcop(), "fxcop.xml");
     }
 
     /** Runs the Gendarme parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllGendarmeIssues() {
-        wrapShouldFindIssuesOfTool(3, new Gendarme(), "Gendarme.xml");
+        shouldFindIssuesOfTool(3, new Gendarme(), "Gendarme.xml");
     }
 
     /** Runs the GhsMulti parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllGhsMultiIssues() {
-        wrapShouldFindIssuesOfTool(3, new GhsMulti(), "ghsmulti.txt");
+        shouldFindIssuesOfTool(3, new GhsMulti(), "ghsmulti.txt");
     }
 
     /**
@@ -632,80 +632,80 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllGnatIssues() {
-        wrapShouldFindIssuesOfTool(9, new Gnat(), "gnat.txt");
+        shouldFindIssuesOfTool(9, new Gnat(), "gnat.txt");
     }
 
     /** Runs the GnuFortran parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllGnuFortranIssues() {
-        wrapShouldFindIssuesOfTool(4, new GnuFortran(), "GnuFortran.txt");
+        shouldFindIssuesOfTool(4, new GnuFortran(), "GnuFortran.txt");
     }
 
     /** Runs the MsBuild parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllMsBuildIssues() {
-        wrapShouldFindIssuesOfTool(6, new MsBuild(), "msbuild.txt");
+        shouldFindIssuesOfTool(6, new MsBuild(), "msbuild.txt");
     }
 
     /** Runs the NagFortran parser on an output file that contains 10 issues. */
     @Test
     public void shouldFindAllNagFortranIssues() {
-        wrapShouldFindIssuesOfTool(10, new NagFortran(), "NagFortran.txt");
+        shouldFindIssuesOfTool(10, new NagFortran(), "NagFortran.txt");
     }
 
     /** Runs the Perforce parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllP4Issues() {
-        wrapShouldFindIssuesOfTool(4, new Perforce(), "perforce.txt");
+        shouldFindIssuesOfTool(4, new Perforce(), "perforce.txt");
     }
 
     /** Runs the Pep8 parser on an output file: the build should report 8 issues. */
     @Test
     public void shouldFindAllPep8Issues() {
-        wrapShouldFindIssuesOfTool(8, new Pep8(), "pep8Test.txt");
+        shouldFindIssuesOfTool(8, new Pep8(), "pep8Test.txt");
     }
 
     /** Runs the Gcc3Compiler parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllGcc3CompilerIssues() {
-        wrapShouldFindIssuesOfTool(8, new Gcc3(), "gcc.txt");
+        shouldFindIssuesOfTool(8, new Gcc3(), "gcc.txt");
     }
 
     /** Runs the Gcc4Compiler and Gcc4Linker parsers on separate output file that contains 14 + 7 issues. */
     @Test
     public void shouldFindAllGcc4Issues() {
-        wrapShouldFindIssuesOfTool(14 + 7, new Gcc4(), "gcc4.txt", "gcc4ld.txt");
+        shouldFindIssuesOfTool(14 + 7, new Gcc4(), "gcc4.txt", "gcc4ld.txt");
     }
 
     /** Runs the Maven console parser on output files that contain 4 + 3 issues. */
     @Test
     public void shouldFindAllMavenConsoleIssues() {
-        wrapShouldFindIssuesOfTool(4 + 3, new MavenConsole(), "maven-console.txt", "issue13969.txt");
+        shouldFindIssuesOfTool(4 + 3, new MavenConsole(), "maven-console.txt", "issue13969.txt");
     }
 
     /** Runs the MetrowerksCWCompiler parser on two output files that contains 5 + 3 issues. */
     @Test
     public void shouldFindAllMetrowerksCWCompilerIssues() {
-        wrapShouldFindIssuesOfTool(5 + 3, new MetrowerksCodeWarrior(), "MetrowerksCWCompiler.txt",
+        shouldFindIssuesOfTool(5 + 3, new MetrowerksCodeWarrior(), "MetrowerksCWCompiler.txt",
                 "MetrowerksCWLinker.txt");
     }
 
     /** Runs the AcuCobol parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllAcuCobolIssues() {
-        wrapShouldFindIssuesOfTool(4, new AcuCobol(), "acu.txt");
+        shouldFindIssuesOfTool(4, new AcuCobol(), "acu.txt");
     }
 
     /** Runs the Ajc parser on an output file that contains 9 issues. */
     @Test
     public void shouldFindAllAjcIssues() {
-        wrapShouldFindIssuesOfTool(9, new Ajc(), "ajc.txt");
+        shouldFindIssuesOfTool(9, new Ajc(), "ajc.txt");
     }
 
     /** Runs the AnsibleLint parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllAnsibleLintIssues() {
-        wrapShouldFindIssuesOfTool(4, new AnsibleLint(), "ansibleLint.txt");
+        shouldFindIssuesOfTool(4, new AnsibleLint(), "ansibleLint.txt");
     }
 
     /**
@@ -713,13 +713,13 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllPerlCriticIssues() {
-        wrapShouldFindIssuesOfTool(105, new PerlCritic(), "perlcritic.txt");
+        shouldFindIssuesOfTool(105, new PerlCritic(), "perlcritic.txt");
     }
 
     /** Runs the Php parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllPhpIssues() {
-        wrapShouldFindIssuesOfTool(5, new Php(), "php.txt");
+        shouldFindIssuesOfTool(5, new Php(), "php.txt");
     }
 
     /**
@@ -727,36 +727,36 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllPhpStanIssues() {
-        wrapShouldFindIssuesOfTool(11, new PhpStan(), "phpstan.xml");
+        shouldFindIssuesOfTool(11, new PhpStan(), "phpstan.xml");
     }
 
     /** Runs the Microsoft PreFast parser on an output file that contains 11 issues. */
     @Test
     public void shouldFindAllPREfastIssues() {
-        wrapShouldFindIssuesOfTool(11, new PreFast(), "PREfast.xml");
+        shouldFindIssuesOfTool(11, new PreFast(), "PREfast.xml");
     }
 
     /** Runs the Puppet Lint parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllPuppetLintIssues() {
-        wrapShouldFindIssuesOfTool(5, new PuppetLint(), "puppet-lint.txt");
+        shouldFindIssuesOfTool(5, new PuppetLint(), "puppet-lint.txt");
     }
 
     /** Runs the Eclipse parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllEclipseIssues() {
-        wrapShouldFindIssuesOfTool(8, new Eclipse(), "eclipse.txt");
+        shouldFindIssuesOfTool(8, new Eclipse(), "eclipse.txt");
 
         // FIXME: fails if offline
-        wrapShouldFindIssuesOfTool(6, new Eclipse(), "eclipse-withinfo.xml");
+        shouldFindIssuesOfTool(6, new Eclipse(), "eclipse-withinfo.xml");
 
-        wrapShouldFindIssuesOfTool(8 + 6, new Eclipse(), "eclipse-withinfo.xml", "eclipse.txt");
+        shouldFindIssuesOfTool(8 + 6, new Eclipse(), "eclipse-withinfo.xml", "eclipse.txt");
     }
 
     /** Runs the PyLint parser on output files that contains 6 + 19 issues. */
     @Test
     public void shouldFindAllPyLintParserIssues() {
-        Report report = shouldFindIssuesOfTool(6 + 19, new PyLint(), "pyLint.txt", "pylint_parseable.txt");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt", "pylint_parseable.txt");
         Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt",
                 "pylint_parseable.txt");
 
@@ -776,61 +776,61 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllQACSourceCodeAnalyserIssues() {
-        wrapShouldFindIssuesOfTool(9, new QacSourceCodeAnalyser(), "QACSourceCodeAnalyser.txt");
+        shouldFindIssuesOfTool(9, new QacSourceCodeAnalyser(), "QACSourceCodeAnalyser.txt");
     }
 
     /** Runs the Resharper parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllResharperInspectCodeIssues() {
-        wrapShouldFindIssuesOfTool(3, new ResharperInspectCode(), "ResharperInspectCode.xml");
+        shouldFindIssuesOfTool(3, new ResharperInspectCode(), "ResharperInspectCode.xml");
     }
 
     /** Runs the RfLint parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllRfLintIssues() {
-        wrapShouldFindIssuesOfTool(6, new RfLint(), "rflint.txt");
+        shouldFindIssuesOfTool(6, new RfLint(), "rflint.txt");
     }
 
     /** Runs the Robocopy parser on an output file: the build should report 3 issues. */
     @Test
     public void shouldFindAllRobocopyIssues() {
-        wrapShouldFindIssuesOfTool(3, new Robocopy(), "robocopy.txt");
+        shouldFindIssuesOfTool(3, new Robocopy(), "robocopy.txt");
     }
 
     /** Runs the Scala and SbtScala parser on separate output files: the build should report 2+3 issues. */
     @Test
     public void shouldFindAllScalaIssues() {
-        wrapShouldFindIssuesOfTool(2 + 3, new Scala(), "scalac.txt", "sbtScalac.txt");
+        shouldFindIssuesOfTool(2 + 3, new Scala(), "scalac.txt", "sbtScalac.txt");
     }
 
     /** Runs the Sphinx build parser on an output file: the build should report 6 issues. */
     @Test
     public void shouldFindAllSphinxIssues() {
-        wrapShouldFindIssuesOfTool(6, new SphinxBuild(), "sphinxbuild.txt");
+        shouldFindIssuesOfTool(6, new SphinxBuild(), "sphinxbuild.txt");
     }
 
     /** Runs the Idea Inspection parser on an output file that contains 1 issues. */
     @Test
     public void shouldFindAllIdeaInspectionIssues() {
-        wrapShouldFindIssuesOfTool(1, new IdeaInspection(), "IdeaInspectionExample.xml");
+        shouldFindIssuesOfTool(1, new IdeaInspection(), "IdeaInspectionExample.xml");
     }
 
     /** Runs the Intel parser on an output file that contains 7 issues. */
     @Test
     public void shouldFindAllIntelIssues() {
-        wrapShouldFindIssuesOfTool(7, new Intel(), "intelc.txt");
+        shouldFindIssuesOfTool(7, new Intel(), "intelc.txt");
     }
 
     /** Runs the Oracle Invalids parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllInvalidsIssues() {
-        wrapShouldFindIssuesOfTool(3, new Invalids(), "invalids.txt");
+        shouldFindIssuesOfTool(3, new Invalids(), "invalids.txt");
     }
 
     /** Runs the Java parser on several output files that contain 2 + 1 + 1 + 1 + 2 issues. */
     @Test
     public void shouldFindAllJavaIssues() {
-        wrapShouldFindIssuesOfTool(2 + 1 + 1 + 1 + 2, new Java(), "javac.txt", "gradle.java.log",
+        shouldFindIssuesOfTool(2 + 1 + 1 + 1 + 2, new Java(), "javac.txt", "gradle.java.log",
                 "gradle.another.java.log",
                 "ant-javac.txt", "hpi.txt");
     }
@@ -840,7 +840,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllKotlinIssues() {
-        wrapShouldFindIssuesOfTool(1, new Kotlin(), "kotlin.txt");
+        shouldFindIssuesOfTool(1, new Kotlin(), "kotlin.txt");
     }
 
     /**
@@ -848,77 +848,78 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllCssLintIssues() {
-        wrapShouldFindIssuesOfTool(51, new CssLint(), "csslint.xml");
+        shouldFindIssuesOfTool(51, new CssLint(), "csslint.xml");
     }
 
     /** Runs the DiabC parser on an output file that contains 12 issues. */
     @Test
     public void shouldFindAllDiabCIssues() {
-        wrapShouldFindIssuesOfTool(12, new DiabC(), "diabc.txt");
+        shouldFindIssuesOfTool(12, new DiabC(), "diabc.txt");
     }
 
     /** Runs the Doxygen parser on an output file that contains 18 issues. */
     @Test
     public void shouldFindAllDoxygenIssues() {
-        wrapShouldFindIssuesOfTool(18, new Doxygen(), "doxygen.txt");
+        shouldFindIssuesOfTool(18, new Doxygen(), "doxygen.txt");
     }
 
     /** Runs the Dr. Memory parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllDrMemoryIssues() {
-        wrapShouldFindIssuesOfTool(8, new DrMemory(), "drmemory.txt");
+        shouldFindIssuesOfTool(8, new DrMemory(), "drmemory.txt");
     }
 
     /** Runs the PVS-Studio parser on an output file that contains 33 issues. */
     @Test
     public void shouldFindAllPVSStudioIssues() {
-        wrapShouldFindIssuesOfTool(33, new PVSStudio(), "TestReport.plog");
+        shouldFindIssuesOfTool(33, new PVSStudio(), "TestReport.plog");
     }
 
     /** Runs the JavaC parser on an output file of the Eclipse compiler: the build should report no issues. */
     @Test
     public void shouldFindNoJavacIssuesInEclipseOutput() {
-        wrapShouldFindIssuesOfTool(0, new Java(), "eclipse.txt");
+        shouldFindIssuesOfTool(0, new Java(), "eclipse.txt");
     }
 
     /** Runs the ProtoLint parser on an output file that contains 10 issues. */
     @Test
     public void shouldFindAllProtoLintIssues() {
-        wrapShouldFindIssuesOfTool(10, new ProtoLint(), "protolint.txt");
+        shouldFindIssuesOfTool(10, new ProtoLint(), "protolint.txt");
     }
 
-    private void wrapShouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
+    private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
-        String pipelineDefinitionDefault = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
+        String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
 
-        shouldFindIssuesOfToolWithPipelineDefinition(expectedSizeOfIssues, tool,
-                pipelineDefinitionDefault, fileNames);
+        shouldFindIssuesOfToolWithPipelineDefinition(defaultPipelineDefinition,
+                expectedSizeOfIssues, tool, fileNames);
 
-        String pipelineDefinitonAnsi = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
-                + "  " + pipelineDefinitionDefault + "\n"
+        String ansiPipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
+                + "  " + defaultPipelineDefinition + "\n"
                 + "}";
 
-        shouldFindIssuesOfToolWithPipelineDefinition(expectedSizeOfIssues, tool, pipelineDefinitonAnsi, fileNames);
+        shouldFindIssuesOfToolWithPipelineDefinition(ansiPipelineDefinition,
+                expectedSizeOfIssues, tool, fileNames);
     }
 
-    private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
+    private Report shouldFindIssuesOfToolWithoutAnsiColorPlugin(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
-        return shouldFindIssuesOfToolWithPipelineDefinition(expectedSizeOfIssues, tool,
-                "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')", fileNames);
+        return shouldFindIssuesOfToolWithPipelineDefinition(
+                "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')", expectedSizeOfIssues, tool,
+                fileNames);
     }
 
     private Report shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(final int expectedSizeOfIssues,
             final ReportScanningTool tool, final String... fileNames) {
-        String pipelineDefiniton = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
+        String pipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
                 + "  recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')\n"
                 + "}";
-        return shouldFindIssuesOfToolWithPipelineDefinition(expectedSizeOfIssues, tool, pipelineDefiniton, fileNames);
+        return shouldFindIssuesOfToolWithPipelineDefinition(pipelineDefinition, expectedSizeOfIssues, tool, fileNames);
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
-    private Report shouldFindIssuesOfToolWithPipelineDefinition(final int expectedSizeOfIssues,
-            final ReportScanningTool tool,
-            final String pipelineDefinition, final String... fileNames) {
+    private Report shouldFindIssuesOfToolWithPipelineDefinition(final String pipelineDefinition,
+            final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
         try {
             WorkflowJob job = createPipeline();
             copyMultipleFilesToWorkspace(job, fileNames);
