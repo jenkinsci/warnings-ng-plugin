@@ -39,7 +39,7 @@
     <echarts-api.version>4.7.0-2</echarts-api.version>
 
     <commons.lang.version>3.10</commons.lang.version>
-    <commons.io.version>2.6</commons.io.version>
+    <commons.io.version>2.7</commons.io.version>
     <commons.digester.version>2.1</commons.digester.version>
     <commons.digester3.version>3.2</commons.digester3.version>
     <commons.text.version>1.8</commons.text.version>
