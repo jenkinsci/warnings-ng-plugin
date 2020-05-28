@@ -198,7 +198,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         prepareGccLog(job);
         enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
 
-        buildAndVerifyFilesResolving(job, false, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
     }
 
     /**
@@ -215,7 +215,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         recorder.setSourceDirectory(buildsFolder);
 
         // First build: copying the affected file is forbidden
-        buildAndVerifyFilesResolving(job, false, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
         AnalysisResult result = getAnalysisResult(job.getLastCompletedBuild());
         assertThat(result.getErrorMessages()).contains(
@@ -226,10 +226,10 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
                 Collections.singletonList(new SourceDirectory(buildsFolder)));
 
         // Second build: copying the affected file is permitted
-        buildAndVerifyFilesResolving(job, true, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
     }
 
-    private void buildAndVerifyFilesResolving(final FreeStyleProject job, final boolean shouldContainLink,
+    private void buildAndVerifyFilesResolving(final FreeStyleProject job, final ColumnLink columnLink,
             final String... expectedResolveMessages) {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
@@ -239,7 +239,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
         IssuesRow firstRow = getIssuesModel(result, 0);
         assertThat(firstRow.getSeverity()).contains(Severity.WARNING_NORMAL.getName());
-        if (shouldContainLink) {
+        if (columnLink == ColumnLink.SHOULD_HAVE_LINK) {
             assertThat(firstRow.getFileName().getDisplay()).startsWith("<a href=\"").contains("config.xml:451");
         }
         else {
@@ -289,5 +289,9 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         enableEclipseWarnings(project);
 
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+    }
+
+    private enum ColumnLink {
+        SHOULD_HAVE_LINK, SHOULD_NOT_HAVE_LINK
     }
 }
