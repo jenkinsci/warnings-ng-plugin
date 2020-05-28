@@ -13,7 +13,7 @@ import org.jenkinsci.test.acceptance.po.Job;
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
- * Ui test for the Trend Chart Page.
+ * Ui test for the Trend Charts Table.
  *
  * @author Mitja Oldenbourg
  */
@@ -23,16 +23,16 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
     private static final String SOURCE_VIEW_FOLDER = WARNINGS_PLUGIN_PREFIX + "trend_charts_tests/";
 
     /**
-     * Shows all three Trend Charts for the build.
+     * Click on next-button switches between different Chart-types.
      */
     @Test
-    public void ShouldDisplayDifferentTrendChartsOnClick() {
+    public void shouldDisplayDifferentTrendChartsOnClick() {
         FreeStyleJob job = createFreeStyleJob("build_01");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("Java", "**/*.txt"));
         job.save();
 
         shouldBuildJobSuccessfully(job);
-        reconfigureJobWithResource(job, "build_02");
+        reconfigureJobWithResource(job);
 
         Build build = shouldBuildJobSuccessfully(job);
 
@@ -69,8 +69,8 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
         return build;
     }
 
-    private void reconfigureJobWithResource(final FreeStyleJob job, final String resource) {
-        job.configure(() -> job.copyResource(SOURCE_VIEW_FOLDER + resource));
+    private void reconfigureJobWithResource(final FreeStyleJob job) {
+        job.configure(() -> job.copyResource(SOURCE_VIEW_FOLDER + "build_02"));
     }
 }
 

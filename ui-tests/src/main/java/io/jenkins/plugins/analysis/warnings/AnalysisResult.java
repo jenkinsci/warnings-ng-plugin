@@ -175,6 +175,11 @@ public class AnalysisResult extends PageObject {
         return retVal;
     }
 
+    /**
+     * returns the TrendChart Carousel DOM Node.
+     *
+     * @return trendChart Carousel.
+     */
     public WebElement getTrendChart () {
         WebElement trendChart = find(By.id("trend-carousel"));
         return trendChart;
