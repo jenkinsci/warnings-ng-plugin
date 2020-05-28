@@ -46,20 +46,43 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         verifyGcc(build);
     }
 
-    /**
-     * Verifies that a custom groovy script is correctly executed.
-     */
-    @Test
-    public void ShouldRunJobWithGroovyConfiguration() {
-        initGlobalSettingsForGroovyParser();
+    private String getHomeDir() {
+        GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
+        settings.configure();
+        return settings.getHomeDirectory();
+    }
 
-        FreeStyleJob job = createFreeStyleJob("groovy_parser/" + PEP_FILE);
-        addGroovyRecorder(job);
-        job.save();
+    private void addGccRecorder(final FreeStyleJob job, final String homeDir) {
+        job.addPublisher(IssuesRecorder.class, recorder -> {
+            recorder.setTool("GNU C Compiler (gcc)", gcc -> gcc.setPattern("**/gcc.log"));
+            recorder.setEnabledForFailure(true);
+            recorder.setSourceCodeEncoding("UTF-8");
+            recorder.setSourceDirectory(getJobDir(homeDir, job));
+        });
+    }
 
-        Build build = buildJob(job);
+    private void createFileInWorkspace(final FreeStyleJob job, final String homeDir) throws IOException {
+        String content = String.format("%s/config.xml:451: warning: foo defined but not used%n",
+                getJobDir(homeDir, job));
 
-        verifyPep8(build);
+        Path workspacePath = Paths.get(homeDir).resolve("workspace");
+        if (Files.notExists(workspacePath)) {
+            Files.createDirectory(workspacePath);
+        }
+        workspacePath = workspacePath.resolve(job.name);
+        if (Files.notExists(workspacePath)) {
+            Files.createDirectory(workspacePath);
+        }
+
+        File newFile = workspacePath.resolve("gcc.log").toFile();
+        boolean newFile1 = newFile.createNewFile();
+        if (!newFile1) {
+            return;
+        }
+        FileWriter writer = new FileWriter(newFile);
+        writer.write(content);
+        writer.flush();
+        writer.close();
     }
 
     private void initGlobalSettingsForSourceDirectory(final FreeStyleJob job) {
@@ -69,6 +92,42 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         String jobDir = getJobDir(homeDir, job);
         settings.enterSourceDirectoryPath(jobDir);
         settings.save();
+    }
+
+    private String getJobDir(final String homeDir, final FreeStyleJob job) {
+        return homeDir + File.separator + "jobs" + File.separator + job.name;
+    }
+
+    private void verifyGcc(final Build build) {
+        build.open();
+        AnalysisSummary gcc = new AnalysisSummary(build, GCC_ID);
+        assertThat(gcc).isDisplayed()
+                .hasTitleText("GNU C Compiler (gcc): One warning")
+                .hasReferenceBuild(0)
+                .hasInfoType(InfoType.INFO);
+
+        AnalysisResult gccDetails = gcc.openOverallResult();
+        assertThat(gccDetails).hasActiveTab(Tab.ISSUES)
+                .hasOnlyAvailableTabs(Tab.ISSUES);
+
+        IssuesTableRow row = gccDetails.openIssuesTable().getRowAs(0, IssuesTableRow.class);
+        assertThat(row.getFileLink()).isNotNull();
+    }
+
+    /**
+     * Verifies that a custom groovy script is correctly executed.
+     */
+    @Test
+    public void shouldRunJobWithGroovyConfiguration() {
+        initGlobalSettingsForGroovyParser();
+
+        FreeStyleJob job = createFreeStyleJob("groovy_parser/" + PEP_FILE);
+        addGroovyRecorder(job);
+        job.save();
+
+        Build build = buildJob(job);
+
+        verifyPep8(build);
     }
 
     private void initGlobalSettingsForGroovyParser() {
@@ -102,71 +161,12 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         settings.save();
     }
 
-    private String getHomeDir() {
-        GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
-        settings.configure();
-        return settings.getHomeDirectory();
-    }
-
-    private void createFileInWorkspace(final FreeStyleJob job, final String homeDir) throws IOException {
-        String content = String.format("%s/config.xml:451: warning: foo defined but not used%n",
-                getJobDir(homeDir, job));
-
-        Path workspacePath = Paths.get(homeDir).resolve("workspace");
-        if (Files.notExists(workspacePath)) {
-            Files.createDirectory(workspacePath);
-        }
-        workspacePath = workspacePath.resolve(job.name);
-        if (Files.notExists(workspacePath)) {
-            Files.createDirectory(workspacePath);
-        }
-
-        File newFile = workspacePath.resolve("gcc.log").toFile();
-        boolean newFile1 = newFile.createNewFile();
-        if (!newFile1) {
-            return;
-        }
-        FileWriter writer = new FileWriter(newFile);
-        writer.write(content);
-        writer.flush();
-        writer.close();
-    }
-
-    private String getJobDir(final String homeDir, final FreeStyleJob job) {
-        return homeDir + File.separator + "jobs" + File.separator + job.name;
-    }
-
-    private void addGccRecorder(final FreeStyleJob job, final String homeDir) {
-        job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("GNU C Compiler (gcc)", gcc -> gcc.setPattern("**/gcc.log"));
-            recorder.setEnabledForFailure(true);
-            recorder.setSourceCodeEncoding("UTF-8");
-            recorder.setSourceDirectory(getJobDir(homeDir, job));
-        });
-    }
-
     private void addGroovyRecorder(final FreeStyleJob job) {
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("Groovy Parser", gp -> gp.setPattern("**/*" + PEP_FILE));
             recorder.setEnabledForFailure(true);
             ;
         });
-    }
-
-    private void verifyGcc(final Build build) {
-        build.open();
-        AnalysisSummary gcc = new AnalysisSummary(build, GCC_ID);
-        assertThat(gcc).isDisplayed()
-                .hasTitleText("GNU C Compiler (gcc): One warning")
-                .hasReferenceBuild(0)
-                .hasInfoType(InfoType.INFO);
-
-        AnalysisResult gccDetails = gcc.openOverallResult();
-        assertThat(gccDetails).hasActiveTab(Tab.ISSUES)
-                .hasOnlyAvailableTabs(Tab.ISSUES);
-
-        IssuesTableRow row = gccDetails.openIssuesTable().getRowAs(0, IssuesTableRow.class);
-        assertThat(row.getFileLink()).isNotNull();
     }
 
     private void verifyPep8(final Build build) {
@@ -186,15 +186,15 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         IssuesTable issuesTable = pep8details.openIssuesTable();
         assertThat(issuesTable).hasSize(8);
 
-        long NormalIssueCount = issuesTable.getTableRows().stream()
+        long normalIssueCount = issuesTable.getTableRows().stream()
                 .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
                 .filter(severity -> severity.equals("Normal")).count();
 
-        long LowIssueCount = issuesTable.getTableRows().stream()
+        long lowIssueCount = issuesTable.getTableRows().stream()
                 .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
                 .filter(severity -> severity.equals("Low")).count();
 
-        assertThat(NormalIssueCount).isEqualTo(6);
-        assertThat(LowIssueCount).isEqualTo(2);
+        assertThat(normalIssueCount).isEqualTo(6);
+        assertThat(lowIssueCount).isEqualTo(2);
     }
 }
