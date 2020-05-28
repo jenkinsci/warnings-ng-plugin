@@ -72,7 +72,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the native parser on a file that contains 9 issues.. */
     @Test
     public void shouldReadNativeFormats() {
-        shouldFindIssuesOfTool(9 + 5 + 5, new WarningsPlugin(), "warnings-issues.xml", "issues.json", "json-issues.log");
+        shouldFindIssuesOfTool(9 + 5 + 5, new WarningsPlugin(), "warnings-issues.xml", "issues.json",
+                "json-issues.log");
     }
 
     /** Runs the native parser on a file that contains 9 issues.. */
@@ -251,6 +252,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFindAllJUnitIssues() {
         shouldFindIssuesOfTool(2, new JUnit(), "junit.xml");
+
         shouldFindIssuesOfTool(1, new JUnit(), "TEST-org.jenkinsci.plugins.jvctb.perform.JvctbPerformerTest.xml");
     }
 
@@ -293,9 +295,11 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the CPD parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllCpdIssues() {
-        Report report = shouldFindIssuesOfTool(2, new Cpd(), "cpd.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new Cpd(), "cpd.xml");
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new Cpd(), "cpd.xml");
 
         assertThatDescriptionOfIssueIsSet(new Cpd(), report.get(0), CODE_FRAGMENT);
+        assertThatDescriptionOfIssueIsSet(new Cpd(), reportAnsi.get(0), CODE_FRAGMENT);
     }
 
     /** Runs the Simian parser on an output file that contains 4 issues. */
@@ -307,9 +311,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the DupFinder parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllDupFinderIssues() {
-        Report report = shouldFindIssuesOfTool(2, new DupFinder(), "dupfinder.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
 
         assertThatDescriptionOfIssueIsSet(new DupFinder(), report.get(0),
+                "<pre><code>if (items &#61;&#61; null) throw new ArgumentNullException(&#34;items&#34;);</code></pre>");
+        assertThatDescriptionOfIssueIsSet(new DupFinder(), reportAnsi.get(0),
                 "<pre><code>if (items &#61;&#61; null) throw new ArgumentNullException(&#34;items&#34;);</code></pre>");
     }
 
@@ -340,21 +347,30 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the PMD parser on an output file that contains 262 issues (PMD 6.1.0). */
     @Test
     public void shouldFindAllPmdIssues() {
-        Report report = shouldFindIssuesOfTool(262, new Pmd(), "pmd-6.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
 
         assertThatDescriptionOfIssueIsSet(new Pmd(), report.get(0),
+                "A high number of imports can indicate a high degree of coupling within an object.");
+        assertThatDescriptionOfIssueIsSet(new Pmd(), reportAnsi.get(0),
                 "A high number of imports can indicate a high degree of coupling within an object.");
     }
 
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllCheckStyleIssues() {
-        Report report = shouldFindIssuesOfTool(6, new CheckStyle(), "checkstyle.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
 
         assertThatDescriptionOfIssueIsSet(new CheckStyle(), report.get(2),
                 "<p>Since Checkstyle 3.1</p><p>");
+        assertThatDescriptionOfIssueIsSet(new CheckStyle(), reportAnsi.get(2),
+                "<p>Since Checkstyle 3.1</p><p>");
+
         StaticAnalysisLabelProvider labelProvider = new CheckStyle().getLabelProvider();
         assertThat(labelProvider.getDescription(report.get(2)))
+                .contains("The check finds classes that are designed for extension (subclass creation).");
+        assertThat(labelProvider.getDescription(reportAnsi.get(2)))
                 .contains("The check finds classes that are designed for extension (subclass creation).");
     }
 
@@ -368,9 +384,35 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the FindBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllFindBugsIssues() {
-        Report report = shouldFindIssuesOfTool(2, new FindBugs(), "findbugs-native.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
 
         assertThatDescriptionOfIssueIsSet(new FindBugs(), report.get(0),
+                "<p> The fields of this class appear to be accessed inconsistently with respect\n"
+                        + "  to synchronization.&nbsp; This bug report indicates that the bug pattern detector\n"
+                        + "  judged that\n"
+                        + "  </p>\n"
+                        + "  <ul>\n"
+                        + "  <li> The class contains a mix of locked and unlocked accesses,</li>\n"
+                        + "  <li> The class is <b>not</b> annotated as javax.annotation.concurrent.NotThreadSafe,</li>\n"
+                        + "  <li> At least one locked access was performed by one of the class's own methods, and</li>\n"
+                        + "  <li> The number of unsynchronized field accesses (reads and writes) was no more than\n"
+                        + "       one third of all accesses, with writes being weighed twice as high as reads</li>\n"
+                        + "  </ul>\n"
+                        + "\n"
+                        + "  <p> A typical bug matching this bug pattern is forgetting to synchronize\n"
+                        + "  one of the methods in a class that is intended to be thread-safe.</p>\n"
+                        + "\n"
+                        + "  <p> You can select the nodes labeled \"Unsynchronized access\" to show the\n"
+                        + "  code locations where the detector believed that a field was accessed\n"
+                        + "  without synchronization.</p>\n"
+                        + "\n"
+                        + "  <p> Note that there are various sources of inaccuracy in this detector;\n"
+                        + "  for example, the detector cannot statically detect all situations in which\n"
+                        + "  a lock is held.&nbsp; Also, even when the detector is accurate in\n"
+                        + "  distinguishing locked vs. unlocked accesses, the code in question may still\n"
+                        + "  be correct.</p>");
+        assertThatDescriptionOfIssueIsSet(new FindBugs(), reportAnsi.get(0),
                 "<p> The fields of this class appear to be accessed inconsistently with respect\n"
                         + "  to synchronization.&nbsp; This bug report indicates that the bug pattern detector\n"
                         + "  judged that\n"
@@ -400,9 +442,23 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllSpotBugsIssues() {
-        Report report = shouldFindIssuesOfTool(2, new SpotBugs(), "spotbugsXml.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
 
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), report.get(0),
+                "<p>This code calls a method and ignores the return value. However our analysis shows that\n"
+                        + "the method (including its implementations in subclasses if any) does not produce any effect \n"
+                        + "other than return value. Thus this call can be removed.\n"
+                        + "</p>\n"
+                        + "<p>We are trying to reduce the false positives as much as possible, but in some cases this warning might be wrong.\n"
+                        + "Common false-positive cases include:</p>\n"
+                        + "<p>- The method is designed to be overridden and produce a side effect in other projects which are out of the scope of the analysis.</p>\n"
+                        + "<p>- The method is called to trigger the class loading which may have a side effect.</p>\n"
+                        + "<p>- The method is called just to get some exception.</p>\n"
+                        + "<p>If you feel that our assumption is incorrect, you can use a @CheckReturnValue annotation\n"
+                        + "to instruct FindBugs that ignoring the return value of this method is acceptable.\n"
+                        + "</p>");
+        assertThatDescriptionOfIssueIsSet(new SpotBugs(), reportAnsi.get(0),
                 "<p>This code calls a method and ignores the return value. However our analysis shows that\n"
                         + "the method (including its implementations in subclasses if any) does not produce any effect \n"
                         + "other than return value. Thus this call can be removed.\n"
@@ -420,13 +476,22 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldProvideMessagesAndDescriptionForSecurityIssuesWithSpotBugs() {
-        Report report = shouldFindIssuesOfTool(1, new SpotBugs(), "issue55707.xml");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
 
         Issue issue = report.get(0);
+        Issue issueAnsi = reportAnsi.get(0);
+
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), issue,
                 "<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter. \n"
                         + "If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>\n");
         assertThat(issue).hasMessage(
+                "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
+
+        assertThatDescriptionOfIssueIsSet(new SpotBugs(), issueAnsi,
+                "<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter. \n"
+                        + "If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>\n");
+        assertThat(issueAnsi).hasMessage(
                 "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
     }
 
@@ -691,11 +756,18 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the PyLint parser on output files that contains 6 + 19 issues. */
     @Test
     public void shouldFindAllPyLintParserIssues() {
-        Report report = shouldFindIssuesOfTool(6 + 19, new PyLint(), "pyLint.txt", "pylint_parseable.txt");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt", "pylint_parseable.txt");
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt",
+                "pylint_parseable.txt");
 
         assertThatDescriptionOfIssueIsSet(new PyLint(), report.get(1),
                 "Used when the name doesn't match the regular expression associated to its type(constant, variable, class...).");
         assertThatDescriptionOfIssueIsSet(new PyLint(), report.get(7),
+                "Used when a wrong number of spaces is used around an operator, bracket orblock opener.");
+
+        assertThatDescriptionOfIssueIsSet(new PyLint(), reportAnsi.get(1),
+                "Used when the name doesn't match the regular expression associated to its type(constant, variable, class...).");
+        assertThatDescriptionOfIssueIsSet(new PyLint(), reportAnsi.get(7),
                 "Used when a wrong number of spaces is used around an operator, bracket orblock opener.");
     }
 
@@ -758,7 +830,9 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Java parser on several output files that contain 2 + 1 + 1 + 1 + 2 issues. */
     @Test
     public void shouldFindAllJavaIssues() {
-        shouldFindIssuesOfTool(2 + 1 + 1 + 1 + 2, new Java(), "javac.txt", "gradle.java.log", "gradle.another.java.log", "ant-javac.txt", "hpi.txt");
+        shouldFindIssuesOfTool(2 + 1 + 1 + 1 + 2, new Java(), "javac.txt", "gradle.java.log",
+                "gradle.another.java.log",
+                "ant-javac.txt", "hpi.txt");
     }
 
     /**
@@ -806,21 +880,51 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     public void shouldFindNoJavacIssuesInEclipseOutput() {
         shouldFindIssuesOfTool(0, new Java(), "eclipse.txt");
     }
-    
+
     /** Runs the ProtoLint parser on an output file that contains 10 issues. */
     @Test
     public void shouldFindAllProtoLintIssues() {
         shouldFindIssuesOfTool(10, new ProtoLint(), "protolint.txt");
     }
 
-    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
-    private Report shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
+    private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
+        String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
+
+        shouldFindIssuesOfToolWithPipelineDefinition(defaultPipelineDefinition,
+                expectedSizeOfIssues, tool, fileNames);
+
+        String ansiPipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
+                + "  " + defaultPipelineDefinition + "\n"
+                + "}";
+
+        shouldFindIssuesOfToolWithPipelineDefinition(ansiPipelineDefinition,
+                expectedSizeOfIssues, tool, fileNames);
+    }
+
+    private Report shouldFindIssuesOfToolWithoutAnsiColorPlugin(final int expectedSizeOfIssues, final ReportScanningTool tool,
+            final String... fileNames) {
+        return shouldFindIssuesOfToolWithPipelineDefinition(
+                "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')", expectedSizeOfIssues, tool,
+                fileNames);
+    }
+
+    private Report shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(final int expectedSizeOfIssues,
+            final ReportScanningTool tool, final String... fileNames) {
+        String pipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
+                + "  recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')\n"
+                + "}";
+        return shouldFindIssuesOfToolWithPipelineDefinition(pipelineDefinition, expectedSizeOfIssues, tool, fileNames);
+    }
+
+    @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
+    private Report shouldFindIssuesOfToolWithPipelineDefinition(final String pipelineDefinition,
+            final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
         try {
             WorkflowJob job = createPipeline();
             copyMultipleFilesToWorkspace(job, fileNames);
             job.setDefinition(asStage(String.format(
-                    "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')",
+                    pipelineDefinition,
                     tool.getSymbolName(), createPatternFor(fileNames))));
 
             AnalysisResult result = scheduleSuccessfulBuild(job);

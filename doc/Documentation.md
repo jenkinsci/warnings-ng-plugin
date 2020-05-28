@@ -169,11 +169,11 @@ If none of the built-in tools works in your project you have several ways to add
 A simple way to get the analysis results of your tool into the Warnings plugin is to export the information into one
 of the already supported formats. E.g., several tools export their issues into the CheckStyle or PMD format. If you
 want to use all features of the Warnings Plugin it would be even better if you would export the information into the
-*native* [XML](../src/test/resources/io/jenkins/plugins/analysis/warnings/warnings-issues.xml) or 
-[JSON](../src/test/resources/io/jenkins/plugins/analysis/warnings/issues.json) format (this parser uses the ID `issues`).  
+*native* [XML](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/warnings-issues.xml) or 
+[JSON](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/issues.json) format (this parser uses the ID `issues`).  
 These formats are already registered in the user interface and you can use them out-of-the-box. You can even provide
 issues in a simple log file that contains single lines of JSON issues, see 
-[example](../src/test/resources/io/jenkins/plugins/analysis/warnings/json-issues.log).
+[example](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/json-issues.log).
 
 Here is an example step that can be used to parse the native JSON (or XML) format:
 
@@ -349,7 +349,7 @@ recordIssues tool: java(pattern: '*.log'), qualityGates: [[threshold: 1, type: '
 ```
 
 The type determines the property that will be picked to evaluate the quality gate. Refer to the enum 
-[QualityGateType](../src/main/java/io/jenkins/plugins/analysis/core/util/QualityGate.java) to see which different
+[QualityGateType](../plugin/src/main/java/io/jenkins/plugins/analysis/core/util/QualityGate.java) to see which different
 types are supported.
  
 ### Health report configuration
@@ -396,7 +396,7 @@ pattern 'MyFile.\*.java' are included. Issues with category 'WHITESPACE' will be
 step will be executed even if the build failed. 
 
 In order to see all configuration options you can investigate the 
-[step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java).
+[step implementation](../plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java).
 
 #### Declarative Pipeline configuration 
 
@@ -445,12 +445,12 @@ a single result. Then you need to split scanning and aggregation. The plugin pro
 two steps:
 - `scanForIssues`: this step scans a report file or the console log with a particular parser and creates an 
   intermediate 
-  [AnnotatedReport](../src/main/java/io/jenkins/plugins/analysis/core/steps/AnnotatedReport.java) 
+  [AnnotatedReport](../plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/AnnotatedReport.java) 
   object that contains the report. See 
-  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssuesStep.java) for details.
+  [step implementation](../plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssuesStep.java) for details.
 - `publishIssues`: this step publishes a new report in your build that contains the aggregated results
   of several `scanForIssues` steps. See 
-  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java) for details.
+  [step implementation](../plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java) for details.
 
 Example: 
 ```
