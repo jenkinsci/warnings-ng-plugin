@@ -4,9 +4,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.po.Control;
+import org.jenkinsci.test.acceptance.po.PageArea;
 import org.jenkinsci.test.acceptance.po.PageAreaImpl;
 import org.jenkinsci.test.acceptance.po.PageObject;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
+
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
 /**
  * Page object for the SnippetGenerator to learning the available Pipeline steps.
@@ -71,6 +75,8 @@ public class SnippetGenerator extends PageObject {
         private final Control healthyThresholdInput = control("healthy");
         private final Control unhealthyThresholdInput = control("unhealthy");
         private final Control minimumSeveritySelect = control("minimumSeverity");
+        private final Control filtersRepeatable = findRepeatableAddButtonFor("filters");
+        private final Control qualityGatesRepeatable = findRepeatableAddButtonFor("qualityGates");
 
         /**
          * Creates a new page area object.
@@ -83,6 +89,18 @@ public class SnippetGenerator extends PageObject {
         public IssuesRecorder(final PageObject snippetGenerator, final String path) {
             super(snippetGenerator, path);
             openAdvancedOptions();
+        }
+
+        /**
+         * Returns the repeatable add button for the specified property.
+         *
+         * @param propertyName
+         *         the name of the repeatable property
+         *
+         * @return the selected repeatable add button
+         */
+        protected Control findRepeatableAddButtonFor(final String propertyName) {
+            return control(by.xpath("//div[@id='" + propertyName + "']//button[contains(@path,'-add')]"));
         }
 
         /**
@@ -214,6 +232,22 @@ public class SnippetGenerator extends PageObject {
         }
 
         /**
+         * Adds a new issue filter.
+         *
+         * @param filterName
+         *         name of the filter
+         * @param regex
+         *         regular expression to apply
+         * @return issuesRecorder page area
+         */
+        public IssuesRecorder addIssueFilter(final String filterName, final String regex) {
+            String path = createPageArea("filters", () -> filtersRepeatable.selectDropdownMenu(filterName));
+            IssueFilterPanel filter = new IssueFilterPanel(this, path);
+            filter.setFilter(regex);
+            return this;
+        }
+
+        /**
          * Set the health report configuration.
          *
          * @param healthy
@@ -229,6 +263,26 @@ public class SnippetGenerator extends PageObject {
             healthyThresholdInput.set(Integer.toString(healthy));
             unhealthyThresholdInput.set(Integer.toString(unhealthy));
             minimumSeveritySelect.select(minimumSeverity);
+            return this;
+        }
+
+        /**
+         * Adds a new quality gate.
+         *
+         * @param threshold
+         *         the minimum number of issues that fails the quality gate
+         * @param type
+         *         the type of the quality gate
+         * @param result
+         *         determines whether the quality gate sets the build result to Unstable or Failed
+         * @return issuesRecorder page area
+         */
+        public IssuesRecorder addQualityGateConfiguration(final int threshold, final QualityGateType type, final QualityGateBuildResult result) {
+            String path = createPageArea("qualityGates", () -> qualityGatesRepeatable.click());
+            QualityGatePanel qualityGate = new QualityGatePanel(this, path);
+            qualityGate.setThreshold(threshold);
+            qualityGate.setType(type);
+            qualityGate.setUnstable(result == QualityGateBuildResult.UNSTABLE);
             return this;
         }
 
@@ -285,6 +339,45 @@ public class SnippetGenerator extends PageObject {
                 this.pattern.set(pattern);
 
                 return this;
+            }
+        }
+
+        /**
+         * Page area of a filter configuration.
+         */
+        private static class IssueFilterPanel extends PageAreaImpl {
+            private final Control regexField = control("pattern");
+
+            IssueFilterPanel(final PageArea area, final String path) {
+                super(area, path);
+            }
+
+            private void setFilter(final String regex) {
+                regexField.set(regex);
+            }
+        }
+
+        /**
+         * Page area of a quality gate configuration.
+         */
+        private static class QualityGatePanel extends PageAreaImpl {
+            private final Control threshold = control("threshold");
+            private final Control type = control("type");
+
+            QualityGatePanel(final PageArea area, final String path) {
+                super(area, path);
+            }
+
+            public void setThreshold(final int threshold) {
+                this.threshold.set(threshold);
+            }
+
+            public void setType(final QualityGateType type) {
+                this.type.select(type.getDisplayName());
+            }
+
+            public void setUnstable(final boolean isUnstable) {
+                self().findElement(by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]")).click();
             }
         }
     }
