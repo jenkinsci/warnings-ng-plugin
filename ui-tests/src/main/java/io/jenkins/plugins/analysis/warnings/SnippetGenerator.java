@@ -122,6 +122,7 @@ public class SnippetGenerator extends PageObject {
          *
          * @param isChecked
          *         determines if the checkbox should be checked or not
+         * @return issuesRecorder page area
          */
         public IssuesRecorder setAggregatingResults(final boolean isChecked) {
             aggregatingResultsCheckBox.check(isChecked);
@@ -133,6 +134,7 @@ public class SnippetGenerator extends PageObject {
          *
          * @param isChecked
          *         determines if the checkbox should be checked or not
+         * @return issuesRecorder page area
          */
         public IssuesRecorder setBlameDisabled(final boolean isChecked) {
             scmBlamesCheckBox.check(isChecked);
@@ -144,6 +146,7 @@ public class SnippetGenerator extends PageObject {
          *
          * @param isChecked
          *         determines if the checkbox should be checked or not
+         * @return issuesRecorder page area
          */
         public IssuesRecorder setForensicsDisabled(final boolean isChecked) {
             scmForensicsCheckBox.check(isChecked);
@@ -155,6 +158,7 @@ public class SnippetGenerator extends PageObject {
          *
          * @param isChecked
          *         determines if the checkbox should be checked or not
+         * @return issuesRecorder page area
          */
         public IssuesRecorder setEnabledForFailure(final boolean isChecked) {
             enabledForFailureCheckBox.check(isChecked);
@@ -166,6 +170,7 @@ public class SnippetGenerator extends PageObject {
          *
          * @param isChecked
          *         determines if the checkbox should be checked or not
+         * @return issuesRecorder page area
          */
         public IssuesRecorder setIgnoreFailedBuilds(final boolean isChecked) {
             ignoreFailedBuildsCheckBox.check(isChecked);
@@ -177,6 +182,7 @@ public class SnippetGenerator extends PageObject {
          *
          * @param isChecked
          *         determines if the checkbox should be checked or not
+         * @return issuesRecorder page area
          */
         public IssuesRecorder setIgnoreQualityGate(final boolean isChecked) {
             ignoreQualityGateCheckBox.check(isChecked);
@@ -188,6 +194,7 @@ public class SnippetGenerator extends PageObject {
          *
          * @param referenceJobName
          *         reference job name
+         * @return issuesRecorder page area
          */
         public IssuesRecorder setReferenceJobName(final String referenceJobName) {
             referenceJobInput.set(referenceJobName);
@@ -199,6 +206,7 @@ public class SnippetGenerator extends PageObject {
          *
          * @param sourceCodeEncoding
          *         source code encoding
+         * @return issuesRecorder page area
          */
         public IssuesRecorder setSourceCodeEncoding(final String sourceCodeEncoding) {
             sourceCodeEncodingInput.set(sourceCodeEncoding);
@@ -214,6 +222,7 @@ public class SnippetGenerator extends PageObject {
          *         unhealthy threshold
          * @param minimumSeverity
          *         health severities
+         * @return issuesRecorder page area
          */
         public IssuesRecorder setHealthReport(final int healthy, final int unhealthy,
                 final String minimumSeverity) {
@@ -257,7 +266,7 @@ public class SnippetGenerator extends PageObject {
              * @param toolName
              *         the name of the tool, e.g. CheckStyle, CPD, etc.
              *
-             * @return this
+             * @return staticAnalysisTool page area
              */
             public StaticAnalysisTool setTool(final String toolName) {
                 tool.select(toolName);
@@ -270,7 +279,7 @@ public class SnippetGenerator extends PageObject {
              * @param pattern
              *         the pattern
              *
-             * @return this
+             * @return staticAnalysisTool page area
              */
             public StaticAnalysisTool setPattern(final String pattern) {
                 this.pattern.set(pattern);
