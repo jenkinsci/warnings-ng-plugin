@@ -1,0 +1,44 @@
+@startuml
+
+skinparam componentStyle uml2
+skinparam FontName Arial Black
+skinparam classFontName Arial
+skinparam classAttributeIconSize 0
+skinparam defaultFontSize 20
+skinparam classFontSize 24
+skinparam componentStyle uml2
+skinparam ArrowColor black
+
+skinparam component {
+  BackgroundColor #f8f8f8
+  BorderColor #a0a0a0
+  BackgroundColor<<Main>> gold
+  BorderColor black
+}
+
+node ":Laptop" <<device>> {
+    node ":Browser" <<execution environment>>  {
+        artifact ECharts.JS <<artifact>> as EI
+        artifact DataTables.JS <<artifact>> as DI
+        artifact ClientModel.JS <<artifact>> as P
+    }
+}
+
+P ..> EI
+P ..> DI
+
+node ":Server" <<device>> {
+    node ":Jetty" <<execution environment>>  {
+        artifact Warnings <<artifact>> as W
+        artifact Jenkins.Core <<artifact>> as C
+        artifact Echarts.API <<artifact>> as E
+        artifact DataTables.API <<artifact>> as D
+    }
+}
+
+C <. W
+W ..> E
+W ..> D
+
+W - P : \t\t\t
+@enduml

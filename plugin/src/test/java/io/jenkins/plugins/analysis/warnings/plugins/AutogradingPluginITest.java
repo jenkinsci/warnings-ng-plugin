@@ -4,17 +4,19 @@ import java.util.List;
 
 import org.junit.Test;
 
+import edu.hm.hafner.grading.AggregatedScore;
+import edu.hm.hafner.grading.AnalysisScore;
+
 import hudson.model.FreeStyleProject;
 import hudson.model.Run;
 
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Cpd;
-import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
-import io.jenkins.plugins.grading.AggregatedScore;
 import io.jenkins.plugins.grading.AutoGrader;
 import io.jenkins.plugins.grading.AutoGradingBuildAction;
 
@@ -26,16 +28,19 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @author Lion Kosiuk
  */
 public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
-
     private static final String AUTOGRADER_RESULT = "{\"analysis\":{\"maxScore\":100,\"errorImpact\":-10,\"highImpact\":-5,\"normalImpact\":-2,\"lowImpact\":-1}}";
+    private static final String PMD = "pmd";
+    private static final String CPD = "cpd";
+    private static final String SPOTBUGS = "spotbugs";
+    private static final String CHECKSTYLE = "checkstyle";
 
     /**
      * Ensures that the autographing plugin outputs the expected score after passing the checks.
-     * Used tools: checkstyle, spotbugs, cpd, pmd
+     * Used tools: CheckStyle, SpotBugs, CPD, and PMD.
      */
     @Test
     public void checksCorrectGradingWithSeveralTools() {
-        FreeStyleProject project = createJavaWarningsFreestyleProject("checkstyle.xml", "spotbugs.xml", "cpd.xml", "pmd.xml");
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "spotbugs.xml", "cpd.xml", "pmd.xml");
 
         IssuesRecorder recorder = new IssuesRecorder();
 
@@ -49,11 +54,9 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
         cpd.setPattern("**/cpd*");
 
         Pmd pmd = new Pmd();
-        pmd.setPattern("**/pmd");
+        pmd.setPattern("**/pmd*");
 
-        recorder.setTools(checkStyle);
-        recorder.setTools(spotBugs);
-        recorder.setTools(cpd);
+        recorder.setTools(checkStyle, spotBugs, cpd, pmd);
 
         project.getPublishersList().add(recorder);
         project.getPublishersList().add(new AutoGrader(AUTOGRADER_RESULT));
@@ -62,50 +65,37 @@ public class AutogradingPluginITest extends IntegrationTestWithJenkinsPerSuite {
 
         List<AutoGradingBuildAction> actions = baseline.getActions(AutoGradingBuildAction.class);
         assertThat(actions).hasSize(1);
+        List<ResultAction> analysisActions = baseline.getActions(ResultAction.class);
+
         AggregatedScore score = actions.get(0).getResult();
-        assertThat(score.getAchieved()).isEqualTo(98);
-    }
+        List<AnalysisScore> analysisScore = score.getAnalysisScores();
+        assertThat(score.getAchieved()).isEqualTo(22);
 
-    /**
-     * Makes sure that the autograding plugin interrupts the grading if the configuration is empty.
-     */
-    @Test
-    public void interruptsGradingDueToEmptyConfiguration() {
-        FreeStyleProject project = createJavaWarningsFreestyleProject("checkstyle.xml");
+        assertThat(analysisScore).hasSize(4);
 
-        IssuesRecorder recorder = new IssuesRecorder();
+        ResultAction checkStyleAction = analysisActions.get(0);
+        assertThat(checkStyleAction.getId()).isEqualTo(CHECKSTYLE);
+        assertThat(checkStyleAction.getResult()).hasTotalErrorsSize(6);
+        assertThat(analysisScore.get(0).getId()).isEqualTo(CHECKSTYLE);
+        assertThat(analysisScore.get(0).getTotalImpact()).isEqualTo(-60);
 
-        CheckStyle checkStyle = new CheckStyle();
-        checkStyle.setPattern("**/*checkstyle*");
+        ResultAction spotBugsAction = analysisActions.get(1);
+        assertThat(spotBugsAction.getId()).isEqualTo(SPOTBUGS);
+        assertThat(spotBugsAction.getResult()).hasTotalNormalPrioritySize(2);
+        assertThat(analysisScore.get(1).getId()).isEqualTo(SPOTBUGS);
+        assertThat(analysisScore.get(1).getTotalImpact()).isEqualTo(-4);
 
-        recorder.setTools(checkStyle);
+        ResultAction cpdAction = analysisActions.get(2);
+        assertThat(cpdAction.getId()).isEqualTo(CPD);
+        assertThat(cpdAction.getResult()).hasTotalLowPrioritySize(2);
+        assertThat(analysisScore.get(2).getId()).isEqualTo(CPD);
+        assertThat(analysisScore.get(2).getTotalImpact()).isEqualTo(-2);
 
-        project.getPublishersList().add(recorder);
-        project.getPublishersList().add(new AutoGrader("{}"));
-
-        Run<?, ?> baseline = buildSuccessfully(project);
-
-        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping static analysis results");
-        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping test results");
-        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping coverage results");
-        assertThat(getConsoleLog(baseline)).contains("[Autograding] Skipping mutation coverage results");
-    }
-
-    /**
-     * Create a Freestyle Project with enabled Java warnings.
-     *
-     * @param files
-     *         The files to be imported into the Freestyle project.
-     *
-     * @return The created Freestyle Project.
-     */
-    private FreeStyleProject createJavaWarningsFreestyleProject(final String... files) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(files);
-        Java java = new Java();
-        for(String file: files) {
-            java.setPattern("**/*" + file + "*");
-        }
-        enableWarnings(project, java);
-        return project;
+        ResultAction pmdAction = analysisActions.get(3);
+        assertThat(pmdAction.getId()).isEqualTo(PMD);
+        assertThat(pmdAction.getResult()).hasTotalErrorsSize(1);
+        assertThat(pmdAction.getResult()).hasTotalNormalPrioritySize(1);
+        assertThat(analysisScore.get(3).getId()).isEqualTo(PMD);
+        assertThat(analysisScore.get(3).getTotalImpact()).isEqualTo(-12);
     }
 }
