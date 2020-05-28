@@ -49,6 +49,24 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
     private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 0;
 
+    /**
+     * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
+     * build folder, then the link to open the file disappears.
+     */
+    @Test
+    public void shouldShowNoLinkIfSourceCodeHasBeenDeleted() {
+        FreeStyleProject project = createEclipseProject();
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        IssuesRow row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).contains("<a href=").contains("Main.java:3");
+
+        deleteAffectedFilesInBuildFolder(result);
+
+        row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).isEqualTo("Main.java:3");
+    }
+
     private FreeStyleProject createEclipseProject() {
         FreeStyleProject project = getJobWithWorkspaceFiles();
         enableEclipseWarnings(project);
@@ -66,24 +84,6 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     }
 
     /**
-     * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
-     * build folder, then the link to open the file disappears.
-     */
-    @Test
-    public void shouldShowNoLinkIfSourceCodeHasBeenDeleted() {
-        FreeStyleProject project = createEclipseProject();
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        IssuesRow row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
-        assertThat(row.getFileName().getDisplay()).contains("<a href=");
-
-        deleteAffectedFilesInBuildFolder(result);
-
-        row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
-        assertThat(row.getFileName().getDisplay()).isEqualTo("Main.java:3");
-    }
-
-    /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is made
      * unreadable in the build folder, then the link to open the file disappears.
      */
@@ -93,7 +93,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         IssuesRow row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
-        assertThat(row.getFileName().getDisplay()).contains("<a href=");
+        assertThat(row.getFileName().getDisplay()).contains("<a href=").contains("Main.java:3");
 
         makeAffectedFilesInBuildFolderUnreadable(result);
 
@@ -215,7 +215,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         recorder.setSourceDirectory(buildsFolder);
 
         // First build: copying the affected file is forbidden
-        buildAndVerifyFilesResolving(job, false,"0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(job, false, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
         AnalysisResult result = getAnalysisResult(job.getLastCompletedBuild());
         assertThat(result.getErrorMessages()).contains(
@@ -226,23 +226,23 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
                 Collections.singletonList(new SourceDirectory(buildsFolder)));
 
         // Second build: copying the affected file is permitted
-        buildAndVerifyFilesResolving(job,true, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(job, true, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
     }
 
-    private void buildAndVerifyFilesResolving(final FreeStyleProject job, final boolean containsLink,
-            final String... resolveMessages) {
+    private void buildAndVerifyFilesResolving(final FreeStyleProject job, final boolean shouldContainLink,
+            final String... expectedResolveMessages) {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
-        assertThat(getConsoleLog(result)).contains(resolveMessages);
+        assertThat(getConsoleLog(result)).contains(expectedResolveMessages);
 
         assertThat(result.getIssues()).hasSize(1);
 
         IssuesRow firstRow = getIssuesModel(result, 0);
         assertThat(firstRow.getSeverity()).contains(Severity.WARNING_NORMAL.getName());
-        if (containsLink) {
-            assertThat(firstRow.getFileName().getDisplay()).startsWith("<a href=\"");
-            assertThat(firstRow.getFileName().getDisplay()).contains("config.xml:451");
-        } else {
+        if (shouldContainLink) {
+            assertThat(firstRow.getFileName().getDisplay()).startsWith("<a href=\"").contains("config.xml:451");
+        }
+        else {
             assertThat(firstRow.getFileName().getDisplay()).isEqualTo("config.xml:451");
         }
 
