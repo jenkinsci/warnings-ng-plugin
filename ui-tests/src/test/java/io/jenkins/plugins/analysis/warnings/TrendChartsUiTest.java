@@ -1,20 +1,15 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 
-import org.junit.jupiter.api.Test;
-import org.openqa.selenium.WebElement;
+import org.junit.Test;
+
 
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Job;
-import org.jenkinsci.test.acceptance.po.Workspace;
 
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
-import io.jenkins.plugins.analysis.warnings.IssuesTable.IssuesTableRowType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
