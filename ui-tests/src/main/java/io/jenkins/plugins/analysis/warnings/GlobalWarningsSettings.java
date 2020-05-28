@@ -5,6 +5,9 @@ import org.openqa.selenium.By;
 import org.jenkinsci.test.acceptance.po.Jenkins;
 import org.jenkinsci.test.acceptance.po.JenkinsConfig;
 
+/**
+ * Class representing the available global setting for the warnings-ng plugin
+ */
 public class GlobalWarningsSettings extends JenkinsConfig {
 
     private static final String XPATH_PLUGIN_CONFIG = "//*[@path='%s']";
@@ -22,7 +25,7 @@ public class GlobalWarningsSettings extends JenkinsConfig {
 
     /**
      * Enters the given sourcedirectory path on the system configuration page from jenkins.
-     * @param absolutePath: sourcedirectory path as absoule path.
+     * @param absolutePath sourcedirectory path as absoule path.
      */
     public void enterSourceDirectoryPath(final String absolutePath) {
         ensureConfigPage();
