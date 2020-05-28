@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.warnings;
 import java.net.URL;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 import org.jenkinsci.test.acceptance.po.PageObject;
 
@@ -14,13 +13,11 @@ public class GroovyConfiguration extends PageObject {
 
     private final String pathPrefix;
     private final String xpathPattern;
-    private WebDriverWait wait;
 
     protected GroovyConfiguration(final PageObject context, final URL url, final String pathPrefix, final String xpathPattern) {
         super(context, url);
         this.pathPrefix = pathPrefix;
         this.xpathPattern = xpathPattern;
-        this.wait = new WebDriverWait(driver, 10);
     }
 
     /**
