@@ -175,6 +175,11 @@ public class AnalysisResult extends PageObject {
         return retVal;
     }
 
+    public WebElement getTrendChart () {
+        WebElement trendChart = find(By.id("trend-carousel"));
+        return trendChart;
+    }
+
     /**
      * Enum representing the possible tabs which can be opened in the {@link AnalysisResult} details view.
      */

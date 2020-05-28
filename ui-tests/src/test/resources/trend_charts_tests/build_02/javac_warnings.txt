@@ -1,0 +1,3 @@
+[WARNING] C:\\Path\\SourceFile.java:[1,42] [deprecation] path.A Class in path has been deprecated%n"
+[WARNING] C:\\Path\\SourceFile.java:[2,42] [deprecation] path.A Class in path has been deprecated%n"
+[WARNING] C:\\Path\\SourceFile.java:[5,42] [deprecation] path.A Class in path has been deprecated%n"
