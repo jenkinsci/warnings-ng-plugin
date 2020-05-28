@@ -8,6 +8,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.junit.Test;
+import org.openqa.selenium.NoSuchElementException;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
@@ -39,11 +40,13 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
 
         createFileInWorkspace(job, homeDir);
 
+        Build build = buildJob(job);
+        verifyGcc(build, false);
+
         initGlobalSettingsForSourceDirectory(job);
 
-        Build build = buildJob(job);
-
-        verifyGcc(build);
+        build = buildJob(job);
+        verifyGcc(build, true);
     }
 
     private String getHomeDir() {
@@ -98,20 +101,31 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         return homeDir + File.separator + "jobs" + File.separator + job.name;
     }
 
-    private void verifyGcc(final Build build) {
+    private void verifyGcc(final Build build, final boolean shouldHaveLink) {
         build.open();
         AnalysisSummary gcc = new AnalysisSummary(build, GCC_ID);
         assertThat(gcc).isDisplayed()
                 .hasTitleText("GNU C Compiler (gcc): One warning")
-                .hasReferenceBuild(0)
-                .hasInfoType(InfoType.INFO);
+                .hasReferenceBuild(shouldHaveLink ? 1 : 0)
+                .hasInfoType(shouldHaveLink ? InfoType.INFO : InfoType.ERROR);
 
         AnalysisResult gccDetails = gcc.openOverallResult();
         assertThat(gccDetails).hasActiveTab(Tab.ISSUES)
                 .hasOnlyAvailableTabs(Tab.ISSUES);
 
         IssuesTableRow row = gccDetails.openIssuesTable().getRowAs(0, IssuesTableRow.class);
-        assertThat(row.getFileLink()).isNotNull();
+
+        if (shouldHaveLink) {
+            assertThat(row.getFileLink()).isNotNull();
+        }
+        else {
+            try {
+                row.getFileLink();
+                fail("element has link to file");
+            }
+            catch (NoSuchElementException ignored) {
+            }
+        }
     }
 
     /**
