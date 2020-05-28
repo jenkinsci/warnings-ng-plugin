@@ -19,6 +19,9 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 public class DashboardViewPortletUITest extends AbstractJUnitTest {
     private static final String WARNINGS_PLUGIN_PREFIX = "/dashboard_test/";
 
+    /**
+     * Creates one Dashboard which will then display one successful build and its checkstyle warnings (icons in header).
+     */
     @Test
     public void shouldShowIcons() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
@@ -31,12 +34,15 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
 
         List<String> headers = dashboardTable.getHeaders();
         assertThat(headers.get(0)).contains("Job");
-        assertThat(headers.get(1)).contains("");
+        assertThat(headers.get(1)).contains("/checkstyle-24x24.png");
 
         Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
-        assertThat(table.get(job.name).get("")).hasWarningsCount(4);
+        assertThat(table.get(job.name).get("/checkstyle-24x24.png")).hasWarningsCount(4);
     }
 
+    /**
+     * Creates one Dashboard which will then display one successful build and its checkstyle warnings.
+     */
     @Test
     public void shouldNotShowIcons() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
@@ -55,6 +61,9 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
         assertThat(table.get(job.name).get("CheckStyle")).hasWarningsCount(4);
     }
 
+    /**
+     * Creates one Dashboard which will then be empty due to one successful build which has no warnings.
+     */
     @Test
     public void shouldHideCleanJob() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(true, false);
@@ -69,6 +78,10 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
         assertThat(dashboardTable.getTable()).isEmpty();
     }
 
+    /**
+     * Creates one Dashboard which will then display one successful build.
+     * Build has checkstyle and eclipse warnings.
+     */
     @Test
     public void shouldShow2Issues() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
@@ -92,6 +105,10 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
         assertThat(table.get(job.name).get("Eclipse ECJ")).hasWarningsCount(8);
     }
 
+    /**
+     * Creates one Dashboard which will then display one successful build.
+     * Build has checkstyle, eclipse and pmd warnings.
+     */
     @Test
     public void shouldShow3Issues() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
@@ -118,6 +135,10 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
         assertThat(table.get(job.name).get("PMD")).hasWarningsCount(4);
     }
 
+    /**
+     * Creates one Dashboard which will then display two successful builds.
+     * Both builds have checkstyle warnings.
+     */
     @Test
     public void shouldShowMultipleJobs() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
@@ -143,6 +164,9 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
         assertThat(table.get(job2.name).get("CheckStyle")).hasWarningsCount(0);
     }
 
+    /**
+     * Creates one Dashboard which will then display one of two successful builds duo to one clean build.
+     */
     @Test
     public void shouldHideCleanJobs() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(true, false);
@@ -187,8 +211,13 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     private DashboardView createDashboardWithStaticAnalysisPortlet(final Boolean hideCleanJobs, final Boolean showIcons) {
         DashboardView v = createDashboardView();
         StaticAnalysisIssuesPerToolAndJobPortlet portlet = v.addTopPortlet(StaticAnalysisIssuesPerToolAndJobPortlet.class);
-        if (hideCleanJobs) { portlet.toggleHideCleanJobs(); }
-        if (showIcons) { portlet.toggleShowIcons(); }
+        if (hideCleanJobs) {
+            portlet.toggleHideCleanJobs();
+        }
+        if (showIcons) {
+            portlet.toggleShowIcons();
+        }
+
         v.save();
         return v;
     }

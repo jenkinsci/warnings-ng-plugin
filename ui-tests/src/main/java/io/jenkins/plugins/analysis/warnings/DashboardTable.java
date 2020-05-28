@@ -10,26 +10,48 @@ import org.openqa.selenium.WebElement;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
+/**
+ * {@link PageObject} representing the dashboard on home.
+ *
+ * @author Lukas Kirner
+ */
 public class DashboardTable extends PageObject {
     private static final String EMPTY = "-";
 
     private final List<String> headers;
     private final Map<String, Map<String, DashboardTableEntry>> table;
 
+    /**
+     * Creates a new page object representing the dashboard.
+     *
+     * @param parent
+     *         a finished build
+     * @param url
+     *         the type of the result page (e.g. simian, checkstyle, cpd, etc.)
+     */
     public DashboardTable(final Build parent, final URL url) {
         super(parent, url);
         this.open();
 
         WebElement page = this.getElement(by.tagName("body"));
         List<WebElement> rows = page.findElements(by.tagName("table")).stream()
-            .filter(dom -> dom.getText().startsWith("Static analysis issues per tool and job"))
-            .flatMap(dom -> dom.findElements(by.tagName("table")).stream().skip(1))
-            .flatMap(dom -> dom.findElements(by.tagName("tr")).stream())
-            .collect(Collectors.toList());
+                .filter(dom -> dom.getText().startsWith("Static analysis issues per tool and job"))
+                .flatMap(dom -> dom.findElements(by.tagName("table")).stream().skip(1))
+                .flatMap(dom -> dom.findElements(by.tagName("tr")).stream())
+                .collect(Collectors.toList());
 
         headers = rows.stream()
             .flatMap(dom -> dom.findElements(by.tagName("th")).stream())
-            .map(WebElement::getText)
+                .map(th -> {
+                    List<WebElement> img = th.findElements(by.tagName("img"));
+                    if (img.size() > 0) {
+                        String src = img.get(0).getAttribute("src");
+                        return src.substring(src.lastIndexOf('/'));
+                    }
+                    else {
+                        return th.getText();
+                    }
+                })
             .collect(Collectors.toList());
 
         List<List<List<String>>> lines = rows.stream().skip(1)
@@ -48,9 +70,13 @@ public class DashboardTable extends PageObject {
                 .collect(Collectors.toMap(entry -> entry.get(0).get(0), entry -> createPluginValueMapping(entry, headers)));
     }
 
-    public List<String> getHeaders() { return this.headers; }
+    public List<String> getHeaders() {
+        return this.headers;
+    }
 
-    public Map<String, Map<String, DashboardTableEntry>> getTable() { return this.table; }
+    public Map<String, Map<String, DashboardTableEntry>> getTable() {
+        return this.table;
+    }
 
     private Map<String, DashboardTableEntry> createPluginValueMapping(final List<List<String>> warnings, final List<String> plugins) {
         Map<String, DashboardTableEntry> valuePluginMapping = new HashMap<>();
