@@ -5,6 +5,9 @@ import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.TrendChartType;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
+
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
@@ -20,6 +23,7 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
     private static final String REFERENCE = "reference";
     private static final String SOURCE_DIRECTORY = "relative";
     private static final String SEVERITY = "NORMAL";
+    private static final String REGEX = "testRegex";
 
     /**
      * Verifies that job configuration screen correctly modifies the properties of an {@link IssuesRecorder} instance.
@@ -27,7 +31,6 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
     @Test
     public void shouldSetPropertiesInJobConfiguration() {
         FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
-
 
         IssuesRecorder issuesRecorder = job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("Eclipse ECJ");
@@ -43,9 +46,11 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         issuesRecorder.setIgnoreQualityGate(true);
         issuesRecorder.setIgnoreFailedBuilds(true);
         issuesRecorder.setFailOnError(true);
-        issuesRecorder.setReferenceJobField(REFERENCE);
+        issuesRecorder.setReferenceJobName(REFERENCE);
         issuesRecorder.setHealthReport(1, 9, SEVERITY);
         issuesRecorder.setReportFilePattern(PATTERN);
+        issuesRecorder.addIssueFilter("Exclude categories", REGEX);
+        issuesRecorder.addQualityGateConfiguration(1, QualityGateType.TOTAL_ERROR, QualityGateBuildResult.UNSTABLE);
 
 
         job.save();
@@ -61,11 +66,16 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         assertThat(issuesRecorder).hasIgnoreQualityGate(true);
         assertThat(issuesRecorder).hasIgnoreFailedBuilds(true);
         assertThat(issuesRecorder).hasFailOnError(true);
-        assertThat(issuesRecorder).hasReferenceJobField(REFERENCE);
+        assertThat(issuesRecorder).hasReferenceJobName(REFERENCE);
         assertThat(issuesRecorder).hasHealthThreshold("1");
         assertThat(issuesRecorder).hasUnhealthyThreshold("9");
         assertThat(issuesRecorder).hasHealthSeverity(SEVERITY);
         assertThat(issuesRecorder).hasReportFilePattern(PATTERN);
+        assertThat(issuesRecorder).hasFilterRegex(REGEX);
+        assertThat(issuesRecorder).hasQualityGateThreshold("1");
+        assertThat(issuesRecorder).hasQualityGateType(QualityGateType.TOTAL_ERROR.toString());
+        assertThat(issuesRecorder).hasQualityGateResult(QualityGateBuildResult.UNSTABLE);
+
 
         // Now invert all booleans:
         issuesRecorder.setAggregatingResults(false);
