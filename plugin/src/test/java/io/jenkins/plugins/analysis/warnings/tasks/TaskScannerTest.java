@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -38,13 +37,22 @@ class TaskScannerTest extends ResourceTest {
     void shouldReportFileExceptionError() {
         TaskScanner scanner = new TaskScannerBuilder().build();
 
-        File fileWithEmptyPath = new File("");
-        Report report = scanner.scan(fileWithEmptyPath.toPath(), StandardCharsets.UTF_8);
+        Report report = scanner.scan(getResourceAsFile(""), StandardCharsets.UTF_8);
 
-        String errorMessage = "Exception while reading the source code file '':";
+        assertThat(report.getErrorMessages()).contains("Exception while reading the source code file '':",
+                "java.io.IOException: Is a directory");
+    }
 
-        assertThat(report.getErrorMessages()).isNotEmpty();
-        assertThat(report.getErrorMessages().get(0)).startsWith(errorMessage);
+    @Test
+    void shouldHandleMalformedInputException() {
+        TaskScanner scanner = new TaskScannerBuilder().build();
+
+        Path pathToFile = getResourceAsFile("file-with-strange-characters.txt");
+        Report report = scanner.scan(pathToFile, StandardCharsets.UTF_8);
+
+        assertThat(report.getErrorMessages()).isNotEmpty().contains("Can't read source file '"
+                + pathToFile.toString()
+                + "', defined encoding 'UTF-8' seems to be wrong");
     }
 
     @Test
