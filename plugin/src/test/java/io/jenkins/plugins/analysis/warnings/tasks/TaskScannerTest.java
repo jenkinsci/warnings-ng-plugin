@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.warnings.tasks;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.Iterator;
 
 import org.junit.jupiter.api.Test;
@@ -32,8 +34,32 @@ class TaskScannerTest extends ResourceTest {
     private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
 
     @Test
+    void shouldReportFileExceptionError() {
+        TaskScanner scanner = new TaskScannerBuilder().build();
+
+        Report report = scanner.scan(getResourceAsFile(""), StandardCharsets.UTF_8);
+
+        assertThat(report.getErrorMessages()).contains("Exception while reading the source code file '':",
+                "java.io.IOException: Is a directory");
+    }
+
+    @Test
+    void shouldHandleMalformedInputException() {
+        TaskScanner scanner = new TaskScannerBuilder().build();
+
+        Path pathToFile = getResourceAsFile("file-with-strange-characters.txt");
+        Report report = scanner.scan(pathToFile, StandardCharsets.UTF_8);
+
+        assertThat(report.getErrorMessages()).isNotEmpty().contains("Can't read source file '"
+                + pathToFile.toString()
+                + "', defined encoding 'UTF-8' seems to be wrong");
+    }
+
+    @Test
     void shouldReportErrorIfPatternIsInvalid() {
-        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\").setMatcherMode(MatcherMode.REGEXP_MATCH).build();
+        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\")
+                .setMatcherMode(MatcherMode.REGEXP_MATCH)
+                .build();
 
         Report report = scanner.scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
@@ -42,7 +68,7 @@ class TaskScannerTest extends ResourceTest {
                 + "'Unexpected internal error near index 1";
         assertThat(report.getErrorMessages()).hasSize(1);
         assertThat(report.getErrorMessages().get(0)).startsWith(errorMessage);
-        
+
         assertThat(scanner.isInvalidPattern()).isTrue();
         assertThat(scanner.getErrors()).startsWith(errorMessage);
     }
@@ -108,7 +134,8 @@ class TaskScannerTest extends ResourceTest {
         assertThat(tasks.get(1)).hasSeverity(Severity.WARNING_NORMAL)
                 .hasType("TODO")
                 .hasLineStart(5)
-                .hasMessage("\u043f\u0440\u0438\u043c\u0435\u0440 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c");
+                .hasMessage(
+                        "\u043f\u0440\u0438\u043c\u0435\u0440 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c");
     }
 
     /**
