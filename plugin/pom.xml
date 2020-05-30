@@ -378,12 +378,6 @@
       <scope>test</scope>
       <type>test-jar</type>
     </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>metrics-aggregation</artifactId>
-      <version>0.2.0</version>
-      <scope>test</scope>
-    </dependency>
 
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
     <dependency>
@@ -446,6 +440,30 @@
       <artifactId>ansicolor</artifactId>
       <version>0.4.3</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>metrics-aggregation</artifactId>
+      <version>0.2.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>io.jenkins.plugins</groupId>
+          <artifactId>code-coverage-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>autograding</artifactId>
+      <version>2.0.0</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>io.jenkins.plugins</groupId>
+          <artifactId>code-coverage-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- stage -->
@@ -520,12 +538,6 @@
           <artifactId>cloudbees-folder</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>autograding</artifactId>
-      <version>2.0.0</version>
-      <scope>test</scope>
     </dependency>
 
   </dependencies>
