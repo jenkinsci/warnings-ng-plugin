@@ -16,6 +16,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
+import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.DuplicationRow;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableModel;
 
@@ -54,7 +55,9 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         TableModel table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
 
-        System.out.println(table.getRows().size()); // <-- NullPointerException at getRows()
+        table.getRows().stream()
+                .map(row -> (DuplicationRow) row)
+                .forEach(row -> assertThat(row.getSeverity()).contains("LOW"));
     }
 
     /**
@@ -75,6 +78,10 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(6);
         assertThat(result.getTotalLowPrioritySize()).isEqualTo(0);
         assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
     }
 
     /**
@@ -95,6 +102,10 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(15);
         assertThat(result.getTotalLowPrioritySize()).isEqualTo(0);
         assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
     }
 
     /**
@@ -114,6 +125,10 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(5);
         assertThat(result.getTotalLowPrioritySize()).isEqualTo(15);
         assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
     }
 
     /**
@@ -132,6 +147,10 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalHighPrioritySize()).isEqualTo(5);
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(9);
         assertThat(result.getTotalLowPrioritySize()).isEqualTo(6);
+
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
     }
 
     /**
