@@ -1,15 +1,23 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.junit.Test;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableModel;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
 
@@ -20,6 +28,13 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
  * @author Lukas Kirner
  */
 public class DryITest extends IntegrationTestWithJenkinsPerSuite {
+    private static final String DETAILS = "Details";
+    private static final String FILE = "File";
+    private static final String SEVERITY = "Severity";
+    private static final String LINES = "#Lines";
+    private static final String DUPLICATIONS = "Duplicated In";
+    private static final String AGE = "Age";
+
     private static final String FOLDER = "dry/";
     private static final String CPD_REPORT = FOLDER + "cpd.xml";
 
@@ -32,9 +47,14 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         enableGenericWarnings(project, new Cpd());
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
         assertThat(result).hasTotalSize(20);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
+
+        System.out.println(table.getRows().size()); // <-- NullPointerException at getRows()
     }
 
     /**
@@ -126,6 +146,16 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatThresholdsAreEvaluated(25, 50, 20, 0, 0, cpd, project);
         assertThatThresholdsAreEvaluated(2, 4, 6, 9, 5, cpd, project);
         assertThatThresholdsAreEvaluated(1, 3, 0, 6, 14, cpd, project);
+    }
+
+    private TableModel getDryTableModel(final Run<?, ?> build) {
+        IssuesDetail issuesDetail = (IssuesDetail) build.getAction(ResultAction.class).getTarget();
+        return issuesDetail.getTableModel("issues");
+    }
+
+    private void assertThatColumnsAreCorrect(final List<TableColumn> columns) {
+        assertThat(columns.stream().map(TableColumn::getHeaderLabel).collect(Collectors.toList()))
+                .contains(DETAILS, FILE, SEVERITY, LINES, DUPLICATIONS, AGE);
     }
 
     /**
