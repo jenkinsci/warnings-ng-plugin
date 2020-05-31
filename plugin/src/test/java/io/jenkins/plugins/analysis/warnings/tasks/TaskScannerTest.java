@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -37,7 +38,7 @@ class TaskScannerTest extends ResourceTest {
     void shouldReportFileExceptionError() {
         TaskScanner scanner = new TaskScannerBuilder().build();
 
-        Report report = scanner.scan(getResourceAsFile(""), StandardCharsets.UTF_8);
+        Report report = scanner.scan(new File("").toPath(), StandardCharsets.UTF_8);
 
         assertThat(report.getErrorMessages()).contains("Exception while reading the source code file '':",
                 "java.io.IOException: Is a directory");
