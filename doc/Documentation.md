@@ -266,6 +266,9 @@ In order to let the plugin display those files you can add an additional source 
 
 ![affected files configuration](images/affected-files.png) 
 
+To enable additional source directories for scanning, the directories have to be added in the global configuration. 
+To select enabled directories for scanning, the directories have to be configured on job level.
+
 An example pipeline with these options is shown in the following snippet, note that the encoding of the report 
 files may be set differently if required:
 

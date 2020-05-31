@@ -56,8 +56,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 @SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.SystemPrintln", "PMD.ExcessiveImports"})
-public class WarningsPluginUiTest extends AbstractJUnitTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/";
+public class WarningsPluginUiTest extends  AbstractUiTest {
 
     private static final String CHECKSTYLE_ID = "checkstyle";
     private static final String ANALYSIS_ID = "analysis";
@@ -532,23 +531,10 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         return agent;
     }
 
-    private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
-        FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
-        for (String resource : resourcesToCopy) {
-            job.copyResource(WARNINGS_PLUGIN_PREFIX + resource);
-        }
-        return job;
-    }
-
     private MavenModuleSet createMavenProject() {
         MavenInstallation.installMaven(jenkins, MavenInstallation.DEFAULT_MAVEN_ID, "3.6.3");
 
         return jenkins.getJobs().create(MavenModuleSet.class);
-    }
-
-    private Build buildJob(final Job job) {
-        return job.startBuild().waitUntilFinished();
     }
 
     private void copyResourceFilesToWorkspace(final Job job, final String... resources) {
