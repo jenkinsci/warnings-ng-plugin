@@ -30,6 +30,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.forensics.reference.BranchMasterIntersectionFinder;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
@@ -198,17 +199,16 @@ class IssuesPublisher {
     private History createAnalysisHistory(final ResultSelector selector, final Report filtered) {
         Run<?, ?> baseline = run;
 
-        if (referenceJobName != null) {
-            Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
-            if (referenceJob.isPresent()) {
-                Job<?, ?> job = referenceJob.get();
-                baseline = obtainReferenceBuild(job);
-                if (baseline == null) {
-                    filtered.logError("Reference job '%s' does not contain %s", job.getName(), getReferenceName());
-                    return new NullAnalysisHistory();
-                }
+        BranchMasterIntersectionFinder finder = baseline.getAction(BranchMasterIntersectionFinder.class);
+        if (finder != null) {
+            Optional<Run<?, ?>> reference = finder.getReferenceBuild();
+            if (!reference.isPresent()) {
+                filtered.logError("Reference job does not contain %s", getReferenceName());
+                return new NullAnalysisHistory();
             }
+            baseline = finder.getReferenceBuild().get();
         }
+
         return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(filtered),
                 jobResultEvaluationMode);
     }
