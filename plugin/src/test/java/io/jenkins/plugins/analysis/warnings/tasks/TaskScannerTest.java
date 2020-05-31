@@ -40,8 +40,7 @@ class TaskScannerTest extends ResourceTest {
 
         Report report = scanner.scan(new File("").toPath(), StandardCharsets.UTF_8);
 
-        assertThat(report.getErrorMessages()).contains("Exception while reading the source code file '':",
-                "java.io.IOException: Is a directory");
+        assertThat(report.getErrorMessages()).contains("Exception while reading the source code file '':");
     }
 
     @Test
