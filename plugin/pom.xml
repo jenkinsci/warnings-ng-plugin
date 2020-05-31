@@ -124,6 +124,11 @@
         <artifactId>commons-net</artifactId>
         <version>3.6</version>
       </dependency>
+      <dependency>
+        <groupId>io.jenkins.plugins</groupId>
+        <artifactId>code-coverage-api</artifactId>
+        <version>1.1.4</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -446,24 +451,12 @@
       <artifactId>metrics-aggregation</artifactId>
       <version>0.2.0</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>io.jenkins.plugins</groupId>
-          <artifactId>code-coverage-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>autograding</artifactId>
       <version>2.0.0</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>io.jenkins.plugins</groupId>
-          <artifactId>code-coverage-api</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- stage -->
