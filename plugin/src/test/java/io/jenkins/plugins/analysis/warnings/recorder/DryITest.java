@@ -82,6 +82,9 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> build = result.getOwner();
         TableModel table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
+
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 1, 1);
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "HIGH", 2, Integer.MAX_VALUE);
     }
 
     /**
@@ -106,6 +109,9 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> build = result.getOwner();
         TableModel table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
+
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 1, 4);
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "HIGH", 5, Integer.MAX_VALUE);
     }
 
     /**
@@ -129,6 +135,8 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> build = result.getOwner();
         TableModel table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
+
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 4, Integer.MAX_VALUE);
     }
 
     /**
@@ -151,6 +159,9 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         Run<?, ?> build = result.getOwner();
         TableModel table = getDryTableModel(build);
         assertThatColumnsAreCorrect(table.getColumns());
+
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 2, 3);
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "HIGH", 4, Integer.MAX_VALUE);
     }
 
     /**
@@ -175,6 +186,15 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private void assertThatColumnsAreCorrect(final List<TableColumn> columns) {
         assertThat(columns.stream().map(TableColumn::getHeaderLabel).collect(Collectors.toList()))
                 .contains(DETAILS, FILE, SEVERITY, LINES, DUPLICATIONS, AGE);
+    }
+
+    private void assertThatLineCountForSeverityIsCorrect(final List<Object> data, final String severity, final Integer min, final Integer max) {
+        data.stream()
+                .map(row -> (DuplicationRow) row)
+                .filter(row -> row.getSeverity().contains(severity))
+                .map(DuplicationRow::getLinesCount)
+                .map(Integer::new)
+                .forEach(count -> assertThat(count).isBetween(min, max));
     }
 
     /**
