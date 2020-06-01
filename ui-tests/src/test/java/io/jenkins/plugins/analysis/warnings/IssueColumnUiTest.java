@@ -121,7 +121,7 @@ public class IssueColumnUiTest extends AbstractJUnitTest {
         });
     }
 
-    private void addRecorder(final FreeStyleJob job) {
+    private void addAllRecorders(final FreeStyleJob job) {
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("CheckStyle");
             recorder.addTool("FindBugs");
