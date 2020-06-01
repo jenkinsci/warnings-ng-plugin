@@ -110,6 +110,9 @@
             <LOCAL_JARS>../plugin/target/warnings-ng.hpi</LOCAL_JARS>
             <BROWSER>firefox</BROWSER>
           </environmentVariables>
+          <includes>
+            <include>**/SmokeTests.java</include>
+          </includes>
         </configuration>
       </plugin>
       <plugin>

@@ -5,16 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.junit.Test;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.Severity;
 
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
@@ -22,7 +20,9 @@ import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.SourceDirectory;
 import io.jenkins.plugins.analysis.core.model.WarningsPluginConfiguration;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -30,13 +30,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
-import io.jenkins.plugins.datatables.TablePageObject;
-import io.jenkins.plugins.datatables.TableRowPageObject;
 
-import static io.jenkins.plugins.analysis.warnings.recorder.MiscIssuesRecorderITest.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -44,6 +38,8 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Deniz Mardin
  * @author Frank Christian Geyer
+ * @author Andreas Riepl
+ * @author Oliver Scholz
  */
 @SuppressWarnings("PMD.ExcessiveImports")
 public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSuite {
@@ -51,7 +47,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
     private static final String SOURCE_AFFECTED_FILE = FOLDER + "/Main.java";
     private static final String ECLIPSE_REPORT = FOLDER + "/eclipseOneAffectedAndThreeNotExistingFiles.txt";
     private static final String ECLIPSE_REPORT_ONE_AFFECTED_AFFECTED_FILE = FOLDER + "/eclipseOneAffectedFile.txt";
-    private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 1;
+    private static final int ROW_NUMBER_ACTUAL_AFFECTED_FILE = 0;
 
     /**
      * Verifies that the affected source code is copied and shown in the source code view. If the file is deleted in the
@@ -62,66 +58,13 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject project = createEclipseProject();
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
-        TableRowPageObject row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
-        SourceCodeView sourceCodeView = new SourceCodeView(getSourceCodePage(result));
-
-        assertThat(row.hasLink(AFFECTED_FILE)).isTrue();
-        assertThat(sourceCodeView.getSourceCode()).isEqualToIgnoringWhitespace(readSourceCode(project));
+        IssuesRow row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).contains("<a href=").contains("Main.java:3");
 
         deleteAffectedFilesInBuildFolder(result);
 
-        row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
-        assertThat(row.hasLink(AFFECTED_FILE)).isFalse();
-    }
-
-    /**
-     * Verifies that the affected source code is copied and shown in the source code view. If the file is made
-     * unreadable in the build folder, then the link to open the file disappears.
-     */
-    @Test
-    public void shouldShowNoLinkIfSourceCodeHasBeenMadeUnreadable() {
-        FreeStyleProject project = createEclipseProject();
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        TableRowPageObject row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
-        assertThat(row.hasLink(AFFECTED_FILE)).isTrue();
-
-        makeAffectedFilesInBuildFolderUnreadable(result);
-
-        row = getIssuesTableRow(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
-        assertThat(row.hasLink(AFFECTED_FILE)).isFalse();
-    }
-
-    private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
-        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result).getFileName()));
-    }
-
-    private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
-        Set<String> files = result.getIssues().getFiles();
-        for (String fileName : files) {
-            Path file = AffectedFilesResolver.getFile(result.getOwner(), fileName);
-            try {
-                Files.delete(file);
-            }
-            catch (IOException ignore) {
-                // ignore
-            }
-        }
-    }
-
-    private TableRowPageObject getIssuesTableRow(final AnalysisResult result, final int rowNumber) {
-        return getIssuesTable(result).getRow(rowNumber);
-    }
-
-    private String readSourceCode(final FreeStyleProject project) {
-        return toString(getSourceInWorkspace(project));
-    }
-
-    // TODO: Navigate to source code from details page 
-    private HtmlPage getSourceCodePage(final AnalysisResult result) {
-        return getWebPage(JavaScriptSupport.JS_DISABLED, result,
-                new FileNameRenderer(result.getOwner()).getSourceCodeUrl(getIssueWithSource(result))
-        );
+        row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).isEqualTo("Main.java:3");
     }
 
     private FreeStyleProject createEclipseProject() {
@@ -138,6 +81,48 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         FreeStyleProject job = createFreeStyleProject();
         copyMultipleFilesToWorkspace(job, ECLIPSE_REPORT, SOURCE_AFFECTED_FILE);
         return job;
+    }
+
+    /**
+     * Verifies that the affected source code is copied and shown in the source code view. If the file is made
+     * unreadable in the build folder, then the link to open the file disappears.
+     */
+    @Test
+    public void shouldShowNoLinkIfSourceCodeHasBeenMadeUnreadable() {
+        FreeStyleProject project = createEclipseProject();
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        IssuesRow row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).contains("<a href=").contains("Main.java:3");
+
+        makeAffectedFilesInBuildFolderUnreadable(result);
+
+        row = getIssuesModel(result, ROW_NUMBER_ACTUAL_AFFECTED_FILE);
+        assertThat(row.getFileName().getDisplay()).isEqualTo("Main.java:3");
+    }
+
+    private void makeAffectedFilesInBuildFolderUnreadable(final AnalysisResult result) {
+        makeFileUnreadable(AffectedFilesResolver.getFile(result.getOwner(), getIssueWithSource(result).getFileName()));
+    }
+
+    private Issue getIssueWithSource(final AnalysisResult result) {
+        return result.getIssues()
+                .stream()
+                .filter(issue -> issue.getFileName().endsWith("Main.java"))
+                .findFirst().orElseThrow(NoSuchElementException::new);
+    }
+
+    private void deleteAffectedFilesInBuildFolder(final AnalysisResult result) {
+        Set<String> files = result.getIssues().getFiles();
+        for (String fileName : files) {
+            Path file = AffectedFilesResolver.getFile(result.getOwner(), fileName);
+            try {
+                Files.delete(file);
+            }
+            catch (IOException ignore) {
+                // ignore
+            }
+        }
     }
 
     /**
@@ -213,16 +198,14 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         prepareGccLog(job);
         enableWarnings(job, createTool(new Gcc4(), "**/gcc.log"));
 
-        TableRowPageObject row = buildAndVerifyFilesResolving(job,
-                "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
-
-        assertThat(row.hasLink(AFFECTED_FILE)).isFalse();
+        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
     }
 
     /**
      * Verifies that a source code file will be copied from outside the workspace if configured correspondingly.
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-55998")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-55998")
     public void shouldShowFileOutsideWorkspaceIfConfigured() {
         FreeStyleProject job = createFreeStyleProject();
         prepareGccLog(job);
@@ -232,55 +215,49 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         recorder.setSourceDirectory(buildsFolder);
 
         // First build: copying the affected file is forbidden
-        TableRowPageObject unresolvedRow = buildAndVerifyFilesResolving(job,
-                "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
+        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_NOT_HAVE_LINK, "0 copied", "1 not in workspace", "0 not-found", "0 with I/O error");
 
         AnalysisResult result = getAnalysisResult(job.getLastCompletedBuild());
         assertThat(result.getErrorMessages()).contains(
                 String.format("Additional source directory '%s' must be registered in Jenkins system configuration",
                         buildsFolder));
 
-        assertThat(unresolvedRow.hasLink(AFFECTED_FILE)).isFalse();
-
         WarningsPluginConfiguration.getInstance().setSourceDirectories(
                 Collections.singletonList(new SourceDirectory(buildsFolder)));
 
         // Second build: copying the affected file is permitted
-        TableRowPageObject resolvedRow = buildAndVerifyFilesResolving(job,
-                "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
-
-        assertThat(resolvedRow.hasLink(AFFECTED_FILE)).isTrue();
-
-        SourceCodeView sourceCodeView = openSourceCode(resolvedRow);
-        assertThat(sourceCodeView.getSourceCode()).contains("<io.jenkins.plugins.analysis.core.steps.IssuesRecorder>");
+        buildAndVerifyFilesResolving(job, ColumnLink.SHOULD_HAVE_LINK, "1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
     }
 
-    private SourceCodeView openSourceCode(final TableRowPageObject resolvedRow) {
-        return new SourceCodeView(resolvedRow.clickColumnLink(AFFECTED_FILE));
-    }
-
-    private TableRowPageObject buildAndVerifyFilesResolving(final FreeStyleProject job, final String... resolveMessages) {
+    private void buildAndVerifyFilesResolving(final FreeStyleProject job, final ColumnLink columnLink,
+            final String... expectedResolveMessages) {
         AnalysisResult result = scheduleBuildAndAssertStatus(job, Result.SUCCESS);
 
-        assertThat(getConsoleLog(result)).contains(resolveMessages);
+        assertThat(getConsoleLog(result)).contains(expectedResolveMessages);
 
-        TablePageObject issues = getIssuesTable(result);
-        assertThat(issues.getColumnHeaders()).containsExactly(
-                DETAILS, AFFECTED_FILE, SEVERITY, AGE);
-        List<TableRowPageObject> rows = issues.getRows();
-        assertThat(rows).hasSize(1);
-        TableRowPageObject row = rows.get(0);
-        assertThat(row.getValuesByColumnLabel()).contains(
-                entry(DETAILS, "foo defined but not used"),
-                entry(AFFECTED_FILE, "config.xml:451"),
-                entry(SEVERITY, "Normal"));
-        return row;
+        assertThat(result.getIssues()).hasSize(1);
+
+        IssuesRow firstRow = getIssuesModel(result, 0);
+        assertThat(firstRow.getSeverity()).contains(Severity.WARNING_NORMAL.getName());
+        if (columnLink == ColumnLink.SHOULD_HAVE_LINK) {
+            assertThat(firstRow.getFileName().getDisplay()).startsWith("<a href=\"").contains("config.xml:451");
+        }
+        else {
+            assertThat(firstRow.getFileName().getDisplay()).isEqualTo("config.xml:451");
+        }
+
+        Issue issue = result.getIssues().get(0);
+        assertThat(issue.getBaseName()).isEqualTo("config.xml");
+        assertThat(issue.getLineStart()).isEqualTo(451);
+        assertThat(issue.getMessage()).isEqualTo("foo defined but not used");
+        assertThat(issue.getSeverity()).isEqualTo(Severity.WARNING_NORMAL);
     }
 
-    private TablePageObject getIssuesTable(final AnalysisResult result) {
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-        DetailsTab detailsTab = new DetailsTab(details);
-        return detailsTab.select(TabType.ISSUES);
+    private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
+        IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
+        Object row = issuesDetail.getTableModel("issues").getRows().get(rowNumber);
+
+        return (IssuesRow) row;
     }
 
     private void prepareGccLog(final FreeStyleProject job) {
@@ -306,18 +283,15 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
         assertThat(getConsoleLog(result)).contains("1 copied", "0 not-found", "0 with I/O error");
     }
 
-    private Issue getIssueWithSource(final AnalysisResult result) {
-        return result.getIssues()
-                .stream()
-                .filter(issue -> issue.getFileName().endsWith("Main.java"))
-                .findFirst().orElseThrow(NoSuchElementException::new);
-    }
-
     private AnalysisResult buildEclipseProject(final String... files) {
         FreeStyleProject project = createFreeStyleProject();
         copyMultipleFilesToWorkspace(project, files);
         enableEclipseWarnings(project);
 
         return scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+    }
+
+    private enum ColumnLink {
+        SHOULD_HAVE_LINK, SHOULD_NOT_HAVE_LINK
     }
 }

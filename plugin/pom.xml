@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
     <version>4.0.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -36,10 +37,10 @@
     <jquery3-api.version>3.5.1-1</jquery3-api.version>
     <bootstrap4-api.version>4.5.0-1</bootstrap4-api.version>
     <data-tables-api.version>1.10.21-1</data-tables-api.version>
-    <echarts-api.version>4.7.0-2</echarts-api.version>
+    <echarts-api.version>4.7.0-3</echarts-api.version>
 
     <commons.lang.version>3.10</commons.lang.version>
-    <commons.io.version>2.6</commons.io.version>
+    <commons.io.version>2.7</commons.io.version>
     <commons.digester.version>2.1</commons.digester.version>
     <commons.digester3.version>3.2</commons.digester3.version>
     <commons.text.version>1.8</commons.text.version>
@@ -122,6 +123,11 @@
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
         <version>3.6</version>
+      </dependency>
+      <dependency>
+        <groupId>io.jenkins.plugins</groupId>
+        <artifactId>code-coverage-api</artifactId>
+        <version>1.1.4</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -434,6 +440,24 @@
       <version>${folder.version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.jenkins-ci.plugins</groupId>
+      <artifactId>ansicolor</artifactId>
+      <version>0.4.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>metrics-aggregation</artifactId>
+      <version>0.2.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>autograding</artifactId>
+      <version>2.0.0</version>
+      <scope>test</scope>
+    </dependency>
 
     <!-- stage -->
     <dependency>
@@ -507,12 +531,6 @@
           <artifactId>cloudbees-folder</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>autograding</artifactId>
-      <version>2.0.0</version>
-      <scope>test</scope>
     </dependency>
 
   </dependencies>
