@@ -17,7 +17,7 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Andreas Riepl
  * @author Oliver Scholz
  */
-public class IssueColumn extends PageObject {
+public class IssuesColumn extends PageObject {
 
     private String jobName;
 
@@ -27,7 +27,7 @@ public class IssueColumn extends PageObject {
      * @param injector injector
      * @param url the URL of the view
      */
-    public IssueColumn(final Injector injector, final URL url) {
+    public IssuesColumn(final Injector injector, final URL url) {
         super(injector, url);
     }
 
@@ -37,7 +37,7 @@ public class IssueColumn extends PageObject {
      * @param context context
      * @param url the URL of the view
      */
-    protected IssueColumn(final PageObject context, final URL url) {
+    protected IssuesColumn(final PageObject context, final URL url) {
         super(context, url);
     }
 
@@ -47,7 +47,7 @@ public class IssueColumn extends PageObject {
      * @param parent the build that contains the static analysis results
      * @param jobName the name of the jenkins job
      */
-    public IssueColumn(final Build parent, final String jobName) {
+    public IssuesColumn(final Build parent, final String jobName) {
         super(parent, parent.url(""));
 
         this.jobName = jobName;
