@@ -1,8 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.json.JsonException;
+
+import com.gargoylesoftware.htmlunit.ScriptResult;
 
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
@@ -26,7 +31,7 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
      * Click on next-button switches between different Chart-types.
      */
     @Test
-    public void shouldDisplayDifferentTrendChartsOnClick() {
+    public void shouldDisplayDifferentTrendChartsOnClick() throws JSONException {
         FreeStyleJob job = createFreeStyleJob("build_01");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("Java", "**/*.txt"));
         job.save();
@@ -48,6 +53,10 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
 
         nextButton.click();
         boolean newVsFixedDisplayed = trendChart.findElement(By.id("new-versus-fixed-trend-chart")).isDisplayed();
+
+
+
+        JSONObject newVsFixed = analysisResultPage.getSeveritiesTrendChart();
 
         assertThat(severitiesDisplayed).isTrue();
         assertThat(toolsDisplayed).isTrue();

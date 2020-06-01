@@ -7,9 +7,12 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
 
 import org.jenkinsci.test.acceptance.po.Build;
@@ -180,9 +183,27 @@ public class AnalysisResult extends PageObject {
      *
      * @return trendChart Carousel.
      */
-    public WebElement getTrendChart () {
+    public WebElement getTrendChart() {
+        return find(By.id("trend-carousel"));
+    }
+
+    public JSONObject getSeveritiesTrendChart() throws JSONException {
+        return getChartModel("severities-trend-chart");
+    }
+
+    protected JSONObject getChartModel(final String id) throws JSONException {
         WebElement trendChart = find(By.id("trend-carousel"));
-        return trendChart;
+        WebElement chart = trendChart.findElement(By.id(id));
+        ScriptResult scriptResult = (ScriptResult) this.executeScript("JSON.stringify(echarts.getInstanceByDom(arguments[0]).getOption())", chart);
+
+        JSONObject chartModel;
+        try {
+            chartModel = new JSONObject(scriptResult.getJavaScriptResult().toString());
+        }
+        catch (JSONException e) {
+            throw new JSONException(e);
+        }
+        return new JSONObject(scriptResult);
     }
 
     /**
