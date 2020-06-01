@@ -19,13 +19,21 @@ import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
+/**
+ * UI tests for the global system configuration of the warnings plugin.
+ *
+ * @author Lukas Kirner
+ */
 @WithPlugins("warnings-ng")
-public class GlobalConfigurationUiTest extends AbstractUiTest {
-
+public class GlobalConfigurationUiTest extends UiTest {
     private static final String GCC_ID = "gcc";
     private static final String PEP8_ID = "pep8-groovy";
-
     private static final String PEP_FILE = "pep8Test.txt";
+
+    private enum LinkType {
+        SHOULD_HAVE_SOURCE_CODE_LINK,
+        SHOULD_NOT_HAVE_SOURCE_CODE_LINK
+    }
 
     /**
      * Verifies that a source code file will be copied from outside the workspace and linked in the open issues tab.
@@ -41,12 +49,12 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         createFileInWorkspace(job, homeDir);
 
         Build build = buildJob(job);
-        verifyGcc(build, false);
+        verifyGcc(build, LinkType.SHOULD_NOT_HAVE_SOURCE_CODE_LINK);
 
         initGlobalSettingsForSourceDirectory(job);
 
         build = buildJob(job);
-        verifyGcc(build, true);
+        verifyGcc(build, LinkType.SHOULD_HAVE_SOURCE_CODE_LINK);
     }
 
     private String getHomeDir() {
@@ -64,6 +72,7 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         });
     }
 
+    // TODO: use plugin?
     private void createFileInWorkspace(final FreeStyleJob job, final String homeDir) throws IOException {
         String content = String.format("%s/config.xml:451: warning: foo defined but not used%n",
                 getJobDir(homeDir, job));
@@ -101,13 +110,13 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         return homeDir + File.separator + "jobs" + File.separator + job.name;
     }
 
-    private void verifyGcc(final Build build, final boolean shouldHaveLink) {
+    private void verifyGcc(final Build build, final LinkType linkType) {
         build.open();
         AnalysisSummary gcc = new AnalysisSummary(build, GCC_ID);
         assertThat(gcc).isDisplayed()
                 .hasTitleText("GNU C Compiler (gcc): One warning")
-                .hasReferenceBuild(shouldHaveLink ? 1 : 0)
-                .hasInfoType(shouldHaveLink ? InfoType.INFO : InfoType.ERROR);
+                .hasReferenceBuild(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? 1 : 0)
+                .hasInfoType(linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK ? InfoType.INFO : InfoType.ERROR);
 
         AnalysisResult gccDetails = gcc.openOverallResult();
         assertThat(gccDetails).hasActiveTab(Tab.ISSUES)
@@ -115,16 +124,13 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
 
         IssuesTableRow row = gccDetails.openIssuesTable().getRowAs(0, IssuesTableRow.class);
 
-        if (shouldHaveLink) {
+        if (linkType == LinkType.SHOULD_HAVE_SOURCE_CODE_LINK) {
             assertThat(row.getFileLink()).isNotNull();
         }
         else {
-            try {
-                row.getFileLink();
-                fail("element has link to file");
-            }
-            catch (NoSuchElementException ignored) {
-            }
+            assertThatExceptionOfType(NoSuchElementException.class)
+                    .as("Source code link should not be available")
+                    .isThrownBy(row::getFileLink);
         }
     }
 
@@ -179,7 +185,6 @@ public class GlobalConfigurationUiTest extends AbstractUiTest {
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("Groovy Parser", gp -> gp.setPattern("**/*" + PEP_FILE));
             recorder.setEnabledForFailure(true);
-            ;
         });
     }
 

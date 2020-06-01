@@ -6,10 +6,9 @@ import org.jenkinsci.test.acceptance.po.Jenkins;
 import org.jenkinsci.test.acceptance.po.JenkinsConfig;
 
 /**
- * Class representing the available global setting for the warnings-ng plugin
+ * Global system configuration of the warnings plugin.
  */
 public class GlobalWarningsSettings extends JenkinsConfig {
-
     private static final String XPATH_PLUGIN_CONFIG = "//*[@path='%s']";
 
     private static final String PATH_PREFIX = "/io-jenkins-plugins-analysis-";
@@ -19,13 +18,15 @@ public class GlobalWarningsSettings extends JenkinsConfig {
     private static final String SOURCE_PATH_FIELD = "sourceDirectories/path";
     private static final String PARSERS_PREFIX = "parsers/";
 
-    public GlobalWarningsSettings(final Jenkins jenkins) {
+    GlobalWarningsSettings(final Jenkins jenkins) {
         super(jenkins);
     }
 
     /**
-     * Enters the given sourcedirectory path on the system configuration page from jenkins.
-     * @param absolutePath sourcedirectory path as absoule path.
+     * Enters the given source directory path on the system configuration page from jenkins.
+     *
+     * @param absolutePath
+     *         source directory path as absolute path.
      */
     public void enterSourceDirectoryPath(final String absolutePath) {
         ensureConfigPage();
@@ -37,6 +38,7 @@ public class GlobalWarningsSettings extends JenkinsConfig {
 
     /**
      * Returns the home directory of the current jenkins instance which is displayed on the system configuration page.
+     *
      * @return home directory of the current jenkins instance.
      */
     public String getHomeDirectory() {
@@ -48,6 +50,7 @@ public class GlobalWarningsSettings extends JenkinsConfig {
 
     /**
      * Opens the groovy parser configuration section on the system configuration page from jenkins.
+     *
      * @return GroovyConfiguration Page Object to fill the parser configuration.
      */
     public GroovyConfiguration openGroovyConfiguration() {
@@ -56,5 +59,4 @@ public class GlobalWarningsSettings extends JenkinsConfig {
         driver.findElement(By.xpath(String.format(XPATH_PLUGIN_CONFIG, GROOVY_PATH + BUTTON_ADD))).click();
         return new GroovyConfiguration(this, url, GROOVY_PATH + PARSERS_PREFIX, XPATH_PLUGIN_CONFIG);
     }
-
 }

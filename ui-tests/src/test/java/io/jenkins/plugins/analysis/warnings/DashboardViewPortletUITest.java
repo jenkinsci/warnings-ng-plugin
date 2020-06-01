@@ -2,13 +2,15 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
 import java.util.Map;
+
 import org.junit.Test;
-import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
+
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
-import org.jenkinsci.test.acceptance.po.Job;
+
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
+
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
@@ -16,8 +18,8 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  *
  * @author Lukas Kirner
  */
-public class DashboardViewPortletUITest extends AbstractJUnitTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/dashboard_test/";
+public class DashboardViewPortletUITest extends UiTest {
+    private static final String DASHBOARD_PREFIX = "dashboard_test/";
 
     /**
      * Creates one Dashboard which will then display one successful build and its checkstyle warnings (icons in header).
@@ -25,10 +27,10 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     @Test
     public void shouldShowIcons() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
-        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml");
+        FreeStyleJob job = createFreeStyleJob(DASHBOARD_PREFIX + "checkstyle-result.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job.save();
-        Build build = shouldBuildJobSuccessfully(job);
+        Build build = shouldBuildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -46,10 +48,10 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     @Test
     public void shouldNotShowIcons() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
-        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml");
+        FreeStyleJob job = createFreeStyleJob(DASHBOARD_PREFIX + "checkstyle-result.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job.save();
-        Build build = shouldBuildJobSuccessfully(job);
+        Build build = shouldBuildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -67,10 +69,10 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     @Test
     public void shouldHideCleanJob() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(true, false);
-        FreeStyleJob job = createFreeStyleJob("checkstyle-clean.xml");
+        FreeStyleJob job = createFreeStyleJob(DASHBOARD_PREFIX + "checkstyle-clean.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job.save();
-        Build build = shouldBuildJobSuccessfully(job);
+        Build build = shouldBuildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -85,13 +87,13 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     @Test
     public void shouldShow2Issues() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
-        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml", "eclipse.txt");
+        FreeStyleJob job = createFreeStyleJob(DASHBOARD_PREFIX + "checkstyle-result.xml", DASHBOARD_PREFIX + "eclipse.txt");
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("CheckStyle", "**/checkstyle-result.xml");
             recorder.addTool("Eclipse ECJ", "**/eclipse.txt");
         });
         job.save();
-        Build build = shouldBuildJobSuccessfully(job);
+        Build build = shouldBuildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -112,14 +114,15 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     @Test
     public void shouldShow3Issues() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
-        FreeStyleJob job = createFreeStyleJob("checkstyle-result.xml", "eclipse.txt", "pmd.xml");
+        FreeStyleJob job = createFreeStyleJob(DASHBOARD_PREFIX + "checkstyle-result.xml", DASHBOARD_PREFIX + "eclipse.txt", DASHBOARD_PREFIX
+                + "pmd.xml");
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("CheckStyle", "**/checkstyle-result.xml");
             recorder.addTool("Eclipse ECJ", "**/eclipse.txt");
             recorder.addTool("PMD", "**/pmd.xml");
         });
         job.save();
-        Build build = shouldBuildJobSuccessfully(job);
+        Build build = shouldBuildSuccessfully(job);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -143,15 +146,15 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     public void shouldShowMultipleJobs() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, false);
 
-        FreeStyleJob job1 = createFreeStyleJob("checkstyle-result.xml");
+        FreeStyleJob job1 = createFreeStyleJob(DASHBOARD_PREFIX + "checkstyle-result.xml");
         job1.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job1.save();
-        shouldBuildJobSuccessfully(job1);
+        shouldBuildSuccessfully(job1);
 
-        FreeStyleJob job2 = createFreeStyleJob("checkstyle-clean.xml");
+        FreeStyleJob job2 = createFreeStyleJob(DASHBOARD_PREFIX + "checkstyle-clean.xml");
         job2.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job2.save();
-        Build build = shouldBuildJobSuccessfully(job2);
+        Build build = shouldBuildSuccessfully(job2);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -171,15 +174,15 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
     public void shouldHideCleanJobs() {
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(true, false);
 
-        FreeStyleJob job1 = createFreeStyleJob("checkstyle-result.xml");
+        FreeStyleJob job1 = createFreeStyleJob(DASHBOARD_PREFIX + "checkstyle-result.xml");
         job1.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job1.save();
-        shouldBuildJobSuccessfully(job1);
+        shouldBuildSuccessfully(job1);
 
-        FreeStyleJob job2 = createFreeStyleJob("checkstyle-clean.xml");
+        FreeStyleJob job2 = createFreeStyleJob(DASHBOARD_PREFIX + "checkstyle-clean.xml");
         job2.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("CheckStyle"));
         job2.save();
-        Build build = shouldBuildJobSuccessfully(job2);
+        Build build = shouldBuildSuccessfully(job2);
 
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
@@ -190,42 +193,5 @@ public class DashboardViewPortletUITest extends AbstractJUnitTest {
         Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
         assertThat(table.size()).isEqualTo(1);
         assertThat(table.get(job1.name).get("CheckStyle")).hasWarningsCount(4);
-    }
-
-
-    private Build shouldBuildJobSuccessfully(final Job job) {
-        Build build = job.startBuild().waitUntilFinished();
-        assertThat(build.isSuccess()).isTrue();
-        return build;
-    }
-
-    private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
-        FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
-        for (String resource : resourcesToCopy) {
-            job.copyResource(WARNINGS_PLUGIN_PREFIX + resource);
-        }
-        return job;
-    }
-
-    private DashboardView createDashboardWithStaticAnalysisPortlet(final Boolean hideCleanJobs, final Boolean showIcons) {
-        DashboardView v = createDashboardView();
-        StaticAnalysisIssuesPerToolAndJobPortlet portlet = v.addTopPortlet(StaticAnalysisIssuesPerToolAndJobPortlet.class);
-        if (hideCleanJobs) {
-            portlet.toggleHideCleanJobs();
-        }
-        if (showIcons) {
-            portlet.toggleShowIcons();
-        }
-
-        v.save();
-        return v;
-    }
-
-    private DashboardView createDashboardView() {
-        DashboardView v = jenkins.views.create(DashboardView.class);
-        v.configure();
-        v.matchAllJobs();
-        return v;
     }
 }

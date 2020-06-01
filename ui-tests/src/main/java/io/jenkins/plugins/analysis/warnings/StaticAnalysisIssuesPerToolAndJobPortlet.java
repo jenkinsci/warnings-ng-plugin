@@ -11,17 +11,15 @@ import org.jenkinsci.test.acceptance.po.Describable;
  */
 @Describable("Static analysis issues per tool and job")
 public class StaticAnalysisIssuesPerToolAndJobPortlet extends AbstractDashboardViewPortlet {
-
-    public StaticAnalysisIssuesPerToolAndJobPortlet(final DashboardView parent, final String path) {
+    StaticAnalysisIssuesPerToolAndJobPortlet(final DashboardView parent, final String path) {
         super(parent, path);
     }
 
-    public void toggleHideCleanJobs() {
+    void toggleHideCleanJobs() {
         this.find(by.name("_.hideCleanJobs")).click();
     }
 
-    public void toggleShowIcons() {
+    void toggleShowIcons() {
         this.find(by.name("_.showIcons")).click();
     }
-
 }
