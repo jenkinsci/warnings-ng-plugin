@@ -20,30 +20,15 @@ import org.jenkinsci.test.acceptance.po.PostBuildStep;
 public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control toolsRepeatable = findRepeatableAddButtonFor("tools");
     private final Control filtersRepeatable = findRepeatableAddButtonFor("filters");
-    private final Control filterRegex = control("/filters/pattern");
     private final Control qualityGatesRepeatable = findRepeatableAddButtonFor("qualityGates");
-    private final Control qualityGateThreshold = control("/qualityGates/threshold");
-    private final Control qualityGateType = control("/qualityGates/type");
-    private final Control qualityGateResult = control("/qualityGates/unstable[true]");
     private final Control advancedButton = control("advanced-button");
     private final Control enabledForFailureCheckBox = control("enabledForFailure");
     private final Control ignoreQualityGate = control("ignoreQualityGate");
     private final Control overallResultMustBeSuccessCheckBox = control("overallResultMustBeSuccess");
-    private final Control referenceJobName = control("referenceJobName");
+    private final Control referenceJobField = control("referenceJob");
     private final Control aggregatingResultsCheckBox = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
     private final Control sourceDirectory = control("sourceDirectory");
-    private final Control blameDisabled = control("blameDisabled");
-    private final Control forensicsDisabled = control("forensicsDisabled");
-    private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
-    private final Control failOnError = control("failOnError");
-    private final Control reportFilePattern = control("/toolProxies/tool/pattern");
-    private final Control trendChartType = control("trendChartType");
-    private final Control healthyThreshold = control("healthy");
-    private final Control unhealthyThreshold = control("unhealthy");
-    private final Control healthSeverity = control("minimumSeverity");
-
-
 
     /**
      * Determines the result of the quality gate.
@@ -166,126 +151,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return addTool(toolName, tool -> tool.setPattern(pattern));
     }
 
-    public String getSourceCodeEncoding() {
-        return sourceCodeEncoding.get();
-    }
-
-    /**
-     * Returns whether recording should be enabled for failed builds as well.
-     *
-     * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
-     *         enabled for successful or unstable builds only
-     */
-    public boolean getEnabledForFailure() {
-        return enabledForFailureCheckBox.resolve().isSelected();
-    }
-
-    /**
-     * Returns whether the results for each configured static analysis result should be aggregated into a single result
-     * or if every tool should get an individual result.
-     *
-     * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
-     *         {@code false} if every tool should get an individual result.
-     */
-    public boolean getAggregatingResults() {
-        return aggregatingResultsCheckBox.resolve().isSelected();
-    }
-
-    public boolean getIgnoreQualityGate() {
-        return ignoreQualityGate.resolve().isSelected();
-    }
-
-    public String getOverallResultMustBeSuccess() {
-        return overallResultMustBeSuccessCheckBox.get();
-    }
-
-    /**
-     * Returns the reference job to get the results for the issue difference computation.
-     *
-     * @return the name of reference job
-     */
-    public String getReferenceJobName() {
-        return referenceJobName.get();
-    }
-
-    public String getSourceDirectory() {
-        return sourceDirectory.get();
-    }
-
-    public String getTrendChartType() {
-        return trendChartType.get();
-    }
-
-    /**
-     * Returns whether SCM blaming should be disabled.
-     *
-     * @return {@code true} if SCM blaming should be disabled
-     */
-    public boolean getBlameDisabled() {
-        return blameDisabled.resolve().isSelected();
-    }
-
-    /**
-     * Returns whether SCM forensics should be disabled.
-     *
-     * @return {@code true} if SCM forensics should be disabled
-     */
-    public boolean getForensicsDisabled() {
-        return forensicsDisabled.resolve().isSelected();
-    }
-
-    public boolean getIgnoreFailedBuilds() {
-        return ignoreFailedBuilds.resolve().isSelected();
-    }
-
-
-    public boolean getFailOnError() {
-        return failOnError.resolve().isSelected();
-    }
-
-    public String getHealthThreshold() {
-        return healthyThreshold.get();
-    }
-
-    public String getUnhealthyThreshold() {
-        return unhealthyThreshold.get();
-    }
-
-    public String getHealthSeverity() {
-        return healthSeverity.get();
-    }
-
-    public String getReportFilePattern() {
-        return reportFilePattern.get();
-    }
-
-    public String getFilterRegex() {
-        return filterRegex.get();
-    }
-
-    public String getQualityGateThreshold() {
-        return qualityGateThreshold.get();
-    }
-
-    public String getQualityGateType() {
-        return qualityGateType.get();
-    }
-
-    /**
-     * Gets the quality gate result.
-     *
-     * @return the quality gate result
-     *
-     **/
-    public QualityGateBuildResult getQualityGateResult() {
-        if (qualityGateResult.resolve().isSelected()) {
-            return QualityGateBuildResult.UNSTABLE;
-        }
-        else {
-            return QualityGateBuildResult.FAILED;
-        }
-    }
-
     /**
      * Sets the source code encoding to the specified value.
      *
@@ -330,16 +195,13 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
-     * disabled by default so a failing quality gate will be passed from build to build until the original reason for
-     * the failure has been resolved.
+     * Enables or disables the checkbox 'ignoreAnalysisResult'.
      *
-     * @param ignoreQualityGate
-     *         if {@code true} then the result of the quality gate is ignored, otherwise only build with a successful
-     *         quality gate are selected
+     * @param isChecked
+     *         determines if the checkbox should be checked or not
      */
-    public void setIgnoreQualityGate(final boolean ignoreQualityGate) {
-        this.ignoreQualityGate.check(ignoreQualityGate);
+    public void setIgnoreQualityGate(final boolean isChecked) {
+        ignoreQualityGate.check(isChecked);
     }
 
     /**
@@ -353,114 +215,19 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Sets the reference job to get the results for the issue difference computation.
+     * Sets the value of the input field 'referenceJob'.
      *
-     * @param referenceJobName
-     *         the name of reference job
+     * @param referenceJob
+     *         the name of the referenceJob
      */
-    public void setReferenceJobName(final String referenceJobName) {
-        this.referenceJobName.set(referenceJobName);
-    }
-
-    /**
-     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
-     * then this folder needs to be added in Jenkins global configuration.
-     *
-     * @param sourceDirectory
-     *         a folder containing the source code
-     */
-    public void setSourceDirectory(final String sourceDirectory) {
-        this.sourceDirectory.set(sourceDirectory);
-    }
-
-    /**
-     * Sets the Aggregate esult checkbox.
-     *
-     * @param isChecked
-     */
-    public void setAggregatingResults(final boolean isChecked) {
-        aggregatingResultsCheckBox.check(isChecked);
-    }
-
-    /**
-     * Sets the Disable SCM Blames checkbox.
-     *
-     * @param blameDisabled
-     */
-    public void setBlameDisabled(final boolean blameDisabled) {
-        this.blameDisabled.check(blameDisabled);
-    }
-
-    /**
-     * Sets the Disable SCM Forensics checkbox.
-     *
-     * @param forensicsDisabled
-     */
-    public void setForensicsDisabled(final boolean forensicsDisabled) {
-        this.forensicsDisabled.check(forensicsDisabled);
-    }
-
-    /**
-     * If {@code true}, then only successful or unstable reference builds will be considered. This option is enabled by
-     * default, since analysis results might be inaccurate if the build failed. If {@code false}, every build that
-     * contains a static analysis result is considered, even if the build failed.
-     *
-     * @param ignoreFailedBuilds
-     *         if {@code true} then a stable build is used as reference
-     */
-    public void setIgnoreFailedBuilds(final boolean ignoreFailedBuilds) {
-        this.ignoreFailedBuilds.check(ignoreFailedBuilds);
-    }
-
-    /**
-     * Determines whether to fail the build on errors during the step of recording issues.
-     *
-     * @param failOnError
-     *         if {@code true} then the build will be failed on errors, {@code false} then errors are only reported in
-     *         the UI
-     */
-    public void setFailOnError(final boolean failOnError) {
-        this.failOnError.check(failOnError);
-    }
-
-    /**
-     * Sets the report file pattern.
-     * @param pattern
-     */
-    public void setReportFilePattern(final String pattern) {
-        reportFilePattern.set(pattern);
-    }
-
-    /**
-     * Sets the type of the trend chart that should be shown on the job page.
-     *
-     * @param trendChartType
-     *         the type of the trend chart to use
-     */
-    public void setTrendChartType(final TrendChartType trendChartType) {
-        this.trendChartType.select(trendChartType.toString());
-    }
-
-    /**
-     * Sets the healthy report values.
-     *
-     * @param healthy
-     *         the number of issues when health is reported as 100%
-     * @param unhealthy
-     *         the number of issues when health is reported as 0%
-     * @param minimumSeverity
-     *         the severity to consider
-     */
-    public void setHealthReport(final int healthy, final int unhealthy, final String minimumSeverity) {
-        healthyThreshold.set(healthy);
-        unhealthyThreshold.set(unhealthy);
-        healthSeverity.select(minimumSeverity);
+    public void setReferenceJobField(final String referenceJob) {
+        referenceJobField.set(referenceJob);
     }
 
     /**
      * Opens the advanced section.
      */
-    public void openAdvancedOptions() {
+    private void openAdvancedOptions() {
         if (advancedButton != null && advancedButton.exists()) {
             advancedButton.click();
         }
@@ -664,19 +431,5 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         public void setUnstable(final boolean isUnstable) {
             self().findElement(by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]")).click();
         }
-    }
-
-    /**
-     * Defines the type of trend chart to use.
-     */
-    public enum TrendChartType {
-        /** The aggregation trend is shown <b>before</b> all other analysis tool trend charts. */
-        AGGREGATION_TOOLS,
-        /** The aggregation trend is shown <b>after</b> all other analysis tool trend charts. */
-        TOOLS_AGGREGATION,
-        /** The aggregation trend is not shown, only the analysis tool trend charts are shown. */
-        TOOLS_ONLY,
-        /** Neither the aggregation trend nor analysis tool trend charts are shown. */
-        NONE
     }
 }
