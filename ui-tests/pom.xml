@@ -26,7 +26,7 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>1.71</version>
+      <version>1.72</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -110,6 +110,9 @@
             <LOCAL_JARS>../plugin/target/warnings-ng.hpi</LOCAL_JARS>
             <BROWSER>firefox</BROWSER>
           </environmentVariables>
+          <includes>
+            <include>**/SmokeTests.java</include>
+          </includes>
         </configuration>
       </plugin>
       <plugin>
