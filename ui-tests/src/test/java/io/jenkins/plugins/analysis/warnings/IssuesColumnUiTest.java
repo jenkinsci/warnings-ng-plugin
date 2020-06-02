@@ -2,7 +2,6 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.junit.Test;
 
-import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
@@ -17,7 +16,7 @@ import static org.assertj.core.api.Assertions.*;
  * @author Oliver Scholz
  */
 @WithPlugins("warnings-ng")
-public class IssuesColumnUiTest extends AbstractJUnitTest {
+public class IssuesColumnUiTest extends UiTest {
     private static final String WARNINGS_PLUGIN_PREFIX = "/";
 
     /**
@@ -140,29 +139,9 @@ public class IssuesColumnUiTest extends AbstractJUnitTest {
         });
     }
 
-    private void addAllRecorders(final FreeStyleJob job) {
-        job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("CheckStyle");
-            recorder.addTool("FindBugs");
-            recorder.addTool("PMD");
-            recorder.addTool("CPD",
-                    cpd -> cpd.setHighThreshold(8).setNormalThreshold(3));
-            recorder.setEnabledForFailure(true);
-        });
-    }
-
     private void assertHoverValues(final IssuesColumn column, final int rowNumber, final String toolName, final String issueCount) {
         assertThat(column.getToolNameFromHover(rowNumber)).isEqualTo(toolName);
         assertThat(column.getIssueCountFromHover(rowNumber)).isEqualTo(issueCount);
-    }
-
-    private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
-        FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
-        for (String resource : resourcesToCopy) {
-            job.copyResource(WARNINGS_PLUGIN_PREFIX + resource);
-        }
-        return job;
     }
 
     private ListView createListView() {

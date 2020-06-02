@@ -84,7 +84,7 @@ public class SmokeTests extends UiTest {
     public void shouldShowBuildSummaryAndLinkToDetails() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
 
-        addRecorder(job);
+        addAllRecorders(job);
         job.save();
 
         buildJob(job);
@@ -97,17 +97,6 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
-    }
-
-    private IssuesRecorder addRecorder(final FreeStyleJob job) {
-        return job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("CheckStyle");
-            recorder.addTool("FindBugs");
-            recorder.addTool("PMD");
-            recorder.addTool("CPD",
-                    cpd -> cpd.setHighThreshold(8).setNormalThreshold(3));
-            recorder.setEnabledForFailure(true);
-        });
     }
 
     private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {

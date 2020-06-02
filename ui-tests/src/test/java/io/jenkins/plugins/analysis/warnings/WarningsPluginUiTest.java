@@ -70,7 +70,7 @@ public class WarningsPluginUiTest extends UiTest {
     @Test
     public void shouldAggregateToolsIntoSingleResult() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
-        IssuesRecorder recorder = addRecorder(job);
+        IssuesRecorder recorder = addAllRecorders(job);
         recorder.setEnabledForAggregation(true);
         recorder.addQualityGateConfiguration(4, QualityGateType.TOTAL, QualityGateBuildResult.UNSTABLE);
         recorder.addQualityGateConfiguration(3, QualityGateType.NEW, QualityGateBuildResult.FAILED);
@@ -110,17 +110,6 @@ public class WarningsPluginUiTest extends UiTest {
         AnalysisResult result = analysisSummary.openOverallResult();
         assertThat(result).hasActiveTab(Tab.TOOLS).hasTotal(25)
                 .hasOnlyAvailableTabs(Tab.TOOLS, Tab.PACKAGES, Tab.FILES, Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
-    }
-
-    private IssuesRecorder addRecorder(final FreeStyleJob job) {
-        return job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("CheckStyle");
-            recorder.addTool("FindBugs");
-            recorder.addTool("PMD");
-            recorder.addTool("CPD",
-                    cpd -> cpd.setHighThreshold(8).setNormalThreshold(3));
-            recorder.setEnabledForFailure(true);
-        });
     }
 
     /**
