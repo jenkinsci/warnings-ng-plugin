@@ -11,7 +11,7 @@ import org.jenkinsci.test.acceptance.po.ListView;
 import static org.assertj.core.api.Assertions.*;
 
 /**
- * Acceptance tests for the Warnings Issue Column
+ * Acceptance tests for the Warnings Issue Column.
  *
  * @author Andreas Riepl
  * @author Oliver Scholz
@@ -21,7 +21,7 @@ public class IssuesColumnUiTest extends AbstractJUnitTest {
     private static final String WARNINGS_PLUGIN_PREFIX = "/";
 
     /**
-     * Configure a job with multiple recorders: Should display a table when hovering the issue column
+     * Configure a job with multiple recorders: Should display a table when hovering the issue column.
      */
     @Test
     @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
@@ -33,7 +33,7 @@ public class IssuesColumnUiTest extends AbstractJUnitTest {
 
         Build build = job.startBuild().waitUntilFinished();
 
-        jenkins.visit("");
+        jenkins.open();
 
         IssuesColumn column = new IssuesColumn(build, jobName);
 
@@ -126,6 +126,7 @@ public class IssuesColumnUiTest extends AbstractJUnitTest {
 
         column.hoverIssueCount();
 
+        // TODO: see JENKINS-59591
         assertHoverValues(column, 1, "CheckStyle Warnings", "3");
         assertHoverValues(column, 2, "FindBugs Warnings", "0");
         assertHoverValues(column, 3, "PMD Warnings", "2");
