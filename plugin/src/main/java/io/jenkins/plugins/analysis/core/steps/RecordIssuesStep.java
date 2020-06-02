@@ -983,8 +983,6 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setSourceCodeEncoding(step.getSourceCodeEncoding());
             recorder.setIgnoreQualityGate(step.getIgnoreQualityGate());
             recorder.setIgnoreFailedBuilds(step.getIgnoreFailedBuilds());
-            recorder.setReferenceJobName(step.getReferenceJobName());
-            recorder.setReferenceBuildId(step.getReferenceBuildId());
             recorder.setHealthy(step.getHealthy());
             recorder.setUnhealthy(step.getUnhealthy());
             recorder.setMinimumSeverity(step.getMinimumSeverity());

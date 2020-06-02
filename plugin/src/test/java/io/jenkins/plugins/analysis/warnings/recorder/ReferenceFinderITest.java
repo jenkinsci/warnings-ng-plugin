@@ -397,7 +397,6 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse4Warnings.txt");
         enableWarnings(project, recorder -> {
             recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.addQualityGate(7, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
@@ -435,7 +434,6 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
         enableWarnings(project, recorder -> {
             recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreQualityGate(false);
         });
 
@@ -474,7 +472,6 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
         enableWarnings(project, recorder -> {
             recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreQualityGate(true);
         });
         scheduleBuildAndAssertStatus(project, Result.SUCCESS, analysisResult -> assertThat(analysisResult)
@@ -511,7 +508,6 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse8Warnings.txt");
         enableWarnings(project, recorder -> {
             recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreQualityGate(true);
             recorder.addQualityGate(9, QualityGateType.TOTAL, QualityGateResult.UNSTABLE);
         });
@@ -553,7 +549,6 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
         enableWarnings(project, recorder -> {
             recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
         });
@@ -594,7 +589,6 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
         enableWarnings(project, recorder -> {
             recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreFailedBuilds(true);
             recorder.setEnabledForFailure(true);
         });
@@ -636,7 +630,6 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
         enableWarnings(project, recorder -> {
             recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
         });
@@ -679,7 +672,6 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
         FreeStyleProject project = createJob(JOB_NAME, "eclipse6Warnings.txt");
         enableWarnings(project, recorder -> {
             recorder.addQualityGate(3, QualityGateType.NEW, QualityGateResult.UNSTABLE);
-            recorder.setReferenceJobName(REFERENCE_JOB_NAME);
             recorder.setIgnoreFailedBuilds(false);
             recorder.setEnabledForFailure(true);
         });

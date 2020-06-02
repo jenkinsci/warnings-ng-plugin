@@ -440,6 +440,7 @@ public class IssuesRecorder extends Recorder {
      *         the name of reference job
      */
     @DataBoundSetter
+    @Deprecated
     public void setReferenceJobName(final String referenceJobName) {
         if (NO_REFERENCE_JOB.equals(referenceJobName)) {
             this.referenceJobName = StringUtils.EMPTY;
@@ -453,6 +454,7 @@ public class IssuesRecorder extends Recorder {
      *
      * @return the name of reference job, or {@link #NO_REFERENCE_JOB} if undefined
      */
+    @Deprecated
     public String getReferenceJobName() {
         if (StringUtils.isBlank(referenceJobName)) {
             return NO_REFERENCE_JOB;
@@ -466,6 +468,7 @@ public class IssuesRecorder extends Recorder {
      * @param referenceBuildId
      *         the build id of the reference job
      */
+    @Deprecated
     public void setReferenceBuildId(final String referenceBuildId) {
         if (NO_REFERENCE_BUILD.equals(referenceBuildId)) {
             this.referenceBuildId = StringUtils.EMPTY;
@@ -481,6 +484,7 @@ public class IssuesRecorder extends Recorder {
      *
      * @return the build id of the reference job, or {@link #NO_REFERENCE_BUILD} if undefined.
      */
+    @Deprecated
     public String getReferenceBuildId() {
         if (StringUtils.isBlank(referenceBuildId)) {
             return NO_REFERENCE_BUILD;
@@ -700,7 +704,7 @@ public class IssuesRecorder extends Recorder {
         qualityGate.addAll(qualityGates);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
-                reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds,
+                reportName, ignoreQualityGate, ignoreFailedBuilds,
                 getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
         publisher.attachAction(trendChartType);

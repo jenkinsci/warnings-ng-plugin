@@ -107,7 +107,6 @@ public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getName()).isEqualTo("test-name");
         assertThat(recorder.getSourceCodeEncoding()).isEqualTo("UTF-8");
         assertThat(recorder.getUnhealthy()).isEqualTo(50);
-        assertThat(recorder.getReferenceJobName()).isEqualTo("test-job");
         assertThat(recorder.getQualityGates()).hasSize(1);
 
         List<Tool> tools = recorder.getTools();

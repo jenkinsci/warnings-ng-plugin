@@ -808,7 +808,7 @@ public class PublishIssuesStep extends Step implements Serializable {
             IssuesPublisher publisher = new IssuesPublisher(getRun(), report,
                     new HealthDescriptor(step.getHealthy(), step.getUnhealthy(),
                             step.getMinimumSeverityAsSeverity()), qualityGate,
-                    StringUtils.defaultString(step.getName()), step.getReferenceJobName(), step.getReferenceBuildId(),
+                    StringUtils.defaultString(step.getName()),
                     step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), statusHandler, step.getFailOnError());
             return publisher.attachAction(step.getTrendChartType());
