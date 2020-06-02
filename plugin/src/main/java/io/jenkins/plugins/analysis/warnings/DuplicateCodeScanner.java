@@ -290,7 +290,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
     /**
      * Provides a table that contains the duplication references as well.
      */
-    static class DryModel extends DetailsTableModel {
+    public static class DryModel extends DetailsTableModel {
         DryModel(final Report report, final FileNameRenderer fileNameRenderer, final AgeBuilder ageBuilder,
                 final DescriptionProvider descriptionProvider) {
             super(report, fileNameRenderer, ageBuilder, descriptionProvider, new JenkinsFacade());

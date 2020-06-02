@@ -1,40 +1,32 @@
 package io.jenkins.plugins.analysis.warnings.recorder;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.HtmlDivision;
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.gargoylesoftware.htmlunit.html.HtmlTable;
-import com.gargoylesoftware.htmlunit.html.HtmlTableBody;
-import com.gargoylesoftware.htmlunit.html.HtmlTableCell;
-import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
-import com.gargoylesoftware.htmlunit.html.HtmlUnorderedList;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
+import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
-import io.jenkins.plugins.datatables.TablePageObject;
-import io.jenkins.plugins.datatables.TableRowPageObject;
+import io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryModel.DuplicationRow;
+import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableModel;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.assertThat;
 
 /**
  * Integration tests for the DRY parsers of the warnings plug-in in freestyle jobs.
  *
  * @author Stephan Plöderl
+ * @author Lukas Kirner
  */
 public class DryITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String DETAILS = "Details";
@@ -46,7 +38,6 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
 
     private static final String FOLDER = "dry/";
     private static final String CPD_REPORT = FOLDER + "cpd.xml";
-    private static final int ROW_INDEX_OF_DUPLICATION_TO_INSPECT = 8;
 
     /**
      * Verifies that the right amount of duplicate code warnings are detected.
@@ -57,9 +48,16 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         enableGenericWarnings(project, new Cpd());
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
         assertThat(result).hasTotalSize(20);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
+
+        table.getRows().stream()
+                .map(row -> (DuplicationRow) row)
+                .forEach(row -> assertThat(row.getSeverity()).contains("LOW"));
     }
 
     /**
@@ -67,15 +65,78 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
      * cpd warnings.
      */
     @Test
-    public void shouldConfigureSeverityThresholdsInJobConfigurationForCpd() {
+    public void shouldConfigureSeverityThresholdTo2InJobConfigurationForCpd() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
         Cpd cpd = new Cpd();
         cpd.setNormalThreshold(1);
         enableGenericWarnings(project, cpd);
 
-        setHighThresholdAndCheckPriority(2, "High", cpd, project);
-        setHighThresholdAndCheckPriority(5, "Normal", cpd, project);
-        setNormalThresholdAndCheckPriority(4, "Low", cpd, project);
+        cpd.setHighThreshold(2);
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result.getTotalHighPrioritySize()).isEqualTo(14);
+        assertThat(result.getTotalNormalPrioritySize()).isEqualTo(6);
+        assertThat(result.getTotalLowPrioritySize()).isEqualTo(0);
+        assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
+
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 1, 1);
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "HIGH", 2, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Verifies that the priority of the duplicate code warnings are changed corresponding to the defined thresholds for
+     * cpd warnings.
+     */
+    @Test
+    public void shouldConfigureSeverityThresholdTo5InJobConfigurationForCpd() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        Cpd cpd = new Cpd();
+        cpd.setNormalThreshold(1);
+        enableGenericWarnings(project, cpd);
+
+        cpd.setHighThreshold(5);
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result.getTotalHighPrioritySize()).isEqualTo(5);
+        assertThat(result.getTotalNormalPrioritySize()).isEqualTo(15);
+        assertThat(result.getTotalLowPrioritySize()).isEqualTo(0);
+        assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
+
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 1, 4);
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "HIGH", 5, Integer.MAX_VALUE);
+    }
+
+    /**
+     * Verifies that the priority of the duplicate code warnings are changed corresponding to the defined thresholds for
+     * cpd warnings.
+     */
+    @Test
+    public void shouldConfigureSeverityNormalThresholdTo4InJobConfigurationForCpd() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
+        Cpd cpd = new Cpd();
+        cpd.setNormalThreshold(4);
+        enableGenericWarnings(project, cpd);
+
+        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(result.getTotalHighPrioritySize()).isEqualTo(0);
+        assertThat(result.getTotalNormalPrioritySize()).isEqualTo(5);
+        assertThat(result.getTotalLowPrioritySize()).isEqualTo(15);
+        assertThat(result.getTotalErrorsSize()).isEqualTo(0);
+
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
+
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 4, Integer.MAX_VALUE);
     }
 
     /**
@@ -90,139 +151,17 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         enableGenericWarnings(project, cpd);
 
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
 
-        TablePageObject issues = getDuplicationTable(details);
-        assertThat(issues.getRows()).hasSize(10); // paging of 10 is activated by default
-        
-        assertSizeOfSeverity(issues, 4, 5); // HIGH
-        assertSizeOfSeverity(issues, 3, 9); // NORMAL
-        assertSizeOfSeverity(issues, 0, 6); // LOW
-    }
+        assertThat(result.getTotalHighPrioritySize()).isEqualTo(5);
+        assertThat(result.getTotalNormalPrioritySize()).isEqualTo(9);
+        assertThat(result.getTotalLowPrioritySize()).isEqualTo(6);
 
-    private TablePageObject getDuplicationTable(final HtmlPage details) {
-        return new TablePageObject(details, "issues");
-    }
+        Run<?, ?> build = result.getOwner();
+        TableModel table = getDryTableModel(build);
+        assertThatColumnsAreCorrect(table.getColumns());
 
-    private void assertSizeOfSeverity(final TablePageObject table, final int row,
-            final int numberOfSelectedIssues) {
-        TableRowPageObject selectedRow = table.getRow(row);
-        HtmlPage detailsOfSeverity = selectedRow.clickColumnLink(SEVERITY);
-
-        TablePageObject issues = getDuplicationTable(detailsOfSeverity);
-        assertThat(issues.getRows()).hasSize(numberOfSelectedIssues);
-    }
-
-    /**
-     * Verifies that the source code links are redirecting to a side displaying the source code.
-     */
-    @Test
-    public void shouldNavigateToSourceCode() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
-        copySingleFileToWorkspace(project, FOLDER + "Main.source", "Main.java");
-        Cpd cpd = new Cpd();
-        cpd.setNormalThreshold(2);
-        cpd.setHighThreshold(4);
-        enableGenericWarnings(project, cpd);
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-
-        TablePageObject issues = getDuplicationTable(details);
-        assertThat(issues.getRows()).hasSize(10);
-
-        HtmlPage sourceCodePage = issues.getRow(0).clickColumnLink(FILE);
-        SourceCodeView sourceCodeView = new SourceCodeView(sourceCodePage);
-
-        String htmlFile = toString(FOLDER + "Main.source");
-        assertThat(sourceCodeView.getSourceCode()).isEqualToIgnoringWhitespace(htmlFile);
-    }
-
-    /**
-     * Verifies the structure of the duplications table. i.e. the table headers and column contents.
-     */
-    @Test
-    public void shouldShowDuplicationColumnContent() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
-        Cpd cpd = new Cpd();
-        enableGenericWarnings(project, cpd);
-
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-        HtmlPage details = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-        TablePageObject issues = getDuplicationTable(details);
-
-        assertThat(issues.getRows()).hasSize(10);
-        assertThat(issues.getColumnHeaders()).containsExactly(DETAILS, FILE, SEVERITY, LINES, DUPLICATIONS, AGE);
-        assertThat(issues.getRow(0).getValuesByColumnLabel())
-                .contains(entry(FILE, "Main.java:3"), entry(SEVERITY, "Low"), entry(LINES, "1"), entry(AGE, "1"),
-                        entry(DUPLICATIONS, "Main.java:8"));
-    }
-
-    /**
-     * Verifies that the first table column shows the content of the duplicated code if clicked.
-     */
-    @Test
-    public void shouldShowDetailsWithDuplicatedSourceCodeSnippet() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
-        Cpd cpd = new Cpd();
-        cpd.setNormalThreshold(2);
-        cpd.setHighThreshold(4);
-        enableGenericWarnings(project, cpd);
-
-        List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
-
-        HtmlTableRow rowToInspect = tableRows.get(ROW_INDEX_OF_DUPLICATION_TO_INSPECT);
-        List<HtmlTableCell> firstTableRowCells = rowToInspect.getCells();
-        HtmlDivision divElement = getCellAs(firstTableRowCells, 0, HtmlDivision.class);
-
-        assertThat(divElement.getAttribute("class")).isEqualTo("details-control");
-        assertThat(divElement.getAttribute("data-description")).isEqualTo(
-                "<p><strong>Found duplicated code.</strong></p> <pre><code>public static void functionOne()\n  "
-                        + "{\n    System.out.println(&#34;testfile for redundancy&#34;);</code></pre>");
-        DomElement file = firstTableRowCells.get(1);
-        assertThat(file.getTextContent()).isEqualTo("Main.java:11");
-
-        int[] duplications = {8, 17, 20, 26, 29};
-        HtmlUnorderedList duplicationList = getCellAs(firstTableRowCells, 4, HtmlUnorderedList.class);
-        @SuppressWarnings("unchecked")
-        NodeList duplicationListItems = duplicationList.getChildNodes();
-
-        assertThat(duplicationListItems.getLength()).isEqualTo(duplications.length);
-        for (int i = 0; i < duplications.length; i++) {
-            Node otherFile = duplicationListItems.item(i);
-            assertThat(otherFile.getTextContent()).isEqualTo("Main.java:" + duplications[i]);
-        }
-    }
-
-    private <T> T getCellAs(final List<HtmlTableCell> cells, final int index, final Class<T> type) {
-        DomElement firstElementChild = cells.get(index).getFirstElementChild();
-        assertThat(firstElementChild).isInstanceOf(type);
-        
-        return type.cast(firstElementChild);
-    }
-
-    /**
-     * Verifies that the duplicate code lines of cpd warnings are correct.
-     */
-    @Test
-    public void duplicateCodeLinesShouldBeOfRightAmount() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(CPD_REPORT);
-        Cpd cpd = new Cpd();
-        cpd.setNormalThreshold(2);
-        cpd.setHighThreshold(4);
-        enableGenericWarnings(project, cpd);
-
-        List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
-        //only 10 are displayed because of the paging
-
-        assertThat(tableRows).hasSize(10);
-        for (HtmlTableRow tableRow : tableRows) {
-            List<HtmlTableCell> tableCells = tableRow.getCells();
-            assertThat(tableCells).hasSize(6);
-            HtmlDivision divElement = getCellAs(tableCells, 0, HtmlDivision.class);
-            int lineCount = Integer.parseInt(tableCells.get(3).getTextContent());
-            assertThat(divElement.getAttribute("data-description").split("\n")).hasSize(lineCount);
-        }
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "NORMAL", 2, 3);
+        assertThatLineCountForSeverityIsCorrect(table.getRows(), "HIGH", 4, Integer.MAX_VALUE);
     }
 
     /**
@@ -237,6 +176,25 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatThresholdsAreEvaluated(25, 50, 20, 0, 0, cpd, project);
         assertThatThresholdsAreEvaluated(2, 4, 6, 9, 5, cpd, project);
         assertThatThresholdsAreEvaluated(1, 3, 0, 6, 14, cpd, project);
+    }
+
+    private TableModel getDryTableModel(final Run<?, ?> build) {
+        IssuesDetail issuesDetail = (IssuesDetail) build.getAction(ResultAction.class).getTarget();
+        return issuesDetail.getTableModel("issues");
+    }
+
+    private void assertThatColumnsAreCorrect(final List<TableColumn> columns) {
+        assertThat(columns.stream().map(TableColumn::getHeaderLabel).collect(Collectors.toList()))
+                .contains(DETAILS, FILE, SEVERITY, LINES, DUPLICATIONS, AGE);
+    }
+
+    private void assertThatLineCountForSeverityIsCorrect(final List<Object> data, final String severity, final Integer min, final Integer max) {
+        data.stream()
+                .map(row -> (DuplicationRow) row)
+                .filter(row -> row.getSeverity().contains(severity))
+                .map(DuplicationRow::getLinesCount)
+                .map(Integer::new)
+                .forEach(count -> assertThat(count).isBetween(min, max));
     }
 
     /**
@@ -269,90 +227,5 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(result.getTotalHighPrioritySize()).isEqualTo(high);
         assertThat(result.getTotalNormalPrioritySize()).isEqualTo(normal);
         assertThat(result.getTotalLowPrioritySize()).isEqualTo(low);
-    }
-
-    @SuppressFBWarnings("BC")
-    private HtmlTable getIssuesTable(final HtmlPage page) {
-        DomElement table = page.getElementById("issues");
-
-        assertThat(table).isInstanceOf(HtmlTable.class);
-
-        return (HtmlTable) table;
-    }
-
-    /**
-     * Helper-method which builds the result and returns a list of all {@link HtmlTableRow}-elements of the
-     * issues-table.
-     *
-     * @param project
-     *         the current {@link FreeStyleProject}.
-     * @return a list of #{@link HtmlTableRow}-elements displayed in the issues-table.
-     */
-    private List<HtmlTableRow> scheduleBuildAndGetRows(final FreeStyleProject project) {
-        AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
-
-        HtmlPage page = getWebPage(JavaScriptSupport.JS_ENABLED, result);
-        HtmlTable table = getIssuesTable(page);
-
-        List<HtmlTableBody> bodies = table.getBodies();
-        assertThat(bodies).hasSize(1);
-        
-        HtmlTableBody tableBody = bodies.get(0);
-        return tableBody.getRows();
-    }
-
-    /**
-     * Helper-method which builds the project and checks the priority of the warning in the first row of the
-     * issues-table.
-     *
-     * @param expectedPriority
-     *         the expected priority of the first warning.
-     * @param project
-     *         the current {@link FreeStyleProject}.
-     */
-    private void checkPriorityOfFirstWarningInTable(final String expectedPriority, final FreeStyleProject project) {
-        List<HtmlTableRow> tableRows = scheduleBuildAndGetRows(project);
-        HtmlTableRow firstRow = tableRows.get(ROW_INDEX_OF_DUPLICATION_TO_INSPECT);
-        List<HtmlTableCell> tableCells = firstRow.getCells();
-
-        assertThat(tableCells.get(2).getTextContent()).isEqualTo(expectedPriority);
-    }
-
-    /**
-     * Helper-method which sets the highThreshold, builds the project and checks the priority of the warning in the
-     * first row of the issues-table.
-     *
-     * @param highThreshold
-     *         the value for the normal threshold.
-     * @param expectedPriority
-     *         the expected priority of the first warning.
-     * @param scanner
-     *         the {@link DuplicateCodeScanner} for which the threshold shall be changed.
-     * @param project
-     *         the current {@link FreeStyleProject}.
-     */
-    private void setHighThresholdAndCheckPriority(final int highThreshold, final String expectedPriority,
-            final DuplicateCodeScanner scanner, final FreeStyleProject project) {
-        scanner.setHighThreshold(highThreshold);
-        checkPriorityOfFirstWarningInTable(expectedPriority, project);
-    }
-
-    /**
-     * Helper-method which sets the normalThreshold, builds the project and checks the priority of the warning in the
-     * first row of the issues-table.
-     *
-     * @param normalThreshold
-     *         the value for the normal threshold.
-     * @param expectedPriority
-     *         the expected priority of the first warning.
-     * @param scanner
-     *         the {@link DuplicateCodeScanner} for which the threshold shall be changed.
-     * @param project
-     *         the current {@link FreeStyleProject}.
-     */
-    private void setNormalThresholdAndCheckPriority(final int normalThreshold, final String expectedPriority,
-            final DuplicateCodeScanner scanner, final FreeStyleProject project) {
-        scanner.setNormalThreshold(normalThreshold);
-        checkPriorityOfFirstWarningInTable(expectedPriority, project);
     }
 }
