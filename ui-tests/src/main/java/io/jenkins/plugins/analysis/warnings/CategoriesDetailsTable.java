@@ -1,5 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
 import org.openqa.selenium.WebElement;
 
 
@@ -22,6 +26,10 @@ public class CategoriesDetailsTable extends AbstractDetailsTable {
         this.updateTableRows();
     }
 
+    public List<Header> getColumnHeaders() {
+        return getHeaders().stream().map(Header::fromTitle).collect(Collectors.toList());
+    }
+
     /**
      * Enum representing the headers which should be present in a {@link CategoriesDetailsTable}.
      */
@@ -34,6 +42,15 @@ public class CategoriesDetailsTable extends AbstractDetailsTable {
 
         Header(final String property) {
             title = property;
+        }
+
+        static Header fromTitle(final String title) {
+            for (Header value : values()) {
+                if (value.title.equalsIgnoreCase(title)) {
+                    return value;
+                }
+            }
+            throw new NoSuchElementException("No enum found for column name " + title);
         }
     }
 }

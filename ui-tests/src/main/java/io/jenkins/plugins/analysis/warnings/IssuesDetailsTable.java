@@ -1,5 +1,9 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebElement;
 
@@ -52,6 +56,10 @@ public class IssuesDetailsTable extends AbstractDetailsTable {
         }
     }
 
+    public List<Header> getColumnHeaders() {
+        return getHeaders().stream().map(Header::fromTitle).collect(Collectors.toList());
+    }
+
     /**
      * Supported element types of the issues table.
      */
@@ -75,6 +83,15 @@ public class IssuesDetailsTable extends AbstractDetailsTable {
 
         Header(final String property) {
             title = property;
+        }
+
+        static Header fromTitle(final String title) {
+            for (Header value : values()) {
+                if (value.title.equalsIgnoreCase(title)) {
+                    return value;
+                }
+            }
+            throw new NoSuchElementException("No enum found for column name " + title);
         }
     }
 }

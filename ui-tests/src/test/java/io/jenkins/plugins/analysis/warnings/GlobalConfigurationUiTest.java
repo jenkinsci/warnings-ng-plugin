@@ -202,7 +202,7 @@ public class GlobalConfigurationUiTest extends UiTest {
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
 
         pep8details.openTab(Tab.ISSUES);
-        IssuesTable issuesTable = pep8details.openIssuesTable();
+        IssuesDetailsTable issuesTable = pep8details.openIssuesTable();
         assertThat(issuesTable).hasSize(8);
 
         long normalIssueCount = issuesTable.getTableRows().stream()

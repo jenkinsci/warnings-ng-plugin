@@ -24,7 +24,6 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 public class DetailsTabUiTest extends AbstractJUnitTest {
-
     private static final String WARNINGS_PLUGIN_PREFIX = "/details_tab_test/";
 
     /**
@@ -122,9 +121,9 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
 
         CategoriesDetailsTable categoriesDetailsTable = resultPage.openCategoriesTable();
-        assertThat(categoriesDetailsTable.getHeaders()).containsExactlyInAnyOrder("Category", "Total", "Distribution");
-        assertThat(categoriesDetailsTable.getSize()).isEqualTo(5);
-        assertThat(categoriesDetailsTable.getTotal()).isEqualTo(5);
+        assertThat(categoriesDetailsTable).hasColumnHeaders(Header.CATEGORY, Header.TOTAL, Header.DISTRIBUTION);
+        assertThat(categoriesDetailsTable).hasSize(5);
+        assertThat(categoriesDetailsTable).hasTotal(5);
 
         TypesDetailsTable typesDetailsTable = resultPage.openTypesTable();
         assertThat(typesDetailsTable.getHeaders()).containsExactlyInAnyOrder("Type", "Total", "Distribution");
@@ -132,8 +131,8 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         assertThat(typesDetailsTable.getTotal()).isEqualTo(7);
 
         IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable.getHeaders()).containsExactlyInAnyOrder("Details", "File", "Category", "Type",
-                "Severity", "Age");
+        assertThat(issuesDetailsTable).hasColumnHeaders(IssuesDetailsTable.Header.DETAILS, IssuesDetailsTable.Header.FILE, IssuesDetailsTable.Header.CATEGORY,
+                IssuesDetailsTable.Header.TYPE, IssuesDetailsTable.Header.SEVERITY, IssuesDetailsTable.Header.AGE);
         assertThat(issuesDetailsTable.getSize()).isEqualTo(10);
         assertThat(issuesDetailsTable.getTotal()).isEqualTo(11);
 
