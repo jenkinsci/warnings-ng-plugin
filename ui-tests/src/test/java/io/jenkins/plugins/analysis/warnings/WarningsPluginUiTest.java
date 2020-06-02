@@ -1,13 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import org.junit.Test;
 
 import com.google.inject.Inject;
@@ -15,22 +7,17 @@ import com.google.inject.Inject;
 import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.JavaGitContainer;
-import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithCredentials;
 import org.jenkinsci.test.acceptance.junit.WithDocker;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
-import org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenModuleSet;
 import org.jenkinsci.test.acceptance.plugins.ssh_slaves.SshSlaveLauncher;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.DumbSlave;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
-import org.jenkinsci.test.acceptance.po.Job;
 import org.jenkinsci.test.acceptance.po.Slave;
-import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
@@ -56,22 +43,8 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 @SuppressWarnings({"checkstyle:ClassFanOutComplexity", "PMD.SystemPrintln", "PMD.ExcessiveImports"})
-public class WarningsPluginUiTest extends AbstractJUnitTest {
-    private static final String WARNINGS_PLUGIN_PREFIX = "/";
-
-    private static final String CHECKSTYLE_ID = "checkstyle";
-    private static final String ANALYSIS_ID = "analysis";
-    private static final String CPD_ID = "cpd";
-    private static final String PMD_ID = "pmd";
-    private static final String FINDBUGS_ID = "findbugs";
-    private static final String MAVEN_ID = "maven-warnings";
-
-    private static final String WARNING_LOW_PRIORITY = "Low";
-
-    private static final String SOURCE_VIEW_FOLDER = WARNINGS_PLUGIN_PREFIX + "source-view/";
-
-    private static final String CPD_SOURCE_NAME = "Main.java";
-    private static final String CPD_SOURCE_PATH = "duplicate_code/Main.java";
+public class WarningsPluginUiTest extends UiTest {
+    private static final String SOURCE_VIEW_FOLDER = "/source-view/";
 
     /**
      * Credentials to access the docker container. The credentials are stored with the specified ID and use the provided
@@ -194,23 +167,23 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         AnalysisResult cpdDetails = cpd.openOverallResult();
         assertThat(cpdDetails).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.ISSUES);
 
-        IssuesDetailsTable issuesDetailsTable = cpdDetails.openIssuesTable();
-        assertThat(issuesDetailsTable).hasSize(10).hasTotal(20);
+        IssuesTable issuesTable = cpdDetails.openIssuesTable();
+        assertThat(issuesTable).hasSize(10).hasTotal(20);
 
-        DryIssuesTableRow firstRow = issuesDetailsTable.getRowAs(0, DryIssuesTableRow.class);
-        DryIssuesTableRow secondRow = issuesDetailsTable.getRowAs(1, DryIssuesTableRow.class);
+        DryIssuesTableRow firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
+        DryIssuesTableRow secondRow = issuesTable.getRowAs(1, DryIssuesTableRow.class);
 
         firstRow.toggleDetailsRow();
-        assertThat(issuesDetailsTable).hasSize(11);
+        assertThat(issuesTable).hasSize(11);
 
-        DetailsTableRow detailsRow = issuesDetailsTable.getRowAs(1, DetailsTableRow.class);
+        DetailsTableRow detailsRow = issuesTable.getRowAs(1, DetailsTableRow.class);
         assertThat(detailsRow).hasDetails("Found duplicated code.\nfunctionOne();");
 
-        assertThat(issuesDetailsTable.getRowAs(2, DryIssuesTableRow.class)).isEqualTo(secondRow);
+        assertThat(issuesTable.getRowAs(2, DryIssuesTableRow.class)).isEqualTo(secondRow);
 
         firstRow.toggleDetailsRow();
-        assertThat(issuesDetailsTable).hasSize(10);
-        assertThat(issuesDetailsTable.getRowAs(1, DryIssuesTableRow.class)).isEqualTo(secondRow);
+        assertThat(issuesTable).hasSize(10);
+        assertThat(issuesTable.getRowAs(1, DryIssuesTableRow.class)).isEqualTo(secondRow);
 
         SourceView sourceView = firstRow.openSourceCode();
         assertThat(sourceView).hasFileName(CPD_SOURCE_NAME);
@@ -219,11 +192,11 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         assertThat(sourceView.getSourceCode()).isEqualToIgnoringWhitespace(expectedSourceCode);
 
         cpdDetails.open();
-        issuesDetailsTable = cpdDetails.openIssuesTable();
-        firstRow = issuesDetailsTable.getRowAs(0, DryIssuesTableRow.class);
+        issuesTable = cpdDetails.openIssuesTable();
+        firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
 
         AnalysisResult lowSeverity = firstRow.clickOnSeverityLink();
-        IssuesDetailsTable lowSeverityTable = lowSeverity.openIssuesTable();
+        IssuesTable lowSeverityTable = lowSeverity.openIssuesTable();
         assertThat(lowSeverityTable).hasSize(6).hasTotal(6);
 
         for (int i = 0; i < 6; i++) {
@@ -299,10 +272,10 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
                 .hasTotal(3)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
-        IssuesDetailsTable issuesDetailsTable = checkstyleDetails.openIssuesTable();
-        assertThat(issuesDetailsTable).hasSize(3).hasTotal(3);
+        IssuesTable issuesTable = checkstyleDetails.openIssuesTable();
+        assertThat(issuesTable).hasSize(3).hasTotal(3);
 
-        DefaultIssuesTableRow tableRow = issuesDetailsTable.getRowAs(0, DefaultIssuesTableRow.class);
+        DefaultIssuesTableRow tableRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
         assertThat(tableRow).hasFileName("RemoteLauncher.java")
                 .hasLineNumber(59)
                 .hasCategory("Checks")
@@ -329,7 +302,7 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
     @Test
     public void shouldAggregateToolsIntoSingleResult() {
         FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
-        IssuesRecorder recorder = addRecorder(job);
+        IssuesRecorder recorder = addAllRecorders(job);
         recorder.setEnabledForAggregation(true);
         recorder.addQualityGateConfiguration(4, QualityGateType.TOTAL, QualityGateBuildResult.UNSTABLE);
         recorder.addQualityGateConfiguration(3, QualityGateType.NEW, QualityGateBuildResult.FAILED);
@@ -371,17 +344,6 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
                 .hasOnlyAvailableTabs(Tab.TOOLS, Tab.PACKAGES, Tab.FILES, Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
     }
 
-    private IssuesRecorder addRecorder(final FreeStyleJob job) {
-        return job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("CheckStyle");
-            recorder.addTool("FindBugs");
-            recorder.addTool("PMD");
-            recorder.addTool("CPD",
-                    cpd -> cpd.setHighThreshold(8).setNormalThreshold(3));
-            recorder.setEnabledForFailure(true);
-        });
-    }
-
     /**
      * Test to check that the issue filter can be configured and is applied.
      */
@@ -405,19 +367,15 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         AnalysisResult resultPage = new AnalysisResult(build, "checkstyle");
         resultPage.open();
 
-        IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable).hasSize(1);
-    }
-
-    private void reconfigureJobWithResource(final FreeStyleJob job, final String fileName) {
-        job.configure(() -> job.copyResource(WARNINGS_PLUGIN_PREFIX + fileName));
+        IssuesTable issuesTable = resultPage.openIssuesTable();
+        assertThat(issuesTable).hasSize(1);
     }
 
     /**
      * Creates and builds a maven job and verifies that all warnings are shown in the summary and details views.
      */
     @Test
-    @WithPlugins({"maven-plugin", "analysis-model-api@7.0.4"})
+    @WithPlugins("maven-plugin")
     public void shouldShowMavenWarningsInMavenProject() {
         MavenModuleSet job = createMavenProject();
         copyResourceFilesToWorkspace(job, SOURCE_VIEW_FOLDER + "pom.xml");
@@ -448,9 +406,9 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
                 .hasTotal(4)
                 .hasOnlyAvailableTabs(Tab.MODULES, Tab.TYPES, Tab.ISSUES);
 
-        IssuesDetailsTable issuesDetailsTable = mavenDetails.openIssuesTable();
+        IssuesTable issuesTable = mavenDetails.openIssuesTable();
 
-        DefaultIssuesTableRow firstRow = issuesDetailsTable.getRowAs(0, DefaultIssuesTableRow.class);
+        DefaultIssuesTableRow firstRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);
         ConsoleLogView sourceView = firstRow.openConsoleLog();
         assertThat(sourceView).hasTitle("Console Details")
                 .hasHighlightedText("[WARNING]\n"
@@ -530,82 +488,6 @@ public class WarningsPluginUiTest extends AbstractJUnitTest {
         assertThat(agent.isOnline()).isTrue();
 
         return agent;
-    }
-
-    private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
-        FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
-        ScrollerUtil.hideScrollerTabBar(driver);
-        for (String resource : resourcesToCopy) {
-            job.copyResource(WARNINGS_PLUGIN_PREFIX + resource);
-        }
-        return job;
-    }
-
-    private MavenModuleSet createMavenProject() {
-        MavenInstallation.installMaven(jenkins, MavenInstallation.DEFAULT_MAVEN_ID, "3.6.3");
-
-        return jenkins.getJobs().create(MavenModuleSet.class);
-    }
-
-    private Build buildJob(final Job job) {
-        return job.startBuild().waitUntilFinished();
-    }
-
-    private void copyResourceFilesToWorkspace(final Job job, final String... resources) {
-        for (String file : resources) {
-            job.copyResource(file);
-        }
-    }
-
-    /**
-     * Finds a resource with the given name and returns the content (decoded with UTF-8) as String.
-     *
-     * @param fileName
-     *         name of the desired resource
-     *
-     * @return the content represented as {@link String}
-     */
-    private String readFileToString(final String fileName) {
-        return new String(readAllBytes(fileName), StandardCharsets.UTF_8);
-    }
-
-    /**
-     * Reads the contents of the desired resource. The rules for searching resources associated with this test class are
-     * implemented by the defining {@linkplain ClassLoader class loader} of this test class.  This method delegates to
-     * this object's class loader.  If this object was loaded by the bootstrap class loader, the method delegates to
-     * {@link ClassLoader#getSystemResource}.
-     * <p>
-     * Before delegation, an absolute resource name is constructed from the given resource name using this algorithm:
-     * </p>
-     * <ul>
-     * <li> If the {@code name} begins with a {@code '/'} (<tt>'&#92;u002f'</tt>), then the absolute name of the
-     * resource is the portion of the {@code name} following the {@code '/'}.</li>
-     * <li> Otherwise, the absolute name is of the following form:
-     * <blockquote> {@code modified_package_name/name} </blockquote>
-     * <p> Where the {@code modified_package_name} is the package name of this object with {@code '/'}
-     * substituted for {@code '.'} (<tt>'&#92;u002e'</tt>).</li>
-     * </ul>
-     *
-     * @param fileName
-     *         name of the desired resource
-     *
-     * @return the content represented by a byte array
-     */
-    private byte[] readAllBytes(final String fileName) {
-        try {
-            return Files.readAllBytes(getPath(fileName));
-        }
-        catch (IOException | URISyntaxException e) {
-            throw new AssertionError("Can't read resource " + fileName, e);
-        }
-    }
-
-    private Path getPath(final String name) throws URISyntaxException {
-        URL resource = getClass().getResource(name);
-        if (resource == null) {
-            throw new AssertionError("Can't find resource " + name);
-        }
-        return Paths.get(resource.toURI());
     }
 }
 

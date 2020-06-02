@@ -1,0 +1,55 @@
+Buildfile: build.xml
+
+init:
+
+compile-warning:
+    [mkdir] Created dir: C:\Desenvolvimento\Java\jfg\build\build\warning
+    [javac] Compiling 34 source files to C:\Desenvolvimento\Java\jfg\build\build\warning
+    [javac] ----------
+    [javac] 1. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\AttributeException.java (at line 3)
+    [javac] 	public class AttributeException extends RuntimeException
+    [javac] 	             ^^^^^^^^^^^^^^^^^^
+    [javac] The serializable class AttributeException does not declare a static final serialVersionUID field of type long
+    [javac] ----------
+    [javac] ----------
+    [javac] 2. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 85)
+    [javac] 	protected void addValidation(Text text, Object type)
+    [javac] 	                                  ^^^^
+    [javac] The parameter text is never read
+    [javac] ----------
+    [javac] 3. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 85)
+    [javac] 	protected void addValidation(Text text, Object type)
+    [javac] 	                                               ^^^^
+    [javac] The parameter type is never read
+    [javac] ----------
+    [javac] 4. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 89)
+    [javac] 	protected String convertToString(Text text, Object value, Object type)
+    [javac] 	                                      ^^^^
+    [javac] The parameter text is never read
+    [javac] ----------
+    [javac] 5. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 89)
+    [javac] 	protected String convertToString(Text text, Object value, Object type)
+    [javac] 	                                                                 ^^^^
+    [javac] The parameter type is never read
+    [javac] ----------
+    [javac] 6. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\gui\swt\SWTTextBuilder.java (at line 97)
+    [javac] 	protected Object convertToObject(String value, Object type, boolean canBeNull)
+    [javac] 	                                                      ^^^^
+    [javac] The parameter type is never read
+    [javac] ----------
+    [javac] ----------
+    [javac] 7. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\reflect\ObjectReflectionException.java (at line 5)
+    [javac] 	public class ObjectReflectionException extends AttributeException
+    [javac] 	             ^^^^^^^^^^^^^^^^^^^^^^^^^
+    [javac] The serializable class ObjectReflectionException does not declare a static final serialVersionUID field of type long
+    [javac] ----------
+    [javac] ----------
+    [javac] 8. WARNING in C:\Desenvolvimento\Java\jfg\src\jfg\reflect\ObjectReflectionGroup.java (at line 31)
+    [javac] 	int x = 0;
+    [javac] 	    ^
+    [javac] The local variable x is never read
+    [javac] ----------
+    [javac] 8 problems (8 warnings)
+
+BUILD SUCCESSFUL
+Total time: 1 second
