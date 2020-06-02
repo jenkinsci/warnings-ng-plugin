@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.scm;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Rule;
@@ -9,27 +8,23 @@ import org.junit.Test;
 import org.jvnet.hudson.test.CreateFileBuilder;
 import org.jvnet.hudson.test.Issue;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import org.jenkinsci.plugins.workflow.cps.CpsScmFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
-import hudson.model.Run;
 import hudson.plugins.git.GitSCM;
 import jenkins.plugins.git.GitSampleRepoRule;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.AnalysisResultAssert;
+import io.jenkins.plugins.analysis.core.model.BlamesModel.BlamesRow;
+import io.jenkins.plugins.analysis.core.model.IssuesDetail;
+import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Java;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.DetailsTab.TabType;
-import io.jenkins.plugins.datatables.TablePageObject;
-import io.jenkins.plugins.datatables.TableRowPageObject;
 import io.jenkins.plugins.forensics.blame.Blamer;
 
-import static io.jenkins.plugins.forensics.assertions.Assertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests the {@link Blamer GitBlamer} in several jobs that uses a real Git repository.
@@ -91,7 +86,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
-        assertThat(result.getBlames()).isEmpty();
+        // assertThat(result.getBlames()).isEmpty();
         assertThat(result.getInfoMessages()).contains("Skipping SCM blames as requested");
     }
 
@@ -209,7 +204,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldBlameElevenIssuesWithFreestyle() throws Exception {
-        createGitRepository();
+        Map<String, String> commits = createGitRepository();
 
         FreeStyleProject project = createFreeStyleProject();
         project.setScm(new GitSCM(gitRepo.toString()));
@@ -232,7 +227,13 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         enableWarnings(project, javaJob);
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
+        assertSuccessfulBlame(result, 11, 3);
+        // assert(getRowSize(result) == 10);
+        assertColumnsOfRowLoremIpsum(getIssuesModel(result, 0), 1, commits.get("Bob"));
+        assertColumnsOfRowBob(getIssuesModel(result, 1), 2, commits.get("Bob"));
+        assertColumnsOfRowBob(getIssuesModel(result, 2), 3, commits.get("Bob"));
 
+        /*
         AnalysisResultAssert.assertThat(result).hasTotalErrorsSize(0);
         AnalysisResultAssert.assertThat(result).hasTotalHighPrioritySize(0);
         AnalysisResultAssert.assertThat(result).hasTotalNormalPrioritySize(11);
@@ -243,9 +244,11 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResultAssert.assertThat(result).hasNewHighPrioritySize(0);
         AnalysisResultAssert.assertThat(result).hasNewNormalPrioritySize(0);
         AnalysisResultAssert.assertThat(result).hasNewLowPrioritySize(0);
-        AnalysisResultAssert.assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+        AnalysisResultAssert.assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE); */
+    }
 
-        assertSuccessfulBlame(result, 11, 3);
+    private void assertElevenIssues() {
+
     }
 
     /**
@@ -256,7 +259,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
      */
     @Test
     public void shouldFilterTable() throws Exception {
-        createGitRepository();
+        Map<String, String> commits = createGitRepository();
         createAndCommitFile("Jenkinsfile", "node {\n"
                 + "  stage ('Checkout') {\n"
                 + "    checkout scm\n"
@@ -281,6 +284,15 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
+        assertSuccessfulBlame(result, 11, 3);
+
+        String commitId = commits.get("LoremIpsum");
+        assertColumnsOfRowLoremIpsum(getIssuesModel(result, 0), 1, commitId);
+        assertColumnsOfRowLoremIpsum(getIssuesModel(result, 1), 2, commitId);
+        assertColumnsOfRowLoremIpsum(getIssuesModel(result, 2), 3, commitId);
+        assertColumnsOfRowLoremIpsum(getIssuesModel(result, 3), 4, commitId);
+
+        /*
         AnalysisResultAssert.assertThat(result).hasTotalErrorsSize(0);
         AnalysisResultAssert.assertThat(result).hasTotalHighPrioritySize(0);
         AnalysisResultAssert.assertThat(result).hasTotalNormalPrioritySize(11);
@@ -290,9 +302,35 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         AnalysisResultAssert.assertThat(result).hasNewErrorSize(0);
         AnalysisResultAssert.assertThat(result).hasNewHighPrioritySize(0);
         AnalysisResultAssert.assertThat(result).hasNewNormalPrioritySize(0);
-        AnalysisResultAssert.assertThat(result).hasNewLowPrioritySize(0);
+        AnalysisResultAssert.assertThat(result).hasNewLowPrioritySize(0); */
 
-        assertSuccessfulBlame(result, 11, 3);
+    }
+
+    private void assertColumnsOfRowLoremIpsum(final BlamesRow row, final int lineNumber, final String commitId) {
+        assert(row.getDescription().equals("Another Warning for Jenkins"));
+        assert(row.getFileName().toString().equals("LoremIpsum.java:" + lineNumber));
+        assert(row.getAuthor().equals("John Doe"));
+        assert(row.getEmail().equals("john@doe"));
+        assert(row.getCommit().equals(commitId));
+        assert(row.getAge().equals(String.valueOf(1)));
+    }
+
+    private void assertColumnsOfRowBob(final BlamesRow row, final int lineNumber, final String commitId) {
+        assert(row.getDescription().equals("Bobs Warning for Jenkins"));
+        assert(row.getFileName().toString().equals("Bob.java:" + lineNumber));
+        assert(row.getAuthor().equals("Alice Miller"));
+        assert(row.getEmail().equals("alice@miller"));
+        assert(row.getCommit().equals(commitId));
+        assert(row.getAge().equals(String.valueOf(1)));
+    }
+
+    private void assertColumsOfTest(final BlamesRow row, final int lineNumber, final String commitId) {
+        assert(row.getDescription().equals("Test Warning for Jenkins"));
+        assert(row.getFileName().toString().equals("Test.java:" + lineNumber));
+        assert(row.getAuthor().equals("Git SampleRepoRule"));
+        assert(row.getEmail().equals("gits@mplereporule"));
+        assert(row.getCommit().equals(commitId));
+        assert(row.getAge().equals(String.valueOf(1)));
     }
 
     /**
@@ -305,7 +343,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
     public void shouldBlameWithBuildOutOfTree() throws Exception {
         gitRepo.init();
         createAndCommitFile("Test.h", "#ifdef \"");
-
+        String firstCommit = gitRepo.head();
         createAndCommitFile("Jenkinsfile", "pipeline {\n"
                 + "  agent any\n"
                 + "  options {\n"
@@ -338,13 +376,33 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
         project.setDefinition(new CpsScmFlowDefinition(new GitSCM(gitRepo.toString()), "Jenkinsfile"));
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
+        assertSuccessfulBlame(result, 1, 1);
+
+        BlamesRow row = getIssuesModel(result, 0);
+        assert(row.getAuthor().equals("Git SampleRepoRule"));
+        assert(row.getEmail().equals("gits@mplerreporule"));
+        assert(row.getCommit().equals(firstCommit));
+        assert(row.getAge().equals(String.valueOf(1)));
+        assert(row.getFileName().toString().equals("Test.h:1"));
+        assert(row.getDescription().equals("Unexpected Character"));
+
+        /*
         AnalysisResultAssert.assertThat(result).hasTotalErrorsSize(1);
         AnalysisResultAssert.assertThat(result).hasTotalHighPrioritySize(0);
         AnalysisResultAssert.assertThat(result).hasTotalNormalPrioritySize(0);
         AnalysisResultAssert.assertThat(result).hasTotalLowPrioritySize(0);
-        AnalysisResultAssert.assertThat(result).hasNewSize(0);
+        AnalysisResultAssert.assertThat(result).hasNewSize(0); */
+    }
 
-        assertSuccessfulBlame(result, 1, 1);
+    private BlamesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
+        IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
+        Object row = issuesDetail.getTableModel("blames").getRows().get(rowNumber);
+        return (BlamesRow) row;
+    }
+
+    private int getRowSize(final AnalysisResult result) {
+        IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
+        return issuesDetail.getTableModel("blames").getRows().size();
     }
 
     private void assertSuccessfulBlame(final AnalysisResult result, final int numberOfIssues, final int numberOfFiles) {
