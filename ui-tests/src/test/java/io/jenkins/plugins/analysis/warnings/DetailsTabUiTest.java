@@ -11,12 +11,14 @@ import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+import io.jenkins.plugins.analysis.warnings.CategoriesDetailsTable.Header;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Integration tests for the details tab part of issue overview page.
  *
+ * @author Nils Engelbrecht
  * @author Kevin Richter
  * @author Simon Schönwiese
  */
@@ -63,8 +65,7 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         AnalysisResult resultPage = new AnalysisResult(build, "java");
         resultPage.open();
 
-        Collection<Tab> tabs = resultPage.getAvailableTabs();
-        assertThat(tabs).containsExactly(Tab.FOLDERS, Tab.FILES, Tab.ISSUES);
+        assertThat(resultPage).hasOnlyAvailableTabs(Tab.FOLDERS, Tab.FILES, Tab.ISSUES);
 
         FoldersDetailsTable foldersDetailsTable = resultPage.openFoldersTable();
         assertThat(foldersDetailsTable.getTotal()).isEqualTo(2);
@@ -92,15 +93,13 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         AnalysisResult resultPage = new AnalysisResult(build, "checkstyle");
         resultPage.open();
 
-        Collection<Tab> tabs = resultPage.getAvailableTabs();
-        assertThat(tabs).containsExactlyInAnyOrder(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
+        assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
 
         assertThat(resultPage.getActiveTab()).isNotEqualTo(Tab.TYPES);
         resultPage.openTab(Tab.TYPES);
         assertThat(resultPage.getActiveTab()).isEqualTo(Tab.TYPES);
 
-        // reload page
-        resultPage.open();
+        resultPage.reload();
         assertThat(resultPage.getActiveTab()).isEqualTo(Tab.TYPES);
     }
 
@@ -120,8 +119,7 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         AnalysisResult resultPage = new AnalysisResult(build, "checkstyle");
         resultPage.open();
 
-        Collection<Tab> tabs = resultPage.getAvailableTabs();
-        assertThat(tabs).containsExactlyInAnyOrder(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
+        assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
 
         CategoriesDetailsTable categoriesDetailsTable = resultPage.openCategoriesTable();
         assertThat(categoriesDetailsTable.getHeaders()).containsExactlyInAnyOrder("Category", "Total", "Distribution");

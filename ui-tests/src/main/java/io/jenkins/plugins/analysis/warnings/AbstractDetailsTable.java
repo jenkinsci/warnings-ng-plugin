@@ -10,6 +10,12 @@ import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.po.PageObject;
 
+/**
+ * Class representing an issues-table on the {@link AnalysisResult}.
+ *
+ * @author Stephan Plöderl
+ * @author Kevin Richter
+ */
 public abstract class AbstractDetailsTable {
     private final AnalysisResult resultDetailsPage;
     private final List<GenericTableRow> tableRows = new ArrayList<>();
@@ -19,10 +25,14 @@ public abstract class AbstractDetailsTable {
     private final String tabId;
 
     /**
-     * Creates an IssuesTable of a specific type.
+     * Creates an AbstractDetailsTable of a specific type.
      *
+     * @param tab
+     *          the WebElement representing the tab which belongs to the table
+     * @param tabId
+     *          the String representing the DOM element identifier
      * @param resultDetailsPage
-     *         the AnalysisResult on which the issues-table is displayed on
+     *         the AnalysisResult on which the table is displayed on
      */
     public AbstractDetailsTable(final WebElement tab, final String tabId, final AnalysisResult resultDetailsPage) {
         this.tab = tab;
@@ -150,11 +160,10 @@ public abstract class AbstractDetailsTable {
     }
 
     /**
-     * Performs a click on the page button to open the page of the table
+     * Performs a click on the page button to open the page of the table.
      *
      * @param pageNumber
      *         the number representing the page to open
-     *
      */
     public void openTablePage(final int pageNumber) {
         resultDetailsPage.clickLink(String.valueOf(pageNumber));

@@ -59,4 +59,22 @@ public class IssuesDetailsTable extends AbstractDetailsTable {
         DEFAULT,
         DRY
     }
+
+    /**
+     * Enum representing the headers which should be present in a {@link IssuesDetailsTable}.
+     */
+    public enum Header {
+        DETAILS("Details"),
+        FILE("File"),
+        CATEGORY("Category"),
+        TYPE("Type"),
+        SEVERITY("Severity"),
+        AGE("Age");
+
+        private final String title;
+
+        Header(final String property) {
+            title = property;
+        }
+    }
 }

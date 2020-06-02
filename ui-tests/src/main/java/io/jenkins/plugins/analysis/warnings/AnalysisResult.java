@@ -114,6 +114,13 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
+     * Reloads the {@link PageObject}.
+     */
+    public void reload() {
+        open();
+    }
+
+    /**
      * Opens the analysis details page and selects the specified tab.
      *
      * @param tab
