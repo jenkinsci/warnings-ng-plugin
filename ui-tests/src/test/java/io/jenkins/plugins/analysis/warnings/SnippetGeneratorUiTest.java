@@ -19,9 +19,8 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  */
 @WithPlugins("warnings-ng")
 public class SnippetGeneratorUiTest extends AbstractJUnitTest {
-
     /**
-     * Tests the default configuration of RecordIssuesStep.
+     * Tests the default configuration of the RecordIssuesStep.
      */
     @Test
     public void defaultConfigurationTest() {
@@ -35,7 +34,7 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
     }
 
     /**
-     * Tests the default configuration of RecordIssuesStep by setting them explicitly.
+     * Tests the default configuration of the RecordIssuesStep by setting them explicitly.
      */
     @Test
     public void defaultConfigurationExplicitTest() {
@@ -57,7 +56,7 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
     }
 
     /**
-     * Tests the configuration of RecordIssuesStep that differs most from the default configuration.
+     * Tests the configuration of the RecordIssuesStep that differs most from the default configuration.
      */
     @Test
     public void antiDefaultConfigurationExplicitTest() {
@@ -151,6 +150,7 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
 
     /**
      * Creates a WorkflowJob (Pipeline) and saves the job.
+     *
      * @return WorkflowJob
      */
     private WorkflowJob createWorkflowJob() {
@@ -161,6 +161,7 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
 
     /**
      * Creates a SnippetGenerator page object and opens the view for tests.
+     *
      * @return SnippetGenerator
      */
     private SnippetGenerator createSnippetGenerator() {
