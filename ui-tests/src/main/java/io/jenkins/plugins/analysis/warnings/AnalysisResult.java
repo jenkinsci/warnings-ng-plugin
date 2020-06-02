@@ -150,52 +150,16 @@ public class AnalysisResult extends PageObject {
      * Opens the analysis details page, selects the tab {@link Tab#CATEGORIES} and returns the {@link PageObject} of the
      * categories table.
      *
+     * @param tab
+     *         the tab to open
+     *
      * @return page object of the categories table.
      */
-    public CategoriesDetailsTable openCategoriesTable() {
-        openTab(Tab.CATEGORIES);
+    public PropertyDetailsTable openPropertiesTable(final Tab tab) {
+        openTab(tab);
 
-        WebElement categoriesTab = find(By.id("categoryContent"));
-        return new CategoriesDetailsTable(categoriesTab, this);
-    }
-
-    /**
-     * Opens the analysis details page, selects the tab {@link Tab#TYPES} and returns the {@link PageObject} of the
-     * types table.
-     *
-     * @return page object of the types table.
-     */
-    public TypesDetailsTable openTypesTable() {
-        openTab(Tab.TYPES);
-
-        WebElement categoriesTab = find(By.id("typeContent"));
-        return new TypesDetailsTable(categoriesTab, this);
-    }
-
-    /**
-     * Opens the analysis details page, selects the tab {@link Tab#FOLDERS} and returns the {@link PageObject} of the
-     * folders table.
-     *
-     * @return page object of the types table.
-     */
-    public FoldersDetailsTable openFoldersTable() {
-        openTab(Tab.FOLDERS);
-
-        WebElement foldersTab = find(By.id("folderContent"));
-        return new FoldersDetailsTable(foldersTab, this);
-    }
-
-    /**
-     * Opens the analysis details page, selects the tab {@link Tab#FILES} and returns the {@link PageObject} of the
-     * files table.
-     *
-     * @return page object of the types table.
-     */
-    public FilesDetailsTable openFilesTable() {
-        openTab(Tab.FILES);
-
-        WebElement filesTab = find(By.id("fileNameContent"));
-        return new FilesDetailsTable(filesTab, this);
+        WebElement table = find(By.id(tab.contentId));
+        return new PropertyDetailsTable(table, this, tab.property);
     }
 
     /**
@@ -205,9 +169,9 @@ public class AnalysisResult extends PageObject {
      *         the WebElement representing the link to be clicked
      * @param type
      *         the class of the PageObject which represents the page to which the link leads to
-     *
      * @param <T>
      *         actual type of the page object
+     *
      * @return the instance of the PageObject to which the link leads to
      */
     // FIXME: IssuesTable should not depend on AnalysisResult
@@ -248,10 +212,12 @@ public class AnalysisResult extends PageObject {
         ISSUES("issues"),
         BLAMES("scm");
 
-        private final String href;
+        private final String contentId;
+        private final String property;
 
         Tab(final String property) {
-            href = "#" + property + "Content";
+            this.property = property;
+            contentId = property + "Content";
         }
 
         /**
@@ -260,7 +226,7 @@ public class AnalysisResult extends PageObject {
          * @return the selenium filter rule
          */
         By getXpath() {
-            return By.xpath("//a[@href='" + href + "']");
+            return By.xpath("//a[@href='#" + contentId + "']");
         }
 
         /**
@@ -275,7 +241,7 @@ public class AnalysisResult extends PageObject {
          */
         static Tab valueWithHref(final String href) {
             for (Tab tab : Tab.values()) {
-                if (tab.href.equals(href)) {
+                if (tab.contentId.equals(href.substring(1))) {
                     return tab;
                 }
             }

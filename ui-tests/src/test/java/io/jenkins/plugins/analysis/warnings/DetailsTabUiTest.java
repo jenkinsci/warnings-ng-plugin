@@ -11,7 +11,7 @@ import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-import io.jenkins.plugins.analysis.warnings.CategoriesDetailsTable.Header;
+import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.Header;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
@@ -66,14 +66,14 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
 
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.FOLDERS, Tab.FILES, Tab.ISSUES);
 
-        FoldersDetailsTable foldersDetailsTable = resultPage.openFoldersTable();
-        assertThat(foldersDetailsTable.getTotal()).isEqualTo(2);
+        PropertyDetailsTable foldersDetailsTable = resultPage.openPropertiesTable(Tab.FOLDERS);
+        assertThat(foldersDetailsTable).hasTotal(2);
 
-        FilesDetailsTable filesDetailsTable = resultPage.openFilesTable();
-        assertThat(filesDetailsTable.getTotal()).isEqualTo(2);
+        PropertyDetailsTable filesDetailsTable = resultPage.openPropertiesTable(Tab.FILES);
+        assertThat(filesDetailsTable).hasTotal(2);
 
         IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable.getTotal()).isEqualTo(2);
+        assertThat(issuesDetailsTable).hasTotal(2);
     }
 
     /**
@@ -120,21 +120,18 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
 
         assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
 
-        CategoriesDetailsTable categoriesDetailsTable = resultPage.openCategoriesTable();
-        assertThat(categoriesDetailsTable).hasColumnHeaders(Header.CATEGORY, Header.TOTAL, Header.DISTRIBUTION);
-        assertThat(categoriesDetailsTable).hasSize(5);
-        assertThat(categoriesDetailsTable).hasTotal(5);
+        PropertyDetailsTable categoriesDetailsTable = resultPage.openPropertiesTable(Tab.CATEGORIES);
+        assertThat(categoriesDetailsTable).hasHeaders("Category", "Total", "Distribution");
+        assertThat(categoriesDetailsTable).hasSize(5).hasTotal(5);
 
-        TypesDetailsTable typesDetailsTable = resultPage.openTypesTable();
-        assertThat(typesDetailsTable.getHeaders()).containsExactlyInAnyOrder("Type", "Total", "Distribution");
-        assertThat(typesDetailsTable.getSize()).isEqualTo(7);
-        assertThat(typesDetailsTable.getTotal()).isEqualTo(7);
+        PropertyDetailsTable typesDetailsTable = resultPage.openPropertiesTable(Tab.TYPES);
+        assertThat(typesDetailsTable).hasHeaders("Type", "Total", "Distribution");
+        assertThat(typesDetailsTable).hasSize(7).hasTotal(7);
 
         IssuesDetailsTable issuesDetailsTable = resultPage.openIssuesTable();
-        assertThat(issuesDetailsTable).hasColumnHeaders(IssuesDetailsTable.Header.DETAILS, IssuesDetailsTable.Header.FILE, IssuesDetailsTable.Header.CATEGORY,
-                IssuesDetailsTable.Header.TYPE, IssuesDetailsTable.Header.SEVERITY, IssuesDetailsTable.Header.AGE);
-        assertThat(issuesDetailsTable.getSize()).isEqualTo(10);
-        assertThat(issuesDetailsTable.getTotal()).isEqualTo(11);
+        assertThat(issuesDetailsTable).hasColumnHeaders(Header.DETAILS, Header.FILE, Header.CATEGORY,
+                Header.TYPE, Header.SEVERITY, Header.AGE);
+        assertThat(issuesDetailsTable).hasSize(10).hasTotal(11);
 
         List<GenericTableRow> tableRowListIssues = issuesDetailsTable.getTableRows();
         IssuesTableRow firstRow = (IssuesTableRow) tableRowListIssues.get(0);
