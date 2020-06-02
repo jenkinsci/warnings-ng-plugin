@@ -1,33 +1,31 @@
-package io.jenkins.plugins.analysis.warnings.recorder;
+package io.jenkins.plugins.analysis.warnings;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
-import edu.hm.hafner.analysis.Severity;
+import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
+import org.jenkinsci.test.acceptance.junit.WithPlugins;
+import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
+import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateType;
 
-import io.jenkins.plugins.analysis.core.model.HealthReportBuilder;
-import io.jenkins.plugins.analysis.core.steps.RecordIssuesStep;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SnippetGenerator;
-
-import static edu.hm.hafner.analysis.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
- * Integration test of the {@link SnippetGenerator}.
+ * Acceptance tests for the SnippetGenerator.
  *
  * @author Matthias Herpers
+ * @author Lion Kosiuk
  */
-@Ignore("TODO: investigate how the runtime of those tests could be improved")
-public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
+@WithPlugins("warnings-ng")
+public class SnippetGeneratorUiTest extends AbstractJUnitTest {
     /**
-     * Tests the default configuration of {@link RecordIssuesStep}.
+     * Tests the default configuration of the RecordIssuesStep.
      */
     @Test
     public void defaultConfigurationTest() {
-        WorkflowJob job = createPipeline();
-        SnippetGenerator snippetGenerator = createSnippetGenerator(job);
+        SnippetGenerator snippetGenerator = createSnippetGenerator();
+
         snippetGenerator.selectRecordIssues().setTool("Java");
 
         String script = snippetGenerator.generateScript();
@@ -36,12 +34,12 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests the default configuration of {@link RecordIssuesStep} by setting them explicitly.
+     * Tests the default configuration of the RecordIssuesStep by setting them explicitly.
      */
     @Test
     public void defaultConfigurationExplicitTest() {
-        WorkflowJob job = createPipeline();
-        SnippetGenerator snippetGenerator = createSnippetGenerator(job);
+        SnippetGenerator snippetGenerator = createSnippetGenerator();
+
         snippetGenerator.selectRecordIssues().setTool("Java")
                 .setAggregatingResults(false)
                 .setBlameDisabled(false)
@@ -49,7 +47,6 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
                 .setEnabledForFailure(false)
                 .setIgnoreFailedBuilds(true)
                 .setIgnoreQualityGate(false)
-                .setPattern("", 1)
                 .setReferenceJobName("")
                 .setSourceCodeEncoding("");
 
@@ -59,22 +56,20 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests the configuration of {@link RecordIssuesStep} that differs most from the default configuration.
+     * Tests the configuration of the RecordIssuesStep that differs most from the default configuration.
      */
     @Test
     public void antiDefaultConfigurationExplicitTest() {
-        WorkflowJob job = createPipeline();
-        SnippetGenerator snippetGenerator = createSnippetGenerator(job);
+        SnippetGenerator snippetGenerator = createSnippetGenerator();
+
         snippetGenerator
-                .selectRecordIssues().setTool("Java")
+                .selectRecordIssues().setToolWithPattern("Java", "firstText")
                 .setAggregatingResults(true)
                 .setBlameDisabled(true)
                 .setForensicsDisabled(true)
                 .setEnabledForFailure(true)
-                //.setHealthReport(null,null,Severity.WARNING_LOW)  // TODO: default int is not yet possible
                 .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
-                .setPattern("firstText", 1)
                 .setReferenceJobName("someText")
                 .setSourceCodeEncoding("otherText");
 
@@ -96,14 +91,14 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Tests the {@link HealthReportBuilder} configuration.
+     * Tests the HealthReportBuilder configuration.
      */
     @Test
     public void configureHealthReportTest() {
-        WorkflowJob job = createPipeline();
-        SnippetGenerator snippetGenerator = createSnippetGenerator(job);
+        SnippetGenerator snippetGenerator = createSnippetGenerator();
+
         snippetGenerator.selectRecordIssues().setTool("Java")
-                .setHealthReport(1, 9, Severity.WARNING_LOW);
+                .setHealthReport(1, 9, "LOW");
 
         String script = snippetGenerator.generateScript();
 
@@ -111,23 +106,24 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Verifies a complex step configuration for {@link RecordIssuesStep}.
+     * Verifies a complex step configuration for RecordIssuesStep.
      */
     @Test
     public void shouldHandleComplexConfiguration() {
-        WorkflowJob job = createPipeline();
-        SnippetGenerator snippetGenerator = createSnippetGenerator(job);
-        snippetGenerator.selectRecordIssues().setTool("Java")
+        SnippetGenerator snippetGenerator = createSnippetGenerator();
+
+        snippetGenerator.selectRecordIssues().setToolWithPattern("Java", "firstText")
                 .setAggregatingResults(true)
                 .setBlameDisabled(true)
                 .setForensicsDisabled(true)
                 .setEnabledForFailure(true)
-                .setHealthReport(1, 9, Severity.WARNING_HIGH)
+                .setHealthReport(1, 9, "HIGH")
                 .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
-                .setPattern("firstText", 1)
                 .setReferenceJobName("someText")
-                .setSourceCodeEncoding("otherText");
+                .setSourceCodeEncoding("otherText")
+                .addIssueFilter("Exclude types", "*toExclude*")
+                .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateBuildResult.FAILED);
 
         String script = snippetGenerator.generateScript();
 
@@ -136,8 +132,10 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(script).contains("blameDisabled: true");
         assertThat(script).contains("forensicsDisabled: true");
         assertThat(script).contains("enabledForFailure: true");
+        assertThat(script).contains("filters: [excludeType('*toExclude*')]");
         assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
+        assertThat(script).contains("qualityGates: [[threshold: 1, type: 'NEW', unstable: false]]");
 
         assertThat(script).contains("pattern: 'firstText'");
         assertThat(script).contains("referenceJobName: 'someText'");
@@ -150,7 +148,26 @@ public class SnippetGeneratorITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(script).contains(")]");
     }
 
-    private SnippetGenerator createSnippetGenerator(final WorkflowJob job) {
-        return new SnippetGenerator(getWebPage(JavaScriptSupport.JS_ENABLED, job, "pipeline-syntax/"));
+    /**
+     * Creates a WorkflowJob (Pipeline) and saves the job.
+     *
+     * @return WorkflowJob
+     */
+    private WorkflowJob createWorkflowJob() {
+        WorkflowJob job = jenkins.getJobs().create(WorkflowJob.class);
+        job.save();
+        return job;
+    }
+
+    /**
+     * Creates a SnippetGenerator page object and opens the view for tests.
+     *
+     * @return SnippetGenerator
+     */
+    private SnippetGenerator createSnippetGenerator() {
+        WorkflowJob job = createWorkflowJob();
+        SnippetGenerator snippetGenerator = new SnippetGenerator(job);
+        snippetGenerator.open();
+        return snippetGenerator;
     }
 }
