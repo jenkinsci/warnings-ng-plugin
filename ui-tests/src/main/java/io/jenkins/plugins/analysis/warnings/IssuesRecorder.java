@@ -297,19 +297,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
-     * then this folder needs to be added in Jenkins global configuration.
-     *
-     * @param sourceDirectory
-     *         a folder containing the source code
-     */
-    public void setSourceDirectory(final String sourceDirectory) {
-        openAdvancedOptions();
-
-        this.sourceDirectory.set(sourceDirectory);
-    }
-
-    /**
      * Enables or disables the checkbox 'enabledForFailure'.
      *
      * @param isChecked
