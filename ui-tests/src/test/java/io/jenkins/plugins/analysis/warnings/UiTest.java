@@ -46,6 +46,17 @@ abstract class UiTest extends AbstractJUnitTest {
         return job;
     }
 
+    protected IssuesRecorder addAllRecorders(final FreeStyleJob job) {
+        return job.addPublisher(IssuesRecorder.class, recorder -> {
+            recorder.setTool("CheckStyle");
+            recorder.addTool("FindBugs");
+            recorder.addTool("PMD");
+            recorder.addTool("CPD",
+                    cpd -> cpd.setHighThreshold(8).setNormalThreshold(3));
+            recorder.setEnabledForFailure(true);
+        });
+    }
+
     protected Build buildJob(final Job job) {
         return job.startBuild().waitUntilFinished();
     }
