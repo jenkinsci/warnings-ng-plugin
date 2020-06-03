@@ -1,6 +1,5 @@
 package core;
 
-import java.io.File;
 import javax.inject.Inject;
 
 import org.junit.Before;
@@ -51,51 +50,45 @@ public class GitBlamerUITest extends AbstractJUnitTest {
 
     @Test
     public void shouldBlameOneIssueWithFreestyle() {
-        Build referenceBuild = generate();
-        referenceBuild.open();
-        AnalysisSummary blame = new AnalysisSummary(referenceBuild, "java");
+        GitRepo repo = setupInitialGitRepository();
+        commitDifferentFilesToGitRepository(repo);
+        repo.commitFileWithMessage("commit", "warnings.txt",
+                "[javac] Test.java:1: warning: Test Warning for Jenkins");
+        Build build = generate(repo);
+        build.open();
+
+        AnalysisSummary blame = new AnalysisSummary(build, "java");
         AnalysisResult result = blame.openOverallResult();
     }
 
-    private Build generate() {
-        GitRepo repo = setupGitRepositoryCommits();
-        buildGitRepo(repo);
+    private Build generate(GitRepo repo) {
+        // Transfer to docker git repository
         repo.transferToDockerContainer(host, port);
-
         job.useScm(GitScm.class)
                 .url(repoUrl)
                 .credentials(USERNAME);
 
         addRecorder((FreeStyleJob) job);
-
         job.save();
+
         return job.startBuild().waitUntilFinished();
     }
 
-    private IssuesRecorder addRecorder(final FreeStyleJob job) {
-        return job.addPublisher(IssuesRecorder.class, recorder -> {
+    private void addRecorder(final FreeStyleJob job) {
+        job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("Java").setPattern("warnings.txt");
         });
     }
 
-    private void buildGitRepo(GitRepo repo) {
-        // repo.commitFileWithMessage("commit", "Test.java", "public class Test {}");
-        repo.commitFileWithMessage("initial commit", "warnings.txt",
-                "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
-                        + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
-                        + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
-                        + "[javac] Test.java:4: warning: Test Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
-                        + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins");
+    private GitRepo setupInitialGitRepository() {
+        GitRepo repo = new GitRepo();
+        repo.setIdentity("Git SampleRepoRule", "gits@mplereporule");
+        repo.commitFileWithMessage("init", "file", "");
+        return repo;
     }
 
-    private GitRepo setupGitRepositoryCommits() {
-        GitRepo repo = new GitRepo();
+    private void commitDifferentFilesToGitRepository(GitRepo repo) {
+        repo.setIdentity("Git SampleRepoRule", "gits@mplereporule");
         repo.commitFileWithMessage("commit", "Test.java", "public class Test {\n"
                 + "    public Test() {\n"
                 + "        System.out.println(\"Test\");"
@@ -116,8 +109,6 @@ public class GitBlamerUITest extends AbstractJUnitTest {
                 + "        Log.log(\"Bob: 'Where are you?'\");"
                 + "    }\n"
                 + "}");
-
-        return repo;
     }
 
 }
