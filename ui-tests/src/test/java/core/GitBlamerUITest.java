@@ -77,6 +77,7 @@ public class GitBlamerUITest extends AbstractJUnitTest {
     private void addRecorder(final FreeStyleJob job) {
         job.addPublisher(IssuesRecorder.class, recorder -> {
             recorder.setTool("Java").setPattern("warnings.txt");
+            recorder.setEnabledForFailure(true);
         });
     }
 
