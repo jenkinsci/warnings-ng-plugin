@@ -15,6 +15,8 @@ import org.openqa.selenium.WebElement;
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
 
+import sun.font.Script;
+
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
@@ -187,14 +189,37 @@ public class AnalysisResult extends PageObject {
         return find(By.id("trend-carousel"));
     }
 
+    /**
+     * returns the Severities Trend Chart.
+     *
+     * @return severities TrendChart as JSONObject.
+     */
     public JSONObject getSeveritiesTrendChart() throws JSONException {
         return getChartModel("severities-trend-chart");
     }
 
+    /**
+     * returns the new versus fixed Trend Chart.
+     *
+     * @return new versus fixed TrendChart as JSONObject.
+     */
+    public JSONObject getNewVersusFixedTrendChart() throws JSONException {
+        return getChartModel("new-versus-fixed-trend-chart");
+    }
+
+    /**
+     * returns the tools Trend Chart.
+     *
+     * @return tools TrendChart as JSONObject.
+     */
+    public JSONObject getToolsTrendChart() throws JSONException {
+        return getChartModel("tools-trend-chart");
+    }
+
     protected JSONObject getChartModel(final String id) throws JSONException {
-        WebElement trendChart = find(By.id("trend-carousel"));
-        WebElement chart = trendChart.findElement(By.id(id));
-        ScriptResult scriptResult = (ScriptResult) this.executeScript("JSON.stringify(echarts.getInstanceByDom(arguments[0]).getOption())", chart);
+        Object result = this.executeScript(String.format("return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
+                id));
+        ScriptResult scriptResult = new ScriptResult(result);
 
         JSONObject chartModel;
         try {
@@ -203,7 +228,7 @@ public class AnalysisResult extends PageObject {
         catch (JSONException e) {
             throw new JSONException(e);
         }
-        return new JSONObject(scriptResult);
+        return chartModel;
     }
 
     /**

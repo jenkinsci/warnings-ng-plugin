@@ -54,13 +54,21 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
         nextButton.click();
         boolean newVsFixedDisplayed = trendChart.findElement(By.id("new-versus-fixed-trend-chart")).isDisplayed();
 
-
-
-        JSONObject newVsFixed = analysisResultPage.getSeveritiesTrendChart();
-
         assertThat(severitiesDisplayed).isTrue();
         assertThat(toolsDisplayed).isTrue();
         assertThat(newVsFixedDisplayed).isTrue();
+    }
+
+    @Test
+    public void shouldShowTrendCharts() throws JSONException {
+        FreeStyleJob job = createFreeStyleJob("build_01");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("Java", "**/*.txt"));
+        job.save();
+        Build build = shouldBuildJobSuccessfully(job);
+        AnalysisResult analysisResultPage = new AnalysisResult(build, "java");
+        analysisResultPage.open();
+        JSONObject newVsFixed = analysisResultPage.getSeveritiesTrendChart();
+//        newVsFixed.get("xAxis");
     }
 
     private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
