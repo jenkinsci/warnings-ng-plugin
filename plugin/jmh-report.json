@@ -1,0 +1,2 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99.9%)","Unit"
+"io.jenkins.plugins.analysis.warnings.benchmark.StepsBenchmark.benchmark","avgt",1,5,0.000244,0.000716,"s/op"
