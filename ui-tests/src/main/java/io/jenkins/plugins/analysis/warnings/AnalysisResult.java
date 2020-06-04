@@ -7,15 +7,16 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
+import org.json.JSONArray;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
 
-import sun.font.Script;
+import net.minidev.json.parser.JSONParser;
+import net.minidev.json.parser.ParseException;
+import net.minidev.json.JSONObject;
 
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
@@ -151,9 +152,9 @@ public class AnalysisResult extends PageObject {
      *         the WebElement representing the link to be clicked
      * @param type
      *         the class of the PageObject which represents the page to which the link leads to
-     *
      * @param <T>
      *         actual type of the page object
+     *
      * @return the instance of the PageObject to which the link leads to
      */
     // FIXME: IssuesTable should not depend on AnalysisResult
@@ -194,7 +195,7 @@ public class AnalysisResult extends PageObject {
      *
      * @return severities TrendChart as JSONObject.
      */
-    public JSONObject getSeveritiesTrendChart() throws JSONException {
+    public JSONObject getSeveritiesTrendChart() throws ParseException {
         return getChartModel("severities-trend-chart");
     }
 
@@ -203,7 +204,7 @@ public class AnalysisResult extends PageObject {
      *
      * @return new versus fixed TrendChart as JSONObject.
      */
-    public JSONObject getNewVersusFixedTrendChart() throws JSONException {
+    public JSONObject getNewVersusFixedTrendChart() throws ParseException {
         return getChartModel("new-versus-fixed-trend-chart");
     }
 
@@ -212,21 +213,22 @@ public class AnalysisResult extends PageObject {
      *
      * @return tools TrendChart as JSONObject.
      */
-    public JSONObject getToolsTrendChart() throws JSONException {
+    public JSONObject getToolsTrendChart() throws ParseException {
         return getChartModel("tools-trend-chart");
     }
 
-    protected JSONObject getChartModel(final String id) throws JSONException {
-        Object result = this.executeScript(String.format("return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
-                id));
+    protected JSONObject getChartModel(final String elementId) throws ParseException {
+        Object result = this.executeScript(String.format(
+                "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
+                elementId));
         ScriptResult scriptResult = new ScriptResult(result);
-
+        JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
         JSONObject chartModel;
         try {
-            chartModel = new JSONObject(scriptResult.getJavaScriptResult().toString());
+            chartModel = (JSONObject) parser.parse(scriptResult.getJavaScriptResult().toString());
         }
-        catch (JSONException e) {
-            throw new JSONException(e);
+        catch (ParseException e) {
+            throw new ParseException(e.getPosition(), e.getCause());
         }
         return chartModel;
     }
