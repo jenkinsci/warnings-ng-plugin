@@ -364,7 +364,7 @@ public class GitBlamerITest extends IntegrationTestWithJenkinsPerTest {
 
         gitRepo.git("config", "user.name", "John Doe");
         gitRepo.git("config", "user.email", "john@doe");
-        createAndCommitFile("LoremIpsum.java", "public class LoremIpsum {\n"
+        createAndCommitFile("2Lorem^1Ipsum.java", "public class wQ  a BVGTC^!$&/(LoremIpsum {\n"
                 + "    public LoremIpsum() {\n"
                 + "        Log.log(\"Lorem ipsum dolor sit amet\");"
                 + "    }\n"

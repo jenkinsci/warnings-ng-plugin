@@ -79,9 +79,9 @@ public class GitRepo implements Closeable {
         gitDir(dir, "config", "user.email", "jenkins-ath@example.org");
     }
 
-    public void setIdentity(String username, String userMail) {
-        gitDir(dir, "config", "user.name", "username");
-        gitDir(dir, "config", "user.email", "userMail");
+    public void setIdentity(final String username, final String userMail) {
+        gitDir(dir, "config", "user.name", username);
+        gitDir(dir, "config", "user.email", userMail);
     }
 
     private File initDir() {

@@ -15,6 +15,7 @@ import com.google.inject.Injector;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
+import io.jenkins.plugins.analysis.warnings.BlamesTable.BlamesTableRowType;
 import io.jenkins.plugins.analysis.warnings.IssuesTable.IssuesTableRowType;
 
 /**
@@ -114,6 +115,17 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
+     *
+     * @return
+     */
+    private BlamesTableRowType getBlamesTableType() {
+        if (ArrayUtils.contains(DRY_TOOLS, id)) {
+            return BlamesTableRowType.DRY;
+        }
+        return BlamesTableRowType.DEFAULT;
+    }
+
+    /**
      * Opens the analysis details page and selects the specified tab.
      *
      * @param tab
@@ -137,6 +149,13 @@ public class AnalysisResult extends PageObject {
 
         WebElement issuesTab = find(By.id("issuesContent"));
         return new IssuesTable(issuesTab, this, getIssuesTableType());
+    }
+
+    public BlamesTable openBlamesTable() {
+        openTab(Tab.BLAMES);
+
+        WebElement blamesTab = find(By.id("blamesContent"));
+        return new BlamesTable(blamesTab, this, getBlamesTableType());
     }
 
     /**
@@ -187,7 +206,7 @@ public class AnalysisResult extends PageObject {
         CATEGORIES("category"),
         TYPES("type"),
         ISSUES("issues"),
-        BLAMES("scm");
+        BLAMES("blames");
 
         private final String href;
 
