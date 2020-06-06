@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class TrendChartsUiTest extends AbstractJUnitTest {
     private static final String WARNINGS_PLUGIN_PREFIX = "/";
     private static final String SOURCE_VIEW_FOLDER = WARNINGS_PLUGIN_PREFIX + "trend_charts_tests/";
-    private static final JSONParser JSON_PARSER = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
+    private static final JSONParser JSON_PARSER = new JSONParser(JSONParser.MODE_PERMISSIVE);
 
     /**
      * Click on next-button switches between different Chart-types.
