@@ -1,0 +1,2 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99.9%)","Unit"
+"io.jenkins.plugins.analysis.warnings.benchmark.TimeStamperPlugingBenchmarkITest.benchmarkCoverage","avgt",1,10,0.000013,0.000002,"s/op"
