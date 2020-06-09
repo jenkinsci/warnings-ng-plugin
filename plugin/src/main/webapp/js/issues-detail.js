@@ -1,4 +1,4 @@
-/* global jQuery3, view, renderZoomableTrendChart */
+/* global jQuery3, view, echartsJenkinsApi */
 (function ($) {
     redrawTrendCharts();
     storeAndRestoreCarousel('trend-carousel');
@@ -68,7 +68,7 @@
          * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
          */
         view.getBuildTrend(isBuildOnXAxis, function (lineModel) {
-            renderZoomableTrendChart('severities-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+            echartsJenkinsApi.renderZoomableTrendChart('severities-trend-chart', lineModel.responseJSON, redrawTrendCharts);
         });
 
         /**
@@ -76,7 +76,7 @@
          * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
          */
         view.getToolsTrend(isBuildOnXAxis, function (lineModel) {
-            renderZoomableTrendChart('tools-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+            echartsJenkinsApi.renderZoomableTrendChart('tools-trend-chart', lineModel.responseJSON, redrawTrendCharts);
         });
 
         /**
@@ -84,7 +84,7 @@
          * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
          */
         view.getNewVersusFixedTrend(isBuildOnXAxis, function (lineModel) {
-            renderZoomableTrendChart('new-versus-fixed-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+            echartsJenkinsApi.renderZoomableTrendChart('new-versus-fixed-trend-chart', lineModel.responseJSON, redrawTrendCharts);
         });
 
         /**
@@ -93,7 +93,7 @@
          */
         if ($('#health-trend-chart').length) {
             view.getHealthTrend(isBuildOnXAxis, function (lineModel) {
-                renderZoomableTrendChart('health-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+                echartsJenkinsApi.renderZoomableTrendChart('health-trend-chart', lineModel.responseJSON, redrawTrendCharts);
             });
         }
     }
