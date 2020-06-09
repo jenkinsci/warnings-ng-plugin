@@ -4,6 +4,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
@@ -13,7 +18,7 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.Header;
 
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
 
 /**
  * Integration tests for the details tab part of issue overview page.
@@ -150,6 +155,162 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
             IssuesTableRow row = (IssuesTableRow) errorIssuesDetailsTable.getTableRows().get(i);
             assertThat(row.getSeverity()).isEqualTo("Error");
         }
+    }
+
+    /**
+     * Checks if the severity and age of the generated issue table from a Analysis Summary with the CPD tool shows the
+     * correct severity and age.
+     */
+    @Test
+    public void shouldShowCorrectSeverityAndAge() {
+        FreeStyleJob job = createFreeStyleJob("../cpd1Warning.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("CPD", "**/*.xml"));
+        job.save();
+
+        Build build = job.startBuild().waitUntilFinished();
+        build.open();
+
+        AnalysisSummary cpd = new AnalysisSummary(build, "cpd");
+
+        AnalysisResult cpdDetails = cpd.openOverallResult();
+
+        IssuesDetailsTable issuesDetailsTable = cpdDetails.openIssuesTable();
+        DryIssuesTableRow issuesTableFirstRow = issuesDetailsTable.getRowAs(0, DryIssuesTableRow.class);
+        assertThat(issuesTableFirstRow.getSeverity()).isEqualTo("Normal");
+        assertThat(issuesTableFirstRow.getAge()).isEqualTo(1);
+    }
+
+    /**
+     * When selecting different options in the dropdown menu that controls the numbers of displayed rows.
+     */
+    @Test
+    public void shouldShowTheCorrectNumberOfRowsSelectedByLength() {
+        FreeStyleJob job = createFreeStyleJob("findbugs-severities.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("FindBugs", "**/*.xml"));
+        job.save();
+
+        Build build = job.startBuild().waitUntilFinished();
+        build.open();
+
+        AnalysisSummary resultPage = new AnalysisSummary(build, "findbugs");
+        assertThat(resultPage).isDisplayed();
+        AnalysisResult findBugsAnalysisResult = resultPage.openOverallResult();
+
+        assertThat(findBugsAnalysisResult).hasAvailableTabs(Tab.ISSUES);
+
+        findBugsAnalysisResult.openPropertiesTable(Tab.ISSUES);
+
+        WebElement issuesLength = resultPage.getElement(By.id("issues_length"));
+        Select issuesLengthSelect = new Select(issuesLength.findElement(By.cssSelector("label > select")));
+        WebElement issuesInfo = resultPage.getElement(By.id("issues_info"));
+        WebElement issuesPaginate = resultPage.getElement(By.id("issues_paginate"));
+
+        issuesLengthSelect.selectByValue("10");
+        WebDriverWait wait = new WebDriverWait(driver, 4, 100);
+        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo, "Showing 1 to 10 of 12 entries"));
+
+        List<WebElement> issuesPaginateLi = issuesPaginate.findElements(By.cssSelector("ul li"));
+
+        assertThat(issuesPaginateLi.size()).isEqualTo(2);
+        assertThat(ExpectedConditions.elementToBeClickable(issuesPaginateLi.get(1)));
+
+        issuesLengthSelect.selectByValue("25");
+        wait = new WebDriverWait(driver, 4, 100);
+        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo, "Showing 1 to 12 of 12 entries"));
+
+        issuesPaginateLi.clear();
+        issuesPaginateLi = issuesPaginate.findElements(By.cssSelector("ul li"));
+
+        assertThat(issuesPaginateLi.size()).isEqualTo(1);
+    }
+
+    /**
+     * When filling out the filter input field, the correct rows should be displayed.
+     */
+    @Test
+    public void shouldDisplayTheFilteredRows() {
+        FreeStyleJob job = createFreeStyleJob("findbugs-severities.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("FindBugs", "**/*.xml"));
+        job.save();
+
+        Build build = job.startBuild().waitUntilFinished();
+        build.open();
+
+        AnalysisSummary resultPage = new AnalysisSummary(build, "findbugs");
+        assertThat(resultPage).isDisplayed();
+        AnalysisResult findBugsAnalysisResult = resultPage.openOverallResult();
+
+        assertThat(findBugsAnalysisResult).hasAvailableTabs(Tab.ISSUES);
+
+        findBugsAnalysisResult.openPropertiesTable(Tab.ISSUES);
+
+        WebElement issuesFilter = resultPage.getElement(By.id("issues_filter"));
+        WebElement issuesInfo = resultPage.getElement(By.id("issues_info"));
+        WebElement issuesFilterInput = issuesFilter.findElement(By.cssSelector("label > input"));
+
+        issuesFilterInput.sendKeys("CalculateFrame");
+
+        WebDriverWait wait = new WebDriverWait(driver, 4, 100);
+        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo,
+                "Showing 1 to 2 of 2 entries (filtered from 12 total entries)"));
+        issuesFilterInput.clear();
+
+        issuesFilterInput.sendKeys("STYLE");
+        wait = new WebDriverWait(driver, 4, 100);
+        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo,
+                "Showing 1 to 7 of 7 entries (filtered from 12 total entries)"));
+    }
+
+    /**
+     * When selecting different options in the dropdown menu that controls the numbers of displayed rows.
+     */
+    @Test
+    public void shouldMemorizeSelectedNumberOfRowsOnReload() {
+        FreeStyleJob job = createFreeStyleJob("findbugs-severities.xml");
+        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("FindBugs", "**/*.xml"));
+        job.save();
+
+        Build build = job.startBuild().waitUntilFinished();
+        build.open();
+
+        AnalysisSummary resultPage = new AnalysisSummary(build, "findbugs");
+        assertThat(resultPage).isDisplayed();
+        AnalysisResult findBugsAnalysisResult = resultPage.openOverallResult();
+
+        assertThat(findBugsAnalysisResult).hasAvailableTabs(Tab.ISSUES);
+
+        findBugsAnalysisResult.openPropertiesTable(Tab.ISSUES);
+
+        WebElement issuesLength = resultPage.getElement(By.id("issues_length"));
+        Select issuesLengthSelect = new Select(issuesLength.findElement(By.cssSelector("label > select")));
+        WebElement issuesInfo = resultPage.getElement(By.id("issues_info"));
+        WebElement issuesPaginate = resultPage.getElement(By.id("issues_paginate"));
+
+        issuesLengthSelect.selectByValue("50");
+        WebDriverWait wait = new WebDriverWait(driver, 4, 100);
+        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo, "Showing 1 to 12 of 12 entries"));
+
+        List<WebElement> issuesPaginateLi = issuesPaginate.findElements(By.cssSelector("ul li"));
+
+        assertThat(issuesPaginateLi.size()).isEqualTo(1);
+
+        //Reload
+        resultPage.open();
+        findBugsAnalysisResult.reload();
+        issuesInfo = resultPage.getElement(By.id("issues_info"));
+        wait = new WebDriverWait(driver, 4, 100);
+        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo, "Showing 1 to 12 of 12 entries"));
+
+        issuesLength = resultPage.getElement(By.id("issues_length"));
+        issuesLengthSelect = new Select(issuesLength.findElement(By.cssSelector("label > select")));
+        assertThat(issuesLengthSelect.getFirstSelectedOption().getText()).isEqualTo("50");
+
+        issuesPaginate = resultPage.getElement(By.id("issues_paginate"));
+        issuesPaginateLi.clear();
+        issuesPaginateLi = issuesPaginate.findElements(By.cssSelector("ul li"));
+
+        assertThat(issuesPaginateLi.size()).isEqualTo(1);
+
     }
 
     private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
