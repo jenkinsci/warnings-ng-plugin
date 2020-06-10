@@ -40,8 +40,6 @@ public class GitBlamerUITest extends AbstractJUnitTest {
     DockerContainerHolder<GitContainer> gitServer;
 
     private static final String USERNAME = "gitplugin";
-    // private Job job;
-    // private WorkflowJob workflowJob;
     private GitContainer container;
     private String repoUrl;
     private String host;
@@ -61,13 +59,7 @@ public class GitBlamerUITest extends AbstractJUnitTest {
         repoUrl = container.getRepoUrl();
         host = container.host();
         port = container.port();
-        // job = jenkins.jobs.create();    // creates freestyle job
-        // workflowJob = jenkins.jobs.create(WorkflowJob.class);
-        // job.configure();
-        // workflowJob.configure();
     }
-
-    // TODO: reactivate the posix file settings before final commit
 
     @Test
     public void shouldBlameOneIssueWithFreestyle() {
@@ -104,7 +96,6 @@ public class GitBlamerUITest extends AbstractJUnitTest {
                         + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
                         + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
                         + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
-                        // + "    echo '[javac] Test.java:4: warning: Test Warning for Jenkins'\n"
                         + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
                         + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
                         + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
