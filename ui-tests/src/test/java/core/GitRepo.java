@@ -89,13 +89,13 @@ public class GitRepo implements Closeable {
             // FIXME: perhaps this logic that makes it use a separate key should be moved elsewhere?
             privateKey = File.createTempFile("ssh", "key");
             FileUtils.copyURLToFile(GitContainer.class.getResource("GitContainer/unsafe"), privateKey);
-            // Files.setPosixFilePermissions(privateKey.toPath(), singleton(OWNER_READ));
+            Files.setPosixFilePermissions(privateKey.toPath(), singleton(OWNER_READ));
 
             ssh = File.createTempFile("jenkins", "ssh");
             FileUtils.writeStringToFile(ssh,
                     "#!/bin/sh\n" +
                             "exec ssh -o StrictHostKeyChecking=no -i " + privateKey.getAbsolutePath() + " \"$@\"");
-            // Files.setPosixFilePermissions(ssh.toPath(), new HashSet<>(Arrays.asList(OWNER_READ, OWNER_EXECUTE)));
+            Files.setPosixFilePermissions(ssh.toPath(), new HashSet<>(Arrays.asList(OWNER_READ, OWNER_EXECUTE)));
 
             return createTempDir("git");
         }

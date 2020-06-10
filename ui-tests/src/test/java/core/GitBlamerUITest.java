@@ -7,6 +7,7 @@ import javax.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
+import org.jvnet.hudson.test.Issue;
 
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.GitContainer;
@@ -27,7 +28,7 @@ import io.jenkins.plugins.analysis.warnings.BlamesTable;
 import io.jenkins.plugins.analysis.warnings.BlamesTableRow;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 @WithDocker
 @Category(DockerTest.class)
@@ -39,8 +40,8 @@ public class GitBlamerUITest extends AbstractJUnitTest {
     DockerContainerHolder<GitContainer> gitServer;
 
     private static final String USERNAME = "gitplugin";
-    private Job job;
-    private WorkflowJob workflowJob;
+    // private Job job;
+    // private WorkflowJob workflowJob;
     private GitContainer container;
     private String repoUrl;
     private String host;
@@ -61,9 +62,9 @@ public class GitBlamerUITest extends AbstractJUnitTest {
         host = container.host();
         port = container.port();
         // job = jenkins.jobs.create();    // creates freestyle job
-        workflowJob = jenkins.jobs.create(WorkflowJob.class);
+        // workflowJob = jenkins.jobs.create(WorkflowJob.class);
         // job.configure();
-        workflowJob.configure();
+        // workflowJob.configure();
     }
 
     // TODO: reactivate the posix file settings before final commit
@@ -93,8 +94,7 @@ public class GitBlamerUITest extends AbstractJUnitTest {
     @Test
     public void shouldBlameElevenIssuesWithPipeline() throws Exception {
         GitRepo repo = new GitRepo();
-
-        /*
+        Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
         repo.commitFileWithMessage("commit", "Jenkinsfile",
                 "node {\n"
                         + "  stage ('Checkout') {\n"
@@ -115,13 +115,18 @@ public class GitBlamerUITest extends AbstractJUnitTest {
                         + "    recordIssues tools: [java()]\n"
                         + "  }\n"
                         + "}"
-        );*/
+        );
 
         Build build = generateWorkflowJob(repo);
         build.open();
 
-        System.out.println("Test");
+        AnalysisSummary blame = new AnalysisSummary(build, "java");
+        AnalysisResult resultPage = blame.openOverallResult();
+        BlamesTable blamesTable = resultPage.openBlamesTable();
 
+        assertThat(blamesTable.getTableRows()).hasSize(10);
+        assertColumnHeader(blamesTable);
+        assertElevenIssues(commits, blamesTable);
     }
 
     @Test
@@ -152,6 +157,65 @@ public class GitBlamerUITest extends AbstractJUnitTest {
         assertElevenIssues(commits, blamesTable);
     }
 
+    /**
+     * Test if blaming works on a build out of tree. See JENKINS-57260.
+     *
+     * @throws Exception
+     *         if there is a problem with the git repository
+     */
+    @Test
+    @Issue("JENKINS-57260")
+    public void shouldBlameWithBuildOutOfTree() throws Exception {
+        GitRepo repo = setupInitialGitRepository();
+        repo.commitFileWithMessage("commit", "Test.h", "#ifdef \"");
+
+        String firstCommit = repo.getLastSha1();
+
+        repo.commitFileWithMessage("commit", "Jenkinsfile", "pipeline {\n"
+                + "  agent any\n"
+                + "  options {\n"
+                + "    skipDefaultCheckout()\n"
+                + "  }\n"
+                + "  stages {\n"
+                + "    stage('Prepare') {\n"
+                + "      steps {\n"
+                + "        dir('source') {\n"
+                + "          checkout scm\n"
+                + "        }\n"
+                + "      }\n"
+                + "    }\n"
+                + "    stage('Doxygen') {\n"
+                + "      steps {\n"
+                + "        dir('build/doxygen') {\n"
+                + "          echo 'Test.h:1: Error: Unexpected character'\n"
+                + "        }\n"
+                + "        recordIssues(aggregatingResults: true, "
+                + "             enabledForFailure: true, "
+                + "             tool: doxygen(name: 'Doxygen'), "
+                + "             sourceDirectory: 'source'"
+                + "        )\n"
+                + "      }\n"
+                + "    }\n"
+                + "  }\n"
+                + "}");
+
+        Build build = generateWorkflowJob(repo);
+        build.open();
+
+        AnalysisSummary blame = new AnalysisSummary(build, "doxygen");
+        AnalysisResult resultPage = blame.openOverallResult();
+        BlamesTable blamesTable = resultPage.openBlamesTable();
+
+        assertColumnHeader(blamesTable);
+        assertThat(blamesTable.getTableRows()).hasSize(1);
+        BlamesTableRow row = blamesTable.getRowAs(0, BlamesTableRow.class);
+
+        assertThat(row.getAuthor()).isEqualTo("Git SampleRepoRule");
+        assertThat(row.getEmail()).isEqualTo("gits@mplereporule");
+        assertThat(row.getFileName()).isEqualTo("Test.h");
+        assertThat(row.getCommit()).isEqualTo(firstCommit);
+    }
+
     private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
         assertColumnsOfRowBob(table.getRowAs(0, BlamesTableRow.class), commits.get("Bob"));
         assertColumnsOfRowBob(table.getRowAs(1, BlamesTableRow.class), commits.get("Bob"));
@@ -162,10 +226,9 @@ public class GitBlamerUITest extends AbstractJUnitTest {
         assertColumnsOfRowLoremIpsum(table.getRowAs(5, BlamesTableRow.class), commits.get("LoremIpsum"));
         assertColumnsOfRowLoremIpsum(table.getRowAs(6, BlamesTableRow.class), commits.get("LoremIpsum"));
 
-        assertColumnsOfTest(table.getRowAs(0, BlamesTableRow.class), commits.get("Test"));
-        assertColumnsOfTest(table.getRowAs(1, BlamesTableRow.class), commits.get("Test"));
-        assertColumnsOfTest(table.getRowAs(2, BlamesTableRow.class), commits.get("Test"));
-        assertColumnsOfTest(table.getRowAs(3, BlamesTableRow.class), commits.get("Test"));
+        assertColumnsOfTest(table.getRowAs(7, BlamesTableRow.class), commits.get("Test"));
+        assertColumnsOfTest(table.getRowAs(8, BlamesTableRow.class), commits.get("Test"));
+        assertColumnsOfTest(table.getRowAs(9, BlamesTableRow.class), commits.get("Test"));
     }
 
     private void assertColumnsOfTest(final BlamesTableRow row, final String commit) {
@@ -186,7 +249,7 @@ public class GitBlamerUITest extends AbstractJUnitTest {
 
     private void assertColumnsOfRowLoremIpsum(final BlamesTableRow row, final String commit) {
         assertThat(row.getAuthor()).isEqualTo("John Doe");
-        assertThat(row.getEmail()).isEqualTo("john@doe.de");
+        assertThat(row.getEmail()).isEqualTo("john@doe");
         assertThat(row.getFileName()).isEqualTo("LoremIpsum.java");
         assertThat(row.getCommit()).isEqualTo(commit);
         assertThat(row.getAge()).isEqualTo(1);
@@ -197,45 +260,24 @@ public class GitBlamerUITest extends AbstractJUnitTest {
     }
 
     private Build generateFreeStyleJob(final GitRepo repo) {
+        FreeStyleJob freestyleJob = jenkins.jobs.create();
+        freestyleJob.configure();
         repo.transferToDockerContainer(host, port);
-        job.useScm(GitScm.class)
+        freestyleJob.useScm(GitScm.class)
                 .url(repoUrl)
                 .credentials(USERNAME);
 
-        addRecorder((FreeStyleJob) job);
-        job.save();
+        addRecorder(freestyleJob);
+        freestyleJob.save();
 
-        return job.startBuild().waitUntilFinished();
+        return freestyleJob.startBuild().waitUntilFinished();
     }
 
     private Build generateWorkflowJob(final GitRepo repo) {
+        WorkflowJob workflowJob = jenkins.jobs.create(WorkflowJob.class);
+        workflowJob.configure();
         repo.transferToDockerContainer(host, port);
-
-        // workflowJob.sandbox.check();
-        /* workflowJob.useScm(GitScm.class)
-                .url(repoUrl)
-                .credentials(USERNAME); */
         workflowJob.setJenkinsFileRepository(repoUrl, USERNAME);
-        workflowJob.script.set("node {\n"
-                + "  stage ('Checkout') {\n"
-                + "    checkout scm\n"
-                + "  }\n"
-                + "  stage ('Build and Analysis') {"
-                + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
-                // + "    echo '[javac] Test.java:4: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
-                + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
-                + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
-                + "    recordIssues tools: [java()]\n"
-                + "  }\n"
-                + "}"
-        );
         workflowJob.save();
         return workflowJob.startBuild().waitUntilFinished();
     }
