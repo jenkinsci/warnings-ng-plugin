@@ -9,6 +9,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.Select;
 
 import com.google.inject.Injector;
 
@@ -180,6 +181,44 @@ public class AnalysisResult extends PageObject {
         T retVal = newInstance(type, injector, url(link));
         element.click();
         return retVal;
+    }
+
+    /**
+     * Method for getting the row length select element by the currently active tab.
+     *
+     * @return Select WebElement where the user can choose how many rows should be displayed.
+     */
+    public Select getLengthSelectElementByActiveTab() {
+        WebElement lengthSelect = find(By.id(this.getActiveTab().property + "_length"));
+        return new Select(lengthSelect.findElement(By.cssSelector("label > select")));
+    }
+
+    /**
+     * Method for getting the paginate WebElement for any active tab.
+     *
+     * @return parent WebElement that contains the paginate buttons for a result table.
+     */
+    public WebElement getInfoElementByActiveTab() {
+        return this.getElement(By.id(this.getActiveTab().property + "_info"));
+    }
+
+    /**
+     * Method for getting the paginate WebElement for any active tab.
+     *
+     * @return parent WebElement that contains the paginate buttons for a result table.
+     */
+    public WebElement getPaginateElementByActiveTab() {
+        return this.getElement(By.id(this.getActiveTab().property + "_paginate"));
+    }
+
+    /**
+     * Method for getting the input field of any active tab.
+     *
+     * @return WebElement where a user can filter the table by text input.
+     */
+    public WebElement getFilterInputElementByActiveTab() {
+        WebElement filter = find(By.id(this.getActiveTab().property + "_filter"));
+        return filter.findElement(By.cssSelector("label > input"));
     }
 
     /**

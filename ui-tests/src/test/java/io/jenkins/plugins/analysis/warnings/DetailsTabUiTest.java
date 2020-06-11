@@ -194,34 +194,32 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
 
         AnalysisSummary resultPage = new AnalysisSummary(build, "findbugs");
         assertThat(resultPage).isDisplayed();
+
         AnalysisResult findBugsAnalysisResult = resultPage.openOverallResult();
 
         assertThat(findBugsAnalysisResult).hasAvailableTabs(Tab.ISSUES);
 
         findBugsAnalysisResult.openPropertiesTable(Tab.ISSUES);
 
-        WebElement issuesLength = resultPage.getElement(By.id("issues_length"));
-        Select issuesLengthSelect = new Select(issuesLength.findElement(By.cssSelector("label > select")));
-        WebElement issuesInfo = resultPage.getElement(By.id("issues_info"));
-        WebElement issuesPaginate = resultPage.getElement(By.id("issues_paginate"));
-
+        Select issuesLengthSelect = findBugsAnalysisResult.getLengthSelectElementByActiveTab();
         issuesLengthSelect.selectByValue("10");
-        WebDriverWait wait = new WebDriverWait(driver, 4, 100);
-        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo, "Showing 1 to 10 of 12 entries"));
 
-        List<WebElement> issuesPaginateLi = issuesPaginate.findElements(By.cssSelector("ul li"));
+        WebElement issuesInfo = findBugsAnalysisResult.getInfoElementByActiveTab();
+        waitUntilCondition(issuesInfo, "Showing 1 to 10 of 12 entries");
 
-        assertThat(issuesPaginateLi.size()).isEqualTo(2);
-        assertThat(ExpectedConditions.elementToBeClickable(issuesPaginateLi.get(1)));
+        WebElement issuesPaginate = findBugsAnalysisResult.getPaginateElementByActiveTab();
+        List<WebElement> issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
+
+        assertThat(issuesPaginateButtons.size()).isEqualTo(2);
+        assertThat(ExpectedConditions.elementToBeClickable(issuesPaginateButtons.get(1)));
 
         issuesLengthSelect.selectByValue("25");
-        wait = new WebDriverWait(driver, 4, 100);
-        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo, "Showing 1 to 12 of 12 entries"));
+        waitUntilCondition(issuesInfo, "Showing 1 to 12 of 12 entries");
 
-        issuesPaginateLi.clear();
-        issuesPaginateLi = issuesPaginate.findElements(By.cssSelector("ul li"));
+        issuesPaginateButtons.clear();
+        issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
 
-        assertThat(issuesPaginateLi.size()).isEqualTo(1);
+        assertThat(issuesPaginateButtons.size()).isEqualTo(1);
     }
 
     /**
@@ -244,21 +242,17 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
 
         findBugsAnalysisResult.openPropertiesTable(Tab.ISSUES);
 
-        WebElement issuesFilter = resultPage.getElement(By.id("issues_filter"));
-        WebElement issuesInfo = resultPage.getElement(By.id("issues_info"));
-        WebElement issuesFilterInput = issuesFilter.findElement(By.cssSelector("label > input"));
+        WebElement issuesFilterInput = findBugsAnalysisResult.getFilterInputElementByActiveTab();
 
         issuesFilterInput.sendKeys("CalculateFrame");
 
-        WebDriverWait wait = new WebDriverWait(driver, 4, 100);
-        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo,
-                "Showing 1 to 2 of 2 entries (filtered from 12 total entries)"));
+        WebElement issuesInfo = findBugsAnalysisResult.getInfoElementByActiveTab();
+        waitUntilCondition(issuesInfo, "Showing 1 to 2 of 2 entries (filtered from 12 total entries)");
+
         issuesFilterInput.clear();
 
         issuesFilterInput.sendKeys("STYLE");
-        wait = new WebDriverWait(driver, 4, 100);
-        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo,
-                "Showing 1 to 7 of 7 entries (filtered from 12 total entries)"));
+        waitUntilCondition(issuesInfo, "Showing 1 to 7 of 7 entries (filtered from 12 total entries)");
     }
 
     /**
@@ -281,36 +275,46 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
 
         findBugsAnalysisResult.openPropertiesTable(Tab.ISSUES);
 
-        WebElement issuesLength = resultPage.getElement(By.id("issues_length"));
-        Select issuesLengthSelect = new Select(issuesLength.findElement(By.cssSelector("label > select")));
-        WebElement issuesInfo = resultPage.getElement(By.id("issues_info"));
-        WebElement issuesPaginate = resultPage.getElement(By.id("issues_paginate"));
+        Select issuesLengthSelect = findBugsAnalysisResult.getLengthSelectElementByActiveTab();
 
         issuesLengthSelect.selectByValue("50");
-        WebDriverWait wait = new WebDriverWait(driver, 4, 100);
-        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo, "Showing 1 to 12 of 12 entries"));
+        WebElement issuesInfo = findBugsAnalysisResult.getInfoElementByActiveTab();
+        waitUntilCondition(issuesInfo, "Showing 1 to 12 of 12 entries");
 
-        List<WebElement> issuesPaginateLi = issuesPaginate.findElements(By.cssSelector("ul li"));
+        WebElement issuesPaginate = findBugsAnalysisResult.getPaginateElementByActiveTab();
+        List<WebElement> issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
 
-        assertThat(issuesPaginateLi.size()).isEqualTo(1);
+        assertThat(issuesPaginateButtons.size()).isEqualTo(1);
 
-        //Reload
         resultPage.open();
         findBugsAnalysisResult.reload();
-        issuesInfo = resultPage.getElement(By.id("issues_info"));
-        wait = new WebDriverWait(driver, 4, 100);
-        wait.until(ExpectedConditions.textToBePresentInElement(issuesInfo, "Showing 1 to 12 of 12 entries"));
 
-        issuesLength = resultPage.getElement(By.id("issues_length"));
-        issuesLengthSelect = new Select(issuesLength.findElement(By.cssSelector("label > select")));
+        issuesInfo = resultPage.getElement(By.id("issues_info"));
+        waitUntilCondition(issuesInfo, "Showing 1 to 12 of 12 entries");
+
+        issuesLengthSelect = findBugsAnalysisResult.getLengthSelectElementByActiveTab();
         assertThat(issuesLengthSelect.getFirstSelectedOption().getText()).isEqualTo("50");
 
         issuesPaginate = resultPage.getElement(By.id("issues_paginate"));
-        issuesPaginateLi.clear();
-        issuesPaginateLi = issuesPaginate.findElements(By.cssSelector("ul li"));
+        issuesPaginateButtons.clear();
+        issuesPaginateButtons = issuesPaginate.findElements(By.cssSelector("ul li"));
 
-        assertThat(issuesPaginateLi.size()).isEqualTo(1);
+        assertThat(issuesPaginateButtons.size()).isEqualTo(1);
 
+    }
+
+    /**
+     * Waits for a defined period of time for a string to be present inside a WebElement. If this is not the case, an
+     * exception will be thrown and the test fails.
+     *
+     * @param expectedString
+     *         String that should eventually be present in the element
+     * @param target
+     *         WebElement that should contain the expected string
+     */
+    private void waitUntilCondition(final WebElement target, final String expectedString) {
+        WebDriverWait wait = new WebDriverWait(driver, 2, 100);
+        wait.until(ExpectedConditions.textToBePresentInElement(target, expectedString));
     }
 
     private FreeStyleJob createFreeStyleJob(final String... resourcesToCopy) {
