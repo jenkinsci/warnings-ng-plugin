@@ -21,7 +21,7 @@ class FindBugsMessagesTest {
     /** Expected number of patterns. */
     private static final int EXPECTED_PATTERNS = 468;
     /** Expected number of patterns in fb-contrib. */
-    private static final int EXPECTED_CONTRIB_PATTERNS = 302;
+    private static final int EXPECTED_CONTRIB_PATTERNS = 307;
     /** Expected number of patterns in find-sec-bugs. */
     private static final int EXPECTED_SECURITY_PATTERNS = 135;
     private static final String PATH_TRAVERSAL_IN = "PATH_TRAVERSAL_IN";
