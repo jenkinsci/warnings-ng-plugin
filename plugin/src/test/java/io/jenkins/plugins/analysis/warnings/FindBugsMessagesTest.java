@@ -19,7 +19,7 @@ class FindBugsMessagesTest {
     /** Bug ID for test. */
     private static final String NP_STORE_INTO_NONNULL_FIELD = "NP_STORE_INTO_NONNULL_FIELD";
     /** Expected number of patterns. */
-    private static final int EXPECTED_PATTERNS = 468;
+    private static final int EXPECTED_PATTERNS = 458;
     /** Expected number of patterns in fb-contrib. */
     private static final int EXPECTED_CONTRIB_PATTERNS = 307;
     /** Expected number of patterns in find-sec-bugs. */
