@@ -63,7 +63,7 @@ public class GitBlamerUITest extends AbstractJUnitTest {
 
     @Test
     public void shouldBlameOneIssueWithFreestyle() {
-        GitRepo repo = setupInitialGitRepository();
+        GitRepo repo = GitUtils.setupInitialGitRepository();
         repo.commitFileWithMessage("commit", "Test.java",
                 "public class Test {}");
         String commitId = repo.getLastSha1();
@@ -86,7 +86,7 @@ public class GitBlamerUITest extends AbstractJUnitTest {
     @Test
     public void shouldBlameElevenIssuesWithPipeline() throws Exception {
         GitRepo repo = new GitRepo();
-        Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
+        Map<String, String> commits = GitUtils.commitDifferentFilesToGitRepository(repo);
         repo.commitFileWithMessage("commit", "Jenkinsfile",
                 "node {\n"
                         + "  stage ('Checkout') {\n"
@@ -123,7 +123,7 @@ public class GitBlamerUITest extends AbstractJUnitTest {
     @Test
     public void shouldBlameElevenIssuesWithFreestyle() throws Exception {
         GitRepo repo = new GitRepo();
-        Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
+        Map<String, String> commits = GitUtils.commitDifferentFilesToGitRepository(repo);
         repo.commitFileWithMessage("commit", "warnings.txt",
                 "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
                         + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
@@ -157,7 +157,7 @@ public class GitBlamerUITest extends AbstractJUnitTest {
     @Test
     @Issue("JENKINS-57260")
     public void shouldBlameWithBuildOutOfTree() throws Exception {
-        GitRepo repo = setupInitialGitRepository();
+        GitRepo repo = GitUtils.setupInitialGitRepository();
         repo.commitFileWithMessage("commit", "Test.h", "#ifdef \"");
 
         String firstCommit = repo.getLastSha1();
@@ -278,43 +278,6 @@ public class GitBlamerUITest extends AbstractJUnitTest {
             recorder.setTool("Java").setPattern("warnings.txt");
             recorder.setEnabledForFailure(true);
         });
-    }
-
-    private GitRepo setupInitialGitRepository() {
-        GitRepo repo = new GitRepo();
-        repo.setIdentity("Git SampleRepoRule", "gits@mplereporule");
-        repo.commitFileWithMessage("init", "file", "");
-        return repo;
-    }
-
-    private Map<String, String> commitDifferentFilesToGitRepository(GitRepo repo) {
-        Map<String, String> commits = new HashMap<>();
-
-        repo.setIdentity("Git SampleRepoRule", "gits@mplereporule");
-        repo.commitFileWithMessage("commit", "Test.java", "public class Test {\n"
-                + "    public Test() {\n"
-                + "        System.out.println(\"Test\");"
-                + "    }\n"
-                + "}");
-        commits.put("Test", repo.getLastSha1());
-
-        repo.setIdentity("John Doe", "john@doe");
-        repo.commitFileWithMessage("commit", "LoremIpsum.java", "public class LoremIpsum {\n"
-                + "    public LoremIpsum() {\n"
-                + "        Log.log(\"Lorem ipsum dolor sit amet\");"
-                + "    }\n"
-                + "}");
-        commits.put("LoremIpsum", repo.getLastSha1());
-
-        repo.setIdentity("Alice Miller", "alice@miller");
-        repo.commitFileWithMessage("commit", "Bob.java", "public class Bob {\n"
-                + "    public Bob() {\n"
-                + "        Log.log(\"Bob: 'Where are you?'\");"
-                + "    }\n"
-                + "}");
-        commits.put("Bob", repo.getLastSha1());
-
-        return commits;
     }
 
 }
