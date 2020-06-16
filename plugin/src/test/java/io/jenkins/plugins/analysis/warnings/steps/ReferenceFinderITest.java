@@ -7,18 +7,21 @@ import org.junit.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.tasks.Builder;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisHistory;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResetQualityGateCommand;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.warnings.Java;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -30,6 +33,97 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JOB_NAME = "Job";
     private static final String REFERENCE_JOB_NAME = "Reference";
+
+    /**
+     * Creates a reference job and starts a build having 2 warnings.  Then two builds for the job.  Then another job is created that
+     * uses the first build as a reference.  Verifies that the association is correctly stored.
+     */
+    @Test
+    public void shouldUseOtherJobBuildAsReference() {
+        WorkflowJob reference = createPipeline("reference");
+        copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start-rev0.txt");
+        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
+
+        AnalysisResult firstReferenceResult = scheduleSuccessfulBuild(reference);
+        cleanWorkspace(reference);
+        copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
+        AnalysisResult secondReferenceResult = scheduleSuccessfulBuild(reference);
+
+        assertThat(firstReferenceResult.getTotalSize()).isEqualTo(1);
+        assertThat(firstReferenceResult.getIssues()).hasSize(1);
+        assertThat(firstReferenceResult.getReferenceBuild()).isEmpty();
+        assertThat(firstReferenceResult.getOwner().getId()).isEqualTo("1");
+
+        assertThat(secondReferenceResult.getTotalSize()).isEqualTo(2);
+        assertThat(secondReferenceResult.getIssues()).hasSize(2);
+        assertThat(secondReferenceResult.getReferenceBuild().get().getId()).isEqualTo("1");
+        assertThat(secondReferenceResult.getOwner().getId()).isEqualTo("2");
+
+        WorkflowJob job = createPipelineWithWorkspaceFiles("java-start.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
+                "publishIssues issues:[issues], referenceJobName:'reference', referenceBuildId: '1'"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(result.getReferenceBuild().isPresent());
+        assertThat(result.getReferenceBuild().get().getId()).isEqualTo(firstReferenceResult.getOwner().getId());
+        assertThat(result.getReferenceBuild().get().getId()).isEqualTo("1");
+
+        assertThat(result.getNewIssues()).hasSize(1);
+    }
+
+    /**
+     * Creates a reference job and starts the analysis for this job. Then another job is created that uses the first one
+     * as reference. Verifies that the association is correctly stored.
+     */
+    @Test
+    public void shouldUseOtherJobAsReference() {
+        WorkflowJob reference = createPipeline("reference");
+        copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start.txt");
+        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
+
+        AnalysisResult referenceResult = scheduleSuccessfulBuild(reference);
+
+        assertThat(referenceResult.getTotalSize()).isEqualTo(2);
+        assertThat(referenceResult.getIssues()).hasSize(2);
+        assertThat(referenceResult.getReferenceBuild()).isEmpty();
+
+        WorkflowJob job = createPipelineWithWorkspaceFiles("java-start.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
+                "publishIssues issues:[issues], referenceJobName:'reference'"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(reference);
+
+        assertThat(result.getTotalSize()).isEqualTo(2);
+        assertThat(result.getIssues()).hasSize(2);
+        assertThat(result.getReferenceBuild()).hasValue(referenceResult.getOwner());
+
+        // TODO: add verification for io.jenkins.plugins.analysis.core.model.IssueDifference
+    }
+
+    /**
+     * Creates a reference job without builds, then builds the job, referring to a non-existant build
+     * in the reference job.
+     */
+    @Test
+    public void shouldHandleMissingJobBuildAsReference() {
+        WorkflowJob reference = createPipeline("reference");
+        copyMultipleFilesToWorkspaceWithSuffix(reference, "java-start-rev0.txt");
+        reference.setDefinition(createPipelineScriptWithScanAndPublishSteps(new Java()));
+
+        WorkflowJob job = createPipelineWithWorkspaceFiles("java-start.txt");
+        job.setDefinition(asStage(createScanForIssuesStep(new Java()),
+                "publishIssues issues:[issues], referenceJobName:'reference'"));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+
+        assertThat(not(result.getReferenceBuild().isPresent()));
+
+        assertThat(result.getNewIssues()).hasSize(0);
+        assertThat(result.getOutstandingIssues()).hasSize(2);
+        assertThat(result.getErrorMessages()).contains(
+                "Reference job 'reference' does not contain any valid build");
+    }
 
     /**
      * Checks if the reference will be reset just for one build.
