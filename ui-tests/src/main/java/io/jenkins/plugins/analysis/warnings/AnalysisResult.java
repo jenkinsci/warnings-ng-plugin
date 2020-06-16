@@ -190,12 +190,21 @@ public class AnalysisResult extends PageObject {
         return find(By.id("trend-carousel"));
     }
 
+    public void clickNextOnTrendCarousel() {
+        find(By.className("carousel-control-next-icon")).click();
+    }
+
+    public boolean trendChartIsDisplayed(String chartName) {
+        WebElement trendChart = getTrendChart();
+        return trendChart.findElement(By.id(chartName)).isDisplayed(); }
+
+
     /**
      * returns the Severities Trend Chart.
      *
      * @return severities TrendChart as JSONObject.
      */
-    public JSONObject getSeveritiesTrendChart() throws ParseException {
+    public String getSeveritiesTrendChart() throws ParseException {
         return getChartModel("severities-trend-chart");
     }
 
@@ -204,7 +213,7 @@ public class AnalysisResult extends PageObject {
      *
      * @return new versus fixed TrendChart as JSONObject.
      */
-    public JSONObject getNewVersusFixedTrendChart() throws ParseException {
+    public String getNewVersusFixedTrendChart() throws ParseException {
         return getChartModel("new-versus-fixed-trend-chart");
     }
 
@@ -213,24 +222,18 @@ public class AnalysisResult extends PageObject {
      *
      * @return tools TrendChart as JSONObject.
      */
-    public JSONObject getToolsTrendChart() throws ParseException {
+    public String getToolsTrendChart() throws ParseException {
         return getChartModel("tools-trend-chart");
     }
 
-    protected JSONObject getChartModel(final String elementId) throws ParseException {
+    protected String getChartModel(final String elementId) {
         Object result = this.executeScript(String.format(
-                "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
+                "delete(window.Array.prototype.toJSON)"
+                        + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
                 elementId));
         ScriptResult scriptResult = new ScriptResult(result);
-        JSONParser parser = new JSONParser(JSONParser.MODE_PERMISSIVE);
-        JSONObject chartModel;
-        try {
-            chartModel = (JSONObject) parser.parse(scriptResult.getJavaScriptResult().toString());
-        }
-        catch (ParseException e) {
-            throw new ParseException(e.getPosition(), e.getCause());
-        }
-        return chartModel;
+
+        return scriptResult.getJavaScriptResult().toString();
     }
 
     /**
