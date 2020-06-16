@@ -14,6 +14,7 @@ import org.jenkinsci.test.acceptance.plugins.maven.MavenModuleSet;
 import org.jenkinsci.test.acceptance.plugins.ssh_slaves.SshSlaveLauncher;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.DumbSlave;
+import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Slave;
 
@@ -62,6 +63,28 @@ public class WarningsPluginUiTest extends UiTest {
 
     @Inject
     private DockerContainerHolder<JavaGitContainer> dockerContainer;
+
+    @Test
+    public void shouldRunInFolder() {
+        Folder folder = jenkins.jobs.create(Folder.class, "singleSummary");
+        FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
+        ScrollerUtil.hideScrollerTabBar(driver);
+        job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
+
+        addAllRecorders(job);
+        job.save();
+
+        buildJob(job);
+
+        reconfigureJobWithResource(job, "build_status_test/build_02");
+
+        Build build = buildJob(job);
+
+        verifyPmd(build);
+        verifyFindBugs(build);
+        verifyCheckStyle(build);
+        verifyCpd(build);
+    }
 
     /**
      * Tests the build overview page by running two builds that aggregate the three different tools into a single
