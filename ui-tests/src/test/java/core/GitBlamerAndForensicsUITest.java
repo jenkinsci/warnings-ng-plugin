@@ -26,6 +26,8 @@ import io.jenkins.plugins.analysis.warnings.AnalysisResult;
 import io.jenkins.plugins.analysis.warnings.AnalysisSummary;
 import io.jenkins.plugins.analysis.warnings.BlamesTable;
 import io.jenkins.plugins.analysis.warnings.BlamesTableRow;
+import io.jenkins.plugins.analysis.warnings.ForensicsTable;
+import io.jenkins.plugins.analysis.warnings.ForensicsTableRow;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder;
 
 import static org.assertj.core.api.Assertions.*;
@@ -34,7 +36,7 @@ import static org.assertj.core.api.Assertions.*;
 @Category(DockerTest.class)
 @WithPlugins({"git", "git-forensics"})
 @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {"gitplugin", "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe"})
-public class GitBlamerUITest extends AbstractJUnitTest {
+public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
 
     @Inject
     DockerContainerHolder<GitContainer> gitServer;
@@ -207,6 +209,125 @@ public class GitBlamerUITest extends AbstractJUnitTest {
         assertThat(row.getCommit()).isEqualTo(firstCommit);
     }
 
+    @Test
+    public void shouldShowGitForensicsOneIssue() {
+        GitRepo repo = GitUtils.setupInitialGitRepository();
+        repo.commitFileWithMessage("commit", "Test.java", "public class Test {}");
+        repo.commitFileWithMessage("commit", "warnings.txt",
+                "[javac] Test.java:1: warning: Test Warning for Jenkins");
+
+        Build build = generateFreeStyleJob(repo);
+        build.open();
+
+        AnalysisSummary summary = new AnalysisSummary(build, "java");
+        AnalysisResult result = summary.openOverallResult();
+        ForensicsTable forensicsTable = result.openForensicsTable();
+        ForensicsTableRow row = forensicsTable.getRowAs(0, ForensicsTableRow.class);
+
+        assertThat(forensicsTable.getTableRows()).hasSize(1);
+        assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
+        assertColumnsOfRow(row, "Test.java", 1);
+    }
+
+    @Test
+    public void shouldShowGitForensicsMultipleIssuesWithPipeline() {
+        GitRepo repo = new GitRepo();
+        GitUtils.commitDifferentFilesToGitRepository(repo);
+        repo.commitFileWithMessage("commit", "Jenkinsfile",
+                "node {\n"
+                        + "  stage ('Checkout') {\n"
+                        + "    checkout scm\n"
+                        + "  }\n"
+                        + "  stage ('Build and Analysis') {"
+                        + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
+                        + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
+                        + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
+                        + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
+                        + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
+                        + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
+                        + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
+                        + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
+                        + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
+                        + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
+                        + "    recordIssues tools: [java()]\n"
+                        + "  }\n"
+                        + "}"
+        );
+
+        Build build = generateWorkflowJob(repo);
+        build.open();
+
+        AnalysisSummary summary = new AnalysisSummary(build, "java");
+        AnalysisResult result = summary.openOverallResult();
+        ForensicsTable forensicsTable = result.openForensicsTable();
+
+        assertThat(forensicsTable.getTableRows()).hasSize(10);
+        assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
+        assertMultipleIssues(forensicsTable, 1);
+    }
+
+    @Test
+    public void shouldShowGitForensicsMultipleIssuesWithFreestyle() {
+        GitRepo repo = new GitRepo();
+        GitUtils.commitDifferentFilesToGitRepository(repo);
+        repo.commitFileWithMessage("commit", "warnings.txt",
+                "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
+                        + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
+                        + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
+                        + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
+                        + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
+                        + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
+                        + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
+                        + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
+                        + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
+                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins");
+
+        Build build = generateFreeStyleJob(repo);
+        build.open();
+
+        AnalysisSummary summary = new AnalysisSummary(build, "java");
+        AnalysisResult result = summary.openOverallResult();
+        ForensicsTable forensicsTable = result.openForensicsTable();
+
+        assertThat(forensicsTable.getTableRows()).hasSize(10);
+        assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
+        assertMultipleIssues(forensicsTable, 1);
+    }
+
+    @Test
+    public void shouldShowGitForensicsMultipleIssuesWithMultipleCommits() {
+        GitRepo repo = new GitRepo();
+        GitUtils.commitDifferentFilesToGitRepository(repo);
+        repo.setIdentity("Alice Miller", "alice@miller");
+        repo.commitFileWithMessage("commit", "LoremIpsum.java", "public class LoremIpsum {\n"
+                + "    public LoremIpsum() {\n"
+                + "        Log.log(\"Lorem ipsum dolor sit amet\");"
+                + "    }\n"
+                + "}");
+        repo.commitFileWithMessage("commit", "warnings.txt",
+                "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
+                        + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
+                        + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
+                        + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
+                        + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
+                        + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
+                        + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
+                        + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
+                        + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
+                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins");
+
+        Build build = generateFreeStyleJob(repo);
+        build.open();
+
+        AnalysisSummary summary = new AnalysisSummary(build, "java");
+        AnalysisResult result = summary.openOverallResult();
+        ForensicsTable forensicsTable = result.openForensicsTable();
+
+        assertThat(forensicsTable.getTableRows()).hasSize(10);
+        assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
+        assertMultipleIssues(forensicsTable, 2);
+    }
+
     private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
         assertColumnsOfRowBob(table.getRowAs(0, BlamesTableRow.class), commits.get("Bob"));
         assertColumnsOfRowBob(table.getRowAs(1, BlamesTableRow.class), commits.get("Bob"));
@@ -248,6 +369,27 @@ public class GitBlamerUITest extends AbstractJUnitTest {
 
     private void assertColumnHeader(final BlamesTable table) {
         assertThat(table.getHeaders()).containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT, ADDED);
+    }
+
+    private void assertColumnsOfRow(final ForensicsTableRow row, final String filename, final int commits) {
+        assertThat(row.getFileName()).isEqualTo(filename);
+        assertThat(row.getAge()).isEqualTo(1);
+        assertThat(row.getAuthors()).isEqualTo(1);
+        assertThat(row.getCommits()).isEqualTo(commits);
+        assertThat(row.getLastCommit()).isNotNull();
+        assertThat(row.getAdded()).isNotNull();
+    }
+
+    private void assertMultipleIssues(final ForensicsTable forensicsTable, final int commits) {
+        assertColumnsOfRow(forensicsTable.getRowAs(0, ForensicsTableRow.class), "Bob.java", 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(1, ForensicsTableRow.class), "Bob.java", 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(2, ForensicsTableRow.class), "Bob.java", 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(3, ForensicsTableRow.class), "LoremIpsum.java", commits);
+        assertColumnsOfRow(forensicsTable.getRowAs(5, ForensicsTableRow.class), "LoremIpsum.java", commits);
+        assertColumnsOfRow(forensicsTable.getRowAs(6, ForensicsTableRow.class), "LoremIpsum.java", commits);
+        assertColumnsOfRow(forensicsTable.getRowAs(7, ForensicsTableRow.class), "Test.java", 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(8, ForensicsTableRow.class), "Test.java", 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(9, ForensicsTableRow.class), "Test.java", 1);
     }
 
     private Build generateFreeStyleJob(final GitRepo repo) {

@@ -62,9 +62,6 @@ public class GitRepo implements Closeable {
         setIdentity(dir);
     }
 
-    /**
-     * Creates a new repo by cloning the given URL.
-     */
     public GitRepo(final String url) {
         dir = initDir();
         git("clone", url, ".");
@@ -108,9 +105,6 @@ public class GitRepo implements Closeable {
         return gitDir(this.dir, args);
     }
 
-    /**
-     * Execute git command in specified directory.
-     */
     public String gitDir(File dir, Object... args) {
         List<String> cmds = new ArrayList<>();
         cmds.add("git");
@@ -216,9 +210,6 @@ public class GitRepo implements Closeable {
         git("checkout", name);
     }
 
-    /**
-     * Refers to a file relative to the workspace directory.
-     */
     public File file(String name) {
         return new File(dir, name);
     }
@@ -235,6 +226,8 @@ public class GitRepo implements Closeable {
      *
      * @param submoduleName
      *         name of the submodule
+     * @return gitRepo
+     *         mocked git repo
      */
     public GitRepo addSubmodule(String submoduleName) {
         try {
