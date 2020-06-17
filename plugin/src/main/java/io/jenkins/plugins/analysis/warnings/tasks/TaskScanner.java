@@ -31,7 +31,7 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
  *
  * @author Ullrich Hafner
  */
-class TaskScanner {
+public class TaskScanner {
     private static final String WORD_BOUNDARY = "\\b";
     private static final Pattern INVALID = Pattern.compile("");
 
@@ -224,7 +224,7 @@ class TaskScanner {
      *
      * @return the open tasks
      */
-    Report scanTasks(final Iterator<String> lines, final IssueBuilder builder) {
+    public Report scanTasks(final Iterator<String> lines, final IssueBuilder builder) {
         Report report = new Report();
 
         if (isPatternInvalid) {
