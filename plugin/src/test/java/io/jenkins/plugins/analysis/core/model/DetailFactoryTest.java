@@ -17,8 +17,10 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
+import hudson.DescriptorExtensionList;
 import hudson.model.ModelObject;
 import hudson.model.Run;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.util.BuildFolderFacade;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogHandler;
@@ -47,6 +49,7 @@ class DetailFactoryTest {
     private static final Report FIXED_ISSUES = createReportWith(3, 2, 1, "fixed");
     private static final String PARENT_NAME = "Parent Name";
     private static final String AFFECTED_FILE_CONTENT = "Console-Log-Content";
+    private static final String TOOL_ID = "spotbugs";
 
     @Test
     void shouldThrowExceptionIfLinkIsNotFound() {
@@ -76,6 +79,19 @@ class DetailFactoryTest {
         assertThat(details).hasFixedIssues(FIXED_ISSUES);
         assertThat(details).hasNewIssues(NEW_ISSUES);
         assertThat(details).hasOutstandingIssues(OUTSTANDING_ISSUES);
+    }
+
+    @Test
+    void shouldReturnLabelProviderNameOnOrigin() {
+        JenkinsFacade jenkins = mock(JenkinsFacade.class);
+        when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(
+                DescriptorExtensionList.createDescriptorList((Jenkins)null, Tool.class));
+        BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
+        DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
+        Object details = detailFactory.createTrendDetails("origin." + TOOL_ID.hashCode(), RUN,
+                createResult(), ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
+        assertThat(details).isInstanceOfSatisfying(IssuesDetail.class,
+                d -> assertThat(d.getDisplayName()).isEqualTo("Static Analysis"));
     }
 
     @Test
@@ -292,7 +308,7 @@ class DetailFactoryTest {
     }
 
     private static Report createReportWith(final int high, final int normal, final int low, final String link) {
-        IssueBuilder builder = new IssueBuilder();
+        IssueBuilder builder = new IssueBuilder().setOrigin(TOOL_ID);
         Report issues = new Report();
         for (int i = 0; i < high; i++) {
             issues.add(builder.setSeverity(Severity.WARNING_HIGH).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());

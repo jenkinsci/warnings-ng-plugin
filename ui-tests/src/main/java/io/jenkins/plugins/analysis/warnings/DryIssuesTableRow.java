@@ -21,11 +21,11 @@ public class DryIssuesTableRow extends IssuesTableRow {
      *
      * @param element
      *         the WebElement representing the row
-     * @param issuesTable
+     * @param issuesDetailsTable
      *         the issues table in which this row is displayed in
      */
-    DryIssuesTableRow(final WebElement element, final IssuesTable issuesTable) {
-        super(element, issuesTable);
+    DryIssuesTableRow(final WebElement element, final IssuesDetailsTable issuesDetailsTable) {
+        super(element, issuesDetailsTable);
     }
 
     /**
