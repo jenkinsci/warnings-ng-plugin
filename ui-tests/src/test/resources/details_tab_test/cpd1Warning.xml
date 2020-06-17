@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd-cpd>
+  <duplication lines="29" tokens="157">
+    <file line="32"
+          path="/var/data/workspace/pipeline-analysis-model/src/test/java/edu/hm/hafner/analysis/parser/EclipseSharedChecks.java"/>
+    <file line="110"
+          path="/var/data/workspace/pipeline-analysis-model/src/test/java/edu/hm/hafner/analysis/parser/EclipseXMLParserTest.java"/>
+    <codefragment><![CDATA[                    .hasCategory(Categories.OTHER);
+
+            softly.assertThat(warnings.get(1))
+                    .hasSeverity(Severity.WARNING_NORMAL)
+                    .hasLineStart(3)
+                    .hasMessage("Javadoc: Missing comment for public declaration")
+                    .hasFileName("C:/devenv/workspace/x/y/src/main/java/a/B.java")
+                    .hasCategory(Categories.JAVADOC);
+
+            softly.assertThat(warnings.get(2))
+                    .hasSeverity(Severity.WARNING_NORMAL)
+                    .hasLineStart(5)
+                    .hasMessage("Javadoc: Missing comment for public declaration")
+                    .hasFileName("C:/devenv/workspace/x/y/src/main/java/a/B.java")
+                    .hasCategory(Categories.JAVADOC);
+
+            softly.assertThat(warnings.get(3))
+                    .hasSeverity(Severity.WARNING_NORMAL)
+                    .hasLineStart(7)
+                    .hasMessage("Javadoc: Missing comment for public declaration")
+                    .hasFileName("C:/devenv/workspace/x/y/src/main/java/a/B.java")
+                    .hasCategory(Categories.JAVADOC);
+
+            softly.assertThat(warnings.get(4))
+                    .hasSeverity(Severity.WARNING_NORMAL)
+                    .hasLineStart(8)
+                    .hasMessage("The value of the local variable unused is not used")
+                    .hasFileName("C:/devenv/workspace/x/y/src/main/java/a/B.java")
+                    .hasCategory(Categories.OTHER);]]></codefragment>
+  </duplication>
+</pmd-cpd>

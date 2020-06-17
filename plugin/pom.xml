@@ -22,7 +22,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.2.0</revision>
+    <revision>8.1.1</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
@@ -36,8 +36,8 @@
     <font-awesome-api.version>5.13.0-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-1</jquery3-api.version>
     <bootstrap4-api.version>4.5.0-1</bootstrap4-api.version>
-    <data-tables-api.version>1.10.21-1</data-tables-api.version>
-    <echarts-api.version>4.7.0-3</echarts-api.version>
+    <data-tables-api.version>1.10.21-2</data-tables-api.version>
+    <echarts-api.version>4.7.0-4</echarts-api.version>
 
     <commons.lang.version>3.10</commons.lang.version>
     <commons.io.version>2.7</commons.io.version>
@@ -127,7 +127,7 @@
       <dependency>
         <groupId>io.jenkins.plugins</groupId>
         <artifactId>code-coverage-api</artifactId>
-        <version>1.1.4</version>
+        <version>1.1.6</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -443,7 +443,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ansicolor</artifactId>
-      <version>0.4.3</version>
+      <version>0.7.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

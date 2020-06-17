@@ -160,4 +160,5 @@ class AxivionParserTest {
         assertThat(issue.getType()).isEqualTo("Absence");
         assertThat(issue.getFileName()).isEqualTo("-");
     }
+
 }

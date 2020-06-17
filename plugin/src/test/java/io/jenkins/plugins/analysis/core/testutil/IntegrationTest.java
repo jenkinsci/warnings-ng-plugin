@@ -311,7 +311,7 @@ public abstract class IntegrationTest extends ResourceTest {
     private void copySingleFileToWorkspace(final FilePath workspace, final String from, final String to) {
         try {
             workspace.child(to).copyFrom(asInputStream(from));
-            System.out.format("Copying file '%s' as workspace file '%s'%n", from, to);
+            System.out.format("Copying file '%s' as workspace file '%s'%n (workspace `%s`)", from, to, workspace);
         }
         catch (IOException | InterruptedException e) {
             throw new AssertionError(e);

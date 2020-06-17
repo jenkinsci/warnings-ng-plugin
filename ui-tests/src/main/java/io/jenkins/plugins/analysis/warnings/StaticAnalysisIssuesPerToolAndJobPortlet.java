@@ -11,7 +11,15 @@ import org.jenkinsci.test.acceptance.po.Describable;
  */
 @Describable("Static analysis issues per tool and job")
 public class StaticAnalysisIssuesPerToolAndJobPortlet extends AbstractDashboardViewPortlet {
-    StaticAnalysisIssuesPerToolAndJobPortlet(final DashboardView parent, final String path) {
+    /**
+     * Creates a new portlet page object.
+     *
+     * @param parent
+     *         parent page object that contains this portlet
+     * @param path
+     *         absolute path to the page area
+     */
+    public StaticAnalysisIssuesPerToolAndJobPortlet(final DashboardView parent, final String path) {
         super(parent, path);
     }
 

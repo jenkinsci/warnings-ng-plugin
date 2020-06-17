@@ -24,20 +24,20 @@
 	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.collect.CollectMethodsReturningImmutableCollections">
-        <Details>
-            <![CDATA[
+		<Details>
+			<![CDATA[
             <p>Collects method calls that may return immutable collections</p>
             ]]>
-        </Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.collect.CollectNullableMethodStatus">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.collect.CollectNullableMethodStatus">
+		<Details>
+			<![CDATA[
     		<p>Collects method calls that can return null</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.detect.InefficientStringBuffering">
 		<Details>
@@ -516,9 +516,13 @@ public void test(int i)
 	<Detector class="com.mebigfatguy.fbcontrib.detect.PossibleMemoryBloat">
 		<Details>
 			<![CDATA[
-			<p>Looks for classes that maintain collections or StringBuffer/StringBuilders in
+			<p>Looks for classes that have usage patterns that may cause memory bloat to occur.
+			This can occur with classes maintain collections or StringBuffer/StringBuilders in
 			static member variables, and that do not appear to provide a way to clear or remove
-			items from these members. Such class fields are likely causes of memory bloat.</p>
+			items from these members. 
+			Other cases are use of JAXBContexts stored recreated over and over again, instead of 
+			using a cached instance.
+			Such class fields are likely causes of memory bloat.</p>
 			<p>It is a fast detector.</p>
 			]]>
 		</Details>
@@ -1379,98 +1383,98 @@ a[0] = new A(); // results in ArrayStoreException (Runtime)
 	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.detect.CollectionNamingConfusion">
-	   <Details>
-	       <![CDATA[
+		<Details>
+			<![CDATA[
 	       <p>Looks for fields or local variables that are collections but the names have a different type
 	       of collection in the name. This is confusing, and is probably a left over from a type change, such as
 	       </p>
 	       <p>List&lt;String&gt; mySet;</p>
 	       <p>It is a fast detector.</p>
 	       ]]>
-	   </Details>
+		</Details>
 	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.detect.PoorMansEnum">
-	   <Details>
-	       <![CDATA[
+		<Details>
+			<![CDATA[
 	       <p>Looks for fields defined with simple types, (int, String, etc) that are used like enums. Specifically fields that are
 	       only assigned a set of constant values. This variable probably should be redefined as an enum.
 	       </p>
 	       <p>It is a fast detector.</p>
 	       ]]>
-	   </Details>
+		</Details>
 	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.detect.UnusedParameter">
-	   <Details>
-	       <![CDATA[
+		<Details>
+			<![CDATA[
 	       <p>Looks for private or static methods that have parameters that aren't used. These parameters
             can be removed, assuming the method isn't used through reflection.</p>
             <p>It is a fast detector.</p>
 	       ]]>
-	   </Details>
+		</Details>
 	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.detect.FindClassCircularDependencies">
-        <Details>
-            <![CDATA[
+		<Details>
+			<![CDATA[
             <p>This detector looks for circular dependencies among classes. </p>
             <p>It is a moderately fast detector.</p>
             ]]>
-        </Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.ModifyingUnmodifiableCollection">
-        <Details>
-            <![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.ModifyingUnmodifiableCollection">
+		<Details>
+			<![CDATA[
             <p>This detector looks for code that attempts to modify a collection that is or may be
             defined as immutable. Doing so will cause exceptions at runtime.</p>
             <p>It is a fast detector.</p>
             ]]>
-        </Details>
-    </Detector>
+		</Details>
+	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.detect.HangingExecutors">
-        <Details>
-            <![CDATA[
+		<Details>
+			<![CDATA[
             <p>Three detectors for hanging ExecutorServices, that is, ExecutorServices that never get a call to shutdown, which
 			can potentially cause the JVM to not exit.</p>
 			<p>It is a fast detector.</p>
             ]]>
-        </Details>
-    </Detector>
+		</Details>
+	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.detect.HttpClientProblems">
-        <Details>
-            <![CDATA[
+		<Details>
+			<![CDATA[
             <p>The HttpRequests from the Apache HttpComponents have some little-known quirks about them.
 			This is a set of detectors that helps guard against resource starvation.</p>
 			<p>It is a fast detector.</p>
             ]]>
-        </Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.Unjitable">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.Unjitable">
+		<Details>
+			<![CDATA[
     		<p>This detector looks for methods that are longer than 8000 bytes. Methods this
 			long are automatically disqualified by the JIT for compilation and will always be
     		emulated. Consider breaking this method up to avoid this, if performance is important.</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.ConflictingTimeUnits">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.ConflictingTimeUnits">
+		<Details>
+			<![CDATA[
 			<p>Looks for methods that perform arithmetic operations on values representing time
 			where the time unit is incompatible, e.g. adding a millisecond value to a nanosecond value.
 			</p>
 			<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.detect.CharsetIssues">
 		<Details>
@@ -1509,9 +1513,9 @@ a[0] = new A(); // results in ArrayStoreException (Runtime)
 		</Details>
 	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.StringifiedTypes">
-        <Details>
-            <![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.StringifiedTypes">
+		<Details>
+			<![CDATA[
             <p>Looks for classes that store fields that are Strings that impersonate instances of classes, or collections that are
             fields that hold Strings that impersonate a class. Examples of String impersonation are storing:
             <ul>
@@ -1523,34 +1527,34 @@ a[0] = new A(); // results in ArrayStoreException (Runtime)
             </p>
             <p>It is a fast detector.</p>
             ]]>
-        </Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.SuspiciousLoopSearch">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.SuspiciousLoopSearch">
+		<Details>
+			<![CDATA[
     		<p>Looks for methods that assign a value to a variable in an "if equals" conditional in a loop, but do not break after doing so.
     		Since equality would seem to be a one time event, continuing with the loop seems pointless, and a break statement in the if statement
     		seems like it should be added.</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.ConflatingResourcesAndFiles">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.ConflatingResourcesAndFiles">
+		<Details>
+			<![CDATA[
     		<p>Looks for methods that use the File API on resources retrieved from URLs where the URL in question isn't from a file protocol.
     		In the case of classpath resources, this will work if the code is executed from directories, but fail using JARs.
     		If using resources, then use URL.openStream() method instead of File APIs.</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.ImmatureClass">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.ImmatureClass">
+		<Details>
+			<![CDATA[
     		<p>Looks for classes that are not fully complete from a usability point of view, making them more difficult to use
     		than they should be. Things such as
     		<ul>
@@ -1562,84 +1566,84 @@ a[0] = new A(); // results in ArrayStoreException (Runtime)
     		</p>
     		<p>It is a moderately fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.JAXRSIssues">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.JAXRSIssues">
+		<Details>
+			<![CDATA[
     		<p>Looks for problems with the use of the JAX-RS specification.</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.JPAIssues">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.JPAIssues">
+		<Details>
+			<![CDATA[
     		<p>Looks for problems with the use of the JPA specification, including Spring's
     		support of JPA</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.SuboptimalExpressionOrder">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.SuboptimalExpressionOrder">
+		<Details>
+			<![CDATA[
     		<p>Looks for conditional expressions that are a combination of simple local variable (in)equalities
     		and tests on the results of method calls, where the method calls are done first. By placing the simple
     		conditions first you may eliminate costly calls in certain cases. This assumes that the method calls
     		do not have side effects that should happen always.</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.IOIssues">
-    	<Details>
-    		<![CDATA[
-    		<p>Looks for various issues around doing I/O with streams and reader/writers.</p>
+	<Detector class="com.mebigfatguy.fbcontrib.detect.IOIssues">
+		<Details>
+			<![CDATA[
+    		<p>Looks for various issues around doing I/O with streams and reader/writers, and compression of byte buffers.</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.DubiousMapCollection">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.DubiousMapCollection">
+		<Details>
+			<![CDATA[
     		<p>Looks for use of maps that are private fields in a List-only way, that is, maps that are created in constructors
     		or static initializers, and are only iterated over. Often this is done because the Map allows for two values, as opposed
     		to a List. The fix is to just create a List of some object that holds all the values.</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.BuryingLogic">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.BuryingLogic">
+		<Details>
+			<![CDATA[
     		<p>Looks for methods that needlessly push a large chunk of code to the right through indenting with braces.
     		The code is basically an if/else-then-return structure. The "if true" test does the bulk of the logic, and the else
     		just returns. It is more readable if the bulk of the logic is moved as far to the left in the method as is possible.
     		</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.WiringIssues">
-    	<Details>
-	    	<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.WiringIssues">
+		<Details>
+			<![CDATA[
 	    	<p>Looks for various issues around @Autowired/@Inject fields in DI classes</p>
 	    	<p>It is a fast detector.</p>
 	    	]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.ConcurrentCollectionIssues">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.ConcurrentCollectionIssues">
+		<Details>
+			<![CDATA[
     		<p>Looks for problems with using concurrent collections.
     		<ul>
     			<li>Adding a collection as a value of a Concurrent map, without the use of putIfAbsent</li>
@@ -1647,31 +1651,31 @@ a[0] = new A(); // results in ArrayStoreException (Runtime)
     		</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.UseTryWithResources">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.UseTryWithResources">
+		<Details>
+			<![CDATA[
     		<p>Looks for use of auto-closeable resources in JDK 7 or later that are not using
     		the try-with-resources paradigm. To avoid problems, and ease the reader, use of try-with-resources
     		is recommended</p>
     		<p>It is a fast detector.</p>
     		]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
-    <Detector class="com.mebigfatguy.fbcontrib.detect.SuspiciousShadedClassUse">
-    	<Details>
-    		<![CDATA[
+	<Detector class="com.mebigfatguy.fbcontrib.detect.SuspiciousShadedClassUse">
+		<Details>
+			<![CDATA[
 			<p>Looks for use of shaded methods from 3rd-party jars, created by tools such as the Maven shade plugin.
 			These methods are from classes that have been included in a jar, for internal use, and are copies of real 3rd-party jars.
 			It is likely you meant to use the real class from the real jar, but your IDE picked the wrong import to use.
 			</p>
 			<p>It is a fast detector.</p>
 			]]>
-    	</Details>
-    </Detector>
+		</Details>
+	</Detector>
 
 	<Detector class="com.mebigfatguy.fbcontrib.detect.UnsynchronizedSingletonFieldWrites">
 		<Details>
@@ -1738,7 +1742,7 @@ a[0] = new A(); // results in ArrayStoreException (Runtime)
 			]]>
 		</Details>
 	</Detector>
-	
+
 	<Detector class="com.mebigfatguy.fbcontrib.detect.FunctionalInterfaceIssues">
 		<Details>
 			<![CDATA[
@@ -1747,16 +1751,26 @@ a[0] = new A(); // results in ArrayStoreException (Runtime)
 			]]>
 		</Details>
 	</Detector>
-	
+
 	<Detector class="com.mebigfatguy.fbcontrib.detect.SetUsageIssues">
-        <Details>
-            <![CDATA[
+		<Details>
+			<![CDATA[
             <p>Looks for various issues around the use of the Set interface</p>
             <p>It is a fast detector</p>
             ]]>
-        </Details>
-    </Detector>
-	
+		</Details>
+	</Detector>
+
+	<Detector class="com.mebigfatguy.fbcontrib.detect.SuspiciousArgumentTypes">
+		<Details>
+			<![CDATA[
+            <p>Looks for method calls where the arguments passed seem oddly typed for the use they are intended for.
+            </p>
+            <p>It is a fast detector</p>
+            ]]>
+		</Details>
+	</Detector>
+
 	<Detector class="com.mebigfatguy.fbcontrib.debug.OCSDebugger">
 		<Details></Details>
 	</Detector>
@@ -1882,7 +1896,7 @@ System.out.println("Problem with the object :" + someObj);
 
 	<BugPattern type="OCP_OVERLY_CONCRETE_PARAMETER">
 		<ShortDescription>Method needlessly defines parameter with concrete classes</ShortDescription>
-		<LongDescription>{3}</LongDescription>
+		<LongDescription>{1}: {3}</LongDescription>
 		<Details>
 			<![CDATA[
 			<p>This method uses concrete classes for parameters when only methods defined in an implemented
@@ -2653,10 +2667,10 @@ static {
 	</BugPattern>
 
 	<BugPattern type="PMB_INSTANCE_BASED_THREAD_LOCAL">
-	   <ShortDescription>Field is an instance based ThreadLocal variable</ShortDescription>
-	   <LongDescription>Field {1} is an instance based ThreadLocal variable</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>Field is an instance based ThreadLocal variable</ShortDescription>
+		<LongDescription>Field {1} is an instance based ThreadLocal variable</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This ThreadLocal field is defined as being instance based (not static). As all
 	       ThreadLocal variables describe permanent reachability roots so far as the garbage
 	       collector is concerned, these variables will never be reclaimed (so long as the Thread lives).
@@ -2664,7 +2678,21 @@ static {
 	       variables, even after the owning instance has been reclaimed. It is almost a certainty that
 	       you want to use static based ThreadLocal variables.</p>
 	       ]]>
-	   </Details>
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="PMB_LOCAL_BASED_JAXB_CONTEXT">
+		<ShortDescription>Local JAXBContext created on demand</ShortDescription>
+		<LongDescription>Method {1} createa a local JAXBContext on demand</LongDescription>
+		<Details>
+			<![CDATA[
+	       <p>This method creates a JAXBContext and stores it in a local variable. This
+	       implies that this JAXBContext is created each time on demand, which will cause 
+	       memory bloat issues. It is better to either create this instance as a static field,
+	       or hold onto it with a ConcurrentHashMap, or such. See 
+	       https://javaee.github.io/jaxb-v2/doc/user-guide/ch03.html#other-miscellaneous-topics-performance-and-thread-safety </p>
+	       ]]>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="LSYC_LOCAL_SYNCHRONIZED_COLLECTION">
@@ -3188,7 +3216,7 @@ if (Boolean.TRUE.equals(b))
 	<BugPattern type="SPP_SUSPECT_STRING_TEST">
 		<ShortDescription>Method possibly mixes up normal strings and empty strings in branching logic</ShortDescription>
 		<LongDescription>Method {1} treats null and normal strings the same, when it should probably
-		treat null and empty strings the same</LongDescription>
+			treat null and empty strings the same</LongDescription>
 		<Details>
 			<![CDATA[
 			<p>This method tests a string, and groups null values with real strings, leaving empty strings as another
@@ -3244,7 +3272,7 @@ if ({{FLAWED_TEST_LOGIC}}) {
 			]]>
 		</Details>
 	</BugPattern>
-	
+
 	<BugPattern type="SPP_USE_ZERO_WITH_COMPARATOR">
 		<ShortDescription>Method compares the result of a compareTo method to a value other than zero</ShortDescription>
 		<LongDescription>Method {1} compares the result of a compareTo method to a value other than zero</LongDescription>
@@ -3426,32 +3454,32 @@ String str = sb.toString();
 	</BugPattern>
 
 	<BugPattern type="SPP_NON_USEFUL_TOSTRING">
-	   <ShortDescription>Method calls toString() on an instance of a class that hasn't overridden toString()</ShortDescription>
-	   <LongDescription>Method {1} calls toString() on an instance of a class that hasn't overridden toString()</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>Method calls toString() on an instance of a class that hasn't overridden toString()</ShortDescription>
+		<LongDescription>Method {1} calls toString() on an instance of a class that hasn't overridden toString()</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This method calls <code>toString</code> on an object that hasn't overridden the toString() method, and thus relies on
 	       the version found in java.lang.Object. This string is just a raw display of the object's class and location, and
 	       provides no information about the information of use. You should implement toString in this class.</p>
 	       ]]>
-	   </Details>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="SPP_TOSTRING_ON_STRING">
-	   <ShortDescription>Method calls toString() on a String</ShortDescription>
-	   <LongDescription>Method {1} calls toString() on a String</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>Method calls toString() on a String</ShortDescription>
+		<LongDescription>Method {1} calls toString() on a String</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This method calls <code>toString</code> on a String. Just use the object itself if you want a String.</p>
 	       ]]>
-	   </Details>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="SPP_CONVERSION_OF_STRING_LITERAL">
-	<ShortDescription>Method converts a String literal</ShortDescription>
-	   <LongDescription>Method {1} calls {3} on a String Literal</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>Method converts a String literal</ShortDescription>
+		<LongDescription>Method {1} calls {3} on a String Literal</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This method calls a converting method like <code>toLowerCase</code> or <code>trim</code>
 		   on a <code>String</code> literal. You should make the transformation yourself and use the transformed literal.</p>
 
@@ -3468,7 +3496,7 @@ return "thisisaconstantstring";
 		   to be done (in the case of <code>toUpperCase()</code> and <code>toLowerCase()</code>.
 		   </p>
 	       ]]>
-	   </Details>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="SPP_EQUALS_ON_STRING_BUILDER">
@@ -3698,15 +3726,15 @@ return new String[0];<br/>
 	</BugPattern>
 
 	<BugPattern type="EXS_EXCEPTION_SOFTENING_RETURN_FALSE">
-	   <ShortDescription>method converts an exception into a boolean 'error code' value</ShortDescription>
-	   <LongDescription>method {1} converts an exception into a boolean 'error code' value</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>method converts an exception into a boolean 'error code' value</ShortDescription>
+		<LongDescription>method {1} converts an exception into a boolean 'error code' value</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This method catches an exception and returns a boolean that represents whether an exception occurred or not.
 	       This throws away the value of exception handling and lets code ignore the resultant 'error code' return value.
 	       You should just throw the exception to the caller instead.</p>
 	       ]]>
-	   </Details>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="CFS_CONFUSING_FUNCTION_SEMANTICS">
@@ -3899,8 +3927,8 @@ return new String[0];<br/>
 	</BugPattern>
 
 	<BugPattern type="UTAO_TESTNG_ASSERTION_ODDITIES_ASSERT_USED">
-	        <ShortDescription>TestNG test method uses Java asserts rather than a TestNG assertion</ShortDescription>
-	        <LongDescription>TestNG test method {1} uses Java asserts rather than a TestNG assertion</LongDescription>
+		<ShortDescription>TestNG test method uses Java asserts rather than a TestNG assertion</ShortDescription>
+		<LongDescription>TestNG test method {1} uses Java asserts rather than a TestNG assertion</LongDescription>
 		<Details>
 			<![CDATA[
 			<p>This method uses a Java assert to assure that a certain state is in effect. As this is
@@ -4090,7 +4118,7 @@ return new String[0];<br/>
 		</Details>
 	</BugPattern>
 
-		<BugPattern type="LO_INVALID_STRING_FORMAT_NOTATION">
+	<BugPattern type="LO_INVALID_STRING_FORMAT_NOTATION">
 		<ShortDescription>Method attempts to log using String.format notation</ShortDescription>
 		<LongDescription>Method {1} attempts to log using String.format notation</LongDescription>
 		<Details>
@@ -4119,37 +4147,37 @@ return new String[0];<br/>
 	</BugPattern>
 
 	<BugPattern type="LO_EXCEPTION_WITH_LOGGER_PARMS">
-       <ShortDescription>Method creates exception with logger parameter markers in message</ShortDescription>
-       <LongDescription>Method {1} creates exception with logger parameter markers in message</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>Method creates exception with logger parameter markers in message</ShortDescription>
+		<LongDescription>Method {1} creates exception with logger parameter markers in message</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This method passes a standard exception as a logger parameter, and expects this exception to be substituted in
 	        an SLF4J or Log4j style parameter marker '{}'. This marker will not be translated as SLF4J and Log4j2 don't process the Exception
 	        class for markers.
 	       </p>
 	       ]]>
-	   </Details>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="LO_APPENDED_STRING_IN_FORMAT_STRING">
-	   <ShortDescription>Method passes a concatenated string to SLF4J's or Log4j2's format string</ShortDescription>
-	   <LongDescription>Method {1} passes a concatenated string to SLF4J's or Log4j2's format string</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>Method passes a concatenated string to SLF4J's or Log4j2's format string</ShortDescription>
+		<LongDescription>Method {1} passes a concatenated string to SLF4J's or Log4j2's format string</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This method uses an SLF4J or Log4j2 logger to log a string, where the first (format) string is created using concatenation.
 	       You should use {} markers to inject dynamic content into the string, so that String building is delayed until the
 	       actual log string is needed. If the log level is high enough that this log statement isn't used, then the appends
 	       will never be executed.</p>
 	       ]]>
-	   </Details>
+		</Details>
 	</BugPattern>
 
 
 	<BugPattern type="LO_EMBEDDED_SIMPLE_STRING_FORMAT_IN_FORMAT_STRING">
-	   <ShortDescription>Method passes a simple String.format result to an SLF4J's or Log4j2's format string</ShortDescription>
-	   <LongDescription>Method {1} passes a simple String.format result to an SLF4J's or Log4j2's format string</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>Method passes a simple String.format result to an SLF4J's or Log4j2's format string</ShortDescription>
+		<LongDescription>Method {1} passes a simple String.format result to an SLF4J's or Log4j2's format string</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This method uses an SLF4J or Log4J2 logger to log a string which was produced through a call to String.format, where
 	       the format string passed was a constant string containing only simple format markers that could be directly handled
 	       by SLF4J or Log4J. Rather than doing
@@ -4162,7 +4190,7 @@ return new String[0];<br/>
 	       </pre>
 	       </p>
 	       ]]>
-	   </Details>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="LO_TOSTRING_PARAMETER">
@@ -4980,13 +5008,13 @@ if (name != null) {
 		</Details>
 	</BugPattern>
 
-		<BugPattern type="PSC_SUBOPTIMAL_COLLECTION_SIZING">
+	<BugPattern type="PSC_SUBOPTIMAL_COLLECTION_SIZING">
 		<ShortDescription>Method uses suboptimal sizing to allocate a collection</ShortDescription>
 		<LongDescription>Method {1} uses suboptimal sizing to allocate a collection</LongDescription>
 		<Details>
 			<![CDATA[
 			<p>This method allocates a collection using the a constructor that takes a size parameter. However,
-			because Maps and Sets have a loading factor, passing in the exact size you want is an
+			because Maps and Sets have a loading factor, passing in the exact size you want is an 
 			incorrect way to presize the collection, and may still cause reallocations. Since you are using
 			Guava, it is better to use
 			<code><pre>
@@ -5062,35 +5090,35 @@ if (name != null) {
 	</BugPattern>
 
 	<BugPattern type="CNC_COLLECTION_NAMING_CONFUSION">
-	    <ShortDescription>Collection variable is named with a different type of collection in the name</ShortDescription>
-        <LongDescription>Collection variable {1} is named with a different type of collection in the name</LongDescription>
-        <Details>
-            <![CDATA[
+		<ShortDescription>Collection variable is named with a different type of collection in the name</ShortDescription>
+		<LongDescription>Collection variable {1} is named with a different type of collection in the name</LongDescription>
+		<Details>
+			<![CDATA[
             <p>This class defines a field or local collection variable with a name that contains a different type
             of collection in its name. An example would be a Set<User> called userList. This is confusing to the reader,
             and likely caused by a previous refactor of type, without changing the name. This detector is obviously
             only checking for English names.</p>
             ]]>
-        </Details>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="PME_POOR_MANS_ENUM">
-	   <ShortDescription>Simple field is used like an enum</ShortDescription>
-	   <LongDescription>Simple field {1} is used like an enum</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>Simple field is used like an enum</ShortDescription>
+		<LongDescription>Simple field {1} is used like an enum</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This field, although defined as a simple variable (int, String, etc), only has a set of constant values
 	       assigned to it. Thus it appears to be used like an enum value, and should probably be defined as such.
 	       </p>
 	       ]]>
-	   </Details>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="UP_UNUSED_PARAMETER">
-	   <ShortDescription>Static or private method has unused parameters</ShortDescription>
-	   <LongDescription>Static or private method {1} has unused parameters</LongDescription>
-	   <Details>
-	       <![CDATA[
+		<ShortDescription>Static or private method has unused parameters</ShortDescription>
+		<LongDescription>Static or private method {1} has unused parameters</LongDescription>
+		<Details>
+			<![CDATA[
 	       <p>This method defines parameters that are never used. As this method is either static or private,
 	       and can't be derived from, it is safe to remove these parameters and simplify your method.
 	       You should consider, while unlikely, that this method may be used reflectively, and thus you will
@@ -5098,40 +5126,40 @@ if (name != null) {
 	       there will be a chain of method calls that have spent time creating this parameter and passing it
 	       down the line. All of this may be able to be removed.</p>
 	       ]]>
-	   </Details>
+		</Details>
 	</BugPattern>
 
 	<BugPattern type="FCCD_FIND_CLASS_CIRCULAR_DEPENDENCY">
-        <ShortDescription>Class has a circular dependency with other classes</ShortDescription>
-        <LongDescription>Class {0} has a circular dependency with other classes</LongDescription>
-        <Details>
-		   <![CDATA[
+		<ShortDescription>Class has a circular dependency with other classes</ShortDescription>
+		<LongDescription>Class {0} has a circular dependency with other classes</LongDescription>
+		<Details>
+			<![CDATA[
 		    <p>
 		    This class has a circular dependency with other classes. This makes building these classes
 		    difficult, as each is dependent on the other to build correctly. Consider using interfaces
 		    to break the hard dependency. The dependency chain can be seen in the GUI version of FindBugs.
 		    </p>
 		    ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="MUC_MODIFYING_UNMODIFIABLE_COLLECTION">
-        <ShortDescription>This method attempts to modify collection that appears to possibly be immutable</ShortDescription>
-        <LongDescription>This method {1} attempts to modify collection that appears to possibly be immutable</LongDescription>
-        <Details>
-            <![CDATA[
+	<BugPattern type="MUC_MODIFYING_UNMODIFIABLE_COLLECTION">
+		<ShortDescription>This method attempts to modify collection that appears to possibly be immutable</ShortDescription>
+		<LongDescription>This method {1} attempts to modify collection that appears to possibly be immutable</LongDescription>
+		<Details>
+			<![CDATA[
             <p>This method attempts to modify a collection that it got from a source that could potentially have created an
             immutable collection, through Arrays.asList, Collections.unmodifiableXXX, or one of Guava's methods.
             Doing so will cause an exception, as these collections are not mutable.</p>
             ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
 	<BugPattern type="HES_EXECUTOR_NEVER_SHUTDOWN">
-        <ShortDescription>ExecutorService field doesn't ever get shutdown</ShortDescription>
-        <LongDescription>ExecutorService {2} is instantiated, but never shutdown, potentially preventing the entire JVM from shutting down</LongDescription>
-        <Details>
-            <![CDATA[
+		<ShortDescription>ExecutorService field doesn't ever get shutdown</ShortDescription>
+		<LongDescription>ExecutorService {2} is instantiated, but never shutdown, potentially preventing the entire JVM from shutting down</LongDescription>
+		<Details>
+			<![CDATA[
             <p>Most <code>ExecutorService</code> objects must be explicitly shut down,
             otherwise their internal threads can prolong the running of the JVM, even when everything
             else has stopped.</p>
@@ -5145,28 +5173,28 @@ if (name != null) {
 			provided, or for <code>ThreadPoolExecutor</code>s with <code>allowsCoreThreadTimeOut()</code> set to true,
 			it is good practice to explicitly shutdown the <code>ExecutorService</code> when its utility is done.</p>
             ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
 	<BugPattern type="HES_LOCAL_EXECUTOR_SERVICE">
-        <ShortDescription>Suspicious Local Executor Service</ShortDescription>
-        <LongDescription>ExecutorService is created as a local variable, which is unusual</LongDescription>
-        <Details>
-            <![CDATA[
+		<ShortDescription>Suspicious Local Executor Service</ShortDescription>
+		<LongDescription>ExecutorService is created as a local variable, which is unusual</LongDescription>
+		<Details>
+			<![CDATA[
             <p><code>ExecutorService</code>s are typically instantiated as fields so that many tasks can be executed on a controlled number of <code>Thread</code>s across many method calls.  Therefore, it is unusual for <code>ExecutorService</code>s to be a local variable, where tasks will be added only one time, in the enclosing method. </p>
 
 			<p>Furthermore, when a local <code>ExecutorService</code> reaches the end of scope and goes up for garbage collection, the internal <code>Thread</code>s are not necessarily terminated and can prevent the JVM from ever shutting down.</p>
 
 			<p>Consider making this local variable a field and creating a method that will explicitly shut down the <code>ExecutorService</code></p>
             ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
 	<BugPattern type="HES_EXECUTOR_OVERWRITTEN_WITHOUT_SHUTDOWN">
-        <ShortDescription>An ExecutorService isn't shutdown before the reference to it is lost</ShortDescription>
-        <LongDescription>ExecutorService {2} is replaced with another ExecutorService without being shutdown, potentially preventing the entire JVM from shutting down</LongDescription>
-        <Details>
-            <![CDATA[
+		<ShortDescription>An ExecutorService isn't shutdown before the reference to it is lost</ShortDescription>
+		<LongDescription>ExecutorService {2} is replaced with another ExecutorService without being shutdown, potentially preventing the entire JVM from shutting down</LongDescription>
+		<Details>
+			<![CDATA[
             <p>Most <code>ExecutorService</code> objects must be explicitly shut down, otherwise their internal threads
             can prevent the JVM from ever shutting down, even when everything else has stopped.</p>
 
@@ -5203,14 +5231,14 @@ public void reset() {
 			replacing the <code>ExecutorService</code>, perhaps you may consider restructuring your code to use calls like
 			<code>awaitTermination()</code> or <code>Future</code>s/<code>Callable</code>s to avoid recreating the <code>ExecutorService</code>.</p>
             ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
 	<BugPattern type="HCP_HTTP_REQUEST_RESOURCES_NOT_FREED_FIELD">
-        <ShortDescription>Unreleased HttpRequest network resources (field)</ShortDescription>
-        <LongDescription>The HttpRequest field {1} does not release its network resources, which could freeze the running code</LongDescription>
-        <Details>
-            <![CDATA[
+		<ShortDescription>Unreleased HttpRequest network resources (field)</ShortDescription>
+		<LongDescription>The HttpRequest field {1} does not release its network resources, which could freeze the running code</LongDescription>
+		<Details>
+			<![CDATA[
             <p>FindBugs has detected an <code>org.apache.http.HttpRequest</code> (e.g. <code>HttpGet</code>, <code>HttpPost</code>, etc)
             that didn't release its associated resources.  Code like the following: <br/>
 <pre>code>
@@ -5251,14 +5279,14 @@ public String requestInfo(URI u) {
 </code></pre>
 			</p>
             ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
 	<BugPattern type="HCP_HTTP_REQUEST_RESOURCES_NOT_FREED_LOCAL">
-        <ShortDescription>Unreleased HttpRequest network resources (local)</ShortDescription>
-        <LongDescription>The local HttpRequest {1} does not release its network resources before being garbage collected, which could freeze the running code</LongDescription>
-        <Details>
-            <![CDATA[
+		<ShortDescription>Unreleased HttpRequest network resources (local)</ShortDescription>
+		<LongDescription>The local HttpRequest {1} does not release its network resources before being garbage collected, which could freeze the running code</LongDescription>
+		<Details>
+			<![CDATA[
             <p>FindBugs has detected an <code>org.apache.http.HttpRequest</code> (e.g. <code>HttpGet</code>, <code>HttpPost</code>, etc)
             that didn't release its associated resources.  Code like the following: <br/>
 <pre><code>
@@ -5298,39 +5326,39 @@ public String requestInfo(URI u) {
 </code></pre>
 			</p>
             ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="UJM_UNJITABLE_METHOD">
-    	<ShortDescription>This method is too long to be compiled by the JIT</ShortDescription>
-    	<LongDescription>This method {1} is too long to be compiled by the JIT</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="UJM_UNJITABLE_METHOD">
+		<ShortDescription>This method is too long to be compiled by the JIT</ShortDescription>
+		<LongDescription>This method {1} is too long to be compiled by the JIT</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method is longer than 8000 bytes. By default the JIT will not attempt to compile this method no matter
     		how hot it is, and so this method will always be interpreted. If performance is important, you should consider
     		breaking this method up into smaller chunks. (And it's probably a good idea for readability too!)</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="CTU_CONFLICTING_TIME_UNITS">
-    	<ShortDescription>This method performs arithmetic operations on time values with different units</ShortDescription>
-    	<LongDescription>This method {1} performs arithmetic operations on time values with different units</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="CTU_CONFLICTING_TIME_UNITS">
+		<ShortDescription>This method performs arithmetic operations on time values with different units</ShortDescription>
+		<LongDescription>This method {1} performs arithmetic operations on time values with different units</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method takes two values that appear to be representing time, and performs arithmetic operations on these
     		two values directly, even though it appears that the two values are representing different time units, such as
     		adding a millisecond value to a nanosecond value. You should convert the two values to the same time unit before
     		performing this calculation in order for it to be meaningful.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET">
-    	<ShortDescription>This method needlessly uses a String literal as a Charset encoding</ShortDescription>
-    	<LongDescription>This method "{3}" needlessly uses a String literal to define an encoding.  A built-in Charset could be used instead like: {4}</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET">
+		<ShortDescription>This method needlessly uses a String literal as a Charset encoding</ShortDescription>
+		<LongDescription>This method "{3}" needlessly uses a String literal to define an encoding.  A built-in Charset could be used instead like: {4}</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method uses a string literal to specify a <code>Charset</code> encoding. However, the method invoked has an
     		alternative signature that takes a <code>Charset</code> object. You should use this signature, as this class is compiled
     		with JDK 7 (or better), and the <code>Charset</code> in question is available as a constant from the
@@ -5338,14 +5366,14 @@ public String requestInfo(URI u) {
     		<p>Instead of specifying "UTF-8", use <code>StandardCharsets.UTF_8</code>, for instance. An added benefit of this is
     		that you will not need to catch <code>UnsupportedEncodingException</code>.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET_NAME">
-    	<ShortDescription>This method should use a StandardCharsets.XXX.name() to specify an encoding</ShortDescription>
-    	<LongDescription>This method {3} should use a StandardCharsets.XXX.name() to specify an encoding</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET_NAME">
+		<ShortDescription>This method should use a StandardCharsets.XXX.name() to specify an encoding</ShortDescription>
+		<LongDescription>This method {3} should use a StandardCharsets.XXX.name() to specify an encoding</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method uses a hand-typed <code>String</code> literal to specify a <code>Charset</code> encoding. As this class is compiled
     		with JDK 7 (or better), and the charset in question is available as a constant from the
     		<code>java.nio.charset.StandardCharsets</code> class, it is better to use the .name() method of the appropriate
@@ -5355,14 +5383,14 @@ public String requestInfo(URI u) {
 			Still, instead of specifying something like "UTF-8" (and potentially mistyping it), use <code>StandardCharsets.UTF_8.name()</code>.
 			</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="CSI_CHAR_SET_ISSUES_UNKNOWN_ENCODING">
-    	<ShortDescription>This method uses an unknown character encoding literal</ShortDescription>
-    	<LongDescription>This method {3} uses an unknown character encoding literal "{4}"</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="CSI_CHAR_SET_ISSUES_UNKNOWN_ENCODING">
+		<ShortDescription>This method uses an unknown character encoding literal</ShortDescription>
+		<LongDescription>This method {3} uses an unknown character encoding literal "{4}"</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method specifies a <code>Charset</code> encoding with a String literal that is not recognized by the current
     		JDK. It's possible that this application will only be deployed on a JVM that does recognize this encoding, but
     		it seems dubious that this is the case.</p>
@@ -5370,27 +5398,27 @@ public String requestInfo(URI u) {
     		The standard JDK encodings (for Java 8) are "UTF-8", "US-ASCII", "ISO-8859-1", "UTF-16BE", "UTF-16LE", "UTF-16".  These are all case-sensitive.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="CBC_CONTAINS_BASED_CONDITIONAL">
-    	<ShortDescription>This method uses an excessively complex conditional that can be replaced with Set.contains</ShortDescription>
-    	<LongDescription>This method {1} uses an excessively complex conditional that can be replaced with Set.contains</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="CBC_CONTAINS_BASED_CONDITIONAL">
+		<ShortDescription>This method uses an excessively complex conditional that can be replaced with Set.contains</ShortDescription>
+		<LongDescription>This method {1} uses an excessively complex conditional that can be replaced with Set.contains</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method uses an overly complex <code>if</code> expression made up of multiple conditions joined by OR, where the same
     		local variable is compared to a static value. When the number of conditions grows, it is much cleaner
     		to build a static set of the possible values, and use the contains method on that set. This will
     		shorten the code, and make it more self documenting.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="OPM_OVERLY_PERMISSIVE_METHOD">
-    	<ShortDescription>This method is declared more permissively than is used in the code base</ShortDescription>
-    	<LongDescription>This method {1} is declared more permissively than is used in the code base</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="OPM_OVERLY_PERMISSIVE_METHOD">
+		<ShortDescription>This method is declared more permissively than is used in the code base</ShortDescription>
+		<LongDescription>This method {1} is declared more permissively than is used in the code base</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method is declared more permissively than the code is using. Having this method be more
 			permissive than is needed limits your ability to make observations about this method, like
     		parameter usage, refactorability, and derivability. It is possible that this detector will report
@@ -5402,42 +5430,42 @@ public String requestInfo(URI u) {
     		</ul>
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="STT_TOSTRING_STORED_IN_FIELD">
-        <ShortDescription>This method stores the value of a toString() call into a field</ShortDescription>
-        <LongDescription>This method {0} stores the value of a toString() call into a field</LongDescription>
-        <Details>
-            <![CDATA[
+	<BugPattern type="STT_TOSTRING_STORED_IN_FIELD">
+		<ShortDescription>This method stores the value of a toString() call into a field</ShortDescription>
+		<LongDescription>This method {0} stores the value of a toString() call into a field</LongDescription>
+		<Details>
+			<![CDATA[
             <p>This method calls the toString() method on an object and stores the value in a field. Doing this
             throws away the type safety of having the object defined by a Class. Using String makes it very easy to
             use the wrong type of value, and the compiler will not catch these mistakes. You should delay converting
             values to Strings for as long as possible, and thus not store them as fields.
             </p>
             ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="STT_STRING_PARSING_A_FIELD">
-        <ShortDescription>This method parses a String that is a field</ShortDescription>
-        <LongDescription>This method {1} parses a String that is a field</LongDescription>
-        <Details>
-            <![CDATA[
+	<BugPattern type="STT_STRING_PARSING_A_FIELD">
+		<ShortDescription>This method parses a String that is a field</ShortDescription>
+		<LongDescription>This method {1} parses a String that is a field</LongDescription>
+		<Details>
+			<![CDATA[
             <p>This method calls a parsing method (indexOf, lastIndexOf, startsWith, endsWith, substring, indexOf) on a String
             that is a field, or comes from a collection that is a field. This implies that the String in question is holding
             multiple parts of information inside the string, which would be more maintainable and type safe if that value was a
             true collection or a first class object with fields, rather than a String.
             </p>
             ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="STT_TOSTRING_MAP_KEYING">
-    	<ShortDescription>This method uses a concatenated String as a map key</ShortDescription>
-    	<LongDescription>This method {1} uses a concatenated String as a map key</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="STT_TOSTRING_MAP_KEYING">
+		<ShortDescription>This method uses a concatenated String as a map key</ShortDescription>
+		<LongDescription>This method {1} uses a concatenated String as a map key</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method builds a key for a map, using a StringBuilder, either implicitly or explicitly. This means the type
     		of the key is something more than a String constant, it is a properly formatted String. However, there is no
     		type based verification that all uses of this key will follow this formatting. It is much better to use a proper, simple,
@@ -5460,14 +5488,14 @@ public String requestInfo(URI u) {
     			</ul>
     			</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="SLS_SUSPICIOUS_LOOP_SEARCH">
-    	<ShortDescription>This method continues a loop after finding an equality condition</ShortDescription>
-    	<LongDescription>This method {1} continues a loop after finding an equality condition</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="SLS_SUSPICIOUS_LOOP_SEARCH">
+		<ShortDescription>This method continues a loop after finding an equality condition</ShortDescription>
+		<LongDescription>This method {1} continues a loop after finding an equality condition</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method continues with a loop, and does not break out of it, after finding and setting a variable in an
     		<code>if</code> condition based on equality. Since continuing on in the loop would seem to be unlikely to find the item again,
     		breaking at this point would seem to be the proper action.</p>
@@ -5482,53 +5510,53 @@ for (Person p : people) {
 </code></pre>
     		It is likely you wanted a break after getting the age for "Dave".</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="CRF_CONFLATING_RESOURCES_AND_FILES">
-    	<ShortDescription>This method accesses URL resources using the File API</ShortDescription>
-    	<LongDescription>This method {1} accesses URL resources using the File API</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="CRF_CONFLATING_RESOURCES_AND_FILES">
+		<ShortDescription>This method accesses URL resources using the File API</ShortDescription>
+		<LongDescription>This method {1} accesses URL resources using the File API</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method fetches a resource from a URL, and uses the File API to manipulate it. If this resource is a
     		classpath resource, it will work if the resource is a file in a directory. If, however, the file is inside a JAR file
     		this will fail. To avoid this confusing inconsistency, use the URL.openStream API instead to access the data of the classpath resource.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IMC_IMMATURE_CLASS_NO_EQUALS">
-    	<ShortDescription>Class does not implement an equals method</ShortDescription>
-    	<LongDescription>Class {0} does not implement an equals method</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_NO_EQUALS">
+		<ShortDescription>Class does not implement an equals method</ShortDescription>
+		<LongDescription>Class {0} does not implement an equals method</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This class, which has instance fields, has no equals(Object o) method. It is possible that this
     		class is never used in a context where this is required; it is often assumed, however, from clients
     		of this class that it is, so it is good to add such methods when you create them.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IMC_IMMATURE_CLASS_NO_HASHCODE">
-    	<ShortDescription>Class does not implement a hashCode method</ShortDescription>
-    	<LongDescription>Class {0} does not implement a hashCode method</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_NO_HASHCODE">
+		<ShortDescription>Class does not implement a hashCode method</ShortDescription>
+		<LongDescription>Class {0} does not implement a hashCode method</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This class, which has instance fields, has no hashCode() method. It is possible that this
     		class is never used in a context where this is required; it is often assumed, however, from clients
     		of this class that it is, so it is good to add such methods when you create them.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IMC_IMMATURE_CLASS_NO_PACKAGE">
-    	<ShortDescription>Class is defined in the default package</ShortDescription>
-    	<LongDescription>Class {0} id defined in the default package</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_NO_PACKAGE">
+		<ShortDescription>Class is defined in the default package</ShortDescription>
+		<LongDescription>Class {0} id defined in the default package</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This class has been created in the default package. Classes should be defined in a
     		proper package structure, typically defined by the reverse of the domain name of the
     		owner of the code base. Putting code in the default (no) package limits its usefulness, including:
@@ -5538,100 +5566,122 @@ for (Person p : people) {
     		</ol>
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IMC_IMMATURE_CLASS_NO_TOSTRING">
-    	<ShortDescription>Class does not implement a toString method</ShortDescription>
-    	<LongDescription>Class {0} does not implement a toString method</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_NO_TOSTRING">
+		<ShortDescription>Class does not implement a toString method</ShortDescription>
+		<LongDescription>Class {0} does not implement a toString method</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This class, which has instance fields, has no toString() method, which will make debugging with this
     		class more difficult than it could be. Consider adding a toString() method. Using libraries like commons-lang3
     		ToStringBuilder makes this process easy.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IMC_IMMATURE_CLASS_IDE_GENERATED_PARAMETER_NAMES">
-    	<ShortDescription>Method uses IDE generated parameter names</ShortDescription>
-    	<LongDescription>Method {1} uses IDE generated parameter names</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_IDE_GENERATED_PARAMETER_NAMES">
+		<ShortDescription>Method uses IDE generated parameter names</ShortDescription>
+		<LongDescription>Method {1} uses IDE generated parameter names</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method appears to have been generated from an interface or superclass using an IDE.
     		As such the IDE generated generic names (arg0, arg1, arg2) for parameters for this method,
     		and the author of this method did not change them to be meaningful. For better understandability
     		it is recommended that you name these parameters with regard to their function.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IMC_IMMATURE_CLASS_PRINTSTACKTRACE">
-    	<ShortDescription>Method prints the stack trace to the console</ShortDescription>
-    	<LongDescription>Method {1} prints the stack trace to the console</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_PRINTSTACKTRACE">
+		<ShortDescription>Method prints the stack trace to the console</ShortDescription>
+		<LongDescription>Method {1} prints the stack trace to the console</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method prints a stack trace to the console. This is non configurable, and causes an
     		application to look unprofessional. Switch to using loggers so that users can control what
     		is logged and where.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IMC_IMMATURE_CLASS_WRONG_FIELD_ORDER">
-    	<ShortDescription>Class orders instance fields before static fields</ShortDescription>
-    	<LongDescription>Class {0} orders instance fields before static fields</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_WRONG_FIELD_ORDER">
+		<ShortDescription>Class orders instance fields before static fields</ShortDescription>
+		<LongDescription>Class {0} orders instance fields before static fields</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This class defines fields in an order that is confusing, and not expected by
     		other developers. The standard is for static fields to be listed first, followed by instance
     		fields. When fields are listed out of order, developers may make assumptions about their
     		behaviour that are incorrect and lead to bugs.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IMC_IMMATURE_CLASS_UPPER_PACKAGE">
-    	<ShortDescription>Class is defined in a package with upper case characters</ShortDescription>
-    	<LongDescription>Class {0} is defined in a package with upper case characters</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_UPPER_PACKAGE">
+		<ShortDescription>Class is defined in a package with upper case characters</ShortDescription>
+		<LongDescription>Class {0} is defined in a package with upper case characters</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This class is defined within a package that uses upper case letters. Package names are
     		expected to be in the form of all lowercase.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IMC_IMMATURE_CLASS_LOWER_CLASS">
-    	<ShortDescription>Class does not start with an upper case letter</ShortDescription>
-    	<LongDescription>Class {0} does not start with an upper case letter</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_LOWER_CLASS">
+		<ShortDescription>Class does not start with an upper case letter</ShortDescription>
+		<LongDescription>Class {0} does not start with an upper case letter</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This class has been given a name that does not start with an upper case letter.
     		Classes should follow a pattern of uppercasing the first letter of each word, AsAnExample</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JXI_GET_ENDPOINT_CONSUMES_CONTENT">
-    	<ShortDescription>JAX-RS Method implements a GET request but consumes input</ShortDescription>
-    	<LongDescription>JAX-RS Method {1} implements a GET request but consumes input</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IMC_IMMATURE_CLASS_BAD_SERIALVERSIONUID">
+		<ShortDescription>Class defines a computed serialVersionUID that doesn't equate to the calculated value</ShortDescription>
+		<LongDescription>Class {0} defines a computed serialVersionUID that doesn't equate to the calculated value</LongDescription>
+		<Details>
+			<![CDATA[
+    		<p>This serializable class defines a serialVersionUID that appears to be a computed value, however the value does not
+    		match the computed value, and thus losses it's value as version indicator. Either create a custom value like 1, 2, 3, 4.. etc, or
+    		recompute the serialVersionUID using your IDE.</p>
+    		]]>
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="IMC_IMMATURE_CLASS_VAR_NAME">
+		<ShortDescription>Class defines a field or local variable named 'var'</ShortDescription>
+		<LongDescription>Class {0} defines a field or local variable named 'var'</LongDescription>
+		<Details>
+			<![CDATA[
+    		<p>A field or variable is named 'var' which will conflict with the built in Java 10 feature using 'var' as a keyword.</p>
+    		]]>
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="JXI_GET_ENDPOINT_CONSUMES_CONTENT">
+		<ShortDescription>JAX-RS Method implements a GET request but consumes input</ShortDescription>
+		<LongDescription>JAX-RS Method {1} implements a GET request but consumes input</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This JAX-RS endpoint is annotated to be used with @GET requests, but also documents that it
     		consumes JSON or XML data. Since a GET request pulls parameters from the URL, and not
     		the body of the request, this pattern is problematic. If you wish to consume JSON or XML data,
     		this request should be annotated with @POST.</p>
     		]]>
-       	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JXI_INVALID_CONTEXT_PARAMETER_TYPE">
-    	<ShortDescription>JAX-RS Method specifies an invalid @Context parameter type</ShortDescription>
-    	<LongDescription>JAX-RS {1} Method specifies an invalid @Context parameter type</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="JXI_INVALID_CONTEXT_PARAMETER_TYPE">
+		<ShortDescription>JAX-RS Method specifies an invalid @Context parameter type</ShortDescription>
+		<LongDescription>JAX-RS {1} Method specifies an invalid @Context parameter type</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This JAX-RS endpoint annotates a parameter with a @Context annotation. This annotation can supply values
     		for the following types:
     		<ul>
@@ -5648,124 +5698,124 @@ for (Person p : people) {
 		    It is possible that your container can supply additional types, but these types are not standard and may
 		    not be supported on other application servers.</p>
     		]]>
-       	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JXI_PARM_PARAM_NOT_FOUND_IN_PATH">
-    	<ShortDescription>JAX-RS Method specifies non-resolveable @PathParam</ShortDescription>
-    	<LongDescription>JAX-RS Method {1} specifies non-resolveable @PathParam</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="JXI_PARM_PARAM_NOT_FOUND_IN_PATH">
+		<ShortDescription>JAX-RS Method specifies non-resolveable @PathParam</ShortDescription>
+		<LongDescription>JAX-RS Method {1} specifies non-resolveable @PathParam</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This JAX-RS endpoint has a @PathParam specified that is not found in the @Path annotation
     		and thus can not determine from where to populate that parameter.</p>
     		]]>
-       	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JXI_UNDEFINED_PARAMETER_SOURCE_IN_ENDPOINT">
-    	<ShortDescription>JAX-RS Method defines a parameter that has no @*Param or @Context annotation, or @Consumes method annotation</ShortDescription>
-    	<LongDescription>JAX-RS Method {1} defines a parameter that has no @*Param or @Context annotation, or @Consumes method annotation</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="JXI_UNDEFINED_PARAMETER_SOURCE_IN_ENDPOINT">
+		<ShortDescription>JAX-RS Method defines a parameter that has no @*Param or @Context annotation, or @Consumes method annotation</ShortDescription>
+		<LongDescription>JAX-RS Method {1} defines a parameter that has no @*Param or @Context annotation, or @Consumes method annotation</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This JAX-RS endpoint declares a parameter without specifying where the value of this parameter comes from.
     		You can specify this by using one of several 'Param' annotations (@PathParam, @CookieParam, @FormParam @HeaderParam @MatrixParam @QueryParam),
     		by adding a @Context parameter annotation, or you can declare that the method @Consumes an XML or JSON stream.</p>
     		]]>
-       	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JPAI_TRANSACTION_ON_NON_PUBLIC_METHOD">
-    	<ShortDescription>Method has a Spring @Transactional annotation on it, but is non-public</ShortDescription>
-    	<LongDescription>Method {1} has a Spring @Transactional annotation on it, but is non-public</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="JPAI_TRANSACTION_ON_NON_PUBLIC_METHOD">
+		<ShortDescription>Method has a Spring @Transactional annotation on it, but is non-public</ShortDescription>
+		<LongDescription>Method {1} has a Spring @Transactional annotation on it, but is non-public</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method specifies a Spring @Transactional annotation but the method is defined as being non-public.
     		Spring only creates transactional boundaries on methods that are public, and so this annotation is not doing
     		anything for this method. Make the method public, or place the annotation on a more appropriate method.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JPAI_HC_EQUALS_ON_MANAGED_ENTITY">
-    	<ShortDescription>JPA Entity with Generated @Id defined with hashCode/equals</ShortDescription>
-    	<LongDescription>JPA Entity {0} with Generated @Id defined with hashCode/equals</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="JPAI_HC_EQUALS_ON_MANAGED_ENTITY">
+		<ShortDescription>JPA Entity with Generated @Id defined with hashCode/equals</ShortDescription>
+		<LongDescription>JPA Entity {0} with Generated @Id defined with hashCode/equals</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This class is defined to be a JPA Entity, and has an @Id field that is generated by the JPA provider.
     		Since you do not control when that Id is created directly, it is risky to implement hashCode/equals for this
     		class, and especially for use with Collections, as the data behind the algorithms will not be immutable, and
     		thus cause problems when those fields change, and the object is in the collection. It is usually safer
     		to not define hashCode and equals for entity objects, but treat them as objects for IdentityHashSet/Maps instead.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JPAI_NON_PROXIED_TRANSACTION_CALL">
-    	<ShortDescription>Method annotated with @Transactional is called from a non Spring proxy</ShortDescription>
-    	<LongDescription>Method {1} annotated with @Transactional is called from a non Spring proxy</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="JPAI_NON_PROXIED_TRANSACTION_CALL">
+		<ShortDescription>Method annotated with @Transactional is called from a non Spring proxy</ShortDescription>
+		<LongDescription>Method {1} annotated with @Transactional is called from a non Spring proxy</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method call is to a method that has a @Transactional annotation on it. However, since this call is from the
     		same class, it is not going through any Spring proxy, and thus the transactional quality of this method is completely
     		lost. @Transactional methods must always be called through a Spring bean that is autowired.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JPAI_INEFFICIENT_EAGER_FETCH">
-    	<ShortDescription>OneToMany join specifies 1+n EAGER join</ShortDescription>
-    	<LongDescription>OneToMany join specifies 1+n EAGER join</LongDescription>
-    	<Details>
-    	<![CDATA[
+	<BugPattern type="JPAI_INEFFICIENT_EAGER_FETCH">
+		<ShortDescription>OneToMany join specifies 1+n EAGER join</ShortDescription>
+		<LongDescription>OneToMany join specifies 1+n EAGER join</LongDescription>
+		<Details>
+			<![CDATA[
     	<p>This JPA entity specifies a @OneToMany join with a fetch type of EAGER. By default EAGER joins perform
     	select operations on each element returned from the original query in sequence, thus producing 1 + n queries.
     	If you are going to use EAGER joins, it is wise to specify a Join type by using @Fetch annotations in
     	Hibernate or @JoinFetch/@BatchFetch annotations (or hints) in EclipseLink, for example. Even so, these
     	annotations may only apply in limited cases, such as in the use of find.</p>
     	]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JPAI_IGNORED_MERGE_RESULT">
-    	<ShortDescription>Method ignores the return value of EntityManager.merge</ShortDescription>
-    	<LongDescription>Method {1} ignores the return value of EntityManager.merge</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="JPAI_IGNORED_MERGE_RESULT">
+		<ShortDescription>Method ignores the return value of EntityManager.merge</ShortDescription>
+		<LongDescription>Method {1} ignores the return value of EntityManager.merge</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method calls EntityManager.merge, and throws away the resultant value. This result is the
     		managed entity version of the potentially unmanaged object that was passed to merge. You should use
     		the returned managed entity for any further use.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JPAI_NON_SPECIFIED_TRANSACTION_EXCEPTION_HANDLING">
-    	<ShortDescription>Method does not specify how to handle transaction when exception is thrown</ShortDescription>
-    	<LongDescription>Method {1} does not specify how to handle transaction when exception is thrown</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="JPAI_NON_SPECIFIED_TRANSACTION_EXCEPTION_HANDLING">
+		<ShortDescription>Method does not specify how to handle transaction when exception is thrown</ShortDescription>
+		<LongDescription>Method {1} does not specify how to handle transaction when exception is thrown</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method declares that it throws one or more non-runtime exceptions. It also is annotated with a
     		@Transactional annotation but fails to describe whether to rollback the transaction or not based on this
     		thrown exception. Use 'rollbackFor' or 'noRollbackFor' attributes of the Transactional annotation to
     		document this.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="JPAI_UNNECESSARY_TRANSACTION_EXCEPTION_HANDLING">
-    	<ShortDescription>Method declares handling a transactional exception that won't be thrown</ShortDescription>
-    	<LongDescription>Method {1} declares handling a transactional exception that won't be thrown</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="JPAI_UNNECESSARY_TRANSACTION_EXCEPTION_HANDLING">
+		<ShortDescription>Method declares handling a transactional exception that won't be thrown</ShortDescription>
+		<LongDescription>Method {1} declares handling a transactional exception that won't be thrown</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method declares that it either rolls back or does not rollback a transaction based on an
     		expected exception being thrown. However, neither this exception, nor any derived exceptions can be thrown
     		from this method, and so the annotation is useless.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="SEO_SUBOPTIMAL_EXPRESSION_ORDER">
-    	<ShortDescription>Method orders expressions in a conditional in a sub optimal way</ShortDescription>
-    	<LongDescription>Method {1} orders expressions in a conditional in a sub optimal way</LongDescription>
+	<BugPattern type="SEO_SUBOPTIMAL_EXPRESSION_ORDER">
+		<ShortDescription>Method orders expressions in a conditional in a sub optimal way</ShortDescription>
+		<LongDescription>Method {1} orders expressions in a conditional in a sub optimal way</LongDescription>
 		<Details>
 			<![CDATA[
 			<p>This method builds a conditional expression, for example, in an <code>if</code> or <code>while</code> statement,
@@ -5787,40 +5837,40 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
 			</p>
 			]]>
 		</Details>
-    </BugPattern>
+	</BugPattern>
 
-    <BugPattern type="IOI_DOUBLE_BUFFER_COPY">
-    	<ShortDescription>Method passes a Buffered Stream/Reader/Writer to a already buffering copy method</ShortDescription>
-    	<LongDescription>Method {1} passes a Buffered Stream/Reader/Writer to a already buffering copy method</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IOI_DOUBLE_BUFFER_COPY">
+		<ShortDescription>Method passes a Buffered Stream/Reader/Writer to a already buffering copy method</ShortDescription>
+		<LongDescription>Method {1} passes a Buffered Stream/Reader/Writer to a already buffering copy method</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method copies data from input to output using streams or reader/writers using a well known copy method, from java.nio, commons-io,
     		springframework, guava or poi. These methods are efficient in that they copy these files using buffers. However, this method is also
     		buffering the streams, causing a double buffering to occur. So data first goes to one buffer, then is copied to another buffer, before
     		making it to the destination (or vice-versa). This just causes the copy operation to be inefficient both from a time perspective and
     		a memory allocation one. When using these copy methods, do not pass buffered streams/readers/writers.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IOI_COPY_WITH_READER">
-        <ShortDescription>Method performs bulk stream copy with a java.io.Reader derived input</ShortDescription>
-    	<LongDescription>Method {1} performs bulk stream copy with a java.io.Reader derived input</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IOI_COPY_WITH_READER">
+		<ShortDescription>Method performs bulk stream copy with a java.io.Reader derived input</ShortDescription>
+		<LongDescription>Method {1} performs bulk stream copy with a java.io.Reader derived input</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method copies data from a java.io.Reader derived class to an output class, using a bulk copy method
     		supplied by java.nio, commons-io, springframework, guava or poi. Since you are copying the entire stream, you
     		don't care about its contents, and thus using a Reader is wasteful, as a reader has to do the hard work of
     		converting byte data to characters, when there is no need to do this. Use stream based inputs for better performance.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="IOI_USE_OF_FILE_STREAM_CONSTRUCTORS">
-    	<ShortDescription>Method uses a FileInputStream or FileOutputStream constructor</ShortDescription>
-    	<LongDescription>Method {1} uses a FileInputStream or FileOutputStream constructor</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="IOI_USE_OF_FILE_STREAM_CONSTRUCTORS">
+		<ShortDescription>Method uses a FileInputStream or FileOutputStream constructor</ShortDescription>
+		<LongDescription>Method {1} uses a FileInputStream or FileOutputStream constructor</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method creates and uses a java.io.FileInputStream or java.io.FileOutputStream object. Unfortunately both
     		of these classes implement a finalize method, which means that objects created will likely hang around until a
     		full garbage collection occurs, which will leave excessive garbage on the heap for longer, and potentially much
@@ -5832,14 +5882,27 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
     		</code>
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
+	<BugPattern type="IOI_UNENDED_ZLIB_OBJECT">
+		<ShortDescription>Method creates a ZLIB Inflater or Deflater and doesn't appear to end() it</ShortDescription>
+		<LongDescription>Method {1} creates a ZLIB Inflater or Deflater and doesn't appear to end() it</LongDescription>
+		<Details>
+			<![CDATA[
+    		<p>This method constructs a java.util.zip.Inflater or java.util.zip.Deflater and does not appear to call end() on
+    		it. This will cause a potentially large amount of memory to hang around inside the object until the object gets 
+    		garbage collected. To avoid this unnecessary bloat, put a call to end() in a finally block of the code where you
+    		are using this instance.
+    		</p>
+    		]]>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="DMC_DUBIOUS_MAP_COLLECTION">
-    	<ShortDescription>Class holds a map-type field, but uses it as only a List</ShortDescription>
-    	<LongDescription>Class {0} holds a map-type field {1}, but uses it as only a List</LongDescription>
-    	<Details>
+	<BugPattern type="DMC_DUBIOUS_MAP_COLLECTION">
+		<ShortDescription>Class holds a map-type field, but uses it as only a List</ShortDescription>
+		<LongDescription>Class {0} holds a map-type field {1}, but uses it as only a List</LongDescription>
+		<Details>
 			<![CDATA[
 			<p>This method instantiates a map-type field in a static initializer or constructor, but then only uses it
 			through iteration. This means that this data structure should really just be a List&lt;SomeObject&gt;,
@@ -5847,52 +5910,52 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
 			It was likely done this way to avoid having to create a class, but this just obfuscates the purpose of the field.
 			</p>
 			]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="BL_BURYING_LOGIC">
-    	<ShortDescription>Method buries logic to the right (indented) more than it needs to be</ShortDescription>
-    	<LongDescription>Method {1} buries logic to the right (indented) more than it needs to be</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="BL_BURYING_LOGIC">
+		<ShortDescription>Method buries logic to the right (indented) more than it needs to be</ShortDescription>
+		<LongDescription>Method {1} buries logic to the right (indented) more than it needs to be</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>Looks for relatively large <code>if</code> blocks of code, where you unconditionally return from them,
     		and then follow that with an unconditional return of a small block. This places the bulk of the logic to the right indentation-wise,
     		making it more difficult to read than needed. It would be better to invert the logic of the if block, and immediately return,
     		allowing the bulk of the logic to be move to the left for easier reading.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="WI_DUPLICATE_WIRED_TYPES">
-    	<ShortDescription>Class auto wires the same object into two separate fields in a class hierarchy</ShortDescription>
-    	<LongDescription>Class {0} auto wires the same object into two separate fields in a class hierarchy</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="WI_DUPLICATE_WIRED_TYPES">
+		<ShortDescription>Class auto wires the same object into two separate fields in a class hierarchy</ShortDescription>
+		<LongDescription>Class {0} auto wires the same object into two separate fields in a class hierarchy</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This class has two fields in either itself or a parent class, which autowire (without specialization) the same object
     		for both fields. This is likely caused by a developer just not being aware that the field already is available for your use,
     		and just causes wasted space, and confuses code access to the same object through two different pathways.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="WI_MANUALLY_ALLOCATING_AN_AUTOWIRED_BEAN">
-    	<ShortDescription>Method allocates an object with new when the class is defined as an autowireable bean</ShortDescription>
-    	<LongDescription>Method {1} allocates an object with new when the class is defined as an autowireable bean</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="WI_MANUALLY_ALLOCATING_AN_AUTOWIRED_BEAN">
+		<ShortDescription>Method allocates an object with new when the class is defined as an autowireable bean</ShortDescription>
+		<LongDescription>Method {1} allocates an object with new when the class is defined as an autowireable bean</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method allocates an object with new, but the class of the object that is being created is marked with a Spring annotation
     		denoting that this class is to be used through an @Autowire annotation. Allocating it with <code>new</code> will likely mean that fields on the
     		class will not be autowired, but instead be null. You should just autowire an instance of this class into the class in question, or if
     		need be, use Spring's getBean(name) method to fetch one.</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="CCI_CONCURRENT_COLLECTION_ISSUES_USE_PUT_IS_RACY">
-    	<ShortDescription>Method gets and sets a value of a ConcurrentHashMap in a racy manner</ShortDescription>
-    	<LongDescription>Method {1} gets and sets a value of a ConcurrentHashMap in a racy manner </LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="CCI_CONCURRENT_COLLECTION_ISSUES_USE_PUT_IS_RACY">
+		<ShortDescription>Method gets and sets a value of a ConcurrentHashMap in a racy manner</ShortDescription>
+		<LongDescription>Method {1} gets and sets a value of a ConcurrentHashMap in a racy manner </LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method retrieves the value of a key from a ConcurrentHashMap, where the value is itself a collection. It checks this
     		value for null, and if it is so, creates a new collection and places it in the map. This may cause thread race conditions
     		where two threads overwrite each other's values. You should be using
@@ -5901,14 +5964,14 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
     		</code>
     		instead.
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="UTWR_USE_TRY_WITH_RESOURCES">
-    	<ShortDescription>Method manually handles closing an auto-closeable resource</ShortDescription>
-    	<LongDescription>Method {1} manually handles closing an auto-closeable resource</LongDescription>
-    	<Details>
-    		<![CDATA[[
+	<BugPattern type="UTWR_USE_TRY_WITH_RESOURCES">
+		<ShortDescription>Method manually handles closing an auto-closeable resource</ShortDescription>
+		<LongDescription>Method {1} manually handles closing an auto-closeable resource</LongDescription>
+		<Details>
+			<![CDATA[[
     		<p>This method allocates and uses an auto closeable resource. However, it manually closes the resource in a finally block.
     		While this is correct management, it doesn't rely on the idiomatic way available to JDK 7 and above, allows for possible
     		subtle problems, and complicates the reading of code by developers expecting the use of try-with-resources.
@@ -5920,14 +5983,14 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
     		    }
     		</pre>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="SSCU_SUSPICIOUS_SHADED_CLASS_USE">
-    	<ShortDescription>Method calls a method from a class that has been shaded by a 3rdparty jar</ShortDescription>
-    	<LongDescription>Method {1} calls a method from a class that has been shaded by a 3rdparty jar</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="SSCU_SUSPICIOUS_SHADED_CLASS_USE">
+		<ShortDescription>Method calls a method from a class that has been shaded by a 3rdparty jar</ShortDescription>
+		<LongDescription>Method {1} calls a method from a class that has been shaded by a 3rdparty jar</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method calls a method found in a 3rd-party library, which appears to be shaded from another 3rd-party library.
     		This occurs when a jar includes other code that uses tools like the maven shade plugin. It is likely you wanted to use the
     		"first-class" class from the original jar, rather than the class with the shaded package structure, but your IDE pulled in
@@ -5942,125 +6005,125 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
     		</code></pre>
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="USFW_UNSYNCHRONIZED_SINGLETON_FIELD_WRITES">
-    	<ShortDescription>Method of Singleton class writes to a field in an unsynchronized manner</ShortDescription>
-    	<LongDescription>Method {1} of Singleton class writes to a field in an unsynchronized manner</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="USFW_UNSYNCHRONIZED_SINGLETON_FIELD_WRITES">
+		<ShortDescription>Method of Singleton class writes to a field in an unsynchronized manner</ShortDescription>
+		<LongDescription>Method {1} of Singleton class writes to a field in an unsynchronized manner</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method writes to a field of this class. Since this class is seen as a Singleton this can produce race
     		conditions, or cause non-visible changes to other threads, because the field isn't accessed synchronously.
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="OI_OPTIONAL_ISSUES_USES_IMMEDIATE_EXECUTION">
-    	<ShortDescription>Method uses immediate execution of a block of code that is often not used</ShortDescription>
-    	<LongDescription>Method {1} uses immediate execution of a block of code that is often not used</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="OI_OPTIONAL_ISSUES_USES_IMMEDIATE_EXECUTION">
+		<ShortDescription>Method uses immediate execution of a block of code that is often not used</ShortDescription>
+		<LongDescription>Method {1} uses immediate execution of a block of code that is often not used</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method uses the Optional.orElse() method passing in some code that will execute immediately, whether
     		or not the else case of the Optional is needed. This may cause incorrect side effects to happen, or at the
     		minimum, code to execute for no reason. It would be better to use Optional.orElseGet()
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="OI_OPTIONAL_ISSUES_USES_DELAYED_EXECUTION">
-    	<ShortDescription>Method uses delayed execution of a block of code that is trivial</ShortDescription>
-    	<LongDescription>Method {1} uses immediate execution of a block of code that is trivial</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="OI_OPTIONAL_ISSUES_USES_DELAYED_EXECUTION">
+		<ShortDescription>Method uses delayed execution of a block of code that is trivial</ShortDescription>
+		<LongDescription>Method {1} uses immediate execution of a block of code that is trivial</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method uses the Optional.orElseGet() method passing in a simple variable or constant value.
     		As this value takes no time to execute and causes no side effects, the use of Optional.orElseGet is
     		unnecessary and potentially confusing. You can use Optional.orElse() instead.
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="OI_OPTIONAL_ISSUES_CHECKING_REFERENCE">
-    	<ShortDescription>Method checks an Optional reference for null</ShortDescription>
-    	<LongDescription>Method {1} checks an Optional reference for null</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="OI_OPTIONAL_ISSUES_CHECKING_REFERENCE">
+		<ShortDescription>Method checks an Optional reference for null</ShortDescription>
+		<LongDescription>Method {1} checks an Optional reference for null</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method compares an Optional reference variable against null. As the whole point of the
     		Optional class is to avoid the null pointer exception, this use pattern is highly suspect.
     		The code should always make sure the Optional reference is valid, and should count on the APIs
     		of this class to check for the held reference instead.
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="OI_OPTIONAL_ISSUES_PRIMITIVE_VARIANT_PREFERRED">
-    	<ShortDescription>Method uses a java.util.Optional when use of OptionalInt, OptionalLong, OptionalDouble would be more clear</ShortDescription>
-    	<LongDescription>Method {1} uses a java.util.Optional when use of OptionalInt, OptionalLong, OptionalDouble would be more clear</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="OI_OPTIONAL_ISSUES_PRIMITIVE_VARIANT_PREFERRED">
+		<ShortDescription>Method uses a java.util.Optional when use of OptionalInt, OptionalLong, OptionalDouble would be more clear</ShortDescription>
+		<LongDescription>Method {1} uses a java.util.Optional when use of OptionalInt, OptionalLong, OptionalDouble would be more clear</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method creates an Optional object to hold an int, double or long. In these cases it
     		is more natural to use the Optional variants OptionalInt, OptionalDouble and OptionalLong.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="OI_OPTIONAL_ISSUES_USES_ORELSEGET_WITH_NULL">
-    	<ShortDescription>Method uses Optional.orElseGet(null)</ShortDescription>
-    	<LongDescription>Method {1} uses Optional.orElseGet(null)</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="OI_OPTIONAL_ISSUES_USES_ORELSEGET_WITH_NULL">
+		<ShortDescription>Method uses Optional.orElseGet(null)</ShortDescription>
+		<LongDescription>Method {1} uses Optional.orElseGet(null)</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method uses Optional.orElseGet(null). This method is supposed to to receive a lambda expression for what to execute
     		when the Optional is not there. If you want to just return null, use Optional.orElse(null) instead.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="UAC_UNNECESSARY_API_CONVERSION_DATE_TO_INSTANT">
-    	<ShortDescription>Method constructs a Date object, merely to convert it to an Instant object</ShortDescription>
-    	<LongDescription>Method {1} constructs a Date object, merely to convert it to an Instant object</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="UAC_UNNECESSARY_API_CONVERSION_DATE_TO_INSTANT">
+		<ShortDescription>Method constructs a Date object, merely to convert it to an Instant object</ShortDescription>
+		<LongDescription>Method {1} constructs a Date object, merely to convert it to an Instant object</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method creates a java.time.Instant object by first creating a java.util.Date object, and then calling
     		toInstant() on it. It is simpler to just construct the Instant object directly, say by using
     		{@code Instant.now()} to get the current time, of by using {@code Instant.parse(CharSequence)} to convert a String.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="UAC_UNNECESSARY_API_CONVERSION_FILE_TO_PATH">
-    	<ShortDescription>Method constructs a File object, merely to convert it to a Path object</ShortDescription>
-    	<LongDescription>Method {1} constructs a File object, merely to convert it to a Path object</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="UAC_UNNECESSARY_API_CONVERSION_FILE_TO_PATH">
+		<ShortDescription>Method constructs a File object, merely to convert it to a Path object</ShortDescription>
+		<LongDescription>Method {1} constructs a File object, merely to convert it to a Path object</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method creates a java.nio.file.Path object by first creating a java.io.File object, and then calling
     		toPath() on it. It is simpler to just construct the Path object directly, say by using
     		{@code Paths.get(String...)}.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="RFI_SET_ACCESSIBLE">
-    	<ShortDescription>Method uses AccessibleObject.setAccessible to modify accessibility of classes</ShortDescription>
-    	<LongDescription>Method {1} uses AccessibleObject.setAccessible to modify accessibility of classes</LongDescription>
-    	<Details>
-    		<![CDATA[
-    		<p>This method uses the reflective setAccessible method to alter the behavior of methods and fields in classes
+	<BugPattern type="RFI_SET_ACCESSIBLE">
+		<ShortDescription>Method uses AccessibleObject.setAccessible to modify accessibility of classes</ShortDescription>
+		<LongDescription>Method {1} uses AccessibleObject.setAccessible to modify accessibility of classes</LongDescription>
+		<Details>
+			<![CDATA[
+    		<p>This method uses the reflective setAccessible method to alter the behavior of methods and fields in classes 
     		in ways that were not expected to be accessed by the author. Doing so circumvents the protections that the author
-    		provided through the class definition, and may expose your application to unexpected side effects and problems. This
+    		provided through the class definition, and may expose your application unexpected side effects and problems. This
     		functionality is deprecated in Java 9, and in Java 10 it is expected that this functionality won't work at all.
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="AI_ANNOTATION_ISSUES_NEEDS_NULLABLE">
-    	<ShortDescription>Method that can return null, is missing a @Nullable annotation</ShortDescription>
-    	<LongDescription>Method {1} that can return null, is missing a @Nullable annotation</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="AI_ANNOTATION_ISSUES_NEEDS_NULLABLE">
+		<ShortDescription>Method that can return null, is missing a @Nullable annotation</ShortDescription>
+		<LongDescription>Method {1} that can return null, is missing a @Nullable annotation</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method can return null, but is not annotated with an @Nullable annotation. Without this annotation,
     		various IDEs, and static analysis tools may not be able to fully discover possible NullPointerExceptions in
     		your code. By adding these annotations, you will discover problems around null-ness, more easily.</p>
@@ -6077,27 +6140,27 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
     		You can supply a comma separated list of classes that are custom Nullable Annotations if you desire, by using the
     		system property -Dfb-contrib.ai.annotations="com.acme.Foo,com.acme.Boo" when run.
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="MUI_CALLING_SIZE_ON_SUBCONTAINER">
-    	<ShortDescription>Method calls size() on a sub collection of a Map</ShortDescription>
-    	<LongDescription>Method {1} calls size() on a sub collection of a Map</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="MUI_CALLING_SIZE_ON_SUBCONTAINER">
+		<ShortDescription>Method calls size() on a sub collection of a Map</ShortDescription>
+		<LongDescription>Method {1} calls size() on a sub collection of a Map</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method calls <code>size</code> on the keySet(), entrySet() or values() collections of a Map. These sub collections
     		will have the same size as the base Map and so it is just simpler to call size on that Map. Calling size() on
     		one of these sub collections will causes unnecessary allocations to occur.
     		</p>
     		]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="MUI_CONTAINSKEY_BEFORE_GET">
-    	<ShortDescription>Method check a map with containsKey(), before using get()</ShortDescription>
-    	<LongDescription>Method {1} checks a map with containsKey(), before using get()</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="MUI_CONTAINSKEY_BEFORE_GET">
+		<ShortDescription>Method check a map with containsKey(), before using get()</ShortDescription>
+		<LongDescription>Method {1} checks a map with containsKey(), before using get()</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method checks for the presence of a key in a map using containsKey(), before attempting to fetch the value of the key
     	    using get(). This equates to doing two map lookups in a row. It is much simpler to just fetch the value with get, and checking
     	    for non null instead.</p>
@@ -6149,14 +6212,14 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
     	    </code>
     	    </p>
     	    ]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-     <BugPattern type="MUI_GET_BEFORE_REMOVE">
-    	<ShortDescription>Method gets an item from a map with get(), before using remove()</ShortDescription>
-    	<LongDescription>Method {1} gets an item from a map with get(), before using remove()</LongDescription>
-    	<Details>
-    		<![CDATA[
+	<BugPattern type="MUI_GET_BEFORE_REMOVE">
+		<ShortDescription>Method gets an item from a map with get(), before using remove()</ShortDescription>
+		<LongDescription>Method {1} gets an item from a map with get(), before using remove()</LongDescription>
+		<Details>
+			<![CDATA[
     		<p>This method fetches the value of an entry in a map using get(K k), and then follows it up with a remove(K k).
     		Since a remove() also returns the value, there is no point for doing the get, and just causes two map lookups
     		to occur when it can be done with just one.</p>
@@ -6177,14 +6240,14 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
     	    </code>
 			</p>
     	    ]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="LUI_USE_SINGLETON_LIST">
-    	<ShortDescription>Method builds a list from one element using Arrays.asList</ShortDescription>
-    	<LongDescription>Method {1} builds a list from one element using Arrays.asList rather than Collections.singletonList</LongDescription>
-    	<Details>
-    	<![CDATA[
+	<BugPattern type="LUI_USE_SINGLETON_LIST">
+		<ShortDescription>Method builds a list from one element using Arrays.asList</ShortDescription>
+		<LongDescription>Method {1} builds a list from one element using Arrays.asList rather than Collections.singletonList</LongDescription>
+		<Details>
+			<![CDATA[
     	<p>This method builds a list using Arrays.asList(foo), passing in a single element. Arrays.asList needs to first create an array from this one
     	element, and then build a List that wraps this array. It is simpler to use Collections.singletonList(foo), which does not create the array, and
     	produces a far simpler instance of List. Since both of these arrays are immutable (from the List's point of view) they are equivalent from a usage
@@ -6194,14 +6257,14 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
     	allowed to be used with a List created by Array.asList, but not with Collections.singletonList. So if you do use the set(index, value) method
     	continue using Arrays.asList.
     	]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="LUI_USE_GET0">
-    	<ShortDescription>Method uses collection streaming to get first item in a List</ShortDescription>
-    	<LongDescription>Method {1} uses collection streaming to get first item in a List</LongDescription>
-    	<Details>
-    	<![CDATA[
+	<BugPattern type="LUI_USE_GET0">
+		<ShortDescription>Method uses collection streaming to get first item in a List</ShortDescription>
+		<LongDescription>Method {1} uses collection streaming to get first item in a List</LongDescription>
+		<Details>
+			<![CDATA[
     	<p>This method fetches the first item in a List using collection streaming. As a list is already ordered
     	there is no need to do that, just use the regular get(0) interface.<br/>
     	Example:
@@ -6214,27 +6277,27 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
     	</pre></code>
     	</p>
     	]]>
-    	</Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
 
-    <BugPattern type="LUI_USE_COLLECTION_ADD">
-    	<ShortDescription>Method passes a temporary one item list to Collection.addAll()</ShortDescription>
-    	<LongDescription>Method {1} passes a temporary one item list to Collection.addAll()</LongDescription>
-    	<Details>
-    	<![CDATA[
+	<BugPattern type="LUI_USE_COLLECTION_ADD">
+		<ShortDescription>Method passes a temporary one item list to Collection.addAll()</ShortDescription>
+		<LongDescription>Method {1} passes a temporary one item list to Collection.addAll()</LongDescription>
+		<Details>
+			<![CDATA[
     	<p>This method creates a temporary list using Collections.singletonList, or Arrays.asList with one
     	element in it, and then turns around and calls the addAll() method on another collection. Since you
     	are only adding one element to the collection, it is simpler to just call the add(object) method on
     	the collection you are using and by pass creating the intermediate List.</p>
     	]]>
-    	</Details>
-    </BugPattern>
-    
-    <BugPattern type="FII_AVOID_CONTAINS_ON_COLLECTED_STREAM">
-        <ShortDescription>Method calls contains() on a collected lambda expression</ShortDescription>
-        <LongDescription>Method {1} calls contains() on a collected lambda expresssion</LongDescription>
-        <Details>
-        <![CDATA[
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="FII_AVOID_CONTAINS_ON_COLLECTED_STREAM">
+		<ShortDescription>Method calls contains() on a collected lambda expression</ShortDescription>
+		<LongDescription>Method {1} calls contains() on a collected lambda expresssion</LongDescription>
+		<Details>
+			<![CDATA[
         <p>This method builds a collection using lambda expressions with a collect terminal operation. It then immediately
         calls the contains() method on it, to see if an item is present. This is sub optimal as the lambda still needs to 
         build the entire collection, iterating the entire source list. It is better to use anyMatch() to short
@@ -6251,14 +6314,14 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
         </pre></code>
         </p>
         ]]>
-        </Details>
-    </BugPattern>
-    
-    <BugPattern type="FII_USE_METHOD_REFERENCE">
-    	<ShortDescription>Method creates an anonymous lambda expression instead of specifying a method reference</ShortDescription>
-    	<LongDescription>Method {1} creates an anonymous lamda expression instead of specifying a method reference</LongDescription>
-    	<Details>
-    	<![CDATA[
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="FII_USE_METHOD_REFERENCE">
+		<ShortDescription>Method creates an anonymous lambda expression instead of specifying a method reference</ShortDescription>
+		<LongDescription>Method {1} creates an anonymous lamda expression instead of specifying a method reference</LongDescription>
+		<Details>
+			<![CDATA[
     	<p>This method defines an anonymous lambda function to be called to fetch a single value from the passed in value. While
     	this will work, it is needlessly complex as this function merely calls a single getter method on the object, and thus
     	the code can be simplied by just passing in a method reference instead.</p>
@@ -6273,23 +6336,23 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
         </pre></code>
         </p>
     	]]>
-    	</Details>
-    </BugPattern>
-    
-    <BugPattern type="FII_USE_ANY_MATCH">
-        <ShortDescription>Method suboptimally finds any match in a stream</ShortDescription>
-        <LongDescription>Method {1} suboptimally finds any match in a stream</LongDescription>
-        <Details>
-        <![CDATA[
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="FII_USE_ANY_MATCH">
+		<ShortDescription>Method suboptimally finds any match in a stream</ShortDescription>
+		<LongDescription>Method {1} suboptimally finds any match in a stream</LongDescription>
+		<Details>
+			<![CDATA[
         <p>This method looks for one item in a stream using filter().findFirst.isPresent() when .anyMatch() will do the same thing more succintly</p>
         ]]></Details>
-    </BugPattern>
-    
-    <BugPattern type="FII_USE_FIND_FIRST">
-        <ShortDescription>Method collects a List from a stream() just to get the first element</ShortDescription>
-        <LongDescription>Method {1} collects a List from a stream() just to get the first element</LongDescription>
-        <Details>
-        <![CDATA[
+	</BugPattern>
+
+	<BugPattern type="FII_USE_FIND_FIRST">
+		<ShortDescription>Method collects a List from a stream() just to get the first element</ShortDescription>
+		<LongDescription>Method {1} collects a List from a stream() just to get the first element</LongDescription>
+		<Details>
+			<![CDATA[
         <p>This method streams data into a List just to call get(0) to get the first item. You can just use findFirst() to short circuit the
         processing of the stream.</p>
         <p>
@@ -6303,34 +6366,34 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
         </pre></code>
         </p>
         ]]>
-        </Details>
-    </BugPattern>
-    
-    <BugPattern type="FII_COMBINE_FILTERS">
-        <ShortDescription>Method implements a stream using back to back filters</ShortDescription>
-        <LongDescription>Method {1} implements a stream using back to back filters</LongDescription>
-        <Details>
-        <![CDATA[
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="FII_COMBINE_FILTERS">
+		<ShortDescription>Method implements a stream using back to back filters</ShortDescription>
+		<LongDescription>Method {1} implements a stream using back to back filters</LongDescription>
+		<Details>
+			<![CDATA[
         <p>This method streams data using more than one filter back to back. These can just be combined into one filter</p>
         ]]>
-        </Details>
-    </BugPattern>
-    
-    <BugPattern type="FII_USE_FUNCTION_IDENTITY">
-        <ShortDescription>Method declares an identity lambda function rather than using Function.identity()</ShortDescription>
-        <LongDescription>Method {1} declares an identity lambda function rather than using Function.identity()</LongDescription>
-        <Details>
-        <![CDATA[
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="FII_USE_FUNCTION_IDENTITY">
+		<ShortDescription>Method declares an identity lambda function rather than using Function.identity()</ShortDescription>
+		<LongDescription>Method {1} declares an identity lambda function rather than using Function.identity()</LongDescription>
+		<Details>
+			<![CDATA[
             <p>This method declares a no-op (identity) lambda method rather than just specifying Function.identity()</p>
         ]]>
-        </Details>
-    </BugPattern>
-    
-    <BugPattern type="FII_AVOID_SIZE_ON_COLLECTED_STREAM">
-        <ShortDescription>Method calls size() on a collected lambda expression</ShortDescription>
-        <LongDescription>Method {1} calls size() on a collected lambda expresssion</LongDescription>
-        <Details>
-        <![CDATA[
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="FII_AVOID_SIZE_ON_COLLECTED_STREAM">
+		<ShortDescription>Method calls size() on a collected lambda expression</ShortDescription>
+		<LongDescription>Method {1} calls size() on a collected lambda expresssion</LongDescription>
+		<Details>
+			<![CDATA[
         <p>This method builds a collection using lambda expressions with a collect terminal operation. It then immediately
         calls the size() method on it, to get a count of items. This is sub optimal as the lambda still needs to 
         build the entire collection, iterating the entire source list. It is better to use count() predicate to short
@@ -6351,14 +6414,14 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
         </pre></code>
         </p>
         ]]>
-        </Details>
-    </BugPattern>
-    
-    <BugPattern type="SUI_CONTAINS_BEFORE_ADD">
-        <ShortDescription>Method checks for an item in a set with contains, before using add()</ShortDescription>
-        <LongDescription>Method {1} checks for an item in a set with contains, before using add()</LongDescription>
-        <Details>
-            <![CDATA[
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="SUI_CONTAINS_BEFORE_ADD">
+		<ShortDescription>Method checks for an item in a set with contains, before using add()</ShortDescription>
+		<LongDescription>Method {1} checks for an item in a set with contains, before using add()</LongDescription>
+		<Details>
+			<![CDATA[
             <p>This method checks to see if an element is not in a set before adding it. This is unnecessary as you can just
             add the item, and if the item exists, it won't add it, otherwise it will.</p>
             <p>As an example, instead of using
@@ -6380,14 +6443,14 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
             </code>
             </p>
             ]]>
-        </Details>
-    </BugPattern>
-    
-    <BugPattern type="SUI_CONTAINS_BEFORE_REMOVE">
-        <ShortDescription>Method checks for an item in a set with contains, before using remove()</ShortDescription>
-        <LongDescription>Method {1} checks for an item in a set with contains, before using remove()</LongDescription>
-        <Details>
-            <![CDATA[
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="SUI_CONTAINS_BEFORE_REMOVE">
+		<ShortDescription>Method checks for an item in a set with contains, before using remove()</ShortDescription>
+		<LongDescription>Method {1} checks for an item in a set with contains, before using remove()</LongDescription>
+		<Details>
+			<![CDATA[
             <p>This method checks to see if an element is in a set before removing it. This is unnecessary as you can just
             remove the item, and if the item exists, it will return true.</p>
             <p>As an example, instead of using
@@ -6409,8 +6472,21 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
             </code>
             </p>
             ]]>
-        </Details>
-    </BugPattern>
+		</Details>
+	</BugPattern>
+
+	<BugPattern type="SAT_SUSPICIOUS_ARGUMENT_TYPES">
+		<ShortDescription>This method invokes a method with parameters that seem incorrect for their intended use</ShortDescription>
+		<LongDescription>This method {1} invokes a method with parameters that seem incorrect for their intended use</LongDescription>
+		<Details>
+			<![CDATA[
+            <p>This method calls a method passing arguments that seem incorrect for the intended purpose of the method. Make sure that the argument types are valid</p>
+            <ul>
+            <li><p>For Match.hasEntry it seems unlikely you want to pass a Matcher and non-Matcher at the same time</p></li>
+            </ul>
+            ]]>
+		</Details>
+	</BugPattern>
 
 	<!-- BugCode -->
 
@@ -6560,4 +6636,5 @@ if (shouldCalcHalting && (calculateHaltingProbability() &gt; 0) { }
 	<BugCode abbrev="LUI">List Usage Issues</BugCode>
 	<BugCode abbrev="FII">FunctionalInterface Issues</BugCode>
 	<BugCode abbrev="SUI">Set Usage Issues</BugCode>
+	<BugCode abbrev="SAT">Suspicious Argument Types</BugCode>
 </MessageCollection>

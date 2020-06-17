@@ -126,7 +126,7 @@ abstract class UiTest extends AbstractJUnitTest {
         AnalysisResult cpdDetails = cpd.openOverallResult();
         assertThat(cpdDetails).hasActiveTab(Tab.ISSUES).hasOnlyAvailableTabs(Tab.ISSUES);
 
-        IssuesTable issuesTable = cpdDetails.openIssuesTable();
+        IssuesDetailsTable issuesTable = cpdDetails.openIssuesTable();
         assertThat(issuesTable).hasSize(10).hasTotal(20);
 
         DryIssuesTableRow firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
@@ -155,7 +155,7 @@ abstract class UiTest extends AbstractJUnitTest {
         firstRow = issuesTable.getRowAs(0, DryIssuesTableRow.class);
 
         AnalysisResult lowSeverity = firstRow.clickOnSeverityLink();
-        IssuesTable lowSeverityTable = lowSeverity.openIssuesTable();
+        IssuesDetailsTable lowSeverityTable = lowSeverity.openIssuesTable();
         assertThat(lowSeverityTable).hasSize(6).hasTotal(6);
 
         for (int i = 0; i < 6; i++) {
@@ -231,7 +231,7 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasTotal(3)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
-        IssuesTable issuesTable = checkstyleDetails.openIssuesTable();
+        IssuesDetailsTable issuesTable = checkstyleDetails.openIssuesTable();
         assertThat(issuesTable).hasSize(3).hasTotal(3);
 
         DefaultIssuesTableRow tableRow = issuesTable.getRowAs(0, DefaultIssuesTableRow.class);

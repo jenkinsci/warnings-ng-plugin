@@ -26,13 +26,13 @@ public abstract class IssuesTableRow extends GenericTableRow {
     private static final By A_TAG = By.tagName("a");
 
     private final WebElement row;
-    private final IssuesTable issuesTable;
+    private final IssuesDetailsTable issuesDetailsTable;
 
-    IssuesTableRow(final WebElement rowElement, final IssuesTable table) {
+    IssuesTableRow(final WebElement rowElement, final IssuesDetailsTable table) {
         super();
 
         this.row = rowElement;
-        this.issuesTable = table;
+        this.issuesDetailsTable = table;
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class IssuesTableRow extends GenericTableRow {
      * @return the PageObject representing the target page
      */
     <T extends PageObject> T clickOnLink(final WebElement link, final Class<T> targetPageClass) {
-        return issuesTable.clickLinkOnSite(link, targetPageClass);
+        return issuesDetailsTable.clickLinkOnSite(link, targetPageClass);
     }
 
     /**
@@ -123,7 +123,7 @@ public abstract class IssuesTableRow extends GenericTableRow {
      * @return the headers of the table
      */
     List<String> getHeaders() {
-        return issuesTable.getHeaders();
+        return issuesDetailsTable.getHeaders();
     }
 
     /**
@@ -146,7 +146,7 @@ public abstract class IssuesTableRow extends GenericTableRow {
      */
     public void toggleDetailsRow() {
         getCell(DETAILS).findElement(By.tagName("div")).click();
-        issuesTable.updateTableRows();
+        issuesDetailsTable.updateTableRows();
     }
 
     /**
@@ -183,7 +183,7 @@ public abstract class IssuesTableRow extends GenericTableRow {
      * @return the representation of the filtered AnalysisResult
      */
     private AnalysisResult clickOnFilterLink(final String columnName) {
-        return issuesTable.clickFilterLinkOnSite(findLink(getCell(columnName)));
+        return issuesDetailsTable.clickFilterLinkOnSite(findLink(getCell(columnName)));
     }
 
     /**
