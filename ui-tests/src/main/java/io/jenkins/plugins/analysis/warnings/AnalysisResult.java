@@ -7,16 +7,12 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONArray;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
 
-import net.minidev.json.parser.JSONParser;
-import net.minidev.json.parser.ParseException;
-import net.minidev.json.JSONObject;
 
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
@@ -28,6 +24,7 @@ import io.jenkins.plugins.analysis.warnings.IssuesTable.IssuesTableRowType;
  *
  * @author Stephan Plöderl
  * @author Ullrich Hafner
+ * @author Mitja Oldenbourg
  */
 public class AnalysisResult extends PageObject {
     private static final String[] DRY_TOOLS = {"cpd", "simian", "dupfinder"};
@@ -186,49 +183,41 @@ public class AnalysisResult extends PageObject {
      *
      * @return trendChart Carousel.
      */
-    public WebElement getTrendChart() {
+    private WebElement getTrendChart() {
         return find(By.id("trend-carousel"));
     }
 
+
+    /**
+     * Clicks the next-button to cycle through the Trend Charts.
+     */
     public void clickNextOnTrendCarousel() {
         find(By.className("carousel-control-next-icon")).click();
     }
 
-    public boolean trendChartIsDisplayed(String chartName) {
+    /**
+     * Checks if the trendChart is visible on the Page.
+     *
+     * @param chartName
+     *         id of the Chart we want to evaluate.
+     *
+     * @return boolean value, that describes the visibility of the Trendchart.
+     */
+    public boolean trendChartIsDisplayed(final String chartName) {
         WebElement trendChart = getTrendChart();
         return trendChart.findElement(By.id(chartName)).isDisplayed(); }
 
-
     /**
-     * returns the Severities Trend Chart.
+     * Checks if the trendChart is visible on the Page.
      *
-     * @return severities TrendChart as JSONObject.
-     */
-    public String getSeveritiesTrendChart() throws ParseException {
-        return getChartModel("severities-trend-chart");
-    }
-
-    /**
-     * returns the new versus fixed Trend Chart.
+     * @param elementId
+     *         id of the Chart we want to return.
      *
-     * @return new versus fixed TrendChart as JSONObject.
+     * @return TrendChart as JSON String.
      */
-    public String getNewVersusFixedTrendChart() throws ParseException {
-        return getChartModel("new-versus-fixed-trend-chart");
-    }
-
-    /**
-     * returns the tools Trend Chart.
-     *
-     * @return tools TrendChart as JSONObject.
-     */
-    public String getToolsTrendChart() throws ParseException {
-        return getChartModel("tools-trend-chart");
-    }
-
-    protected String getChartModel(final String elementId) {
+    public String getTrendChartById(final String elementId) {
         Object result = this.executeScript(String.format(
-                "delete(window.Array.prototype.toJSON)"
+                "delete(window.Array.prototype.toJSON) \n"
                         + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
                 elementId));
         ScriptResult scriptResult = new ScriptResult(result);
