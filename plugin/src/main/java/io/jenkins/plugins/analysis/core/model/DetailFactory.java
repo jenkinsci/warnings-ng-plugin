@@ -177,9 +177,18 @@ public class DetailFactory {
     }
 
     private String getDisplayNameOfDetails(final String property, final Report selectedIssues) {
+        if ("origin".equals(property)) {
+            LabelProviderFactory factory = createFactory();
+            return factory.create(getPropertyValueAsString(property, selectedIssues)).getName();
+        }
         return getColumnHeaderFor(selectedIssues, property)
                 + " "
                 + getPropertyValueAsString(property, selectedIssues);
+    }
+
+    @VisibleForTesting
+    private LabelProviderFactory createFactory() {
+        return new LabelProviderFactory(jenkins);
     }
 
     private String getPropertyValueAsString(final String property, final Report selectedIssues) {

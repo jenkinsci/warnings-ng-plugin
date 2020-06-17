@@ -443,55 +443,45 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllSpotBugsIssues() {
-        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
+        String expectedDescription =
+                "<p>This code calls a method and ignores the return value. However our analysis shows that\n"
+                        + "the method (including its implementations in subclasses if any) does not produce any effect\n"
+                        + "other than return value. Thus this call can be removed.\n"
+                        + "</p>\n"
+                        + "<p>We are trying to reduce the false positives as much as possible, but in some cases this warning might be wrong.\n"
+                        + "Common false-positive cases include:</p>\n"
+                        + "<p>- The method is designed to be overridden and produce a side effect in other projects which are out of the scope of the analysis.</p>\n"
+                        + "<p>- The method is called to trigger the class loading which may have a side effect.</p>\n"
+                        + "<p>- The method is called just to get some exception.</p>\n"
+                        + "<p>If you feel that our assumption is incorrect, you can use a @CheckReturnValue annotation\n"
+                        + "to instruct SpotBugs that ignoring the return value of this method is acceptable.\n"
+                        + "</p>";
 
-        assertThatDescriptionOfIssueIsSet(new SpotBugs(), report.get(0),
-                "<p>This code calls a method and ignores the return value. However our analysis shows that\n"
-                        + "the method (including its implementations in subclasses if any) does not produce any effect \n"
-                        + "other than return value. Thus this call can be removed.\n"
-                        + "</p>\n"
-                        + "<p>We are trying to reduce the false positives as much as possible, but in some cases this warning might be wrong.\n"
-                        + "Common false-positive cases include:</p>\n"
-                        + "<p>- The method is designed to be overridden and produce a side effect in other projects which are out of the scope of the analysis.</p>\n"
-                        + "<p>- The method is called to trigger the class loading which may have a side effect.</p>\n"
-                        + "<p>- The method is called just to get some exception.</p>\n"
-                        + "<p>If you feel that our assumption is incorrect, you can use a @CheckReturnValue annotation\n"
-                        + "to instruct FindBugs that ignoring the return value of this method is acceptable.\n"
-                        + "</p>");
-        assertThatDescriptionOfIssueIsSet(new SpotBugs(), reportAnsi.get(0),
-                "<p>This code calls a method and ignores the return value. However our analysis shows that\n"
-                        + "the method (including its implementations in subclasses if any) does not produce any effect \n"
-                        + "other than return value. Thus this call can be removed.\n"
-                        + "</p>\n"
-                        + "<p>We are trying to reduce the false positives as much as possible, but in some cases this warning might be wrong.\n"
-                        + "Common false-positive cases include:</p>\n"
-                        + "<p>- The method is designed to be overridden and produce a side effect in other projects which are out of the scope of the analysis.</p>\n"
-                        + "<p>- The method is called to trigger the class loading which may have a side effect.</p>\n"
-                        + "<p>- The method is called just to get some exception.</p>\n"
-                        + "<p>If you feel that our assumption is incorrect, you can use a @CheckReturnValue annotation\n"
-                        + "to instruct FindBugs that ignoring the return value of this method is acceptable.\n"
-                        + "</p>");
+        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
+        assertThatDescriptionOfIssueIsSet(new SpotBugs(), report.get(0), expectedDescription);
+
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
+        assertThatDescriptionOfIssueIsSet(new SpotBugs(), reportAnsi.get(0), expectedDescription);
     }
 
     /** Runs the SpotBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldProvideMessagesAndDescriptionForSecurityIssuesWithSpotBugs() {
+        String expectedDescription =
+                "<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter.\n"
+                        + "If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>\n"
+                        + "<p>This rule identifies <b>potential</b> path traversal vulnerabilities. In many cases, the constructed file path cannot be controlled\n"
+                        + "by the user. If that is the case, the reported instance is a false positive.</p>";
+
         Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
-
         Issue issue = report.get(0);
-        Issue issueAnsi = reportAnsi.get(0);
-
-        assertThatDescriptionOfIssueIsSet(new SpotBugs(), issue,
-                "<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter. \n"
-                        + "If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>\n");
+        assertThatDescriptionOfIssueIsSet(new SpotBugs(), issue, expectedDescription);
         assertThat(issue).hasMessage(
                 "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
 
-        assertThatDescriptionOfIssueIsSet(new SpotBugs(), issueAnsi,
-                "<p>A file is opened to read its content. The filename comes from an <b>input</b> parameter. \n"
-                        + "If an unfiltered parameter is passed to this file API, files from an arbitrary filesystem location could be read.</p>\n");
+        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
+        Issue issueAnsi = reportAnsi.get(0);
+        assertThatDescriptionOfIssueIsSet(new SpotBugs(), issueAnsi, expectedDescription);
         assertThat(issueAnsi).hasMessage(
                 "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
     }

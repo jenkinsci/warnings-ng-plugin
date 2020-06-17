@@ -19,11 +19,11 @@ class FindBugsMessagesTest {
     /** Bug ID for test. */
     private static final String NP_STORE_INTO_NONNULL_FIELD = "NP_STORE_INTO_NONNULL_FIELD";
     /** Expected number of patterns. */
-    private static final int EXPECTED_PATTERNS = 468;
+    private static final int EXPECTED_PATTERNS = 458;
     /** Expected number of patterns in fb-contrib. */
-    private static final int EXPECTED_CONTRIB_PATTERNS = 302;
+    private static final int EXPECTED_CONTRIB_PATTERNS = 307;
     /** Expected number of patterns in find-sec-bugs. */
-    private static final int EXPECTED_SECURITY_PATTERNS = 128;
+    private static final int EXPECTED_SECURITY_PATTERNS = 135;
     private static final String PATH_TRAVERSAL_IN = "PATH_TRAVERSAL_IN";
 
     @Test
@@ -80,7 +80,7 @@ class FindBugsMessagesTest {
         assertThat(messages.getShortMessage(PATH_TRAVERSAL_IN, Locale.ENGLISH))
                 .isEqualTo("Potential Path Traversal (file read)");
         assertThat(messages.getMessage(PATH_TRAVERSAL_IN, Locale.ENGLISH))
-                .contains("A file is opened to read its content. The filename comes from an <b>input</b> parameter. ");
+                .contains("A file is opened to read its content. The filename comes from an <b>input</b> parameter.");
     }
 
     private List<Pattern> readMessages(final String fileName) {

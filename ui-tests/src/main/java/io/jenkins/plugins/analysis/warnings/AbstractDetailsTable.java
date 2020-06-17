@@ -14,38 +14,37 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * Class representing an issues-table on the {@link AnalysisResult}.
  *
  * @author Stephan Plöderl
+ * @author Kevin Richter
  */
-public class IssuesTable {
+public abstract class AbstractDetailsTable {
     private final AnalysisResult resultDetailsPage;
     private final List<GenericTableRow> tableRows = new ArrayList<>();
     private final List<String> headers;
     private final WebElement tableElement;
-    private final WebElement issuesTab;
-    private final IssuesTableRowType type;
+    private final WebElement tab;
+    private final String tabId;
 
     /**
-     * Creates an IssuesTable of a specific type.
+     * Creates an AbstractDetailsTable of a specific type.
      *
-     * @param issuesTab
-     *         the WebElement containing the issues-tab
+     * @param tab
+     *          the WebElement representing the tab which belongs to the table
+     * @param tabId
+     *          the String representing the DOM element identifier
      * @param resultDetailsPage
-     *         the AnalysisResult on which the issues-table is displayed on
-     * @param type
-     *         the type of the issues-table (e.g. Default or DRY)
+     *         the AnalysisResult on which the table is displayed on
      */
-    public IssuesTable(final WebElement issuesTab, final AnalysisResult resultDetailsPage,
-            final IssuesTableRowType type) {
-        this.issuesTab = issuesTab;
+    public AbstractDetailsTable(final WebElement tab, final String tabId, final AnalysisResult resultDetailsPage) {
+        this.tab = tab;
         this.resultDetailsPage = resultDetailsPage;
-        this.type = type;
+        this.tabId = tabId;
 
-        tableElement = issuesTab.findElement(By.id("issues"));
+        tableElement = tab.findElement(By.id(tabId));
         headers = tableElement.findElements(By.xpath(".//thead/tr/th"))
                 .stream()
                 .map(WebElement::getText)
                 .collect(
                         Collectors.toList());
-        updateTableRows();
     }
 
     /**
@@ -70,7 +69,7 @@ public class IssuesTable {
      * @return the totals
      */
     public int getTotal() {
-        String tableInfo = issuesTab.findElement(By.id("issues_info")).getText();
+        String tableInfo = tab.findElement(By.id(tabId + "_info")).getText();
         String total = StringUtils.substringAfter(tableInfo, "of ");
         return Integer.parseInt(StringUtils.substringBefore(total, " "));
     }
@@ -92,19 +91,8 @@ public class IssuesTable {
      *
      * @return the table row
      */
-    private GenericTableRow getRightTableRow(final WebElement row) {
-        String rowType = row.getAttribute("role");
-        if (StringUtils.equals(rowType, "row")) {
-            if (type == IssuesTableRowType.DRY) {
-                return new DryIssuesTableRow(row, this);
-            }
-            else {
-                return new DefaultIssuesTableRow(row, this);
-            }
-        }
-        else {
-            return new DetailsTableRow(row);
-        }
+    public GenericTableRow getRightTableRow(final WebElement row) {
+        return new DetailsTableRow(row);
     }
 
     /**
@@ -172,10 +160,13 @@ public class IssuesTable {
     }
 
     /**
-     * Supported element types of the issues table.
+     * Performs a click on the page button to open the page of the table.
+     *
+     * @param pageNumber
+     *         the number representing the page to open
      */
-    public enum IssuesTableRowType {
-        DEFAULT,
-        DRY
+    public void openTablePage(final int pageNumber) {
+        resultDetailsPage.clickLink(String.valueOf(pageNumber));
+        this.updateTableRows();
     }
 }

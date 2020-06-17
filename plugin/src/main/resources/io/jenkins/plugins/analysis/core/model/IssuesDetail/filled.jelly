@@ -10,10 +10,10 @@
         <div id="overview-carousel" class="carousel slide" data-interval="false">
           <div class="carousel-inner">
             <div class="carousel-item active">
-              <c:pie-chart id="severities" model="${it.severityModel}" height="256" />
+              <c:pie-chart id="severities" model="${it.severityModel}" height="256" enableLinks="true" />
             </div>
             <div class="carousel-item">
-              <c:pie-chart id="trend" model="${it.trendModel}" height="256" />
+              <c:pie-chart id="trend" model="${it.trendModel}" height="256" enableLinks="true"/>
             </div>
           </div>
           <a class="carousel-control-prev" data-target="#overview-carousel" role="button" data-slide="prev">
@@ -33,7 +33,7 @@
     <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
 
       <bs:card title="${%Severities Distribution}" fontAwesomeIcon="chart-pie">
-        <c:pie-chart id="severities-solo" model="${it.severityModel}" height="256" />
+        <c:pie-chart id="severities-solo" model="${it.severityModel}" height="256" enableLinks="true" />
       </bs:card>
 
     </div>
@@ -42,7 +42,7 @@
     <div class="col-xl-3 col-xxl-2 d-none d-xl-block">
 
       <bs:card title="${%Reference Comparison}" fontAwesomeIcon="bell">
-        <c:pie-chart id="trend-solo" model="${it.trendModel}" height="256" />
+        <c:pie-chart id="trend-solo" model="${it.trendModel}" height="256" enableLinks="true" />
       </bs:card>
 
     </div>
