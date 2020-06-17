@@ -73,7 +73,7 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
      * Verifies Severity Chart after a series of 2 builds.
      *
      * @param severitiesTrendChart
-     *         ONObject with values from Severities Trendchart
+     *         JSONString with values from Severities Trendchart
      */
     private void verifySeveritiesChart(final String severitiesTrendChart) {
         assertThatJson(severitiesTrendChart)
@@ -105,7 +105,7 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
      * Verifies Tools Chart after a series of 2 builds.
      *
      * @param toolsTrendChart
-     *         ONObject with values from Severities Tools TrendChart
+     *         JSONString with values from Severities Tools TrendChart
      */
     private void verifyToolsChart(final String toolsTrendChart) {
         assertThatJson(toolsTrendChart)
@@ -127,7 +127,7 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
      * Verifies New-Versus-Fixed Chart after a series of 2 builds.
      *
      * @param newVersusFixedTrendChart
-     *         ONObject with values from Severities new Versus Fixed TrendChart
+     *         JSONString with values from Severities new Versus Fixed TrendChart
      */
     private void verifyNewVersusFixedChart(final String newVersusFixedTrendChart) {
         assertThatJson(newVersusFixedTrendChart)
