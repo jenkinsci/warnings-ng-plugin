@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
+import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
@@ -80,9 +81,13 @@ public class SmokeTests extends UiTest {
     /**
      * Runs a freestyle job with all tools two times. Verifies the analysis results in several views.
      */
-    @Test
+    @Test @WithPlugins("cloudbees-folder")
     public void shouldShowBuildSummaryAndLinkToDetails() {
-        FreeStyleJob job = createFreeStyleJob("build_status_test/build_01");
+        Folder folder = jenkins.jobs.create(Folder.class, "folder");
+        FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
+        ScrollerUtil.hideScrollerTabBar(driver);
+
+        job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
 
         addAllRecorders(job);
         job.save();
