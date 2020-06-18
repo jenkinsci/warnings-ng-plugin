@@ -1,13 +1,20 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.List;
+import java.util.Map;
+
 import org.junit.Test;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
+import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
+import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
+
+import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -57,6 +64,18 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+
+        // Dashboard UI-Tests
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+        List<String> headers = dashboardTable.getHeaders();
+        assertThat(headers).containsExactly("Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/pmd-24x24.png");
+
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+        assertThat(table.get(job.name).get("/findbugs-24x24.png")).hasWarningsCount(0);
+        assertThat(table.get(job.name).get("/checkstyle-24x24.png")).hasWarningsCount(3);
+        assertThat(table.get(job.name).get("/pmd-24x24.png")).hasWarningsCount(2);
+        assertThat(table.get(job.name).get("/dry-24x24.png")).hasWarningsCount(20);
     }
 
     private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
@@ -102,6 +121,16 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+
+        // Dashboard UI-Tests
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+        List<String> headers = dashboardTable.getHeaders();
+        assertThat(headers.size()).isZero();
+
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+        assertThat(table.size()).isZero();
+
     }
 
     private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
