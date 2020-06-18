@@ -1,6 +1,5 @@
 package core;
 
-import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 
@@ -19,7 +18,6 @@ import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.plugins.git.GitScm;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
-import org.jenkinsci.test.acceptance.po.Job;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult;
@@ -226,7 +224,7 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
 
         assertThat(forensicsTable.getTableRows()).hasSize(1);
         assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
-        assertColumnsOfRow(row, "Test.java", 1);
+        assertColumnsOfRow(row, "Test.java", 1, 1);
     }
 
     @Test
@@ -263,7 +261,7 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
 
         assertThat(forensicsTable.getTableRows()).hasSize(10);
         assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
-        assertMultipleIssues(forensicsTable, 1);
+        assertMultipleIssuesAndAuthors(forensicsTable, 1, 1);
     }
 
     @Test
@@ -291,11 +289,11 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
 
         assertThat(forensicsTable.getTableRows()).hasSize(10);
         assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
-        assertMultipleIssues(forensicsTable, 1);
+        assertMultipleIssuesAndAuthors(forensicsTable, 1, 1);
     }
 
     @Test
-    public void shouldShowGitForensicsMultipleIssuesWithMultipleCommits() {
+    public void shouldShowGitForensicsMultipleIssuesWithMultipleCommitsAndAuthors() {
         GitRepo repo = new GitRepo();
         GitUtils.commitDifferentFilesToGitRepository(repo);
         repo.setIdentity("Alice Miller", "alice@miller");
@@ -325,7 +323,7 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
 
         assertThat(forensicsTable.getTableRows()).hasSize(10);
         assertThat(forensicsTable.getHeaders()).containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
-        assertMultipleIssues(forensicsTable, 2);
+        assertMultipleIssuesAndAuthors(forensicsTable, 2, 2);
     }
 
     private void assertElevenIssues(final Map<String, String> commits, final BlamesTable table) {
@@ -371,25 +369,25 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
         assertThat(table.getHeaders()).containsExactly(DETAILS, FILE, AGE, AUTHOR, EMAIL, COMMIT, ADDED);
     }
 
-    private void assertColumnsOfRow(final ForensicsTableRow row, final String filename, final int commits) {
+    private void assertColumnsOfRow(final ForensicsTableRow row, final String filename, final int commits, final int authors) {
         assertThat(row.getFileName()).isEqualTo(filename);
         assertThat(row.getAge()).isEqualTo(1);
-        assertThat(row.getAuthors()).isEqualTo(1);
+        assertThat(row.getAuthors()).isEqualTo(authors);
         assertThat(row.getCommits()).isEqualTo(commits);
         assertThat(row.getLastCommit()).isNotNull();
         assertThat(row.getAdded()).isNotNull();
     }
 
-    private void assertMultipleIssues(final ForensicsTable forensicsTable, final int commits) {
-        assertColumnsOfRow(forensicsTable.getRowAs(0, ForensicsTableRow.class), "Bob.java", 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(1, ForensicsTableRow.class), "Bob.java", 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(2, ForensicsTableRow.class), "Bob.java", 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(3, ForensicsTableRow.class), "LoremIpsum.java", commits);
-        assertColumnsOfRow(forensicsTable.getRowAs(5, ForensicsTableRow.class), "LoremIpsum.java", commits);
-        assertColumnsOfRow(forensicsTable.getRowAs(6, ForensicsTableRow.class), "LoremIpsum.java", commits);
-        assertColumnsOfRow(forensicsTable.getRowAs(7, ForensicsTableRow.class), "Test.java", 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(8, ForensicsTableRow.class), "Test.java", 1);
-        assertColumnsOfRow(forensicsTable.getRowAs(9, ForensicsTableRow.class), "Test.java", 1);
+    private void assertMultipleIssuesAndAuthors(final ForensicsTable forensicsTable, final int commits, final int authors) {
+        assertColumnsOfRow(forensicsTable.getRowAs(0, ForensicsTableRow.class), "Bob.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(1, ForensicsTableRow.class), "Bob.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(2, ForensicsTableRow.class), "Bob.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(3, ForensicsTableRow.class), "LoremIpsum.java", commits, authors);
+        assertColumnsOfRow(forensicsTable.getRowAs(5, ForensicsTableRow.class), "LoremIpsum.java", commits, authors);
+        assertColumnsOfRow(forensicsTable.getRowAs(6, ForensicsTableRow.class), "LoremIpsum.java", commits, authors);
+        assertColumnsOfRow(forensicsTable.getRowAs(7, ForensicsTableRow.class), "Test.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(8, ForensicsTableRow.class), "Test.java", 1, 1);
+        assertColumnsOfRow(forensicsTable.getRowAs(9, ForensicsTableRow.class), "Test.java", 1, 1);
     }
 
     private Build generateFreeStyleJob(final GitRepo repo) {
