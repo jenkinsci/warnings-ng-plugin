@@ -1,2 +1,3 @@
 "Benchmark","Mode","Threads","Samples","Score","Score Error (99.9%)","Unit"
-"io.jenkins.plugins.analysis.warnings.benchmark.StepsBenchmarkITest.benchmark","avgt",1,10,0.000070,0.000017,"s/op"
+"io.jenkins.plugins.analysis.warnings.benchmark.DeltaReportBenchmarkTest.benchmarkDeltaReportCreation","avgt",1,10,0.000179,0.000002,"s/op"
+"io.jenkins.plugins.analysis.warnings.benchmark.DeltaReportBenchmarkTest.benchmarkIssueStatisticsCreation","avgt",1,10,0.000002,0.000000,"s/op"

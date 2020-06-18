@@ -9,7 +9,13 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import jenkins.benchmark.jmh.BenchmarkFinder;
 
 
+/**
+ * Runner for all Benchmark Tests annotated with @Benchmark inside @JmhBenchmark annotated classes.
+ */
 public class BenchmarkRunner {
+    /**
+     * Runs all performance benchmark tests and creates result file.
+     */
     @Test
     public void runJmhBenchmarks() throws Exception {
         ChainedOptionsBuilder options = new OptionsBuilder()
