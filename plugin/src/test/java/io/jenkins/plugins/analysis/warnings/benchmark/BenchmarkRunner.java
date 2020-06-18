@@ -1,34 +1,30 @@
 package io.jenkins.plugins.analysis.warnings.benchmark;
 
 import org.junit.jupiter.api.Test;
-import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.options.ChainedOptionsBuilder;
+import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import jenkins.benchmark.jmh.BenchmarkFinder;
-
 
 /**
- * Main class for Benchmark tests
- * Add "-Djmh.separateClasspathJAR=true" to your vm options in the Run Configuration
+ * Simple Runner to execute Benchmarks and write result to file {@code jmh-report.json}
  *
  * @author Andreas Riepl
  * @author Oliver Scholz
  */
-class BenchmarkRunner {
+public class BenchmarkRunner {
 
     @Test
-    void runJmhBenchmarks() throws Exception {
-        ChainedOptionsBuilder options = new OptionsBuilder()
-                .mode(Mode.AverageTime)
-                .forks(2)
-                .threads(1)
+    public void benchmark() throws Exception {
+        Options opt = new OptionsBuilder()
+                .include(TaskScannerBenchmarkTest.class.getSimpleName())
+                .addProfiler(StackProfiler.class)
+                .result("jmh-report.json")
                 .resultFormat(ResultFormatType.JSON)
-                .result("jmh-report.json");
+                .build();
 
-        // Automatically detect benchmark classes annotated with @JmhBenchmark
-        new BenchmarkFinder(getClass()).findBenchmarks(options);
-        new Runner(options.build()).run();
+        new Runner(opt).run();
     }
+
 }

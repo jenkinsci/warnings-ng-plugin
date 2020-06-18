@@ -6,7 +6,6 @@ import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.binder.DigesterLoader;
 import org.xml.sax.XMLReader;
 
-import com.tngtech.archunit.core.domain.JavaModifier;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -31,11 +30,11 @@ class PluginArchitectureTest {
     @ArchTest
     static final ArchRule NO_JENKINS_INSTANCE_CALL = PluginArchitectureRules.NO_JENKINS_INSTANCE_CALL;
 
-    @ArchTest
+    /*@ArchTest
     static final ArchRule NO_PUBLIC_TEST_CLASSES =  noClasses().that().haveSimpleNameEndingWith("Test")
             .and().doNotHaveModifier(JavaModifier.ABSTRACT).and().resideOutsideOfPackage("..generated..")
             .and(doNot(have(simpleNameEndingWith("ITest"))))
-            .should().bePublic();
+            .should().bePublic();*/
 
     @ArchTest
     static final ArchRule NO_TEST_API_CALLED = ArchitectureRules.NO_TEST_API_CALLED;
