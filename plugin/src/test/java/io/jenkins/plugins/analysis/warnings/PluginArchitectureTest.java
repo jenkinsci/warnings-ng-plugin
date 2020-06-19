@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.Serializable;
 import javax.xml.parsers.SAXParser;
 
 import org.apache.commons.digester3.Digester;
@@ -11,6 +12,12 @@ import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
 import edu.hm.hafner.util.ArchitectureRules;
+
+import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.bind.JavaScriptMethod;
+
+import hudson.Extension;
 
 import io.jenkins.plugins.util.PluginArchitectureRules;
 
@@ -60,4 +67,32 @@ class PluginArchitectureTest {
                             .or(have(simpleNameStartingWith("Integration")))
                             .or(have(simpleName("ToolsLister")))))
                     .should().dependOnClassesThat().resideInAnyPackage("org.junit");
+
+    @ArchTest
+    static final ArchRule JAVASCRIPTMETHOD_PUBLIC_CLASS =
+            methods().that().areAnnotatedWith(JavaScriptMethod.class)
+                    .should().beDeclaredInClassesThat().arePublic();
+
+    @ArchTest
+    static final ArchRule EXTENSION_PUBLIC_CLASS =
+            classes().that().areAnnotatedWith(Extension.class)
+                    .should().bePublic();
+
+    @ArchTest
+    static final ArchRule DATABOUND_PUBLIC_CLASS_AND_CONSTRUCTOR =
+            constructors().that().areAnnotatedWith(DataBoundConstructor.class)
+                    .should().bePublic()
+                    .andShould().beDeclaredInClassesThat().arePublic();
+
+    @ArchTest
+    static final ArchRule JAVASCRIPTMETHOD_AND_DATABOUND_PUBLIC_METHOD =
+            methods().that().areAnnotatedWith(JavaScriptMethod.class)
+                    .or().areAnnotatedWith(DataBoundSetter.class)
+                    .should().bePublic();
+
+    @ArchTest
+    static final ArchRule READRESOLVE_SERIALIZABLE_CLASS =
+            methods().that().haveFullName("readResolve").and().haveRawReturnType(Object.class)
+                    .should().beDeclaredInClassesThat().implement(Serializable.class)
+                    .andShould().beProtected();
 }
