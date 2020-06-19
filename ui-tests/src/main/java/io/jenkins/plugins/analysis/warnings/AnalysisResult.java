@@ -10,13 +10,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
-
-
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
+import io.jenkins.plugins.analysis.warnings.BlamesTable.BlamesTableRowType;
+import io.jenkins.plugins.analysis.warnings.ForensicsTable.ForensicsTableRowType;
 
 import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.IssuesTableRowType;
 
@@ -118,6 +117,29 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
+     *
+     * @return
+     */
+    private BlamesTableRowType getBlamesTableType() {
+        if (ArrayUtils.contains(DRY_TOOLS, id)) {
+            return BlamesTableRowType.DRY;
+        }
+        return BlamesTableRowType.DEFAULT;
+    }
+
+    /**
+     * Returns the type of the rows in the forensics table.
+     *
+     * @return the row type
+     */
+    private ForensicsTableRowType getForensicsTableType() {
+        if (ArrayUtils.contains(DRY_TOOLS, id)) {
+            return ForensicsTableRowType.DRY;
+        }
+        return ForensicsTableRowType.DEFAULT;
+    }
+    
+    /**
      * Reloads the {@link PageObject}.
      */
     public void reload() {
@@ -164,6 +186,26 @@ public class AnalysisResult extends PageObject {
 
         WebElement table = find(By.id(tab.contentId));
         return new PropertyDetailsTable(table, this, tab.property);
+    }
+
+    public BlamesTable openBlamesTable() {
+        openTab(Tab.BLAMES);
+
+        WebElement blamesTab = find(By.id("blamesContent"));
+        return new BlamesTable(blamesTab, this, getBlamesTableType());
+    }
+
+    /**
+     * Opens the analysis details page, selects the tab {@link Tab#FORENSICS} and returns the {@link PageObject} of the
+     * forensics table.
+     *
+     * @return page object of the forensics table.
+     */
+    public ForensicsTable openForensicsTable() {
+        openTab(Tab.FORENSICS);
+
+        WebElement forensicsTab = find(By.id("forensicsContent"));
+        return new ForensicsTable(forensicsTab, this, getForensicsTableType());
     }
 
     /**
@@ -299,7 +341,8 @@ public class AnalysisResult extends PageObject {
         CATEGORIES("category"),
         TYPES("type"),
         ISSUES("issues"),
-        BLAMES("scm");
+        BLAMES("blames"),
+        FORENSICS("forensics");
 
         private final String contentId;
         private final String property;
