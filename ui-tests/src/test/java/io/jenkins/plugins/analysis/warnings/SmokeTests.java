@@ -31,7 +31,7 @@ public class SmokeTests extends UiTest {
      * the expansion of tokens with the token-macro plugin.
      */
     @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
+    @WithPlugins({"dashboard-view", "token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldRecordIssuesInPipelineAndExpandTokens() {
         WorkflowJob job = jenkins.jobs.create(WorkflowJob.class);
         job.sandbox.check();
