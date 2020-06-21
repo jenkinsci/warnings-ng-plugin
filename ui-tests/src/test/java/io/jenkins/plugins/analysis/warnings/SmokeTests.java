@@ -106,7 +106,7 @@ public class SmokeTests extends UiTest {
         verifyCheckStyle(build);
         verifyCpd(build);
 
-        jenkins.open();
+        folder.open();
         verifyIssuesColumnResults(build, job.name);
     }
 
