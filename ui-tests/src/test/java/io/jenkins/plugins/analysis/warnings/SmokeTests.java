@@ -57,6 +57,9 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+
+        jenkins.open();
+        verifyIssuesColumnResults(build, job.name);
     }
 
     private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
@@ -102,6 +105,9 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+
+        jenkins.open();
+        verifyIssuesColumnResults(build, job.name);
     }
 
     private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
@@ -112,5 +118,12 @@ public class SmokeTests extends UiTest {
                     "/build_status_test/build_0" + build + "/" + fileName).replace("\\", "\\\\"));
         }
         return resourceCopySteps;
+    }
+
+    private void verifyIssuesColumnResults(final Build build, final String jobName ) {
+        IssuesColumn column = new IssuesColumn(build, jobName);
+
+        String issueCount = column.getIssuesCountTextFromTable();
+        assertThat(issueCount).isEqualTo("25");
     }
 }
