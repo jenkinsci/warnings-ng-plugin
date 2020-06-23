@@ -13,6 +13,7 @@ import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenModuleSet;
 import org.jenkinsci.test.acceptance.po.Build;
+import org.jenkinsci.test.acceptance.po.Container;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Job;
 
@@ -259,7 +260,11 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs, final boolean showIcons) {
-        DashboardView view = createDashboardView();
+        return createDashboardWithStaticAnalysisPortlet(jenkins, hideCleanJobs, showIcons);
+    }
+
+    protected DashboardView createDashboardWithStaticAnalysisPortlet(final Container container, final boolean hideCleanJobs, final boolean showIcons) {
+        DashboardView view = createDashboardView(container);
         StaticAnalysisIssuesPerToolAndJobPortlet portlet = view.addTopPortlet(StaticAnalysisIssuesPerToolAndJobPortlet.class);
         if (hideCleanJobs) {
             portlet.toggleHideCleanJobs();
@@ -273,7 +278,11 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     private DashboardView createDashboardView() {
-        DashboardView view = jenkins.views.create(DashboardView.class);
+        return createDashboardView(jenkins);
+    }
+
+    private DashboardView createDashboardView(final Container container) {
+        DashboardView view = container.getViews().create(DashboardView.class);
         view.configure();
         view.matchAllJobs();
         return view;

@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
@@ -14,8 +13,7 @@ import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 
-import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Smoke tests for the Warnings Next Generation Plugin. These tests are invoked during the validation of pull requests
@@ -24,14 +22,14 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-@WithPlugins("warnings-ng")
+@WithPlugins({"warnings-ng", "dashboard-view"})
 public class SmokeTests extends UiTest {
     /**
      * Runs a pipeline with all tools two times. Verifies the analysis results in several views. Additionally, verifies
      * the expansion of tokens with the token-macro plugin.
      */
     @Test
-    @WithPlugins({"dashboard-view", "token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
+    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldRecordIssuesInPipelineAndExpandTokens() {
         WorkflowJob job = jenkins.jobs.create(WorkflowJob.class);
         job.sandbox.check();
@@ -68,14 +66,19 @@ public class SmokeTests extends UiTest {
         // Dashboard UI-Tests
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
-        List<String> headers = dashboardTable.getHeaders();
-        assertThat(headers).containsExactly("Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/pmd-24x24.png");
+
+        verifyDashboardTablePortlet(dashboardTable, job.name);
+    }
+
+    private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
+        assertThat(dashboardTable.getHeaders()).containsExactly(
+                "Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/pmd-24x24.png");
 
         Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
-        assertThat(table.get(job.name).get("/findbugs-24x24.png")).hasWarningsCount(0);
-        assertThat(table.get(job.name).get("/checkstyle-24x24.png")).hasWarningsCount(3);
-        assertThat(table.get(job.name).get("/pmd-24x24.png")).hasWarningsCount(2);
-        assertThat(table.get(job.name).get("/dry-24x24.png")).hasWarningsCount(20);
+        assertThat(table.get(jobName).get("/findbugs-24x24.png")).hasWarningsCount(0);
+        assertThat(table.get(jobName).get("/checkstyle-24x24.png")).hasWarningsCount(3);
+        assertThat(table.get(jobName).get("/pmd-24x24.png")).hasWarningsCount(2);
+        assertThat(table.get(jobName).get("/dry-24x24.png")).hasWarningsCount(20);
     }
 
     private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
@@ -123,14 +126,10 @@ public class SmokeTests extends UiTest {
         verifyCpd(build);
 
         // Dashboard UI-Tests
-        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(folder, false, true);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
-        List<String> headers = dashboardTable.getHeaders();
-        assertThat(headers.size()).isZero();
 
-        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
-        assertThat(table.size()).isZero();
-
+        verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
     }
 
     private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
