@@ -1,8 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.List;
+
 import java.util.Map;
 
 import org.junit.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
@@ -11,6 +15,10 @@ import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
+import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
+
+import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
@@ -62,6 +70,7 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+        verifyDetailsTab(build);
 
         jenkins.open();
         verifyIssuesColumnResults(build, job.name);
@@ -127,6 +136,7 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+        verifyDetailsTab(build);
 
         folder.open();
         verifyIssuesColumnResults(build, job.name);
@@ -136,6 +146,21 @@ public class SmokeTests extends UiTest {
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
         verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
+    }
+
+    private void verifyDetailsTab(final Build build) {
+        build.open();
+
+        AnalysisResult resultPage = new AnalysisResult(build, "checkstyle");
+        resultPage.open();
+        assertThat(resultPage).hasOnlyAvailableTabs(Tab.ISSUES, Tab.TYPES, Tab.CATEGORIES);
+        PropertyDetailsTable categoriesDetailsTable = resultPage.openPropertiesTable(Tab.CATEGORIES);
+        assertThat(categoriesDetailsTable).hasHeaders("Category", "Total", "Distribution");
+        assertThat(categoriesDetailsTable).hasSize(2).hasTotal(2);
+
+        WebElement categoryPaginate = resultPage.getPaginateElementByActiveTab();
+        List<WebElement> categoryPaginateButtons = categoryPaginate.findElements(By.cssSelector("ul li"));
+        assertThat(categoryPaginateButtons.size()).isEqualTo(1);
     }
 
     private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
