@@ -37,7 +37,7 @@
     <jquery3-api.version>3.5.1-1</jquery3-api.version>
     <bootstrap4-api.version>4.5.0-1</bootstrap4-api.version>
     <data-tables-api.version>1.10.21-2</data-tables-api.version>
-    <echarts-api.version>4.7.0-5-rc257.c2049d878da1</echarts-api.version>
+    <echarts-api.version>4.8.0-1</echarts-api.version>
 
     <commons.lang.version>3.10</commons.lang.version>
     <commons.io.version>2.7</commons.io.version>

@@ -2,11 +2,14 @@ package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
 
+import java.util.Map;
+
 import org.junit.Test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
+import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
@@ -16,6 +19,9 @@ import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.*;
+import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
+
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Smoke tests for the Warnings Next Generation Plugin. These tests are invoked during the validation of pull requests
@@ -24,7 +30,7 @@ import static org.assertj.core.api.Assertions.*;
  *
  * @author Ullrich Hafner
  */
-@WithPlugins("warnings-ng")
+@WithPlugins({"warnings-ng", "dashboard-view"})
 public class SmokeTests extends UiTest {
     /**
      * Runs a pipeline with all tools two times. Verifies the analysis results in several views. Additionally, verifies
@@ -64,6 +70,27 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+        verifyDetailsTab(build);
+
+        jenkins.open();
+        verifyIssuesColumnResults(build, job.name);
+
+        // Dashboard UI-Tests
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+
+        verifyDashboardTablePortlet(dashboardTable, job.name);
+    }
+
+    private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
+        assertThat(dashboardTable.getHeaders()).containsExactly(
+                "Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/pmd-24x24.png");
+
+        Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
+        assertThat(table.get(jobName).get("/findbugs-24x24.png")).hasWarningsCount(0);
+        assertThat(table.get(jobName).get("/checkstyle-24x24.png")).hasWarningsCount(3);
+        assertThat(table.get(jobName).get("/pmd-24x24.png")).hasWarningsCount(2);
+        assertThat(table.get(jobName).get("/dry-24x24.png")).hasWarningsCount(20);
     }
 
     private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
@@ -110,11 +137,17 @@ public class SmokeTests extends UiTest {
         verifyCheckStyle(build);
         verifyCpd(build);
         verifyDetailsTab(build);
+
+        folder.open();
+        verifyIssuesColumnResults(build, job.name);
+
+        // Dashboard UI-Tests
+        DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(folder, false, true);
+        DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
+
+        verifyDashboardTablePortlet(dashboardTable, String.format("%s » %s", folder.name, job.name));
     }
 
-    /**
-     * Asserts correct display of Page Objects in the details section of a CheckStyle result page.
-     */
     private void verifyDetailsTab(final Build build) {
         build.open();
 
@@ -138,5 +171,12 @@ public class SmokeTests extends UiTest {
                     "/build_status_test/build_0" + build + "/" + fileName).replace("\\", "\\\\"));
         }
         return resourceCopySteps;
+    }
+
+    private void verifyIssuesColumnResults(final Build build, final String jobName ) {
+        IssuesColumn column = new IssuesColumn(build, jobName);
+
+        String issueCount = column.getIssuesCountTextFromTable();
+        assertThat(issueCount).isEqualTo("25");
     }
 }
