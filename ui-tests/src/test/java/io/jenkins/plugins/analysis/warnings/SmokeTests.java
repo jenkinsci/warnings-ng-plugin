@@ -63,6 +63,9 @@ public class SmokeTests extends UiTest {
         verifyCheckStyle(build);
         verifyCpd(build);
 
+        jenkins.open();
+        verifyIssuesColumnResults(build, job.name);
+
         // Dashboard UI-Tests
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
@@ -125,6 +128,9 @@ public class SmokeTests extends UiTest {
         verifyCheckStyle(build);
         verifyCpd(build);
 
+        folder.open();
+        verifyIssuesColumnResults(build, job.name);
+
         // Dashboard UI-Tests
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(folder, false, true);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
@@ -140,5 +146,12 @@ public class SmokeTests extends UiTest {
                     "/build_status_test/build_0" + build + "/" + fileName).replace("\\", "\\\\"));
         }
         return resourceCopySteps;
+    }
+
+    private void verifyIssuesColumnResults(final Build build, final String jobName ) {
+        IssuesColumn column = new IssuesColumn(build, jobName);
+
+        String issueCount = column.getIssuesCountTextFromTable();
+        assertThat(issueCount).isEqualTo("25");
     }
 }
