@@ -1,5 +1,6 @@
-package core;
+package io.jenkins.plugins.analysis.warnings;
 
+import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 
@@ -15,18 +16,11 @@ import org.jenkinsci.test.acceptance.junit.DockerTest;
 import org.jenkinsci.test.acceptance.junit.WithCredentials;
 import org.jenkinsci.test.acceptance.junit.WithDocker;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
+import org.jenkinsci.test.acceptance.plugins.git.GitRepo;
 import org.jenkinsci.test.acceptance.plugins.git.GitScm;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
-
-import io.jenkins.plugins.analysis.warnings.AnalysisResult;
-import io.jenkins.plugins.analysis.warnings.AnalysisSummary;
-import io.jenkins.plugins.analysis.warnings.BlamesTable;
-import io.jenkins.plugins.analysis.warnings.BlamesTableRow;
-import io.jenkins.plugins.analysis.warnings.ForensicsTable;
-import io.jenkins.plugins.analysis.warnings.ForensicsTableRow;
-import io.jenkins.plugins.analysis.warnings.IssuesRecorder;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -35,7 +29,6 @@ import static org.assertj.core.api.Assertions.*;
 @WithPlugins({"git", "git-forensics"})
 @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {"gitplugin", "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe"})
 public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
-
     @Inject
     DockerContainerHolder<GitContainer> gitServer;
 
@@ -53,6 +46,54 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     private static final String COMMIT = "Commit";
     private static final String ADDED = "Added";
 
+    /**
+     * Setups a GitRepo with one initial commit.
+     *
+     * @return a GitRepo
+     */
+    private GitRepo setupInitialGitRepository() {
+        GitRepo repo = new GitRepo();
+        repo.setIdentity("Git SampleRepoRule", "gits@mplereporule");
+        repo.changeAndCommitFile("file", "Initial Commit", "init");
+        return repo;
+    }
+
+    /**
+     * Commits multiple files to a given GitRepo.
+     *
+     * @param repo to add commits
+     * @return Map with filename and the commit hash
+     */
+    private Map<String, String> commitDifferentFilesToGitRepository(final GitRepo repo) {
+        Map<String, String> commits = new HashMap<>();
+
+        repo.setIdentity("Git SampleRepoRule", "gits@mplereporule");
+        repo.changeAndCommitFile("Test.java", "public class Test {\n"
+                + "    public Test() {\n"
+                + "        System.out.println(\"Test\");"
+                + "    }\n"
+                + "}", "commit");
+        commits.put("Test", repo.getLastSha1());
+
+        repo.setIdentity("John Doe", "john@doe");
+        repo.changeAndCommitFile("LoremIpsum.java", "public class LoremIpsum {\n"
+                + "    public LoremIpsum() {\n"
+                + "        Log.log(\"Lorem ipsum dolor sit amet\");"
+                + "    }\n"
+                + "}", "commit");
+        commits.put("LoremIpsum", repo.getLastSha1());
+
+        repo.setIdentity("Alice Miller", "alice@miller");
+        repo.changeAndCommitFile("Bob.java", "public class Bob {\n"
+                + "    public Bob() {\n"
+                + "        Log.log(\"Bob: 'Where are you?'\");"
+                + "    }\n"
+                + "}", "commit");
+        commits.put("Bob", repo.getLastSha1());
+
+        return commits;
+    }
+
     @Before
     public void initGitRepository() {
         container = gitServer.get();
@@ -63,12 +104,10 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
 
     @Test
     public void shouldBlameOneIssueWithFreestyle() {
-        GitRepo repo = GitUtils.setupInitialGitRepository();
-        repo.commitFileWithMessage("commit", "Test.java",
-                "public class Test {}");
+        GitRepo repo = setupInitialGitRepository();
+        repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
         String commitId = repo.getLastSha1();
-        repo.commitFileWithMessage("commit", "warnings.txt",
-                "[javac] Test.java:1: warning: Test Warning for Jenkins");
+        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins", "commit");
 
         Build build = generateFreeStyleJob(repo);
         build.open();
@@ -86,27 +125,25 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     @Test
     public void shouldBlameElevenIssuesWithPipeline() throws Exception {
         GitRepo repo = new GitRepo();
-        Map<String, String> commits = GitUtils.commitDifferentFilesToGitRepository(repo);
-        repo.commitFileWithMessage("commit", "Jenkinsfile",
-                "node {\n"
-                        + "  stage ('Checkout') {\n"
-                        + "    checkout scm\n"
-                        + "  }\n"
-                        + "  stage ('Build and Analysis') {"
-                        + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
-                        + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
-                        + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
-                        + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
-                        + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
-                        + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
-                        + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
-                        + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
-                        + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
-                        + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
-                        + "    recordIssues tools: [java()]\n"
-                        + "  }\n"
-                        + "}"
-        );
+        Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
+        repo.changeAndCommitFile("Jenkinsfile", "node {\n"
+                + "  stage ('Checkout') {\n"
+                + "    checkout scm\n"
+                + "  }\n"
+                + "  stage ('Build and Analysis') {"
+                + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
+                + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
+                + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
+                + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
+                + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
+                + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
+                + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
+                + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
+                + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
+                + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
+                + "    recordIssues tools: [java()]\n"
+                + "  }\n"
+                + "}", "commit");
 
         Build build = generateWorkflowJob(repo);
         build.open();
@@ -123,9 +160,8 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     @Test
     public void shouldBlameElevenIssuesWithFreestyle() throws Exception {
         GitRepo repo = new GitRepo();
-        Map<String, String> commits = GitUtils.commitDifferentFilesToGitRepository(repo);
-        repo.commitFileWithMessage("commit", "warnings.txt",
-                "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
+        Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
+        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
                         + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
                         + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
                         + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
@@ -134,7 +170,8 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
                         + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
                         + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
                         + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins");
+                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins",
+                "commit");
 
         Build build = generateFreeStyleJob(repo);
         build.open();
@@ -157,12 +194,12 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     @Test
     @Issue("JENKINS-57260")
     public void shouldBlameWithBuildOutOfTree() throws Exception {
-        GitRepo repo = GitUtils.setupInitialGitRepository();
-        repo.commitFileWithMessage("commit", "Test.h", "#ifdef \"");
+        GitRepo repo = setupInitialGitRepository();
+        repo.changeAndCommitFile("Test.h", "#ifdef \"", "commit");
 
         String firstCommit = repo.getLastSha1();
 
-        repo.commitFileWithMessage("commit", "Jenkinsfile", "pipeline {\n"
+        repo.changeAndCommitFile("Jenkinsfile", "pipeline {\n"
                 + "  agent any\n"
                 + "  options {\n"
                 + "    skipDefaultCheckout()\n"
@@ -188,7 +225,7 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
                 + "      }\n"
                 + "    }\n"
                 + "  }\n"
-                + "}");
+                + "}", "commit");
 
         Build build = generateWorkflowJob(repo);
         build.open();
@@ -209,10 +246,10 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
 
     @Test
     public void shouldShowGitForensicsOneIssue() {
-        GitRepo repo = GitUtils.setupInitialGitRepository();
-        repo.commitFileWithMessage("commit", "Test.java", "public class Test {}");
-        repo.commitFileWithMessage("commit", "warnings.txt",
-                "[javac] Test.java:1: warning: Test Warning for Jenkins");
+        GitRepo repo = setupInitialGitRepository();
+        repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
+        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
+                "commit");
 
         Build build = generateFreeStyleJob(repo);
         build.open();
@@ -230,9 +267,8 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     @Test
     public void shouldShowGitForensicsMultipleIssuesWithPipeline() {
         GitRepo repo = new GitRepo();
-        GitUtils.commitDifferentFilesToGitRepository(repo);
-        repo.commitFileWithMessage("commit", "Jenkinsfile",
-                "node {\n"
+        commitDifferentFilesToGitRepository(repo);
+        repo.changeAndCommitFile("Jenkinsfile", "node {\n"
                         + "  stage ('Checkout') {\n"
                         + "    checkout scm\n"
                         + "  }\n"
@@ -249,7 +285,8 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
                         + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
                         + "    recordIssues tools: [java()]\n"
                         + "  }\n"
-                        + "}"
+                        + "}",
+                "commit"
         );
 
         Build build = generateWorkflowJob(repo);
@@ -267,18 +304,17 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     @Test
     public void shouldShowGitForensicsMultipleIssuesWithFreestyle() {
         GitRepo repo = new GitRepo();
-        GitUtils.commitDifferentFilesToGitRepository(repo);
-        repo.commitFileWithMessage("commit", "warnings.txt",
-                "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
-                        + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
-                        + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
-                        + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins");
+        commitDifferentFilesToGitRepository(repo);
+        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
+                + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
+                + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
+                + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
+                + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
+                + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
+                + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
+                + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
+                + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
+                + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins", "commit");
 
         Build build = generateFreeStyleJob(repo);
         build.open();
@@ -295,15 +331,14 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     @Test
     public void shouldShowGitForensicsMultipleIssuesWithMultipleCommitsAndAuthors() {
         GitRepo repo = new GitRepo();
-        GitUtils.commitDifferentFilesToGitRepository(repo);
+        commitDifferentFilesToGitRepository(repo);
         repo.setIdentity("Alice Miller", "alice@miller");
-        repo.commitFileWithMessage("commit", "LoremIpsum.java", "public class LoremIpsum {\n"
+        repo.changeAndCommitFile("LoremIpsum.java", "public class LoremIpsum {\n"
                 + "    public LoremIpsum() {\n"
                 + "        Log.log(\"Lorem ipsum dolor sit amet\");"
                 + "    }\n"
-                + "}");
-        repo.commitFileWithMessage("commit", "warnings.txt",
-                "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
+                + "}", "commit");
+        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
                         + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
                         + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
                         + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
@@ -312,7 +347,8 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
                         + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
                         + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
                         + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins");
+                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins",
+                "commit");
 
         Build build = generateFreeStyleJob(repo);
         build.open();
@@ -419,5 +455,4 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
             recorder.setEnabledForFailure(true);
         });
     }
-
 }
