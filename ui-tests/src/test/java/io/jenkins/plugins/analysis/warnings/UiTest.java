@@ -282,6 +282,17 @@ abstract class UiTest extends AbstractJUnitTest {
 
         assertThat(normalIssueCount).isEqualTo(6);
         assertThat(lowIssueCount).isEqualTo(2);
+
+        build.open();
+        assertThat(openInfoView(build, PEP8_ID))
+                .hasInfoMessages("-> found 1 file",
+                        "-> found 8 issues (skipped 0 duplicates)")
+                .hasErrorMessages("Can't create fingerprints for some files:");
+
+        if(referenceBuild > 0) {
+            assertThat(openInfoView(build, PEP8_ID))
+                    .hasInfoMessages("Issues delta (vs. reference build): outstanding: 0, new: 8, fixed: 0");
+        }
     }
 
     protected AnalysisResult verifyPep8Details (final AnalysisSummary pep8) {
