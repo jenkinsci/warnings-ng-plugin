@@ -27,8 +27,6 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 @WithPlugins("warnings-ng")
 public class GlobalConfigurationUiTest extends UiTest {
     private static final String GCC_ID = "gcc";
-    private static final String PEP8_ID = "pep8-groovy";
-    private static final String PEP_FILE = "pep8Test.txt";
 
     private enum LinkType {
         SHOULD_HAVE_SOURCE_CODE_LINK,
@@ -147,38 +145,7 @@ public class GlobalConfigurationUiTest extends UiTest {
 
         Build build = buildJob(job);
 
-        verifyPep8(build);
-    }
-
-    private void initGlobalSettingsForGroovyParser() {
-        GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
-        settings.configure();
-        GroovyConfiguration groovyConfiguration = settings.openGroovyConfiguration();
-        groovyConfiguration.enterName("Pep8 Groovy Parser");
-        groovyConfiguration.enterId("pep8-groovy");
-        groovyConfiguration.enterRegex("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)");
-        groovyConfiguration.enterScript("import edu.hm.hafner.analysis.Severity\n"
-                + "\n"
-                + "String message = matcher.group(5)\n"
-                + "String category = matcher.group(4)\n"
-                + "Severity severity\n"
-                + "if (category.contains(\"E\")) {\n"
-                + "    severity = Severity.WARNING_NORMAL\n"
-                + "}else {\n"
-                + "    severity = Severity.WARNING_LOW\n"
-                + "}\n"
-                + "\n"
-                + "return builder.setFileName(matcher.group(1))\n"
-                + "    .setLineStart(Integer.parseInt(matcher.group(2)))\n"
-                + "    .setColumnStart(Integer.parseInt(matcher.group(3)))\n"
-                + "    .setCategory(category)\n"
-                + "    .setMessage(message)\n"
-                + "    .setSeverity(severity)\n"
-                + "    .buildOptional()");
-
-        groovyConfiguration.enterExampleLogMessage("optparse.py:69:11: E401 multiple imports on one line");
-
-        settings.save();
+        verifyPep8(build, 0);
     }
 
     private void addGroovyRecorder(final FreeStyleJob job) {
@@ -188,32 +155,5 @@ public class GlobalConfigurationUiTest extends UiTest {
         });
     }
 
-    private void verifyPep8(final Build build) {
-        build.open();
-        AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
-        assertThat(pep8).isDisplayed()
-                .hasTitleText("Pep8 Groovy Parser: 8 warnings")
-                .hasReferenceBuild(0)
-                .hasInfoType(InfoType.ERROR);
 
-        AnalysisResult pep8details = pep8.openOverallResult();
-        assertThat(pep8details).hasActiveTab(Tab.CATEGORIES)
-                .hasTotal(8)
-                .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
-
-        pep8details.openTab(Tab.ISSUES);
-        IssuesDetailsTable issuesTable = pep8details.openIssuesTable();
-        assertThat(issuesTable).hasSize(8);
-
-        long normalIssueCount = issuesTable.getTableRows().stream()
-                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
-                .filter(severity -> severity.equals("Normal")).count();
-
-        long lowIssueCount = issuesTable.getTableRows().stream()
-                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
-                .filter(severity -> severity.equals("Low")).count();
-
-        assertThat(normalIssueCount).isEqualTo(6);
-        assertThat(lowIssueCount).isEqualTo(2);
-    }
 }

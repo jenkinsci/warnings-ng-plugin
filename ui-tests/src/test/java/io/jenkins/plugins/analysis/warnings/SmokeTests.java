@@ -18,10 +18,8 @@ import org.jenkinsci.test.acceptance.po.WorkflowJob;
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.*;
-import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 
-import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 
 /**
  * Smoke tests for the Warnings Next Generation Plugin. These tests are invoked during the validation of pull requests
@@ -73,7 +71,7 @@ public class SmokeTests extends UiTest {
         verifyDetailsTab(build);
 
         jenkins.open();
-        verifyIssuesColumnResults(build, job.name);
+        verifyIssuesColumnResults(build, job.name, "25");
 
         // Dashboard UI-Tests
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
@@ -84,11 +82,12 @@ public class SmokeTests extends UiTest {
 
     private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
         assertThat(dashboardTable.getHeaders()).containsExactly(
-                "Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/pmd-24x24.png");
+                "Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/analysis-24x24.png", "/pmd-24x24.png");
 
         Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
         assertThat(table.get(jobName).get("/findbugs-24x24.png")).hasWarningsCount(0);
         assertThat(table.get(jobName).get("/checkstyle-24x24.png")).hasWarningsCount(3);
+        assertThat(table.get(jobName).get("/analysis-24x24.png")).hasWarningsCount(8);
         assertThat(table.get(jobName).get("/pmd-24x24.png")).hasWarningsCount(2);
         assertThat(table.get(jobName).get("/dry-24x24.png")).hasWarningsCount(20);
     }
@@ -115,8 +114,11 @@ public class SmokeTests extends UiTest {
     /**
      * Runs a freestyle job with all tools two times. Verifies the analysis results in several views.
      */
-    @Test @WithPlugins("cloudbees-folder")
+    @Test
+    @WithPlugins("cloudbees-folder")
     public void shouldShowBuildSummaryAndLinkToDetails() {
+        initGlobalSettingsForGroovyParser();
+
         Folder folder = jenkins.jobs.create(Folder.class, "folder");
         FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
         ScrollerUtil.hideScrollerTabBar(driver);
@@ -136,10 +138,11 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+        verifyPep8(build, 1);
         verifyDetailsTab(build);
 
         folder.open();
-        verifyIssuesColumnResults(build, job.name);
+        verifyIssuesColumnResults(build, job.name, "33");
 
         // Dashboard UI-Tests
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(folder, false, true);
@@ -173,10 +176,17 @@ public class SmokeTests extends UiTest {
         return resourceCopySteps;
     }
 
-    private void verifyIssuesColumnResults(final Build build, final String jobName ) {
+    private void verifyIssuesColumnResults(final Build build, final String jobName, final String issuesCount) {
         IssuesColumn column = new IssuesColumn(build, jobName);
 
         String issueCount = column.getIssuesCountTextFromTable();
-        assertThat(issueCount).isEqualTo("25");
+        assertThat(issueCount).isEqualTo(issuesCount);
+    }
+
+    @Override
+    protected IssuesRecorder addAllRecorders(final FreeStyleJob job) {
+        IssuesRecorder issuesRecorder = super.addAllRecorders(job);
+        issuesRecorder.addTool("Groovy Parser", gp -> gp.setPattern("**/*" + PEP_FILE));
+        return issuesRecorder;
     }
 }

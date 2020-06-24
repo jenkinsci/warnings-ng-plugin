@@ -33,6 +33,8 @@ abstract class UiTest extends AbstractJUnitTest {
     static final String FINDBUGS_ID = "findbugs";
     static final String MAVEN_ID = "maven-warnings";
     static final String ANALYSIS_ID = "analysis";
+    static final String PEP8_ID = "pep8-groovy";
+    static final String PEP_FILE = "pep8Test.txt";
 
     private static final String CPD_SOURCE_NAME = "Main.java";
     private static final String CPD_SOURCE_PATH = "/duplicate_code/Main.java";
@@ -251,6 +253,36 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasErrorMessages("Can't create fingerprints for some files:");
     }
 
+    protected void verifyPep8(final Build build, final int referenceBuild) {
+        build.open();
+        AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
+        assertThat(pep8).isDisplayed()
+                .hasTitleText("Pep8 Groovy Parser: 8 warnings")
+                .hasReferenceBuild(referenceBuild)
+                .hasInfoType(InfoType.ERROR);
+
+        AnalysisResult pep8details = pep8.openOverallResult();
+        pep8details.openTab(Tab.CATEGORIES);
+        assertThat(pep8details).hasActiveTab(Tab.CATEGORIES)
+                .hasTotal(8)
+                .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
+
+        pep8details.openTab(Tab.ISSUES);
+        IssuesDetailsTable issuesTable = pep8details.openIssuesTable();
+        assertThat(issuesTable).hasSize(8);
+
+        long normalIssueCount = issuesTable.getTableRows().stream()
+                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
+                .filter(severity -> severity.equals("Normal")).count();
+
+        long lowIssueCount = issuesTable.getTableRows().stream()
+                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
+                .filter(severity -> severity.equals("Low")).count();
+
+        assertThat(normalIssueCount).isEqualTo(6);
+        assertThat(lowIssueCount).isEqualTo(2);
+    }
+
     InfoView openInfoView(final Build build, final String toolId) {
         return new AnalysisSummary(build, toolId).openInfoView();
     }
@@ -302,5 +334,36 @@ abstract class UiTest extends AbstractJUnitTest {
         MavenInstallation.installMaven(jenkins, MavenInstallation.DEFAULT_MAVEN_ID, "3.6.3");
 
         return jenkins.getJobs().create(MavenModuleSet.class);
+    }
+
+    protected void initGlobalSettingsForGroovyParser() {
+        GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
+        settings.configure();
+        GroovyConfiguration groovyConfiguration = settings.openGroovyConfiguration();
+        groovyConfiguration.enterName("Pep8 Groovy Parser");
+        groovyConfiguration.enterId("pep8-groovy");
+        groovyConfiguration.enterRegex("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)");
+        groovyConfiguration.enterScript("import edu.hm.hafner.analysis.Severity\n"
+                + "\n"
+                + "String message = matcher.group(5)\n"
+                + "String category = matcher.group(4)\n"
+                + "Severity severity\n"
+                + "if (category.contains(\"E\")) {\n"
+                + "    severity = Severity.WARNING_NORMAL\n"
+                + "}else {\n"
+                + "    severity = Severity.WARNING_LOW\n"
+                + "}\n"
+                + "\n"
+                + "return builder.setFileName(matcher.group(1))\n"
+                + "    .setLineStart(Integer.parseInt(matcher.group(2)))\n"
+                + "    .setColumnStart(Integer.parseInt(matcher.group(3)))\n"
+                + "    .setCategory(category)\n"
+                + "    .setMessage(message)\n"
+                + "    .setSeverity(severity)\n"
+                + "    .buildOptional()");
+
+        groovyConfiguration.enterExampleLogMessage("optparse.py:69:11: E401 multiple imports on one line");
+
+        settings.save();
     }
 }
