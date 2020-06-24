@@ -109,7 +109,6 @@ public class GlobalConfigurationUiTest extends UiTest {
     }
 
     private void verifyGcc(final Build build, final LinkType linkType) {
-        build.open();
         AnalysisSummary gcc = new AnalysisSummary(build, GCC_ID);
         assertThat(gcc).isDisplayed()
                 .hasTitleText("GNU C Compiler (gcc): One warning")

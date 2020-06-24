@@ -117,8 +117,6 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyCpd(final Build build) {
-        build.open();
-
         AnalysisSummary cpd = new AnalysisSummary(build, CPD_ID);
         assertThat(cpd).isDisplayed()
                 .hasTitleText("CPD: 20 warnings")
@@ -167,7 +165,6 @@ abstract class UiTest extends AbstractJUnitTest {
             assertThat(row).hasSeverity(WARNING_LOW_PRIORITY);
         }
 
-        build.open();
         assertThat(openInfoView(build, CPD_ID))
                 .hasNoErrorMessages()
                 .hasInfoMessages("-> found 1 file",
@@ -178,8 +175,6 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyFindBugs(final Build build) {
-        build.open();
-
         AnalysisSummary findbugs = new AnalysisSummary(build, FINDBUGS_ID);
         assertThat(findbugs).isDisplayed()
                 .hasTitleText("FindBugs: No warnings")
@@ -189,7 +184,6 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasInfoType(InfoType.INFO)
                 .hasDetails("No warnings for 2 builds, i.e. since build 1");
 
-        build.open();
         assertThat(openInfoView(build, FINDBUGS_ID))
                 .hasNoErrorMessages()
                 .hasInfoMessages("-> found 1 file",
@@ -198,7 +192,6 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPmd(final Build build) {
-        build.open();
         AnalysisSummary pmd = new AnalysisSummary(build, PMD_ID);
         assertThat(pmd).isDisplayed()
                 .hasTitleText("PMD: 2 warnings")
@@ -212,7 +205,6 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasTotal(2)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
-        build.open();
         assertThat(openInfoView(build, PMD_ID))
                 .hasInfoMessages("-> found 1 file",
                         "-> found 2 issues (skipped 0 duplicates)",
@@ -221,7 +213,6 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyCheckStyle(final Build build) {
-        build.open();
         AnalysisSummary checkstyle = new AnalysisSummary(build, CHECKSTYLE_ID);
         assertThat(checkstyle).isDisplayed()
                 .hasTitleText("CheckStyle: 3 warnings")
@@ -246,7 +237,6 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasSeverity("Error")
                 .hasAge(1);
 
-        build.open();
         assertThat(openInfoView(build, CHECKSTYLE_ID))
                 .hasInfoMessages("-> found 1 file",
                         "-> found 3 issues (skipped 0 duplicates)",
@@ -259,7 +249,6 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPep8(final Build build, final int referenceBuild) {
-        build.open();
         AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
         assertThat(pep8).isDisplayed()
                 .hasTitleText(PEP8_NAME + ": 8 warnings")
@@ -283,7 +272,6 @@ abstract class UiTest extends AbstractJUnitTest {
         assertThat(normalIssueCount).isEqualTo(6);
         assertThat(lowIssueCount).isEqualTo(2);
 
-        build.open();
         assertThat(openInfoView(build, PEP8_ID))
                 .hasInfoMessages("-> found 1 file",
                         "-> found 8 issues (skipped 0 duplicates)")
