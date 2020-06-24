@@ -8,7 +8,6 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import jenkins.benchmark.jmh.BenchmarkFinder;
 
-
 /**
  * Runner for all Benchmark Tests annotated with @Benchmark inside @JmhBenchmark annotated classes.
  */

@@ -16,6 +16,7 @@ import edu.hm.hafner.analysis.FileReaderFactory;
 import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
+import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 
 import hudson.model.Run;
 import jenkins.benchmark.jmh.JmhBenchmark;
@@ -42,7 +43,21 @@ public class CheckstyleBenchmarkTest {
      */
     @Benchmark
     public void benchmarkCheckStyleParser(final BenchmarkState state, final Blackhole blackhole) {
-        Report report = new CheckStyleParser().parse(state.getFileReaderFactory());
+        Report report = new CheckStyleParser().parse(state.getCheckstyleFileReaderFactory());
+        blackhole.consume(report);
+    }
+
+    /**
+     * Benchmarking for parsing an xml file with a {@link PmdParser}.
+     *
+     * @param state
+     *         a {@link BenchmarkState} object containing the FileReaderFactory object
+     * @param blackhole
+     *         a {@link Blackhole} to avoid dead code elminination
+     */
+    @Benchmark
+    public void benchmarkPMDParser(final BenchmarkState state, final Blackhole blackhole) {
+        Report report = new PmdParser().parse(state.getPmdFileReaderFactory());
         blackhole.consume(report);
     }
 
@@ -53,7 +68,8 @@ public class CheckstyleBenchmarkTest {
     public static class BenchmarkState {
         private History history;
         private static final String RESOURCE_FOLDER = "io/jenkins/plugins/analysis/warnings/recorder/";
-        private ReaderFactory fileReaderFactory;
+        private ReaderFactory checkstyleFileReaderFactory;
+        private ReaderFactory pmdFileReaderFactory;
 
         public History getHistory() {
             return history;
@@ -65,8 +81,12 @@ public class CheckstyleBenchmarkTest {
                     Paths.get(Objects.requireNonNull(contextClassLoader.getResource(fileName)).toURI()));
         }
 
-        public ReaderFactory getFileReaderFactory() {
-            return fileReaderFactory;
+        public ReaderFactory getCheckstyleFileReaderFactory() {
+            return checkstyleFileReaderFactory;
+        }
+
+        public ReaderFactory getPmdFileReaderFactory() {
+            return pmdFileReaderFactory;
         }
 
         /**
@@ -79,7 +99,8 @@ public class CheckstyleBenchmarkTest {
 
             history = mock(History.class);
             when(history.getBuild()).thenReturn(Optional.of(run));
-            fileReaderFactory = createFileReaderFactory(RESOURCE_FOLDER + "checkstyle-quality-gate.xml");
+            checkstyleFileReaderFactory = createFileReaderFactory(RESOURCE_FOLDER + "checkstyle-quality-gate.xml");
+            pmdFileReaderFactory = createFileReaderFactory(RESOURCE_FOLDER + "pmd-warnings.xml");
         }
     }
 }
