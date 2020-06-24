@@ -71,7 +71,7 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
-        verifyPep8(build, 1);
+        verifyPep8(build);
         verifyDetailsTab(build);
 
         jenkins.open();
@@ -145,7 +145,7 @@ public class SmokeTests extends UiTest {
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
-        verifyPep8(build, 1);
+        verifyPep8(build);
         verifyDetailsTab(build);
 
         folder.open();

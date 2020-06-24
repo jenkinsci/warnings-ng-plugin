@@ -254,6 +254,10 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasErrorMessages("Can't create fingerprints for some files:");
     }
 
+    protected void verifyPep8(final Build build) {
+        verifyPep8(build, 1);
+    }
+
     protected void verifyPep8(final Build build, final int referenceBuild) {
         build.open();
         AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
@@ -262,14 +266,10 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasReferenceBuild(referenceBuild)
                 .hasInfoType(InfoType.ERROR);
 
-        AnalysisResult pep8details = pep8.openOverallResult();
-        pep8details.openTab(Tab.CATEGORIES);
-        assertThat(pep8details).hasActiveTab(Tab.CATEGORIES)
-                .hasTotal(8)
-                .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
+        AnalysisResult pep8Details = verifyPep8Details(pep8);
 
-        pep8details.openTab(Tab.ISSUES);
-        IssuesDetailsTable issuesTable = pep8details.openIssuesTable();
+        pep8Details.openTab(Tab.ISSUES);
+        IssuesDetailsTable issuesTable = pep8Details.openIssuesTable();
         assertThat(issuesTable).hasSize(8);
 
         long normalIssueCount = issuesTable.getTableRows().stream()
@@ -284,8 +284,11 @@ abstract class UiTest extends AbstractJUnitTest {
         assertThat(lowIssueCount).isEqualTo(2);
     }
 
-    private boolean isPipelineJob(final Build build) {
-        return build.job.getClass().getTypeName().endsWith("WorkflowJob");
+    protected AnalysisResult verifyPep8Details (final AnalysisSummary pep8) {
+        AnalysisResult pep8Details = pep8.openOverallResult();
+        assertThat(pep8Details).hasActiveTab(Tab.ISSUES)
+                .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
+        return pep8Details;
     }
 
     InfoView openInfoView(final Build build, final String toolId) {

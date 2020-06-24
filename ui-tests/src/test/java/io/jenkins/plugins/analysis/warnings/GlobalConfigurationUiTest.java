@@ -155,5 +155,12 @@ public class GlobalConfigurationUiTest extends UiTest {
         });
     }
 
-
+    @Override
+    protected AnalysisResult verifyPep8Details(final AnalysisSummary pep8) {
+        AnalysisResult pep8Details = pep8.openOverallResult();
+        assertThat(pep8Details).hasActiveTab(Tab.CATEGORIES)
+                .hasTotal(8)
+                .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
+        return pep8Details;
+    }
 }
