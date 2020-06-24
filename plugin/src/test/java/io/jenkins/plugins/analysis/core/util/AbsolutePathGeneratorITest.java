@@ -10,18 +10,14 @@ import org.junit.rules.TemporaryFolder;
 import org.jvnet.hudson.test.Issue;
 import org.jvnet.hudson.test.JenkinsRule;
 
-import com.gargoylesoftware.htmlunit.html.HtmlPage;
-
 import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Slave;
 import hudson.slaves.DumbSlave;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Java;
-import io.jenkins.plugins.analysis.warnings.recorder.pageobj.SourceCodeView;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static org.assertj.core.api.Assumptions.*;
@@ -63,9 +59,6 @@ public class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSui
 
         assertThat(result).hasInfoMessages("-> resolved paths in source directory (1 found, 0 not found)");
         assertThat(result).doesNotHaveInfoMessages("-> 0 copied, 1 not in workspace, 0 not-found, 0 with I/O error");
-
-        SourceCodeView view = new SourceCodeView(getSourceCodePage(result));
-        assertThat(view.getSourceCode()).isEqualTo(SOURCE_CODE);
     }
 
     private FreeStyleProject createJobForAgent(final Slave agent) {
@@ -112,11 +105,5 @@ public class AbsolutePathGeneratorITest extends IntegrationTestWithJenkinsPerSui
 
     private String getAbsolutePathInLowerCase(final FilePath folder) {
         return StringUtils.lowerCase(folder.getRemote() + "\\Test.java");
-    }
-
-    private HtmlPage getSourceCodePage(final AnalysisResult result) {
-        return getWebPage(JavaScriptSupport.JS_DISABLED, result,
-                new FileNameRenderer(result.getOwner()).getSourceCodeUrl(result.getIssues().get(0))
-        );
     }
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<checkstyle version="4.1">
+<file name="bla">
+<error line="0" severity="error" message="Fehlende Package-Dokumentation." source="com.puppycrawl.tools.checkstyle.checks.javadoc.PackageHtmlCheck"/>
+</file>
+<file name="bla">
+</file>
+<file name="???????">
+<error line="42" severity="error" message="Zeile länger als 80 Zeichen" source="com.puppycrawl.tools.checkstyle.checks.sizes.LineLengthCheck"/>
+</file>
+</checkstyle>
+

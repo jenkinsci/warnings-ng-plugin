@@ -9,19 +9,22 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-
+import org.openqa.selenium.support.ui.Select;
+import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
-
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
+import io.jenkins.plugins.analysis.warnings.BlamesTable.BlamesTableRowType;
+import io.jenkins.plugins.analysis.warnings.ForensicsTable.ForensicsTableRowType;
 
-import io.jenkins.plugins.analysis.warnings.IssuesTable.IssuesTableRowType;
+import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.IssuesTableRowType;
 
 /**
  * {@link PageObject} representing the details page of the static analysis tool results.
  *
  * @author Stephan Plöderl
  * @author Ullrich Hafner
+ * @author Mitja Oldenbourg
  */
 public class AnalysisResult extends PageObject {
     private static final String[] DRY_TOOLS = {"cpd", "simian", "dupfinder"};
@@ -114,6 +117,36 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
+     *
+     * @return
+     */
+    private BlamesTableRowType getBlamesTableType() {
+        if (ArrayUtils.contains(DRY_TOOLS, id)) {
+            return BlamesTableRowType.DRY;
+        }
+        return BlamesTableRowType.DEFAULT;
+    }
+
+    /**
+     * Returns the type of the rows in the forensics table.
+     *
+     * @return the row type
+     */
+    private ForensicsTableRowType getForensicsTableType() {
+        if (ArrayUtils.contains(DRY_TOOLS, id)) {
+            return ForensicsTableRowType.DRY;
+        }
+        return ForensicsTableRowType.DEFAULT;
+    }
+    
+    /**
+     * Reloads the {@link PageObject}.
+     */
+    public void reload() {
+        open();
+    }
+
+    /**
      * Opens the analysis details page and selects the specified tab.
      *
      * @param tab
@@ -132,11 +165,47 @@ public class AnalysisResult extends PageObject {
      *
      * @return page object of the issues table.
      */
-    public IssuesTable openIssuesTable() {
+    public IssuesDetailsTable openIssuesTable() {
         openTab(Tab.ISSUES);
 
         WebElement issuesTab = find(By.id("issuesContent"));
-        return new IssuesTable(issuesTab, this, getIssuesTableType());
+        return new IssuesDetailsTable(issuesTab, this, getIssuesTableType());
+    }
+
+    /**
+     * Opens the analysis details page, selects the tab {@link Tab#CATEGORIES} and returns the {@link PageObject} of the
+     * categories table.
+     *
+     * @param tab
+     *         the tab to open
+     *
+     * @return page object of the categories table.
+     */
+    public PropertyDetailsTable openPropertiesTable(final Tab tab) {
+        openTab(tab);
+
+        WebElement table = find(By.id(tab.contentId));
+        return new PropertyDetailsTable(table, this, tab.property);
+    }
+
+    public BlamesTable openBlamesTable() {
+        openTab(Tab.BLAMES);
+
+        WebElement blamesTab = find(By.id("blamesContent"));
+        return new BlamesTable(blamesTab, this, getBlamesTableType());
+    }
+
+    /**
+     * Opens the analysis details page, selects the tab {@link Tab#FORENSICS} and returns the {@link PageObject} of the
+     * forensics table.
+     *
+     * @return page object of the forensics table.
+     */
+    public ForensicsTable openForensicsTable() {
+        openTab(Tab.FORENSICS);
+
+        WebElement forensicsTab = find(By.id("forensicsContent"));
+        return new ForensicsTable(forensicsTab, this, getForensicsTableType());
     }
 
     /**
@@ -146,9 +215,9 @@ public class AnalysisResult extends PageObject {
      *         the WebElement representing the link to be clicked
      * @param type
      *         the class of the PageObject which represents the page to which the link leads to
-     *
      * @param <T>
      *         actual type of the page object
+     *
      * @return the instance of the PageObject to which the link leads to
      */
     // FIXME: IssuesTable should not depend on AnalysisResult
@@ -157,6 +226,44 @@ public class AnalysisResult extends PageObject {
         T retVal = newInstance(type, injector, url(link));
         element.click();
         return retVal;
+    }
+
+    /**
+     * Method for getting the row length select element by the currently active tab.
+     *
+     * @return Select WebElement where the user can choose how many rows should be displayed.
+     */
+    public Select getLengthSelectElementByActiveTab() {
+        WebElement lengthSelect = find(By.id(this.getActiveTab().property + "_length"));
+        return new Select(lengthSelect.findElement(By.cssSelector("label > select")));
+    }
+
+    /**
+     * Method for getting the paginate WebElement for any active tab.
+     *
+     * @return parent WebElement that contains the paginate buttons for a result table.
+     */
+    public WebElement getInfoElementByActiveTab() {
+        return this.getElement(By.id(this.getActiveTab().property + "_info"));
+    }
+
+    /**
+     * Method for getting the paginate WebElement for any active tab.
+     *
+     * @return parent WebElement that contains the paginate buttons for a result table.
+     */
+    public WebElement getPaginateElementByActiveTab() {
+        return this.getElement(By.id(this.getActiveTab().property + "_paginate"));
+    }
+
+    /**
+     * Method for getting the input field of any active tab.
+     *
+     * @return WebElement where a user can filter the table by text input.
+     */
+    public WebElement getFilterInputElementByActiveTab() {
+        WebElement filter = find(By.id(this.getActiveTab().property + "_filter"));
+        return filter.findElement(By.cssSelector("label > input"));
     }
 
     /**
@@ -176,6 +283,53 @@ public class AnalysisResult extends PageObject {
     }
 
     /**
+     * returns the TrendChart Carousel DOM Node.
+     *
+     * @return trendChart Carousel.
+     */
+    private WebElement getTrendChart() {
+        return find(By.id("trend-carousel"));
+    }
+
+
+    /**
+     * Clicks the next-button to cycle through the Trend Charts.
+     */
+    public void clickNextOnTrendCarousel() {
+        find(By.className("carousel-control-next-icon")).click();
+    }
+
+    /**
+     * Checks if the trendChart is visible on the Page.
+     *
+     * @param chartName
+     *         id of the Chart we want to evaluate.
+     *
+     * @return boolean value, that describes the visibility of the Trendchart.
+     */
+    public boolean trendChartIsDisplayed(final String chartName) {
+        WebElement trendChart = getTrendChart();
+        return trendChart.findElement(By.id(chartName)).isDisplayed(); }
+
+    /**
+     * Checks if the trendChart is visible on the Page.
+     *
+     * @param elementId
+     *         id of the Chart we want to return.
+     *
+     * @return TrendChart as JSON String.
+     */
+    public String getTrendChartById(final String elementId) {
+        Object result = this.executeScript(String.format(
+                "delete(window.Array.prototype.toJSON) \n"
+                        + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
+                elementId));
+        ScriptResult scriptResult = new ScriptResult(result);
+
+        return scriptResult.getJavaScriptResult().toString();
+    }
+
+    /**
      * Enum representing the possible tabs which can be opened in the {@link AnalysisResult} details view.
      */
     public enum Tab {
@@ -187,12 +341,15 @@ public class AnalysisResult extends PageObject {
         CATEGORIES("category"),
         TYPES("type"),
         ISSUES("issues"),
-        BLAMES("scm");
+        BLAMES("blames"),
+        FORENSICS("forensics");
 
-        private final String href;
+        private final String contentId;
+        private final String property;
 
         Tab(final String property) {
-            href = "#" + property + "Content";
+            this.property = property;
+            contentId = property + "Content";
         }
 
         /**
@@ -201,7 +358,7 @@ public class AnalysisResult extends PageObject {
          * @return the selenium filter rule
          */
         By getXpath() {
-            return By.xpath("//a[@href='" + href + "']");
+            return By.xpath("//a[@href='#" + contentId + "']");
         }
 
         /**
@@ -216,7 +373,7 @@ public class AnalysisResult extends PageObject {
          */
         static Tab valueWithHref(final String href) {
             for (Tab tab : Tab.values()) {
-                if (tab.href.equals(href)) {
+                if (tab.contentId.equals(href.substring(1))) {
                     return tab;
                 }
             }
