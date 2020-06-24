@@ -33,8 +33,11 @@ abstract class UiTest extends AbstractJUnitTest {
     static final String FINDBUGS_ID = "findbugs";
     static final String MAVEN_ID = "maven-warnings";
     static final String ANALYSIS_ID = "analysis";
-    static final String PEP8_ID = "pep8-groovy";
-    static final String PEP_FILE = "pep8Test.txt";
+    static final String PEP8_FREESTYLE_ID = "pep8-groovy";
+    static final String PEP8_PIPELINE_ID = "pep8";
+    static final String PEP8_FREESTYLE_NAME = "Pep8 Groovy Parser";
+    static final String PEP8_PIPELINE_NAME = "Pep8";
+    static final String PEP8_FILE = "pep8Test.txt";
 
     private static final String CPD_SOURCE_NAME = "Main.java";
     private static final String CPD_SOURCE_PATH = "/duplicate_code/Main.java";
@@ -254,10 +257,17 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPep8(final Build build, final int referenceBuild) {
+        String pep8Id = PEP8_FREESTYLE_ID;
+        String pep8Name = PEP8_FREESTYLE_NAME;
+        if (isPipelineJob(build)) {
+            pep8Id = PEP8_PIPELINE_ID;
+            pep8Name = PEP8_PIPELINE_NAME;
+        }
+
         build.open();
-        AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
+        AnalysisSummary pep8 = new AnalysisSummary(build, pep8Id);
         assertThat(pep8).isDisplayed()
-                .hasTitleText("Pep8 Groovy Parser: 8 warnings")
+                .hasTitleText(pep8Name + ": 8 warnings")
                 .hasReferenceBuild(referenceBuild)
                 .hasInfoType(InfoType.ERROR);
 
@@ -281,6 +291,10 @@ abstract class UiTest extends AbstractJUnitTest {
 
         assertThat(normalIssueCount).isEqualTo(6);
         assertThat(lowIssueCount).isEqualTo(2);
+    }
+
+    private boolean isPipelineJob(final Build build) {
+        return build.job.getClass().getTypeName().endsWith("WorkflowJob");
     }
 
     InfoView openInfoView(final Build build, final String toolId) {

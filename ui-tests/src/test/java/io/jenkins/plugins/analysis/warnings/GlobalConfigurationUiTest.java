@@ -139,7 +139,7 @@ public class GlobalConfigurationUiTest extends UiTest {
     public void shouldRunJobWithGroovyConfiguration() {
         initGlobalSettingsForGroovyParser();
 
-        FreeStyleJob job = createFreeStyleJob("groovy_parser/" + PEP_FILE);
+        FreeStyleJob job = createFreeStyleJob("groovy_parser/" + PEP8_FILE);
         addGroovyRecorder(job);
         job.save();
 
@@ -150,7 +150,7 @@ public class GlobalConfigurationUiTest extends UiTest {
 
     private void addGroovyRecorder(final FreeStyleJob job) {
         job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("Groovy Parser", gp -> gp.setPattern("**/*" + PEP_FILE));
+            recorder.setTool("Groovy Parser", gp -> gp.setPattern("**/*" + PEP8_FILE));
             recorder.setEnabledForFailure(true);
         });
     }
