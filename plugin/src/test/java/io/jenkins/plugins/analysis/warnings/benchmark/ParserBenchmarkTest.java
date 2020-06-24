@@ -26,13 +26,13 @@ import io.jenkins.plugins.analysis.core.model.History;
 import static org.mockito.Mockito.*;
 
 /**
- * Performance benchmarks for a {@link CheckStyleParser}.
+ * Performance benchmarks for analysis parsers parsing xml files.
  *
  * @author Kevin Richter
  * @author Simon Schönwiese
  */
 @JmhBenchmark
-public class CheckstyleBenchmarkTest {
+public class ParserBenchmarkTest {
     /**
      * Benchmarking for parsing an xml file with a {@link CheckStyleParser}.
      *
@@ -99,6 +99,7 @@ public class CheckstyleBenchmarkTest {
 
             history = mock(History.class);
             when(history.getBuild()).thenReturn(Optional.of(run));
+            
             checkstyleFileReaderFactory = createFileReaderFactory(RESOURCE_FOLDER + "checkstyle-quality-gate.xml");
             pmdFileReaderFactory = createFileReaderFactory(RESOURCE_FOLDER + "pmd-warnings.xml");
         }
