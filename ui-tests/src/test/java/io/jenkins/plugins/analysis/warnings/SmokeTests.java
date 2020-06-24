@@ -75,7 +75,7 @@ public class SmokeTests extends UiTest {
         verifyDetailsTab(build);
 
         jenkins.open();
-        verifyIssuesColumnResults(build, job.name, "33");
+        verifyIssuesColumnResults(build, job.name);
 
         // Dashboard UI-Tests
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
@@ -149,7 +149,7 @@ public class SmokeTests extends UiTest {
         verifyDetailsTab(build);
 
         folder.open();
-        verifyIssuesColumnResults(build, job.name, "33");
+        verifyIssuesColumnResults(build, job.name);
 
         // Dashboard UI-Tests
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(folder, false, true);
@@ -183,11 +183,11 @@ public class SmokeTests extends UiTest {
         return resourceCopySteps;
     }
 
-    private void verifyIssuesColumnResults(final Build build, final String jobName, final String issuesCount) {
+    private void verifyIssuesColumnResults(final Build build, final String jobName) {
         IssuesColumn column = new IssuesColumn(build, jobName);
 
         String issueCount = column.getIssuesCountTextFromTable();
-        assertThat(issueCount).isEqualTo(issuesCount);
+        assertThat(issueCount).isEqualTo("33");
     }
 
     @Override
