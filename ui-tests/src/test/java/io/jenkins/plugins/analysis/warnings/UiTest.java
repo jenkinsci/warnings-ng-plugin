@@ -33,10 +33,8 @@ abstract class UiTest extends AbstractJUnitTest {
     static final String FINDBUGS_ID = "findbugs";
     static final String MAVEN_ID = "maven-warnings";
     static final String ANALYSIS_ID = "analysis";
-    static final String PEP8_FREESTYLE_ID = "pep8-groovy";
-    static final String PEP8_PIPELINE_ID = "pep8";
-    static final String PEP8_FREESTYLE_NAME = "Pep8 Groovy Parser";
-    static final String PEP8_PIPELINE_NAME = "Pep8";
+    static final String PEP8_ID = "pep8";
+    static final String PEP8_NAME = "Pep8";
     static final String PEP8_FILE = "pep8Test.txt";
 
     private static final String CPD_SOURCE_NAME = "Main.java";
@@ -257,17 +255,10 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPep8(final Build build, final int referenceBuild) {
-        String pep8Id = PEP8_FREESTYLE_ID;
-        String pep8Name = PEP8_FREESTYLE_NAME;
-        if (isPipelineJob(build)) {
-            pep8Id = PEP8_PIPELINE_ID;
-            pep8Name = PEP8_PIPELINE_NAME;
-        }
-
         build.open();
-        AnalysisSummary pep8 = new AnalysisSummary(build, pep8Id);
+        AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
         assertThat(pep8).isDisplayed()
-                .hasTitleText(pep8Name + ": 8 warnings")
+                .hasTitleText(PEP8_NAME + ": 8 warnings")
                 .hasReferenceBuild(referenceBuild)
                 .hasInfoType(InfoType.ERROR);
 
@@ -354,8 +345,8 @@ abstract class UiTest extends AbstractJUnitTest {
         GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
         settings.configure();
         GroovyConfiguration groovyConfiguration = settings.openGroovyConfiguration();
-        groovyConfiguration.enterName("Pep8 Groovy Parser");
-        groovyConfiguration.enterId("pep8-groovy");
+        groovyConfiguration.enterName(PEP8_NAME);
+        groovyConfiguration.enterId(PEP8_ID);
         groovyConfiguration.enterRegex("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)");
         groovyConfiguration.enterScript("import edu.hm.hafner.analysis.Severity\n"
                 + "\n"
