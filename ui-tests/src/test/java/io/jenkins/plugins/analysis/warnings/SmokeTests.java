@@ -18,7 +18,6 @@ import org.jenkinsci.test.acceptance.po.WorkflowJob;
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 
 /**
@@ -69,7 +68,6 @@ public class SmokeTests extends UiTest {
         verifyCheckStyle(build);
         verifyCpd(build);
         verifyDetailsTab(build);
-        verifyTrendCharts(build);
 
         jenkins.open();
         verifyIssuesColumnResults(build, job.name);
@@ -137,7 +135,6 @@ public class SmokeTests extends UiTest {
         verifyCheckStyle(build);
         verifyCpd(build);
         verifyDetailsTab(build);
-        verifyTrendCharts(build);
 
         folder.open();
         verifyIssuesColumnResults(build, job.name);
@@ -162,66 +159,6 @@ public class SmokeTests extends UiTest {
         WebElement categoryPaginate = resultPage.getPaginateElementByActiveTab();
         List<WebElement> categoryPaginateButtons = categoryPaginate.findElements(By.cssSelector("ul li"));
         assertThat(categoryPaginateButtons.size()).isEqualTo(1);
-    }
-
-    private void verifyTrendCharts(final Build build) {
-        AnalysisResult analysisResult = new AnalysisResult(build, "checkstyle");
-
-        analysisResult.open();
-        String severitiesTrendChart = analysisResult.getTrendChartById("severities-trend-chart");
-        String toolsTrendChart = analysisResult.getTrendChartById("tools-trend-chart");
-        String newVersusFixedTrendChart = analysisResult.getTrendChartById("new-versus-fixed-trend-chart");
-
-        assertThatJson(severitiesTrendChart)
-                .inPath("$.xAxis[*].data[*]")
-                .isArray()
-                .hasSize(2)
-                .contains("#1")
-                .contains("#2");
-
-        assertThatJson(severitiesTrendChart)
-                .node("series")
-                .isArray()
-                .hasSize(1);
-
-        assertThatJson(severitiesTrendChart)
-                .node("series[0].name").isEqualTo("Error");
-
-        assertThatJson(severitiesTrendChart)
-                .node("series[0].data").isArray().contains(1).contains(3);
-
-        assertThatJson(toolsTrendChart)
-                .inPath("$.xAxis[*].data[*]")
-                .isArray()
-                .hasSize(2);
-
-        assertThatJson(toolsTrendChart)
-                .node("series[0].name").isEqualTo("checkstyle");
-
-        assertThatJson(toolsTrendChart)
-                .node("series[0].data")
-                .isArray()
-                .contains(1)
-                .contains(3);
-
-        assertThatJson(newVersusFixedTrendChart)
-                .inPath("$.xAxis[*].data[*]")
-                .isArray()
-                .hasSize(2)
-                .contains("#1")
-                .contains("#2");
-
-        assertThatJson(newVersusFixedTrendChart)
-                .and(
-                        a -> a.node("series[0].name").isEqualTo("New"),
-                        a -> a.node("series[0].data").isArray()
-                                .contains(0)
-                                .contains(3),
-                        a -> a.node("series[1].name").isEqualTo("Fixed"),
-                        a -> a.node("series[1].data").isArray()
-                                .contains(0)
-                                .contains(1)
-                );
     }
 
     private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {

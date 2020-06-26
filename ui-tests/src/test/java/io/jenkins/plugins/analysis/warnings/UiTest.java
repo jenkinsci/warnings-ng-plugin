@@ -21,6 +21,7 @@ import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Base class for all UI tests. Provides several helper methods that can be used by all tests.
@@ -243,12 +244,71 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasSeverity("Error")
                 .hasAge(1);
 
+        verifyTrendCharts(checkstyleDetails);
+
         build.open();
         assertThat(openInfoView(build, CHECKSTYLE_ID))
                 .hasInfoMessages("-> found 1 file",
                         "-> found 3 issues (skipped 0 duplicates)",
                         "Issues delta (vs. reference build): outstanding: 0, new: 3, fixed: 1")
                 .hasErrorMessages("Can't create fingerprints for some files:");
+    }
+
+    private void verifyTrendCharts(final AnalysisResult analysisResult) {
+        String severitiesTrendChart = analysisResult.getTrendChartById("severities-trend-chart");
+        String toolsTrendChart = analysisResult.getTrendChartById("tools-trend-chart");
+        String newVersusFixedTrendChart = analysisResult.getTrendChartById("new-versus-fixed-trend-chart");
+
+        assertThatJson(severitiesTrendChart)
+                .inPath("$.xAxis[*].data[*]")
+                .isArray()
+                .hasSize(2)
+                .contains("#1")
+                .contains("#2");
+
+        assertThatJson(severitiesTrendChart)
+                .node("series")
+                .isArray()
+                .hasSize(1);
+
+        assertThatJson(severitiesTrendChart)
+                .node("series[0].name").isEqualTo("Error");
+
+        assertThatJson(severitiesTrendChart)
+                .node("series[0].data").isArray().contains(1).contains(3);
+
+        assertThatJson(toolsTrendChart)
+                .inPath("$.xAxis[*].data[*]")
+                .isArray()
+                .hasSize(2);
+
+        assertThatJson(toolsTrendChart)
+                .node("series[0].name").isEqualTo("checkstyle");
+
+        assertThatJson(toolsTrendChart)
+                .node("series[0].data")
+                .isArray()
+                .contains(1)
+                .contains(3);
+
+        assertThatJson(newVersusFixedTrendChart)
+                .inPath("$.xAxis[*].data[*]")
+                .isArray()
+                .hasSize(2)
+                .contains("#1")
+                .contains("#2");
+
+        assertThatJson(newVersusFixedTrendChart)
+                .and(
+                        a -> a.node("series[0].name").isEqualTo("New"),
+                        a -> a.node("series[0].data").isArray()
+                                .contains(0)
+                                .contains(3),
+                        a -> a.node("series[1].name").isEqualTo("Fixed"),
+                        a -> a.node("series[1].data").isArray()
+                                .contains(0)
+                                .contains(1)
+                );
     }
 
     InfoView openInfoView(final Build build, final String toolId) {
