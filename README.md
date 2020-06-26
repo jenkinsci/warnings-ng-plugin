@@ -3,7 +3,6 @@
 [![Join the chat at https://gitter.im/jenkinsci/warnings-plugin](https://badges.gitter.im/jenkinsci/warnings-plugin.svg)](https://gitter.im/jenkinsci/warnings-plugin?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Jenkins Plugin](https://img.shields.io/jenkins/plugin/v/warnings-ng.svg?label=latest%20version)](https://plugins.jenkins.io/warnings-ng)
 [![Jenkins Plugin Installs](https://img.shields.io/jenkins/plugin/i/warnings-ng.svg?color=red)](https://plugins.jenkins.io/warnings-ng)
-[![Jenkins Version](https://img.shields.io/badge/Jenkins-2.204.4-green.svg?label=min.%20Jenkins)](https://jenkins.io/download/)
 [![Jenkins](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/badge/icon?subject=Jenkins%20CI)](https://ci.jenkins.io/job/Plugins/job/warnings-ng-plugin/job/master/)
 [![GitHub Actions](https://github.com/jenkinsci/warnings-ng-plugin/workflows/GitHub%20CI/badge.svg?branch=master)](https://github.com/jenkinsci/warnings-ng-plugin/actions)
 [![Codacy](https://api.codacy.com/project/badge/Grade/2a5c80b9064749a09d128f89f661d1c3)](https://www.codacy.com/app/uhafner/warnings-ng-plugin?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=jenkinsci/warnings-ng-plugin&amp;utm_campaign=Badge_Grade)
