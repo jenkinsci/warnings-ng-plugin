@@ -18,6 +18,7 @@ import org.jenkinsci.test.acceptance.po.WorkflowJob;
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
+
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 
 /**
@@ -36,6 +37,7 @@ public class SmokeTests extends UiTest {
     @Test
     @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldRecordIssuesInPipelineAndExpandTokens() {
+        initGlobalSettingsForGroovyParser();
         WorkflowJob job = jenkins.jobs.create(WorkflowJob.class);
         job.sandbox.check();
 
@@ -50,23 +52,26 @@ public class SmokeTests extends UiTest {
                 .contains("[new=0]")
                 .contains("[fixed=0]")
                 .contains("[checkstyle=1]")
-                .contains("[pmd=3]");
+                .contains("[pmd=3]")
+                .contains("[pep8=0]");
 
         job.configure(() -> createRecordIssuesStep(job, 2));
 
         Build build = buildJob(job);
 
         assertThat(build.getConsole())
-                .contains("[total=25]")
-                .contains("[new=23]")
+                .contains("[total=33]")
+                .contains("[new=31]")
                 .contains("[fixed=2]")
                 .contains("[checkstyle=3]")
-                .contains("[pmd=2]");
+                .contains("[pmd=2]")
+                .contains("[pep8=8]");
 
         verifyPmd(build);
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+        verifyPep8(build);
         verifyDetailsTab(build);
 
         jenkins.open();
@@ -81,11 +86,12 @@ public class SmokeTests extends UiTest {
 
     private void verifyDashboardTablePortlet(final DashboardTable dashboardTable, final String jobName) {
         assertThat(dashboardTable.getHeaders()).containsExactly(
-                "Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/pmd-24x24.png");
+                "Job", "/checkstyle-24x24.png", "/dry-24x24.png", "/findbugs-24x24.png", "/analysis-24x24.png", "/pmd-24x24.png");
 
         Map<String, Map<String, DashboardTableEntry>> table = dashboardTable.getTable();
         assertThat(table.get(jobName).get("/findbugs-24x24.png")).hasWarningsCount(0);
         assertThat(table.get(jobName).get("/checkstyle-24x24.png")).hasWarningsCount(3);
+        assertThat(table.get(jobName).get("/analysis-24x24.png")).hasWarningsCount(8);
         assertThat(table.get(jobName).get("/pmd-24x24.png")).hasWarningsCount(2);
         assertThat(table.get(jobName).get("/dry-24x24.png")).hasWarningsCount(20);
     }
@@ -96,12 +102,15 @@ public class SmokeTests extends UiTest {
                 + "recordIssues tool: checkStyle(pattern: '**/checkstyle*')\n"
                 + "recordIssues tool: pmdParser(pattern: '**/pmd*')\n"
                 + "recordIssues tools: [cpd(pattern: '**/cpd*', highThreshold:8, normalThreshold:3), findBugs()], aggregatingResults: 'false' \n"
+                + "recordIssues tool: pep8(pattern: '**/" + PEP8_FILE + "')\n"
                 + "def total = tm('${ANALYSIS_ISSUES_COUNT}')\n"
                 + "echo '[total=' + total + ']' \n"
                 + "def checkstyle = tm('${ANALYSIS_ISSUES_COUNT, tool=\"checkstyle\"}')\n"
                 + "echo '[checkstyle=' + checkstyle + ']' \n"
                 + "def pmd = tm('${ANALYSIS_ISSUES_COUNT, tool=\"pmd\"}')\n"
                 + "echo '[pmd=' + pmd + ']' \n"
+                + "def pep8 = tm('${ANALYSIS_ISSUES_COUNT, tool=\"pep8\"}')\n"
+                + "echo '[pep8=' + pep8 + ']' \n"
                 + "def newSize = tm('${ANALYSIS_ISSUES_COUNT, type=\"NEW\"}')\n"
                 + "echo '[new=' + newSize + ']' \n"
                 + "def fixedSize = tm('${ANALYSIS_ISSUES_COUNT, type=\"FIXED\"}')\n"
@@ -112,8 +121,11 @@ public class SmokeTests extends UiTest {
     /**
      * Runs a freestyle job with all tools two times. Verifies the analysis results in several views.
      */
-    @Test @WithPlugins("cloudbees-folder")
+    @Test
+    @WithPlugins("cloudbees-folder")
     public void shouldShowBuildSummaryAndLinkToDetails() {
+        initGlobalSettingsForGroovyParser();
+
         Folder folder = jenkins.jobs.create(Folder.class, "folder");
         FreeStyleJob job = folder.getJobs().create(FreeStyleJob.class);
         ScrollerUtil.hideScrollerTabBar(driver);
@@ -129,11 +141,11 @@ public class SmokeTests extends UiTest {
 
         Build build = buildJob(job);
 
-
         verifyPmd(build);
         verifyFindBugs(build);
         verifyCheckStyle(build);
         verifyCpd(build);
+        verifyPep8(build);
         verifyDetailsTab(build);
 
         folder.open();
@@ -162,7 +174,7 @@ public class SmokeTests extends UiTest {
     }
 
     private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
-        String[] fileNames = {"checkstyle-result.xml", "pmd.xml", "findbugsXml.xml", "cpd.xml", "Main.java"};
+        String[] fileNames = {"checkstyle-result.xml", "pmd.xml", "findbugsXml.xml", "cpd.xml", "Main.java", "pep8Test.txt"};
         StringBuilder resourceCopySteps = new StringBuilder();
         for (String fileName : fileNames) {
             resourceCopySteps.append(job.copyResourceStep(
@@ -171,10 +183,17 @@ public class SmokeTests extends UiTest {
         return resourceCopySteps;
     }
 
-    private void verifyIssuesColumnResults(final Build build, final String jobName ) {
+    private void verifyIssuesColumnResults(final Build build, final String jobName) {
         IssuesColumn column = new IssuesColumn(build, jobName);
 
         String issueCount = column.getIssuesCountTextFromTable();
-        assertThat(issueCount).isEqualTo("25");
+        assertThat(issueCount).isEqualTo("33");
+    }
+
+    @Override
+    protected IssuesRecorder addAllRecorders(final FreeStyleJob job) {
+        IssuesRecorder issuesRecorder = super.addAllRecorders(job);
+        issuesRecorder.addTool("Groovy Parser", gp -> gp.setPattern("**/*" + PEP8_FILE));
+        return issuesRecorder;
     }
 }

@@ -44,6 +44,7 @@ public class AnalysisSummary extends PageObject {
     public AnalysisSummary(final Build parent, final String id) {
         super(parent, parent.url(id));
 
+        parent.open();
         this.id = id;
         summary = getElement(By.id(id + "-summary"));
         if (summary == null) {
