@@ -17,11 +17,13 @@ import hudson.Extension;
 import hudson.model.Descriptor;
 import hudson.model.Job;
 import hudson.plugins.view.dashboard.DashboardPortlet;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
+import io.jenkins.plugins.forensics.miner.MinerFactory;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
@@ -48,6 +50,8 @@ public class IssuesChartPortlet extends DashboardPortlet {
     @DataBoundConstructor
     public IssuesChartPortlet(final String name) {
         super(name);
+
+        Jenkins.getInstance().getExtensionList(MinerFactory.class);
     }
 
     @SuppressWarnings({"unused", "PMD.BooleanGetMethodName"}) // called by Stapler
@@ -63,7 +67,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
      */
     @SuppressWarnings("unused")
     @DataBoundSetter
-    public void setHideCleanJobs(final boolean hideCleanJobs) {
+    void setHideCleanJobs(final boolean hideCleanJobs) {
         this.hideCleanJobs = hideCleanJobs;
     }
 
@@ -124,7 +128,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public String getBuildTrendModel() {
+    String getBuildTrendModel() {
         SeverityTrendChart severityChart = new SeverityTrendChart();
 
         List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()

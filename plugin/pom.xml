@@ -46,6 +46,8 @@
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
+    <archunit.version>0.14.1</archunit.version>
+
     <json.version>20200518</json.version>
     <jackson2-api.version>2.11.1</jackson2-api.version>
 
@@ -83,7 +85,7 @@
     <scm-api.version>2.6.3</scm-api.version>
 
     <!-- Maven Surefire ArgLine -->
-    <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
+    <argLine>-Djava.awt.headless=true -Xmx1024m -Djava.util.logging.config.file=logging.properties</argLine>
   </properties>
 
   <licenses>
@@ -132,6 +134,24 @@
   </dependencyManagement>
 
   <dependencies>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jul-to-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <!-- Project Library Dependencies -->
     <dependency>
