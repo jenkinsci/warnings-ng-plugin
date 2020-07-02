@@ -119,18 +119,33 @@
                             }
 
                             if (first) {
-                                recordIssues enabledForFailure: true, tool: mavenConsole(), referenceJobName: 'Plugins/warnings-ng-plugin/master'
-                                recordIssues enabledForFailure: true, tool: errorProne(), referenceJobName: 'Plugins/warnings-ng-plugin/master'
-                                recordIssues enabledForFailure: true, tools: [java(), javaDoc()], sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
-                                recordIssues tools: [spotBugs(), checkStyle(), pmdParser(), cpd()], sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
+                                referenceJobName = env.JOB_NAME.substring(0, env.JOB_NAME.lastIndexOf("/") + 1) + "master"
+                                echo "Recording static analysis results on '${stageIdentifier}' using reference job '${referenceJobName}'"
+
+                                recordIssues enabledForFailure: true,
+                                        tool: mavenConsole(),
+                                        referenceJobName: referenceJobName
+                                recordIssues enabledForFailure: true,
+                                        tools: [java(), javaDoc()],
+                                        sourceCodeEncoding: 'UTF-8',
+                                        filters:[excludeFile('.*Assert.java')],
+                                        referenceJobName: referenceJobName
+                                recordIssues tools: [spotBugs(pattern: '**/target/spotbugsXml.xml'),
+                                                     checkStyle(pattern: '**/target/checkstyle-result.xml'),
+                                                     pmdParser(pattern: '**/target/pmd.xml'),
+                                                     cpd(pattern: '**/target/cpd.xml')],
+                                        sourceCodeEncoding: 'UTF-8',
+                                        referenceJobName: referenceJobName
                                 recordIssues enabledForFailure: true, tool: taskScanner(
                                         includePattern:'**/*.java',
-                                        excludePattern:'target/**',
+                                        excludePattern:'**/target/**',
                                         highTags:'FIXME',
-                                        normalTags:'TODO'), sourceCodeEncoding: 'UTF-8', referenceJobName: 'Plugins/warnings-ng-plugin/master'
-                                if (failFast && currentBuild.result == 'UNSTABLE') {
-                                    error 'There were static analysis warnings; halting early'
+                                        normalTags:'TODO'),
+                                        sourceCodeEncoding: 'UTF-8',
+                                        referenceJobName: referenceJobName
                                 }
+                            else {
+                                echo "Skipping static analysis results for ${stageIdentifier}"
                             }
                             if (doArchiveArtifacts) {
                                 if (incrementals) {
