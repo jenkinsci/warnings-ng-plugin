@@ -12,6 +12,8 @@ import com.tngtech.archunit.lang.ArchRule;
 
 import edu.hm.hafner.util.ArchitectureRules;
 
+import jenkins.model.Jenkins;
+
 import io.jenkins.plugins.util.PluginArchitectureRules;
 
 import static com.tngtech.archunit.base.DescribedPredicate.*;
@@ -28,7 +30,11 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
 @AnalyzeClasses(packages = "io.jenkins.plugins.analysis")
 class PluginArchitectureTest {
     @ArchTest
-    static final ArchRule NO_JENKINS_INSTANCE_CALL = PluginArchitectureRules.NO_JENKINS_INSTANCE_CALL;
+    static final ArchRule NO_JENKINS_INSTANCE_CALL = noClasses().that().doNotHaveSimpleName("JenkinsFacade")
+            .should().callMethod(Jenkins.class, "getInstance")
+            .orShould().callMethod(Jenkins.class, "getInstanceOrNull")
+            .orShould().callMethod(Jenkins.class, "getActiveInstance")
+            .orShould().callMethod(Jenkins.class, "get");;
 
     @ArchTest
     static final ArchRule NO_PUBLIC_TEST_CLASSES = PluginArchitectureRules.NO_PUBLIC_TEST_CLASSES;

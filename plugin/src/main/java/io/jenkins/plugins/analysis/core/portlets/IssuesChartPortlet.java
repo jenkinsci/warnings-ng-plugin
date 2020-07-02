@@ -67,7 +67,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
      */
     @SuppressWarnings("unused")
     @DataBoundSetter
-    void setHideCleanJobs(final boolean hideCleanJobs) {
+    public void setHideCleanJobs(final boolean hideCleanJobs) {
         this.hideCleanJobs = hideCleanJobs;
     }
 
@@ -128,7 +128,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    String getBuildTrendModel() {
+    public String getBuildTrendModel() {
         SeverityTrendChart severityChart = new SeverityTrendChart();
 
         List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
