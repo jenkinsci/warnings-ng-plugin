@@ -1,4 +1,3 @@
-
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
@@ -703,7 +702,8 @@ public class IssuesRecorder extends Recorder {
                 reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds,
                 getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
-        publisher.attachAction(trendChartType);
+        ResultAction action = publisher.attachAction(trendChartType);
+        publisher.publishChecks(action);
     }
 
     /**
