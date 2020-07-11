@@ -878,6 +878,24 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(10, new ProtoLint(), "protolint.txt");
     }
 
+    /** Runs the HadoLint parser on an output file that contains 10 issues. */
+    @Test
+    public void shouldFindAllHadoLintIssues() {
+        shouldFindIssuesOfTool(5, new HadoLint(), "hadolint.json");
+    }
+
+    /** Runs the DockerLint parser on an output file that contains 10 issues. */
+    @Test
+    public void shouldFindAllDockerLintIssues() {
+        shouldFindIssuesOfTool(3, new DockerLint(), "dockerlint.json");
+    }
+
+    /** Runs the Clair parser on an output file that contains 10 issues. */
+    @Test
+    public void shouldFindAllClairIssues() {
+        shouldFindIssuesOfTool(112, new Clair(), "clair.json");
+    }
+
     private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";

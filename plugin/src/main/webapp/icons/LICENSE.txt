@@ -170,3 +170,11 @@ Original file: https://camo.githubusercontent.com/049cbfc3f4c820fe5aa0b376a703a9
 742e6f72672f6a756e6974352f6173736574732f696d672f6a756e6974352d6c6f676f2e706e67
 The 24x24 and 48x48 icons were created from this file. No modifications were made, except
 the scale that was changed.
+
+------------------------------------------------------------------------------
+
+Hadolint icons:
+
+Taken from https://hadolint.github.io/hadolint/img/cat_container.png and rescaled.
+
+------------------------------------------------------------------------------
