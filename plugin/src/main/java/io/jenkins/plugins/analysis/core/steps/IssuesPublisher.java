@@ -3,7 +3,6 @@ package io.jenkins.plugins.analysis.core.steps;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,21 +25,11 @@ import io.jenkins.plugins.analysis.core.model.ResetReferenceAction;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.ResultSelector;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
-import io.jenkins.plugins.analysis.core.util.IssuesStatistics;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
-import io.jenkins.plugins.checks.api.ChecksAnnotation;
-import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
-import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
-import io.jenkins.plugins.checks.api.ChecksConclusion;
-import io.jenkins.plugins.checks.api.ChecksDetails.ChecksDetailsBuilder;
-import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
-import io.jenkins.plugins.checks.api.ChecksPublisher;
-import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
-import io.jenkins.plugins.checks.api.ChecksStatus;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
@@ -159,29 +148,6 @@ class IssuesPublisher {
         return action;
     }
 
-    /**
-     * Publishes checks to platforms. Afterwards, all warnings are available in corresponding platform's UI.
-     */
-    public void publishChecks(final ResultAction action) {
-        AnalysisResult result = action.getResult();
-        IssuesStatistics totals = result.getTotals();
-
-        ChecksPublisher publisher = ChecksPublisherFactory.fromRun(run);
-        publisher.publish(new ChecksDetailsBuilder()
-                .withName(result.getId())
-                .withStatus(ChecksStatus.COMPLETED)
-                .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
-                .withOutput(new ChecksOutputBuilder()
-                        .withTitle(StringUtils.capitalize(result.getId()) + " Warnings")
-                        .withSummary(extractChecksSummary(totals))
-                        .withText(extractChecksText(totals))
-                        .withAnnotations(extractChecksAnnotations(result.getIssues()))
-                        .build())
-                .withDetailsURL(result.getOwner().getParent().getAbsoluteUrl() + result.getOwner().getSearchUrl()
-                        + result.getId())
-                .build());
-    }
-
     private ResultSelector ensureThatIdIsUnique() {
         ResultSelector selector = new ByIdResultSelector(getId());
         Optional<ResultAction> other = selector.get(run);
@@ -276,65 +242,5 @@ class IssuesPublisher {
             }
         }
         return qualityGateEvaluationMode;
-    }
-
-    private String extractChecksSummary(final IssuesStatistics statistics) {
-        return String.format("## %d issues in total:\n"
-                        + "- ### %d new issues\n"
-                        + "- ### %d Outstanding Issues\n"
-                        + "- ### %d delta issues\n"
-                        + "- ### %d fixed issues",
-                statistics.getTotalSize(), statistics.getNewSize(), statistics.getTotalSize() - statistics.getNewSize(),
-                statistics.getDeltaSize(), statistics.getFixedSize());
-    }
-
-    private String extractChecksText(final IssuesStatistics statistics) {
-        return "## Total Issue Statistics:\n"
-                + generateSeverityText(statistics.getTotalLowSize(), statistics.getTotalNormalSize(),
-                statistics.getTotalHighSize(), statistics.getTotalErrorSize())
-                + "## New Issue Statistics:\n"
-                + generateSeverityText(statistics.getNewLowSize(), statistics.getNewNormalSize(),
-                statistics.getNewHighSize(), statistics.getNewErrorSize())
-                + "## Delta Issue Statistics:\n"
-                + generateSeverityText(statistics.getDeltaLowSize(), statistics.getDeltaNormalSize(),
-                statistics.getDeltaHighSize(), statistics.getDeltaErrorSize());
-    }
-
-    private String generateSeverityText(final int low, final int normal, final int high, final int error) {
-        return "* low: " + low + "\n"
-                + "* Normal: " + normal + "\n"
-                + "* High: " + high + "\n"
-                + "* Error: " + error + "\n";
-    }
-
-    private ChecksConclusion extractChecksConclusion(final QualityGateStatus status) {
-        switch (status) {
-            case INACTIVE:
-                return ChecksConclusion.SUCCESS;
-            case FAILED:
-                return ChecksConclusion.FAILURE;
-            case WARNING:
-                return ChecksConclusion.NEUTRAL;
-            case PASSED:
-                return ChecksConclusion.SUCCESS;
-            default:
-                throw new IllegalArgumentException("Unsupported quality gate status: " + status);
-        }
-    }
-
-    private List<ChecksAnnotation> extractChecksAnnotations(final Report issues) {
-        return issues.stream()
-                .map(issue -> new ChecksAnnotationBuilder()
-                        .withPath(issue.getFileName())
-                        .withTitle(issue.getType())
-                        .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
-                        .withMessage(issue.getSeverity() + ": " + issue.getMessage())
-                        .withStartLine(issue.getLineStart())
-                        .withEndLine(issue.getLineEnd())
-                        .withStartColumn(issue.getColumnStart())
-                        .withEndColumn(issue.getColumnEnd())
-                        .withRawDetails(issue.getDescription())
-                        .build())
-                .collect(Collectors.toList());
     }
 }

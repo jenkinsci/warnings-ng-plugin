@@ -703,7 +703,9 @@ public class IssuesRecorder extends Recorder {
                 getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);
-        publisher.publishChecks(action);
+
+        WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
+        checksPublisher.publishChecks();
     }
 
     /**
