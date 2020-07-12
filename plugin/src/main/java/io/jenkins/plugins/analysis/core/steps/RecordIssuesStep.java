@@ -84,6 +84,8 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean isBlameDisabled;
     private boolean isForensicsDisabled;
 
+    private boolean isChecksPublishingDisabled;
+
     private String id;
     private String name;
 
@@ -761,6 +763,21 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns whether checks publishing should be disabled.
+     *
+     * @return {@code true} if checks publishing should be disabled
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getChecksPublishingDisabled() {
+        return isChecksPublishingDisabled;
+    }
+
+    @DataBoundSetter
+    public void setChecksPublishingDisabled(final boolean checksPublishingDisabled) {
+        isChecksPublishingDisabled = checksPublishingDisabled;
+    }
+
+    /**
      * Returns whether recording should be enabled for failed builds as well.
      *
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
@@ -993,6 +1010,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.getBlameDisabled());
             recorder.setForensicsDisabled(step.getForensicsDisabled());
+            recorder.setChecksPublishingDisabled(step.getChecksPublishingDisabled());
             recorder.setId(step.getId());
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());

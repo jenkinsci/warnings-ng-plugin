@@ -25,6 +25,7 @@
     </f:entry>
     <i:scan-parameters/>
     <i:publish-parameters/>
+    <i:checks-parameters/>
   </f:advanced>
 
 </j:jelly>

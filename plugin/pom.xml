@@ -81,7 +81,7 @@
     <form-element-path.version>1.8</form-element-path.version>
     <folder.version>6.9</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
-    <github-checks.version>0.1.0-rc139.bc6d314165d6</github-checks.version>
+    <github-checks.version>0.1.0-rc143.251559838646</github-checks.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>

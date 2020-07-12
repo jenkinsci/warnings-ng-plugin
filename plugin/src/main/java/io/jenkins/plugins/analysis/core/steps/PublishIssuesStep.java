@@ -58,6 +58,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private String referenceJobName = StringUtils.EMPTY;
     private String referenceBuildId = StringUtils.EMPTY;
     private boolean failOnError = false; // by default, it should not fail on error
+    private boolean isChecksPublishingDisabled = false; // by default, warnings should be published to SCM platforms
 
     private int healthy;
     private int unhealthy;
@@ -145,6 +146,22 @@ public class PublishIssuesStep extends Step implements Serializable {
     @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
     public boolean getFailOnError() {
         return failOnError;
+    }
+
+    /**
+     * Returns whether checks publishing should be disabled.
+     *
+     * @return {@code true} if checks publishing should be disabled
+     */
+    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
+    public boolean getChecksPublishingDisabled() {
+        return isChecksPublishingDisabled;
+    }
+
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setChecksPublishingDisabled(final boolean checksPublishingDisabled) {
+        isChecksPublishingDisabled = checksPublishingDisabled;
     }
 
     /**
@@ -811,7 +828,14 @@ public class PublishIssuesStep extends Step implements Serializable {
                     StringUtils.defaultString(step.getName()), step.getReferenceJobName(), step.getReferenceBuildId(),
                     step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), statusHandler, step.getFailOnError());
-            return publisher.attachAction(step.getTrendChartType());
+            ResultAction action = publisher.attachAction(step.getTrendChartType());
+
+            if (!step.getChecksPublishingDisabled()) {
+                WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
+                checksPublisher.publishChecks();
+            }
+
+            return action;
         }
 
         private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {

@@ -103,6 +103,8 @@ public class IssuesRecorder extends Recorder {
     private boolean isBlameDisabled;
     private boolean isForensicsDisabled;
 
+    private boolean isChecksPublishingDisabled;
+
     private String id;
     private String name;
 
@@ -359,6 +361,21 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setForensicsDisabled(final boolean forensicsDisabled) {
         isForensicsDisabled = forensicsDisabled;
+    }
+
+    /**
+     * Returns whether checks publishing should be disabled.
+     *
+     * @return {@code true} if checks publishing should be disabled
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    public boolean getChecksPublishingDisabled() {
+        return isChecksPublishingDisabled;
+    }
+
+    @DataBoundSetter
+    public void setChecksPublishingDisabled(final boolean checksPublishingDisabled) {
+        isChecksPublishingDisabled = checksPublishingDisabled;
     }
 
     /**
@@ -704,8 +721,10 @@ public class IssuesRecorder extends Recorder {
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);
 
-        WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
-        checksPublisher.publishChecks();
+        if (!isChecksPublishingDisabled) {
+            WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
+            checksPublisher.publishChecks();
+        }
     }
 
     /**
