@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.Report;
 
-import hudson.model.Result;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -21,8 +19,6 @@ import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksPublisher;
 import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
-
-import static hudson.model.Result.*;
 
 /**
  * Publishes warnings as checks to scm platforms.
@@ -47,7 +43,7 @@ class WarningChecksPublisher {
 
         ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner());
         publisher.publish(new ChecksDetailsBuilder()
-                .withName(labelProvider.getId())
+                .withName(labelProvider.getName())
                 .withStatus(ChecksStatus.COMPLETED)
                 .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
                 .withOutput(new ChecksOutputBuilder()
