@@ -33,7 +33,8 @@ class WarningChecksPublisher {
     }
 
     /**
-     * Actually publishes checks to platforms. Afterwards, all warnings are available in corresponding platform's UI.
+     * Publishes checks to platforms. Afterwards, all warnings are available in corresponding platform's UI,
+     * e.g. GitHub checks.
      */
     void publishChecks() {
         AnalysisResult result = action.getResult();
@@ -87,7 +88,7 @@ class WarningChecksPublisher {
 
     private ChecksConclusion extractChecksConclusion(final QualityGateStatus status) {
         switch (status) {
-            case INACTIVE: // TODO:  determine conclusion for it
+            case INACTIVE:
             case PASSED:
                 return ChecksConclusion.SUCCESS;
             case FAILED:
