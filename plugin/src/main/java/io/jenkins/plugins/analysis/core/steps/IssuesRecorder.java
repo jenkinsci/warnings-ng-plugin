@@ -103,7 +103,7 @@ public class IssuesRecorder extends Recorder {
     private boolean isBlameDisabled;
     private boolean isForensicsDisabled;
 
-    private boolean isChecksPublishingDisabled;
+    private boolean publishChecks = true; // by default, checks will be published
 
     private String id;
     private String name;
@@ -364,18 +364,17 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns whether checks publishing should be disabled.
+     * Returns whether checks should be published.
      *
-     * @return {@code true} if checks publishing should be disabled
+     * @return {@code true} if checks should be published
      */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getChecksPublishingDisabled() {
-        return isChecksPublishingDisabled;
+    public boolean isPublishChecks() {
+        return publishChecks;
     }
 
     @DataBoundSetter
-    public void setChecksPublishingDisabled(final boolean checksPublishingDisabled) {
-        isChecksPublishingDisabled = checksPublishingDisabled;
+    public void setPublishChecks(final boolean publishChecks) {
+        this.publishChecks = publishChecks;
     }
 
     /**
@@ -721,7 +720,7 @@ public class IssuesRecorder extends Recorder {
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);
 
-        if (!isChecksPublishingDisabled) {
+        if (publishChecks) {
             WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
             checksPublisher.publishChecks();
         }

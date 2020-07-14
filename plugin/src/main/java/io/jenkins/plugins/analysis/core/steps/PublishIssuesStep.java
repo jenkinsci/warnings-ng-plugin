@@ -58,7 +58,8 @@ public class PublishIssuesStep extends Step implements Serializable {
     private String referenceJobName = StringUtils.EMPTY;
     private String referenceBuildId = StringUtils.EMPTY;
     private boolean failOnError = false; // by default, it should not fail on error
-    private boolean isChecksPublishingDisabled = false; // by default, warnings should be published to SCM platforms
+
+    private boolean publishChecks = true; // by default, warnings should be published to SCM platforms
 
     private int healthy;
     private int unhealthy;
@@ -149,19 +150,18 @@ public class PublishIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Returns whether checks publishing should be disabled.
+     * Returns whether checks should be published.
      *
-     * @return {@code true} if checks publishing should be disabled
+     * @return {@code true} if checks should be published
      */
-    @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
-    public boolean getChecksPublishingDisabled() {
-        return isChecksPublishingDisabled;
+    public boolean isPublishChecks() {
+        return publishChecks;
     }
 
     @DataBoundSetter
     @SuppressWarnings("unused") // Used by Stapler
-    public void setChecksPublishingDisabled(final boolean checksPublishingDisabled) {
-        isChecksPublishingDisabled = checksPublishingDisabled;
+    public void setPublishChecks(final boolean publishChecks) {
+        this.publishChecks = publishChecks;
     }
 
     /**
@@ -830,7 +830,7 @@ public class PublishIssuesStep extends Step implements Serializable {
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), statusHandler, step.getFailOnError());
             ResultAction action = publisher.attachAction(step.getTrendChartType());
 
-            if (!step.getChecksPublishingDisabled()) {
+            if (step.isPublishChecks()) {
                 WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
                 checksPublisher.publishChecks();
             }

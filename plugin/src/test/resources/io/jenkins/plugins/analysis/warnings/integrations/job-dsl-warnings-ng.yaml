@@ -11,6 +11,7 @@ jobs:
                     healthy(10)
                     ignoreFailedBuilds(false)
                     ignoreQualityGate(true)
+                    publishChecks(false)
                     id('test-id')
                     name('test-name')
                     minimumSeverity('ERROR')

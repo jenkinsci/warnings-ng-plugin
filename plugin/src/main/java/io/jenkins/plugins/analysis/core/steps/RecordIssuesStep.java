@@ -84,7 +84,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean isBlameDisabled;
     private boolean isForensicsDisabled;
 
-    private boolean isChecksPublishingDisabled;
+    private boolean publishChecks = true; // by default, checks will be published
 
     private String id;
     private String name;
@@ -763,18 +763,17 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Returns whether checks publishing should be disabled.
+     * Returns whether checks should be published.
      *
-     * @return {@code true} if checks publishing should be disabled
+     * @return {@code true} if checks should be published
      */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getChecksPublishingDisabled() {
-        return isChecksPublishingDisabled;
+    public boolean isPublishChecks() {
+        return publishChecks;
     }
 
     @DataBoundSetter
-    public void setChecksPublishingDisabled(final boolean checksPublishingDisabled) {
-        isChecksPublishingDisabled = checksPublishingDisabled;
+    public void setPublishChecks(final boolean publishChecks) {
+        this.publishChecks = publishChecks;
     }
 
     /**
@@ -1010,7 +1009,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.getBlameDisabled());
             recorder.setForensicsDisabled(step.getForensicsDisabled());
-            recorder.setChecksPublishingDisabled(step.getChecksPublishingDisabled());
+            recorder.setPublishChecks(step.isPublishChecks());
             recorder.setId(step.getId());
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());

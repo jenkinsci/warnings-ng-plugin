@@ -5,9 +5,11 @@
     Provides all required input fields to publish checks.
   </st:documentation>
 
-  <f:entry title="${%title.checksPublishingDisabled}" description="${%description.checksPublishingDisabled}"
-           field="checksPublishingDisabled">
-    <f:checkbox/>
+  <i:hr title="${%Checks Configuration}"/>
+
+  <f:entry title="${%title.publishChecks}" description="${%description.publishChecks}"
+           field="publishChecks">
+    <f:checkbox default="true"/>
   </f:entry>
 
 </j:jelly>
