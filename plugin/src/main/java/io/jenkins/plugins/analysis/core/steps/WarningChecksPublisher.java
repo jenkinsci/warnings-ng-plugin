@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
@@ -14,6 +15,7 @@ import io.jenkins.plugins.checks.api.ChecksAnnotation;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 import io.jenkins.plugins.checks.api.ChecksConclusion;
+import io.jenkins.plugins.checks.api.ChecksDetails;
 import io.jenkins.plugins.checks.api.ChecksDetails.ChecksDetailsBuilder;
 import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksPublisher;
@@ -37,13 +39,18 @@ class WarningChecksPublisher {
      * e.g. GitHub checks.
      */
     void publishChecks() {
+        ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner());
+        publisher.publish(extractChecksDetails());
+    }
+
+    @VisibleForTesting
+    ChecksDetails extractChecksDetails() {
         AnalysisResult result = action.getResult();
         IssuesStatistics totals = result.getTotals();
 
         StaticAnalysisLabelProvider labelProvider = action.getLabelProvider();
 
-        ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner());
-        publisher.publish(new ChecksDetailsBuilder()
+        return new ChecksDetailsBuilder()
                 .withName(labelProvider.getName())
                 .withStatus(ChecksStatus.COMPLETED)
                 .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
@@ -54,7 +61,7 @@ class WarningChecksPublisher {
                         .withAnnotations(extractChecksAnnotations(result.getNewIssues()))
                         .build())
                 .withDetailsURL(action.getAbsoluteUrl())
-                .build());
+                .build();
     }
 
     private String extractChecksSummary(final IssuesStatistics statistics) {
