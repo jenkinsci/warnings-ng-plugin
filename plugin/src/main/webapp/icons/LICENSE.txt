@@ -176,5 +176,6 @@ the scale that was changed.
 Hadolint icons:
 
 Taken from https://hadolint.github.io/hadolint/img/cat_container.png and rescaled.
+Usage consent via Github comment at https://github.com/hadolint/hadolint/issues/449#issuecomment-658594755
 
 ------------------------------------------------------------------------------
