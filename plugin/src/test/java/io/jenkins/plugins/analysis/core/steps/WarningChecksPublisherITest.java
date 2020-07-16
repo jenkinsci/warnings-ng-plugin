@@ -1,11 +1,21 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import org.junit.Test;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+
+import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
+import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 import io.jenkins.plugins.checks.api.ChecksConclusion;
@@ -30,44 +40,62 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(OLD_REPORT_FILE);
         enableCheckStyleWarnings(project);
 
-        // trigger a build using the report file with 4 issues
-        Run<?, ?> run = buildSuccessfully(project);
-        assertThat(getAnalysisResult(run))
+        Run<?, ?> reference = buildSuccessfully(project);
+        assertThat(getAnalysisResult(reference))
                 .hasTotalSize(4)
                 .hasNewSize(0);
 
-        // trigger a build using the report file with 2 new issues
         copyMultipleFilesToWorkspaceWithSuffix(project, NEW_REPORT_FILE);
-        run = buildSuccessfully(project);
+        Run<?, ?> run = buildSuccessfully(project);
         assertThat(getAnalysisResult(run))
                 .hasTotalSize(6)
                 .hasNewSize(2);
 
-        // extract details from result
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run));
-        ChecksDetails details = publisher.extractChecksDetails();
-
-        // verify extracted details
-        ChecksDetails expectedDetails = createChecksDetailsBasedOnReportFile();
-        assertThat(details)
+        assertThat(publisher.extractChecksDetails())
+                .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
                 .ignoringFields("detailsURL")
-                .isEqualTo(expectedDetails);
+                .isEqualTo(createExpectedDetails());
     }
 
-    private ChecksDetails createChecksDetailsBasedOnReportFile() {
+    @Test
+    public void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_REPORT_FILE);
+        enableAndConfigureCheckstyle(project,
+                recorder -> recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
+
+        Run<?, ?> build = buildSuccessfully(project);
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build));
+
+        assertThat(publisher.extractChecksDetails().getConclusion())
+                .isEqualTo(ChecksConclusion.SUCCESS);
+    }
+
+    @Test
+    public void shouldConcludeChecksAsFailureWhenQualityGateIsFailed() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_REPORT_FILE);
+        enableAndConfigureCheckstyle(project,
+                recorder -> recorder.addQualityGate(1, QualityGateType.TOTAL, QualityGateResult.FAILURE));
+
+        Run<?, ?> build = buildWithResult(project, Result.FAILURE);
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build));
+
+        assertThat(publisher.extractChecksDetails().getConclusion())
+                .isEqualTo(ChecksConclusion.FAILURE);
+    }
+
+    private ChecksDetails createExpectedDetails() {
         ChecksDetailsBuilder builder = new ChecksDetailsBuilder()
                 .withName("CheckStyle")
                 .withStatus(ChecksStatus.COMPLETED)
-                .withConclusion(ChecksConclusion.SUCCESS)
-                .withDetailsURL("http://localhost:39121/jenkins/job/test0/2/");
-
+                .withConclusion(ChecksConclusion.SUCCESS);
 
         ChecksOutput output = new ChecksOutputBuilder()
                 .withTitle("CheckStyle Warnings")
                 .withSummary("## 6 issues in total:\n"
                         + "- ### 2 new issues\n"
-                        + "- ### 4 outstanding Issues\n"
+                        + "- ### 4 outstanding issues\n"
                         + "- ### 2 delta issues\n"
                         + "- ### 0 fixed issues")
                 .withText("## Total Issue Statistics:\n* Error: 6\n* High: 0\n* Normal: 0\n* Low: 0\n"
@@ -100,5 +128,15 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
         return builder
                 .withOutput(output)
                 .build();
+    }
+
+    @CanIgnoreReturnValue
+    private IssuesRecorder enableAndConfigureCheckstyle(final AbstractProject<?, ?> job,
+            final Consumer<IssuesRecorder> configuration) {
+        IssuesRecorder item = new IssuesRecorder();
+        item.setTools(createTool(new CheckStyle(), "**/*issues.txt"));
+        job.getPublishersList().add(item);
+        configuration.accept(item);
+        return item;
     }
 }
