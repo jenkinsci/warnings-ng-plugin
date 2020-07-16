@@ -67,7 +67,7 @@ class WarningChecksPublisher {
     private String extractChecksSummary(final IssuesStatistics statistics) {
         return String.format("## %d issues in total:\n"
                         + "- ### %d new issues\n"
-                        + "- ### %d outstanding Issues\n"
+                        + "- ### %d outstanding issues\n"
                         + "- ### %d delta issues\n"
                         + "- ### %d fixed issues",
                 statistics.getTotalSize(), statistics.getNewSize(), statistics.getTotalSize() - statistics.getNewSize(),
