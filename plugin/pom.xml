@@ -183,6 +183,11 @@
       <artifactId>json-smart</artifactId>
       <version>${json-smart.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup.version}</version>
+    </dependency>
 
     <!-- PMD Messages -->
     <dependency>
@@ -355,12 +360,6 @@
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>${json.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jsoup</groupId>
-      <artifactId>jsoup</artifactId>
-      <version>${jsoup.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

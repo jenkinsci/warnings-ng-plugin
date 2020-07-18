@@ -15,6 +15,7 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.warnings.PVSStudio;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
@@ -28,8 +29,8 @@ import io.jenkins.plugins.checks.api.ChecksStatus;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTest {
-    private static final String OLD_REPORT_FILE = "checkstyle.xml";
-    private static final String NEW_REPORT_FILE = "checkstyle1.xml";
+    private static final String OLD_CHECK_STYLE_REPORT = "checkstyle.xml";
+    private static final String NEW_CHECK_STYLE_REPORT = "checkstyle1.xml";
 
     /**
      * Verifies that {@link WarningChecksPublisher} constructs the {@link ChecksDetails} correctly
@@ -37,7 +38,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
      */
     @Test
     public void shouldCreateChecksDetailsWithNewIssuesAsAnnotations() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(OLD_REPORT_FILE);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(OLD_CHECK_STYLE_REPORT);
         enableCheckStyleWarnings(project);
 
         Run<?, ?> reference = buildSuccessfully(project);
@@ -45,7 +46,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                 .hasTotalSize(4)
                 .hasNewSize(0);
 
-        copyMultipleFilesToWorkspaceWithSuffix(project, NEW_REPORT_FILE);
+        copyMultipleFilesToWorkspaceWithSuffix(project, NEW_CHECK_STYLE_REPORT);
         Run<?, ?> run = buildSuccessfully(project);
         assertThat(getAnalysisResult(run))
                 .hasTotalSize(6)
@@ -56,12 +57,12 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                 .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
                 .ignoringFields("detailsURL")
-                .isEqualTo(createExpectedDetails());
+                .isEqualTo(createExpectedCheckStyleDetails());
     }
 
     @Test
     public void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_REPORT_FILE);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECK_STYLE_REPORT);
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
 
@@ -74,7 +75,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
 
     @Test
     public void shouldConcludeChecksAsFailureWhenQualityGateIsFailed() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_REPORT_FILE);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECK_STYLE_REPORT);
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(1, QualityGateType.TOTAL, QualityGateResult.FAILURE));
 
@@ -85,7 +86,29 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                 .isEqualTo(ChecksConclusion.FAILURE);
     }
 
-    private ChecksDetails createExpectedDetails() {
+    @Test
+    public void shouldParseHtmlMessage() {
+        FreeStyleProject project = createFreeStyleProject();
+        enableWarnings(project, new PVSStudio());
+
+        buildSuccessfully(project);
+
+        copySingleFileToWorkspace(project, "PVSReport.xml", "PVSReport.plog");
+        Run<?, ?> run = buildSuccessfully(project);
+
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run));
+        ChecksDetails details = publisher.extractChecksDetails();
+
+        assertThat(details.getOutput().get().getChecksAnnotations())
+                .usingElementComparatorOnFields("message")
+                .containsOnly(new ChecksAnnotationBuilder()
+                        .withMessage("ERROR:\n"
+                                + "Some diagnostic messages may contain incorrect line number.\n"
+                                + "V002:https://www.viva64.com/en/w/v002/")
+                        .build());
+    }
+
+    private ChecksDetails createExpectedCheckStyleDetails() {
         ChecksDetailsBuilder builder = new ChecksDetailsBuilder()
                 .withName("CheckStyle")
                 .withStatus(ChecksStatus.COMPLETED)
@@ -106,7 +129,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                                 + "/tasks/parser/CsharpNamespaceDetector.java")
                         .withTitle("RightCurlyCheck")
                         .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
-                        .withMessage("ERROR: '}' sollte in derselben Zeile stehen.")
+                        .withMessage("ERROR:\n'}' sollte in derselben Zeile stehen.")
                         .withLine(30)
                         .withStartColumn(21)
                         .withEndColumn(21)
@@ -117,7 +140,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                                 + "/tasks/parser/CsharpNamespaceDetector.java")
                         .withTitle("RightCurlyCheck")
                         .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
-                        .withMessage("ERROR: '}' sollte in derselben Zeile stehen.")
+                        .withMessage("ERROR:\n'}' sollte in derselben Zeile stehen.")
                         .withLine(37)
                         .withStartColumn(9)
                         .withEndColumn(9)

@@ -1,7 +1,13 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.TextNode;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -106,13 +112,14 @@ class WarningChecksPublisher {
         }
     }
 
+    // TODO: Use IconLabelProvider to extract description
     private List<ChecksAnnotation> extractChecksAnnotations(final Report issues) {
         return issues.stream()
                 .map(issue -> new ChecksAnnotationBuilder()
                         .withPath(issue.getFileName())
                         .withTitle(issue.getType())
                         .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
-                        .withMessage(issue.getSeverity() + ": " + issue.getMessage())
+                        .withMessage(issue.getSeverity() + ":\n" + parseHtml(issue.getMessage()))
                         .withStartLine(issue.getLineStart())
                         .withEndLine(issue.getLineEnd())
                         .withStartColumn(issue.getColumnStart())
@@ -120,5 +127,25 @@ class WarningChecksPublisher {
                         .withRawDetails(issue.getDescription())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private String parseHtml(final String html) {
+        Set<String> contents = new HashSet<>();
+        parseHtml(Jsoup.parse(html), contents);
+        return String.join("\n", contents);
+    }
+
+    private void parseHtml(final Element html, final Set<String> contents) {
+        for (TextNode node : html.textNodes()) {
+            contents.add(node.text().trim());
+        }
+
+        for (Element child : html.children()) {
+            if (child.hasAttr("href")) {
+                contents.add(child.text().trim() + ":" + child.attr("href").trim());
+            } else {
+                parseHtml(child, contents);
+            }
+        }
     }
 }
