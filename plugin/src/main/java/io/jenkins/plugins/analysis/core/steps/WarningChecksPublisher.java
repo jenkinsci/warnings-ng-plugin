@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
@@ -64,7 +65,7 @@ class WarningChecksPublisher {
                         .withTitle(labelProvider.getLinkName())
                         .withSummary(extractChecksSummary(totals))
                         .withText(extractChecksText(totals))
-                        .withAnnotations(extractChecksAnnotations(result.getNewIssues()))
+                        .withAnnotations(extractChecksAnnotations(result.getNewIssues(), labelProvider))
                         .build())
                 .withDetailsURL(action.getAbsoluteUrl())
                 .build();
@@ -112,8 +113,8 @@ class WarningChecksPublisher {
         }
     }
 
-    // TODO: Use IconLabelProvider to extract description
-    private List<ChecksAnnotation> extractChecksAnnotations(final Report issues) {
+    private List<ChecksAnnotation> extractChecksAnnotations(final Report issues,
+            final StaticAnalysisLabelProvider labelProvider) {
         return issues.stream()
                 .map(issue -> new ChecksAnnotationBuilder()
                         .withPath(issue.getFileName())
@@ -124,7 +125,7 @@ class WarningChecksPublisher {
                         .withEndLine(issue.getLineEnd())
                         .withStartColumn(issue.getColumnStart())
                         .withEndColumn(issue.getColumnEnd())
-                        .withRawDetails(issue.getDescription())
+                        .withRawDetails(StringUtils.normalizeSpace(labelProvider.getDescription(issue)))
                         .build())
                 .collect(Collectors.toList());
     }

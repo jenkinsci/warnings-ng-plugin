@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.steps;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -133,7 +134,15 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                         .withLine(30)
                         .withStartColumn(21)
                         .withEndColumn(21)
-                        .withRawDetails("")
+                        .withRawDetails(StringUtils.normalizeSpace("<p>Since Checkstyle 3.0</p><p>\n"
+                                + "Checks the placement of right curly braces (<code>'}'</code>)\n"
+                                + "for if-else, try-catch-finally blocks, while-loops, for-loops,\n"
+                                + "method definitions, class definitions, constructor definitions,\n"
+                                + "instance and static initialization blocks.\n"
+                                + "The policy to verify is specified using the property <code> option</code>.\n"
+                                + "For right curly brace of expression blocks please follow issue\n"
+                                + "<a href=\"https://github.com/checkstyle/checkstyle/issues/5945\">#5945</a>.\n"
+                                + "</p>"))
                         .build())
                 .addAnnotation(new ChecksAnnotationBuilder()
                         .withPath("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins"
@@ -144,7 +153,15 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                         .withLine(37)
                         .withStartColumn(9)
                         .withEndColumn(9)
-                        .withRawDetails("")
+                        .withRawDetails(StringUtils.normalizeSpace("<p>Since Checkstyle 3.0</p><p>\n"
+                                + "Checks the placement of right curly braces (<code>'}'</code>)\n"
+                                + "for if-else, try-catch-finally blocks, while-loops, for-loops,\n"
+                                + "method definitions, class definitions, constructor definitions,\n"
+                                + "instance and static initialization blocks.\n"
+                                + "The policy to verify is specified using the property <code> option</code>.\n"
+                                + "For right curly brace of expression blocks please follow issue\n"
+                                + "<a href=\"https://github.com/checkstyle/checkstyle/issues/5945\">#5945</a>.\n"
+                                + "</p>"))
                         .build())
                 .build();
 
