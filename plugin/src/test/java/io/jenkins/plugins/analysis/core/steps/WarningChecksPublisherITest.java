@@ -10,7 +10,6 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
-import hudson.model.Result;
 import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
@@ -76,15 +75,12 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
 
     @Test
     public void shouldConcludeChecksAsFailureWhenQualityGateIsFailed() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECK_STYLE_REPORT);
-        enableAndConfigureCheckstyle(project,
-                recorder -> recorder.addQualityGate(1, QualityGateType.TOTAL, QualityGateResult.FAILURE));
+        assertChecksConclusionIsFailureWithQualityGateResult(QualityGateResult.FAILURE);
+    }
 
-        Run<?, ?> build = buildWithResult(project, Result.FAILURE);
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build));
-
-        assertThat(publisher.extractChecksDetails().getConclusion())
-                .isEqualTo(ChecksConclusion.FAILURE);
+    @Test
+    public void shouldConcludeChecksAsFailureWhenQualityGateResultIsUnstable() {
+        assertChecksConclusionIsFailureWithQualityGateResult(QualityGateResult.UNSTABLE);
     }
 
     @Test
@@ -178,5 +174,20 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
         job.getPublishersList().add(item);
         configuration.accept(item);
         return item;
+    }
+
+    private void assertChecksConclusionIsFailureWithQualityGateResult(final QualityGateResult qualityGateResult) {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECK_STYLE_REPORT);
+        enableAndConfigureCheckstyle(project,
+                recorder -> recorder.addQualityGate(1, QualityGateType.TOTAL, qualityGateResult));
+
+        Run<?, ?> build = buildWithResult(project, qualityGateResult.getStatus().getResult());
+        assertThat(getAnalysisResult(build))
+                .hasTotalSize(6)
+                .hasQualityGateStatus(qualityGateResult.getStatus());
+
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build));
+        assertThat(publisher.extractChecksDetails().getConclusion())
+                .isEqualTo(ChecksConclusion.FAILURE);
     }
 }
