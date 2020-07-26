@@ -56,8 +56,7 @@ class JobActionTest {
         assertThat(action.getOwner()).isEqualTo(job); 
     }
 
-    @SuppressWarnings("rawtypes")
-    @Test
+    @Test @SuppressWarnings("rawtypes")
     void shouldShowIconIfThereIsABuildResultAvailable() {
         Job job = mock(Job.class);
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
