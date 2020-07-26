@@ -205,6 +205,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(2, new RuboCop(), "rubocop.log");
     }
 
+    /** Runs the flawfinder parser on an output file that contains 3 issues. */
+    @Test
+    public void shouldFindAllFlawfinderIssues() {
+        shouldFindIssuesOfTool(3, new Flawfinder(), "flawfinder.log");
+    }
+
     /** Runs the Android Lint parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllAndroidLintIssues() {
