@@ -1,8 +1,11 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.util.Collections;
+
 import org.junit.jupiter.api.Test;
 
 import hudson.model.Job;
+import hudson.model.Run;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -16,6 +19,7 @@ class JobActionTest {
     private static final String LINK_NAME = "link-name";
     private static final String TREND_NAME = "trend-name";
     private static final String ID = "jobaction-id";
+    private static final String ANALYSIS_ID = "analysis-id";
 
     @Test
     void shouldUseLabelProviderLinkNameAsDisplayName() {
@@ -50,5 +54,31 @@ class JobActionTest {
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
         JobAction action = new JobAction(job, labelProvider, 1);
         assertThat(action.getOwner()).isEqualTo(job); 
-    } 
-} 
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Test
+    void shouldShowIconIfThereIsABuildResultAvailable() {
+        Job job = mock(Job.class);
+        StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
+        when(labelProvider.getId()).thenReturn(ANALYSIS_ID);
+
+        JobAction action = new JobAction(job, labelProvider, 1);
+
+        assertThat(action.getIconFileName()).isNull();
+
+        Run<?, ?> reference = createValidReferenceBuild();
+        when(job.getLastCompletedBuild()).thenReturn(reference);
+
+        assertThat(action.getIconFileName()).isNotEmpty();
+    }
+
+    private Run<?, ?> createValidReferenceBuild() {
+        Run<?, ?> reference = mock(Run.class);
+        ResultAction result = mock(ResultAction.class);
+        when(result.getResult()).thenReturn(mock(AnalysisResult.class));
+        when(result.getId()).thenReturn(ANALYSIS_ID);
+        when(reference.getActions(ResultAction.class)).thenReturn(Collections.singletonList(result));
+        return reference;
+    }
+}
