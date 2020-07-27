@@ -84,7 +84,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean isBlameDisabled;
     private boolean isForensicsDisabled;
 
-    private boolean publishChecks = true; // by default, checks will be published
+    private boolean skipPublishingChecks; // by default, checks will be published
 
     private String id;
     private String name;
@@ -763,17 +763,17 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Returns whether checks should be published.
+     * Returns whether publishing checks should be skip.
      *
-     * @return {@code true} if checks should be published
+     * @return {@code true} if publishing checks should be skipped
      */
-    public boolean isPublishChecks() {
-        return publishChecks;
+    public boolean isSkipPublishingChecks() {
+        return skipPublishingChecks;
     }
 
     @DataBoundSetter
-    public void setPublishChecks(final boolean publishChecks) {
-        this.publishChecks = publishChecks;
+    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+        this.skipPublishingChecks = skipPublishingChecks;
     }
 
     /**
@@ -1009,7 +1009,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.getBlameDisabled());
             recorder.setForensicsDisabled(step.getForensicsDisabled());
-            recorder.setPublishChecks(step.isPublishChecks());
+            recorder.setSkipPublishingChecks(step.isSkipPublishingChecks());
             recorder.setId(step.getId());
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());

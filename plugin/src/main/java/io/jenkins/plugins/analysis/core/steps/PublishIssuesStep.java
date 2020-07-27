@@ -59,7 +59,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private String referenceBuildId = StringUtils.EMPTY;
     private boolean failOnError = false; // by default, it should not fail on error
 
-    private boolean publishChecks = true; // by default, warnings should be published to SCM platforms
+    private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
 
     private int healthy;
     private int unhealthy;
@@ -150,18 +150,18 @@ public class PublishIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Returns whether checks should be published.
+     * Returns whether publishing checks should be skip.
      *
-     * @return {@code true} if checks should be published
+     * @return {@code true} if publising checks should be skipped
      */
-    public boolean isPublishChecks() {
-        return publishChecks;
+    public boolean isSkipPublishingChecks() {
+        return skipPublishingChecks;
     }
 
     @DataBoundSetter
     @SuppressWarnings("unused") // Used by Stapler
-    public void setPublishChecks(final boolean publishChecks) {
-        this.publishChecks = publishChecks;
+    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+        this.skipPublishingChecks = skipPublishingChecks;
     }
 
     /**
@@ -830,7 +830,7 @@ public class PublishIssuesStep extends Step implements Serializable {
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), statusHandler, step.getFailOnError());
             ResultAction action = publisher.attachAction(step.getTrendChartType());
 
-            if (step.isPublishChecks()) {
+            if (!step.isSkipPublishingChecks()) {
                 WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
                 checksPublisher.publishChecks();
             }

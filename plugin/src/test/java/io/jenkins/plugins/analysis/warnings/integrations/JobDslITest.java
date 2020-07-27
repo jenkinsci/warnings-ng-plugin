@@ -103,7 +103,7 @@ public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getId()).isEqualTo("test-id");
         assertThat(recorder.getIgnoreFailedBuilds()).isFalse();
         assertThat(recorder.getIgnoreQualityGate()).isTrue();
-        assertThat(recorder.isPublishChecks()).isFalse();
+        assertThat(recorder.isSkipPublishingChecks()).isTrue();
         assertThat(recorder.getMinimumSeverity()).isEqualTo("ERROR");
         assertThat(recorder.getName()).isEqualTo("test-name");
         assertThat(recorder.getSourceCodeEncoding()).isEqualTo("UTF-8");

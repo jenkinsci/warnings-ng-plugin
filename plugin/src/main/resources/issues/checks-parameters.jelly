@@ -7,9 +7,9 @@
 
   <i:hr title="${%Checks Configuration}"/>
 
-  <f:entry title="${%title.publishChecks}" description="${%description.publishChecks}"
-           field="publishChecks">
-    <f:checkbox default="true"/>
+  <f:entry title="${%title.skipPublishingChecks}" description="${%description.skipPublishingChecks}"
+           field="skipPublishingChecks">
+    <f:checkbox />
   </f:entry>
 
 </j:jelly>
