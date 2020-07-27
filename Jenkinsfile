@@ -28,10 +28,9 @@
         String stageIdentifier = "${label}-${jdk}${jenkinsVersion ? '-' + jenkinsVersion : ''}"
         boolean first = tasks.size() == 1
         boolean skipTests = params?.tests?.skip
-        boolean reallyUseAci = (useAci && label == 'linux') || forceAci
-        boolean addToolEnv = !reallyUseAci
+        boolean addToolEnv = !useAci
 
-        if(reallyUseAci) {
+        if(useAci && (label == 'linux' || label == 'windows')) {
             String aciLabel = jdk == '8' ? 'maven' : 'maven-11'
             if(label == 'windows') {
                 aciLabel += "-windows"

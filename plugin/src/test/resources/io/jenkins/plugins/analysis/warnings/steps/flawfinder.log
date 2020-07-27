@@ -1,0 +1,27 @@
+Flawfinder version 2.0.8, (C) 2001-2017 David A. Wheeler.
+Number of rules (primarily dangerous function names) in C/C++ ruleset: 223
+Examining src/Foo.h
+Examining src/Bar.c
+Examining src/Bar.h
+Examining src/main.c
+Examining test/test_Bar.c
+
+FINAL RESULTS:
+
+src/Bar.c:779:  [5] (buffer) strncat:Easily used incorrectly (e.g., incorrectly computing the correct maximum size to add) [MS-banned] (CWE-120).
+src/main.c:114:  [3] (format) printf:If format strings can be influenced by an attacker, they can be exploited (CWE-134).  Use a constant for the format specification.
+src/Bar.c:246:  [1] (buffer) scanf:It's unclear if the %s limit in the format string is small enough (CWE-120).
+
+ANALYSIS SUMMARY:
+
+Hits = 5
+Lines analyzed = 2416 in approximately 0.03 seconds (70867 lines/second)
+Physical Source Lines of Code (SLOC) = 1694
+Hits@level = [0] 143 [1]  16 [2]  27 [3]   1 [4]   1 [5]   4
+Hits@level+ = [0+] 191 [1+]  48 [2+]  32 [3+]   5 [4+]   5 [5+]   4
+Hits/KSLOC@level+ = [0+] 112.751 [1+] 28.3353 [2+] 18.8902 [3+] 2.95159 [4+] 2.95159 [5+] 2.36128
+Not every hit is necessarily a security vulnerability.
+There may be other security vulnerabilities; review your code!
+See 'Secure Programming HOWTO'
+(https://dwheeler.com/secure-programs) for more information.
+
