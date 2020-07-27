@@ -29,8 +29,8 @@ import io.jenkins.plugins.checks.api.ChecksStatus;
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTest {
-    private static final String OLD_CHECK_STYLE_REPORT = "checkstyle.xml";
-    private static final String NEW_CHECK_STYLE_REPORT = "checkstyle1.xml";
+    private static final String OLD_CHECKSTYLE_REPORT = "checkstyle.xml";
+    private static final String NEW_CHECKSTYLE_REPORT = "checkstyle1.xml";
 
     /**
      * Verifies that {@link WarningChecksPublisher} constructs the {@link ChecksDetails} correctly
@@ -38,7 +38,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
      */
     @Test
     public void shouldCreateChecksDetailsWithNewIssuesAsAnnotations() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(OLD_CHECK_STYLE_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT);
         enableCheckStyleWarnings(project);
 
         Run<?, ?> reference = buildSuccessfully(project);
@@ -46,7 +46,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                 .hasTotalSize(4)
                 .hasNewSize(0);
 
-        copyMultipleFilesToWorkspaceWithSuffix(project, NEW_CHECK_STYLE_REPORT);
+        copyMultipleFilesToWorkspaceWithSuffix(project, NEW_CHECKSTYLE_REPORT);
         Run<?, ?> run = buildSuccessfully(project);
         assertThat(getAnalysisResult(run))
                 .hasTotalSize(6)
@@ -62,7 +62,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
 
     @Test
     public void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECK_STYLE_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
 
@@ -105,6 +105,60 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                         .build());
     }
 
+    @Test
+    public void shouldReportNoIssuesInTitle() {
+        FreeStyleProject project = createFreeStyleProject();
+        enableCheckStyleWarnings(project);
+
+        Run<?, ?> run = buildSuccessfully(project);
+        assertThat(getAnalysisResult(run))
+                .hasTotalSize(0)
+                .hasNewSize(0);
+
+        assertThat(new WarningChecksPublisher(getResultAction(run)).extractChecksDetails().getOutput())
+                .isPresent()
+                .get()
+                .hasFieldOrPropertyWithValue("title", Optional.of("No issues."));
+    }
+
+    @Test
+    public void shouldReportOnlyTotalIssuesInTitleWhenNoNewIssues() {
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT);
+        enableCheckStyleWarnings(project);
+
+        Run<?, ?> run = buildSuccessfully(project);
+        assertThat(getAnalysisResult(run))
+                .hasTotalSize(4)
+                .hasNewSize(0);
+
+        assertThat(new WarningChecksPublisher(getResultAction(run)).extractChecksDetails().getOutput())
+                .isPresent()
+                .get()
+                .hasFieldOrPropertyWithValue("title", Optional.of("No new issues, 4 total."));
+    }
+
+    @Test
+    public void shouldReportOnlyNewIssuesInTitleWhenAllIssuesAreNew() {
+        FreeStyleProject project = createFreeStyleProject();
+        enableCheckStyleWarnings(project);
+
+        Run<?, ?> reference = buildSuccessfully(project);
+        assertThat(getAnalysisResult(reference))
+                .hasTotalSize(0)
+                .hasNewSize(0);
+
+        copyMultipleFilesToWorkspaceWithSuffix(project, NEW_CHECKSTYLE_REPORT);
+        Run<?, ?> run = buildSuccessfully(project);
+        assertThat(getAnalysisResult(run))
+                .hasTotalSize(6)
+                .hasNewSize(6);
+
+        assertThat(new WarningChecksPublisher(getResultAction(run)).extractChecksDetails().getOutput())
+                .isPresent()
+                .get()
+                .hasFieldOrPropertyWithValue("title", Optional.of("6 new issues."));
+    }
+
     private ChecksDetails createExpectedCheckStyleDetails() {
         ChecksDetailsBuilder builder = new ChecksDetailsBuilder()
                 .withName("CheckStyle")
@@ -112,7 +166,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
                 .withConclusion(ChecksConclusion.SUCCESS);
 
         ChecksOutput output = new ChecksOutputBuilder()
-                .withTitle("CheckStyle Warnings")
+                .withTitle("2 new issues, 6 total.")
                 .withSummary("## 6 issues in total:\n"
                         + "- ### 2 new issues\n"
                         + "- ### 4 outstanding issues\n"
@@ -177,7 +231,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTe
     }
 
     private void assertChecksConclusionIsFailureWithQualityGateResult(final QualityGateResult qualityGateResult) {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECK_STYLE_REPORT);
+        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
         enableAndConfigureCheckstyle(project,
                 recorder -> recorder.addQualityGate(1, QualityGateType.TOTAL, qualityGateResult));
 

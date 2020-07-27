@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.core.steps;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -62,13 +63,25 @@ class WarningChecksPublisher {
                 .withStatus(ChecksStatus.COMPLETED)
                 .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
                 .withOutput(new ChecksOutputBuilder()
-                        .withTitle(labelProvider.getLinkName())
+                        .withTitle(extractChecksTitle(totals))
                         .withSummary(extractChecksSummary(totals))
                         .withText(extractChecksText(totals))
                         .withAnnotations(extractChecksAnnotations(result.getNewIssues(), labelProvider))
                         .build())
                 .withDetailsURL(action.getAbsoluteUrl())
                 .build();
+    }
+
+    private String extractChecksTitle(final IssuesStatistics statistics) {
+        if (statistics.getTotalSize() == 0) {
+            return "No issues.";
+        } else if (statistics.getNewSize() == 0) {
+            return String.format("No new issues, %d total.", statistics.getTotalSize());
+        } else if (statistics.getNewSize() == statistics.getTotalSize()) {
+            return String.format("%d new issues.", statistics.getNewSize());
+        } else {
+            return String.format("%d new issues, %d total.", statistics.getNewSize(), statistics.getTotalSize());
+        }
     }
 
     private String extractChecksSummary(final IssuesStatistics statistics) {
