@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.2.1</revision>
+    <revision>8.3.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
@@ -81,7 +81,7 @@
     <form-element-path.version>1.8</form-element-path.version>
     <folder.version>6.9</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
-    <github-checks.version>0.1.0-rc143.251559838646</github-checks.version>
+    <checks-api.version>0.1.0-rc4.fc43ef9447c7</checks-api.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
@@ -294,8 +294,8 @@
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>github-checks</artifactId>
-      <version>${github-checks.version}</version>
+      <artifactId>checks-api</artifactId>
+      <version>${checks-api.version}</version>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
