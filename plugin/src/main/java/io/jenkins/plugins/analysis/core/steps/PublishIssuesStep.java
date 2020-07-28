@@ -47,7 +47,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  */
 @SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass"})
 public class PublishIssuesStep extends Step implements Serializable {
-    private static final long serialVersionUID = -1833335402353771148L;
+    private static final long serialVersionUID = 5754928934079561716L;
 
     private final List<AnnotatedReport> reports;
 
