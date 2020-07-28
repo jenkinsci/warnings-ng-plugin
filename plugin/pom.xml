@@ -82,9 +82,12 @@
     <form-element-path.version>1.8</form-element-path.version>
     <folder.version>6.9</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
+    <checks-api.version>0.1.0</checks-api.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
+
+    <useBeta>true</useBeta>
   </properties>
 
   <licenses>
@@ -180,6 +183,11 @@
       <groupId>net.minidev</groupId>
       <artifactId>json-smart</artifactId>
       <version>${json-smart.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup.version}</version>
     </dependency>
 
     <!-- PMD Messages -->
@@ -285,6 +293,11 @@
       <artifactId>antisamy-markup-formatter</artifactId>
       <version>${antisamy-markup-formatter.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>checks-api</artifactId>
+      <version>${checks-api.version}</version>
+    </dependency>
 
     <!-- AxivionSuite Dependencies -->
     <dependency>
@@ -348,12 +361,6 @@
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>${json.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jsoup</groupId>
-      <artifactId>jsoup</artifactId>
-      <version>${jsoup.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -601,6 +608,12 @@
           <checkDependencies>false</checkDependencies>
           <analysisConfiguration>
             <revapi.ignore combine.children="append">
+              <item>
+                <regex>true</regex>
+                <code>java.field.serialVersionUIDUnchanged</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.*Step</classQualifiedName>
+                <justification>Serialization is only used in interprocess communication using the same classes</justification>
+              </item>
               <item>
                 <regex>true</regex>
                 <code>java.missing.*</code>

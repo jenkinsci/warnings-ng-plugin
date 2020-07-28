@@ -1,4 +1,3 @@
-
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
@@ -103,6 +102,8 @@ public class IssuesRecorder extends Recorder {
 
     private boolean isBlameDisabled;
     private boolean isForensicsDisabled;
+
+    private boolean skipPublishingChecks; // by default, checks will be published
 
     private String id;
     private String name;
@@ -360,6 +361,20 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setForensicsDisabled(final boolean forensicsDisabled) {
         isForensicsDisabled = forensicsDisabled;
+    }
+
+    /**
+     * Returns whether publishing checks should be skipped.
+     *
+     * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
+     */
+    public boolean isSkipPublishingChecks() {
+        return skipPublishingChecks;
+    }
+
+    @DataBoundSetter
+    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+        this.skipPublishingChecks = skipPublishingChecks;
     }
 
     /**
@@ -703,7 +718,12 @@ public class IssuesRecorder extends Recorder {
                 reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds,
                 getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
-        publisher.attachAction(trendChartType);
+        ResultAction action = publisher.attachAction(trendChartType);
+
+        if (!skipPublishingChecks) {
+            WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
+            checksPublisher.publishChecks();
+        }
     }
 
     /**
