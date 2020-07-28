@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.4.0</revision>
+    <revision>9.0.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
