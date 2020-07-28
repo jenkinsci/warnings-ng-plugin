@@ -12,12 +12,10 @@ categories:
     label: deprecated
   - title: 🚀 New features
     labels:
-      - enhancement
       - feature
   - title: ✨ Improvements
     labels:
       - enhancement
-      - feature
   - title: 🐛 Bug Fixes
     labels:
       - bug
