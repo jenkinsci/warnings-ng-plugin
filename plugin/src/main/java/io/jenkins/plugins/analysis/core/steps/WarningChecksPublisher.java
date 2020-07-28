@@ -42,8 +42,8 @@ class WarningChecksPublisher {
     }
 
     /**
-     * Publishes checks to platforms. Afterwards, all warnings are available in corresponding platform's UI,
-     * e.g. GitHub checks.
+     * Publishes checks to platforms. Afterwards, all warnings are available in corresponding platform's UI, e.g. GitHub
+     * checks.
      */
     void publishChecks() {
         ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner());
@@ -74,11 +74,20 @@ class WarningChecksPublisher {
     private String extractChecksTitle(final IssuesStatistics statistics) {
         if (statistics.getTotalSize() == 0) {
             return "No issues.";
-        } else if (statistics.getNewSize() == 0) {
+        }
+        else if (statistics.getNewSize() == 0) {
             return String.format("No new issues, %d total.", statistics.getTotalSize());
-        } else if (statistics.getNewSize() == statistics.getTotalSize()) {
+        }
+        else if (statistics.getNewSize() == statistics.getTotalSize()) {
+            if (statistics.getNewSize() == 1) {
+                return "1 new issue.";
+            }
             return String.format("%d new issues.", statistics.getNewSize());
-        } else {
+        }
+        else {
+            if (statistics.getNewSize() == 1) {
+                return String.format("1 new issue, %d total.", statistics.getTotalSize());
+            }
             return String.format("%d new issues, %d total.", statistics.getNewSize(), statistics.getTotalSize());
         }
     }
@@ -156,7 +165,8 @@ class WarningChecksPublisher {
         for (Element child : html.children()) {
             if (child.hasAttr("href")) {
                 contents.add(child.text().trim() + ":" + child.attr("href").trim());
-            } else {
+            }
+            else {
                 parseHtml(child, contents);
             }
         }

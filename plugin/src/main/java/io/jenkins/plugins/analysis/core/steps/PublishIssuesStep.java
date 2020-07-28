@@ -47,7 +47,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  */
 @SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass"})
 public class PublishIssuesStep extends Step implements Serializable {
-    private static final long serialVersionUID = 5754928934079561716L;
+    private static final long serialVersionUID = -1833335402353771148L;
 
     private final List<AnnotatedReport> reports;
 
@@ -150,9 +150,9 @@ public class PublishIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Returns whether publishing checks should be skip.
+     * Returns whether publishing checks should be skipped.
      *
-     * @return {@code true} if publising checks should be skipped
+     * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
      */
     public boolean isSkipPublishingChecks() {
         return skipPublishingChecks;

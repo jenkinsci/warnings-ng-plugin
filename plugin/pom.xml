@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>9.0.0</revision>
+    <revision>8.4.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
@@ -608,6 +608,12 @@
           <checkDependencies>false</checkDependencies>
           <analysisConfiguration>
             <revapi.ignore combine.children="append">
+              <item>
+                <regex>true</regex>
+                <code>java.field.serialVersionUIDUnchanged</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.*Step</classQualifiedName>
+                <justification>Serialization is only used in interprocess communication using the same classes</justification>
+              </item>
               <item>
                 <regex>true</regex>
                 <code>java.missing.*</code>

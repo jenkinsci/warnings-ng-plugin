@@ -60,7 +60,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass"})
 public class RecordIssuesStep extends Step implements Serializable {
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 1L;
 
     private List<Tool> analysisTools = new ArrayList<>();
 
@@ -763,9 +763,9 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Returns whether publishing checks should be skip.
+     * Returns whether publishing checks should be skipped.
      *
-     * @return {@code true} if publishing checks should be skipped
+     * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
      */
     public boolean isSkipPublishingChecks() {
         return skipPublishingChecks;

@@ -12,7 +12,7 @@ import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.PVSStudio;
@@ -28,7 +28,12 @@ import io.jenkins.plugins.checks.api.ChecksStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
-public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerTest {
+/**
+ * Tests the class {@link WarningChecksPublisher}.
+ *
+ * @author Kezhi Xiong
+ */
+public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String OLD_CHECKSTYLE_REPORT = "checkstyle.xml";
     private static final String NEW_CHECKSTYLE_REPORT = "checkstyle1.xml";
 

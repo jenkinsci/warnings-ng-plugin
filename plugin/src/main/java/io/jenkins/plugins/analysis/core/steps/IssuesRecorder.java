@@ -364,9 +364,9 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns whether publishing checks should be skip.
+     * Returns whether publishing checks should be skipped.
      *
-     * @return {@code true} if publishing checks should be skipped
+     * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
      */
     public boolean isSkipPublishingChecks() {
         return skipPublishingChecks;
