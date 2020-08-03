@@ -65,7 +65,7 @@
     <junit-plugin.version>1.24</junit-plugin.version>
     <git-plugin.version>4.2.2</git-plugin.version>
     <structs.version>1.20</structs.version>
-    <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
+    <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
     <credentials.version>2.3.0</credentials.version>
@@ -702,4 +702,3 @@
   </pluginRepositories>
 
 </project>
-
