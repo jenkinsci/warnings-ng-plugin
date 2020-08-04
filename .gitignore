@@ -6,3 +6,5 @@ target
 .settings
 pom.xml.versionsBackup
 .DS_Store
+work/
+

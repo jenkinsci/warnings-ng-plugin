@@ -832,7 +832,7 @@ public class PublishIssuesStep extends Step implements Serializable {
 
             if (!step.isSkipPublishingChecks()) {
                 WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
-                checksPublisher.publishChecks();
+                checksPublisher.publishChecks(getTaskListener());
             }
 
             return action;

@@ -722,7 +722,7 @@ public class IssuesRecorder extends Recorder {
 
         if (!skipPublishingChecks) {
             WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
-            checksPublisher.publishChecks();
+            checksPublisher.publishChecks(listener);
         }
     }
 

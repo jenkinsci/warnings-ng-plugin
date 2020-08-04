@@ -13,6 +13,8 @@ import org.jsoup.nodes.TextNode;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 
+import hudson.model.TaskListener;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -45,8 +47,8 @@ class WarningChecksPublisher {
      * Publishes checks to platforms. Afterwards, all warnings are available in corresponding platform's UI, e.g. GitHub
      * checks.
      */
-    void publishChecks() {
-        ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner());
+    void publishChecks(TaskListener listener) {
+        ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner(), listener);
         publisher.publish(extractChecksDetails());
     }
 
