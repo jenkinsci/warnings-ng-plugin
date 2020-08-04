@@ -13,6 +13,9 @@ import org.jsoup.nodes.TextNode;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 
+import hudson.model.Queue.Task;
+import hudson.model.TaskListener;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -36,9 +39,11 @@ import io.jenkins.plugins.checks.api.ChecksStatus;
  */
 class WarningChecksPublisher {
     private final ResultAction action;
+    private final TaskListener listener;
 
-    WarningChecksPublisher(final ResultAction action) {
+    WarningChecksPublisher(final ResultAction action, final TaskListener listener) {
         this.action = action;
+        this.listener = listener;
     }
 
     /**
@@ -46,7 +51,7 @@ class WarningChecksPublisher {
      * checks.
      */
     void publishChecks() {
-        ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner());
+        ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner(), listener);
         publisher.publish(extractChecksDetails());
     }
 

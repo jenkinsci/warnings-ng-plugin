@@ -11,6 +11,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
 import hudson.model.Run;
+import hudson.model.TaskListener;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
@@ -27,6 +28,7 @@ import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link WarningChecksPublisher}.
@@ -57,7 +59,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(6)
                 .hasNewSize(2);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run));
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class));
         assertThat(publisher.extractChecksDetails())
                 .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
@@ -72,7 +74,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 recorder -> recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
 
         Run<?, ?> build = buildSuccessfully(project);
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build));
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), mock(TaskListener.class));
 
         assertThat(publisher.extractChecksDetails().getConclusion())
                 .isEqualTo(ChecksConclusion.SUCCESS);
@@ -98,7 +100,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         copySingleFileToWorkspace(project, "PVSReport.xml", "PVSReport.plog");
         Run<?, ?> run = buildSuccessfully(project);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run));
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class));
         ChecksDetails details = publisher.extractChecksDetails();
 
         assertThat(details.getOutput().get().getChecksAnnotations())
@@ -120,7 +122,8 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(0)
                 .hasNewSize(0);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run)).extractChecksDetails().getOutput())
+        assertThat(new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class))
+                .extractChecksDetails().getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("No issues."));
@@ -136,7 +139,8 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(4)
                 .hasNewSize(0);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run)).extractChecksDetails().getOutput())
+        assertThat(new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class))
+                .extractChecksDetails().getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("No new issues, 4 total."));
@@ -158,7 +162,8 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(6)
                 .hasNewSize(6);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run)).extractChecksDetails().getOutput())
+        assertThat(new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class))
+                .extractChecksDetails().getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("6 new issues."));
@@ -245,7 +250,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(6)
                 .hasQualityGateStatus(qualityGateResult.getStatus());
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build));
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), mock(TaskListener.class));
         assertThat(publisher.extractChecksDetails().getConclusion())
                 .isEqualTo(ChecksConclusion.FAILURE);
     }

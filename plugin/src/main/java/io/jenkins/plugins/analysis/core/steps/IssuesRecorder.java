@@ -721,7 +721,7 @@ public class IssuesRecorder extends Recorder {
         ResultAction action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {
-            WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
+            WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, listener);
             checksPublisher.publishChecks();
         }
     }
