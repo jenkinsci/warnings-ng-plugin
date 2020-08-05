@@ -130,7 +130,7 @@
       <dependency>
         <groupId>io.jenkins.plugins</groupId>
         <artifactId>code-coverage-api</artifactId>
-        <version>1.1.6</version>
+        <version>1.2.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
