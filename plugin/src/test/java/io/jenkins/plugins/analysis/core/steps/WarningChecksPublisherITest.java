@@ -16,7 +16,9 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.PVSStudio;
+import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+import io.jenkins.plugins.checks.api.ChecksAnnotation;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 import io.jenkins.plugins.checks.api.ChecksConclusion;
@@ -162,6 +164,26 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("6 new issues."));
+    }
+
+    @Test
+    public void shouldIgnoreColumnsWhenBuildMultipleLineAnnotation() {
+        FreeStyleProject project = createFreeStyleProject();
+        enableWarnings(project, new Pmd());
+
+        buildSuccessfully(project);
+
+        copySingleFileToWorkspace(project, "pmd.xml");
+        Run<?, ?> run = buildSuccessfully(project);
+
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run));
+        ChecksDetails details = publisher.extractChecksDetails();
+
+        assertThat(details.getOutput().get().getChecksAnnotations().get(0))
+                .hasFieldOrPropertyWithValue("startLine", Optional.of(123))
+                .hasFieldOrPropertyWithValue("endLine", Optional.of(125))
+                .hasFieldOrPropertyWithValue("startColumn", Optional.empty())
+                .hasFieldOrPropertyWithValue("endColumn", Optional.empty());
     }
 
     private ChecksDetails createExpectedCheckStyleDetails() {

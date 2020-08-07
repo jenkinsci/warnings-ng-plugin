@@ -1,15 +1,16 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.TextNode;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 
@@ -136,19 +137,27 @@ class WarningChecksPublisher {
 
     private List<ChecksAnnotation> extractChecksAnnotations(final Report issues,
             final StaticAnalysisLabelProvider labelProvider) {
-        return issues.stream()
-                .map(issue -> new ChecksAnnotationBuilder()
-                        .withPath(issue.getFileName())
-                        .withTitle(issue.getType())
-                        .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
-                        .withMessage(issue.getSeverity() + ":\n" + parseHtml(issue.getMessage()))
-                        .withStartLine(issue.getLineStart())
-                        .withEndLine(issue.getLineEnd())
-                        .withStartColumn(issue.getColumnStart())
-                        .withEndColumn(issue.getColumnEnd())
-                        .withRawDetails(StringUtils.normalizeSpace(labelProvider.getDescription(issue)))
-                        .build())
-                .collect(Collectors.toList());
+        List<ChecksAnnotation> annotations = new ArrayList<>(issues.getSize());
+
+        for (Issue issue : issues) {
+            ChecksAnnotationBuilder builder = new ChecksAnnotationBuilder()
+                    .withPath(issue.getFileName())
+                    .withTitle(issue.getType())
+                    .withAnnotationLevel(ChecksAnnotationLevel.WARNING)
+                    .withMessage(issue.getSeverity() + ":\n" + parseHtml(issue.getMessage()))
+                    .withStartLine(issue.getLineStart())
+                    .withEndLine(issue.getLineEnd())
+                    .withRawDetails(StringUtils.normalizeSpace(labelProvider.getDescription(issue)));
+
+            if (issue.getLineStart() == issue.getLineEnd()) {
+                builder.withStartColumn(issue.getColumnStart())
+                        .withEndColumn(issue.getColumnEnd());
+            }
+
+            annotations.add(builder.build());
+        }
+
+        return annotations;
     }
 
     private String parseHtml(final String html) {
