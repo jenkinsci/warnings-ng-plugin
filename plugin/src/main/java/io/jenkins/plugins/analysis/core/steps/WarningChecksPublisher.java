@@ -13,7 +13,6 @@ import org.jsoup.nodes.TextNode;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 
-import hudson.model.Queue.Task;
 import hudson.model.TaskListener;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
