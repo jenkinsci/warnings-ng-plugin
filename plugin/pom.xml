@@ -25,7 +25,8 @@
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
-
+    <jenkins.version>${jenkins.baseline}.6</jenkins.version>
+    
     <analysis-model-api.version>8.2.0</analysis-model-api.version>
     <analysis-model-tests.version>8.2.0</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
