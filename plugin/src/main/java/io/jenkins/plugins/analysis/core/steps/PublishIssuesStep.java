@@ -831,7 +831,7 @@ public class PublishIssuesStep extends Step implements Serializable {
             ResultAction action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
-                WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action);
+                WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, getTaskListener());
                 checksPublisher.publishChecks();
             }
 
