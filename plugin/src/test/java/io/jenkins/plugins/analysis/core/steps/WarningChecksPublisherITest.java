@@ -28,7 +28,6 @@ import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksStatus;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link WarningChecksPublisher}.
@@ -59,7 +58,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(6)
                 .hasNewSize(2);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class));
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL);
         assertThat(publisher.extractChecksDetails())
                 .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
@@ -74,7 +73,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 recorder -> recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
 
         Run<?, ?> build = buildSuccessfully(project);
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), mock(TaskListener.class));
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL);
 
         assertThat(publisher.extractChecksDetails().getConclusion())
                 .isEqualTo(ChecksConclusion.SUCCESS);
@@ -100,7 +99,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         copySingleFileToWorkspace(project, "PVSReport.xml", "PVSReport.plog");
         Run<?, ?> run = buildSuccessfully(project);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class));
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL);
         ChecksDetails details = publisher.extractChecksDetails();
 
         assertThat(details.getOutput().get().getChecksAnnotations())
@@ -122,7 +121,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(0)
                 .hasNewSize(0);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class))
+        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL)
                 .extractChecksDetails().getOutput())
                 .isPresent()
                 .get()
@@ -139,7 +138,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(4)
                 .hasNewSize(0);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class))
+        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL)
                 .extractChecksDetails().getOutput())
                 .isPresent()
                 .get()
@@ -162,7 +161,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(6)
                 .hasNewSize(6);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run), mock(TaskListener.class))
+        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL)
                 .extractChecksDetails().getOutput())
                 .isPresent()
                 .get()
@@ -250,7 +249,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(6)
                 .hasQualityGateStatus(qualityGateResult.getStatus());
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), mock(TaskListener.class));
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL);
         assertThat(publisher.extractChecksDetails().getConclusion())
                 .isEqualTo(ChecksConclusion.FAILURE);
     }
