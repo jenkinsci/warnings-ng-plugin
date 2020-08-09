@@ -19,7 +19,6 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.warnings.PVSStudio;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
-import io.jenkins.plugins.checks.api.ChecksAnnotation;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 import io.jenkins.plugins.checks.api.ChecksConclusion;
@@ -180,7 +179,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         copySingleFileToWorkspace(project, "pmd.xml");
         Run<?, ?> run = buildSuccessfully(project);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run));
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL);
         ChecksDetails details = publisher.extractChecksDetails();
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
