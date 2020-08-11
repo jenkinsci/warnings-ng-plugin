@@ -83,7 +83,7 @@
     <form-element-path.version>1.8</form-element-path.version>
     <folder.version>6.12</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
-    <checks-api.version>0.2.2</checks-api.version>
+    <checks-api.version>0.2.3</checks-api.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
