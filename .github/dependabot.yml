@@ -1,0 +1,110 @@
+version: 2
+updates:
+- package-ecosystem: maven
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: io.jenkins:configuration-as-code
+    versions:
+    - "> 1.36"
+  - dependency-name: joda-time:joda-time
+    versions:
+    - "> 2.9.9"
+  - dependency-name: net.sourceforge.pmd:pmd-core
+    versions:
+    - ">= 6.18.a"
+    - "< 6.19"
+  - dependency-name: net.sourceforge.pmd:pmd-java
+    versions:
+    - ">= 6.18.a"
+    - "< 6.19"
+  - dependency-name: org.eclipse.collections:eclipse-collections
+    versions:
+    - ">= 10.a"
+    - "< 11"
+  - dependency-name: org.eclipse.collections:eclipse-collections-api
+    versions:
+    - ">= 10.a"
+    - "< 11"
+  - dependency-name: org.jenkins-ci.main:maven-plugin
+    versions:
+    - "> 3.1.2"
+  - dependency-name: org.jenkins-ci.plugins:credentials
+    versions:
+    - "> 2.3.0"
+  - dependency-name: org.jenkins-ci.plugins:dashboard-view
+    versions:
+    - "> 2.9.4"
+  - dependency-name: org.jenkins-ci.plugins:envinject
+    versions:
+    - "> 2.1.6"
+  - dependency-name: org.jenkins-ci.plugins:form-element-path
+    versions:
+    - "> 1.8"
+  - dependency-name: org.jenkins-ci.plugins:jdk-tool
+    versions:
+    - "> 1.2"
+  - dependency-name: org.jenkins-ci.plugins:job-dsl
+    versions:
+    - "> 1.76"
+  - dependency-name: org.jenkins-ci.plugins:jsch
+    versions:
+    - "> 0.1.55.1"
+  - dependency-name: org.jenkins-ci.plugins:mailer
+    versions:
+    - "> 1.23"
+  - dependency-name: org.jenkins-ci.plugins:matrix-project
+    versions:
+    - "> 1.14"
+  - dependency-name: org.jenkinsci.plugins:pipeline-model-definition
+    versions:
+    - "> 1.2"
+  - dependency-name: org.jenkins-ci.plugins:pipeline-stage-step
+    versions:
+    - "> 2.3"
+  - dependency-name: org.jenkins-ci.plugins:script-security
+    versions:
+    - "> 1.62"
+  - dependency-name: org.jenkins-ci.plugins:script-security
+    versions:
+    - ">= 1.68.a"
+    - "< 1.69"
+  - dependency-name: org.jenkins-ci.plugins:ssh-credentials
+    versions:
+    - "> 1.17.2"
+  - dependency-name: org.jenkins-ci.plugins:ssh-credentials
+    versions:
+    - ">= 1.18.a"
+    - "< 1.19"
+  - dependency-name: org.jenkins-ci.plugins:ssh-slaves
+    versions:
+    - "> 1.25"
+  - dependency-name: org.jenkins-ci.plugins:timestamper
+    versions:
+    - "> 1.9"
+  - dependency-name: org.jenkins-ci.plugins:token-macro
+    versions:
+    - "> 2.10"
+  - dependency-name: org.jenkins-ci.plugins.workflow:workflow-api
+    versions:
+    - "> 2.37"
+  - dependency-name: org.jenkins-ci.plugins.workflow:workflow-basic-steps
+    versions:
+    - "> 2.7"
+  - dependency-name: org.jenkins-ci.plugins.workflow:workflow-cps
+    versions:
+    - "> 2.74"
+  - dependency-name: org.jenkins-ci.plugins.workflow:workflow-durable-task-step
+    versions:
+    - "> 2.15"
+  - dependency-name: org.jenkins-ci.plugins.workflow:workflow-job
+    versions:
+    - "> 2.35"
+  - dependency-name: org.jenkins-ci.plugins.workflow:workflow-step-api
+    versions:
+    - "> 2.20"
+  - dependency-name: org.jenkins-ci.plugins.workflow:workflow-support
+    versions:
+    - "> 3.3"
