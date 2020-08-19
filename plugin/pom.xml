@@ -69,7 +69,7 @@
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
-    <credentials.version>2.3.0</credentials.version>
+    <credentials.version>2.3.5</credentials.version>
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
     <configuration-as-code.version>1.36</configuration-as-code.version>
     <job-dsl.version>1.76</job-dsl.version>
