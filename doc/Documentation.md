@@ -498,7 +498,7 @@ node {
             issues: [checkstyle, pmd, spotbugs], 
             filters: [includePackage('io.jenkins.plugins.analysis.*')]
     }
-
+}
 ``` 
   
 ## New features
