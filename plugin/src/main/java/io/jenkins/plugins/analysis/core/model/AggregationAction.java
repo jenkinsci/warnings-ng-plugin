@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.Action;
@@ -28,19 +28,19 @@ import io.jenkins.plugins.analysis.core.restapi.ToolApi;
 public class AggregationAction implements RunAction2, LastBuildAction {
     private transient Run<?, ?> owner;
 
-    @Nullable
+    @CheckForNull
     @Override
     public String getIconFileName() {
         return null; // No UI representation up to now
     }
 
-    @Nullable
+    @CheckForNull
     @Override
     public String getDisplayName() {
         return Messages.Aggregation_Name();
     }
 
-    @Nullable
+    @CheckForNull
     @Override
     public String getUrlName() {
         return "warnings-ng";

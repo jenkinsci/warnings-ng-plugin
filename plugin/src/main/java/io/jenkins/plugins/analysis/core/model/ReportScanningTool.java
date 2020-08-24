@@ -10,7 +10,7 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -62,7 +62,7 @@ public abstract class ReportScanningTool extends Tool {
         this.pattern = pattern;
     }
 
-    @Nullable
+    @CheckForNull
     public String getPattern() {
         return pattern;
     }
@@ -110,7 +110,7 @@ public abstract class ReportScanningTool extends Tool {
         this.reportEncoding = reportEncoding;
     }
 
-    @Nullable
+    @CheckForNull
     public String getReportEncoding() {
         return reportEncoding;
     }

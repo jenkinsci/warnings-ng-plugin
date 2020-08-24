@@ -8,8 +8,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -51,7 +51,7 @@ public class ScanForIssuesStep extends Step {
         // empty constructor required for Stapler
     }
 
-    @Nullable
+    @CheckForNull
     public Tool getTool() {
         return tool;
     }
@@ -106,7 +106,7 @@ public class ScanForIssuesStep extends Step {
         isForensicsDisabled = forensicsDisabled;
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }

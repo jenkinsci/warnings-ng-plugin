@@ -9,7 +9,7 @@ import java.util.Map;
 import com.google.errorprone.annotations.FormatMethod;
 
 import edu.hm.hafner.analysis.Report;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
 
@@ -51,7 +51,7 @@ public class AnnotatedReport implements Serializable {
      * @param report
      *         report with issues
      */
-    public AnnotatedReport(@Nullable final String id, final Report report) {
+    public AnnotatedReport(@CheckForNull final String id, final Report report) {
         this(id, report, new Blames(), new RepositoryStatistics());
     }
 
@@ -67,7 +67,7 @@ public class AnnotatedReport implements Serializable {
      * @param statistics
      *         repository statistics for affected files
      */
-    public AnnotatedReport(@Nullable final String id, final Report report, final Blames blames,
+    public AnnotatedReport(@CheckForNull final String id, final Report report, final Blames blames,
             final RepositoryStatistics statistics) {
         this(id);
 
@@ -82,7 +82,7 @@ public class AnnotatedReport implements Serializable {
      * @param reports
      *         the reports to aggregate
      */
-    public AnnotatedReport(@Nullable final String id, final List<AnnotatedReport> reports) {
+    public AnnotatedReport(@CheckForNull final String id, final List<AnnotatedReport> reports) {
         this(id);
 
         addAllReports(reports);
@@ -96,7 +96,7 @@ public class AnnotatedReport implements Serializable {
      * @param reports
      *         the reports to aggregate
      */
-    public AnnotatedReport(@Nullable final String id, final Iterable<AnnotatedReport> reports) {
+    public AnnotatedReport(@CheckForNull final String id, final Iterable<AnnotatedReport> reports) {
         this(id);
 
         addAllReports(reports);

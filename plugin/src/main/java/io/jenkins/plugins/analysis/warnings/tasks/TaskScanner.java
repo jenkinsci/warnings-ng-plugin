@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
@@ -73,9 +73,8 @@ class TaskScanner {
      * @param matcherMode
      *         if tag identifiers should be treated as regular expression
      */
-    TaskScanner(final @Nullable String highTags, final @Nullable String normalTags,
-            final @Nullable String lowTags,
-            final CaseMode caseMode, final MatcherMode matcherMode) {
+    TaskScanner(@CheckForNull final String highTags, @CheckForNull final String normalTags,
+            @CheckForNull final String lowTags, final CaseMode caseMode, final MatcherMode matcherMode) {
         this.isUppercase = caseMode == CaseMode.IGNORE_CASE;
         if (StringUtils.isNotBlank(highTags)) {
             patterns.put(Severity.WARNING_HIGH, compile(highTags, caseMode, matcherMode));

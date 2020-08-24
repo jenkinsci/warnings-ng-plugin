@@ -12,8 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -585,7 +585,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @see #getTools
      * @deprecated this method is only intended to be called by the UI
      */
-    @Nullable
+    @CheckForNull
     @Deprecated
     public List<ToolProxy> getToolProxies() {
         return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
@@ -678,12 +678,12 @@ public class RecordIssuesStep extends Step implements Serializable {
      *
      * @return {@code null}
      */
-    @Nullable
+    @CheckForNull
     public Tool getTool() {
         return null;
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -933,7 +933,7 @@ public class RecordIssuesStep extends Step implements Serializable {
         this.unhealthy = unhealthy;
     }
 
-    @Nullable
+    @CheckForNull
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }

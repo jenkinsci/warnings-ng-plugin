@@ -26,7 +26,8 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
     <jenkins.version>${jenkins.baseline}.6</jenkins.version>
-    
+
+    <codingstyle.config.version>1.4.0</codingstyle.config.version>
     <analysis-model-api.version>8.2.1</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
@@ -626,9 +627,14 @@
                 <justification>Dependencies are not being checked, so they are reported as missing</justification>
               </item>
               <item>
+                <code>java.annotation.removed</code>
+                <annotation>@edu.umd.cs.findbugs.annotations.Nullable</annotation>
+                <justification>Annotation should be save to change.</justification>
+              </item>
+              <item>
                 <code>java.annotation.added</code>
-                <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
-                <justification>Annotation should be save to add.</justification>
+                <annotation>@edu.umd.cs.findbugs.annotations.CheckForNull</annotation>
+                <justification>Annotation should be save to change.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>

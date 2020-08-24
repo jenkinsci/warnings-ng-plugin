@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -227,7 +227,7 @@ public class IssuesRecorder extends Recorder {
      * @see #getTools
      * @deprecated this method is only intended to be called by the UI
      */
-    @Nullable
+    @CheckForNull
     @Deprecated
     public List<ToolProxy> getToolProxies() {
         return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
@@ -284,7 +284,7 @@ public class IssuesRecorder extends Recorder {
         return new ArrayList<>(analysisTools);
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -533,7 +533,7 @@ public class IssuesRecorder extends Recorder {
         this.unhealthy = unhealthy;
     }
 
-    @Nullable
+    @CheckForNull
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
