@@ -69,7 +69,7 @@
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
-    <credentials.version>2.3.0</credentials.version>
+    <credentials.version>2.3.5</credentials.version>
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
     <configuration-as-code.version>1.36</configuration-as-code.version>
     <job-dsl.version>1.76</job-dsl.version>
@@ -81,7 +81,7 @@
     <workflow-support.version>3.3</workflow-support.version>
     <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
     <form-element-path.version>1.8</form-element-path.version>
-    <folder.version>6.12</folder.version>
+    <folder.version>6.14</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
     <checks-api.version>0.2.3</checks-api.version>
 
@@ -136,7 +136,7 @@
       <dependency>
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>branch-api</artifactId>
-        <version>2.5.8</version>
+        <version>2.5.9</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
