@@ -121,8 +121,8 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         assertThat(result.getNewIssues()).hasSize(0);
         assertThat(result.getOutstandingIssues()).hasSize(2);
-        assertThat(result.getErrorMessages()).contains(
-                "Reference job 'reference' does not contain any valid build");
+        assertThat(result.getInfoMessages()).contains(
+                "Reference job 'reference' has no completed build yet");
     }
 
     /**

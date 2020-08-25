@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>4.0.0</version>
+    <version>4.1.0</version>
     <relativePath />
   </parent>
 
@@ -21,19 +21,19 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.4.2</revision>
+    <revision>8.5.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
     <jenkins.version>${jenkins.baseline}.6</jenkins.version>
     
     <analysis-model-api.version>8.2.1</analysis-model-api.version>
-    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.7.0</git-forensics-plugin.version>
+    <analysis-model-tests.version>8.3.0-SNAPSHOT</analysis-model-tests.version>
+    <forensics-api-plugin.version>0.8.0-SNAPSHOT</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.8.0-SNAPSHOT</git-forensics-plugin.version>
     <plugin-util-api.version>1.2.2</plugin-util-api.version>
 
-    <font-awesome-api.version>5.13.0-1</font-awesome-api.version>
+    <font-awesome-api.version>5.14.0-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-1</jquery3-api.version>
     <bootstrap4-api.version>4.5.0-2</bootstrap4-api.version>
     <data-tables-api.version>1.10.21-2</data-tables-api.version>
@@ -69,7 +69,6 @@
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
-    <credentials.version>2.3.0</credentials.version>
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
     <configuration-as-code.version>1.36</configuration-as-code.version>
     <job-dsl.version>1.76</job-dsl.version>
@@ -134,9 +133,9 @@
         <version>1.2.0</version>
       </dependency>
       <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>branch-api</artifactId>
-        <version>2.5.8</version>
+        <groupId>edu.hm.hafner</groupId>
+        <artifactId>codingstyle</artifactId>
+        <version>1.4.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -309,7 +308,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>${credentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>

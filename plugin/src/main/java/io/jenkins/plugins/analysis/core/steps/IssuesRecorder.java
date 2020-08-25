@@ -75,8 +75,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  */
 @SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder {
-    static final String NO_REFERENCE_JOB = "-";
-    static final String NO_REFERENCE_BUILD = "-";
+    static final String NO_REFERENCE_DEFINED = "-";
     static final String DEFAULT_ID = "analysis";
 
     private List<Tool> analysisTools = new ArrayList<>();
@@ -456,7 +455,7 @@ public class IssuesRecorder extends Recorder {
      */
     @DataBoundSetter
     public void setReferenceJobName(final String referenceJobName) {
-        if (NO_REFERENCE_JOB.equals(referenceJobName)) {
+        if (NO_REFERENCE_DEFINED.equals(referenceJobName)) {
             this.referenceJobName = StringUtils.EMPTY;
         }
         this.referenceJobName = referenceJobName;
@@ -464,13 +463,13 @@ public class IssuesRecorder extends Recorder {
 
     /**
      * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
-     * then {@link #NO_REFERENCE_JOB} is returned.
+     * then {@link #NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the name of reference job, or {@link #NO_REFERENCE_JOB} if undefined
+     * @return the name of reference job, or {@link #NO_REFERENCE_DEFINED} if undefined
      */
     public String getReferenceJobName() {
         if (StringUtils.isBlank(referenceJobName)) {
-            return NO_REFERENCE_JOB;
+            return NO_REFERENCE_DEFINED;
         }
         return referenceJobName;
     }
@@ -482,7 +481,7 @@ public class IssuesRecorder extends Recorder {
      *         the build id of the reference job
      */
     public void setReferenceBuildId(final String referenceBuildId) {
-        if (NO_REFERENCE_BUILD.equals(referenceBuildId)) {
+        if (NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
             this.referenceBuildId = StringUtils.EMPTY;
         }
         else {
@@ -492,13 +491,13 @@ public class IssuesRecorder extends Recorder {
 
     /**
      * Returns the reference build id to get the results for the issue difference computation.  If the build id not
-     * defined, then {@link #NO_REFERENCE_BUILD} is returned.
+     * defined, then {@link #NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the build id of the reference job, or {@link #NO_REFERENCE_BUILD} if undefined.
+     * @return the build id of the reference job, or {@link #NO_REFERENCE_DEFINED} if undefined.
      */
     public String getReferenceBuildId() {
         if (StringUtils.isBlank(referenceBuildId)) {
-            return NO_REFERENCE_BUILD;
+            return NO_REFERENCE_DEFINED;
         }
         return referenceBuildId;
     }
@@ -715,7 +714,7 @@ public class IssuesRecorder extends Recorder {
         qualityGate.addAll(qualityGates);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
-                reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds,
+                reportName, getReferenceJobName(), getReferenceBuildId(), ignoreQualityGate, ignoreFailedBuilds,
                 getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
         ResultAction action = publisher.attachAction(trendChartType);

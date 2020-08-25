@@ -763,6 +763,34 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    public boolean isSkipBlames() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setSkipBlames(final boolean skipBlames) {
+        isBlameDisabled = skipBlames;
+    }
+
+    /**
+     * Returns whether SCM forensics should be disabled.
+     *
+     * @return {@code true} if SCM forensics should be disabled
+     */
+    public boolean isSkipForensics() {
+        return isForensicsDisabled;
+    }
+
+    @DataBoundSetter
+    public void setSkipForensics(final boolean skipForensics) {
+        isForensicsDisabled = skipForensics;
+    }
+
+    /**
      * Returns whether publishing checks should be skipped.
      *
      * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
@@ -855,7 +883,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      */
     @DataBoundSetter
     public void setReferenceJobName(final String referenceJobName) {
-        if (IssuesRecorder.NO_REFERENCE_JOB.equals(referenceJobName)) {
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceJobName)) {
             this.referenceJobName = StringUtils.EMPTY;
         }
         this.referenceJobName = referenceJobName;
@@ -863,13 +891,13 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     /**
      * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
-     * then {@link IssuesRecorder#NO_REFERENCE_JOB} is returned.
+     * then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the name of reference job, or {@link IssuesRecorder#NO_REFERENCE_JOB} if undefined
+     * @return the name of reference job, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
      */
     public String getReferenceJobName() {
         if (StringUtils.isBlank(referenceJobName)) {
-            return IssuesRecorder.NO_REFERENCE_JOB;
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
         }
         return referenceJobName;
     }
@@ -882,7 +910,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      */
     @DataBoundSetter
     public void setReferenceBuildId(final String referenceBuildId) {
-        if (IssuesRecorder.NO_REFERENCE_BUILD.equals(referenceBuildId)) {
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
             this.referenceBuildId = StringUtils.EMPTY;
         }
         else {
@@ -892,13 +920,13 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     /**
      * Returns the reference build id of the reference job to get the results for the issue difference computation.
-     * If the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_BUILD} is returned.
+     * If the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_BUILD} if undefined
+     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
      */
     public String getReferenceBuildId() {
         if (StringUtils.isBlank(referenceBuildId)) {
-            return IssuesRecorder.NO_REFERENCE_BUILD;
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
         }
         return referenceBuildId;
     }

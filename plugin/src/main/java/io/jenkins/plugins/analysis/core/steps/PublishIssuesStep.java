@@ -210,28 +210,52 @@ public class PublishIssuesStep extends Step implements Serializable {
      *         the name of reference job
      */
     @DataBoundSetter
-    @SuppressWarnings("unused") // Used by Stapler
     public void setReferenceJobName(final String referenceJobName) {
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceJobName)) {
+            this.referenceJobName = StringUtils.EMPTY;
+        }
         this.referenceJobName = referenceJobName;
     }
 
-    @SuppressWarnings("WeakerAccess") // Required by Stapler
+    /**
+     * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
+     * then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
+     *
+     * @return the name of reference job, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
+     */
     public String getReferenceJobName() {
+        if (StringUtils.isBlank(referenceJobName)) {
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
+        }
         return referenceJobName;
     }
 
     /**
-     * Sets the reference build id to get the results for the issue difference computation.
+     * Sets the reference build id of the reference job for the issue difference computation.
      *
      * @param referenceBuildId
      *         the build id of the reference job
      */
     @DataBoundSetter
     public void setReferenceBuildId(final String referenceBuildId) {
-        this.referenceBuildId = referenceBuildId;
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
+            this.referenceBuildId = StringUtils.EMPTY;
+        }
+        else {
+            this.referenceBuildId = referenceBuildId;
+        }
     }
 
+    /**
+     * Returns the reference build id of the reference job to get the results for the issue difference computation.
+     * If the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
+     *
+     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
+     */
     public String getReferenceBuildId() {
+        if (StringUtils.isBlank(referenceBuildId)) {
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
+        }
         return referenceBuildId;
     }
 

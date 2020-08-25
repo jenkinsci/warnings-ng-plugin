@@ -85,7 +85,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         project.setDefinition(new CpsFlowDefinition("node('agent') {\n"
                 + "    echo '[javac] Test.java:39: warning: Test Warning'\n"
-                + "    recordIssues tool: java()\n"
+                + "    recordIssues tool: java(), skipForensics: true, skipBlames: true\n"
                 + "}", true));
 
         AnalysisResult result = scheduleSuccessfulBuild(project);
@@ -881,7 +881,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result.getNewIssues()).hasSize(0);
         assertThat(result.getOutstandingIssues()).hasSize(2);
         assertThat(result.getErrorMessages()).contains(
-                "Reference job 'reference' does not contain build '1'");
+                "Reference job 'reference' does not contain configured build '1'");
     }
 
     /**
