@@ -28,9 +28,9 @@
     <jenkins.version>${jenkins.baseline}.6</jenkins.version>
     
     <analysis-model-api.version>8.2.1</analysis-model-api.version>
-    <analysis-model-tests.version>8.3.0-SNAPSHOT</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.8.0-SNAPSHOT</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.8.0-SNAPSHOT</git-forensics-plugin.version>
+    <analysis-model-tests.version>8.3.0</analysis-model-tests.version>
+    <forensics-api-plugin.version>0.8.0-rc581.f8c26050c964</forensics-api-plugin.version>
+    <git-forensics-plugin.version>0.7.0</git-forensics-plugin.version>
     <plugin-util-api.version>1.2.2</plugin-util-api.version>
 
     <font-awesome-api.version>5.14.0-1</font-awesome-api.version>
@@ -308,7 +308,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>${credentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
