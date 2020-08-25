@@ -80,7 +80,7 @@
     <workflow-support.version>3.3</workflow-support.version>
     <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
     <form-element-path.version>1.8</form-element-path.version>
-    <folder.version>6.12</folder.version>
+    <folder.version>6.14</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
     <checks-api.version>0.2.3</checks-api.version>
 
@@ -308,6 +308,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
+      <version>${credentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
