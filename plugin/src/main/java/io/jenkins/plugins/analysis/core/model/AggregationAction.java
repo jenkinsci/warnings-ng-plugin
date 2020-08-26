@@ -70,7 +70,7 @@ public class AggregationAction implements RunAction2, LastBuildAction {
 
     private ToolApi createToolApi(final ResultAction result) {
         return new ToolApi(result.getId(), result.getDisplayName(),
-                result.getAbsoluteUrl() + result.getUrlName(), result.getResult().getTotalSize());
+                result.getAbsoluteUrl(), result.getResult().getTotalSize());
     }
 
     @Override
