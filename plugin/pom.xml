@@ -25,11 +25,10 @@
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
-    <jenkins.version>${jenkins.baseline}.6</jenkins.version>
-    
-    <analysis-model-api.version>8.2.1</analysis-model-api.version>
-    <analysis-model-tests.version>8.3.0</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.8.0-rc581.f8c26050c964</forensics-api-plugin.version>
+
+    <analysis-model-api.version>8.3.0</analysis-model-api.version>
+    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <forensics-api-plugin.version>0.8.0-rc583.61d294e54bdd</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0</git-forensics-plugin.version>
     <plugin-util-api.version>1.2.2</plugin-util-api.version>
 
