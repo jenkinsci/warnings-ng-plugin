@@ -31,7 +31,7 @@
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
     <git-forensics-plugin.version>0.7.0</git-forensics-plugin.version>
-    <plugin-util-api.version>1.2.2</plugin-util-api.version>
+    <plugin-util-api.version>1.2.4</plugin-util-api.version>
 
     <font-awesome-api.version>5.14.0-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-1</jquery3-api.version>
