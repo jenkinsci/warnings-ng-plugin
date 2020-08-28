@@ -86,6 +86,7 @@ You still need to enable and configure the static analysis tool in your build fi
     * [Summary of the analysis result](#summary-of-the-analysis-result)
     * [Details of the analysis result](#details-of-the-analysis-result)
   * [Token macro support](#token-macro-support)
+  * [Warnings Checks (for GitHub projects)](#warnings-checks-for-github-projects)
 * [Transition from the static analysis suite](#transition-from-the-static-analysis-suite)
   * [Migration of Pipelines](#migration-of-pipelines)
   * [Migration of all other jobs](#migration-of-all-other-jobs)
@@ -907,6 +908,25 @@ Examples:
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
 - `${ANALYSIS_ISSUES_COUNT, tool="checkstyle"}`: expands to the total number of **CheckStyle** issues
 - `${ANALYSIS_ISSUES_COUNT, tool="checkstyle", type="NEW"}`: expands to the number of new **CheckStyle** issues
+
+### Warnings Checks (for GitHub projects)
+
+:warning: This feature requires the installation of an additional plugin: [GitHub Checks Plugin](https://github.com/jenkinsci/github-checks-plugin)
+
+If not disabled in the job configuration, this plugin will publish warnings to GitHub through [GitHub checks API](https://docs.github.com/en/rest/reference/checks).
+In the *Checks* view of each pull request ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), issues statistics will be displayed.
+
+![checks](images/checks.png)
+
+When new issues are produced by a pull request, they will be listed in the *File Changes* view.
+The issues will be added as annotations below the code where the issues are introduced.
+
+![check annotation](images/check-annotation.png)
+
+In order to disable the checks feature, set the property `skipPublishingChecks` to `true`, see the following example:
+```groovy
+recordIssues skipPublishingChecks: true, tool: java(pattern: '*.log')
+```
 
 ## Transition from the static analysis suite
 
