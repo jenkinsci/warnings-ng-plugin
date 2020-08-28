@@ -278,8 +278,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the PIT parser on an output file that contains 25 issues. */
     @Test
     public void shouldFindAllPitIssues() {
-        // FIXME: https://github.com/tomasbjerre/violations-lib/issues/98
-        shouldFindIssuesOfTool(14, new Pit(), "pit.xml");
+        shouldFindIssuesOfTool(22, new Pit(), "pit.xml");
     }
 
     /** Runs the PyDocStyle parser on an output file that contains 33 issues. */
