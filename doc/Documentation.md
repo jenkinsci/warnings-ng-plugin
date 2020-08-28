@@ -911,7 +911,9 @@ Examples:
 
 ### Warnings Checks (for GitHub projects)
 
-:warning: This feature requires the installation of an additional plugin: [GitHub Checks Plugin](https://github.com/jenkinsci/github-checks-plugin)
+:warning: This feature requires:
+* the installation of an additional plugin: [GitHub Checks Plugin](https://github.com/jenkinsci/github-checks-plugin)
+* the configuration of GitHub App credentails, see [this guide](https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc) for more details
 
 If not disabled in the job configuration, this plugin will publish warnings to GitHub through [GitHub checks API](https://docs.github.com/en/rest/reference/checks).
 In the *Checks* view of each pull request ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), issues statistics will be displayed.
