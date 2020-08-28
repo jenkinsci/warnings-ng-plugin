@@ -918,8 +918,7 @@ In the *Checks* view of each pull request ([example](https://github.com/jenkinsc
 
 ![checks](images/checks.png)
 
-When new issues are produced by a pull request, they will be listed in the *File Changes* view.
-The issues will be added as annotations below the code where the issues are introduced.
+When new issues are produced by a pull request, they will be added as annotations below the code where the issues are introduced.
 
 ![check annotation](images/check-annotation.png)
 
