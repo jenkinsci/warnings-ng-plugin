@@ -924,7 +924,7 @@ When new issues are produced by a pull request, they will be added as annotation
 
 ![check annotation](images/check-annotation.png)
 
-In order to disable the checks feature, set the property `skipPublishingChecks` to `true`, see the following example:
+In order to disable the checks feature, set the property `skipPublishingChecks` to `true`:
 ```groovy
 recordIssues skipPublishingChecks: true, tool: java(pattern: '*.log')
 ```
