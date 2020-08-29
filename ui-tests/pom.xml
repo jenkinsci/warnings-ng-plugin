@@ -82,17 +82,6 @@
       </properties>
     </profile>
     <profile>
-      <id>no-ui-tests-on-mac</id>
-      <activation>
-        <os>
-          <family>mac</family>
-        </os>
-      </activation>
-      <properties>
-        <maven.test.skip>true</maven.test.skip>
-      </properties>
-    </profile>
-    <profile>
       <id>consume-incrementals</id>
     </profile>
     <profile>
