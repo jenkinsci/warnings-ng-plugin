@@ -916,7 +916,13 @@ Examples:
 * the configuration of GitHub App credentails, see [this guide](https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc) for more details
 
 If not disabled in the job configuration, this plugin will publish warnings to GitHub through [GitHub checks API](https://docs.github.com/en/rest/reference/checks).
-In the *Checks* view of each pull request ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), issues statistics will be displayed.
+
+Each analysis tool is published as an individual check, the quality gate is published as the check result.
+
+![check quality gate](images/check-quality-gate.png)
+
+
+In the *Details* view of each check ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), issues statistics will be displayed.
 
 ![checks](images/checks.png)
 
