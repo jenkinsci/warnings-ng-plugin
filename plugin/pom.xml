@@ -64,7 +64,7 @@
     <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
     <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
-    <git-plugin.version>4.2.2</git-plugin.version>
+    <git-plugin.version>4.4.1</git-plugin.version>
     <structs.version>1.20</structs.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
