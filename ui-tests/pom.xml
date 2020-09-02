@@ -5,7 +5,7 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>1.1.1</version>
+    <version>1.5.0</version>
     <relativePath/>
   </parent>
 
