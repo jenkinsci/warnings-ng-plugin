@@ -164,8 +164,8 @@ public class ModelValidation {
     
     public ListBoxModel getAllReferenceBuildSelectionStrategy() {
         ListBoxModel options = new ListBoxModel();
-        options.add("Last successful build", ReferenceBuildSelectionStrategy.LAST_SUCCESSFUL_BUILD.name());
-        options.add("Last parent Commit build ", ReferenceBuildSelectionStrategy.PARENT_COMMIT_BUILD.name());
+        options.add(Messages.ReferenceBuildSelectionStrategy_LAST_SUCCESSFUL_BUILD(), ReferenceBuildSelectionStrategy.LAST_SUCCESSFUL_BUILD.name());
+        options.add(Messages.ReferenceBuildSelectionStrategy_PARENT_COMMIT_BUILD(), ReferenceBuildSelectionStrategy.PARENT_COMMIT_BUILD.name());
         return options;
     }
 
