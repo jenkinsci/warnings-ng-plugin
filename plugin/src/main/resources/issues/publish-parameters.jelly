@@ -31,6 +31,10 @@
   <f:entry title="${%title.referenceJob}" field="referenceJobName" description="${%description.referenceJob}">
     <f:combobox/>
   </f:entry>
+  <f:entry title="${%title.referenceBuildSelectionStrategy}" description="${%description.referenceBuildSelectionStrategy}"
+           field="referenceBuildSelectionStrategy">
+    <f:select default="LAST_SUCCESSFUL_BUILD"/>
+  </f:entry>
   <f:entry title="${%title.ignoreQualityGate}" description="${%description.ignoreQualityGate}"
            field="ignoreQualityGate">
     <f:checkbox/>

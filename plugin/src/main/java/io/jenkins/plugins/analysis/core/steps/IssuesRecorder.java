@@ -5,6 +5,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +53,9 @@ import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.core.util.QualityGate;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.forensics.reference.ReferenceBuild;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
+import io.jenkins.plugins.analysis.core.util.ReferenceBuildSelectionStrategy;
 import io.jenkins.plugins.analysis.core.util.RunResultHandler;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
@@ -111,6 +114,8 @@ public class IssuesRecorder extends Recorder {
     private List<QualityGate> qualityGates = new ArrayList<>();
 
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
+    private ReferenceBuildSelectionStrategy referenceBuildSelectionStrategy = 
+            ReferenceBuildSelectionStrategy.LAST_SUCCESSFUL_BUILD;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -552,6 +557,15 @@ public class IssuesRecorder extends Recorder {
     public TrendChartType getTrendChartType() {
         return trendChartType;
     }
+    
+    @DataBoundSetter
+    public void setReferenceBuildSelectionStrategy(final ReferenceBuildSelectionStrategy strategy) {
+        referenceBuildSelectionStrategy = strategy;
+    }
+    
+    public ReferenceBuildSelectionStrategy getReferenceBuildSelectionStrategy() {
+        return referenceBuildSelectionStrategy;
+    }
 
     /**
      * Sets the minimum severity to consider when computing the health report. Issues with a severity less than this
@@ -688,6 +702,14 @@ public class IssuesRecorder extends Recorder {
     private Charset getCharset(final String encoding) {
         return new ModelValidation().getCharset(encoding);
     }
+    
+    private String findParentReferenceBuild(Run<?, ?> run) {
+        ReferenceBuild referenceBuild = run.getAction(ReferenceBuild.class);
+        if(referenceBuild == null)
+            return this.referenceBuildId;
+        Optional<Run<?, ?>> rb = referenceBuild.getReferenceBuild();
+        return rb.isPresent() ? rb.get().getId() : this.referenceBuildId;
+    }
 
     /**
      * Publishes the results as {@link Action} in the job using an {@link IssuesPublisher}. Afterwards, all affected
@@ -713,6 +735,13 @@ public class IssuesRecorder extends Recorder {
             qualityGates.addAll(QualityGate.map(thresholds));
         }
         qualityGate.addAll(qualityGates);
+        
+        // Testing
+        if(referenceBuildSelectionStrategy == ReferenceBuildSelectionStrategy.PARENT_COMMIT_BUILD) {
+            referenceBuildId = findParentReferenceBuild(run);
+            listener.getLogger().println("[ReferenceBuildSelectionStrategy] Build number: " + referenceBuildId);
+        }
+        
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
                 reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds,
@@ -1287,6 +1316,11 @@ public class IssuesRecorder extends Recorder {
          */
         public ListBoxModel doFillTrendChartTypeItems() {
             return model.getAllTrendChartTypes();
+        }
+        
+        // Reference Build Selection Strategy Drop Down Menu
+        public ListBoxModel doFillReferenceBuildSelectionStrategyItems() {
+            return model.getAllReferenceBuildSelectionStrategy();
         }
 
         /**

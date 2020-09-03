@@ -605,12 +605,13 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
+      <!--  <plugin>
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
-          <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
+          <failBuildOnProblemsFound>true</failBuildOnProblemsFound> -->
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
+          <!-- 
           <checkDependencies>false</checkDependencies>
           <analysisConfiguration>
             <revapi.ignore combine.children="append">
@@ -633,7 +634,7 @@
             </revapi.ignore>
           </analysisConfiguration>
         </configuration>
-      </plugin>
+      </plugin> -->
     </plugins>
     <pluginManagement>
       <plugins>
