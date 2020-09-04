@@ -55,7 +55,6 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.forensics.reference.ReferenceBuild;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
-import io.jenkins.plugins.analysis.core.util.ReferenceBuildSelectionStrategy;
 import io.jenkins.plugins.analysis.core.util.RunResultHandler;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
@@ -89,6 +88,7 @@ public class IssuesRecorder extends Recorder {
 
     private boolean ignoreQualityGate = false; // by default, a successful quality gate is mandatory;
     private boolean ignoreFailedBuilds = true; // by default, failed builds are ignored;
+    private boolean useReferenceBuildFinderResult = true;
     private String referenceJobName;
     private String referenceBuildId;
 
@@ -114,8 +114,6 @@ public class IssuesRecorder extends Recorder {
     private List<QualityGate> qualityGates = new ArrayList<>();
 
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
-    private ReferenceBuildSelectionStrategy referenceBuildSelectionStrategy = 
-            ReferenceBuildSelectionStrategy.LAST_SUCCESSFUL_BUILD;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -452,6 +450,22 @@ public class IssuesRecorder extends Recorder {
     public boolean getIgnoreFailedBuilds() {
         return ignoreFailedBuilds;
     }
+    
+    /**
+     * If {@code true}, then a reference build calculated previously by the Reference Build Finder from the forensics api 
+     * will be used
+     * 
+     * @param useReferenceBuildFinderResult
+     *         if {@code true} then a calculated reference build
+     */
+    @DataBoundSetter
+    public void setUseReferenceBuildFinderResult(boolean useReferenceBuildFinderResult) {
+        this.useReferenceBuildFinderResult = useReferenceBuildFinderResult;
+    }
+    
+    public boolean getUseReferenceBuildFinderResult() {
+        return useReferenceBuildFinderResult;
+    }
 
     /**
      * Sets the reference job to get the results for the issue difference computation.
@@ -556,15 +570,6 @@ public class IssuesRecorder extends Recorder {
 
     public TrendChartType getTrendChartType() {
         return trendChartType;
-    }
-    
-    @DataBoundSetter
-    public void setReferenceBuildSelectionStrategy(final ReferenceBuildSelectionStrategy strategy) {
-        referenceBuildSelectionStrategy = strategy;
-    }
-    
-    public ReferenceBuildSelectionStrategy getReferenceBuildSelectionStrategy() {
-        return referenceBuildSelectionStrategy;
     }
 
     /**
@@ -703,12 +708,24 @@ public class IssuesRecorder extends Recorder {
         return new ModelValidation().getCharset(encoding);
     }
     
-    private String findParentReferenceBuild(Run<?, ?> run) {
-        ReferenceBuild referenceBuild = run.getAction(ReferenceBuild.class);
-        if(referenceBuild == null)
+    /** 
+     * Fetch the reference build {@link ReferenceBuild}, which has been previously calculated by an 
+     * implementation of the forensics-api, eg. GitForensics. Fallback to previous reference build
+     * if no Action was found.
+     * 
+     * @param run
+     *          the current run
+     * 
+     * @return the id of the reference build
+     * */
+    private String fetchReferenceBuild(Run<?, ?> run) {
+        ReferenceBuild referenceBuildAction = run.getAction(ReferenceBuild.class);
+        if(referenceBuildAction == null) {
             return this.referenceBuildId;
-        Optional<Run<?, ?>> rb = referenceBuild.getReferenceBuild();
-        return rb.isPresent() ? rb.get().getId() : this.referenceBuildId;
+        }
+        
+        Optional<Run<?, ?>> referenceBuild = referenceBuildAction.getReferenceBuild();
+        return referenceBuild.isPresent() ? referenceBuild.get().getId() : this.referenceBuildId;
     }
 
     /**
@@ -736,10 +753,9 @@ public class IssuesRecorder extends Recorder {
         }
         qualityGate.addAll(qualityGates);
         
-        // Testing
-        if(referenceBuildSelectionStrategy == ReferenceBuildSelectionStrategy.PARENT_COMMIT_BUILD) {
-            referenceBuildId = findParentReferenceBuild(run);
-            listener.getLogger().println("[ReferenceBuildSelectionStrategy] Build number: " + referenceBuildId);
+        if(useReferenceBuildFinderResult) {
+            referenceBuildId = fetchReferenceBuild(run);
+            listener.getLogger().println("[ReferenceBuildFinder] Build number: " + referenceBuildId);
         }
         
         IssuesPublisher publisher = new IssuesPublisher(run, report,
@@ -1316,11 +1332,6 @@ public class IssuesRecorder extends Recorder {
          */
         public ListBoxModel doFillTrendChartTypeItems() {
             return model.getAllTrendChartTypes();
-        }
-        
-        // Reference Build Selection Strategy Drop Down Menu
-        public ListBoxModel doFillReferenceBuildSelectionStrategyItems() {
-            return model.getAllReferenceBuildSelectionStrategy();
         }
 
         /**

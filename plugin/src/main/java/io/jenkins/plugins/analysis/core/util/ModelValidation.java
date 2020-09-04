@@ -161,13 +161,6 @@ public class ModelValidation {
         options.add(Messages.AggregationChart_NONE(), TrendChartType.NONE.name());
         return options;
     }
-    
-    public ListBoxModel getAllReferenceBuildSelectionStrategy() {
-        ListBoxModel options = new ListBoxModel();
-        options.add(Messages.ReferenceBuildSelectionStrategy_LAST_SUCCESSFUL_BUILD(), ReferenceBuildSelectionStrategy.LAST_SUCCESSFUL_BUILD.name());
-        options.add(Messages.ReferenceBuildSelectionStrategy_PARENT_COMMIT_BUILD(), ReferenceBuildSelectionStrategy.PARENT_COMMIT_BUILD.name());
-        return options;
-    }
 
     /**
      * Returns the model with the possible reference jobs.

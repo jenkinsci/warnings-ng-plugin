@@ -605,6 +605,8 @@
           </execution>
         </executions>
       </plugin>
+      
+      <!-- Added new method, revapi.ignore file did not work -->
       <!--  <plugin>
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
@@ -635,6 +637,7 @@
           </analysisConfiguration>
         </configuration>
       </plugin> -->
+      
     </plugins>
     <pluginManagement>
       <plugins>
