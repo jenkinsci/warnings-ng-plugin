@@ -184,7 +184,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     public String getAbsoluteUrl() {
-        return getOwner().getAbsoluteUrl();
+        return getOwner().getAbsoluteUrl() + getUrlName();
     }
 
     @Override

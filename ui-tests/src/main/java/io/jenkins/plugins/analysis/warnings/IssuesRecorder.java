@@ -30,20 +30,19 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control ignoreQualityGate = control("ignoreQualityGate");
     private final Control overallResultMustBeSuccessCheckBox = control("overallResultMustBeSuccess");
     private final Control referenceJobName = control("referenceJobName");
-    private final Control aggregatingResultsCheckBox = control("aggregatingResults");
+    private final Control aggregatingResults = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
     private final Control sourceDirectory = control("sourceDirectory");
     private final Control blameDisabled = control("blameDisabled");
     private final Control forensicsDisabled = control("forensicsDisabled");
     private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
+    private final Control skipPublishingChecks = control("skipPublishingChecks");
     private final Control reportFilePattern = control("/toolProxies/tool/pattern");
     private final Control trendChartType = control("trendChartType");
     private final Control healthyThreshold = control("healthy");
     private final Control unhealthyThreshold = control("unhealthy");
     private final Control healthSeverity = control("minimumSeverity");
-
-
 
     /**
      * Determines the result of the quality gate.
@@ -177,7 +176,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         enabled for successful or unstable builds only
      */
     public boolean getEnabledForFailure() {
-        return enabledForFailureCheckBox.resolve().isSelected();
+        return isChecked(enabledForFailureCheckBox);
     }
 
     /**
@@ -188,11 +187,11 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         {@code false} if every tool should get an individual result.
      */
     public boolean getAggregatingResults() {
-        return aggregatingResultsCheckBox.resolve().isSelected();
+        return isChecked(aggregatingResults);
     }
 
     public boolean getIgnoreQualityGate() {
-        return ignoreQualityGate.resolve().isSelected();
+        return isChecked(ignoreQualityGate);
     }
 
     public String getOverallResultMustBeSuccess() {
@@ -222,7 +221,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @return {@code true} if SCM blaming should be disabled
      */
     public boolean getBlameDisabled() {
-        return blameDisabled.resolve().isSelected();
+        return isChecked(blameDisabled);
     }
 
     /**
@@ -231,16 +230,23 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @return {@code true} if SCM forensics should be disabled
      */
     public boolean getForensicsDisabled() {
-        return forensicsDisabled.resolve().isSelected();
+        return isChecked(forensicsDisabled);
     }
 
     public boolean getIgnoreFailedBuilds() {
-        return ignoreFailedBuilds.resolve().isSelected();
+        return isChecked(ignoreFailedBuilds);
     }
 
+    public boolean getSkipPublishingChecks() {
+        return isChecked(skipPublishingChecks);
+    }
+
+    private boolean isChecked(final Control control) {
+        return control.resolve().isSelected();
+    }
 
     public boolean getFailOnError() {
-        return failOnError.resolve().isSelected();
+        return isChecked(failOnError);
     }
 
     public String getHealthThreshold() {
@@ -275,10 +281,9 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * Gets the quality gate result.
      *
      * @return the quality gate result
-     *
      **/
     public QualityGateBuildResult getQualityGateResult() {
-        if (qualityGateResult.resolve().isSelected()) {
+        if (isChecked(qualityGateResult)) {
             return QualityGateBuildResult.UNSTABLE;
         }
         else {
@@ -313,7 +318,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *         determines if the checkbox should be checked or not
      */
     public void setEnabledForAggregation(final boolean isChecked) {
-        aggregatingResultsCheckBox.check(isChecked);
+        aggregatingResults.check(isChecked);
     }
 
     /**
@@ -361,27 +366,32 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Sets the Aggregate esult checkbox.
+     * Determines whether the results for each configured static analysis result should be aggregated into a single
+     * result or if every tool should get an individual result.
      *
-     * @param isChecked
+     * @param aggregatingResults
+     *         if {@code true} then the results of each static analysis tool should be aggregated into a single result,
+     *         if {@code false} then every tool should get an individual result.
      */
-    public void setAggregatingResults(final boolean isChecked) {
-        aggregatingResultsCheckBox.check(isChecked);
+    public void setAggregatingResults(final boolean aggregatingResults) {
+        this.aggregatingResults.check(aggregatingResults);
     }
 
     /**
-     * Sets the Disable SCM Blames checkbox.
+     * Determines whether SCM blaming should be disabled or not.
      *
      * @param blameDisabled
+     *         {@code true} if SCM blaming should be disabled, {@code false} otherwise
      */
     public void setBlameDisabled(final boolean blameDisabled) {
         this.blameDisabled.check(blameDisabled);
     }
 
     /**
-     * Sets the Disable SCM Forensics checkbox.
+     * Determines whether SCM forensics should be disabled or not.
      *
      * @param forensicsDisabled
+     *         {@code true} if SCM forensics should be disabled, {@code false} otherwise
      */
     public void setForensicsDisabled(final boolean forensicsDisabled) {
         this.forensicsDisabled.check(forensicsDisabled);
@@ -411,8 +421,17 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
+     * Determines whether skip publishing of checks.
+     *
+     * @param skipPublishingChecks
+     *         if {@code true} then publishing checks should be skipped, {@code false} otherwise
+     */
+    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+        this.skipPublishingChecks.check(skipPublishingChecks);
+    }
+
+    /**
      * Sets the report file pattern.
-     * @param pattern
      */
     public void setReportFilePattern(final String pattern) {
         reportFilePattern.set(pattern);
@@ -485,7 +504,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param result
      *         determines whether the quality gate sets the build result to Unstable or Failed
      */
-    public void addQualityGateConfiguration(final int threshold, final QualityGateType type, final QualityGateBuildResult result) {
+    public void addQualityGateConfiguration(final int threshold, final QualityGateType type,
+            final QualityGateBuildResult result) {
         String path = createPageArea("qualityGates", () -> qualityGatesRepeatable.click());
         QualityGatePanel qualityGate = new QualityGatePanel(this, path);
         qualityGate.setThreshold(threshold);
@@ -649,7 +669,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         }
 
         public void setUnstable(final boolean isUnstable) {
-            self().findElement(by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]")).click();
+            self().findElement(by.xpath(".//input[@type='radio' and contains(@path,'unstable[" + isUnstable + "]')]"))
+                    .click();
         }
     }
 

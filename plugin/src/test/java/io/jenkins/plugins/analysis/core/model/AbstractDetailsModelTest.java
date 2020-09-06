@@ -31,9 +31,9 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("PMD.AbstractClassWithoutAbstractMethod")
 public abstract class AbstractDetailsModelTest {
     static final String DESCRIPTION
-            = join("Hello description with", a().withHref("url").withText("link")).render();
+            = join("Hello description with", a().withHref("url").withText("link").withRel("nofollow")).render();
     private static final String MESSAGE
-            = join("Hello message with", a().withHref("url").withText("link")).render();
+            = join("Hello message with", a().withHref("url").withText("link").withRel("nofollow")).render();
     /** Details icon that opens a new row. */
     protected static final String DETAILS_ICON = "<svg class=\"details-icon svg-icon\"><use href=\"/path/to/icon\"></use></svg>";
     static final String EXPECTED_DESCRIPTION = String.format(

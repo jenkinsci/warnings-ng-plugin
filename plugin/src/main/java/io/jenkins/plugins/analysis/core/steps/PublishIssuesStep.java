@@ -59,6 +59,8 @@ public class PublishIssuesStep extends Step implements Serializable {
     private String referenceBuildId = StringUtils.EMPTY;
     private boolean failOnError = false; // by default, it should not fail on error
 
+    private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
+
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
@@ -145,6 +147,21 @@ public class PublishIssuesStep extends Step implements Serializable {
     @SuppressWarnings({"PMD.BooleanGetMethodName", "WeakerAccess"})
     public boolean getFailOnError() {
         return failOnError;
+    }
+
+    /**
+     * Returns whether publishing checks should be skipped.
+     *
+     * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
+     */
+    public boolean isSkipPublishingChecks() {
+        return skipPublishingChecks;
+    }
+
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+        this.skipPublishingChecks = skipPublishingChecks;
     }
 
     /**
@@ -811,7 +828,14 @@ public class PublishIssuesStep extends Step implements Serializable {
                     StringUtils.defaultString(step.getName()), step.getReferenceJobName(), step.getReferenceBuildId(),
                     step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), statusHandler, step.getFailOnError());
-            return publisher.attachAction(step.getTrendChartType());
+            ResultAction action = publisher.attachAction(step.getTrendChartType());
+
+            if (!step.isSkipPublishingChecks()) {
+                WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, getTaskListener());
+                checksPublisher.publishChecks();
+            }
+
+            return action;
         }
 
         private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {

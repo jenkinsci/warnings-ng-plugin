@@ -1,0 +1,80 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="Solution_Path">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="SolutionPath" type="xs:string" minOccurs="0" />
+                <xs:element name="SolutionVersion" type="xs:string" minOccurs="0" />
+                <xs:element name="PlogVersion" type="xs:unsignedInt" minOccurs="0" />
+                <xs:element name="ModificationDate" msdata:DateTimeMode="Utc" type="xs:dateTime" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="PVS-Studio_Analysis_Log">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="FavIcon" type="xs:boolean" minOccurs="0" msdata:Ordinal="0" />
+                <xs:element name="Level" type="xs:unsignedInt" minOccurs="0" msdata:Ordinal="1" />
+                <xs:element name="DefaultOrder" type="xs:int" minOccurs="0" msdata:Ordinal="2" />
+                <xs:element name="ErrorCode" type="xs:string" minOccurs="0" msdata:Ordinal="3" />
+                <xs:element name="Message" type="xs:string" msdata:Ordinal="4" />
+                <xs:element name="Project" type="xs:string" minOccurs="0" msdata:Ordinal="5" />
+                <xs:element name="ShortFile" type="xs:string" minOccurs="0" msdata:Ordinal="6" />
+                <xs:element name="Line" type="xs:int" msdata:Ordinal="7" />
+                <xs:element name="FalseAlarm" type="xs:boolean" minOccurs="0" msdata:Ordinal="8" />
+                <xs:element name="File" type="xs:string" msdata:Ordinal="9" />
+                <xs:element name="CodePrev" type="xs:unsignedInt" minOccurs="0" msdata:Ordinal="10" />
+                <xs:element name="CodeCurrent" type="xs:unsignedInt" minOccurs="0" msdata:Ordinal="11" />
+                <xs:element name="CodeNext" type="xs:unsignedInt" minOccurs="0" msdata:Ordinal="12" />
+                <xs:element name="TrialMessage" type="xs:boolean" minOccurs="0" msdata:Ordinal="13" />
+                <xs:element name="Analyzer" type="xs:int" minOccurs="0" msdata:Ordinal="14" />
+                <xs:element name="LineExtension" type="xs:string" minOccurs="0" msdata:Ordinal="15" />
+                <xs:element name="Retired" type="xs:boolean" default="false" minOccurs="0" msdata:Ordinal="16" />
+                <xs:element name="AnalyzedSourceFiles" type="xs:string" minOccurs="0" msdata:Ordinal="17" />
+                <xs:element name="CWECode" type="xs:string" minOccurs="0" msdata:Ordinal="18" />
+                <xs:element name="MISRA" type="xs:string" minOccurs="0" msdata:Ordinal="19" />
+              </xs:sequence>
+              <xs:attribute name="ErrorCodeNumeric" msdata:ReadOnly="true" msdata:Expression="IIF(LEN(ErrorCode) &lt; 2 OR (SUBSTRING(ErrorCode, 1, 1) &lt;&gt; 'V'), 0, CONVERT(SUBSTRING(ErrorCode, 2, LEN(ErrorCode) - 1), 'System.UInt32'))" type="xs:unsignedInt" use="prohibited" />
+              <xs:attribute name="CWECodeNumeric" msdata:ReadOnly="true" msdata:Expression="ISNULL(IIF(LEN(CWECode) &lt; 4 + 1 OR (SUBSTRING(CWECode, 1, 4) &lt;&gt; 'CWE-'), 4294967295, CONVERT(SUBSTRING(CWECode, 4 + 1, LEN(CWECode) - 4), 'System.UInt32')), 4294967295)" type="xs:unsignedInt" use="prohibited" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+      <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+        <xs:selector xpath=".//PVS-Studio_Analysis_Log" />
+        <xs:field xpath="Line" />
+        <xs:field xpath="Message" />
+        <xs:field xpath="File" />
+      </xs:unique>
+    </xs:element>
+  </xs:schema>
+  <Solution_Path>
+    <SolutionPath>D:\PartPath\PartPath\out\test\resources\TestReport.plog</SolutionPath>
+    <SolutionVersion>10.0</SolutionVersion>
+    <PlogVersion>5</PlogVersion>
+    <ModificationDate>2019-07-16T12:15:22.9602426Z</ModificationDate>
+  </Solution_Path>
+  <PVS-Studio_Analysis_Log>
+    <FavIcon>false</FavIcon>
+    <Level>0</Level>
+    <DefaultOrder>1</DefaultOrder>
+    <ErrorCode>V002</ErrorCode>
+    <Message>Some diagnostic messages may contain incorrect line number.</Message>
+    <Project>ABackup%CppLib</Project>
+    <ShortFile>KitCpp.h</ShortFile>
+    <Line>42</Line>
+    <FalseAlarm>false</FalseAlarm>
+    <File>D:\PartPath\PartPath\out\test\resources\TestReport.plog</File>
+    <CodePrev>491455435</CodePrev>
+    <CodeCurrent>3951257461</CodeCurrent>
+    <CodeNext>2875126159</CodeNext>
+    <TrialMessage>false</TrialMessage>
+    <Analyzer>1</Analyzer>
+    <LineExtension />
+    <Retired>false</Retired>
+  </PVS-Studio_Analysis_Log>
+</NewDataSet>

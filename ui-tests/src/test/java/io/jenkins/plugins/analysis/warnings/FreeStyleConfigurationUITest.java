@@ -33,9 +33,7 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
     public void shouldSetPropertiesInJobConfiguration() {
         FreeStyleJob job = jenkins.getJobs().create(FreeStyleJob.class);
 
-        IssuesRecorder issuesRecorder = job.addPublisher(IssuesRecorder.class, recorder -> {
-            recorder.setTool("Eclipse ECJ");
-        });
+        IssuesRecorder issuesRecorder = job.addPublisher(IssuesRecorder.class, recorder -> recorder.setTool("Eclipse ECJ"));
 
         issuesRecorder.setSourceCodeEncoding(ENCODING);
         issuesRecorder.setSourceDirectory(SOURCE_DIRECTORY);
@@ -46,6 +44,7 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         issuesRecorder.setEnabledForFailure(true);
         issuesRecorder.setIgnoreQualityGate(true);
         issuesRecorder.setIgnoreFailedBuilds(true);
+        issuesRecorder.setSkipPublishingChecks(true);
         issuesRecorder.setFailOnError(true);
         issuesRecorder.setReferenceJobName(REFERENCE);
         issuesRecorder.setHealthReport(1, 9, SEVERITY);
@@ -66,6 +65,7 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         assertThat(issuesRecorder).hasEnabledForFailure(true);
         assertThat(issuesRecorder).hasIgnoreQualityGate(true);
         assertThat(issuesRecorder).hasIgnoreFailedBuilds(true);
+        assertThat(issuesRecorder).hasSkipPublishingChecks(true);
         assertThat(issuesRecorder).hasFailOnError(true);
         assertThat(issuesRecorder).hasReferenceJobName(REFERENCE);
         assertThat(issuesRecorder).hasHealthThreshold("1");
