@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.FilteredLog;
 
 import hudson.model.Job;
 import hudson.model.Result;
@@ -28,7 +29,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
-import io.jenkins.plugins.forensics.reference.ReferenceBuild;
+import io.jenkins.plugins.forensics.reference.ReferenceFinder;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
@@ -40,7 +41,7 @@ import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGate
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
 class IssuesPublisher {
     private final AnnotatedReport report;
     private final Run<?, ?> run;
@@ -228,21 +229,11 @@ class IssuesPublisher {
     }
 
     private Run<?, ?> findReference(final Report issues) {
-        ReferenceBuild action = run.getAction(ReferenceBuild.class);
-        if (action == null) {
-            issues.logInfo("Reference build recorder is not configured, using current build as baseline");
-        }
-        else {
-            issues.logInfo("Obtaining reference build from reference recorder");
-            Optional<Run<?, ?>> referenceBuild = action.getReferenceBuild();
-            if (referenceBuild.isPresent()) {
-                Run<?, ?> reference = referenceBuild.get();
-                issues.logInfo("-> found '%s'", reference.getFullDisplayName());
-
-                return reference;
-            }
-        }
-        return this.run;
+        ReferenceFinder referenceFinder = new ReferenceFinder();
+        FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
+        log.getInfoMessages().forEach(issues::logInfo);
+        log.getErrorMessages().forEach(issues::logError);
+        return referenceFinder.findReference(run, log).orElse(run);
     }
 
     private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {
