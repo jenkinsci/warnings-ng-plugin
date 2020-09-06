@@ -57,7 +57,7 @@
     <jsoup.version>1.13.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
     <git-client.version>3.2.1</git-client.version>
-    <jmh.version>1.25.1</jmh.version>
+    <jmh.version>1.25.2</jmh.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <token-macro.version>2.10</token-macro.version>
