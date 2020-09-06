@@ -16,8 +16,8 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("hideutilityclassconstructor")
-@AnalyzeClasses(packages = "io.jenkins.plugins.analysis.core.portlets")
-class PluginArchitectureTest {
+@AnalyzeClasses(packages = "io.jenkins.plugins.analysis.core")
+class PluginArchitecture2Test {
     @ArchTest
     static final ArchRule NO_JENKINS_INSTANCE_CALL = noClasses().that().doNotHaveSimpleName("JenkinsFacade")
             .should().callMethod(Jenkins.class, "getInstance")
