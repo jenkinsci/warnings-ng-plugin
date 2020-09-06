@@ -89,6 +89,8 @@
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djava.util.logging.config.file=logging.properties</argLine>
+
+    <useBeta>true</useBeta>
   </properties>
 
   <licenses>
