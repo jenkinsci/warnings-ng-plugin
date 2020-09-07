@@ -35,7 +35,7 @@ public class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
         project.setDefinition(new CpsFlowDefinition("node {\n"
                 + "    timestamps {\n"
                 + "        echo '[javac] Test.java:39: warning: Test Warning'\n"
-                + "        recordIssues tools: [java()], skipForensics: true, skipBlames: true\n"
+                + "        recordIssues tools: [java()], skipBlames: true\n"
                 + "    }\n"
                 + "}", true));
 
