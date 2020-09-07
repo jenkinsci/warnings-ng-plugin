@@ -87,7 +87,6 @@ class AggregationActionTest {
 
         when(resultAction.getId()).thenReturn(id);
         when(resultAction.getDisplayName()).thenReturn(name);
-        when(resultAction.getAbsoluteUrl()).thenReturn("http://example.com/");
         when(resultAction.getUrlName()).thenReturn("job/build/" + id);
         when(resultAction.getResult()).thenReturn(result);
 
