@@ -74,7 +74,7 @@ public class TimeStamperPluginITest extends IntegrationTestWithJenkinsPerSuite {
         project.setDefinition(new CpsFlowDefinition("node {\n"
                 + "    timestamps {\n"
                 + "        echo 'test.c:1:2: error: This is an error.'\n"
-                + "        recordIssues tools: [clang(id: 'clang', name: 'clang')], skipForensics: true, skipBlames: true\n"
+                + "        recordIssues tools: [clang(id: 'clang', name: 'clang')], skipBlames: true\n"
                 + "    }\n"
                 + "}", true));
 
