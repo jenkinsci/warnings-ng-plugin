@@ -57,7 +57,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  * </li>
  * </ul>
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.CyclomaticComplexity"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.GodClass"})
 public class RecordIssuesStep extends Step implements Serializable {
     private static final long serialVersionUID = 1L;
 
