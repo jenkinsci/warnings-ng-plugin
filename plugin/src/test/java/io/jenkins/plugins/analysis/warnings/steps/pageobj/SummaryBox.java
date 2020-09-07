@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 /**
  * Page Object for the static analysis summary box on the build page.
@@ -18,9 +18,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
  * @author Ullrich Hafner
  */
 public class SummaryBox {
-    @Nullable
+    @CheckForNull
     private final DomElement summary;
-    @Nullable
+    @CheckForNull
     private final DomElement title;
     private final List<String> items;
 

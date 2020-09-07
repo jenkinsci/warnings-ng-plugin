@@ -10,8 +10,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -45,7 +45,6 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
-import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -73,7 +72,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.GodClass", "PMD.CyclomaticComplexity", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder {
     static final String NO_REFERENCE_DEFINED = "-";
     static final String DEFAULT_ID = "analysis";
@@ -100,7 +99,13 @@ public class IssuesRecorder extends Recorder {
     private boolean isAggregatingResults;
 
     private boolean isBlameDisabled;
-    private boolean isForensicsDisabled;
+    /**
+     * Not used anymore.
+     *
+     * @deprecated since 8.5.0
+     */
+    @Deprecated
+    private transient boolean isForensicsDisabled;
 
     private boolean skipPublishingChecks; // by default, checks will be published
 
@@ -226,7 +231,7 @@ public class IssuesRecorder extends Recorder {
      * @see #getTools
      * @deprecated this method is only intended to be called by the UI
      */
-    @Nullable
+    @CheckForNull
     @Deprecated
     public List<ToolProxy> getToolProxies() {
         return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
@@ -283,7 +288,7 @@ public class IssuesRecorder extends Recorder {
         return new ArrayList<>(analysisTools);
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -348,16 +353,26 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns whether SCM forensics should be disabled.
+     * Not used anymore.
      *
      * @return {@code true} if SCM forensics should be disabled
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
      */
     @SuppressWarnings("PMD.BooleanGetMethodName")
+    @Deprecated
     public boolean getForensicsDisabled() {
         return isForensicsDisabled;
     }
 
+    /**
+     * Not used anymore.
+     *
+     * @param forensicsDisabled
+     *         not used
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
+     */
     @DataBoundSetter
+    @Deprecated
     public void setForensicsDisabled(final boolean forensicsDisabled) {
         isForensicsDisabled = forensicsDisabled;
     }
@@ -532,7 +547,7 @@ public class IssuesRecorder extends Recorder {
         this.unhealthy = unhealthy;
     }
 
-    @Nullable
+    @CheckForNull
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
@@ -674,8 +689,7 @@ public class IssuesRecorder extends Recorder {
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
                 workspace, sourceDirectory, run,
-                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
-                isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
+                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
         return issuesScanner.scan();
     }

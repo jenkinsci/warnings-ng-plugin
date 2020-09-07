@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
@@ -183,7 +183,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
      * @return the list of quality gates
      */
     @SuppressWarnings({"deprecation", "PMD.NPathComplexity", "PMD.CyclomaticComplexity"})
-    public static List<QualityGate> map(@Nullable final Thresholds thresholds) {
+    public static List<QualityGate> map(@CheckForNull final Thresholds thresholds) {
         if (thresholds == null) {
             return Collections.emptyList();
         }

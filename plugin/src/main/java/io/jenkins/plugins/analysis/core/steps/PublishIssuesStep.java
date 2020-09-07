@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -82,7 +82,7 @@ public class PublishIssuesStep extends Step implements Serializable {
      *         if the array of issues is {@code null} or empty
      */
     @DataBoundConstructor
-    public PublishIssuesStep(@Nullable final List<AnnotatedReport> issues) {
+    public PublishIssuesStep(@CheckForNull final List<AnnotatedReport> issues) {
         super();
 
         if (issues == null) {
@@ -259,7 +259,7 @@ public class PublishIssuesStep extends Step implements Serializable {
         return referenceBuildId;
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -305,13 +305,13 @@ public class PublishIssuesStep extends Step implements Serializable {
         this.unhealthy = unhealthy;
     }
 
-    @Nullable
+    @CheckForNull
     @SuppressWarnings("unused") // Used by Stapler
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
 
-    @Nullable
+    @CheckForNull
     @SuppressWarnings("WeakerAccess") // Required by Stapler
     public Severity getMinimumSeverityAsSeverity() {
         return minimumSeverity;

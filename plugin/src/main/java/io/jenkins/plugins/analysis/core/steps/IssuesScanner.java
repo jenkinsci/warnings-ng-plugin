@@ -67,13 +67,8 @@ class IssuesScanner {
     private final List<RegexpFilter> filters;
     private final TaskListener listener;
     private final BlameMode blameMode;
-    private final ForensicsMode forensicsMode;
 
     enum BlameMode {
-        ENABLED, DISABLED
-    }
-
-    enum ForensicsMode {
         ENABLED, DISABLED
     }
 
@@ -81,7 +76,7 @@ class IssuesScanner {
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
             final FilePath workspace, final String sourceDirectory, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
-            final BlameMode blameMode, final ForensicsMode forensicsMode) {
+            final BlameMode blameMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -91,7 +86,6 @@ class IssuesScanner {
         this.jenkinsRootDir = jenkinsRootDir;
         this.listener = listener;
         this.blameMode = blameMode;
-        this.forensicsMode = forensicsMode;
     }
 
     public AnnotatedReport scan() throws IOException, InterruptedException {
