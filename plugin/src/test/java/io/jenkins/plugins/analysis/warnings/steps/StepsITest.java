@@ -62,7 +62,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
 
