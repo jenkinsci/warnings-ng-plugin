@@ -85,7 +85,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
         project.setDefinition(new CpsFlowDefinition("node('agent') {\n"
                 + "    echo '[javac] Test.java:39: warning: Test Warning'\n"
-                + "    recordIssues tool: java(), skipForensics: true, skipBlames: true\n"
+                + "    recordIssues tool: java(), skipBlames: true\n"
                 + "}", true));
 
         AnalysisResult result = scheduleSuccessfulBuild(project);

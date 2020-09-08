@@ -54,7 +54,6 @@ public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getAggregatingResults()).isFalse();
         assertThat(recorder.getTrendChartType()).isEqualTo(TrendChartType.AGGREGATION_TOOLS);
         assertThat(recorder.getBlameDisabled()).isFalse();
-        assertThat(recorder.getForensicsDisabled()).isFalse();
         assertThat(recorder.getEnabledForFailure()).isFalse();
         assertThat(recorder.getHealthy()).isEqualTo(0);
         assertThat(recorder.getId()).isNull();
@@ -97,7 +96,6 @@ public class JobDslITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(recorder.getAggregatingResults()).isTrue();
         assertThat(recorder.getTrendChartType()).isEqualTo(TrendChartType.NONE);
         assertThat(recorder.getBlameDisabled()).isTrue();
-        assertThat(recorder.getForensicsDisabled()).isTrue();
         assertThat(recorder.getEnabledForFailure()).isTrue();
         assertThat(recorder.getHealthy()).isEqualTo(10);
         assertThat(recorder.getId()).isEqualTo("test-id");
