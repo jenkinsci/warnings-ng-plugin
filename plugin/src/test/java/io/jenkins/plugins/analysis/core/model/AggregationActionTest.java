@@ -14,7 +14,6 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.restapi.AggregationApi;
 import io.jenkins.plugins.analysis.core.restapi.ToolApi;
 import io.jenkins.plugins.analysis.core.testutil.JobStubs;
-import io.jenkins.plugins.analysis.core.testutil.SoftAssertions;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -31,11 +30,9 @@ class AggregationActionTest {
     void shouldNotReturnIconFileName() {
         AggregationAction action = new AggregationAction();
 
-        SoftAssertions.assertSoftly(softly -> {
-            softly.assertThat(action.getIconFileName()).isNull();
-            softly.assertThat(action.getDisplayName()).isEqualTo(Messages.Aggregation_Name());
-            softly.assertThat(action.getUrlName()).isEqualTo("warnings-ng");
-        });
+        assertThat(action.getIconFileName()).isNull();
+        assertThat(action.getDisplayName()).isEqualTo(Messages.Aggregation_Name());
+        assertThat(action.getUrlName()).isEqualTo("warnings-ng");
     }
 
     @Test

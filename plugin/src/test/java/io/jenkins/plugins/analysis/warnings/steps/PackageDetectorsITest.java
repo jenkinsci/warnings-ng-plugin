@@ -15,9 +15,9 @@ import org.xml.sax.SAXException;
 import com.gargoylesoftware.htmlunit.WebResponse;
 import com.gargoylesoftware.htmlunit.html.DomElement;
 import com.gargoylesoftware.htmlunit.html.DomNodeList;
-import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.parser.neko.HtmlUnitNekoHtmlParser;
 
 import edu.hm.hafner.analysis.Issue;
 
@@ -32,7 +32,6 @@ import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable.PropertyRow;
 
-import static io.jenkins.plugins.analysis.core.testutil.SoftAssertions.*;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -54,7 +53,8 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that the output is correct if there exist various namespaces (C#) and packages (Java) at the same time
      * in the expected HTML output.
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-58538")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-58538")
     public void shouldShowFolderDistributionRatherThanPackageDistribution() {
         FreeStyleProject project = createFreeStyleProject();
 
@@ -250,24 +250,22 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         );
 
-        assertSoftly(softly -> {
-            softly.assertThat(result.getIssues()).hasSize(10);
-            softly.assertThat(result.getIssues().getPackages())
-                    .containsExactly("edu.hm.hafner.analysis._123.int.naming.structure", "SampleClassWithNamespace",
-                            "NestedNamespace", "SampleClassWithNestedAndNormalNamespace", "-");
+        assertThat(result.getIssues()).hasSize(10);
+        assertThat(result.getIssues().getPackages())
+                .containsExactly("edu.hm.hafner.analysis._123.int.naming.structure", "SampleClassWithNamespace",
+                        "NestedNamespace", "SampleClassWithNestedAndNormalNamespace", "-");
 
-            Map<String, Long> totalByPackageName = collectPackageNames(result);
-            softly.assertThat(totalByPackageName).hasSize(5);
-            softly.assertThat(totalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
-            softly.assertThat(totalByPackageName.get("SampleClassWithNamespace")).isEqualTo(1L);
-            softly.assertThat(totalByPackageName.get("NestedNamespace")).isEqualTo(1L);
-            softly.assertThat(totalByPackageName.get("SampleClassWithNestedAndNormalNamespace")).isEqualTo(1L);
-            softly.assertThat(totalByPackageName.get("-")).isEqualTo(6L);
+        Map<String, Long> totalByPackageName = collectPackageNames(result);
+        assertThat(totalByPackageName).hasSize(5);
+        assertThat(totalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
+        assertThat(totalByPackageName.get("SampleClassWithNamespace")).isEqualTo(1L);
+        assertThat(totalByPackageName.get("NestedNamespace")).isEqualTo(1L);
+        assertThat(totalByPackageName.get("SampleClassWithNestedAndNormalNamespace")).isEqualTo(1L);
+        assertThat(totalByPackageName.get("-")).isEqualTo(6L);
 
-            String logOutput = getConsoleLog(result);
-            softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(10));
-        });
+        String logOutput = getConsoleLog(result);
+        assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
+        assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(10));
     }
 
     /**
@@ -289,38 +287,36 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_JAVA + "SampleClassWithBrokenPackageNaming.java"
         );
 
-        assertSoftly(softly -> {
-            softly.assertThat(resultWithFindBugsParser.getIssues()).hasSize(3);
-            softly.assertThat(resultWithFindBugsParser.getIssues().getPackages())
-                    .containsExactly("edu.hm.hafner.analysis.123",
-                            "edu.hm.hafner.analysis._test",
-                            "edu.hm.hafner.analysis.int.naming.structure");
+        assertThat(resultWithFindBugsParser.getIssues()).hasSize(3);
+        assertThat(resultWithFindBugsParser.getIssues().getPackages())
+                .containsExactly("edu.hm.hafner.analysis.123",
+                        "edu.hm.hafner.analysis._test",
+                        "edu.hm.hafner.analysis.int.naming.structure");
 
-            Map<String, Long> findBugsTotalByPackageName = collectPackageNames(resultWithFindBugsParser);
-            softly.assertThat(findBugsTotalByPackageName).hasSize(3);
-            softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.123")).isEqualTo(1L);
-            softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis._test")).isEqualTo(1L);
-            softly.assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.int.naming.structure"))
-                    .isEqualTo(1L);
+        Map<String, Long> findBugsTotalByPackageName = collectPackageNames(resultWithFindBugsParser);
+        assertThat(findBugsTotalByPackageName).hasSize(3);
+        assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.123")).isEqualTo(1L);
+        assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis._test")).isEqualTo(1L);
+        assertThat(findBugsTotalByPackageName.get("edu.hm.hafner.analysis.int.naming.structure"))
+                .isEqualTo(1L);
 
-            String findBugsConsoleLog = getConsoleLog(resultWithFindBugsParser);
-            softly.assertThat(findBugsConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(findBugsConsoleLog).contains("-> all affected files already have a valid package name");
+        String findBugsConsoleLog = getConsoleLog(resultWithFindBugsParser);
+        assertThat(findBugsConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
+        assertThat(findBugsConsoleLog).contains("-> all affected files already have a valid package name");
 
-            softly.assertThat(resultWithEclipseParser.getIssues()).hasSize(6);
-            softly.assertThat(resultWithEclipseParser.getIssues().getPackages())
-                    .containsExactly("edu.hm.hafner.analysis._123.int.naming.structure", "-");
+        assertThat(resultWithEclipseParser.getIssues()).hasSize(6);
+        assertThat(resultWithEclipseParser.getIssues().getPackages())
+                .containsExactly("edu.hm.hafner.analysis._123.int.naming.structure", "-");
 
-            Map<String, Long> eclipseTotalByPackageName = collectPackageNames(resultWithEclipseParser);
-            softly.assertThat(eclipseTotalByPackageName).hasSize(2);
-            softly.assertThat(eclipseTotalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure"))
-                    .isEqualTo(1L);
-            softly.assertThat(eclipseTotalByPackageName.get("-")).isEqualTo(5L);
+        Map<String, Long> eclipseTotalByPackageName = collectPackageNames(resultWithEclipseParser);
+        assertThat(eclipseTotalByPackageName).hasSize(2);
+        assertThat(eclipseTotalByPackageName.get("edu.hm.hafner.analysis._123.int.naming.structure"))
+                .isEqualTo(1L);
+        assertThat(eclipseTotalByPackageName.get("-")).isEqualTo(5L);
 
-            String eclipseConsoleLog = getConsoleLog(resultWithEclipseParser);
-            softly.assertThat(eclipseConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(eclipseConsoleLog).contains(returnExpectedNumberOfResolvedPackageNames(6));
-        });
+        String eclipseConsoleLog = getConsoleLog(resultWithEclipseParser);
+        assertThat(eclipseConsoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
+        assertThat(eclipseConsoleLog).contains(returnExpectedNumberOfResolvedPackageNames(6));
     }
 
     /**
@@ -338,19 +334,17 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         String logOutput = getConsoleLog(result);
         Map<String, Long> collect = collectPackageNames(result);
 
-        assertSoftly(softly -> {
-            softly.assertThat(result.getIssues()).hasSize(6);
-            softly.assertThat(result.getIssues().getPackages())
-                    .containsExactly("SampleClassWithNamespace", "NestedNamespace",
-                            "SampleClassWithNestedAndNormalNamespace", "-");
-            softly.assertThat(collect).hasSize(4);
-            softly.assertThat(collect.get("SampleClassWithNamespace")).isEqualTo(1L);
-            softly.assertThat(collect.get("NestedNamespace")).isEqualTo(1L);
-            softly.assertThat(collect.get("SampleClassWithNestedAndNormalNamespace")).isEqualTo(1L);
-            softly.assertThat(collect.get("-")).isEqualTo(3L);
-            softly.assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(6));
-        });
+        assertThat(result.getIssues()).hasSize(6);
+        assertThat(result.getIssues().getPackages())
+                .containsExactly("SampleClassWithNamespace", "NestedNamespace",
+                        "SampleClassWithNestedAndNormalNamespace", "-");
+        assertThat(collect).hasSize(4);
+        assertThat(collect.get("SampleClassWithNamespace")).isEqualTo(1L);
+        assertThat(collect.get("NestedNamespace")).isEqualTo(1L);
+        assertThat(collect.get("SampleClassWithNestedAndNormalNamespace")).isEqualTo(1L);
+        assertThat(collect.get("-")).isEqualTo(3L);
+        assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);
+        assertThat(logOutput).contains(returnExpectedNumberOfResolvedPackageNames(6));
     }
 
     /**
@@ -367,29 +361,27 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
 
         );
 
-        assertSoftly(softly -> {
-            softly.assertThat(result.getIssues()).hasSize(6);
-            softly.assertThat(result.getIssues().getPackages()).containsExactly(
-                    "edu.hm.hafner.analysis._123.int.naming.structure", "-");
+        assertThat(result.getIssues()).hasSize(6);
+        assertThat(result.getIssues().getPackages()).containsExactly(
+                "edu.hm.hafner.analysis._123.int.naming.structure", "-");
 
-            Map<String, Long> totalByPacakgeName = collectPackageNames(result);
-            softly.assertThat(totalByPacakgeName).hasSize(2);
-            softly.assertThat(totalByPacakgeName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
-            softly.assertThat(totalByPacakgeName.get("-")).isEqualTo(5L);
+        Map<String, Long> totalByPacakgeName = collectPackageNames(result);
+        assertThat(totalByPacakgeName).hasSize(2);
+        assertThat(totalByPacakgeName.get("edu.hm.hafner.analysis._123.int.naming.structure")).isEqualTo(1L);
+        assertThat(totalByPacakgeName.get("-")).isEqualTo(5L);
 
-            String consoleLog = getConsoleLog(result);
-            softly.assertThat(consoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
-            softly.assertThat(consoleLog).contains(returnExpectedNumberOfResolvedPackageNames(6));
-        });
+        String consoleLog = getConsoleLog(result);
+        assertThat(consoleLog).contains(DEFAULT_DEBUG_LOG_LINE);
+        assertThat(consoleLog).contains(returnExpectedNumberOfResolvedPackageNames(6));
     }
 
     private String returnExpectedNumberOfResolvedPackageNames(final int expectedNumberOfResolvedPackageNames) {
         return "-> resolved package names of " + expectedNumberOfResolvedPackageNames + " affected files";
     }
 
-    private WebClient createWebClient(final boolean javaScriptEnabled) {
+    private WebClient createWebClient() {
         WebClient webClient = getJenkins().createWebClient();
-        webClient.setJavaScriptEnabled(javaScriptEnabled);
+        webClient.setJavaScriptEnabled(false);
         return webClient;
     }
 
@@ -399,9 +391,9 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private void checkWebPageForExpectedEmptyResult(final AnalysisResult result) {
-        try (WebClient webClient = createWebClient(false)) {
+        try (WebClient webClient = createWebClient()) {
             WebResponse webResponse = webClient.getPage(result.getOwner(), DEFAULT_ENTRY_PATH).getWebResponse();
-            HtmlPage htmlPage = HTMLParser.parseHtml(webResponse, webClient.getCurrentWindow());
+            HtmlPage htmlPage = new HtmlUnitNekoHtmlParser().parseHtml(webResponse, webClient.getCurrentWindow());
             assertThat(getLinksWithGivenTargetName(htmlPage, DEFAULT_TAB_TO_INVESTIGATE)).isEmpty();
         }
         catch (IOException | SAXException e) {

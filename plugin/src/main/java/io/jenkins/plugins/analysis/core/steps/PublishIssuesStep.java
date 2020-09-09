@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -82,7 +82,7 @@ public class PublishIssuesStep extends Step implements Serializable {
      *         if the array of issues is {@code null} or empty
      */
     @DataBoundConstructor
-    public PublishIssuesStep(@Nullable final List<AnnotatedReport> issues) {
+    public PublishIssuesStep(@CheckForNull final List<AnnotatedReport> issues) {
         super();
 
         if (issues == null) {
@@ -210,32 +210,56 @@ public class PublishIssuesStep extends Step implements Serializable {
      *         the name of reference job
      */
     @DataBoundSetter
-    @SuppressWarnings("unused") // Used by Stapler
     public void setReferenceJobName(final String referenceJobName) {
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceJobName)) {
+            this.referenceJobName = StringUtils.EMPTY;
+        }
         this.referenceJobName = referenceJobName;
     }
 
-    @SuppressWarnings("WeakerAccess") // Required by Stapler
+    /**
+     * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
+     * then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
+     *
+     * @return the name of reference job, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
+     */
     public String getReferenceJobName() {
+        if (StringUtils.isBlank(referenceJobName)) {
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
+        }
         return referenceJobName;
     }
 
     /**
-     * Sets the reference build id to get the results for the issue difference computation.
+     * Sets the reference build id of the reference job for the issue difference computation.
      *
      * @param referenceBuildId
      *         the build id of the reference job
      */
     @DataBoundSetter
     public void setReferenceBuildId(final String referenceBuildId) {
-        this.referenceBuildId = referenceBuildId;
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
+            this.referenceBuildId = StringUtils.EMPTY;
+        }
+        else {
+            this.referenceBuildId = referenceBuildId;
+        }
     }
 
+    /**
+     * Returns the reference build id of the reference job to get the results for the issue difference computation.
+     * If the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
+     *
+     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
+     */
     public String getReferenceBuildId() {
+        if (StringUtils.isBlank(referenceBuildId)) {
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
+        }
         return referenceBuildId;
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -281,13 +305,13 @@ public class PublishIssuesStep extends Step implements Serializable {
         this.unhealthy = unhealthy;
     }
 
-    @Nullable
+    @CheckForNull
     @SuppressWarnings("unused") // Used by Stapler
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
 
-    @Nullable
+    @CheckForNull
     @SuppressWarnings("WeakerAccess") // Required by Stapler
     public Severity getMinimumSeverityAsSeverity() {
         return minimumSeverity;

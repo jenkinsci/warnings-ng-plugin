@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -60,8 +61,11 @@ public class IssuesTotalColumn extends ListViewColumn {
      *
      * @return this
      */
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Deserialization of instances that do not have all fields yet")
     protected Object readResolve() {
-        type = StatisticProperties.TOTAL;
+        if (type == null) {
+            type = StatisticProperties.TOTAL;
+        }
 
         return this;
     }

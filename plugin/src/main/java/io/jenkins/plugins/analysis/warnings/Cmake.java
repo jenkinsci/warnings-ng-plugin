@@ -32,7 +32,7 @@ public class Cmake extends ReportScanningTool {
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("cmake")
+    @Symbol("cmake") // FIXME: change to cmakeParse, see https://plugins.jenkins.io/cmakebuilder/
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */

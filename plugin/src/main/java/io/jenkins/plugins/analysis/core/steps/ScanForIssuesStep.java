@@ -8,8 +8,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -25,7 +25,6 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
-import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
 
 /**
  * Scan files or the console log for issues.
@@ -37,7 +36,6 @@ public class ScanForIssuesStep extends Step {
     private String sourceCodeEncoding = StringUtils.EMPTY;
     private String sourceDirectory = StringUtils.EMPTY;
     private boolean isBlameDisabled;
-    private boolean isForensicsDisabled;
 
     private List<RegexpFilter> filters = new ArrayList<>();
 
@@ -51,7 +49,7 @@ public class ScanForIssuesStep extends Step {
         // empty constructor required for Stapler
     }
 
-    @Nullable
+    @CheckForNull
     public Tool getTool() {
         return tool;
     }
@@ -92,21 +90,32 @@ public class ScanForIssuesStep extends Step {
     }
 
     /**
-     * Returns whether SCM forensics should be disabled.
+     * Not used anymore.
      *
      * @return {@code true} if SCM forensics should be disabled
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
      */
     @SuppressWarnings("PMD.BooleanGetMethodName")
+    @Deprecated
     public boolean getForensicsDisabled() {
-        return isForensicsDisabled;
+        return false;
     }
 
+    /**
+     * Not used anymore.
+     *
+     * @param forensicsDisabled
+     *         not used
+     *
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
+     */
     @DataBoundSetter
+    @Deprecated
     public void setForensicsDisabled(final boolean forensicsDisabled) {
-        isForensicsDisabled = forensicsDisabled;
+        // do nothing
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -152,7 +161,6 @@ public class ScanForIssuesStep extends Step {
         private final Tool tool;
         private final String sourceCodeEncoding;
         private final boolean isBlameDisabled;
-        private final boolean isForensicsDisabled;
         private final List<RegexpFilter> filters;
         private final String sourceDirectory;
 
@@ -170,7 +178,6 @@ public class ScanForIssuesStep extends Step {
             tool = step.getTool();
             sourceCodeEncoding = step.getSourceCodeEncoding();
             isBlameDisabled = step.getBlameDisabled();
-            isForensicsDisabled = step.getForensicsDisabled();
             filters = step.getFilters();
             sourceDirectory = step.getSourceDirectory();
         }
@@ -183,8 +190,7 @@ public class ScanForIssuesStep extends Step {
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), workspace, sourceDirectory,
                     getRun(), new FilePath(getRun().getRootDir()), listener,
-                    isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
-                    isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
+                    isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
             return issuesScanner.scan();
         }
