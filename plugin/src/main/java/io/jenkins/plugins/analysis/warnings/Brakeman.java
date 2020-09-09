@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
-
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.BrakemanParser;
 
@@ -44,13 +42,11 @@ public class Brakeman extends ReportScanningTool {
             return false;
         }
 
-        @Nonnull
         @Override
         public String getDisplayName() {
             return "Brakeman";
         }
 
-        @Nonnull
         @Override
         public String getHelp() {
             return "Reads Brakeman JSON reports. "
@@ -59,7 +55,6 @@ public class Brakeman extends ReportScanningTool {
                     + "Brakeman documentation</a> for usage details.";
         }
 
-        @Nonnull
         @Override
         public String getPattern() {
             return "brakeman-output.json";
