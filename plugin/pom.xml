@@ -28,7 +28,7 @@
 
     <analysis-model-api.version>9.0.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.8.0-rc613.886cb1cc8afe</forensics-api-plugin.version>
+    <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
     <plugin-util-api.version>1.2.5</plugin-util-api.version>
 
     <font-awesome-api.version>5.14.0-1</font-awesome-api.version>
@@ -655,7 +655,7 @@
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>v8.4.2</tag>
+    <tag>${scmTag}</tag>
   </scm>
 
   <repositories>
