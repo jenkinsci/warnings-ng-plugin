@@ -26,7 +26,7 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>8.3.1</analysis-model-api.version>
+    <analysis-model-api.version>9.0.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <forensics-api-plugin.version>0.8.0-rc613.886cb1cc8afe</forensics-api-plugin.version>
     <plugin-util-api.version>1.2.5</plugin-util-api.version>
@@ -121,7 +121,7 @@
       <dependency>
         <groupId>edu.hm.hafner</groupId>
         <artifactId>codingstyle</artifactId>
-        <version>1.4.0</version>
+        <version>1.5.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -597,19 +597,7 @@
               <item>
                 <code>java.annotation.added</code>
                 <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
-                <justification>Whitelisted annotations are save to add.</justification>
-              </item>
-              <item>
-                <code>java.annotation.removed</code>
-                <regex>true</regex>
-                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
-                <justification>SpotBugs annotations are save to change.</justification>
-              </item>
-              <item>
-                <code>java.annotation.added</code>
-                <regex>true</regex>
-                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
-                <justification>SpotBugs annotations are save to change.</justification>
+                <justification>Annotation should be save to add.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>
