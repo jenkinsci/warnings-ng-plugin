@@ -25,12 +25,10 @@
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
-    <jenkins.version>${jenkins.baseline}.6</jenkins.version>
-    
+
     <analysis-model-api.version>9.0.0</analysis-model-api.version>
-    <analysis-model-tests.version>9.0.0</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.7.0</git-forensics-plugin.version>
+    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <forensics-api-plugin.version>0.8.0-rc613.886cb1cc8afe</forensics-api-plugin.version>
     <plugin-util-api.version>1.2.5</plugin-util-api.version>
 
     <font-awesome-api.version>5.14.0-1</font-awesome-api.version>
@@ -56,20 +54,17 @@
     <xmlunit.version>2.7.0</xmlunit.version>
     <jsoup.version>1.13.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
-    <git-client.version>3.2.1</git-client.version>
-    <jmh.version>1.24</jmh.version>
+    <jmh.version>1.25.2</jmh.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <token-macro.version>2.10</token-macro.version>
+    <token-macro.version>2.12</token-macro.version>
     <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
     <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
-    <git-plugin.version>4.2.2</git-plugin.version>
     <structs.version>1.20</structs.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.9.4</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
-    <credentials.version>2.3.0</credentials.version>
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
     <configuration-as-code.version>1.36</configuration-as-code.version>
     <job-dsl.version>1.76</job-dsl.version>
@@ -81,9 +76,9 @@
     <workflow-support.version>3.3</workflow-support.version>
     <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
     <form-element-path.version>1.8</form-element-path.version>
-    <folder.version>6.12</folder.version>
+    <folder.version>6.14</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
-    <checks-api.version>0.2.2</checks-api.version>
+    <checks-api.version>0.2.3</checks-api.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
@@ -109,16 +104,6 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>git-client</artifactId>
-        <version>${git-client.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>git</artifactId>
-        <version>${git-plugin.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
         <version>2.4.20</version>
@@ -134,9 +119,9 @@
         <version>1.2.0</version>
       </dependency>
       <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>branch-api</artifactId>
-        <version>2.5.6</version>
+        <groupId>edu.hm.hafner</groupId>
+        <artifactId>codingstyle</artifactId>
+        <version>1.5.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -309,7 +294,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>${credentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -348,12 +332,6 @@
       <artifactId>forensics-api</artifactId>
       <version>${forensics-api-plugin.version}</version>
       <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>git-forensics</artifactId>
-      <version>${git-forensics-plugin.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -508,15 +486,6 @@
       <artifactId>jdk-tool</artifactId>
       <version>${jdk-tool.version}</version>
       <scope>test</scope>
-    </dependency>
-
-    <!-- GitSampleRepoRule -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>git</artifactId>
-      <version>${git-plugin.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -686,7 +655,7 @@
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>warnings-ng-8.4.1</tag>
+    <tag>v8.4.2</tag>
   </scm>
 
   <repositories>
