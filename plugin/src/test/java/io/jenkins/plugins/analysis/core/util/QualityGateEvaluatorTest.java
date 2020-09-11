@@ -17,6 +17,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.MoreThanOneLogger")
 class QualityGateEvaluatorTest {
     @Test
     void shouldBeInactiveIfGatesAreEmpty() {
