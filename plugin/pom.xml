@@ -28,7 +28,7 @@
 
     <analysis-model-api.version>9.0.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.8.0-rc613.886cb1cc8afe</forensics-api-plugin.version>
+    <forensics-api-plugin.version>0.21.0-alpha-rc536.c6018be1c550</forensics-api-plugin.version>
     <plugin-util-api.version>1.2.5</plugin-util-api.version>
 
     <font-awesome-api.version>5.14.0-1</font-awesome-api.version>
