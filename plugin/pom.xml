@@ -406,6 +406,12 @@
       <artifactId>maven-plugin</artifactId>
       <version>${jenkins-maven-plugin.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>annotations</artifactId>
+          <groupId>com.google.code.findbugs</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -442,12 +448,24 @@
       <artifactId>metrics-aggregation</artifactId>
       <version>0.2.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>warnings-ng</artifactId>
+          <groupId>io.jenkins.plugins</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>autograding</artifactId>
       <version>2.0.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>warnings-ng</artifactId>
+          <groupId>io.jenkins.plugins</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- stage -->
@@ -598,6 +616,16 @@
                 <code>java.annotation.added</code>
                 <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
                 <justification>Annotation should be save to add.</justification>
+              </item>
+              <item>
+                <code>java.annotation.removed</code>
+                <annotation>@edu.umd.cs.findbugs.annotations.Nullable</annotation>
+                <justification>Annotation should be save to change.</justification>
+              </item>
+              <item>
+                <code>java.annotation.added</code>
+                <annotation>@edu.umd.cs.findbugs.annotations.CheckForNull</annotation>
+                <justification>Annotation should be save to change.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>
