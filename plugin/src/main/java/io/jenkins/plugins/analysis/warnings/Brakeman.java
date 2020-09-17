@@ -7,7 +7,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides a parser and customized messages for Brakeman Scanner.
@@ -63,6 +65,11 @@ public class Brakeman extends ReportScanningTool {
         @Override
         public String getUrl() {
             return "https://brakemanscanner.org";
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new IconLabelProvider(getId(), getDisplayName());
         }
     }
 }
