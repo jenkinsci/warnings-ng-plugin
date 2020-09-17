@@ -48,7 +48,7 @@
     <json.version>20200518</json.version>
     <jackson2-api.version>2.11.1</jackson2-api.version>
 
-    <pmd.version>6.26.0</pmd.version>
+    <pmd.version>6.27.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.7.0</xmlunit.version>
@@ -58,7 +58,7 @@
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <token-macro.version>2.12</token-macro.version>
-    <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
+    <jenkins-maven-plugin.version>3.7</jenkins-maven-plugin.version>
     <matrix-project.version>1.14</matrix-project.version>
     <junit-plugin.version>1.24</junit-plugin.version>
     <structs.version>1.20</structs.version>
@@ -68,17 +68,17 @@
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
     <configuration-as-code.version>1.36</configuration-as-code.version>
     <job-dsl.version>1.76</job-dsl.version>
-    <envinject.version>2.1.6</envinject.version>
+    <envinject.version>2.3.0</envinject.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <pipeline-stage-step.version>2.3</pipeline-stage-step.version>
     <docker-fixtures.version>1.10</docker-fixtures.version>
-    <jdk-tool.version>1.2</jdk-tool.version>
-    <workflow-support.version>3.3</workflow-support.version>
+    <jdk-tool.version>1.4</jdk-tool.version>
+    <workflow-support.version>3.5</workflow-support.version>
     <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
-    <form-element-path.version>1.8</form-element-path.version>
+    <form-element-path.version>1.9</form-element-path.version>
     <folder.version>6.14</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
-    <checks-api.version>0.2.3</checks-api.version>
+    <checks-api.version>1.0.0</checks-api.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
@@ -121,7 +121,7 @@
       <dependency>
         <groupId>edu.hm.hafner</groupId>
         <artifactId>codingstyle</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -597,19 +597,7 @@
               <item>
                 <code>java.annotation.added</code>
                 <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
-                <justification>Whitelisted annotations are save to add.</justification>
-              </item>
-              <item>
-                <code>java.annotation.removed</code>
-                <regex>true</regex>
-                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
-                <justification>SpotBugs annotations are save to change.</justification>
-              </item>
-              <item>
-                <code>java.annotation.added</code>
-                <regex>true</regex>
-                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
-                <justification>SpotBugs annotations are save to change.</justification>
+                <justification>Annotation should be save to add.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>
