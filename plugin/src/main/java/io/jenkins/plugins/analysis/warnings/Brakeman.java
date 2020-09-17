@@ -14,7 +14,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  */
 public class Brakeman extends ReportScanningTool {
     private static final long serialVersionUID = 75319755633492904L;
-    static final String ID = "brakeman";
+    private static final String ID = "brakeman";
 
     /** Creates a new instance of {@link Brakeman}. */
     @DataBoundConstructor
@@ -57,7 +57,7 @@ public class Brakeman extends ReportScanningTool {
 
         @Override
         public String getPattern() {
-            return "brakeman-output.json";
+            return "**/brakeman-output.json";
         }
 
         @Override
