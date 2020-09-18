@@ -156,28 +156,6 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
                 toString("multiline.groovy"))).isOk();
     }
 
-    @Test @Issue("SECURITY-1295")
-    void blockASTTest() {
-        DescriptorImpl descriptor = createDescriptor();
-
-        assertThat(descriptor.doCheckScript("import groovy.transform.*\n"
-                + "import jenkins.model.Jenkins\n"
-                + "import hudson.model.FreeStyleProject\n"
-                + "@ASTTest(value={ assert Jenkins.getInstance().createProject(FreeStyleProject.class, \"should-not-exist\") })\n"
-                + "@Field int x\n"
-                + "echo 'hello'\n"))
-                .isError()
-                .hasMessageContaining("Annotation ASTTest cannot be used in the sandbox");
-    }
-
-    @Test @Issue("SECURITY-1295")
-    void blockGrab() {
-        DescriptorImpl descriptor = createDescriptor();
-        assertThat(descriptor.doCheckScript("@Grab(group='foo', module='bar', version='1.0')\ndef foo\n"))
-                .isError()
-                .hasMessageContaining("Annotation Grab cannot be used in the sandbox");
-    }
-
     private DescriptorImpl createDescriptor() {
         return createDescriptor(createJenkinsFacade());
     }
