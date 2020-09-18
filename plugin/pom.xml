@@ -618,13 +618,9 @@
                 <justification>Annotation should be save to add.</justification>
               </item>
               <item>
-                <code>java.annotation.removed</code>
-                <annotation>@edu.umd.cs.findbugs.annotations.Nullable</annotation>
-                <justification>Annotation should be save to change.</justification>
-              </item>
-              <item>
-                <code>java.annotation.added</code>
-                <annotation>@edu.umd.cs.findbugs.annotations.CheckForNull</annotation>
+                <regex>true</regex>
+                <code>java.annotation.*</code>
+                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
                 <justification>Annotation should be save to change.</justification>
               </item>
             </revapi.ignore>
