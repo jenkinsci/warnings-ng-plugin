@@ -133,7 +133,7 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
                 try {
                     ((Report) unmarshal).isEmpty();
                 }
-                catch (NullPointerException npe) {
+                catch (NullPointerException npe) { // NOPMD
                     return new Report(); // FIXME: workaround for JENKINS-63659, remove in 8.6.0
                 }
             }
