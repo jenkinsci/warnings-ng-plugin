@@ -66,7 +66,7 @@
     <dashboard-view.version>2.13</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
-    <configuration-as-code.version>1.36</configuration-as-code.version>
+    <configuration-as-code.version>1.43</configuration-as-code.version>
     <job-dsl.version>1.77</job-dsl.version>
     <envinject.version>2.3.0</envinject.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
