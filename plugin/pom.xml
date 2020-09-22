@@ -81,7 +81,7 @@
     <checks-api.version>1.0.0</checks-api.version>
 
     <!-- Maven Surefire ArgLine -->
-    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=240</argLine>
+    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=400</argLine>
 
     <useBeta>true</useBeta>
   </properties>
