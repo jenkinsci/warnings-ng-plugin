@@ -231,9 +231,10 @@ class IssuesPublisher {
     private Run<?, ?> findReference(final Report issues) {
         ReferenceFinder referenceFinder = new ReferenceFinder();
         FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
+        Run<?, ?> reference = referenceFinder.findReference(this.run, log).orElse(this.run);
         log.getInfoMessages().forEach(issues::logInfo);
         log.getErrorMessages().forEach(issues::logError);
-        return referenceFinder.findReference(run, log).orElse(run);
+        return reference;
     }
 
     private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {
