@@ -93,9 +93,9 @@ class IssuesScanner {
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
         report.setNameOfOrigin(tool.getActualId(), tool.getName());
 
-        RepositoryStatistics statistics = getRepositoryStatistics(report);
-
         AnnotatedReport annotatedReport = postProcessReport(report);
+
+        RepositoryStatistics statistics = getRepositoryStatistics(annotatedReport.getReport());
         annotatedReport.addRepositoryStatistics(statistics);
 
         logger.log(annotatedReport.getReport());
