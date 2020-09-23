@@ -19,6 +19,17 @@ import static edu.hm.hafner.analysis.assertions.Assertions.*;
  * @author Ullrich Hafner
  */
 class ReportXmlStreamTest extends ResourceTest {
+    @Test @Issue("JENKINS-63659")
+    void shouldMapOldSerializationFromAnalysisModel900AndWarnings841() {
+        ReportXmlStream reportXmlStream = new ReportXmlStream();
+
+        Object restored = reportXmlStream.read(getResourceAsFile("serialization-9.0.0.xml"));
+        assertThat(restored).isInstanceOfSatisfying(Report.class,
+                report -> {
+                    assertThat(report).isEmpty(); // Fallback empty report
+                });
+    }
+
     @Test @Issue("JENKINS-61293")
     void shouldMapDescriptionsToCorrectType() {
         ReportXmlStream reportXmlStream = new ReportXmlStream();
