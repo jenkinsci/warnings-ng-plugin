@@ -128,7 +128,16 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
 
         @Override
         public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-            return this.ref.unmarshal(reader, context);
+            Object unmarshal = this.ref.unmarshal(reader, context);
+            if (unmarshal instanceof Report) {
+                try {
+                    ((Report) unmarshal).isEmpty();
+                }
+                catch (NullPointerException npe) { // NOPMD
+                    return new Report(); // FIXME: workaround for JENKINS-63659, remove in 8.6.0
+                }
+            }
+            return unmarshal;
         }
 
         @Override
