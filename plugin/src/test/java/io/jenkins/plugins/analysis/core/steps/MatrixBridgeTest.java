@@ -35,7 +35,7 @@ class MatrixBridgeTest {
         assertThat(aggregator).isNotNull();
     }
 
-    private MatrixBuild createBuild(boolean withIssueRecorder) {
+    private MatrixBuild createBuild(final boolean withIssueRecorder) {
         MatrixBuild build = mock(MatrixBuild.class);
         MatrixProject matrixProject = mock(MatrixProject.class);
         DescribableList describableList = mock(DescribableList.class);
@@ -53,7 +53,7 @@ class MatrixBridgeTest {
         return build;
     }
 
-    private MatrixAggregator createAggregator(MatrixBuild build) {
+    private MatrixAggregator createAggregator(final MatrixBuild build) {
         return new MatrixBridge().createAggregator(build, mock(Launcher.class), mock(BuildListener.class));
     }
 }
