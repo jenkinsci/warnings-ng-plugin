@@ -5,6 +5,13 @@ updates:
     schedule:
       interval: daily
     open-pull-requests-limit: 10
+    automerged_updates:
+      - match:
+        dependency_name: "org.mockito*"
+        update_type: "all"
+      - match:
+        dependency_name: "com.github.spotbugs*"
+        update_type: "all"
     ignore:
       - dependency-name: org.eclipse.collections:eclipse-collections
         versions:
@@ -47,3 +54,7 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
+    automerged_updates:
+      - match:
+          dependency_type: "all"
+          update_type: "all"
