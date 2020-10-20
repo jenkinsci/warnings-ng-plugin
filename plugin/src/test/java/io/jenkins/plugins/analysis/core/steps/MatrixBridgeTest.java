@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.steps;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import hudson.Launcher;
 import hudson.matrix.MatrixAggregator;
@@ -10,7 +9,7 @@ import hudson.matrix.MatrixProject;
 import hudson.model.BuildListener;
 import hudson.util.DescribableList;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -18,51 +17,43 @@ import static org.mockito.Mockito.*;
  *
  * @author Naveen Sundar
  */
-public class MatrixBridgeTest {
-    // to be tested
-    private MatrixBridge matrixBridge;
+class MatrixBridgeTest {
 
-    // Dependencies
-    private MatrixBuild build;
-    private Launcher launcher;
-    private BuildListener listener;
-    private IssuesRecorder issuesRecorder;
+    @Test
+    void constructMatrixAggregatorWithoutRecorder() {
+        MatrixBuild build = createBuild(false);
+        MatrixAggregator aggregator = createAggregator(build);
 
-    private MatrixProject matrixProject;
-    private DescribableList describableList;
+        assertThat(aggregator).isNull();
+    }
 
-    @Before
-    public void setup() {
-        matrixBridge = new MatrixBridge();
+    @Test
+    void constructMatrixAggregatorWithRecorder() {
+        MatrixBuild build = createBuild(true);
+        MatrixAggregator aggregator = createAggregator(build);
 
-        build = mock(MatrixBuild.class);
-        launcher = mock(Launcher.class);
-        listener = mock(BuildListener.class);
-        issuesRecorder = mock(IssuesRecorder.class);
+        assertThat(aggregator).isNotNull();
+    }
 
-        matrixProject = mock(MatrixProject.class);
-        describableList = mock(DescribableList.class);
+    private MatrixBuild createBuild(boolean withIssueRecorder) {
+        MatrixBuild build = mock(MatrixBuild.class);
+        MatrixProject matrixProject = mock(MatrixProject.class);
+        DescribableList describableList = mock(DescribableList.class);
 
-        // stubbing
         when(build.getParent()).thenReturn(matrixProject);
         when(matrixProject.getPublishersList()).thenReturn(describableList);
+
+        if (withIssueRecorder) {
+            when(describableList.get(IssuesRecorder.class)).thenReturn(mock(IssuesRecorder.class));
+        }
+        else {
+            when(describableList.get(IssuesRecorder.class)).thenReturn(null);
+        }
+
+        return build;
     }
 
-    @Test
-    public void constructMatrixAggregatorWithoutRecorder() {
-        when(describableList.get(IssuesRecorder.class)).thenReturn(null);
-
-        MatrixAggregator aggregator = matrixBridge.createAggregator(build, launcher, listener);
-
-        assertNull(aggregator);
-    }
-
-    @Test
-    public void constructMatrixAggregatorWithRecorder() {
-        when(describableList.get(IssuesRecorder.class)).thenReturn(issuesRecorder);
-
-        MatrixAggregator aggregator = matrixBridge.createAggregator(build, launcher, listener);
-
-        assertNotNull(aggregator);
+    private MatrixAggregator createAggregator(MatrixBuild build) {
+        return new MatrixBridge().createAggregator(build, mock(Launcher.class), mock(BuildListener.class));
     }
 }
