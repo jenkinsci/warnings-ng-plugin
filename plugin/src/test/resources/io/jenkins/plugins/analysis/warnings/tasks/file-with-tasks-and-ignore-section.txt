@@ -1,0 +1,22 @@
+
+excerpt from Jenkinsfile using that very plugin
+
+    docker.image(params.dockerImage).inside {
+        stage('Linux: Checkout Sources') {
+            dir('sources') {
+                checkout scm
+            }
+        }
+
+        stage('Collect Open Issues') {
+            // task-scanner-ignore-begin
+            recordIssues tool: taskScanner(
+                excludePattern: '*moc_*, sources/.clang-tidy',
+                highTags: 'FIXME',
+                ignoreCase: true,
+                includePattern: 'sources/**/*.h, sources/**/*.cpp, sources/*',
+                lowTags: 'REVIEW',
+                normalTags: 'TODO'
+            )
+            // task-scanner-ignore-end
+        }

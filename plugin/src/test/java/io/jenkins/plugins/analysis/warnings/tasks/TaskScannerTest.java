@@ -359,6 +359,23 @@ class TaskScannerTest extends ResourceTest {
         assertThat(tasks).hasSize(0);
     }
 
+    /**
+     * Checks whether ignoring parts of a file works
+     */
+    @Test
+    void shouldIgnoreItsOwnConfigurationWithIgnoreSectionMark() {
+        Report tasks = new TaskScannerBuilder().setHighTasks("FIXME")
+                .setNormalTasks("TODO")
+                .setLowTasks("REVIEW")
+                .setHighTasks("FIXME")
+                .setCaseMode(CaseMode.CASE_SENSITIVE)
+                .setMatcherMode(MatcherMode.STRING_MATCH)
+                .build()
+                .scanTasks(read("file-with-tasks-and-ignore-section.txt"), ISSUE_BUILDER);
+
+        assertThat(tasks).hasSize(0);
+    }
+
     private Iterator<String> read(final String fileName) {
         return asStream(fileName).iterator();
     }
