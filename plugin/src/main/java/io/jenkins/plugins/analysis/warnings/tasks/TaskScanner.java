@@ -27,33 +27,33 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
 
-class IgnoreSection {
-    private static final String IGNORE_BEGIN = " task-scanner-ignore-begin";
-    private static final String IGNORE_END = " task-scanner-ignore-end";
-
-    private boolean ignore = false;
-
-    public boolean matches(final String line) {
-        if (line.contains(IGNORE_BEGIN)) {
-            ignore = true;
-        } else if (line.contains(IGNORE_END)) {
-            ignore = false;
-        }
-
-        return ignore;
-    }
-
-    public void reset() {
-        ignore = false;
-    }
-}
-
 /**
  * Scans a given input stream for open tasks.
  *
  * @author Ullrich Hafner
  */
 class TaskScanner {
+    class IgnoreSection {
+        private static final String IGNORE_BEGIN = " task-scanner-ignore-begin";
+        private static final String IGNORE_END = " task-scanner-ignore-end";
+
+        private boolean ignore = false;
+
+        public boolean matches(final String line) {
+            if (line.contains(IGNORE_BEGIN)) {
+                ignore = true;
+            } else if (line.contains(IGNORE_END)) {
+                ignore = false;
+            }
+
+            return ignore;
+        }
+
+        public void reset() {
+            ignore = false;
+        }
+    }
+
     private final IgnoreSection inIgnoreSection = new IgnoreSection();
 
     private static final String WORD_BOUNDARY = "\\b";
