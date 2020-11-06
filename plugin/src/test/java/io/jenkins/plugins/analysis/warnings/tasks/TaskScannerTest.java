@@ -360,7 +360,7 @@ class TaskScannerTest extends ResourceTest {
     }
 
     /**
-     * Checks whether ignoring parts of a file works
+     * Checks whether ignoring parts of a file works.
      */
     @Test
     void shouldIgnoreItsOwnConfigurationWithIgnoreSectionMark() {
