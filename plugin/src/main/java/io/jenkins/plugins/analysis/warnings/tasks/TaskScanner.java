@@ -42,7 +42,8 @@ class TaskScanner {
         public boolean matches(final String line) {
             if (line.contains(IGNORE_BEGIN)) {
                 ignore = true;
-            } else if (line.contains(IGNORE_END)) {
+            }
+            else if (line.contains(IGNORE_END)) {
                 ignore = false;
             }
 
