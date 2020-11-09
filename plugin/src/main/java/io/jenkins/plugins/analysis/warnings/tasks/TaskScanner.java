@@ -33,24 +33,6 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
  * @author Ullrich Hafner
  */
 class TaskScanner {
-    private static class IgnoreSection {
-        private static final String IGNORE_BEGIN = " task-scanner-ignore-begin";
-        private static final String IGNORE_END = " task-scanner-ignore-end";
-
-        private boolean ignore = false;
-
-        public boolean matches(final String line) {
-            if (line.contains(IGNORE_BEGIN)) {
-                ignore = true;
-            }
-            else if (line.contains(IGNORE_END)) {
-                ignore = false;
-            }
-
-            return ignore;
-        }
-    }
-
     private static final String WORD_BOUNDARY = "\\b";
     private static final Pattern INVALID = Pattern.compile("");
 
@@ -280,6 +262,24 @@ class TaskScanner {
             }
         }
         return report;
+    }
+
+    private static class IgnoreSection {
+        private static final String IGNORE_BEGIN = " task-scanner-ignore-begin";
+        private static final String IGNORE_END = " task-scanner-ignore-end";
+
+        private boolean ignore = false;
+
+        public boolean matches(final String line) {
+            if (line.contains(IGNORE_BEGIN)) {
+                ignore = true;
+            }
+            else if (line.contains(IGNORE_END)) {
+                ignore = false;
+            }
+
+            return ignore;
+        }
     }
 }
 
