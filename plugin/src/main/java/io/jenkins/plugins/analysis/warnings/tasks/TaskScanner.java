@@ -33,7 +33,7 @@ import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
  * @author Ullrich Hafner
  */
 class TaskScanner {
-    class IgnoreSection {
+    private static class IgnoreSection {
         private static final String IGNORE_BEGIN = " task-scanner-ignore-begin";
         private static final String IGNORE_END = " task-scanner-ignore-end";
 
