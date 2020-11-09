@@ -49,13 +49,7 @@ class TaskScanner {
 
             return ignore;
         }
-
-        public void reset() {
-            ignore = false;
-        }
     }
-
-    private final IgnoreSection inIgnoreSection = new IgnoreSection();
 
     private static final String WORD_BOUNDARY = "\\b";
     private static final Pattern INVALID = Pattern.compile("");
@@ -257,7 +251,7 @@ class TaskScanner {
             return report;
         }
 
-        inIgnoreSection.reset();
+        IgnoreSection inIgnoreSection = new IgnoreSection();
 
         for (int lineNumber = 1; lines.hasNext(); lineNumber++) {
             String line = lines.next();
