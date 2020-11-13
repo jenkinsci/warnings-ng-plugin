@@ -54,7 +54,7 @@ public class ToolApi {
      * @param size
      *         the number of warnings
      * @param sizePerSeverity
-     *         the number of warnings, grouped by severity.
+     *         the number of warnings, grouped by severity
      */
     public ToolApi(final String id, final String name, final String latestUrl, final int size, final Map<Severity, Integer> sizePerSeverity) {
         this.name = name;
