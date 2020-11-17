@@ -26,6 +26,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 
+
 /**
  * Scans a given input stream for open tasks.
  *
@@ -232,8 +233,14 @@ class TaskScanner {
             return report;
         }
 
+        IgnoreSection inIgnoreSection = new IgnoreSection();
+
         for (int lineNumber = 1; lines.hasNext(); lineNumber++) {
             String line = lines.next();
+
+            if (inIgnoreSection.matches(line)) {
+                continue;
+            }
 
             for (Severity severity : Severity.getPredefinedValues()) {
                 if (patterns.containsKey(severity)) {
@@ -255,6 +262,24 @@ class TaskScanner {
             }
         }
         return report;
+    }
+
+    private static class IgnoreSection {
+        private static final String IGNORE_BEGIN = " task-scanner-ignore-begin";
+        private static final String IGNORE_END = " task-scanner-ignore-end";
+
+        private boolean ignore = false;
+
+        public boolean matches(final String line) {
+            if (line.contains(IGNORE_BEGIN)) {
+                ignore = true;
+            }
+            else if (line.contains(IGNORE_END)) {
+                ignore = false;
+            }
+
+            return ignore;
+        }
     }
 }
 
