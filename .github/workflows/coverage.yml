@@ -24,7 +24,7 @@ jobs:
         run: mvn -V -ntp clean verify jacoco:prepare-agent test integration-test jacoco:report --file plugin/pom.xml '-Dgpg.skip'
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1.0.14
+        uses: codecov/codecov-action@v1.0.15
         with:
           token: ${{secrets.CODECOV_TOKEN}}
           file: ./plugin/target/site/jacoco/jacoco.xml
