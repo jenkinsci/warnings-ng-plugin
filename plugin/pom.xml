@@ -26,7 +26,7 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>9.0.1</analysis-model-api.version>
+    <analysis-model-api.version>9.3.2</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <forensics-api-plugin.version>0.8.0-rc659.942931c6a1e4</forensics-api-plugin.version>
     <plugin-util-api.version>1.4.0</plugin-util-api.version>
@@ -48,7 +48,7 @@
     <json.version>20200518</json.version>
     <jackson2-api.version>2.11.1</jackson2-api.version>
 
-    <pmd.version>6.28.0</pmd.version>
+    <pmd.version>6.29.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.7.0</xmlunit.version>
@@ -111,7 +111,7 @@
       <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
-        <version>3.7.1</version>
+        <version>3.7.2</version>
       </dependency>
       <dependency>
         <groupId>io.jenkins.plugins</groupId>

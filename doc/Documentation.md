@@ -698,7 +698,7 @@ The plugin provides the following REST API endpoints.
 
 All static analysis tools that have been configured in a build can be queried by using the URL 
 `[build-url]/warnings-ng/api/json` (or `[build-url]/warnings-ng/api/xml`). This aggregation shows ID, name, URL and 
-total number of issues for each tool.
+total number of issues, and breakdown of issue count by severity for each tool.
 
 ```json
 {
@@ -708,49 +708,81 @@ total number of issues for each tool.
       "id": "maven",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/maven",
       "name": "Maven Warnings",
-      "size": 9
+      "size": 9,
+      "errorSize": 0,
+      "highSize": 6,
+      "normalSize": 1,
+      "lowSize": 2
     },
     {
       "id": "java",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/java",
       "name": "Java Warnings",
-      "size": 1
+      "size": 1,
+      "errorSize": 1,
+      "highSize": 0,
+      "normalSize": 0, 
+      "lowSize": 0
     },
     {
       "id": "javadoc",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/javadoc",
       "name": "JavaDoc Warnings",
-      "size": 0
+      "size": 0,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 0,
+      "lowSize": 0
     },
     {
       "id": "checkstyle",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/checkstyle",
       "name": "CheckStyle Warnings",
-      "size": 0
+      "size": 0,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 0,
+      "lowSize": 0
     },
     {
       "id": "pmd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/pmd",
       "name": "PMD Warnings",
-      "size": 671
+      "size": 671,
+      "errorSize": 0,
+      "highSize": 1,
+      "normalSize": 70,
+      "lowSize": 600
     },
     {
       "id": "spotbugs",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/spotbugs",
       "name": "SpotBugs Warnings",
-      "size": 0
+      "size": 0,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 0,
+      "lowSize": 0
     },
     {
       "id": "cpd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/cpd",
       "name": "CPD Warnings",
-      "size": 123
+      "size": 123,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 23,
+      "lowSize": 100
     },
     {
       "id": "open-tasks",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/open-tasks",
       "name": "Open Tasks Scanner Warnings",
-      "size": 11
+      "size": 11,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 11,
+      "lowSize": 0
     }
   ]
 }
