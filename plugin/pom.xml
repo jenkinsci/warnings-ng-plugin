@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
     <version>4.5.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -28,7 +29,7 @@
 
     <analysis-model-api.version>9.3.2</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.8.0-rc659.942931c6a1e4</forensics-api-plugin.version>
+    <forensics-api-plugin.version>0.8.0-rc710.f9a5c103b329</forensics-api-plugin.version>
     <plugin-util-api.version>1.4.0</plugin-util-api.version>
 
     <font-awesome-api.version>5.15.1-1</font-awesome-api.version>
@@ -45,7 +46,7 @@
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
-    <json.version>20200518</json.version>
+    <json.version>20201115</json.version>
     <jackson2-api.version>2.11.1</jackson2-api.version>
 
     <pmd.version>6.29.0</pmd.version>
@@ -293,6 +294,12 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>checks-api</artifactId>
       <version>${checks-api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- AxivionSuite Dependencies -->
@@ -345,6 +352,12 @@
       <version>${analysis-model-tests.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
@@ -405,6 +418,12 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>timestamper</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+          <artifactId>owasp-java-html-sanitizer</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
@@ -458,6 +477,10 @@
           <artifactId>warnings-ng</artifactId>
           <groupId>io.jenkins.plugins</groupId>
         </exclusion>
+        <exclusion>
+          <groupId>io.jenkins.plugins</groupId>
+          <artifactId>code-coverage-api</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -469,6 +492,10 @@
         <exclusion>
           <artifactId>warnings-ng</artifactId>
           <groupId>io.jenkins.plugins</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-annotations</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -610,7 +637,8 @@
                 <regex>true</regex>
                 <code>java.field.serialVersionUIDUnchanged</code>
                 <classQualifiedName>io.jenkins.plugins.analysis.core.steps.*Step</classQualifiedName>
-                <justification>Serialization is only used in interprocess communication using the same classes</justification>
+                <justification>Serialization is only used in interprocess communication using the same classes
+                </justification>
               </item>
               <item>
                 <regex>true</regex>
