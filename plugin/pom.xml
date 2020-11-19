@@ -376,6 +376,12 @@
       <artifactId>xmlunit-assertj</artifactId>
       <version>${xmlunit.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>net.bytebuddy</groupId>
+          <artifactId>byte-buddy</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
