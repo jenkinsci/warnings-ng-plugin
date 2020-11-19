@@ -86,6 +86,7 @@ You still need to enable and configure the static analysis tool in your build fi
     * [Summary of the analysis result](#summary-of-the-analysis-result)
     * [Details of the analysis result](#details-of-the-analysis-result)
   * [Token macro support](#token-macro-support)
+  * [Warnings Checks (for GitHub projects)](#warnings-checks-for-github-projects)
 * [Transition from the static analysis suite](#transition-from-the-static-analysis-suite)
   * [Migration of Pipelines](#migration-of-pipelines)
   * [Migration of all other jobs](#migration-of-all-other-jobs)
@@ -169,11 +170,11 @@ If none of the built-in tools works in your project you have several ways to add
 A simple way to get the analysis results of your tool into the Warnings plugin is to export the information into one
 of the already supported formats. E.g., several tools export their issues into the CheckStyle or PMD format. If you
 want to use all features of the Warnings Plugin it would be even better if you would export the information into the
-*native* [XML](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/warnings-issues.xml) or 
-[JSON](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/issues.json) format (this parser uses the ID `issues`).  
+*native* [XML](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/steps/warnings-issues.xml) or 
+[JSON](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/steps/issues.json) format (this parser uses the ID `issues`).  
 These formats are already registered in the user interface and you can use them out-of-the-box. You can even provide
 issues in a simple log file that contains single lines of JSON issues, see 
-[example](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/json-issues.log).
+[example](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/steps/json-issues.log).
 
 Here is an example step that can be used to parse the native JSON (or XML) format:
 
@@ -498,7 +499,7 @@ node {
             issues: [checkstyle, pmd, spotbugs], 
             filters: [includePackage('io.jenkins.plugins.analysis.*')]
     }
-
+}
 ``` 
   
 ## New features
@@ -697,7 +698,7 @@ The plugin provides the following REST API endpoints.
 
 All static analysis tools that have been configured in a build can be queried by using the URL 
 `[build-url]/warnings-ng/api/json` (or `[build-url]/warnings-ng/api/xml`). This aggregation shows ID, name, URL and 
-total number of issues for each tool.
+total number of issues, and breakdown of issue count by severity for each tool.
 
 ```json
 {
@@ -707,49 +708,81 @@ total number of issues for each tool.
       "id": "maven",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/maven",
       "name": "Maven Warnings",
-      "size": 9
+      "size": 9,
+      "errorSize": 0,
+      "highSize": 6,
+      "normalSize": 1,
+      "lowSize": 2
     },
     {
       "id": "java",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/java",
       "name": "Java Warnings",
-      "size": 1
+      "size": 1,
+      "errorSize": 1,
+      "highSize": 0,
+      "normalSize": 0, 
+      "lowSize": 0
     },
     {
       "id": "javadoc",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/javadoc",
       "name": "JavaDoc Warnings",
-      "size": 0
+      "size": 0,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 0,
+      "lowSize": 0
     },
     {
       "id": "checkstyle",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/checkstyle",
       "name": "CheckStyle Warnings",
-      "size": 0
+      "size": 0,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 0,
+      "lowSize": 0
     },
     {
       "id": "pmd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/pmd",
       "name": "PMD Warnings",
-      "size": 671
+      "size": 671,
+      "errorSize": 0,
+      "highSize": 1,
+      "normalSize": 70,
+      "lowSize": 600
     },
     {
       "id": "spotbugs",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/spotbugs",
       "name": "SpotBugs Warnings",
-      "size": 0
+      "size": 0,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 0,
+      "lowSize": 0
     },
     {
       "id": "cpd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/cpd",
       "name": "CPD Warnings",
-      "size": 123
+      "size": 123,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 23,
+      "lowSize": 100
     },
     {
       "id": "open-tasks",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/open-tasks",
       "name": "Open Tasks Scanner Warnings",
-      "size": 11
+      "size": 11,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 11,
+      "lowSize": 0
     }
   ]
 }
@@ -907,6 +940,32 @@ Examples:
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
 - `${ANALYSIS_ISSUES_COUNT, tool="checkstyle"}`: expands to the total number of **CheckStyle** issues
 - `${ANALYSIS_ISSUES_COUNT, tool="checkstyle", type="NEW"}`: expands to the number of new **CheckStyle** issues
+
+### Warnings Checks (for GitHub projects)
+
+:warning: This feature requires:
+* the installation of an additional plugin: [GitHub Checks Plugin](https://github.com/jenkinsci/github-checks-plugin)
+* the configuration of GitHub App credentails, see [this guide](https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc) for more details
+
+If not disabled in the job configuration, this plugin will publish warnings to GitHub through [GitHub checks API](https://docs.github.com/en/rest/reference/checks).
+
+Each analysis tool is published as an individual check, the quality gate is published as the check result.
+
+![check quality gate](images/check-quality-gate.png)
+
+
+In the *Details* view of each check ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), issues statistics will be displayed.
+
+![checks](images/checks.png)
+
+When new issues are produced by a pull request, they will be added as annotations below the code where the issues are introduced.
+
+![check annotation](images/check-annotation.png)
+
+In order to disable the checks feature, set the property `skipPublishingChecks` to `true`:
+```groovy
+recordIssues skipPublishingChecks: true, tool: java(pattern: '*.log')
+```
 
 ## Transition from the static analysis suite
 

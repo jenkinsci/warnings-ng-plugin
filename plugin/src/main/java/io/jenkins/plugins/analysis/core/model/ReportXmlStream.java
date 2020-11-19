@@ -6,8 +6,10 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
+import com.thoughtworks.xstream.converters.reflection.ReflectionProvider;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
+import com.thoughtworks.xstream.mapper.Mapper;
 
 import edu.hm.hafner.analysis.DuplicationGroup;
 import edu.hm.hafner.analysis.Issue;
@@ -19,6 +21,7 @@ import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.TreeString;
 
 import hudson.util.RobustCollectionConverter;
+import hudson.util.RobustReflectionConverter;
 import hudson.util.XStream2;
 
 import io.jenkins.plugins.util.AbstractXmlStream;
@@ -40,6 +43,7 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
 
     @Override
     protected void configureXStream(final XStream2 xStream) {
+        xStream.registerConverter(new ReportConverter(xStream.getMapper(), xStream.getReflectionProvider()));
         xStream.registerConverter(new LineRangeListConverter(xStream));
         xStream.registerConverter(new SeverityConverter());
         xStream.alias("lineRange", LineRange.class);
@@ -52,7 +56,6 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
     /**
      * {@link Converter} implementation for XStream.
      */
-    @SuppressWarnings("rawtypes")
     private static final class LineRangeListConverter extends RobustCollectionConverter {
         /**
          * Creates a nex {@link LineRangeListConverter} instance.
@@ -103,6 +106,43 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
         @Override
         public boolean canConvert(final Class type) {
             return type == Severity.class;
+        }
+    }
+
+    /**
+     * A dummy converter for {@link Report} instances that simply delegates to a {@link RobustReflectionConverter}. This
+     * workaround is required since {@link Report} instances now have custom serialization methods.
+     */
+    private static class ReportConverter implements Converter {
+        private final RobustReflectionConverter ref;
+
+        ReportConverter(final Mapper mapper, final ReflectionProvider reflectionProvider) {
+            this.ref = new RobustReflectionConverter(mapper, reflectionProvider);
+        }
+
+        @Override
+        public void marshal(final Object source, final HierarchicalStreamWriter writer,
+                final MarshallingContext context) {
+            this.ref.marshal(source, writer, context);
+        }
+
+        @Override
+        public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+            Object unmarshal = this.ref.unmarshal(reader, context);
+            if (unmarshal instanceof Report) {
+                try {
+                    ((Report) unmarshal).isEmpty();
+                }
+                catch (NullPointerException npe) { // NOPMD
+                    return new Report(); // FIXME: workaround for JENKINS-63659, remove in 8.6.0
+                }
+            }
+            return unmarshal;
+        }
+
+        @Override
+        public boolean canConvert(final Class type) {
+            return type == Report.class;
         }
     }
 }

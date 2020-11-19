@@ -53,5 +53,10 @@ public class NullAnalysisHistory implements History {
     public boolean hasMultipleResults() {
         return false;
     }
+
+    @Override
+    public String toString() {
+        return "No history found";
+    }
 }
 

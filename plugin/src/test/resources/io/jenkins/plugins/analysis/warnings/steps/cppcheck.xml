@@ -1,6 +1,3 @@
-<!--
- cppcheck --quiet --enable=all --force --inline-suppr --xml --xml-version=2 . 2> cppcheck-result.xml
-//-->
 <?xml version="1.0" encoding="UTF-8"?>
 <results version="2">
   <cppcheck version="1.52"/>

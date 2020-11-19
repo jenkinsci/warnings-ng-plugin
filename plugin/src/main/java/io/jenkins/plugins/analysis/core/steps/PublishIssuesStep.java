@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -59,6 +59,8 @@ public class PublishIssuesStep extends Step implements Serializable {
     private String referenceBuildId = StringUtils.EMPTY;
     private boolean failOnError = false; // by default, it should not fail on error
 
+    private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
+
     private int healthy;
     private int unhealthy;
     private Severity minimumSeverity = Severity.WARNING_LOW;
@@ -80,7 +82,7 @@ public class PublishIssuesStep extends Step implements Serializable {
      *         if the array of issues is {@code null} or empty
      */
     @DataBoundConstructor
-    public PublishIssuesStep(@Nullable final List<AnnotatedReport> issues) {
+    public PublishIssuesStep(@CheckForNull final List<AnnotatedReport> issues) {
         super();
 
         if (issues == null) {
@@ -148,6 +150,21 @@ public class PublishIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns whether publishing checks should be skipped.
+     *
+     * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
+     */
+    public boolean isSkipPublishingChecks() {
+        return skipPublishingChecks;
+    }
+
+    @DataBoundSetter
+    @SuppressWarnings("unused") // Used by Stapler
+    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+        this.skipPublishingChecks = skipPublishingChecks;
+    }
+
+    /**
      * If {@code true}, then the result of the quality gate is ignored when selecting a reference build. This option is
      * disabled by default so a failing quality gate will be passed from build to build until the original reason for
      * the failure has been resolved.
@@ -193,32 +210,56 @@ public class PublishIssuesStep extends Step implements Serializable {
      *         the name of reference job
      */
     @DataBoundSetter
-    @SuppressWarnings("unused") // Used by Stapler
     public void setReferenceJobName(final String referenceJobName) {
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceJobName)) {
+            this.referenceJobName = StringUtils.EMPTY;
+        }
         this.referenceJobName = referenceJobName;
     }
 
-    @SuppressWarnings("WeakerAccess") // Required by Stapler
+    /**
+     * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
+     * then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
+     *
+     * @return the name of reference job, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
+     */
     public String getReferenceJobName() {
+        if (StringUtils.isBlank(referenceJobName)) {
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
+        }
         return referenceJobName;
     }
 
     /**
-     * Sets the reference build id to get the results for the issue difference computation.
+     * Sets the reference build id of the reference job for the issue difference computation.
      *
      * @param referenceBuildId
      *         the build id of the reference job
      */
     @DataBoundSetter
     public void setReferenceBuildId(final String referenceBuildId) {
-        this.referenceBuildId = referenceBuildId;
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
+            this.referenceBuildId = StringUtils.EMPTY;
+        }
+        else {
+            this.referenceBuildId = referenceBuildId;
+        }
     }
 
+    /**
+     * Returns the reference build id of the reference job to get the results for the issue difference computation.
+     * If the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
+     *
+     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
+     */
     public String getReferenceBuildId() {
+        if (StringUtils.isBlank(referenceBuildId)) {
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
+        }
         return referenceBuildId;
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -264,13 +305,13 @@ public class PublishIssuesStep extends Step implements Serializable {
         this.unhealthy = unhealthy;
     }
 
-    @Nullable
+    @CheckForNull
     @SuppressWarnings("unused") // Used by Stapler
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
 
-    @Nullable
+    @CheckForNull
     @SuppressWarnings("WeakerAccess") // Required by Stapler
     public Severity getMinimumSeverityAsSeverity() {
         return minimumSeverity;
@@ -811,7 +852,14 @@ public class PublishIssuesStep extends Step implements Serializable {
                     StringUtils.defaultString(step.getName()), step.getReferenceJobName(), step.getReferenceBuildId(),
                     step.getIgnoreQualityGate(), step.getIgnoreFailedBuilds(),
                     getCharset(step.getSourceCodeEncoding()), getLogger(report), statusHandler, step.getFailOnError());
-            return publisher.attachAction(step.getTrendChartType());
+            ResultAction action = publisher.attachAction(step.getTrendChartType());
+
+            if (!step.isSkipPublishingChecks()) {
+                WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, getTaskListener());
+                checksPublisher.publishChecks();
+            }
+
+            return action;
         }
 
         private LogHandler getLogger(final AnnotatedReport report) throws InterruptedException {

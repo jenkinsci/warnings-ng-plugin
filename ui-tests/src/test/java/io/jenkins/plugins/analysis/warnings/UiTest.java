@@ -21,6 +21,7 @@ import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import io.jenkins.plugins.analysis.warnings.AnalysisSummary.InfoType;
 
 import static io.jenkins.plugins.analysis.warnings.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Base class for all UI tests. Provides several helper methods that can be used by all tests.
@@ -33,6 +34,9 @@ abstract class UiTest extends AbstractJUnitTest {
     static final String FINDBUGS_ID = "findbugs";
     static final String MAVEN_ID = "maven-warnings";
     static final String ANALYSIS_ID = "analysis";
+    static final String PEP8_ID = "pep8";
+    static final String PEP8_NAME = "Pep8";
+    static final String PEP8_FILE = "pep8Test.txt";
 
     private static final String CPD_SOURCE_NAME = "Main.java";
     private static final String CPD_SOURCE_PATH = "/duplicate_code/Main.java";
@@ -114,8 +118,6 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyCpd(final Build build) {
-        build.open();
-
         AnalysisSummary cpd = new AnalysisSummary(build, CPD_ID);
         assertThat(cpd).isDisplayed()
                 .hasTitleText("CPD: 20 warnings")
@@ -164,7 +166,6 @@ abstract class UiTest extends AbstractJUnitTest {
             assertThat(row).hasSeverity(WARNING_LOW_PRIORITY);
         }
 
-        build.open();
         assertThat(openInfoView(build, CPD_ID))
                 .hasNoErrorMessages()
                 .hasInfoMessages("-> found 1 file",
@@ -175,8 +176,6 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyFindBugs(final Build build) {
-        build.open();
-
         AnalysisSummary findbugs = new AnalysisSummary(build, FINDBUGS_ID);
         assertThat(findbugs).isDisplayed()
                 .hasTitleText("FindBugs: No warnings")
@@ -186,7 +185,6 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasInfoType(InfoType.INFO)
                 .hasDetails("No warnings for 2 builds, i.e. since build 1");
 
-        build.open();
         assertThat(openInfoView(build, FINDBUGS_ID))
                 .hasNoErrorMessages()
                 .hasInfoMessages("-> found 1 file",
@@ -195,7 +193,6 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyPmd(final Build build) {
-        build.open();
         AnalysisSummary pmd = new AnalysisSummary(build, PMD_ID);
         assertThat(pmd).isDisplayed()
                 .hasTitleText("PMD: 2 warnings")
@@ -209,7 +206,6 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasTotal(2)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
-        build.open();
         assertThat(openInfoView(build, PMD_ID))
                 .hasInfoMessages("-> found 1 file",
                         "-> found 2 issues (skipped 0 duplicates)",
@@ -218,7 +214,6 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void verifyCheckStyle(final Build build) {
-        build.open();
         AnalysisSummary checkstyle = new AnalysisSummary(build, CHECKSTYLE_ID);
         assertThat(checkstyle).isDisplayed()
                 .hasTitleText("CheckStyle: 3 warnings")
@@ -243,12 +238,116 @@ abstract class UiTest extends AbstractJUnitTest {
                 .hasSeverity("Error")
                 .hasAge(1);
 
-        build.open();
+        verifyTrendCharts(checkstyleDetails);
+
         assertThat(openInfoView(build, CHECKSTYLE_ID))
                 .hasInfoMessages("-> found 1 file",
                         "-> found 3 issues (skipped 0 duplicates)",
                         "Issues delta (vs. reference build): outstanding: 0, new: 3, fixed: 1")
                 .hasErrorMessages("Can't create fingerprints for some files:");
+    }
+
+    private void verifyTrendCharts(final AnalysisResult analysisResult) {
+        String severitiesTrendChart = analysisResult.getTrendChartById("severities-trend-chart");
+        String toolsTrendChart = analysisResult.getTrendChartById("tools-trend-chart");
+        String newVersusFixedTrendChart = analysisResult.getTrendChartById("new-versus-fixed-trend-chart");
+
+        assertThatJson(severitiesTrendChart)
+                .inPath("$.xAxis[*].data[*]")
+                .isArray()
+                .hasSize(2)
+                .contains("#1")
+                .contains("#2");
+
+        assertThatJson(severitiesTrendChart)
+                .node("series")
+                .isArray()
+                .hasSize(1);
+
+        assertThatJson(severitiesTrendChart)
+                .node("series[0].name").isEqualTo("Error");
+
+        assertThatJson(severitiesTrendChart)
+                .node("series[0].data").isArray().contains(1).contains(3);
+
+        assertThatJson(toolsTrendChart)
+                .inPath("$.xAxis[*].data[*]")
+                .isArray()
+                .hasSize(2);
+
+        assertThatJson(toolsTrendChart)
+                .node("series[0].name").isEqualTo("checkstyle");
+
+        assertThatJson(toolsTrendChart)
+                .node("series[0].data")
+                .isArray()
+                .contains(1)
+                .contains(3);
+
+        assertThatJson(newVersusFixedTrendChart)
+                .inPath("$.xAxis[*].data[*]")
+                .isArray()
+                .hasSize(2)
+                .contains("#1")
+                .contains("#2");
+
+        assertThatJson(newVersusFixedTrendChart)
+                .and(
+                        a -> a.node("series[0].name").isEqualTo("New"),
+                        a -> a.node("series[0].data").isArray()
+                                .contains(0)
+                                .contains(3),
+                        a -> a.node("series[1].name").isEqualTo("Fixed"),
+                        a -> a.node("series[1].data").isArray()
+                                .contains(0)
+                                .contains(1)
+                );
+    }
+
+    protected void verifyPep8(final Build build) {
+        verifyPep8(build, 1);
+    }
+
+    protected void verifyPep8(final Build build, final int referenceBuild) {
+        AnalysisSummary pep8 = new AnalysisSummary(build, PEP8_ID);
+        assertThat(pep8).isDisplayed()
+                .hasTitleText(PEP8_NAME + ": 8 warnings")
+                .hasReferenceBuild(referenceBuild)
+                .hasInfoType(InfoType.ERROR);
+
+        AnalysisResult pep8Details = verifyPep8Details(pep8);
+
+        pep8Details.openTab(Tab.ISSUES);
+        IssuesDetailsTable issuesTable = pep8Details.openIssuesTable();
+        assertThat(issuesTable).hasSize(8);
+
+        long normalIssueCount = issuesTable.getTableRows().stream()
+                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
+                .filter(severity -> severity.equals("Normal")).count();
+
+        long lowIssueCount = issuesTable.getTableRows().stream()
+                .map(row -> row.getAs(IssuesTableRow.class).getSeverity())
+                .filter(severity -> severity.equals("Low")).count();
+
+        assertThat(normalIssueCount).isEqualTo(6);
+        assertThat(lowIssueCount).isEqualTo(2);
+
+        assertThat(openInfoView(build, PEP8_ID))
+                .hasInfoMessages("-> found 1 file",
+                        "-> found 8 issues (skipped 0 duplicates)")
+                .hasErrorMessages("Can't create fingerprints for some files:");
+
+        if(referenceBuild > 0) {
+            assertThat(openInfoView(build, PEP8_ID))
+                    .hasInfoMessages("Issues delta (vs. reference build): outstanding: 0, new: 8, fixed: 0");
+        }
+    }
+
+    protected AnalysisResult verifyPep8Details (final AnalysisSummary pep8) {
+        AnalysisResult pep8Details = pep8.openOverallResult();
+        assertThat(pep8Details).hasActiveTab(Tab.ISSUES)
+                .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
+        return pep8Details;
     }
 
     InfoView openInfoView(final Build build, final String toolId) {
@@ -277,10 +376,6 @@ abstract class UiTest extends AbstractJUnitTest {
         return view;
     }
 
-    private DashboardView createDashboardView() {
-        return createDashboardView(jenkins);
-    }
-
     private DashboardView createDashboardView(final Container container) {
         DashboardView view = container.getViews().create(DashboardView.class);
         view.configure();
@@ -302,5 +397,36 @@ abstract class UiTest extends AbstractJUnitTest {
         MavenInstallation.installMaven(jenkins, MavenInstallation.DEFAULT_MAVEN_ID, "3.6.3");
 
         return jenkins.getJobs().create(MavenModuleSet.class);
+    }
+
+    protected void initGlobalSettingsForGroovyParser() {
+        GlobalWarningsSettings settings = new GlobalWarningsSettings(jenkins);
+        settings.configure();
+        GroovyConfiguration groovyConfiguration = settings.openGroovyConfiguration();
+        groovyConfiguration.enterName(PEP8_NAME);
+        groovyConfiguration.enterId(PEP8_ID);
+        groovyConfiguration.enterRegex("(.*):(\\d+):(\\d+): (\\D\\d*) (.*)");
+        groovyConfiguration.enterScript("import edu.hm.hafner.analysis.Severity\n"
+                + "\n"
+                + "String message = matcher.group(5)\n"
+                + "String category = matcher.group(4)\n"
+                + "Severity severity\n"
+                + "if (category.contains(\"E\")) {\n"
+                + "    severity = Severity.WARNING_NORMAL\n"
+                + "}else {\n"
+                + "    severity = Severity.WARNING_LOW\n"
+                + "}\n"
+                + "\n"
+                + "return builder.setFileName(matcher.group(1))\n"
+                + "    .setLineStart(Integer.parseInt(matcher.group(2)))\n"
+                + "    .setColumnStart(Integer.parseInt(matcher.group(3)))\n"
+                + "    .setCategory(category)\n"
+                + "    .setMessage(message)\n"
+                + "    .setSeverity(severity)\n"
+                + "    .buildOptional()");
+
+        groovyConfiguration.enterExampleLogMessage("optparse.py:69:11: E401 multiple imports on one line");
+
+        settings.save();
     }
 }

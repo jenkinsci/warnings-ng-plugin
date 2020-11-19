@@ -1,5 +1,5 @@
-tag-template: warnings-ng-plugin-$NEXT_PATCH_VERSION
-name-template: Warnings NG Plugin $NEXT_PATCH_VERSION 🎁
+name-template: 'v$RESOLVED_VERSION 🎁'
+tag-template: 'v$RESOLVED_VERSION'
 
 template: |
   $CHANGES
@@ -12,12 +12,10 @@ categories:
     label: deprecated
   - title: 🚀 New features
     labels:
-      - enhancement
       - feature
   - title: ✨ Improvements
     labels:
       - enhancement
-      - feature
   - title: 🐛 Bug Fixes
     labels:
       - bug
@@ -34,6 +32,23 @@ categories:
     labels:
       - test
       - tests
+
+version-resolver:
+  major:
+    labels:
+      - 'removed'
+  minor:
+    labels:
+      - 'feature'
+      - 'enhancement'
+      - 'deprecated'
+  patch:
+    labels:
+      - 'dependencies'
+      - 'documentation'
+      - 'tests'
+      - 'internal'
+  default: minor
 
 replacers:
   - search: '/\[*JENKINS-(\d+)\]*\s*-*\s*/g'

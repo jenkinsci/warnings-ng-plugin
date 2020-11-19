@@ -55,6 +55,7 @@ public class ErrorProne extends ReportScanningToolSuite {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName(), "bug");
         }
+
         @Override
         public String getUrl() {
             return "https://errorprone.info";

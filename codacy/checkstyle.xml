@@ -3,6 +3,7 @@
     Checkstyle-Configuration: Ullrich Hafner
     Description: Ullrich Hafner's Checkstyle Rules.
 -->
+<!-- ${project.groupId}:${project.artifactId}:${project.version} -->
 <!DOCTYPE module PUBLIC "-//Puppy Crawl//DTD Check Configuration 1.2//EN"
         "http://www.puppycrawl.com/dtds/configuration_1_2.dtd">
 <module name="Checker">
@@ -26,25 +27,21 @@
     <module name="PackageAnnotation"/>
     <module name="EqualsAvoidNull"/>
     <module name="GenericWhitespace"/>
+    <module name="JavadocStyle">
+      <property name="severity" value="warning"/>
+      <property name="checkEmptyJavadoc" value="true"/>
+    </module>
     <module name="JavadocType"/>
-    <module name="JavadocMethod">
+    <module name="JavadocMethod"/>
+    <module name="JavadocVariable">
       <property name="scope" value="protected"/>
+      <property name="tokens" value="VARIABLE_DEF"/>
     </module>
     <module name="MissingJavadocMethodCheck">
       <property name="allowMissingPropertyJavadoc" value="true"/>
     </module>
     <module name="MissingJavadocTypeCheck"/>
     <module name="MissingJavadocPackageCheck"/>
-    <module name="JavadocVariable">
-      <property name="scope" value="protected"/>
-      <property name="tokens" value="VARIABLE_DEF"/>
-    </module>
-    <module name="JavadocStyle">
-      <property name="severity" value="warning"/>
-    </module>
-    <module name="JavadocStyle">
-      <property name="checkEmptyJavadoc" value="true"/>
-    </module>
     <module name="ConstantName"/>
     <module name="LocalFinalVariableName"/>
     <module name="LocalVariableName"/>
@@ -122,7 +119,6 @@
     <module name="SuperClone"/>
     <module name="SuperFinalize"/>
     <module name="UnnecessaryParentheses"/>
-    <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
     <module name="InterfaceIsType"/>
     <module name="MutableException"/>
@@ -143,7 +139,7 @@
     <module name="IllegalCatch"/>
     <module name="IllegalImport">
       <property name="illegalPkgs" value="net.jcip.annotations, javax.annotation"/>
-      <property name="illegalClasses" value="edu.umd.cs.findbugs.annotations.CheckForNull"/>
+      <property name="illegalClasses" value="edu.umd.cs.findbugs.annotations.Nullable"/>
       <property name="severity" value="error"/>
     </module>
   </module>

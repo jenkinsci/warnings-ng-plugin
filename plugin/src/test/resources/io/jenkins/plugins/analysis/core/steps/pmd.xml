@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmd xmlns="http://pmd.sourceforge.net/report/2.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://pmd.sourceforge.net/report/2.0.0 http://pmd.sourceforge.net/report_2_0_0.xsd"
+    version="6.25.0" timestamp="2020-08-07T12:05:13.186">
+<file name="/var/jenkins_home/workspace/pipeline-coding-style_PR-4/src/main/java/edu/hm/hafner/util/PathUtil.java">
+<violation beginline="123" endline="125" begincolumn="35" endcolumn="57" rule="MethodArgumentCouldBeFinal" ruleset="Code Style" package="edu.hm.hafner.util" class="PathUtil" method="getRelativePath" variable="base" externalInfoUrl="https://pmd.github.io/pmd-6.25.0/pmd_rules_java_codestyle.html#methodargumentcouldbefinal" priority="3">
+Parameter 'base' is not assigned and could be declared final
+</violation>
+</file>
+</pmd>

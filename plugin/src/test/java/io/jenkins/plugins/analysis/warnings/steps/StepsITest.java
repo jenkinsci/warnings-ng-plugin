@@ -29,20 +29,16 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.plugins.workflow.job.WorkflowRun;
 import hudson.model.Result;
 import hudson.model.Run;
-import hudson.model.Slave;
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
-import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
-import io.jenkins.plugins.analysis.core.model.SourceDetail;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
-import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerTest;
+import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
@@ -66,43 +62,9 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
-public class StepsITest extends IntegrationTestWithJenkinsPerTest {
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
+public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
-    private static final String JAVA_CONTENT = "public class Test {}";
-
-    /**
-     * Verifies that affected source files are copied to Jenkins build folder, even if the master - agent security
-     * is active, see JENKINS-56007 for details.
-     */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-56007")
-    public void shouldCopySourcesIfMasterAgentSecurityIsActive() {
-        Slave agent = createAgentWithEnabledSecurity("agent");
-
-        WorkflowJob project = createPipeline();
-
-        createFileInAgentWorkspace(agent, project, "Test.java", JAVA_CONTENT);
-
-        project.setDefinition(new CpsFlowDefinition("node('agent') {\n"
-                + "    echo '[javac] Test.java:39: warning: Test Warning'\n"
-                + "    recordIssues tool: java()\n"
-                + "}", true));
-
-        AnalysisResult result = scheduleSuccessfulBuild(project);
-        assertThat(result).hasNoErrorMessages();
-        assertThat(result).hasTotalSize(1);
-        assertThat(getConsoleLog(result)).contains("1 copied", "0 not in workspace", "0 not-found", "0 with I/O error");
-
-        // TODO: check for the links in the table model
-        assertThat(getSourceCode(result, 0)).contains(JAVA_CONTENT);
-    }
-
-    private String getSourceCode(final AnalysisResult result, final int rowIndex) {
-        IssuesDetail target = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
-        String sourceCodeUrl = new FileNameRenderer(result.getOwner()).getSourceCodeUrl(result.getIssues().get(rowIndex));
-        SourceDetail dynamic = (SourceDetail) target.getDynamic(sourceCodeUrl.replaceAll("/#.*", ""), null, null);
-        return dynamic.getSourceCode();
-    }
 
     /**
      * Runs a pipeline and verifies the {@code scanForIssues} step has some whitelisted methods.
@@ -252,38 +214,6 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         }
     }
 
-    /**
-     * Creates a JenkinsFile with parallel steps and aggregates the warnings.
-     */
-    @Test
-    public void shouldRecordOutputOfParallelSteps() {
-        WorkflowJob job = createPipeline();
-
-        copySingleFileToAgentWorkspace(createAgent("node1"), job, "eclipse.txt", "issues.txt");
-        copySingleFileToAgentWorkspace(createAgent("node2"), job, "eclipse.txt", "issues.txt");
-
-        job.setDefinition(readJenkinsFile("parallel.jenkinsfile"));
-
-        Run<?, ?> run = buildSuccessfully(job);
-        List<ResultAction> actions = run.getActions(ResultAction.class);
-
-        assertThat(actions).hasSize(2);
-
-        ResultAction first;
-        ResultAction second;
-        if (actions.get(0).getId().equals("java-1")) {
-            first = actions.get(0);
-            second = actions.get(1);
-        }
-        else {
-            first = actions.get(1);
-            second = actions.get(0);
-        }
-
-        assertThat(first.getResult().getIssues()).hasSize(5);
-        assertThat(second.getResult().getIssues()).hasSize(3);
-    }
-
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
     public void shouldFindAllClangIssuesIfConsoleIsAnnotatedWithTimeStamps() {
@@ -339,8 +269,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
     /**
      * Parses a colored console log that also contains console notes. Verifies that the console notes will be removed
-     * before the color codes. Output is from ATH test case
-     * {@code WarningsNextGenerationPluginTest#should_show_maven_warnings_in_maven_project}.
+     * before the color codes. Output is from ATH test case {@code WarningsNextGenerationPluginTest#should_show_maven_warnings_in_maven_project}.
      */
     @Test
     public void shouldRemoveConsoleLogNotesBeforeRemovingColorCodes() {
@@ -355,7 +284,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result.getIssues().get(0))
                 .hasSeverity(Severity.WARNING_NORMAL);
         assertThat(result.getIssues().get(1))
-                .hasDescription("<pre><code>Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!</code></pre>")
+                .hasDescription(
+                        "<pre><code>Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!</code></pre>")
                 .hasSeverity(Severity.WARNING_NORMAL);
     }
 
@@ -452,7 +382,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /** Runs the JavaDoc parser and enforces quality gates. */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-58253")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-58253")
     public void shouldFailBuildWhenFailBuildOnErrorsIsSet() {
         WorkflowJob job = createPipeline();
 
@@ -468,7 +399,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /** Runs the JavaDoc parser and enforces quality gates. */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-58253")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-58253")
     public void shouldSupportDeprecatedAttributesInRecord() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt");
 
@@ -494,7 +426,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /** Runs the JavaDoc parser and enforces quality gates. */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-58253")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-58253")
     public void shouldSupportDeprecatedAttributesInPublish() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt");
 
@@ -556,7 +489,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
 
     private void assertThatJavaIssuesArePublished(final AnalysisResult result) {
         Report report = result.getIssues();
-        assertThat(report.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(10); // maven eclipse detects to maven javac warnings
+        assertThat(report.filter(issue -> "eclipse".equals(issue.getOrigin()))).hasSize(
+                10); // maven eclipse detects to maven javac warnings
         assertThat(report.filter(issue -> "java".equals(issue.getOrigin()))).hasSize(2);
         assertThat(report.filter(issue -> "javadoc-warnings".equals(issue.getOrigin()))).hasSize(6);
         assertThat(report.getTools()).containsExactlyInAnyOrder("java", "javadoc-warnings", "eclipse");
@@ -564,10 +498,11 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Runs the the Java and JavaDoc parsers on two output files. Both parsers are using a custom ID that should be
-     * used for the origin field as well.
+     * Runs the the Java and JavaDoc parsers on two output files. Both parsers are using a custom ID that should be used
+     * for the origin field as well.
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-57638")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-57638")
     public void shouldUseCustomIdsForOrigin() {
         verifyCustomIdsForOrigin(asStage(
                 "def java = scanForIssues tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8', id:'id1', name:'name1')",
@@ -576,10 +511,11 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Runs the the Java and JavaDoc parsers on two output files. Both parsers are using a custom ID that should be
-     * used for the origin field as well.
+     * Runs the the Java and JavaDoc parsers on two output files. Both parsers are using a custom ID that should be used
+     * for the origin field as well.
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-57638")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-57638")
     public void shouldUseCustomIdsForOriginSimpleStep() {
         verifyCustomIdsForOrigin(asStage(
                 "recordIssues(\n"
@@ -862,8 +798,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
     }
 
     /**
-     * Creates a reference job with a build, then builds the job, referring to a non-existing build
-     * in the reference job.
+     * Creates a reference job with a build, then builds the job, referring to a non-existing build in the reference
+     * job.
      */
     @Test
     public void shouldHandleMissingJobBuildIdAsReference() {
@@ -881,49 +817,51 @@ public class StepsITest extends IntegrationTestWithJenkinsPerTest {
         assertThat(result.getNewIssues()).hasSize(0);
         assertThat(result.getOutstandingIssues()).hasSize(2);
         assertThat(result.getErrorMessages()).contains(
-                "Reference job 'reference' does not contain build '1'");
+                "Reference job 'reference' does not contain configured build '1'");
     }
 
     /**
-     * Verifies that when publishIssues marks the build as unstable it also marks the step with
-     * WarningAction so that visualizations can display the step as unstable rather than just
-     * the whole build.
+     * Verifies that when publishIssues marks the build as unstable it also marks the step with WarningAction so that
+     * visualizations can display the step as unstable rather than just the whole build.
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-39203">Issue 39203</a>
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-39203")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-39203")
     public void publishIssuesShouldMarkStepWithWarningAction() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("javac.txt");
         job.setDefinition(asStage(createScanForIssuesStep(new Java(), "java"),
                 "publishIssues(issues:[java], qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
-        WorkflowRun run = (WorkflowRun)buildWithResult(job, Result.UNSTABLE);
+        WorkflowRun run = (WorkflowRun) buildWithResult(job, Result.UNSTABLE);
         FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
                 node -> "publishIssues".equals(Objects.requireNonNull(node).getDisplayFunctionName()));
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
-        assertThat(warningAction.getMessage()).isEqualTo("Some quality gates have been missed: overall result is UNSTABLE");
+        assertThat(warningAction.getMessage()).isEqualTo(
+                "Some quality gates have been missed: overall result is UNSTABLE");
     }
 
     /**
-     * Verifies that when recordIssues marks the build as unstable it also marks the step with
-     * WarningAction so that visualizations can display the step as unstable rather than just
-     * the whole build.
+     * Verifies that when recordIssues marks the build as unstable it also marks the step with WarningAction so that
+     * visualizations can display the step as unstable rather than just the whole build.
      *
      * @see <a href="http://issues.jenkins-ci.org/browse/JENKINS-39203">Issue 39203</a>
      */
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-39203")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-39203")
     public void recordIssuesShouldMarkStepWithWarningAction() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("javac.txt");
         job.setDefinition(asStage("recordIssues(tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8'),"
                 + "qualityGates: [[threshold: 1, type: 'TOTAL', unstable: true]])"));
-        WorkflowRun run = (WorkflowRun)buildWithResult(job, Result.UNSTABLE);
+        WorkflowRun run = (WorkflowRun) buildWithResult(job, Result.UNSTABLE);
         FlowNode publishIssuesNode = new DepthFirstScanner().findFirstMatch(run.getExecution(),
                 node -> "recordIssues".equals(Objects.requireNonNull(node).getDisplayFunctionName()));
         assertThat(publishIssuesNode).isNotNull();
         WarningAction warningAction = publishIssuesNode.getPersistentAction(WarningAction.class);
         assertThat(warningAction).isNotNull();
-        assertThat(warningAction.getMessage()).isEqualTo("Some quality gates have been missed: overall result is UNSTABLE");
+        assertThat(warningAction.getMessage()).isEqualTo(
+                "Some quality gates have been missed: overall result is UNSTABLE");
     }
 
     /**

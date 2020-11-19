@@ -7,7 +7,7 @@ import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.StaplerProxy;
@@ -184,11 +184,11 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     public String getAbsoluteUrl() {
-        return getOwner().getAbsoluteUrl();
+        return getOwner().getAbsoluteUrl() + getUrlName();
     }
 
     @Override
-    @Nullable
+    @CheckForNull
     public HealthReport getBuildHealth() {
         return new HealthReportBuilder().computeHealth(healthDescriptor, getLabelProvider(),
                 getResult().getSizePerSeverity());

@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>4.0.0</version>
-    <relativePath />
+    <version>4.6.0</version>
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -21,69 +22,69 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.2.1</revision>
+    <revision>8.5.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>8.1.3</analysis-model-api.version>
-    <analysis-model-tests.version>8.1.3</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
-    <git-forensics-plugin.version>0.7.0</git-forensics-plugin.version>
-    <plugin-util-api.version>1.2.2</plugin-util-api.version>
+    <analysis-model-api.version>9.3.2</analysis-model-api.version>
+    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <forensics-api-plugin.version>0.8.0-rc710.f9a5c103b329</forensics-api-plugin.version>
+    <plugin-util-api.version>1.4.0</plugin-util-api.version>
 
-    <font-awesome-api.version>5.13.0-1</font-awesome-api.version>
-    <jquery3-api.version>3.5.1-1</jquery3-api.version>
-    <bootstrap4-api.version>4.5.0-1</bootstrap4-api.version>
-    <data-tables-api.version>1.10.21-2</data-tables-api.version>
-    <echarts-api.version>4.8.0-1</echarts-api.version>
+    <font-awesome-api.version>5.15.1-1</font-awesome-api.version>
+    <jquery3-api.version>3.5.1-2</jquery3-api.version>
+    <bootstrap4-api.version>4.5.3-1</bootstrap4-api.version>
+    <data-tables-api.version>1.10.21-3</data-tables-api.version>
+    <echarts-api.version>4.9.0-2</echarts-api.version>
 
-    <commons.lang.version>3.10</commons.lang.version>
-    <commons.io.version>2.7</commons.io.version>
+    <commons.lang.version>3.11</commons.lang.version>
+    <commons.io.version>2.8.0</commons.io.version>
     <commons.digester.version>2.1</commons.digester.version>
     <commons.digester3.version>3.2</commons.digester3.version>
-    <commons.text.version>1.8</commons.text.version>
+    <commons.text.version>1.9</commons.text.version>
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
-    <json.version>20200518</json.version>
-    <jackson2-api.version>2.11.0</jackson2-api.version>
+    <json.version>20201115</json.version>
+    <jackson2-api.version>2.11.1</jackson2-api.version>
 
-    <pmd.version>6.24.0</pmd.version>
+    <pmd.version>6.29.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.7.0</xmlunit.version>
     <jsoup.version>1.13.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
-    <git-client.version>3.2.1</git-client.version>
+    <jmh.version>1.26</jmh.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
-    <token-macro.version>2.10</token-macro.version>
-    <jenkins-maven-plugin.version>3.1.2</jenkins-maven-plugin.version>
-    <matrix-project.version>1.14</matrix-project.version>
-    <junit-plugin.version>1.24</junit-plugin.version>
-    <git-plugin.version>4.2.2</git-plugin.version>
+    <token-macro.version>2.12</token-macro.version>
+    <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
+    <matrix-project.version>1.18</matrix-project.version>
+    <junit-plugin.version>1.35</junit-plugin.version>
     <structs.version>1.20</structs.version>
-    <antisamy-markup-formatter.version>1.5</antisamy-markup-formatter.version>
-    <dashboard-view.version>2.9.4</dashboard-view.version>
+    <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
+    <dashboard-view.version>2.13</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
-    <credentials.version>2.3.0</credentials.version>
     <httpcomponents-client.version>4.5.10-2.0</httpcomponents-client.version>
     <configuration-as-code.version>1.36</configuration-as-code.version>
-    <job-dsl.version>1.76</job-dsl.version>
-    <envinject.version>2.1.6</envinject.version>
+    <job-dsl.version>1.77</job-dsl.version>
+    <envinject.version>2.3.0</envinject.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
-    <pipeline-stage-step.version>2.3</pipeline-stage-step.version>
+    <pipeline-stage-step.version>2.5</pipeline-stage-step.version>
     <docker-fixtures.version>1.10</docker-fixtures.version>
-    <jdk-tool.version>1.2</jdk-tool.version>
-    <workflow-support.version>3.3</workflow-support.version>
-    <pipeline-model-definition.version>1.2</pipeline-model-definition.version>
-    <form-element-path.version>1.8</form-element-path.version>
-    <folder.version>6.9</folder.version>
+    <jdk-tool.version>1.4</jdk-tool.version>
+    <workflow-support.version>3.6</workflow-support.version>
+    <pipeline-model-definition.version>1.7.0</pipeline-model-definition.version>
+    <form-element-path.version>1.9</form-element-path.version>
+    <folder.version>6.14</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
+    <checks-api.version>1.0.0</checks-api.version>
 
     <!-- Maven Surefire ArgLine -->
-    <argLine>-Djava.awt.headless=true -Xmx1024m</argLine>
+    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=480</argLine>
+
+    <useBeta>true</useBeta>
   </properties>
 
   <licenses>
@@ -104,29 +105,29 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>git-client</artifactId>
-        <version>${git-client.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>git</artifactId>
-        <version>${git-plugin.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.codehaus.groovy</groupId>
         <artifactId>groovy-all</artifactId>
-        <version>2.4.19</version>
+        <version>2.4.20</version>
       </dependency>
       <dependency>
         <groupId>commons-net</groupId>
         <artifactId>commons-net</artifactId>
-        <version>3.6</version>
+        <version>3.7.2</version>
       </dependency>
       <dependency>
         <groupId>io.jenkins.plugins</groupId>
         <artifactId>code-coverage-api</artifactId>
-        <version>1.1.6</version>
+        <version>1.2.0</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.hm.hafner</groupId>
+        <artifactId>codingstyle</artifactId>
+        <version>1.6.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.jenkins-ci.plugins</groupId>
+        <artifactId>junit</artifactId>
+        <version>1.37</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -179,6 +180,11 @@
       <groupId>net.minidev</groupId>
       <artifactId>json-smart</artifactId>
       <version>${json-smart.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>${jsoup.version}</version>
     </dependency>
 
     <!-- PMD Messages -->
@@ -284,12 +290,22 @@
       <artifactId>antisamy-markup-formatter</artifactId>
       <version>${antisamy-markup-formatter.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>checks-api</artifactId>
+      <version>${checks-api.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
     <!-- AxivionSuite Dependencies -->
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>credentials</artifactId>
-      <version>${credentials.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -331,28 +347,22 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>io.jenkins.plugins</groupId>
-      <artifactId>git-forensics</artifactId>
-      <version>${git-forensics-plugin.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>edu.hm.hafner</groupId>
       <artifactId>analysis-model</artifactId>
       <version>${analysis-model-tests.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>
       <artifactId>json</artifactId>
       <version>${json.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jsoup</groupId>
-      <artifactId>jsoup</artifactId>
-      <version>${jsoup.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -408,12 +418,24 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>timestamper</artifactId>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+          <artifactId>owasp-java-html-sanitizer</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.main</groupId>
       <artifactId>maven-plugin</artifactId>
       <version>${jenkins-maven-plugin.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>annotations</artifactId>
+          <groupId>com.google.code.findbugs</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -442,7 +464,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ansicolor</artifactId>
-      <version>0.7.0</version>
+      <version>0.7.3</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -450,12 +472,32 @@
       <artifactId>metrics-aggregation</artifactId>
       <version>0.2.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>warnings-ng</artifactId>
+          <groupId>io.jenkins.plugins</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.jenkins.plugins</groupId>
+          <artifactId>code-coverage-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>autograding</artifactId>
-      <version>2.0.0</version>
+      <version>3.0.1</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>warnings-ng</artifactId>
+          <groupId>io.jenkins.plugins</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- stage -->
@@ -495,15 +537,6 @@
       <version>${jdk-tool.version}</version>
       <scope>test</scope>
     </dependency>
-
-    <!-- GitSampleRepoRule -->
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>git</artifactId>
-      <version>${git-plugin.version}</version>
-      <scope>test</scope>
-      <type>test-jar</type>
-    </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>scm-api</artifactId>
@@ -532,6 +565,19 @@
       </exclusions>
     </dependency>
 
+    <!-- JMH Benchmark -->
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>${jmh.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>${jmh.version}</version>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -589,6 +635,13 @@
             <revapi.ignore combine.children="append">
               <item>
                 <regex>true</regex>
+                <code>java.field.serialVersionUIDUnchanged</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.steps.*Step</classQualifiedName>
+                <justification>Serialization is only used in interprocess communication using the same classes
+                </justification>
+              </item>
+              <item>
+                <regex>true</regex>
                 <code>java.missing.*</code>
                 <justification>Dependencies are not being checked, so they are reported as missing</justification>
               </item>
@@ -596,6 +649,12 @@
                 <code>java.annotation.added</code>
                 <annotationType>org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted</annotationType>
                 <justification>Annotation should be save to add.</justification>
+              </item>
+              <item>
+                <regex>true</regex>
+                <code>java.annotation.*</code>
+                <annotation>@edu.umd.cs.findbugs.annotations.*</annotation>
+                <justification>Annotation should be save to change.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>
@@ -627,6 +686,28 @@
     </pluginManagement>
   </build>
 
+  <profiles>
+    <profile>
+      <id>benchmark</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <excludes>
+                <exclude>**/*Test.java</exclude>
+              </excludes>
+              <includes>
+                <include>**/*Benchmark.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
@@ -653,4 +734,3 @@
   </pluginRepositories>
 
 </project>
-

@@ -1,4 +1,3 @@
-
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
@@ -11,8 +10,8 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -46,7 +45,6 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
-import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -74,10 +72,9 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.GodClass", "PMD.CyclomaticComplexity", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder {
-    static final String NO_REFERENCE_JOB = "-";
-    static final String NO_REFERENCE_BUILD = "-";
+    static final String NO_REFERENCE_DEFINED = "-";
     static final String DEFAULT_ID = "analysis";
 
     private List<Tool> analysisTools = new ArrayList<>();
@@ -102,7 +99,15 @@ public class IssuesRecorder extends Recorder {
     private boolean isAggregatingResults;
 
     private boolean isBlameDisabled;
-    private boolean isForensicsDisabled;
+    /**
+     * Not used anymore.
+     *
+     * @deprecated since 8.5.0
+     */
+    @Deprecated
+    private transient boolean isForensicsDisabled;
+
+    private boolean skipPublishingChecks; // by default, checks will be published
 
     private String id;
     private String name;
@@ -226,7 +231,7 @@ public class IssuesRecorder extends Recorder {
      * @see #getTools
      * @deprecated this method is only intended to be called by the UI
      */
-    @Nullable
+    @CheckForNull
     @Deprecated
     public List<ToolProxy> getToolProxies() {
         return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
@@ -283,7 +288,7 @@ public class IssuesRecorder extends Recorder {
         return new ArrayList<>(analysisTools);
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -348,18 +353,42 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns whether SCM forensics should be disabled.
+     * Not used anymore.
      *
      * @return {@code true} if SCM forensics should be disabled
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
      */
     @SuppressWarnings("PMD.BooleanGetMethodName")
+    @Deprecated
     public boolean getForensicsDisabled() {
         return isForensicsDisabled;
     }
 
+    /**
+     * Not used anymore.
+     *
+     * @param forensicsDisabled
+     *         not used
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
+     */
     @DataBoundSetter
+    @Deprecated
     public void setForensicsDisabled(final boolean forensicsDisabled) {
         isForensicsDisabled = forensicsDisabled;
+    }
+
+    /**
+     * Returns whether publishing checks should be skipped.
+     *
+     * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
+     */
+    public boolean isSkipPublishingChecks() {
+        return skipPublishingChecks;
+    }
+
+    @DataBoundSetter
+    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+        this.skipPublishingChecks = skipPublishingChecks;
     }
 
     /**
@@ -441,7 +470,7 @@ public class IssuesRecorder extends Recorder {
      */
     @DataBoundSetter
     public void setReferenceJobName(final String referenceJobName) {
-        if (NO_REFERENCE_JOB.equals(referenceJobName)) {
+        if (NO_REFERENCE_DEFINED.equals(referenceJobName)) {
             this.referenceJobName = StringUtils.EMPTY;
         }
         this.referenceJobName = referenceJobName;
@@ -449,13 +478,13 @@ public class IssuesRecorder extends Recorder {
 
     /**
      * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
-     * then {@link #NO_REFERENCE_JOB} is returned.
+     * then {@link #NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the name of reference job, or {@link #NO_REFERENCE_JOB} if undefined
+     * @return the name of reference job, or {@link #NO_REFERENCE_DEFINED} if undefined
      */
     public String getReferenceJobName() {
         if (StringUtils.isBlank(referenceJobName)) {
-            return NO_REFERENCE_JOB;
+            return NO_REFERENCE_DEFINED;
         }
         return referenceJobName;
     }
@@ -467,7 +496,7 @@ public class IssuesRecorder extends Recorder {
      *         the build id of the reference job
      */
     public void setReferenceBuildId(final String referenceBuildId) {
-        if (NO_REFERENCE_BUILD.equals(referenceBuildId)) {
+        if (NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
             this.referenceBuildId = StringUtils.EMPTY;
         }
         else {
@@ -477,13 +506,13 @@ public class IssuesRecorder extends Recorder {
 
     /**
      * Returns the reference build id to get the results for the issue difference computation.  If the build id not
-     * defined, then {@link #NO_REFERENCE_BUILD} is returned.
+     * defined, then {@link #NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the build id of the reference job, or {@link #NO_REFERENCE_BUILD} if undefined.
+     * @return the build id of the reference job, or {@link #NO_REFERENCE_DEFINED} if undefined.
      */
     public String getReferenceBuildId() {
         if (StringUtils.isBlank(referenceBuildId)) {
-            return NO_REFERENCE_BUILD;
+            return NO_REFERENCE_DEFINED;
         }
         return referenceBuildId;
     }
@@ -518,7 +547,7 @@ public class IssuesRecorder extends Recorder {
         this.unhealthy = unhealthy;
     }
 
-    @Nullable
+    @CheckForNull
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
@@ -660,8 +689,7 @@ public class IssuesRecorder extends Recorder {
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
                 workspace, sourceDirectory, run,
-                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
-                isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
+                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
         return issuesScanner.scan();
     }
@@ -700,10 +728,15 @@ public class IssuesRecorder extends Recorder {
         qualityGate.addAll(qualityGates);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
-                reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds,
+                reportName, getReferenceJobName(), getReferenceBuildId(), ignoreQualityGate, ignoreFailedBuilds,
                 getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
-        publisher.attachAction(trendChartType);
+        ResultAction action = publisher.attachAction(trendChartType);
+
+        if (!skipPublishingChecks) {
+            WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, listener);
+            checksPublisher.publishChecks();
+        }
     }
 
     /**
