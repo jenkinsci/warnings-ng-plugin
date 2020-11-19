@@ -52,7 +52,7 @@
     <pmd.version>6.29.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
-    <xmlunit.version>2.7.0</xmlunit.version>
+    <xmlunit.version>2.8.1</xmlunit.version>
     <jsoup.version>1.13.1</jsoup.version>
     <json-smart.version>2.3</json-smart.version>
     <jmh.version>1.26</jmh.version>
@@ -376,6 +376,12 @@
       <artifactId>xmlunit-assertj</artifactId>
       <version>${xmlunit.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>net.bytebuddy</groupId>
+          <artifactId>byte-buddy</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
