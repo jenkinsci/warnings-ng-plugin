@@ -236,6 +236,18 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 .hasSeverity(Severity.WARNING_HIGH);
     }
 
+    /**
+     * Tries to expose JENKINS-64243.
+     */
+    @Test
+    public void issue64243() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("maven-console.txt");
+        job.setDefinition(asStage("def issues = scanForIssues tool: mavenConsole(id: 'id', name: 'MavenConsoleFile', pattern: '*.txt')", PUBLISH_ISSUES_STEP));
+
+        AnalysisResult result = scheduleSuccessfulBuild(job);
+        assertThat(result).hasTotalSize(4);
+    }
+
     /** Runs the Clang parser on an output file that contains 1 issue. */
     @Test
     public void shouldFindAllGhsIssuesIfConsoleIsAnnotatedWithTimeStamps() {
