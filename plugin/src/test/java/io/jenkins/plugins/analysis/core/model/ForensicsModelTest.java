@@ -31,18 +31,20 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         ForensicsModel model = createModel(report, statistics);
 
         String columnDefinitions = model.getColumnsDefinition();
-        assertThatJson(columnDefinitions).isArray().hasSize(7);
+        assertThatJson(columnDefinitions).isArray().hasSize(9);
 
-        String[] columns = {"description", "fileName", "age", "authorsSize", "commitsSize", "modifiedAt", "addedAt"};
+        String[] columns = {"description", "fileName", "age", "authorsSize",
+                "commitsSize", "modifiedAt", "addedAt", "linesOfCode", "churn"};
         for (int column = 0; column < columns.length; column++) {
             verifyColumnProperty(model, column, columns[column]);
         }
         verifyFileNameColumn(columnDefinitions);
 
         assertThat(getLabels(model))
-                .containsExactly("Details", "File", "Age", "#Authors", "#Commits", "Last Commit", "Added");
+                .containsExactly("Details", "File", "Age", "#Authors",
+                        "#Commits", "Last Commit", "Added", "#LoC", "Code Churn");
         assertThat(getWidths(model))
-                .containsExactly(1, 2, 1, 1, 1, 2, 2);
+                .containsExactly(1, 2, 1, 1, 1, 2, 2, 1, 1);
 
         assertThat(model.getRows()).hasSize(2);
     }

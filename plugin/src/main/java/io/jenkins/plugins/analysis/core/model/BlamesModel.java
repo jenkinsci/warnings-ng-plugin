@@ -12,6 +12,7 @@ import io.jenkins.plugins.analysis.core.util.Blame;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.forensics.blame.Blames;
+import io.jenkins.plugins.forensics.util.CommitDecorator;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -36,18 +37,22 @@ public class BlamesModel extends DetailsTableModel {
     static final int UNDEFINED_DATE = 0;
 
     private final Blames blames;
+    private final CommitDecorator commitDecorator;
 
     BlamesModel(final Report report, final Blames blames, final FileNameRenderer fileNameRenderer,
-            final AgeBuilder ageBuilder, final DescriptionProvider labelProvider) {
-        this(report, blames, fileNameRenderer, ageBuilder, labelProvider, new JenkinsFacade());
+            final AgeBuilder ageBuilder, final DescriptionProvider labelProvider,
+            final CommitDecorator commitDecorator) {
+        this(report, blames, fileNameRenderer, ageBuilder, labelProvider, commitDecorator, new JenkinsFacade());
     }
 
     @VisibleForTesting
     BlamesModel(final Report report, final Blames blames, final FileNameRenderer fileNameRenderer,
-            final AgeBuilder ageBuilder, final DescriptionProvider labelProvider, final JenkinsFacade jenkinsFacade) {
+            final AgeBuilder ageBuilder, final DescriptionProvider labelProvider, final CommitDecorator commitDecorator,
+            final JenkinsFacade jenkinsFacade) {
         super(report, fileNameRenderer, ageBuilder, labelProvider, jenkinsFacade);
 
         this.blames = blames;
+        this.commitDecorator = commitDecorator;
     }
 
     @Override
@@ -73,8 +78,9 @@ public class BlamesModel extends DetailsTableModel {
 
     @Override
     protected BlamesRow getRow(final Issue issue) {
+        Blame blame = new Blame(issue, blames);
         return new BlamesRow(getAgeBuilder(), getFileNameRenderer(), getDescriptionProvider(),
-                issue, getJenkinsFacade(), new Blame(issue, blames));
+                issue, getJenkinsFacade(), blame, commitDecorator.asLink(blame.getCommit()));
     }
 
     /**
@@ -83,13 +89,15 @@ public class BlamesModel extends DetailsTableModel {
     @SuppressWarnings("PMD.DataClass") // Used to automatically convert to JSON object
     public static class BlamesRow extends TableRow {
         private final Blame blame;
+        private final String commit;
 
         BlamesRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade,
-                final Blame blame) {
+                final Blame blame, final String commit) {
             super(ageBuilder, fileNameRenderer, descriptionProvider, issue, jenkinsFacade);
 
             this.blame = blame;
+            this.commit = commit;
         }
 
         public String getAuthor() {
@@ -101,7 +109,7 @@ public class BlamesModel extends DetailsTableModel {
         }
 
         public String getCommit() {
-            return blame.getCommit();
+            return commit;
         }
 
         public int getAddedAt() {

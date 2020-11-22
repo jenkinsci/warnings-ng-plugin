@@ -78,7 +78,6 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
         assertThat(script).contains("recordIssues");
         assertThat(script).contains("aggregatingResults: true");
         assertThat(script).contains("blameDisabled: true");
-        assertThat(script).contains("forensicsDisabled: true");
         assertThat(script).contains("enabledForFailure: true");
         assertThat(script).contains("ignoreFailedBuilds: false");
         assertThat(script).contains("ignoreQualityGate: true");
@@ -130,7 +129,6 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
         assertThat(script).contains("recordIssues");
         assertThat(script).contains("aggregatingResults: true");
         assertThat(script).contains("blameDisabled: true");
-        assertThat(script).contains("forensicsDisabled: true");
         assertThat(script).contains("enabledForFailure: true");
         assertThat(script).contains("filters: [excludeType('*toExclude*')]");
         assertThat(script).contains("ignoreFailedBuilds: false");

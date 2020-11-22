@@ -24,6 +24,7 @@ import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Controls the live cycle of the analysis results in a job. This action persists the results of a build and displays a
@@ -184,7 +185,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     public String getAbsoluteUrl() {
-        return getOwner().getAbsoluteUrl() + getUrlName();
+        return new JenkinsFacade().getAbsoluteUrl(getOwner().getUrl(), getUrlName());
     }
 
     @Override

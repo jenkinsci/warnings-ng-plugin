@@ -5,7 +5,7 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>1.5.1</version>
+    <version>1.6.0</version>
     <relativePath/>
   </parent>
 
@@ -16,7 +16,7 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.235.1</jenkins.version>
+    <jenkins.version> 2.249.3</jenkins.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -104,11 +104,12 @@
               <environmentVariables>
                 <PLUGINS_DIR>../plugin/target/test-classes/test-dependencies</PLUGINS_DIR>
                 <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
-                <BROWSER>chrome</BROWSER>
+                <BROWSER>firefox</BROWSER>
               </environmentVariables>
               <rerunFailingTestsCount>1</rerunFailingTestsCount>
               <includes>
-                <include>**/SmokeTests.java</include>
+                <include>**/*Tests.java</include>
+                <include>**/*Test.java</include>
               </includes>
             </configuration>
           </plugin>
