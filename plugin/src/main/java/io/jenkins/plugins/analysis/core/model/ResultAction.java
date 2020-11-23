@@ -185,7 +185,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     public String getAbsoluteUrl() {
-        return new JenkinsFacade().getAbsoluteUrl(getOwner().getUrl(), getUrlName());
+        return new JenkinsFacade().getAbsoluteUrl(StringUtils.removeEnd(getOwner().getUrl(), "/"), getUrlName());
     }
 
     @Override
