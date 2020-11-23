@@ -102,6 +102,22 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
+     * Runs a pipeline and verifies that blames are skipped.
+     */
+    @Test
+    public void shouldSkipBlaming() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("checkstyle1.xml");
+
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         recordIssues forensicsDisabled: true, skipBlames: true, tool: checkStyle(pattern: '**/" + "checkstyle1" + "*')\n"
+                + "  }\n"
+                + "}", true));
+        Run<?, ?> baseline = buildSuccessfully(job);
+        assertThat(getConsoleLog(baseline)).contains("Skipping SCM blames as requested");
+    }
+
+    /**
      * Runs a pipeline and verifies the {@code publishIssues} step has whitelisted methods.
      */
     @Test
