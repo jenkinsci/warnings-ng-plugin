@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
@@ -38,7 +39,6 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     private DockerContainerHolder<GitContainer> gitServer;
 
     private static final String USERNAME = "gitplugin";
-    private GitContainer container;
     private String repoUrl;
     private String host;
     private int port;
@@ -104,287 +104,296 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     /** Initialize a Git repository that will be used by all tests. */
     @Before
     public void initGitRepository() {
-        container = gitServer.get();
-        repoUrl = container.getRepoUrl();
-        host = container.host();
-        port = container.port();
+        repoUrl = gitServer.get().getRepoUrl();
+        host = gitServer.get().host();
+        port = gitServer.get().port();
     }
 
     /** Verifies that freestyle jobs will correctly blame issues. */
     @Test
-    public void shouldBlameOneIssueWithFreestyle() {
-        GitRepo repo = setupInitialGitRepository();
-        repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
-        String commitId = repo.getLastSha1();
-        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins", "commit");
+    public void shouldBlameOneIssueWithFreestyle() throws IOException {
+        try (GitRepo repo = setupInitialGitRepository()) {
+            repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
+            String commitId = repo.getLastSha1();
+            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
+                    "commit");
 
-        Build build = generateFreeStyleJob(repo);
-        build.open();
+            Build build = generateFreeStyleJob(repo);
+            build.open();
 
-        AnalysisSummary blame = new AnalysisSummary(build, "java");
-        AnalysisResult resultPage = blame.openOverallResult();
-        BlamesTable blamesTable = resultPage.openBlamesTable();
-        BlamesTableRow row = blamesTable.getRowAs(0, BlamesTableRow.class);
+            AnalysisSummary blame = new AnalysisSummary(build, "java");
+            AnalysisResult resultPage = blame.openOverallResult();
+            BlamesTable blamesTable = resultPage.openBlamesTable();
+            BlamesTableRow row = blamesTable.getRowAs(0, BlamesTableRow.class);
 
-        assertThat(blamesTable.getTableRows()).hasSize(1);
-        assertColumnHeader(blamesTable);
-        assertColumnsOfTest(row, commitId);
+            assertThat(blamesTable.getTableRows()).hasSize(1);
+            assertColumnHeader(blamesTable);
+            assertColumnsOfTest(row, commitId);
+        }
     }
 
     /** Verifies that pipelines will correctly blame issues. */
     @Test
-    public void shouldBlameElevenIssuesWithPipeline() {
-        GitRepo repo = new GitRepo();
-        Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
-        repo.changeAndCommitFile("Jenkinsfile", "node {\n"
-                + "  stage ('Checkout') {\n"
-                + "    checkout scm\n"
-                + "  }\n"
-                + "  stage ('Build and Analysis') {"
-                + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
-                + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
-                + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
-                + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
-                + "    discoverGitReferenceBuild()\n"
-                + "    mineRepository()\n"
-                + "    recordIssues tools: [java()]\n"
-                + "  }\n"
-                + "}", "commit");
+    public void shouldBlameElevenIssuesWithPipeline() throws IOException {
+        try (GitRepo repo = new GitRepo()) {
+            Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
+            repo.changeAndCommitFile("Jenkinsfile", "node {\n"
+                    + "  stage ('Checkout') {\n"
+                    + "    checkout scm\n"
+                    + "  }\n"
+                    + "  stage ('Build and Analysis') {"
+                    + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
+                    + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
+                    + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
+                    + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
+                    + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
+                    + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
+                    + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
+                    + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
+                    + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
+                    + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
+                    + "    discoverGitReferenceBuild()\n"
+                    + "    mineRepository()\n"
+                    + "    recordIssues tools: [java()]\n"
+                    + "  }\n"
+                    + "}", "commit");
 
-        Build build = generateWorkflowJob(repo);
-        build.open();
+            Build build = generateWorkflowJob(repo);
+            build.open();
 
-        AnalysisSummary blame = new AnalysisSummary(build, "java");
-        AnalysisResult resultPage = blame.openOverallResult();
-        BlamesTable blamesTable = resultPage.openBlamesTable();
+            AnalysisSummary blame = new AnalysisSummary(build, "java");
+            AnalysisResult resultPage = blame.openOverallResult();
+            BlamesTable blamesTable = resultPage.openBlamesTable();
 
-        assertThat(blamesTable.getTableRows()).hasSize(10);
-        assertColumnHeader(blamesTable);
-        assertElevenIssues(commits, blamesTable);
+            assertThat(blamesTable.getTableRows()).hasSize(10);
+            assertColumnHeader(blamesTable);
+            assertElevenIssues(commits, blamesTable);
+        }
     }
 
     /**
      * Verifies that freestyle jobs will correctly blame issues. This test handles multiple issue pages.
      */
     @Test
-    public void shouldBlameElevenIssuesWithFreestyle() {
-        GitRepo repo = new GitRepo();
-        Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
-        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
-                        + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
-                        + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
-                        + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins",
-                "commit");
+    public void shouldBlameElevenIssuesWithFreestyle() throws IOException {
+        try (GitRepo repo = new GitRepo()) {
+            Map<String, String> commits = commitDifferentFilesToGitRepository(repo);
+            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
+                            + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
+                            + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
+                            + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
+                            + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
+                            + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
+                            + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
+                            + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
+                            + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
+                            + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins",
+                    "commit");
 
-        Build build = generateFreeStyleJob(repo);
-        build.open();
+            Build build = generateFreeStyleJob(repo);
+            build.open();
 
-        AnalysisSummary blame = new AnalysisSummary(build, "java");
-        AnalysisResult resultPage = blame.openOverallResult();
-        BlamesTable blamesTable = resultPage.openBlamesTable();
+            AnalysisSummary blame = new AnalysisSummary(build, "java");
+            AnalysisResult resultPage = blame.openOverallResult();
+            BlamesTable blamesTable = resultPage.openBlamesTable();
 
-        assertThat(blamesTable.getTableRows()).hasSize(10);
-        assertColumnHeader(blamesTable);
-        assertElevenIssues(commits, blamesTable);
+            assertThat(blamesTable.getTableRows()).hasSize(10);
+            assertColumnHeader(blamesTable);
+            assertElevenIssues(commits, blamesTable);
+        }
     }
 
     /** Test if blaming works on a build out of tree. See JENKINS-57260. */
     @Test
     @Issue("JENKINS-57260")
     // TODO: forensics is not yet working, see JENKINS-64280 for details
-    public void shouldBlameWithBuildOutOfTree() {
-        GitRepo repo = setupInitialGitRepository();
-        repo.changeAndCommitFile("Test.h", "#ifdef \"", "commit");
+    public void shouldBlameWithBuildOutOfTree() throws IOException {
+        try (GitRepo repo = setupInitialGitRepository()) {
+            repo.changeAndCommitFile("Test.h", "#ifdef \"", "commit");
 
-        String firstCommit = repo.getLastSha1();
+            String firstCommit = repo.getLastSha1();
 
-        repo.changeAndCommitFile("Jenkinsfile", "pipeline {\n"
-                + "  agent any\n"
-                + "  options {\n"
-                + "    skipDefaultCheckout()\n"
-                + "  }\n"
-                + "  stages {\n"
-                + "    stage('Prepare') {\n"
-                + "      steps {\n"
-                + "        dir('source') {\n"
-                + "          checkout scm\n"
-                + "        }\n"
-                + "      }\n"
-                + "    }\n"
-                + "    stage('Doxygen') {\n"
-                + "      steps {\n"
-                + "        dir('build/doxygen') {\n"
-                + "          echo 'Test.h:1: Error: Unexpected character'\n"
-                + "        }\n"
-                + "        discoverGitReferenceBuild()\n"
-                + "        mineRepository()\n"
-                + "        recordIssues(aggregatingResults: true, "
-                + "             enabledForFailure: true, "
-                + "             tool: doxygen(name: 'Doxygen'), "
-                + "             sourceDirectory: 'source'"
-                + "        )\n"
-                + "      }\n"
-                + "    }\n"
-                + "  }\n"
-                + "}", "commit");
+            repo.changeAndCommitFile("Jenkinsfile", "pipeline {\n"
+                    + "  agent any\n"
+                    + "  options {\n"
+                    + "    skipDefaultCheckout()\n"
+                    + "  }\n"
+                    + "  stages {\n"
+                    + "    stage('Prepare') {\n"
+                    + "      steps {\n"
+                    + "        dir('source') {\n"
+                    + "          checkout scm\n"
+                    + "        }\n"
+                    + "      }\n"
+                    + "    }\n"
+                    + "    stage('Doxygen') {\n"
+                    + "      steps {\n"
+                    + "        dir('build/doxygen') {\n"
+                    + "          echo 'Test.h:1: Error: Unexpected character'\n"
+                    + "        }\n"
+                    + "        discoverGitReferenceBuild()\n"
+                    + "        mineRepository()\n"
+                    + "        recordIssues(aggregatingResults: true, "
+                    + "             enabledForFailure: true, "
+                    + "             tool: doxygen(name: 'Doxygen'), "
+                    + "             sourceDirectory: 'source'"
+                    + "        )\n"
+                    + "      }\n"
+                    + "    }\n"
+                    + "  }\n"
+                    + "}", "commit");
 
-        Build build = generateWorkflowJob(repo);
-        build.open();
+            Build build = generateWorkflowJob(repo);
+            build.open();
 
-        AnalysisSummary blame = new AnalysisSummary(build, "doxygen");
-        AnalysisResult resultPage = blame.openOverallResult();
-        BlamesTable blamesTable = resultPage.openBlamesTable();
+            AnalysisSummary blame = new AnalysisSummary(build, "doxygen");
+            AnalysisResult resultPage = blame.openOverallResult();
+            BlamesTable blamesTable = resultPage.openBlamesTable();
 
-        assertColumnHeader(blamesTable);
-        assertThat(blamesTable.getTableRows()).hasSize(1);
-        BlamesTableRow row = blamesTable.getRowAs(0, BlamesTableRow.class);
+            assertColumnHeader(blamesTable);
+            assertThat(blamesTable.getTableRows()).hasSize(1);
+            BlamesTableRow row = blamesTable.getRowAs(0, BlamesTableRow.class);
 
-        assertThat(row.getAuthor()).isEqualTo("Git SampleRepoRule");
-        assertThat(row.getEmail()).isEqualTo("gits@mplereporule");
-        assertThat(row.getFileName()).isEqualTo("Test.h");
-        assertThat(row.getCommit()).isEqualTo(renderCommit(firstCommit));
+            assertThat(row.getAuthor()).isEqualTo("Git SampleRepoRule");
+            assertThat(row.getEmail()).isEqualTo("gits@mplereporule");
+            assertThat(row.getFileName()).isEqualTo("Test.h");
+            assertThat(row.getCommit()).isEqualTo(renderCommit(firstCommit));
+        }
     }
 
     /** Verifies that freestyle jobs will correctly show Git forensics statistics. */
     @Test
-    public void shouldShowGitForensicsOneIssue() {
-        GitRepo repo = setupInitialGitRepository();
-        repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
-        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
-                "commit");
+    public void shouldShowGitForensicsOneIssue() throws IOException {
+        try (GitRepo repo = setupInitialGitRepository()) {
+            repo.changeAndCommitFile("Test.java", "public class Test {}", "commit");
+            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins",
+                    "commit");
 
-        Build build = generateFreeStyleJob(repo);
-        build.open();
+            Build build = generateFreeStyleJob(repo);
+            build.open();
 
-        AnalysisSummary summary = new AnalysisSummary(build, "java");
-        AnalysisResult result = summary.openOverallResult();
-        ForensicsTable forensicsTable = result.openForensicsTable();
-        ForensicsTableRow row = forensicsTable.getRowAs(0, ForensicsTableRow.class);
-        assertThat(forensicsTable.getTableRows()).hasSize(1);
+            AnalysisSummary summary = new AnalysisSummary(build, "java");
+            AnalysisResult result = summary.openOverallResult();
+            ForensicsTable forensicsTable = result.openForensicsTable();
+            ForensicsTableRow row = forensicsTable.getRowAs(0, ForensicsTableRow.class);
+            assertThat(forensicsTable.getTableRows()).hasSize(1);
 
-        verifyForensicsTableModel(forensicsTable);
-        assertColumnsOfRow(row, "Test.java", 1, 1);
+            verifyForensicsTableModel(forensicsTable);
+            assertColumnsOfRow(row, "Test.java", 1, 1);
+        }
     }
 
     /** Verifies that pipelines will correctly show Git forensics statistics. */
     @Test
-    public void shouldShowGitForensicsMultipleIssuesWithPipeline() {
-        GitRepo repo = new GitRepo();
-        commitDifferentFilesToGitRepository(repo);
-        repo.changeAndCommitFile("Jenkinsfile", "node {\n"
-                        + "  stage ('Checkout') {\n"
-                        + "    checkout scm\n"
-                        + "  }\n"
-                        + "  stage ('Build and Analysis') {"
-                        + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
-                        + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
-                        + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
-                        + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
-                        + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
-                        + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
-                        + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
-                        + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
-                        + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
-                        + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
-                        + "    discoverGitReferenceBuild()\n"
-                        + "    mineRepository()\n"
-                        + "    recordIssues tools: [java()]\n"
-                        + "  }\n"
-                        + "}",
-                "commit"
-        );
+    public void shouldShowGitForensicsMultipleIssuesWithPipeline() throws IOException {
+        try (GitRepo repo = new GitRepo()) {
+            commitDifferentFilesToGitRepository(repo);
+            repo.changeAndCommitFile("Jenkinsfile", "node {\n"
+                            + "  stage ('Checkout') {\n"
+                            + "    checkout scm\n"
+                            + "  }\n"
+                            + "  stage ('Build and Analysis') {"
+                            + "    echo '[javac] Test.java:1: warning: Test Warning for Jenkins'\n"
+                            + "    echo '[javac] Test.java:2: warning: Test Warning for Jenkins'\n"
+                            + "    echo '[javac] Test.java:3: warning: Test Warning for Jenkins'\n"
+                            + "    echo '[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins'\n"
+                            + "    echo '[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins'\n"
+                            + "    echo '[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins'\n"
+                            + "    echo '[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins'\n"
+                            + "    echo '[javac] Bob.java:1: warning: Bobs Warning for Jenkins'\n"
+                            + "    echo '[javac] Bob.java:2: warning: Bobs Warning for Jenkins'\n"
+                            + "    echo '[javac] Bob.java:3: warning: Bobs Warning for Jenkins'\n"
+                            + "    discoverGitReferenceBuild()\n"
+                            + "    mineRepository()\n"
+                            + "    recordIssues tools: [java()]\n"
+                            + "  }\n"
+                            + "}",
+                    "commit"
+            );
+            Build build = generateWorkflowJob(repo);
+            build.open();
 
-        Build build = generateWorkflowJob(repo);
-        build.open();
+            AnalysisSummary summary = new AnalysisSummary(build, "java");
+            AnalysisResult result = summary.openOverallResult();
+            ForensicsTable forensicsTable = result.openForensicsTable();
+            assertThat(forensicsTable.getTableRows()).hasSize(10);
 
-        AnalysisSummary summary = new AnalysisSummary(build, "java");
-        AnalysisResult result = summary.openOverallResult();
-        ForensicsTable forensicsTable = result.openForensicsTable();
-        assertThat(forensicsTable.getTableRows()).hasSize(10);
-
-        verifyForensicsTableModel(forensicsTable);
-        assertMultipleIssuesAndAuthors(forensicsTable, 1, 1);
+            verifyForensicsTableModel(forensicsTable);
+            assertMultipleIssuesAndAuthors(forensicsTable, 1, 1);
+        }
     }
 
     /**
-     * Verifies that freestyle jobs will correctly show Git forensics statistics. This test handles multiple issue pages.
+     * Verifies that freestyle jobs will correctly show Git forensics statistics. This test handles multiple issue
+     * pages.
      */
     @Test
-    public void shouldShowGitForensicsMultipleIssuesWithFreestyle() {
-        GitRepo repo = new GitRepo();
-        commitDifferentFilesToGitRepository(repo);
-        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
-                + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
-                + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
-                + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
-                + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
-                + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
-                + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
-                + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
-                + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins", "commit");
+    public void shouldShowGitForensicsMultipleIssuesWithFreestyle() throws IOException {
+        try (GitRepo repo = new GitRepo()) {
+            commitDifferentFilesToGitRepository(repo);
+            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
+                    + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
+                    + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
+                    + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
+                    + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
+                    + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
+                    + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
+                    + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
+                    + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
+                    + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins", "commit");
 
-        Build build = generateFreeStyleJob(repo);
-        build.open();
+            Build build = generateFreeStyleJob(repo);
+            build.open();
 
-        AnalysisSummary summary = new AnalysisSummary(build, "java");
-        AnalysisResult result = summary.openOverallResult();
+            AnalysisSummary summary = new AnalysisSummary(build, "java");
+            AnalysisResult result = summary.openOverallResult();
 
-        ForensicsTable forensicsTable = result.openForensicsTable();
-        assertThat(forensicsTable.getTableRows()).hasSize(10);
+            ForensicsTable forensicsTable = result.openForensicsTable();
+            assertThat(forensicsTable.getTableRows()).hasSize(10);
 
-        verifyForensicsTableModel(forensicsTable);
-        assertMultipleIssuesAndAuthors(forensicsTable, 1, 1);
+            verifyForensicsTableModel(forensicsTable);
+            assertMultipleIssuesAndAuthors(forensicsTable, 1, 1);
+        }
     }
 
     /**
-     * Verifies that freestyle jobs will correctly show Git forensics statistics. This test handles multiple commits and authors.
+     * Verifies that freestyle jobs will correctly show Git forensics statistics. This test handles multiple commits and
+     * authors.
      */
     @Test
-    public void shouldShowGitForensicsMultipleIssuesWithMultipleCommitsAndAuthors() {
-        GitRepo repo = new GitRepo();
-        commitDifferentFilesToGitRepository(repo);
-        repo.setIdentity("Alice Miller", "alice@miller");
-        repo.changeAndCommitFile("LoremIpsum.java", "public class LoremIpsum {\n"
-                + "    public LoremIpsum() {\n"
-                + "        Log.log(\"Lorem ipsum dolor sit amet\");"
-                + "    }\n"
-                + "}", "commit");
-        repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
-                        + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
-                        + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
-                        + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
-                        + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
-                        + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins",
-                "commit");
+    public void shouldShowGitForensicsMultipleIssuesWithMultipleCommitsAndAuthors() throws IOException {
+        try (GitRepo repo = new GitRepo()) {
+            commitDifferentFilesToGitRepository(repo);
+            repo.setIdentity("Alice Miller", "alice@miller");
+            repo.changeAndCommitFile("LoremIpsum.java", "public class LoremIpsum {\n"
+                    + "    public LoremIpsum() {\n"
+                    + "        Log.log(\"Lorem ipsum dolor sit amet\");"
+                    + "    }\n"
+                    + "}", "commit");
+            repo.changeAndCommitFile("warnings.txt", "[javac] Test.java:1: warning: Test Warning for Jenkins\n"
+                            + "[javac] Test.java:2: warning: Test Warning for Jenkins\n"
+                            + "[javac] Test.java:3: warning: Test Warning for Jenkins\n"
+                            + "[javac] LoremIpsum.java:1: warning: Another Warning for Jenkins\n"
+                            + "[javac] LoremIpsum.java:2: warning: Another Warning for Jenkins\n"
+                            + "[javac] LoremIpsum.java:3: warning: Another Warning for Jenkins\n"
+                            + "[javac] LoremIpsum.java:4: warning: Another Warning for Jenkins\n"
+                            + "[javac] Bob.java:1: warning: Bobs Warning for Jenkins\n"
+                            + "[javac] Bob.java:2: warning: Bobs Warning for Jenkins\n"
+                            + "[javac] Bob.java:3: warning: Bobs Warning for Jenkins",
+                    "commit");
 
-        Build build = generateFreeStyleJob(repo);
-        build.open();
+            Build build = generateFreeStyleJob(repo);
+            build.open();
 
-        AnalysisSummary summary = new AnalysisSummary(build, "java");
-        AnalysisResult result = summary.openOverallResult();
+            AnalysisSummary summary = new AnalysisSummary(build, "java");
+            AnalysisResult result = summary.openOverallResult();
 
-        ForensicsTable forensicsTable = result.openForensicsTable();
-        assertThat(forensicsTable.getTableRows()).hasSize(10);
+            ForensicsTable forensicsTable = result.openForensicsTable();
+            assertThat(forensicsTable.getTableRows()).hasSize(10);
 
-        verifyForensicsTableModel(forensicsTable);
-        assertMultipleIssuesAndAuthors(forensicsTable, 2, 2);
+            verifyForensicsTableModel(forensicsTable);
+            assertMultipleIssuesAndAuthors(forensicsTable, 2, 2);
+        }
     }
 
     private void verifyForensicsTableModel(final ForensicsTable forensicsTable) {

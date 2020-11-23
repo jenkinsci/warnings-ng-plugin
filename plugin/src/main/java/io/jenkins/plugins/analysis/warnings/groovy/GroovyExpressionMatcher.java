@@ -10,6 +10,7 @@ import org.codehaus.groovy.control.CompilationFailedException;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -62,6 +63,7 @@ class GroovyExpressionMatcher implements Serializable {
      * @throws CompilationFailedException
      *         if the script contains compile errors
      */
+    @SuppressFBWarnings("GROOVY_SHELL")
     public Script compile() throws CompilationFailedException {
         Binding binding = new Binding();
         GroovyShell shell = new GroovyShell(GroovyExpressionMatcher.class.getClassLoader(), binding);
