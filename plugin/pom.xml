@@ -29,7 +29,7 @@
 
     <analysis-model-api.version>9.3.2</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.8.0-rc710.f9a5c103b329</forensics-api-plugin.version>
+    <forensics-api-plugin.version>0.8.0-rc719.d6b007b88023</forensics-api-plugin.version>
     <plugin-util-api.version>1.4.0</plugin-util-api.version>
 
     <font-awesome-api.version>5.15.1-1</font-awesome-api.version>
@@ -375,12 +375,6 @@
       <artifactId>xmlunit-assertj</artifactId>
       <version>${xmlunit.version}</version>
       <scope>test</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>net.bytebuddy</groupId>
-          <artifactId>byte-buddy</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -595,9 +589,7 @@
             <configuration>
               <rules>
                 <requireUpperBoundDeps>
-                  <excludes combine.children="append">
-                    <exclude>commons-beanutils:commons-beanutils</exclude>
-                  </excludes>
+                  <level>WARN</level>
                 </requireUpperBoundDeps>
               </rules>
             </configuration>

@@ -28,6 +28,8 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * <li>total number of commits</li>
  * <li>time of last commit</li>
  * <li>time of first commit</li>
+ * <li>lines of code</li>
+ * <li>code churn</li>
  * </ul>
  *
  * @author Ullrich Hafner
@@ -72,6 +74,8 @@ public class ForensicsModel extends DetailsTableModel {
         columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedAt")
                 .setWidth(2)
                 .setHeaderClass(ColumnCss.DATE));
+        columns.add(new TableColumn(Messages.Table_Column_LOC(), "linesOfCode"));
+        columns.add(new TableColumn(Messages.Table_Column_Churn(), "churn"));
 
         return columns;
     }
@@ -86,12 +90,16 @@ public class ForensicsModel extends DetailsTableModel {
             row.setCommitsSize(String.valueOf(result.getNumberOfCommits()));
             row.setModifiedAt(result.getLastModificationTime());
             row.setAddedAt(result.getCreationTime());
+            row.setLinesOfCode(result.getLinesOfCode());
+            row.setChurn(result.getAbsoluteChurn());
         }
         else {
             row.setAuthorsSize(UNDEFINED);
             row.setCommitsSize(UNDEFINED);
             row.setModifiedAt(0);
             row.setAddedAt(0);
+            row.setLinesOfCode(0);
+            row.setChurn(0);
         }
         return row;
     }
@@ -105,6 +113,8 @@ public class ForensicsModel extends DetailsTableModel {
         private String commitsSize;
         private int modifiedAt;
         private int addedAt;
+        private int linesOfCode;
+        private int churn;
 
         ForensicsRow(final AgeBuilder ageBuilder, final FileNameRenderer fileNameRenderer,
                 final DescriptionProvider descriptionProvider, final Issue issue, final JenkinsFacade jenkinsFacade) {
@@ -141,6 +151,22 @@ public class ForensicsModel extends DetailsTableModel {
 
         void setAddedAt(final int addedAt) {
             this.addedAt = addedAt;
+        }
+
+        public int getLinesOfCode() {
+            return linesOfCode;
+        }
+
+        public void setLinesOfCode(final int linesOfCode) {
+            this.linesOfCode = linesOfCode;
+        }
+
+        public int getChurn() {
+            return churn;
+        }
+
+        public void setChurn(final int churn) {
+            this.churn = churn;
         }
     }
 }
