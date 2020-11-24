@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.jvnet.hudson.test.Issue;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.docker.DockerContainerHolder;
 import org.jenkinsci.test.acceptance.docker.fixtures.GitContainer;
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
@@ -102,11 +104,12 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     }
 
     /** Initialize a Git repository that will be used by all tests. */
-    @Before
+    @Before @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
     public void initGitRepository() {
-        repoUrl = gitServer.get().getRepoUrl();
-        host = gitServer.get().host();
-        port = gitServer.get().port();
+        GitContainer gitContainer = gitServer.get();
+        repoUrl = gitContainer.getRepoUrl();
+        host = gitContainer.host();
+        port = gitContainer.port();
     }
 
     /** Verifies that freestyle jobs will correctly blame issues. */
