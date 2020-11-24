@@ -117,6 +117,7 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
 
     /** Dispose the docker container. */
     @After
+    @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
     public void disposeContainer() {
         gitServer.get().close();
     }
