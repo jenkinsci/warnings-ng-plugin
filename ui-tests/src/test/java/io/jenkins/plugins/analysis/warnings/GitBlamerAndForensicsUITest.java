@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -104,12 +105,20 @@ public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
     }
 
     /** Initialize a Git repository that will be used by all tests. */
-    @Before @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
+    @Before
+    @SuppressFBWarnings("BC_UNCONFIRMED_CAST_OF_RETURN_VALUE")
+    @SuppressWarnings("PMD.CloseResource")
     public void initGitRepository() {
         GitContainer gitContainer = gitServer.get();
         repoUrl = gitContainer.getRepoUrl();
         host = gitContainer.host();
         port = gitContainer.port();
+    }
+
+    /** Dispose the docker container. */
+    @After
+    public void disposeContainer() {
+        gitServer.get().close();
     }
 
     /** Verifies that freestyle jobs will correctly blame issues. */
