@@ -231,7 +231,11 @@ class IssuesPublisher {
     private Run<?, ?> findReference(final Report issues) {
         ReferenceFinder referenceFinder = new ReferenceFinder();
         FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
-        Run<?, ?> reference = referenceFinder.findReference(this.run, log).orElse(this.run);
+        Run<?, ?> reference = referenceFinder.findReference(run, log)
+                .orElseGet(() -> {
+                    log.logInfo("Obtaining reference build from this job (%s)", run.getParent());
+                    return this.run;
+                });
         log.getInfoMessages().forEach(issues::logInfo);
         log.getErrorMessages().forEach(issues::logError);
         return reference;
