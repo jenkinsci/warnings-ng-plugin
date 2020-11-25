@@ -82,7 +82,7 @@
     <scm-api.version>2.6.3</scm-api.version>
 
     <!-- Maven Surefire ArgLine -->
-    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=480</argLine>
+    <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
 
     <useBeta>true</useBeta>
   </properties>
