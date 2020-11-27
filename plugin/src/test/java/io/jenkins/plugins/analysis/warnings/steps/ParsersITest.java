@@ -902,6 +902,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(112, new Clair(), "clair.json");
     }
 
+    /** Runs the OTDockerLint parser on an output file that contains 5 issues. */
+    @Test
+    public void shouldFindAllOTDockerLintIssues() {
+        shouldFindIssuesOfTool(3, new OTDockerLint(), "ot-docker-linter.json");
+    }
+
     /** Runs the Brakeman parser on an output file that contains 32 issues. */
     @Test
     public void shouldFindAllBrakemanIssues() {
