@@ -30,6 +30,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
@@ -183,6 +184,7 @@ public final class AxivionSuite extends Tool {
          *
          * @return {@link FormValidation#ok()} is a valid url
          */
+        @POST
         public FormValidation doCheckProjectUrl(@QueryParameter final String projectUrl) {
             try {
                 new URL(projectUrl).toURI();
@@ -202,6 +204,7 @@ public final class AxivionSuite extends Tool {
          * @return {@link FormValidation#ok()} is a valid url
          */
         @SuppressFBWarnings("PATH_TRAVERSAL_IN")
+        @POST
         public FormValidation doCheckBasedir(@QueryParameter final String basedir) {
             try {
                 if (!basedir.contains("$")) {
@@ -225,6 +228,7 @@ public final class AxivionSuite extends Tool {
          *
          * @return {@link FormValidation#ok()} if credentials exist and are valid
          */
+        @POST
         public FormValidation doCheckCredentialsId(
                 @AncestorInPath final Item item, @QueryParameter final String credentialsId) {
             if (StringUtils.isBlank(credentialsId)) {

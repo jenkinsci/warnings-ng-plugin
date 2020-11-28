@@ -17,6 +17,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
@@ -1198,6 +1199,7 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckId(@QueryParameter final String id) {
             return model.validateId(id);
         }
@@ -1221,27 +1223,6 @@ public class IssuesRecorder extends Recorder {
         }
 
         /**
-         * Returns the model with the possible reference jobs.
-         *
-         * @return the model with the possible reference jobs
-         */
-        public ComboBoxModel doFillReferenceJobNameItems() {
-            return model.getAllJobs();
-        }
-
-        /**
-         * Performs on-the-fly validation of the reference job.
-         *
-         * @param referenceJobName
-         *         the reference job
-         *
-         * @return the validation result
-         */
-        public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
-            return model.validateJob(referenceJobName);
-        }
-
-        /**
          * Performs on-the-fly validation of the character encoding.
          *
          * @param reportEncoding
@@ -1249,6 +1230,7 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
             return model.validateCharset(reportEncoding);
         }
@@ -1261,6 +1243,7 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
             return model.validateCharset(sourceCodeEncoding);
         }
@@ -1312,6 +1295,7 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String sourceDirectory) {
             return model.doCheckSourceDirectory(project, sourceDirectory);

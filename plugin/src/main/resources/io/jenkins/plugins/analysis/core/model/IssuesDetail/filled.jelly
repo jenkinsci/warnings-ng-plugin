@@ -1,6 +1,28 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:issues="/issues" xmlns:dt="/data-tables" xmlns:c="/charts" xmlns:bs="/bootstrap">
 
+  <div class="row">
+    <div class="col">
+      One
+    </div>
+    <div class="col">
+      Two
+    </div>
+    <div class="col">
+      Three
+    </div>
+  </div>
+  <div class="row">
+    <div class="col">
+      Content 1
+    </div>
+    <div class="col">
+      Content 2
+    </div>
+    <div class="col">
+      Content 3
+    </div>
+  </div>
   <div class="row py-3">
 
     <!-- A carousel with all pie charts on small screens -->

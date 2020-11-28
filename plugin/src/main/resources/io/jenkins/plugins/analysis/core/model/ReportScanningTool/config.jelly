@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:i="/issues" xmlns:f="/lib/form">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:i="/issues" xmlns:f="/lib/form" xmlns:c="/controls">
 
   <i:tool-help/>
 
@@ -7,13 +7,13 @@
     <j:when test="${size(descriptor.pattern) > 0}">
       <f:entry title="${%title.pattern}" field="pattern"
                description="${%description.overridePattern(descriptor.pattern)}">
-        <f:textbox/>
+        <c:safe-textbox/>
       </f:entry>
     </j:when>
     <j:otherwise>
       <f:entry title="${%title.pattern}" field="pattern"
                description="${%description.consoleOrPattern}">
-        <f:textbox/>
+        <c:safe-textbox/>
       </f:entry>
     </j:otherwise>
   </j:choose>
@@ -24,7 +24,7 @@
 
   <f:entry title="${%title.reportEncoding}" field="reportEncoding"
            description="${%description.reportEncoding}">
-    <f:combobox/>
+    <c:safe-combobox/>
   </f:entry>
 
   <st:include class="${descriptor.clazz}" page="local-config.jelly" optional="true"/>

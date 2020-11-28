@@ -1,37 +1,22 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:c="/controls">
 
   <f:entry title="${%Files to scan}" field="includePattern"
            description="${%description.files('http://ant.apache.org/manual/Types/fileset.html')}">
-    <f:textbox/>
+    <c:safe-textbox/>
   </f:entry>
   <f:entry title="${%Files to exclude}" field="excludePattern"
            description="${%description.exclude.files('http://ant.apache.org/manual/Types/fileset.html')}">
-    <f:textbox/>
+    <c:safe-textbox/>
   </f:entry>
-  <f:entry title="${%Tasks tags}" description="${%description.tags}">
-    <table>
-      <thead>
-        <tr>
-          <td width="33%">${%High priority}</td>
-          <td width="33%">${%Normal priority}</td>
-          <td width="33%">${%Low priority}</td>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <f:textbox name="highTags" value="${instance.highTags}"/>
-          </td>
-          <td>
-            <f:textbox name="normalTags" value="${instance.normalTags}"/>
-          </td>
-          <td>
-            <f:textbox name="lowTags" value="${instance.lowTags}"/>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+  <f:entry title="${%High Priority Tasks Tags}" field="highTags">
+    <c:safe-textbox/>
+  </f:entry>
+  <f:entry title="${%Normal Priority Tasks Tags}" field="normalTags">
+    <c:safe-textbox/>
+  </f:entry>
+  <f:entry title="${%Low Priority Tasks Tags}" field="lowTags" description="${%description.tags}">
+    <c:safe-textbox/>
   </f:entry>
   <f:entry title="${%Ignore case}" field="ignoreCase" description="${%description.ignoreCase}">
     <f:checkbox />
@@ -40,7 +25,7 @@
     <f:checkbox />
   </f:entry>
   <f:entry title="${%Test the tags}" field="example" description="${%description.example}">
-    <f:textarea/>
+    <c:safe-textarea/>
   </f:entry>
   
   <i:tool-defaults/>
