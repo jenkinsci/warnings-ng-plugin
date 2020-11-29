@@ -23,7 +23,7 @@ import groovy.lang.Script;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.interceptor.RequirePOST;
+import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
@@ -244,6 +244,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckId(@QueryParameter(required = true) final String id) {
             return new ModelValidation().validateId(id);
         }
@@ -256,6 +257,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckName(@QueryParameter(required = true) final String name) {
             if (StringUtils.isBlank(name)) {
                 return FormValidation.error(Messages.GroovyParser_Error_Name_isEmpty());
@@ -271,6 +273,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckRegexp(@QueryParameter(required = true) final String regexp) {
             try {
                 if (StringUtils.isBlank(regexp)) {
@@ -295,7 +298,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          *
          * @return the validation result
          */
-        @RequirePOST
+        @POST
         public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
             if (isNotAllowedToRunScripts()) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
@@ -333,7 +336,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          *
          * @return the validation result
          */
-        @RequirePOST
+        @POST
         public FormValidation doCheckExample(@QueryParameter final String example,
                 @QueryParameter final String regexp, @QueryParameter final String script) {
             if (isNotAllowedToRunScripts()) {

@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:i="/issues" >
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:c="/controls">
 
   <st:documentation>
     Provides all required input fields to scan for issues.
@@ -12,10 +12,10 @@
   <i:hr title="${%Affected Files}"/>
 
   <f:entry title="${%title.sourceCodeEncoding}" field="sourceCodeEncoding">
-    <f:combobox />
+    <c:safe-combobox/>
   </f:entry>
   <f:entry title="${%title.sourceDirectory}" description="${%description.sourceDirectory}" field="sourceDirectory">
-    <f:textbox />
+    <c:safe-textbox/>
   </f:entry>
 
   <i:hr title="${%Issue filters}"/>

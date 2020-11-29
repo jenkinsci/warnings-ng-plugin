@@ -54,6 +54,9 @@ class PluginArchitectureTest {
     @ArchTest
     static final ArchRule DATA_BOUND_SETTER_MUST_BE_IN_PUBLIC_CLASS = PluginArchitectureRules.DATA_BOUND_SETTER_MUST_BE_IN_PUBLIC_CLASS;
 
+    @ArchTest
+    static final ArchRule USE_POST_FOR_VALIDATION_END_POINTS = PluginArchitectureRules.USE_POST_FOR_VALIDATION_END_POINTS;
+
     /** Digester must not be used directly, rather use a SecureDigester instance. */
     @ArchTest
     static final ArchRule NO_DIGESTER_CONSTRUCTOR_CALLED =

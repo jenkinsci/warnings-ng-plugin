@@ -11,6 +11,7 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.Ensure;
 
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
 import hudson.util.FormValidation;
@@ -64,6 +65,7 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckPattern(@QueryParameter final String pattern) {
             try {
                 if (StringUtils.isBlank(pattern)) {
