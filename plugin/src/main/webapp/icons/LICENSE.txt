@@ -179,3 +179,12 @@ Taken from https://hadolint.github.io/hadolint/img/cat_container.png and rescale
 Usage consent via Github comment at https://github.com/hadolint/hadolint/issues/449#issuecomment-658594755
 
 ------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+
+OT-Dockerlinter icons:
+
+The OT-Dockerlinter icon is referenced from https://github.com/opstree/OT-Dockerlinter/raw/main/static/ot-dockerlinter.svg
+No modification has been made only converted to PNG and resized
+
+------------------------------------------------------------------------------
