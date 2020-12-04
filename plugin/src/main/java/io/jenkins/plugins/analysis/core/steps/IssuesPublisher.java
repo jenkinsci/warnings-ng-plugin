@@ -233,7 +233,7 @@ class IssuesPublisher {
         FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
         Run<?, ?> reference = referenceFinder.findReference(run, log)
                 .orElseGet(() -> {
-                    log.logInfo("Obtaining reference build from this job (%s)", run.getParent());
+                    log.logInfo("Obtaining reference build from same job (%s)", run.getParent().getDisplayName());
                     return this.run;
                 });
         log.getInfoMessages().forEach(issues::logInfo);

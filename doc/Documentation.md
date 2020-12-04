@@ -23,6 +23,7 @@ to a job:
 1. The plugin scans the console log of a Jenkins build or files in the workspace of your job for any kind of issues. 
 There are more than hundred [report formats](../SUPPORTED-FORMATS.md) supported. Among the problems it can detect:
     - errors from your compiler (C, C#, Java, etc.)
+    - failures from your test reports (JUnit, etc.)
     - warnings from a static analysis tool (CheckStyle, StyleCop, SpotBugs, etc.)
     - duplications from a copy-and-paste detector (CPD, Simian, etc.)
     - vulnerabilities
@@ -34,6 +35,8 @@ main build page. From there you can also dive into the details:
     - list of all issues including helpful comments from the reporting tool
     - annotated source code of the affected files
     - trend charts of the issues 
+    - blames that identify the origin (commit, author, etc.) of a warning
+    - forensics that give insight to your SCM history
    
 :exclamation: The plugin does not run the static analysis, it just visualizes the results reported by such tools. 
 You still need to enable and configure the static analysis tool in your build file or Jenkinsfile. 
@@ -305,6 +308,11 @@ One important feature of the Warnings Next Generation plugin is the classificati
 In order to compute this classification, the plugin requires a reference build (baseline). New, fixed, and outstanding
 issues are then computed by comparing the issues in the current build and in the baseline. There are three options that
 control the selection of the reference build. 
+
+Starting with release 8.5.0 the selection of the reference build is delegated to the 
+[Forensics API plugin](https://github.com/jenkinsci/forensics-api-plugin) and the corresponding Git implementation in the
+[Git Forensics plugin](https://github.com/jenkinsci/git-forensics-plugin).
+
 
 ![reference build configuration](images/reference.png) 
 
