@@ -17,6 +17,7 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
@@ -227,6 +228,7 @@ public class OpenTasks extends Tool {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckIncludePattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String includePattern) {
             return model.doCheckPattern(project, includePattern);
@@ -242,6 +244,7 @@ public class OpenTasks extends Tool {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckExcludePattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String excludePattern) {
             return model.doCheckPattern(project, excludePattern);
@@ -266,6 +269,7 @@ public class OpenTasks extends Tool {
          * @return validation result
          */
         @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
+        @POST
         public FormValidation doCheckExample(@QueryParameter final String example,
                 @QueryParameter final String high,
                 @QueryParameter final String normal,

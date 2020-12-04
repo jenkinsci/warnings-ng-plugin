@@ -8,6 +8,7 @@ import edu.hm.hafner.analysis.Report;
 import io.jenkins.plugins.analysis.core.model.BlamesModel.BlamesRow;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileBlame;
+import io.jenkins.plugins.forensics.util.CommitDecorator.NullDecorator;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
@@ -102,6 +103,6 @@ class BlamesModelTest extends AbstractDetailsModelTest {
 
     private BlamesModel createModel(final Report report, final Blames blames) {
         return new BlamesModel(report, blames, createFileNameRenderer(), createAgeBuilder(), issue -> DESCRIPTION,
-                createJenkinsFacade());
+                new NullDecorator(), createJenkinsFacade());
     }
 }

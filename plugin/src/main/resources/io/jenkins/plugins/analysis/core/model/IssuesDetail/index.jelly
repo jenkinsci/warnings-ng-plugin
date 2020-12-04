@@ -1,45 +1,33 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:bs="/bootstrap">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap">
 
   <st:header name="Content-Type" value="text/html;charset=UTF-8"/>
 
-  <bs:layout title="${it.displayName}" norefresh="true">
+  <bs:page it="${it}">
 
-    <st:include it="${it.owner}" page="sidepanel.jelly"/>
+    <st:adjunct includes="io.jenkins.plugins.echarts"/>
+    <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
-    <l:main-panel>
+    <j:set var="i" value="${it.issues}"/>
 
-      <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
-      <st:adjunct includes="io.jenkins.plugins.echarts"/>
-      <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+    <j:choose>
+      <j:when test="${i.isNotEmpty()}">
 
-      <div class="fluid-container">
+        <st:include page="filled.jelly"/>
 
-        <j:set var="i" value="${it.issues}"/>
+      </j:when>
+      <j:otherwise>
 
-        <h3>${it.displayName}</h3>
+        <st:include page="empty.jelly"/>
 
-        <j:choose>
-          <j:when test="${i.isNotEmpty()}">
+      </j:otherwise>
 
-            <st:include page="filled.jelly"/>
+    </j:choose>
 
-          </j:when>
-          <j:otherwise>
+    <script>var view =<st:bind value="${it}"/></script>
 
-            <st:include page="empty.jelly"/>
+    <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
 
-          </j:otherwise>
-
-        </j:choose>
-      </div>
-
-      <script>var view = <st:bind value="${it}"/></script>
-
-      <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-detail.js"/>
-
-    </l:main-panel>
-
-  </bs:layout>
+  </bs:page>
 
 </j:jelly>

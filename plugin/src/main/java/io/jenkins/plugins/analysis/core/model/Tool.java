@@ -11,6 +11,7 @@ import edu.hm.hafner.analysis.Report;
 
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
@@ -169,6 +170,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckId(@QueryParameter final String id) {
             return model.validateId(id);
         }

@@ -23,7 +23,7 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.Build;
 import edu.hm.hafner.util.VisibleForTesting;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.jenkinsci.plugins.scriptsecurity.sandbox.whitelists.Whitelisted;
@@ -75,27 +75,27 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     /**
      * All outstanding issues: i.e. all issues, that are part of the current and reference report.
      */
-    @Nullable
+    @CheckForNull
     private transient WeakReference<Report> outstandingIssuesReference;
     /**
      * All new issues: i.e. all issues, that are part of the current report but have not been shown up in the reference
      * report.
      */
-    @Nullable
+    @CheckForNull
     private transient WeakReference<Report> newIssuesReference;
     /**
      * All fixed issues: i.e. all issues, that are part of the reference report but are not present in the current
      * report anymore.
      */
-    @Nullable
+    @CheckForNull
     private transient WeakReference<Report> fixedIssuesReference;
 
     /** All SCM blames. Provides a mapping of file names to SCM commit information like author, email or commit ID. */
-    @Nullable
+    @CheckForNull
     private transient WeakReference<Blames> blamesReference;
 
     /** Statistics for all files. Provides a mapping of file names to SCM statistics like #authors, #commits, etc. */
-    @Nullable
+    @CheckForNull
     private transient WeakReference<RepositoryStatistics> repositoryStatistics;
 
     /** Determines since which build we have zero warnings. */

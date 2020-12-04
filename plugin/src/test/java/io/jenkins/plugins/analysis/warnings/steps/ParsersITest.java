@@ -884,22 +884,34 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(10, new ProtoLint(), "protolint.txt");
     }
 
-    /** Runs the HadoLint parser on an output file that contains 10 issues. */
+    /** Runs the HadoLint parser on an output file that contains 5 issues. */
     @Test
     public void shouldFindAllHadoLintIssues() {
         shouldFindIssuesOfTool(5, new HadoLint(), "hadolint.json");
     }
 
-    /** Runs the DockerLint parser on an output file that contains 10 issues. */
+    /** Runs the DockerLint parser on an output file that contains 3 issues. */
     @Test
     public void shouldFindAllDockerLintIssues() {
         shouldFindIssuesOfTool(3, new DockerLint(), "dockerlint.json");
     }
 
-    /** Runs the Clair parser on an output file that contains 10 issues. */
+    /** Runs the Clair parser on an output file that contains 112 issues. */
     @Test
     public void shouldFindAllClairIssues() {
         shouldFindIssuesOfTool(112, new Clair(), "clair.json");
+    }
+
+    /** Runs the OTDockerLint parser on an output file that contains 5 issues. */
+    @Test
+    public void shouldFindAllOTDockerLintIssues() {
+        shouldFindIssuesOfTool(3, new OTDockerLint(), "ot-docker-linter.json");
+    }
+
+    /** Runs the Brakeman parser on an output file that contains 32 issues. */
+    @Test
+    public void shouldFindAllBrakemanIssues() {
+        shouldFindIssuesOfTool(32, new Brakeman(), "brakeman.json");
     }
 
     private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,

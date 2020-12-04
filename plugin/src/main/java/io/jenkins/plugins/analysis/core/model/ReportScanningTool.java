@@ -10,11 +10,12 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.Ensure;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
 import hudson.model.Run;
@@ -62,7 +63,7 @@ public abstract class ReportScanningTool extends Tool {
         this.pattern = pattern;
     }
 
-    @Nullable
+    @CheckForNull
     public String getPattern() {
         return pattern;
     }
@@ -110,7 +111,7 @@ public abstract class ReportScanningTool extends Tool {
         this.reportEncoding = reportEncoding;
     }
 
-    @Nullable
+    @CheckForNull
     public String getReportEncoding() {
         return reportEncoding;
     }
@@ -243,6 +244,7 @@ public abstract class ReportScanningTool extends Tool {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
             return model.validateCharset(reportEncoding);
         }
@@ -257,6 +259,7 @@ public abstract class ReportScanningTool extends Tool {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String pattern) {
             return model.doCheckPattern(project, pattern);

@@ -45,9 +45,7 @@ import io.jenkins.plugins.forensics.blame.Blamer.NullBlamer;
 import io.jenkins.plugins.forensics.blame.BlamerFactory;
 import io.jenkins.plugins.forensics.blame.Blames;
 import io.jenkins.plugins.forensics.blame.FileLocations;
-import io.jenkins.plugins.forensics.miner.MinerFactory;
-import io.jenkins.plugins.forensics.miner.RepositoryMiner;
-import io.jenkins.plugins.forensics.miner.RepositoryMiner.NullMiner;
+import io.jenkins.plugins.forensics.miner.MinerService;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
@@ -69,13 +67,8 @@ class IssuesScanner {
     private final List<RegexpFilter> filters;
     private final TaskListener listener;
     private final BlameMode blameMode;
-    private final ForensicsMode forensicsMode;
 
     enum BlameMode {
-        ENABLED, DISABLED
-    }
-
-    enum ForensicsMode {
         ENABLED, DISABLED
     }
 
@@ -83,7 +76,7 @@ class IssuesScanner {
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
             final FilePath workspace, final String sourceDirectory, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
-            final BlameMode blameMode, final ForensicsMode forensicsMode) {
+            final BlameMode blameMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -93,7 +86,6 @@ class IssuesScanner {
         this.jenkinsRootDir = jenkinsRootDir;
         this.listener = listener;
         this.blameMode = blameMode;
-        this.forensicsMode = forensicsMode;
     }
 
     public AnnotatedReport scan() throws IOException, InterruptedException {
@@ -102,9 +94,22 @@ class IssuesScanner {
         report.setNameOfOrigin(tool.getActualId(), tool.getName());
 
         AnnotatedReport annotatedReport = postProcessReport(report);
+
+        RepositoryStatistics statistics = getRepositoryStatistics(annotatedReport.getReport());
+        annotatedReport.addRepositoryStatistics(statistics);
+
         logger.log(annotatedReport.getReport());
 
         return annotatedReport;
+    }
+
+    private RepositoryStatistics getRepositoryStatistics(final Report report) {
+        MinerService minerService = new MinerService();
+        FilteredLog log = new FilteredLog("Errors while obtaining repository statistics");
+        RepositoryStatistics statistics = minerService.queryStatisticsFor(run, report.getFiles(), log);
+        log.getErrorMessages().forEach(report::logError);
+        log.getInfoMessages().forEach(report::logInfo);
+        return statistics;
     }
 
     private AnnotatedReport postProcessReport(final Report report) throws IOException, InterruptedException {
@@ -123,8 +128,7 @@ class IssuesScanner {
 
     private ReportPostProcessor createPostProcessor(final Report report) {
         return new ReportPostProcessor(tool.getActualId(), report, sourceCodeEncoding.name(),
-                createBlamer(report), createMiner(report), filters,
-                getPermittedSourceDirectory(report).getRemote());
+                createBlamer(report), filters, getPermittedSourceDirectory(report).getRemote());
     }
 
     private FilePath getPermittedSourceDirectory(final Report report) {
@@ -153,26 +157,6 @@ class IssuesScanner {
             log.getErrorMessages().forEach(report::logError);
 
             return blamer;
-        }
-    }
-
-    private RepositoryMiner createMiner(final Report report) {
-        if (forensicsMode == ForensicsMode.ENABLED) {
-            FilteredLog log = new FilteredLog("Errors while determining a supported SCM miner for "
-                    + run.getFullDisplayName());
-            report.logInfo("Creating SCM miner to obtain statistics for affected repository files");
-            RepositoryMiner miner = MinerFactory.findMiner(run,
-                    singleton(getPermittedSourceDirectory(report)), listener, log);
-            log.logSummary();
-            log.getInfoMessages().forEach(report::logInfo);
-            log.getErrorMessages().forEach(report::logError);
-
-            return miner;
-        }
-        else {
-            report.logInfo("Skipping SCM repository mining as requested");
-
-            return new NullMiner();
         }
     }
 
@@ -243,13 +227,11 @@ class IssuesScanner {
         private final Report originalReport;
         private final String sourceCodeEncoding;
         private final Blamer blamer;
-        private final RepositoryMiner miner;
         private final String sourceDirectory;
         private final List<RegexpFilter> filters;
 
         ReportPostProcessor(final String id, final Report report, final String sourceCodeEncoding,
-                final Blamer blamer, final RepositoryMiner miner, final List<RegexpFilter> filters,
-                final String sourceDirectory) {
+                final Blamer blamer, final List<RegexpFilter> filters, final String sourceDirectory) {
             super();
 
             this.id = id;
@@ -257,12 +239,11 @@ class IssuesScanner {
             this.sourceCodeEncoding = sourceCodeEncoding;
             this.blamer = blamer;
             this.filters = filters;
-            this.miner = miner;
             this.sourceDirectory = sourceDirectory;
         }
 
         @Override
-        public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) throws InterruptedException {
+        public AnnotatedReport invoke(final File workspace, final VirtualChannel channel) {
             resolvePaths(originalReport);
             resolveModuleNames(originalReport, workspace);
             resolvePackageNames(originalReport);
@@ -272,9 +253,8 @@ class IssuesScanner {
             createFingerprints(filtered);
 
             FileLocations fileLocations = new ReportLocations().toFileLocations(filtered);
-            return new AnnotatedReport(id, filtered,
-                    blame(filtered, fileLocations),
-                    mineRepository(filtered, fileLocations));
+
+            return new AnnotatedReport(id, filtered, blame(filtered, fileLocations));
         }
 
         private Blames blame(final Report filtered, final FileLocations fileLocations) {
@@ -287,20 +267,6 @@ class IssuesScanner {
             log.getInfoMessages().forEach(filtered::logInfo);
             log.getErrorMessages().forEach(filtered::logError);
             return blames;
-        }
-
-        private RepositoryStatistics mineRepository(final Report filtered, final FileLocations fileLocations)
-                throws InterruptedException {
-            if (fileLocations.isEmpty()) {
-                return new RepositoryStatistics();
-            }
-
-            FilteredLog log = new FilteredLog("Errors while mining source control repository:");
-            RepositoryStatistics statistics = miner.mine(fileLocations.getFiles(), log);
-            log.logSummary();
-            log.getInfoMessages().forEach(filtered::logInfo);
-            log.getErrorMessages().forEach(filtered::logError);
-            return statistics;
         }
 
         private void resolvePaths(final Report report) {

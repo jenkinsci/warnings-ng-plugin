@@ -1,0 +1,754 @@
+{
+  "scan_info": {
+    "app_path": "/home/justin/work/brakeman/test/apps/rails5",
+    "rails_version": "5.0.0",
+    "security_warnings": 32,
+    "start_time": "2020-09-02 12:22:19 -0700",
+    "end_time": "2020-09-02 12:22:19 -0700",
+    "duration": 0.3933622,
+    "checks_performed": [
+      "BasicAuth",
+      "BasicAuthTimingAttack",
+      "CSRFTokenForgeryCVE",
+      "ContentTag",
+      "CookieSerialization",
+      "CreateWith",
+      "CrossSiteScripting",
+      "DefaultRoutes",
+      "Deserialize",
+      "DetailedExceptions",
+      "DigestDoS",
+      "DynamicFinders",
+      "EscapeFunction",
+      "Evaluation",
+      "Execute",
+      "FileAccess",
+      "FileDisclosure",
+      "FilterSkipping",
+      "ForgerySetting",
+      "HeaderDoS",
+      "I18nXSS",
+      "JRubyXML",
+      "JSONEncoding",
+      "JSONEntityEscape",
+      "JSONParsing",
+      "LinkTo",
+      "LinkToHref",
+      "MailTo",
+      "MassAssignment",
+      "MimeTypeDoS",
+      "ModelAttrAccessible",
+      "ModelAttributes",
+      "ModelSerialize",
+      "NestedAttributes",
+      "NestedAttributesBypass",
+      "NumberToCurrency",
+      "PageCachingCVE",
+      "PermitAttributes",
+      "QuoteTableName",
+      "Redirect",
+      "RegexDoS",
+      "Render",
+      "RenderDoS",
+      "RenderInline",
+      "ResponseSplitting",
+      "RouteDoS",
+      "SQL",
+      "SQLCVEs",
+      "SSLVerify",
+      "SafeBufferManipulation",
+      "SanitizeMethods",
+      "SelectTag",
+      "SelectVulnerability",
+      "Send",
+      "SendFile",
+      "SessionManipulation",
+      "SessionSettings",
+      "SimpleFormat",
+      "SingleQuotes",
+      "SkipBeforeFilter",
+      "SprocketsPathTraversal",
+      "StripTags",
+      "SymbolDoSCVE",
+      "TemplateInjection",
+      "TranslateBug",
+      "UnsafeReflection",
+      "ValidationRegex",
+      "WithoutProtection",
+      "XMLDoS",
+      "YAMLParsing"
+    ],
+    "number_of_controllers": 5,
+    "number_of_models": 3,
+    "number_of_templates": 19,
+    "ruby_version": "2.7.0",
+    "brakeman_version": "4.9.0"
+  },
+  "warnings": [
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "01ff71dc776c03921089d8559dabd1a75480411ec7f1de7f2886659085c26045",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/widget/haml_test.html.haml",
+      "line": 6,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_scripting/",
+      "code": "params[:y]",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "WidgetController",
+          "method": "haml_test",
+          "line": 116,
+          "file": "app/controllers/widget_controller.rb",
+          "rendered": {
+            "name": "widget/haml_test",
+            "file": "app/views/widget/haml_test.html.haml"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "widget/haml_test"
+      },
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 4,
+      "fingerprint": "03fcddff701f15c976a229c2a814c817f81463b733c6d4925253488879d907e3",
+      "check_name": "LinkToHref",
+      "message": "Unsafe parameter value in `link_to` href",
+      "file": "app/views/users/show.html.erb",
+      "line": 7,
+      "link": "https://brakemanscanner.org/docs/warning_types/link_to_href",
+      "code": "link_to(\"xss\", url_for(params[:bad]))",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "UsersController",
+          "method": "create",
+          "line": 32,
+          "file": "app/controllers/users_controller.rb",
+          "rendered": {
+            "name": "users/show",
+            "file": "app/views/users/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "users/show"
+      },
+      "user_input": "params[:bad]",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 70,
+      "fingerprint": "046f3c6cc9a55464d21837b583c672c26532cd46c1f719853a1a15b790baf8ea",
+      "check_name": "MassAssignment",
+      "message": "Specify exact keys allowed for mass assignment instead of using `permit!` which allows any keys",
+      "file": "app/controllers/users_controller.rb",
+      "line": 78,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.permit!",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "UsersController",
+        "method": "ruby_230"
+      },
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "0d980d69bd0158cfa6a92c12bc49294fe32e9862a758e11fe3cf9e03b6c50489",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/users/sanitizing.html.erb",
+      "line": 3,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "strip_tags(params[:x])",
+      "render_path": null,
+      "location": {
+        "type": "template",
+        "template": "users/sanitizing"
+      },
+      "user_input": "params[:x]",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Dangerous Send",
+      "warning_code": 23,
+      "fingerprint": "21c9eef1c001e48a0bfedfa11ff0f9d96b0c106f1016218712dabc088b2e69b6",
+      "check_name": "Send",
+      "message": "User controlled method execution",
+      "file": "app/controllers/users_controller.rb",
+      "line": 76,
+      "link": "https://brakemanscanner.org/docs/warning_types/dangerous_send/",
+      "code": "x.send(params[:x])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "UsersController",
+        "method": "ruby_230"
+      },
+      "user_input": "params[:x]",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 4,
+      "fingerprint": "2247b0928591e951ddb428e97bf4174a36080a196a2f6d6fedd2d7c4428db2a9",
+      "check_name": "LinkToHref",
+      "message": "Potentially unsafe model attribute in `link_to` href",
+      "file": "app/views/users/show.html.erb",
+      "line": 9,
+      "link": "https://brakemanscanner.org/docs/warning_types/link_to_href",
+      "code": "link_to(image_tag(\"icons/twitter-gray.svg\"), sanitize(User.new(user_params).home_page), :target => \"_blank\")",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "UsersController",
+          "method": "create",
+          "line": 32,
+          "file": "app/controllers/users_controller.rb",
+          "rendered": {
+            "name": "users/show",
+            "file": "app/views/users/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "users/show"
+      },
+      "user_input": "User.new(user_params).home_page",
+      "confidence": "Weak"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "26948b197b886c81ed6e3cc668b811e6e2407bcd6d2df3cf1ae79e33dccc4bb0",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/controllers/widget_controller.rb",
+      "line": 15,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_scripting/",
+      "code": "params[:xss]",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "WidgetController",
+          "method": "render_inline",
+          "line": 15,
+          "file": "app/controllers/widget_controller.rb",
+          "rendered": {
+            "name": "render_inline/inline@15:WidgetController",
+            "file": "app/controllers/widget_controller.rb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "render_inline/inline@15:WidgetController"
+      },
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "26b8b0ad586712d41ac6877e2292c6da7aa4760078add7fd23edf5b7a1bcb699",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/widget/show.html.erb",
+      "line": 1,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_scripting/",
+      "code": "params[:x]",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "WidgetController",
+          "method": "show",
+          "line": 4,
+          "file": "app/controllers/widget_controller.rb",
+          "rendered": {
+            "name": "widget/show",
+            "file": "app/views/widget/show.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "widget/show"
+      },
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 102,
+      "fingerprint": "331e69e4654f158601d9a0e124304f825da4e0156d2c94759eb02611e280feaa",
+      "check_name": "ContentTag",
+      "message": "Rails 5.0.0 `content_tag` does not escape double quotes in attribute values (CVE-2016-6316). Upgrade to Rails 5.0.0.1",
+      "file": "Gemfile.lock",
+      "line": 115,
+      "link": "https://groups.google.com/d/msg/ruby-security-ann/8B2iV2tPRSE/JkjCJkSoCgAJ",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 107,
+      "fingerprint": "3e35a6afcd1a8a14894cf26a7f00d4e895f0583bbc081d45e5bd28c4b541b7e6",
+      "check_name": "SanitizeMethods",
+      "message": "rails-html-sanitizer 1.0.2 is vulnerable (CVE-2018-3741). Upgrade to rails-html-sanitizer 1.0.4",
+      "file": "Gemfile.lock",
+      "line": 133,
+      "link": "https://groups.google.com/d/msg/rubyonrails-security/tP7W3kLc5u4/uDy2Br7xBgAJ",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Directory Traversal",
+      "warning_code": 115,
+      "fingerprint": "4022cb6c8f1bdeb4feec0fe01ba0ddc34441c551ae40c84845d76edb47464b8f",
+      "check_name": "PageCachingCVE",
+      "message": "Directory traversal vulnerability in actionpack-page_caching 1.2.0 (CVE-2020-8159). Upgrade to actionpack-page_caching 1.2.2",
+      "file": "Gemfile",
+      "line": 24,
+      "link": "https://groups.google.com/d/msg/rubyonrails-security/CFRVkEytdP8/c5gmICECAgAJ",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "Weak"
+    },
+    {
+      "warning_type": "Mass Assignment",
+      "warning_code": 105,
+      "fingerprint": "615627822842388859734b6124bf99e0db057a2572f35c92ff42b5ad46f4415f",
+      "check_name": "PermitAttributes",
+      "message": "Potentially dangerous key allowed for mass assignment",
+      "file": "app/controllers/widget_controller.rb",
+      "line": 90,
+      "link": "https://brakemanscanner.org/docs/warning_types/mass_assignment/",
+      "code": "params.permit(:admin)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "WidgetController",
+        "method": "dangerous_permits"
+      },
+      "user_input": ":admin",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "672fb59ead203af7b429e4efa722101b9246e60334470daa7c07a62078974350",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "app/controllers/users_controller.rb",
+      "line": 97,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "Arel.sql(\"select #{params[:s]}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "UsersController",
+        "method": "arel_sql"
+      },
+      "user_input": "params[:s]",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "7aec2bbe8fa40f49f08b70dfc8c0b6afdc9be252eb0459a3d5313bc904d9ec77",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped model attribute",
+      "file": "app/views/layouts/users.html.erb",
+      "line": 2,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "User.new.name",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "UsersController",
+          "method": "new",
+          "line": 18,
+          "file": "app/controllers/users_controller.rb",
+          "rendered": {
+            "name": "layouts/users",
+            "file": "app/views/layouts/users.html.erb"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "layouts/users"
+      },
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Dangerous Eval",
+      "warning_code": 13,
+      "fingerprint": "7fe3142d1d11b7118463e45a82b4b7a2b5b5bac95cf8904050c101fae16b8168",
+      "check_name": "Evaluation",
+      "message": "User input in eval",
+      "file": "app/models/user.rb",
+      "line": 7,
+      "link": "https://brakemanscanner.org/docs/warning_types/dangerous_eval/",
+      "code": "eval(params)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "User",
+        "method": "User.evaluate_user_input"
+      },
+      "user_input": "params",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 96,
+      "fingerprint": "7feea01d5ef6edbc300e34ecffd304a4d76cf306dbc71712a8340a3ac08b6dad",
+      "check_name": "SanitizeMethods",
+      "message": "rails-html-sanitizer 1.0.2 is vulnerable (CVE-2015-7578). Upgrade to rails-html-sanitizer 1.0.3",
+      "file": "Gemfile.lock",
+      "line": 133,
+      "link": "https://groups.google.com/d/msg/rubyonrails-security/uh--W4TDwmI/JbvSRpdbFQAJ",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 84,
+      "fingerprint": "8badd2e174576484eca32fb6015d903700d6694e9b3486be64d737aa215a36ea",
+      "check_name": "RenderInline",
+      "message": "Unescaped cookie value rendered inline",
+      "file": "app/controllers/widget_controller.rb",
+      "line": 86,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_scripting/",
+      "code": "render(inline => request.cookies[\"value\"], {})",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "WidgetController",
+        "method": "render_cookies"
+      },
+      "user_input": "request.cookies[\"value\"]",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Redirect",
+      "warning_code": 18,
+      "fingerprint": "9187972b879413888afcc0f94c02d9e5c47d56ecb15add404d6706f95efc08ee",
+      "check_name": "Redirect",
+      "message": "Possible unprotected redirect",
+      "file": "app/controllers/mixed_controller.rb",
+      "line": 26,
+      "link": "https://brakemanscanner.org/docs/warning_types/redirect/",
+      "code": "redirect_to(params.permit(:domain))",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "BaseController",
+        "method": "redirect_to_strong_params"
+      },
+      "user_input": "params.permit(:domain)",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 53,
+      "fingerprint": "956e3e4f494316c5f30cde009086fd7be0bddf80d85901cdb8e3d7b7d76d219b",
+      "check_name": "ContentTag",
+      "message": "Unescaped parameter value in `content_tag`",
+      "file": "app/views/widget/content_tag.html.erb",
+      "line": 1,
+      "link": "https://brakemanscanner.org/docs/warning_types/content_tag",
+      "code": "content_tag(:div, \"hi\", :title => params[:stuff].html_safe)",
+      "render_path": null,
+      "location": {
+        "type": "template",
+        "template": "widget/content_tag"
+      },
+      "user_input": "params[:stuff].html_safe",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 98,
+      "fingerprint": "9f292c507e0f07fd0ffc7a3d000af464c522ae6a929015256f505f35fb75ac82",
+      "check_name": "StripTags",
+      "message": "rails-html-sanitizer 1.0.2 is vulnerable (CVE-2015-7579). Upgrade to rails-html-sanitizer 1.0.3",
+      "file": "Gemfile.lock",
+      "line": 133,
+      "link": "https://groups.google.com/d/msg/rubyonrails-security/OU9ugTZcbjc/PjEP46pbFQAJ",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 53,
+      "fingerprint": "a1ca8c0e91d159ddc920d3c9efc6942f6aa697c519b299b756810ac1ca977763",
+      "check_name": "ContentTag",
+      "message": "Unescaped parameter value in `content_tag`",
+      "file": "app/views/widget/content_tag.html.erb",
+      "line": 3,
+      "link": "https://brakemanscanner.org/docs/warning_types/content_tag",
+      "code": "content_tag(:div, \"hi\", :title => sanitize(params[:stuff]))",
+      "render_path": null,
+      "location": {
+        "type": "template",
+        "template": "widget/content_tag"
+      },
+      "user_input": "params[:stuff]",
+      "confidence": "Medium"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "c16c1a10087e9e1b703a21ab8d9eac942f033c50be9afe9a56fff5ba5c62c739",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped model attribute",
+      "file": "app/views/widget/attributes.html.haml",
+      "line": 13,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "User.first.name.stuff_html",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "WidgetController",
+          "method": "attributes",
+          "line": 113,
+          "file": "app/controllers/widget_controller.rb",
+          "rendered": {
+            "name": "widget/attributes",
+            "file": "app/views/widget/attributes.html.haml"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "widget/attributes"
+      },
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Request Forgery",
+      "warning_code": 116,
+      "fingerprint": "c8697fda60549ca065789e2ea74c94effecef88b2b5483bae17ddd62ece47194",
+      "check_name": "CSRFTokenForgeryCVE",
+      "message": "Rails 5.0.0 has a vulnerability that may allow CSRF token forgery. Upgrade to Rails 5.2.4.3 or patch",
+      "file": "Gemfile.lock",
+      "line": 115,
+      "link": "https://groups.google.com/g/rubyonrails-security/c/NOjKiGeXUgw",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "Medium"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 106,
+      "fingerprint": "cdfb1541fdcc9cdcf0784ce5bd90013dc39316cb822eedea3f03b2521c06137f",
+      "check_name": "SanitizeMethods",
+      "message": "loofah gem 2.0.3 is vulnerable (CVE-2018-8048). Upgrade to 2.2.1",
+      "file": "Gemfile.lock",
+      "line": 99,
+      "link": "https://github.com/flavorjones/loofah/issues/144",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Path Traversal",
+      "warning_code": 108,
+      "fingerprint": "d4c4f9fab93a12c4fabb5b5f9541700e94f4948bc1b90a1aea38f1425d8d0dc9",
+      "check_name": "SprocketsPathTraversal",
+      "message": "sprockets 3.5.2 has a path traversal vulnerability (CVE-2018-3760). Upgrade to sprockets 3.7.2 or newer",
+      "file": "Gemfile.lock",
+      "line": 144,
+      "link": "https://groups.google.com/d/msg/rubyonrails-security/ft_J--l55fM/7roDfQ50BwAJ",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "dbec030dda82f21c5ea860e38746de64a6f3b9c49508ae2db947759a753a386c",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/widget/no_html.haml",
+      "line": 1,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross-site_scripting/",
+      "code": "params[:x]",
+      "render_path": [
+        {
+          "type": "controller",
+          "class": "WidgetController",
+          "method": "no_html",
+          "line": 75,
+          "file": "app/controllers/widget_controller.rb",
+          "rendered": {
+            "name": "widget/no_html",
+            "file": "app/views/widget/no_html.haml"
+          }
+        }
+      ],
+      "location": {
+        "type": "template",
+        "template": "widget/no_html"
+      },
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 2,
+      "fingerprint": "e203c837d65aad6ab63e09c2487beabf478534f77f0c20e946a28a38826ca657",
+      "check_name": "CrossSiteScripting",
+      "message": "Unescaped parameter value",
+      "file": "app/views/users/sanitizing.html.erb",
+      "line": 1,
+      "link": "https://brakemanscanner.org/docs/warning_types/cross_site_scripting",
+      "code": "sanitize(params[:x])",
+      "render_path": null,
+      "location": {
+        "type": "template",
+        "template": "users/sanitizing"
+      },
+      "user_input": "params[:x]",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Dangerous Eval",
+      "warning_code": 13,
+      "fingerprint": "e90f8e364e35ed2f6a56b4597e7de8945c836c75ef673006d960a380ecdf47e8",
+      "check_name": "Evaluation",
+      "message": "User input in eval",
+      "file": "app/helpers/users_helper.rb",
+      "line": 3,
+      "link": "https://brakemanscanner.org/docs/warning_types/dangerous_eval/",
+      "code": "eval(params[:x])",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "UsersHelper",
+        "method": "bad_helper"
+      },
+      "user_input": "params[:x]",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Remote Code Execution",
+      "warning_code": 24,
+      "fingerprint": "ed9f1dea97ba2929a0107fce64c3b4aa66010961ebbef36e1d11428067095cb6",
+      "check_name": "UnsafeReflection",
+      "message": "Unsafe reflection method `constantize` called with parameter value",
+      "file": "app/controllers/widget_controller.rb",
+      "line": 7,
+      "link": "https://brakemanscanner.org/docs/warning_types/remote_code_execution/",
+      "code": "params[:IdentifierClass].constantize",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "WidgetController",
+        "method": "dynamic_constant"
+      },
+      "user_input": "params[:IdentifierClass]",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Cross-Site Scripting",
+      "warning_code": 97,
+      "fingerprint": "f542035c0310ab2e76ec6dbccace0954f0d7c576d56d8cfcb03d9836f50bc7c9",
+      "check_name": "SanitizeMethods",
+      "message": "rails-html-sanitizer 1.0.2 is vulnerable (CVE-2015-7580). Upgrade to rails-html-sanitizer 1.0.3",
+      "file": "Gemfile.lock",
+      "line": 133,
+      "link": "https://groups.google.com/d/msg/rubyonrails-security/uh--W4TDwmI/m_CVZtdbFQAJ",
+      "code": null,
+      "render_path": null,
+      "location": null,
+      "user_input": null,
+      "confidence": "High"
+    },
+    {
+      "warning_type": "Template Injection",
+      "warning_code": 117,
+      "fingerprint": "fba898ebe85a030856f8553a3329c184ad6f9e16b1ecc8eb862d75f8b48d8189",
+      "check_name": "TemplateInjection",
+      "message": "Parameter value used directly in `ERB` template, which might enable remote code execution",
+      "file": "app/models/user.rb",
+      "line": 3,
+      "link": "https://brakemanscanner.org/docs/warning_types/template_injection/",
+      "code": "ERB.new(params)",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "User",
+        "method": "User.render_user_input"
+      },
+      "user_input": "params",
+      "confidence": "High"
+    },
+    {
+      "warning_type": "SQL Injection",
+      "warning_code": 0,
+      "fingerprint": "fe0098fc5ab1051854573b487855f348bd9320c8eb5ae55302b4649d0147d7dd",
+      "check_name": "SQL",
+      "message": "Possible SQL injection",
+      "file": "lib/a_lib.rb",
+      "line": 3,
+      "link": "https://brakemanscanner.org/docs/warning_types/sql_injection/",
+      "code": "joins(\"INNER JOIN things ON id = #{params[:id]}\")",
+      "render_path": null,
+      "location": {
+        "type": "method",
+        "class": "JustAClass",
+        "method": "do_sql_stuff"
+      },
+      "user_input": "params[:id]",
+      "confidence": "High"
+    }
+  ],
+  "ignored_warnings": [
+
+  ],
+  "errors": [
+
+  ],
+  "obsolete": [
+
+  ]
+}

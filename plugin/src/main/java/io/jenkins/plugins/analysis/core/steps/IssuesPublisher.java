@@ -4,9 +4,8 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang3.StringUtils;
-
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.FilteredLog;
 
 import hudson.model.Job;
 import hudson.model.Result;
@@ -30,6 +29,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.forensics.reference.ReferenceFinder;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.JobResultEvaluationMode.*;
@@ -41,7 +41,7 @@ import static io.jenkins.plugins.analysis.core.model.AnalysisHistory.QualityGate
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.ExcessiveImports")
+@SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
 class IssuesPublisher {
     private final AnnotatedReport report;
     private final Run<?, ?> run;
@@ -88,16 +88,6 @@ class IssuesPublisher {
      * Creates a new {@link AnalysisResult} and attaches the result in a {@link ResultAction} that is registered with
      * the current run.
      *
-     * @return the created result action
-     */
-    ResultAction attachAction() {
-        return attachAction(TrendChartType.AGGREGATION_TOOLS);
-    }
-
-    /**
-     * Creates a new {@link AnalysisResult} and attaches the result in a {@link ResultAction} that is registered with
-     * the current run.
-     *
      * @param trendChartType
      *         the chart to show
      *
@@ -106,17 +96,17 @@ class IssuesPublisher {
     ResultAction attachAction(final TrendChartType trendChartType) {
         ResultSelector selector = ensureThatIdIsUnique();
 
-        Report filtered = report.getReport();
-        DeltaReport deltaReport = new DeltaReport(filtered, createAnalysisHistory(selector, filtered), run.getNumber());
-        QualityGateStatus qualityGateStatus = evaluateQualityGate(filtered, deltaReport);
-        reportHealth(filtered);
+        Report issues = report.getReport();
+        DeltaReport deltaReport = new DeltaReport(issues, createAnalysisHistory(selector, issues), run.getNumber());
+        QualityGateStatus qualityGateStatus = evaluateQualityGate(issues, deltaReport);
+        reportHealth(issues);
 
-        report.logInfo("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
+        issues.logInfo("Created analysis result for %d issues (found %d new issues, fixed %d issues)",
                 deltaReport.getAllIssues().size(), deltaReport.getNewIssues().size(),
                 deltaReport.getFixedIssues().size());
 
-        if (failOnErrors && report.getReport().hasErrors()) {
-            report.logInfo("Failing build because analysis result contains errors");
+        if (failOnErrors && issues.hasErrors()) {
+            issues.logInfo("Failing build because analysis result contains errors");
             stageResultHandler.setResult(Result.FAILURE,
                     "Some errors have been logged during recording of issues");
         }
@@ -128,8 +118,8 @@ class IssuesPublisher {
             }
         }
 
-        report.logInfo("Attaching ResultAction with ID '%s' to run '%s'.", getId(), run);
-        logger.log(filtered);
+        issues.logInfo("Attaching ResultAction with ID '%s' to build '%s'.", getId(), run);
+        logger.log(issues);
 
         AnalysisResult result = new AnalysisHistory(run, selector).getResult()
                 .map(previous -> new AnalysisResult(run, getId(), deltaReport, report.getBlames(),
@@ -172,16 +162,16 @@ class IssuesPublisher {
         }
     }
 
-    private QualityGateStatus evaluateQualityGate(final Report filtered, final DeltaReport deltaReport) {
+    private QualityGateStatus evaluateQualityGate(final Report issues, final DeltaReport deltaReport) {
         QualityGateStatus qualityGateStatus;
         if (qualityGate.isEnabled()) {
-            filtered.logInfo("Evaluating quality gates");
-            qualityGateStatus = qualityGate.evaluate(deltaReport.getStatistics(), filtered::logInfo);
+            issues.logInfo("Evaluating quality gates");
+            qualityGateStatus = qualityGate.evaluate(deltaReport.getStatistics(), issues::logInfo);
             if (qualityGateStatus.isSuccessful()) {
-                filtered.logInfo("-> All quality gates have been passed");
+                issues.logInfo("-> All quality gates have been passed");
             }
             else {
-                filtered.logInfo("-> Some quality gates have been missed: overall result is %s", qualityGateStatus);
+                issues.logInfo("-> Some quality gates have been missed: overall result is %s", qualityGateStatus);
             }
             if (!qualityGateStatus.isSuccessful()) {
                 stageResultHandler.setResult(qualityGateStatus.getResult(),
@@ -189,44 +179,66 @@ class IssuesPublisher {
             }
         }
         else {
-            filtered.logInfo("No quality gates have been set - skipping");
+            issues.logInfo("No quality gates have been set - skipping");
             qualityGateStatus = QualityGateStatus.INACTIVE;
         }
         return qualityGateStatus;
     }
 
-    private History createAnalysisHistory(final ResultSelector selector, final Report filtered) {
-        Run<?, ?> baseline = run;
+    private History createAnalysisHistory(final ResultSelector selector, final Report issues) {
+        if (isValidReference(referenceJobName)) {
+            return findConfiguredReference(selector, issues);
+        }
 
-        if (referenceJobName != null) {
-            Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
-            if (referenceJob.isPresent()) {
-                Job<?, ?> job = referenceJob.get();
-                baseline = obtainReferenceBuild(job);
+        return new AnalysisHistory(findReference(issues), selector,
+                determineQualityGateEvaluationMode(issues), jobResultEvaluationMode);
+    }
+
+    private boolean isValidReference(final String referenceName) {
+        return !IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceName);
+    }
+
+    private History findConfiguredReference(final ResultSelector selector, final Report issues) {
+        issues.logError("Setting the reference job has been deprecated, please use the new reference recorder");
+
+        Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
+        if (referenceJob.isPresent()) {
+            Job<?, ?> job = referenceJob.get();
+
+            Run<?, ?> baseline;
+            if (isValidReference(referenceBuildId)) {
+                baseline = job.getBuild(referenceBuildId);
                 if (baseline == null) {
-                    filtered.logError("Reference job '%s' does not contain %s", job.getName(), getReferenceName());
+                    issues.logError("Reference job '%s' does not contain configured build '%s'",
+                            job.getFullDisplayName(), referenceBuildId);
                     return new NullAnalysisHistory();
                 }
             }
+            else {
+                baseline = job.getLastCompletedBuild();
+                if (baseline == null) {
+                    issues.logInfo("Reference job '%s' has no completed build yet", job.getFullDisplayName());
+                    return new NullAnalysisHistory();
+                }
+            }
+            return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(issues),
+                    jobResultEvaluationMode);
         }
-        return new AnalysisHistory(baseline, selector, determineQualityGateEvaluationMode(filtered),
-                jobResultEvaluationMode);
+        issues.logError("Configured reference job '%s' does not exist", referenceJobName);
+        return new NullAnalysisHistory();
     }
 
-    private Run<?, ?> obtainReferenceBuild(final Job<?, ?> job) {
-        if (StringUtils.isBlank(referenceBuildId)) {
-            return job.getLastBuild();
-        }
-        else {
-            return job.getBuild(referenceBuildId);
-        }
-    }
-
-    private String getReferenceName() {
-        if (StringUtils.isBlank(referenceBuildId)) {
-            return "any valid build";
-        }
-        return String.format("build '%s'", referenceBuildId);
+    private Run<?, ?> findReference(final Report issues) {
+        ReferenceFinder referenceFinder = new ReferenceFinder();
+        FilteredLog log = new FilteredLog("Errors while resolving the reference build:");
+        Run<?, ?> reference = referenceFinder.findReference(run, log)
+                .orElseGet(() -> {
+                    log.logInfo("Obtaining reference build from same job (%s)", run.getParent().getDisplayName());
+                    return this.run;
+                });
+        log.getInfoMessages().forEach(issues::logInfo);
+        log.getErrorMessages().forEach(issues::logError);
+        return reference;
     }
 
     private QualityGateEvaluationMode determineQualityGateEvaluationMode(final Report filtered) {

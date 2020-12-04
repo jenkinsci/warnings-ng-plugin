@@ -47,7 +47,7 @@
 
     </div>
 
-    <div class="col-xs-12 col-sm-6 col-md-7 col-lg-8 col-xl-6 col-xxl-8">
+    <div class="col">
       <issues:history/>
     </div>
 

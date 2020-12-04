@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.PathUtil;
 import edu.hm.hafner.util.VisibleForTesting;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
@@ -70,7 +70,7 @@ public class ModelValidation {
      *
      * @return the default charset for the specified encoding string
      */
-    public Charset getCharset(@Nullable final String charset) {
+    public Charset getCharset(@CheckForNull final String charset) {
         try {
             if (StringUtils.isNotBlank(charset)) {
                 return Charset.forName(charset);

@@ -22,7 +22,6 @@ import hudson.util.ListBoxModel.Option;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
-import static io.jenkins.plugins.analysis.core.testutil.SoftAssertions.*;
 import static io.jenkins.plugins.analysis.core.util.ModelValidation.*;
 import static org.mockito.Mockito.*;
 
@@ -58,13 +57,11 @@ class ModelValidationTest {
     void shouldValidateCharsets() {
         ModelValidation model = new ModelValidation();
 
-        assertSoftly(softly -> {
-            softly.assertThat(model.validateCharset("")).isOk();
-            softly.assertThat(model.validateCharset("UTF-8")).isOk();
-            softly.assertThat(model.validateCharset("Some wrong text"))
-                    .isError()
-                    .hasMessage(createWrongEncodingErrorMessage());
-        });
+        assertThat(model.validateCharset("")).isOk();
+        assertThat(model.validateCharset("UTF-8")).isOk();
+        assertThat(model.validateCharset("Some wrong text"))
+                .isError()
+                .hasMessage(createWrongEncodingErrorMessage());
     }
 
     @Test
@@ -78,7 +75,7 @@ class ModelValidationTest {
     @Test
     void shouldFallbackToPlatformCharset() {
         ModelValidation model = new ModelValidation();
-        
+
         assertThat(model.getCharset("UTF-8")).isEqualTo(StandardCharsets.UTF_8);
         assertThat(model.getCharset("nothing")).isEqualTo(Charset.defaultCharset());
         assertThat(model.getCharset("")).isEqualTo(Charset.defaultCharset());
@@ -96,14 +93,12 @@ class ModelValidationTest {
         Option actualNormalOption = allFilters.get(1);
         Option actualLowOption = allFilters.get(2);
 
-        assertSoftly(softly -> {
-            softly.assertThat(actualHighOption.value).isEqualTo(Severity.WARNING_HIGH.getName());
-            softly.assertThat(actualHighOption.name).isEqualTo(Messages.SeverityFilter_High());
-            softly.assertThat(actualNormalOption.value).isEqualTo(Severity.WARNING_NORMAL.getName());
-            softly.assertThat(actualNormalOption.name).isEqualTo(Messages.SeverityFilter_Normal());
-            softly.assertThat(actualLowOption.value).isEqualTo(Severity.WARNING_LOW.getName());
-            softly.assertThat(actualLowOption.name).isEqualTo(Messages.SeverityFilter_Low());
-        });
+        assertThat(actualHighOption.value).isEqualTo(Severity.WARNING_HIGH.getName());
+        assertThat(actualHighOption.name).isEqualTo(Messages.SeverityFilter_High());
+        assertThat(actualNormalOption.value).isEqualTo(Severity.WARNING_NORMAL.getName());
+        assertThat(actualNormalOption.name).isEqualTo(Messages.SeverityFilter_Normal());
+        assertThat(actualLowOption.value).isEqualTo(Severity.WARNING_LOW.getName());
+        assertThat(actualLowOption.name).isEqualTo(Messages.SeverityFilter_Low());
     }
 
     @Test
@@ -124,11 +119,9 @@ class ModelValidationTest {
         when(jenkins.getJob(jobName)).thenReturn(Optional.of(job));
         ModelValidation model = new ModelValidation(jenkins);
 
-        assertSoftly(softly -> {
-            softly.assertThat(model.validateJob(jobName)).isOk();
-            softly.assertThat(model.validateJob(NO_REFERENCE_JOB)).isOk();
-            softly.assertThat(model.validateJob("")).isOk();
-        });
+        assertThat(model.validateJob(jobName)).isOk();
+        assertThat(model.validateJob(NO_REFERENCE_JOB)).isOk();
+        assertThat(model.validateJob("")).isOk();
     }
 
     @Test
@@ -159,7 +152,8 @@ class ModelValidationTest {
         assertThat(model.validateUnhealthy(0, 0)).isOk();
     }
 
-    @Test @Issue("JENKINS-55293")
+    @Test
+    @Issue("JENKINS-55293")
     void doCheckHealthyShouldBeNotOkWithInvalidValues() {
         ModelValidation model = new ModelValidation();
 
@@ -209,5 +203,5 @@ class ModelValidationTest {
 
         assertThat(actualModel).hasSize(2);
         assertThat(actualModel).containsExactly(NO_REFERENCE_JOB, name);
-    }   
+    }
 }

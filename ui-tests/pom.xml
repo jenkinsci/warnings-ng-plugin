@@ -5,7 +5,7 @@
   <parent>
     <groupId>edu.hm.hafner</groupId>
     <artifactId>codingstyle-pom</artifactId>
-    <version>1.1.1</version>
+    <version>1.6.0</version>
     <relativePath/>
   </parent>
 
@@ -16,7 +16,7 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.204.6</jenkins.version>
+    <jenkins.version> 2.249.3</jenkins.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -27,12 +27,12 @@
     <dependency>
       <groupId>org.jenkins-ci</groupId>
       <artifactId>acceptance-test-harness</artifactId>
-      <version>1.74</version>
+      <version>1.79</version>
     </dependency>
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
-      <version>4.5.12</version>
+      <version>4.5.13</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -44,13 +44,13 @@
     <dependency>
       <groupId>net.javacrumbs.json-unit</groupId>
       <artifactId>json-unit-assertj</artifactId>
-      <version>2.18.1</version>
+      <version>2.22.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.javacrumbs.json-unit</groupId>
       <artifactId>json-unit-json-path</artifactId>
-      <version>2.18.1</version>
+      <version>2.22.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -93,6 +93,33 @@
       </properties>
     </profile>
     <profile>
+      <id>ui-tests-locally</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <reuseForks>false</reuseForks>
+              <environmentVariables>
+                <PLUGINS_DIR>../plugin/target/test-classes/test-dependencies</PLUGINS_DIR>
+                <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
+                <BROWSER>firefox</BROWSER>
+              </environmentVariables>
+              <rerunFailingTestsCount>1</rerunFailingTestsCount>
+              <includes>
+                <include>**/*Tests.java</include>
+                <include>**/*Test.java</include>
+              </includes>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+      <properties>
+        <maven.test.skip>false</maven.test.skip>
+      </properties>
+    </profile>
+    <profile>
       <id>consume-incrementals</id>
     </profile>
     <profile>
@@ -114,15 +141,40 @@
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>../plugin/target/test-classes/test-dependencies</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>../plugin/target/</directory>
+                  <includes>
+                    <include>warnings-ng.hpi</include>
+                  </includes>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <reuseForks>false</reuseForks>
           <environmentVariables>
-            <PLUGINS_DIR>../../docker/volumes/jenkins-home/plugins</PLUGINS_DIR>
+            <PLUGINS_DIR>../plugin/target/test-classes/test-dependencies</PLUGINS_DIR>
             <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
-            <LOCAL_JARS>../plugin/target/warnings-ng.hpi</LOCAL_JARS>
-            <BROWSER>firefox</BROWSER>
+            <BROWSER>firefox-container</BROWSER>
           </environmentVariables>
+          <rerunFailingTestsCount>1</rerunFailingTestsCount>
           <includes>
             <include>**/SmokeTests.java</include>
           </includes>

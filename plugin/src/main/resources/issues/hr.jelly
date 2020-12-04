@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:st="jelly:stapler">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form" xmlns:st="jelly:stapler">
 
   <st:documentation>
     Provides a horizontal rule <hr/> with a caption.
@@ -9,12 +9,6 @@
   </st:documentation>
 
   <f:block><div class="subsection-header"/></f:block>
-
-  <tr>
-    <td/>
-    <td colspan="3">
-      <strong>${title}</strong>
-    </td>
-  </tr>
+  <f:block><div class="subsection-title">${title}</div></f:block>
 
 </j:jelly>

@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
@@ -34,6 +35,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
+    @POST
     public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
         return model.validateCharset(reportEncoding);
     }
@@ -46,6 +48,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
+    @POST
     public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
         return model.validateCharset(sourceCodeEncoding);
     }
@@ -66,18 +69,6 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     public ComboBoxModel doFillReferenceJobNameItems() {
         return model.getAllJobs();
-    }
-
-    /**
-     * Performs on-the-fly validation of the reference job.
-     *
-     * @param referenceJobName
-     *         the reference job
-     *
-     * @return the validation result
-     */
-    public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
-        return model.validateJob(referenceJobName);
     }
 
     /**
@@ -125,6 +116,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
+    @POST
     public FormValidation doCheckId(@QueryParameter final String id) {
         return model.validateId(id);
     }
