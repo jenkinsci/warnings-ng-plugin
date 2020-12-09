@@ -354,6 +354,9 @@ recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true
 
 ### Selecting a baseline in the target job
 
+:warning: This feature requires the installation of an additional plugin:
+[Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
+
 For more complex branch source projects (i.e., projects that build several branches and pull requests in a 
 connected job hierarchy) it makes more sense to select a reference build from a job
 that builds the actual target branch (i.e., the branch the current changes will be merged into). Here one typically is
@@ -707,7 +710,8 @@ child row within the table.
 
 If not disabled in the job configuration, the plugin will execute `git blame` to determine who is the responsible 
 'author' of an issue. In the corresponding *SCM Blames* view all issues will be listed with author name, email and
-commit ID. 
+commit ID. If available by the corresponding SCM plugin, you can also directly navigate to the affected commit using
+the configured repository browser.
   
 ![source control overview](images/git.png) 
 
@@ -721,21 +725,22 @@ recordIssues blameDisabled: true, tool: java(pattern: '*.log')
 :warning: This feature requires the installation of an additional plugin: 
 [Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
 
-If not disabled in the job configuration, the plugin will mine the source code repository in the style of 
+If the Git Forensics plugin has been configured to mine the source code repository in the style of 
 [Code as a Crime Scene](https://www.adamtornhill.com/articles/crimescene/codeascrimescene.htm) 
-(Adam Tornhill, November 2013) to determine statistics of the affected files.
-In the corresponding *SCM Forensics* view all issues will be listed with the following properties of the affected files:
-- total number of commits
-- total number of different authors
+(Adam Tornhill, November 2013) then this information will be shown in an additional view side by side with the issues.
+In this *SCM Forensics* view all issues will be listed with the following properties of the affected files:
+- commits count
+- different authors count
 - creation time
 - last modification time
+- lines of code (from the commit details)
+- code churn (changed lines since created)
   
 ![source control overview](images/forensics-view.png) 
 
-In order to disable the forensics feature, set the property `forensicsDisabled` to `true`, see the following example:
-```groovy
-recordIssues forensicsDisabled: true, tool: java(pattern: '*.log')
-```
+If a project contains many issues, then this view will give you a hint, which files you should improve first. Files
+that have many lines, many changed lines, many different authors, or many commits are frequently touched in your project
+and typically require a special attention.  
 
 ### Source code view
 
