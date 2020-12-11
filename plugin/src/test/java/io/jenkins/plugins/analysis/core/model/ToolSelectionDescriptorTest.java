@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.assertj.core.util.Lists;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import hudson.model.Item;
 import hudson.model.Job;
 import hudson.util.ComboBoxModel;
 
@@ -27,6 +29,25 @@ class ToolSelectionDescriptorTest {
     void shouldFillIDItems(final String ids) {
         String[] elements = ids.split(",", -1);
 
+        ComboBoxModel model = createDescriptor(elements, true).doFillIdItems();
+        assertThat(model).containsExactly(elements);
+
+        ComboBoxModel prohibited = createDescriptor(elements, false).doFillIdItems();
+        assertThat(prohibited).isEmpty();
+    }
+
+    @Test
+    void shouldReturnEmptyListIfNoPermission() {
+        String[] elements = {"1", "3"};
+
+        ComboBoxModel model = createDescriptor(elements, true).doFillIdItems();
+        assertThat(model).containsExactly(elements);
+
+        ComboBoxModel prohibited = createDescriptor(elements, false).doFillIdItems();
+        assertThat(prohibited).isEmpty();
+    }
+
+    private ToolSelectionDescriptor createDescriptor(final String[] elements, final boolean hasPermission) {
         ToolSelectionDescriptor toolSelectionDescriptor = new ToolSelectionDescriptor();
 
         List<JobAction> actions = new ArrayList<>();
@@ -42,9 +63,7 @@ class ToolSelectionDescriptorTest {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.getAllJobs()).thenReturn(Lists.list(job));
         ToolSelectionDescriptor.setJenkinsFacade(jenkinsFacade);
-
-        ComboBoxModel model = toolSelectionDescriptor.doFillIdItems();
-
-        assertThat(model).containsExactly(elements);
+        when(jenkinsFacade.hasPermission(Item.CONFIGURE)).thenReturn(hasPermission);
+        return toolSelectionDescriptor;
     }
 }
