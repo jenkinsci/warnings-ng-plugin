@@ -23,6 +23,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return a model with all available charsets
      */
+    @POST
     public ComboBoxModel doFillSourceCodeEncodingItems() {
         return model.getAllCharsets();
     }
@@ -58,6 +59,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return a model with all available severity filters
      */
+    @POST
     public ListBoxModel doFillMinimumSeverityItems() {
         return model.getAllSeverityFilters();
     }
@@ -66,7 +68,9 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * Returns the model with the possible reference jobs.
      *
      * @return the model with the possible reference jobs
+     * @deprecated not used anymore, part of forensics plugin
      */
+    @Deprecated @POST
     public ComboBoxModel doFillReferenceJobNameItems() {
         return model.getAllJobs();
     }
@@ -104,6 +108,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return a model with all  aggregation trend chart positions
      */
+    @POST
     public ListBoxModel doFillTrendChartTypeItems() {
         return model.getAllTrendChartTypes();
     }

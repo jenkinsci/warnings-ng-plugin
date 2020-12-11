@@ -232,6 +232,7 @@ public abstract class ReportScanningTool extends Tool {
          *
          * @return a model with all available charsets
          */
+        @POST
         public ComboBoxModel doFillReportEncodingItems() {
             return model.getAllCharsets();
         }

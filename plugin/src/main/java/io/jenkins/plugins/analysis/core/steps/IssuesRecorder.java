@@ -1209,6 +1209,7 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all available charsets
          */
+        @POST
         public ComboBoxModel doFillSourceCodeEncodingItems() {
             return model.getAllCharsets();
         }
@@ -1218,6 +1219,7 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all available severity filters
          */
+        @POST
         public ListBoxModel doFillMinimumSeverityItems() {
             return model.getAllSeverityFilters();
         }
@@ -1281,6 +1283,7 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all  aggregation trend chart positions
          */
+        @POST
         public ListBoxModel doFillTrendChartTypeItems() {
             return model.getAllTrendChartTypes();
         }

@@ -7,6 +7,7 @@ import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.util.ListBoxModel;
@@ -96,6 +97,7 @@ public class GroovyScript extends ReportScanningTool {
          * @return the model of the list box
          */
         @SuppressWarnings("unused") // Called from config.jelly
+        @POST
         public ListBoxModel doFillParserIdItems() {
             ListBoxModel options = ParserConfiguration.getInstance().asListBoxModel();
             if (options.isEmpty()) {

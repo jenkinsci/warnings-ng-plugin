@@ -12,6 +12,11 @@ import com.tngtech.archunit.lang.ArchRule;
 
 import edu.hm.hafner.util.ArchitectureRules;
 
+import org.kohsuke.stapler.verb.POST;
+import hudson.model.Descriptor;
+import hudson.util.ComboBoxModel;
+import hudson.util.ListBoxModel;
+
 import io.jenkins.plugins.util.PluginArchitectureRules;
 
 import static com.tngtech.archunit.base.DescribedPredicate.*;
@@ -56,6 +61,31 @@ class PluginArchitectureTest {
 
     @ArchTest
     static final ArchRule USE_POST_FOR_VALIDATION_END_POINTS = PluginArchitectureRules.USE_POST_FOR_VALIDATION_END_POINTS;
+
+    /**
+     * Methods that are used as AJAX end points must be in public classes.
+     */
+    public static final ArchRule USE_POST_FOR_LIST_MODELS =
+            methods().that().areDeclaredInClassesThat().areAssignableTo(Descriptor.class)
+                    .and().haveNameMatching("doFill[A-Z].*")
+                    .and().haveRawReturnType(ListBoxModel.class)
+                    .should().beAnnotatedWith(POST.class)
+                    .andShould().bePublic();
+    /**
+     * Methods that are used as AJAX end points must be in public classes.
+     */
+    public static final ArchRule USE_POST_FOR_COMBOBOX_MODELS =
+            methods().that().areDeclaredInClassesThat().areAssignableTo(Descriptor.class)
+                    .and().haveNameMatching("doFill[A-Z].*")
+                    .and().haveRawReturnType(ComboBoxModel.class)
+                    .should().beAnnotatedWith(POST.class)
+                    .andShould().bePublic();
+
+    @ArchTest
+    static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = USE_POST_FOR_LIST_MODELS;
+
+    @ArchTest
+    static final ArchRule USE_POST_FOR_COMBOBOX_MODELS_RULE = USE_POST_FOR_COMBOBOX_MODELS;
 
     /** Digester must not be used directly, rather use a SecureDigester instance. */
     @ArchTest

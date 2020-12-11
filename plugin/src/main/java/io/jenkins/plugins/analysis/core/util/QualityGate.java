@@ -11,6 +11,7 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
@@ -303,6 +304,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          *
          * @return the quality gate types
          */
+        @POST
         public ListBoxModel doFillTypeItems() {
             ListBoxModel model = new ListBoxModel();
 
