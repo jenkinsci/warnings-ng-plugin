@@ -18,6 +18,7 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
@@ -27,6 +28,7 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.util.EnvironmentResolver;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 
@@ -234,7 +236,10 @@ public abstract class ReportScanningTool extends Tool {
          */
         @POST
         public ComboBoxModel doFillReportEncodingItems() {
-            return model.getAllCharsets();
+            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+                return model.getAllCharsets();
+            }
+            return new ComboBoxModel();
         }
 
         /**

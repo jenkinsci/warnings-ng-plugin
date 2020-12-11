@@ -17,6 +17,7 @@ import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 
@@ -111,7 +112,9 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
         @POST
         public ComboBoxModel doFillIdItems() {
             ComboBoxModel model = new ComboBoxModel();
-            model.addAll(collectAvailableIds());
+            if (jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+                model.addAll(collectAvailableIds());
+            }
             return model;
         }
 

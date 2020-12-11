@@ -3,15 +3,17 @@ package io.jenkins.plugins.analysis.core.steps;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
+import hudson.model.Item;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
- * Descriptor base class for all analysis steps. Provides generic validation methods,
- * and list box models for UI select elements.
+ * Descriptor base class for all analysis steps. Provides generic validation methods, and list box models for UI select
+ * elements.
  *
  * @author Ullrich Hafner
  */
@@ -25,7 +27,10 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ComboBoxModel doFillSourceCodeEncodingItems() {
-        return model.getAllCharsets();
+        if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            return model.getAllCharsets();
+        }
+        return new ComboBoxModel();
     }
 
     /**
@@ -61,7 +66,11 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ListBoxModel doFillMinimumSeverityItems() {
-        return model.getAllSeverityFilters();
+        if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            return model.getAllSeverityFilters();
+        }
+        return new ListBoxModel();
+
     }
 
     /**
@@ -70,9 +79,13 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the model with the possible reference jobs
      * @deprecated not used anymore, part of forensics plugin
      */
-    @Deprecated @POST
+    @Deprecated
+    @POST
     public ComboBoxModel doFillReferenceJobNameItems() {
-        return model.getAllJobs();
+        if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            return model.getAllJobs();
+        }
+        return new ComboBoxModel();
     }
 
     /**
@@ -110,7 +123,10 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ListBoxModel doFillTrendChartTypeItems() {
-        return model.getAllTrendChartTypes();
+        if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            return model.getAllTrendChartTypes();
+        }
+        return new ListBoxModel();
     }
 
     /**

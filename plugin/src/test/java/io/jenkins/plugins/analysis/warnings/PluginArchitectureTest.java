@@ -1,14 +1,20 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import java.util.Set;
 import javax.xml.parsers.SAXParser;
 
 import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.binder.DigesterLoader;
 import org.xml.sax.XMLReader;
 
+import com.tngtech.archunit.core.domain.JavaCall;
+import com.tngtech.archunit.core.domain.JavaMethod;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
+import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
+import com.tngtech.archunit.lang.ConditionEvents;
+import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 import edu.hm.hafner.util.ArchitectureRules;
 
@@ -17,6 +23,7 @@ import hudson.model.Descriptor;
 import hudson.util.ComboBoxModel;
 import hudson.util.ListBoxModel;
 
+import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.PluginArchitectureRules;
 
 import static com.tngtech.archunit.base.DescribedPredicate.*;
@@ -70,7 +77,7 @@ class PluginArchitectureTest {
                     .and().haveNameMatching("doFill[A-Z].*")
                     .and().haveRawReturnType(ListBoxModel.class)
                     .should().beAnnotatedWith(POST.class)
-                    .andShould().bePublic();
+                    .andShould().bePublic().andShould(new PermissionCondition());
     /**
      * Methods that are used as AJAX end points must be in public classes.
      */
@@ -79,7 +86,7 @@ class PluginArchitectureTest {
                     .and().haveNameMatching("doFill[A-Z].*")
                     .and().haveRawReturnType(ComboBoxModel.class)
                     .should().beAnnotatedWith(POST.class)
-                    .andShould().bePublic();
+                    .andShould().bePublic().andShould(new PermissionCondition());
 
     @ArchTest
     static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = USE_POST_FOR_LIST_MODELS;
@@ -105,4 +112,24 @@ class PluginArchitectureTest {
                             .or(have(simpleNameStartingWith("Integration")))
                             .or(have(simpleName("ToolsLister")))))
                     .should().dependOnClassesThat().resideInAnyPackage("org.junit");
+
+    private static class PermissionCondition extends ArchCondition<JavaMethod> {
+        PermissionCondition() {
+            super("should have a permission check");
+        }
+
+        @Override
+        public void check(final JavaMethod item, final ConditionEvents events) {
+            Set<JavaCall<?>> callsFromSelf = item.getCallsFromSelf();
+
+            if (callsFromSelf.stream().anyMatch(
+                    javaCall -> javaCall.getTarget().getOwner().getFullName().equals(JenkinsFacade.class.getName())
+                    && javaCall.getTarget().getName().equals("hasPermission"))) {
+                return;
+            }
+            events.add(SimpleConditionEvent.violated(item,
+                    String.format("JenkinsFacade not called in %s in %s",
+                            item.getDescription(), item.getSourceCodeLocation())));
+        }
+    }
 }
