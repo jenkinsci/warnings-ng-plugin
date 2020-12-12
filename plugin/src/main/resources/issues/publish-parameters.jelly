@@ -7,11 +7,10 @@
 
   <i:hr title="${%Miscellaneous options}"/>
 
-  <f:entry title="${%title.skipPublishingChecks}" description="${%description.skipPublishingChecks}"
-           field="skipPublishingChecks">
+  <f:entry title="${%title.skipPublishingChecks}" field="skipPublishingChecks">
     <f:checkbox />
   </f:entry>
-  <f:entry title="${%title.failOnError}" description="${%description.failOnError}" field="failOnError">
+  <f:entry title="${%title.failOnError}" field="failOnError">
     <f:checkbox/>
   </f:entry>
   <f:entry title="${%title.trendChartType}" description="${%description.trendChartType}"
@@ -28,12 +27,10 @@
     </td>
   </tr>
 
-  <f:entry title="${%title.ignoreQualityGate}" description="${%description.ignoreQualityGate}"
-           field="ignoreQualityGate">
+  <f:entry title="${%title.ignoreQualityGate}" field="ignoreQualityGate">
     <f:checkbox/>
   </f:entry>
-  <f:entry title="${%title.ignoreFailedBuilds}" description="${%description.ignoreFailedBuilds}"
-           field="ignoreFailedBuilds">
+  <f:entry title="${%title.ignoreFailedBuilds}" field="ignoreFailedBuilds">
     <f:checkbox default="true"/>
   </f:entry>
 

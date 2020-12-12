@@ -5,7 +5,7 @@
     Provides all required input fields to scan for issues.
   </st:documentation>
 
-  <f:entry title="${%title.blameDisabled}" description="${%description.blameDisabled}" field="skipBlames">
+  <f:entry title="${%title.blameDisabled}" field="skipBlames">
     <f:checkbox />
   </f:entry>
 

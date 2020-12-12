@@ -18,10 +18,10 @@
   <f:entry title="${%Low Priority Tasks Tags}" field="lowTags" description="${%description.tags}">
     <c:safe-textbox/>
   </f:entry>
-  <f:entry title="${%Ignore case}" field="ignoreCase" description="${%description.ignoreCase}">
+  <f:entry field="ignoreCase" title="${%description.ignoreCase}">
     <f:checkbox />
   </f:entry>
-  <f:entry title="${%Regular expression}" field="isRegularExpression" description="${%description.asRegexp}">
+  <f:entry field="isRegularExpression" title="${%description.asRegexp}">
     <f:checkbox />
   </f:entry>
   <f:entry title="${%Test the tags}" field="example" description="${%description.example}">
