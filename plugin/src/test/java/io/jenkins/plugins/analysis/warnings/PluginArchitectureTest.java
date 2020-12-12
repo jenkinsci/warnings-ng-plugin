@@ -1,34 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.xml.parsers.SAXParser;
 
 import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.binder.DigesterLoader;
 import org.xml.sax.XMLReader;
 
-import com.tngtech.archunit.base.DescribedPredicate;
-import com.tngtech.archunit.core.domain.JavaCall;
-import com.tngtech.archunit.core.domain.JavaClass;
-import com.tngtech.archunit.core.domain.JavaMethod;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
-import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.lang.ConditionEvents;
-import com.tngtech.archunit.lang.SimpleConditionEvent;
 
 import edu.hm.hafner.util.ArchitectureRules;
 
-import org.kohsuke.stapler.verb.POST;
-import hudson.model.Descriptor;
-import hudson.util.ComboBoxModel;
-import hudson.util.ListBoxModel;
-
-import io.jenkins.plugins.util.JenkinsFacade;
 import io.jenkins.plugins.util.PluginArchitectureRules;
 
 import static com.tngtech.archunit.base.DescribedPredicate.*;
@@ -74,20 +57,8 @@ class PluginArchitectureTest {
     @ArchTest
     static final ArchRule USE_POST_FOR_VALIDATION_END_POINTS = PluginArchitectureRules.USE_POST_FOR_VALIDATION_END_POINTS;
 
-    /**
-     * List model methods that are used as AJAX end points must use @POST and have a permission check.
-     */
-    public static final ArchRule USE_POST_FOR_LIST_MODELS =
-            methods().that().areDeclaredInClassesThat().areAssignableTo(Descriptor.class)
-                    .and().haveNameMatching("doFill[A-Z].*")
-                    .and().haveRawReturnType(new AllowedClasses(ComboBoxModel.class, ListBoxModel.class))
-                    .should().beAnnotatedWith(POST.class)
-                    .andShould().bePublic()
-                    .andShould(new HavePermissionCheck());
-
     @ArchTest
-    static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = USE_POST_FOR_LIST_MODELS;
-
+    static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = PluginArchitectureRules.USE_POST_FOR_LIST_AND_COMBOBOX_FILL;
 
     /** Digester must not be used directly, rather use a SecureDigester instance. */
     @ArchTest
@@ -107,39 +78,4 @@ class PluginArchitectureTest {
                             .or(have(simpleNameStartingWith("Integration")))
                             .or(have(simpleName("ToolsLister")))))
                     .should().dependOnClassesThat().resideInAnyPackage("org.junit");
-
-    private static class HavePermissionCheck extends ArchCondition<JavaMethod> {
-        HavePermissionCheck() {
-            super("should have a permission check");
-        }
-
-        @Override
-        public void check(final JavaMethod item, final ConditionEvents events) {
-            Set<JavaCall<?>> callsFromSelf = item.getCallsFromSelf();
-
-            if (callsFromSelf.stream().anyMatch(
-                    javaCall -> javaCall.getTarget().getOwner().getFullName().equals(JenkinsFacade.class.getName())
-                    && javaCall.getTarget().getName().equals("hasPermission"))) {
-                return;
-            }
-            events.add(SimpleConditionEvent.violated(item,
-                    String.format("JenkinsFacade not called in %s in %s",
-                            item.getDescription(), item.getSourceCodeLocation())));
-        }
-    }
-
-    private static class AllowedClasses extends DescribedPredicate<JavaClass> {
-        private final List<String> allowedClasses;
-
-        AllowedClasses(final Class<?>... classes) {
-            super("raw return type of any of %s", Arrays.toString(classes));
-
-            allowedClasses = Arrays.stream(classes).map(Class::getName).collect(Collectors.toList());
-        }
-
-        @Override
-        public boolean apply(final JavaClass input) {
-            return allowedClasses.contains(input.getFullName());
-        }
-    }
 }

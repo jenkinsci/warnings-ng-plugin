@@ -30,7 +30,7 @@
     <analysis-model-api.version>9.4.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <forensics-api-plugin.version>0.8.0-rc719.d6b007b88023</forensics-api-plugin.version>
-    <plugin-util-api.version>1.5.0</plugin-util-api.version>
+    <plugin-util-api.version>1.6.0</plugin-util-api.version>
 
     <font-awesome-api.version>5.15.1-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-2</jquery3-api.version>
