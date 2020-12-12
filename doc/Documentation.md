@@ -298,37 +298,115 @@ unclassified:
 ``` 
 
 
-### Control the selection of the reference build (baseline)
+### Configure the selection of the reference build (baseline)
 
-One important feature of the Warnings Next Generation plugin is the classification of issues as new, outstanding and fixed:
+One unique feature of the Warnings Next Generation plugin is the classification of issues as new, outstanding and fixed:
 - **new**: all issues, that are part of the current report but have not been shown up in the reference report
 - **fixed**: all issues, that are part of the reference report but are not present in the current report anymore
 - **outstanding**: all issues, that are part of the current and reference report
+Using this classification one can see what new issues have been caused by a pull request, or if
+ new and fixed issues are in balance or if the quality of the project is degenerating or improving.
 
 In order to compute this classification, the plugin requires a reference build (baseline). New, fixed, and outstanding
-issues are then computed by comparing the issues in the current build and in the baseline. There are three options that
-control the selection of the reference build. 
-
+issues are then computed by comparing the issues in the current build and in the baseline.
 Starting with release 8.5.0 the selection of the reference build is delegated to the 
 [Forensics API plugin](https://github.com/jenkinsci/forensics-api-plugin) and the corresponding Git implementation in the
-[Git Forensics plugin](https://github.com/jenkinsci/git-forensics-plugin).
+[Git Forensics plugin](https://github.com/jenkinsci/git-forensics-plugin). This new implementation in the Git Forensics 
+plugin is much more versatile than the old default implementation that simply returned a previous build of a configurable 
+Jenkins job.
 
+When selecting a baseline, we need to distinguish two different use cases, which are documented in the next sections.
 
-![reference build configuration](images/reference.png) 
+### Selecting a baseline from the current job
 
-An example pipeline with these options is shown in the following snippet:
+When a team wants to investigate how the quality of the project changes over the time, we need to simply
+look back in the history of the same Jenkins job and select another build that we can use to compare the results 
+with. Such a Jenkins job typically build the main branch of the source control system. 
+This behavior was part of the Warnings' Plugin since the beginning and is still available. You do not need to
+configure anything to get this functionality: just skip the computation of the reference build (see next section). 
+You can affect the selection of the reference build with the following properties:
+
+- `ignoreQualityGate`: This option is only available if you have a quality gate enabled for your job. Then you can
+  enable this option to always select the previous build as baseline. That means, that the plugin marks only those
+  issues as new, that have been submitted in the current build. Previously new issues in older builds will the plugin
+  convert and classify as outstanding issues. Think carefully before selecting this option because then manually
+  starting a new build (without source code changes) simply will convert all previously new issues to outstanding.
+  Therefore, this option is disabled by default: a reference build is always a build that passed all quality gates. As
+  soon as a build does not pass the quality gate, the reference will be frozen until all new issues will be resolved 
+  again. This means, that new issues will be aggregated from build to build until the original cause for the failure 
+  and all those additional new issues have been resolved. This helps much more to keep your project clean: as soon as 
+  there are new issues, Jenkins will mark all builds as unstable until the issues have been resolved.
+
+- `ignoreFailedBuilds`: This option determines if failed builds should be selected as baseline or not.
+  This option is enabled by default, since analysis results might be inaccurate if the build failed.
+  If unchecked, every build that contains a static analysis result will be considered as a baseline, 
+  even if the build failed.
+
+You can use checkboxes to change the default values of these options, see image below.
+
+![reference build configuration](images/reference-warnings.png)
+
+These options are available for pipelines as well: 
 
 ```groovy
-recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true, referenceJobName: 'my-project/master'
+recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true
 ```
 
-In pipelines you also have the additional option to specify a specific build that should be used as reference. Such
-a build needs to be computed in your pipeline before you call the `recordIssues`  step. 
+### Selecting a baseline in the target job
+
+:warning: This feature requires the installation of an additional plugin:
+[Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
+
+For more complex branch source projects (i.e., projects that build several branches and pull requests in a 
+connected job hierarchy) it makes more sense to select a reference build from a job
+that builds the actual target branch (i.e., the branch the current changes will be merged into). Here one typically is
+interested what changed in the branch or pull request over the main branch (or any other
+target branch). That means we want to see what new warnings will be submitted by a branch or pull request
+if the team merges the changes. 
+
+If you are using a Git branch source project, the Jenkins job that builds the target branch 
+will be selected automatically by running the reference recorder step. Simply call the step `discoverGitReferenceBuild` 
+before any of static analysis steps:
 
 ```groovy
-recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true, 
-        referenceJobName: 'my-project/master', referenceBuildId: '1'
+discoverGitReferenceBuild
+recordIssues tool: checkStyle(pattern: 'checkstyle-result.xml')
 ```
+
+Selecting the correct reference build is not that easy as it looks, since the main branch of a project will evolve 
+more frequently than a specific feature or bugfix branch. That means if we want to compare the results of a pull 
+request with the results of the main branch we need to select a build from the main branch that contains only 
+commits that are also part of the branch of the associated pull request.    
+
+Therefore, the Git Forensics plugin automatically tracks all commits of a Jenkins build and uses this information to 
+identify a build in the target branch that matches best with the commits in the current branch. Please have a look
+at the [documentation of the Git Forensics plugin](https://github.com/jenkinsci/git-forensics-plugin) to see how 
+this is achieved in detail. 
+
+This algorithm can be used for plain Git SCM freestyle projects or pipelines as well. In this case, we cannot get
+the target branch information automatically from the Git branch source API. Therefore, you need to manually 
+specify the Jenkins job that builds the target branch in the parameter `referenceJob`. See the following sample pipeline 
+snippet for an example on how to discover a baseline from such a reference job:
+
+```groovy
+    discoverGitReferenceBuild referenceJob: 'my-reference-job'
+    recordIssues tool: checkStyle(pattern: 'checkstyle-result.xml')
+```
+
+Please note that the parameter `referenceJob` can be used even for non Git projects: in that case, the algorithm selects 
+the baseline from the specified job using the same techniques as described in 
+[the previous section](#selecting-a-baseline-from-the-current-job). However, this may lead to inaccurate results if the
+main branch diverged too heavily from the starting point of the current branch. See the following sample 
+snippet that shows the relevant options for this feature. 
+
+```groovy
+    discoverGitReferenceBuild referenceJob: 'my-project/main-branch'
+    recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true
+```
+
+A corresponding Freestyle configuration is given in the following screenshot. 
+
+![reference build configuration](images/reference-step.png)
 
 
 ### Filtering issues
@@ -632,7 +710,8 @@ child row within the table.
 
 If not disabled in the job configuration, the plugin will execute `git blame` to determine who is the responsible 
 'author' of an issue. In the corresponding *SCM Blames* view all issues will be listed with author name, email and
-commit ID. 
+commit ID. If available by the corresponding SCM plugin, you can also directly navigate to the affected commit using
+the configured repository browser.
   
 ![source control overview](images/git.png) 
 
@@ -646,21 +725,22 @@ recordIssues blameDisabled: true, tool: java(pattern: '*.log')
 :warning: This feature requires the installation of an additional plugin: 
 [Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
 
-If not disabled in the job configuration, the plugin will mine the source code repository in the style of 
+If the Git Forensics plugin has been configured to mine the source code repository in the style of 
 [Code as a Crime Scene](https://www.adamtornhill.com/articles/crimescene/codeascrimescene.htm) 
-(Adam Tornhill, November 2013) to determine statistics of the affected files.
-In the corresponding *SCM Forensics* view all issues will be listed with the following properties of the affected files:
-- total number of commits
-- total number of different authors
+(Adam Tornhill, November 2013) then this information will be shown in an additional view side by side with the issues.
+In this *SCM Forensics* view all issues will be listed with the following properties of the affected files:
+- commits count
+- different authors count
 - creation time
 - last modification time
+- lines of code (from the commit details)
+- code churn (changed lines since created)
   
 ![source control overview](images/forensics-view.png) 
 
-In order to disable the forensics feature, set the property `forensicsDisabled` to `true`, see the following example:
-```groovy
-recordIssues forensicsDisabled: true, tool: java(pattern: '*.log')
-```
+If a project contains many issues, then this view will give you a hint, which files you should improve first. Files
+that have many lines, many changed lines, many different authors, or many commits are frequently touched in your project
+and typically require a special attention.  
 
 ### Source code view
 

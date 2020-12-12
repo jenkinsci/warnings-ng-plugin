@@ -18,7 +18,7 @@
     </j:otherwise>
   </j:choose>
 
-  <f:entry title="${%title.skipSymbolicLinks}" field="skipSymbolicLinks" description="${%description.skipSymbolicLinks}">
+  <f:entry title="${%title.skipSymbolicLinks}" field="skipSymbolicLinks">
     <f:checkbox/>
   </f:entry>
 
