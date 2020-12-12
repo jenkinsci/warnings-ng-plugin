@@ -28,6 +28,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.model.Item;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -56,6 +57,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.RunResultHandler;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -1209,8 +1211,12 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all available charsets
          */
+        @POST
         public ComboBoxModel doFillSourceCodeEncodingItems() {
-            return model.getAllCharsets();
+            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+                return model.getAllCharsets();
+            }
+            return new ComboBoxModel();
         }
 
         /**
@@ -1218,8 +1224,12 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all available severity filters
          */
+        @POST
         public ListBoxModel doFillMinimumSeverityItems() {
-            return model.getAllSeverityFilters();
+            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+                return model.getAllSeverityFilters();
+            }
+            return new ListBoxModel();
         }
 
         /**
@@ -1281,8 +1291,12 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all  aggregation trend chart positions
          */
+        @POST
         public ListBoxModel doFillTrendChartTypeItems() {
-            return model.getAllTrendChartTypes();
+            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+                return model.getAllTrendChartTypes();
+            }
+            return new ListBoxModel();
         }
 
         /**

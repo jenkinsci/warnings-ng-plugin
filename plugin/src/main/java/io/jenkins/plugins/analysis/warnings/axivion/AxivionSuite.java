@@ -269,6 +269,7 @@ public final class AxivionSuite extends Tool {
          *
          * @return a list view of all credential ids
          */
+        @POST
         public ListBoxModel doFillCredentialsIdItems(
                 @AncestorInPath final Item item, @QueryParameter final String credentialsId) {
             StandardListBoxModel result = new StandardListBoxModel();

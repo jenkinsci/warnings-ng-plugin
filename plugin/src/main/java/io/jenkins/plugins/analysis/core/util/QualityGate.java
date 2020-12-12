@@ -11,13 +11,16 @@ import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult.*;
 
@@ -303,11 +306,14 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          *
          * @return the quality gate types
          */
+        @POST
         public ListBoxModel doFillTypeItems() {
             ListBoxModel model = new ListBoxModel();
 
-            for (QualityGateType qualityGateType : QualityGateType.values()) {
-                model.add(qualityGateType.getDisplayName(), qualityGateType.name());
+            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+                for (QualityGateType qualityGateType : QualityGateType.values()) {
+                    model.add(qualityGateType.getDisplayName(), qualityGateType.name());
+                }
             }
 
             return model;

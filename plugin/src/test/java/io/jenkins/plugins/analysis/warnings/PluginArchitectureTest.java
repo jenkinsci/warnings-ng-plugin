@@ -57,6 +57,9 @@ class PluginArchitectureTest {
     @ArchTest
     static final ArchRule USE_POST_FOR_VALIDATION_END_POINTS = PluginArchitectureRules.USE_POST_FOR_VALIDATION_END_POINTS;
 
+    @ArchTest
+    static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = PluginArchitectureRules.USE_POST_FOR_LIST_AND_COMBOBOX_FILL;
+
     /** Digester must not be used directly, rather use a SecureDigester instance. */
     @ArchTest
     static final ArchRule NO_DIGESTER_CONSTRUCTOR_CALLED =
