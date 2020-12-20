@@ -33,10 +33,12 @@ If you are using Git as source code management system then the warnings plugin w
 the repository in the style of 
 [Code as a Crime Scene](https://www.adamtornhill.com/articles/crimescene/codeascrimescene.htm) 
 (Adam Tornhill, November 2013) to determine statistics of the affected files (i.e. the files with issues):
-- total number of commits 
-- total number of different authors
+- commits count
+- different authors count
 - creation time
 - last modification time
+- lines of code (from the commit details)
+- code churn (changed lines since created)
 
 Additionally, the plugin shows the last person who modified the code that contains an issue (and the last commit ID).
 In order to use this functionality you need to install the optional 
