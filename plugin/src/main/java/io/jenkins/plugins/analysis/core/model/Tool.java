@@ -16,12 +16,14 @@ import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
 import jenkins.security.MasterToSlaveCallable;
 
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
@@ -172,6 +174,10 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          */
         @POST
         public FormValidation doCheckId(@QueryParameter final String id) {
+            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.validateId(id);
         }
 

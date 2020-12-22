@@ -14,7 +14,10 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.FormValidation;
+
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Defines a filter criteria based on a regular expression for {@link Report}.
@@ -67,6 +70,10 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
          */
         @POST
         public FormValidation doCheckPattern(@QueryParameter final String pattern) {
+            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             try {
                 if (StringUtils.isBlank(pattern)) {
                     return FormValidation.ok(Messages.pattern_blank());

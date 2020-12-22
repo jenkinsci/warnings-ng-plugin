@@ -27,6 +27,7 @@ import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
 import jenkins.model.Jenkins;
@@ -246,6 +247,9 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          */
         @POST
         public FormValidation doCheckId(@QueryParameter(required = true) final String id) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             return new ModelValidation().validateId(id);
         }
 
@@ -259,6 +263,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          */
         @POST
         public FormValidation doCheckName(@QueryParameter(required = true) final String name) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             if (StringUtils.isBlank(name)) {
                 return FormValidation.error(Messages.GroovyParser_Error_Name_isEmpty());
             }
@@ -275,6 +283,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          */
         @POST
         public FormValidation doCheckRegexp(@QueryParameter(required = true) final String regexp) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             try {
                 if (StringUtils.isBlank(regexp)) {
                     return FormValidation.error(Messages.GroovyParser_Error_Regexp_isEmpty());
@@ -300,6 +312,10 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
          */
         @POST
         public FormValidation doCheckScript(@QueryParameter(required = true) final String script) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             if (isNotAllowedToRunScripts()) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }

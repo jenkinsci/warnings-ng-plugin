@@ -217,6 +217,8 @@ public abstract class ReportScanningTool extends Tool {
 
     /** Descriptor for {@link ReportScanningTool}. **/
     public abstract static class ReportScanningToolDescriptor extends ToolDescriptor {
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
+
         private final ModelValidation model = new ModelValidation();
 
         /**
@@ -236,7 +238,7 @@ public abstract class ReportScanningTool extends Tool {
          */
         @POST
         public ComboBoxModel doFillReportEncodingItems() {
-            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            if (JENKINS.hasPermission(Item.CONFIGURE)) {
                 return model.getAllCharsets();
             }
             return new ComboBoxModel();
@@ -252,6 +254,10 @@ public abstract class ReportScanningTool extends Tool {
          */
         @POST
         public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.validateCharset(reportEncoding);
         }
 
@@ -268,6 +274,10 @@ public abstract class ReportScanningTool extends Tool {
         @POST
         public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String pattern) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.doCheckPattern(project, pattern);
         }
 
