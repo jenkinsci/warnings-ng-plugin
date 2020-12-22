@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.Ensure;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
@@ -60,6 +61,20 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
 
     /** Descriptor for a filter. */
     public abstract static class RegexpFilterDescriptor extends Descriptor<RegexpFilter> {
+        private final JenkinsFacade jenkinsFacade;
+
+        /**
+         * Creates a new {@link RegexpFilterDescriptor}.
+         */
+        public RegexpFilterDescriptor() {
+            this(new JenkinsFacade());
+        }
+
+        @VisibleForTesting
+        RegexpFilterDescriptor(final JenkinsFacade jenkinsFacade) {
+            this.jenkinsFacade = jenkinsFacade;
+        }
+
         /**
          * Performs on-the-fly validation on threshold for high warnings.
          *
@@ -70,7 +85,7 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
          */
         @POST
         public FormValidation doCheckPattern(@QueryParameter final String pattern) {
-            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
                 return FormValidation.ok();
             }
 
