@@ -41,6 +41,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implements Serializable {
     private static final long serialVersionUID = 2447124045452896581L;
     private static final int MAX_EXAMPLE_SIZE = 4096;

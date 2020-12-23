@@ -72,6 +72,8 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
 
         @VisibleForTesting
         RegexpFilterDescriptor(final JenkinsFacade jenkinsFacade) {
+            super();
+
             this.jenkinsFacade = jenkinsFacade;
         }
 

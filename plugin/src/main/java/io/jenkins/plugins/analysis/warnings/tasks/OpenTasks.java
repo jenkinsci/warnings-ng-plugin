@@ -41,7 +41,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.DataClass")
+@SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveImports"})
 public class OpenTasks extends Tool {
     private static final long serialVersionUID = 4692318309214830824L;
 
