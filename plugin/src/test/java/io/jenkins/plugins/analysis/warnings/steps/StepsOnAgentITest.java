@@ -27,7 +27,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-public class StepsOnSlaveITest extends IntegrationTestWithJenkinsPerTest {
+public class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JAVA_CONTENT = "public class Test {}";
 
     /**
