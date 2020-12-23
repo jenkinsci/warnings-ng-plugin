@@ -5,8 +5,8 @@
     Provides all required input fields to scan for issues.
   </st:documentation>
 
-  <f:entry title="${%title.blameDisabled}" field="skipBlames">
-    <f:checkbox />
+  <f:entry field="skipBlames">
+    <f:checkbox title="${%title.blameDisabled}" />
   </f:entry>
 
   <i:hr title="${%Affected Files}"/>

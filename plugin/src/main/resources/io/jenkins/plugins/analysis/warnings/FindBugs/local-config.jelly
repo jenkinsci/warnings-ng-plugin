@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
-  <f:entry title="${%title.useRankAsPriority}" field="useRankAsPriority">
-    <f:checkbox default="true"/>
+  <f:entry field="useRankAsPriority">
+    <f:checkbox default="true" title="${%title.useRankAsPriority}"/>
   </f:entry>
 
 </j:jelly>

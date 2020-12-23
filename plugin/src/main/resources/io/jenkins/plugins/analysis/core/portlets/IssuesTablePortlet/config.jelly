@@ -4,11 +4,11 @@
   <f:entry title="${%Name}" field="name">
     <f:textbox default="${descriptor.getDisplayName()}"/>
   </f:entry>
-  <f:entry title="${%hide.title}" field="hideCleanJobs">
-    <f:checkbox />
+  <f:entry field="hideCleanJobs">
+    <f:checkbox title="${%hide.title}"/>
   </f:entry>
-  <f:entry title="${%icons.title}" field="showIcons">
-    <f:checkbox />
+  <f:entry field="showIcons">
+    <f:checkbox title="${%icons.title}"/>
   </f:entry>
   <i:select-tools/>
 

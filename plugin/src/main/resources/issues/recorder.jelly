@@ -14,12 +14,12 @@
   </f:entry>
 
   <f:advanced>
-    <f:entry title="${%title.aggregatingResults}" field="aggregatingResults">
-      <f:checkbox/>
+    <f:entry field="aggregatingResults">
+      <f:checkbox title="${%title.aggregatingResults}" />
     </f:entry>
 
-    <f:entry title="${%title.enabledForFailure}" field="enabledForFailure">
-      <f:checkbox/>
+    <f:entry field="enabledForFailure">
+      <f:checkbox title="${%title.enabledForFailure}"/>
     </f:entry>
     <i:scan-parameters/>
     <i:publish-parameters/>
