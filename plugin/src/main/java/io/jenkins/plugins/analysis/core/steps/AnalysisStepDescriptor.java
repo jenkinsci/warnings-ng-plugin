@@ -18,6 +18,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * @author Ullrich Hafner
  */
 public abstract class AnalysisStepDescriptor extends StepDescriptor {
+    private static final JenkinsFacade JENKINS = new JenkinsFacade();
     private final ModelValidation model = new ModelValidation();
 
     /**
@@ -27,7 +28,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ComboBoxModel doFillSourceCodeEncodingItems() {
-        if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+        if (JENKINS.hasPermission(Item.CONFIGURE)) {
             return model.getAllCharsets();
         }
         return new ComboBoxModel();
@@ -43,6 +44,10 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            return FormValidation.ok();
+        }
+
         return model.validateCharset(reportEncoding);
     }
 
@@ -56,6 +61,10 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            return FormValidation.ok();
+        }
+
         return model.validateCharset(sourceCodeEncoding);
     }
 
@@ -66,7 +75,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ListBoxModel doFillMinimumSeverityItems() {
-        if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+        if (JENKINS.hasPermission(Item.CONFIGURE)) {
             return model.getAllSeverityFilters();
         }
         return new ListBoxModel();
@@ -82,7 +91,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     @Deprecated
     @POST
     public ComboBoxModel doFillReferenceJobNameItems() {
-        if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+        if (JENKINS.hasPermission(Item.CONFIGURE)) {
             return model.getAllJobs();
         }
         return new ComboBoxModel();
@@ -123,7 +132,7 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public ListBoxModel doFillTrendChartTypeItems() {
-        if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+        if (JENKINS.hasPermission(Item.CONFIGURE)) {
             return model.getAllTrendChartTypes();
         }
         return new ListBoxModel();
@@ -139,6 +148,10 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      */
     @POST
     public FormValidation doCheckId(@QueryParameter final String id) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            return FormValidation.ok();
+        }
+
         return model.validateId(id);
     }
 }

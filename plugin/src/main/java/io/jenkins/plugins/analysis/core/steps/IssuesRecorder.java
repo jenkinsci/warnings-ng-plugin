@@ -1173,6 +1173,9 @@ public class IssuesRecorder extends Recorder {
     @Symbol("recordIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
+
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
+
         /** Retain backward compatibility. */
         @Initializer(before = InitMilestone.PLUGINS_STARTED)
         public static void addAliases() {
@@ -1203,6 +1206,10 @@ public class IssuesRecorder extends Recorder {
          */
         @POST
         public FormValidation doCheckId(@QueryParameter final String id) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.validateId(id);
         }
 
@@ -1213,7 +1220,7 @@ public class IssuesRecorder extends Recorder {
          */
         @POST
         public ComboBoxModel doFillSourceCodeEncodingItems() {
-            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            if (JENKINS.hasPermission(Item.CONFIGURE)) {
                 return model.getAllCharsets();
             }
             return new ComboBoxModel();
@@ -1226,7 +1233,7 @@ public class IssuesRecorder extends Recorder {
          */
         @POST
         public ListBoxModel doFillMinimumSeverityItems() {
-            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            if (JENKINS.hasPermission(Item.CONFIGURE)) {
                 return model.getAllSeverityFilters();
             }
             return new ListBoxModel();
@@ -1242,6 +1249,10 @@ public class IssuesRecorder extends Recorder {
          */
         @POST
         public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.validateCharset(reportEncoding);
         }
 
@@ -1255,6 +1266,10 @@ public class IssuesRecorder extends Recorder {
          */
         @POST
         public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.validateCharset(sourceCodeEncoding);
         }
 
@@ -1293,7 +1308,7 @@ public class IssuesRecorder extends Recorder {
          */
         @POST
         public ListBoxModel doFillTrendChartTypeItems() {
-            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            if (JENKINS.hasPermission(Item.CONFIGURE)) {
                 return model.getAllTrendChartTypes();
             }
             return new ListBoxModel();
@@ -1312,6 +1327,10 @@ public class IssuesRecorder extends Recorder {
         @POST
         public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String sourceDirectory) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.doCheckSourceDirectory(project, sourceDirectory);
         }
     }

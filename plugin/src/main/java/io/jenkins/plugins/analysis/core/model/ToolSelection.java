@@ -135,6 +135,9 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
          */
         @POST
         public FormValidation doCheckId(@QueryParameter final String id) {
+            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             if (collectAvailableIds().contains(id)) {
                 return FormValidation.ok();
             }
