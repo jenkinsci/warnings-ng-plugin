@@ -42,7 +42,7 @@ class WarningChecksPublisher {
     private final TaskListener listener;
     private final String checksName;
 
-    WarningChecksPublisher(ResultAction action, TaskListener listener, String checksName) {
+    WarningChecksPublisher(final ResultAction action, final TaskListener listener, final String checksName) {
         this.action = action;
         this.listener = listener;
         this.checksName = checksName;

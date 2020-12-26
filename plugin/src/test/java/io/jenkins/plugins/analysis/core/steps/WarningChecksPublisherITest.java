@@ -44,9 +44,15 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
     private static final String OLD_CHECKSTYLE_REPORT = "checkstyle.xml";
     private static final String NEW_CHECKSTYLE_REPORT = "checkstyle1.xml";
 
+    /**
+     * Capturing checks publisher for inspection of checks created during a run.
+     */
     @TestExtension
     public static final CapturingChecksPublisher.Factory PUBLISHER_FACTORY = new CapturingChecksPublisher.Factory();
 
+    /**
+     * Resets captured checks after each test.
+     */
     @After
     public void clearPublisher() {
         PUBLISHER_FACTORY.getPublishedChecks().clear();
@@ -203,6 +209,9 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasFieldOrPropertyWithValue("endColumn", Optional.empty());
     }
 
+    /**
+     * Test that publishIssues honors the checks name provided by a withChecks context.
+     */
     @Test
     public void shouldHonorWithChecksContext() {
         WorkflowJob project = createPipeline();
