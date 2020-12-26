@@ -40,10 +40,16 @@ import io.jenkins.plugins.checks.api.ChecksStatus;
 class WarningChecksPublisher {
     private final ResultAction action;
     private final TaskListener listener;
+    private final String checksName;
 
-    WarningChecksPublisher(final ResultAction action, final TaskListener listener) {
+    WarningChecksPublisher(ResultAction action, TaskListener listener, String checksName) {
         this.action = action;
         this.listener = listener;
+        this.checksName = checksName;
+    }
+
+    WarningChecksPublisher(final ResultAction action, final TaskListener listener) {
+        this(action, listener, null);
     }
 
     /**
@@ -63,7 +69,7 @@ class WarningChecksPublisher {
         StaticAnalysisLabelProvider labelProvider = action.getLabelProvider();
 
         return new ChecksDetailsBuilder()
-                .withName(labelProvider.getName())
+                .withName(StringUtils.defaultIfEmpty(checksName, labelProvider.getName()))
                 .withStatus(ChecksStatus.COMPLETED)
                 .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
                 .withOutput(new ChecksOutputBuilder()
