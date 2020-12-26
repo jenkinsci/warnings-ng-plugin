@@ -1,9 +1,13 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
 import org.apache.commons.lang3.StringUtils;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junit.After;
 import org.junit.Test;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
@@ -27,6 +31,7 @@ import io.jenkins.plugins.checks.api.ChecksDetails.ChecksDetailsBuilder;
 import io.jenkins.plugins.checks.api.ChecksOutput;
 import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksStatus;
+import org.jvnet.hudson.test.TestExtension;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -38,6 +43,15 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String OLD_CHECKSTYLE_REPORT = "checkstyle.xml";
     private static final String NEW_CHECKSTYLE_REPORT = "checkstyle1.xml";
+
+    @TestExtension
+    public static final CapturingChecksPublisher.Factory PUBLISHER_FACTORY = new CapturingChecksPublisher.Factory();
+
+    @After
+    public void clearPublisher() {
+        PUBLISHER_FACTORY.getPublishedChecks().clear();
+    }
+
 
     /**
      * Verifies that {@link WarningChecksPublisher} constructs the {@link ChecksDetails} correctly
@@ -187,6 +201,21 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasFieldOrPropertyWithValue("endLine", Optional.of(125))
                 .hasFieldOrPropertyWithValue("startColumn", Optional.empty())
                 .hasFieldOrPropertyWithValue("endColumn", Optional.empty());
+    }
+
+    @Test
+    public void shouldHonorWithChecksContext() {
+        WorkflowJob project = createPipeline();
+        copySingleFileToWorkspace(project, NEW_CHECKSTYLE_REPORT);
+        project.setDefinition(asStage("withChecks('Custom Checks Name') {", createScanForIssuesStep(new CheckStyle()), PUBLISH_ISSUES_STEP, "}"));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+
+        assertThat(publishedChecks.size()).isEqualTo(2);
+
+        publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
+
     }
 
     private ChecksDetails createExpectedCheckStyleDetails() {

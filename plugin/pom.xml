@@ -80,6 +80,7 @@
     <form-element-path.version>1.10</form-element-path.version>
     <folder.version>6.15</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
+    <checks-api.version>1.2.0</checks-api.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
@@ -293,6 +294,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>checks-api</artifactId>
+      <version>${checks-api.version}</version>
       <exclusions>
         <exclusion>
           <groupId>com.github.spotbugs</groupId>
@@ -390,6 +392,20 @@
       <version>${data-tables-api.version}</version>
       <scope>test</scope>
       <type>test-jar</type>
+    </dependency>
+
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>checks-api</artifactId>
+      <version>${checks-api.version}</version>
+      <scope>test</scope>
+      <type>test-jar</type>
+      <exclusions>
+        <exclusion>
+          <groupId>com.github.spotbugs</groupId>
+          <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- Form element path plugin to simplify location of UI elements in HtmlUnit tests -->
