@@ -29,12 +29,10 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control enabledForFailureCheckBox = control("enabledForFailure");
     private final Control ignoreQualityGate = control("ignoreQualityGate");
     private final Control overallResultMustBeSuccessCheckBox = control("overallResultMustBeSuccess");
-    private final Control referenceJobName = control("referenceJobName");
     private final Control aggregatingResults = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
     private final Control sourceDirectory = control("sourceDirectory");
-    private final Control blameDisabled = control("blameDisabled");
-    private final Control forensicsDisabled = control("forensicsDisabled");
+    private final Control skipBlames = control("skipBlames");
     private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
     private final Control skipPublishingChecks = control("skipPublishingChecks");
@@ -198,15 +196,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return overallResultMustBeSuccessCheckBox.get();
     }
 
-    /**
-     * Returns the reference job to get the results for the issue difference computation.
-     *
-     * @return the name of reference job
-     */
-    public String getReferenceJobName() {
-        return referenceJobName.get();
-    }
-
     public String getSourceDirectory() {
         return sourceDirectory.get();
     }
@@ -220,17 +209,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @return {@code true} if SCM blaming should be disabled
      */
-    public boolean getBlameDisabled() {
-        return isChecked(blameDisabled);
-    }
-
-    /**
-     * Returns whether SCM forensics should be disabled.
-     *
-     * @return {@code true} if SCM forensics should be disabled
-     */
-    public boolean getForensicsDisabled() {
-        return isChecked(forensicsDisabled);
+    public boolean getSkipBlames() {
+        return isChecked(skipBlames);
     }
 
     public boolean getIgnoreFailedBuilds() {
@@ -345,16 +325,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Sets the reference job to get the results for the issue difference computation.
-     *
-     * @param referenceJobName
-     *         the name of reference job
-     */
-    public void setReferenceJobName(final String referenceJobName) {
-        this.referenceJobName.set(referenceJobName);
-    }
-
-    /**
      * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
      * then this folder needs to be added in Jenkins global configuration.
      *
@@ -383,18 +353,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @param blameDisabled
      *         {@code true} if SCM blaming should be disabled, {@code false} otherwise
      */
-    public void setBlameDisabled(final boolean blameDisabled) {
-        this.blameDisabled.check(blameDisabled);
-    }
-
-    /**
-     * Determines whether SCM forensics should be disabled or not.
-     *
-     * @param forensicsDisabled
-     *         {@code true} if SCM forensics should be disabled, {@code false} otherwise
-     */
-    public void setForensicsDisabled(final boolean forensicsDisabled) {
-        this.forensicsDisabled.check(forensicsDisabled);
+    public void setSkipBlames(final boolean blameDisabled) {
+        skipBlames.check(blameDisabled);
     }
 
     /**

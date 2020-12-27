@@ -356,6 +356,20 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    public boolean isSkipBlames() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setSkipBlames(final boolean skipBlames) {
+        isBlameDisabled = skipBlames;
+    }
+
+    /**
      * Not used anymore.
      *
      * @return {@code true} if SCM forensics should be disabled

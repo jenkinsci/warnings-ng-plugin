@@ -750,15 +750,38 @@ public class RecordIssuesStep extends Step implements Serializable {
      * Returns whether SCM blaming should be disabled.
      *
      * @return {@code true} if SCM blaming should be disabled
+     * @deprecated use {@link #isSkipBlames()}
      */
     @SuppressWarnings("PMD.BooleanGetMethodName")
+    @Deprecated
     public boolean getBlameDisabled() {
         return isBlameDisabled;
     }
 
+    /**
+     * Determines whether to skip the SCM blaming.
+     * 
+     * @param blameDisabled {@code true} if SCM blaming should be disabled
+     * @deprecated use {@link #setSkipBlames(boolean)}
+     */
+    @Deprecated
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
         isBlameDisabled = blameDisabled;
+    }
+
+    /**
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    public boolean isSkipBlames() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setSkipBlames(final boolean skipBlames) {
+        isBlameDisabled = skipBlames;
     }
 
     /**
@@ -785,20 +808,6 @@ public class RecordIssuesStep extends Step implements Serializable {
     @Deprecated
     public void setForensicsDisabled(final boolean forensicsDisabled) {
         // do nothing
-    }
-
-    /**
-     * Returns whether SCM blaming should be disabled.
-     *
-     * @return {@code true} if SCM blaming should be disabled
-     */
-    public boolean isSkipBlames() {
-        return isBlameDisabled;
-    }
-
-    @DataBoundSetter
-    public void setSkipBlames(final boolean skipBlames) {
-        isBlameDisabled = skipBlames;
     }
 
     /**

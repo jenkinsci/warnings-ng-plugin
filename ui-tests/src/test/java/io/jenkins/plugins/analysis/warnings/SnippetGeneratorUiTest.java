@@ -42,12 +42,10 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
 
         snippetGenerator.selectRecordIssues().setTool("Java")
                 .setAggregatingResults(false)
-                .setBlameDisabled(false)
-                .setForensicsDisabled(false)
+                .setSkipBlames(false)
                 .setEnabledForFailure(false)
                 .setIgnoreFailedBuilds(true)
                 .setIgnoreQualityGate(false)
-                .setReferenceJobName("")
                 .setSourceCodeEncoding("");
 
         String script = snippetGenerator.generateScript();
@@ -65,12 +63,10 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
         snippetGenerator
                 .selectRecordIssues().setToolWithPattern("Java", "firstText")
                 .setAggregatingResults(true)
-                .setBlameDisabled(true)
-                .setForensicsDisabled(true)
+                .setSkipBlames(true)
                 .setEnabledForFailure(true)
                 .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
-                .setReferenceJobName("someText")
                 .setSourceCodeEncoding("otherText");
 
         String script = snippetGenerator.generateScript();
@@ -83,7 +79,6 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
         assertThat(script).contains("ignoreQualityGate: true");
 
         assertThat(script).contains("pattern: 'firstText'");
-        assertThat(script).contains("referenceJobName: 'someText'");
         assertThat(script).contains("sourceCodeEncoding: 'otherText'");
         assertThat(script).contains("tools: [java(");
         assertThat(script).contains(")]");
@@ -111,15 +106,14 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
     public void shouldHandleComplexConfiguration() {
         SnippetGenerator snippetGenerator = createSnippetGenerator();
 
-        snippetGenerator.selectRecordIssues().setToolWithPattern("Java", "firstText")
+        snippetGenerator.selectRecordIssues()
+                .setToolWithPattern("Java", "firstText")
                 .setAggregatingResults(true)
-                .setBlameDisabled(true)
-                .setForensicsDisabled(true)
+                .setSkipBlames(true)
                 .setEnabledForFailure(true)
                 .setHealthReport(1, 9, "HIGH")
                 .setIgnoreFailedBuilds(false)
                 .setIgnoreQualityGate(true)
-                .setReferenceJobName("someText")
                 .setSourceCodeEncoding("otherText")
                 .addIssueFilter("Exclude types", "*toExclude*")
                 .addQualityGateConfiguration(1, QualityGateType.NEW, QualityGateBuildResult.FAILED);
@@ -136,7 +130,6 @@ public class SnippetGeneratorUiTest extends AbstractJUnitTest {
         assertThat(script).contains("qualityGates: [[threshold: 1, type: 'NEW', unstable: false]]");
 
         assertThat(script).contains("pattern: 'firstText'");
-        assertThat(script).contains("referenceJobName: 'someText'");
         assertThat(script).contains("sourceCodeEncoding: 'otherText'");
 
         assertThat(script).contains("healthy: 1");

@@ -61,16 +61,14 @@ public class SnippetGenerator extends PageObject {
     /**
      * Page area of a issues recorder configuration.
      */
+    // FIXME: duplicates most of the controls in IssuesRecorder build step page object
     public static class IssuesRecorder extends PageAreaImpl {
-
         private final Control advancedButton = control("advanced-button");
         private final Control aggregatingResultsCheckBox = control("aggregatingResults");
-        private final Control scmBlamesCheckBox = control("blameDisabled");
-        private final Control scmForensicsCheckBox = control("forensicsDisabled");
+        private final Control scmBlamesCheckBox = control("skipBlames");
         private final Control enabledForFailureCheckBox = control("enabledForFailure");
         private final Control ignoreFailedBuildsCheckBox = control("ignoreFailedBuilds");
         private final Control ignoreQualityGateCheckBox = control("ignoreQualityGate");
-        private final Control referenceJobInput = control("referenceJobName");
         private final Control sourceCodeEncodingInput = control("sourceCodeEncoding");
         private final Control healthyThresholdInput = control("healthy");
         private final Control unhealthyThresholdInput = control("unhealthy");
@@ -154,20 +152,8 @@ public class SnippetGenerator extends PageObject {
          *         determines if the checkbox should be checked or not
          * @return issuesRecorder page area
          */
-        public IssuesRecorder setBlameDisabled(final boolean isChecked) {
+        public IssuesRecorder setSkipBlames(final boolean isChecked) {
             scmBlamesCheckBox.check(isChecked);
-            return this;
-        }
-
-        /**
-         * Enables or disables the checkbox 'scmForensics'.
-         *
-         * @param isChecked
-         *         determines if the checkbox should be checked or not
-         * @return issuesRecorder page area
-         */
-        public IssuesRecorder setForensicsDisabled(final boolean isChecked) {
-            scmForensicsCheckBox.check(isChecked);
             return this;
         }
 
@@ -204,18 +190,6 @@ public class SnippetGenerator extends PageObject {
          */
         public IssuesRecorder setIgnoreQualityGate(final boolean isChecked) {
             ignoreQualityGateCheckBox.check(isChecked);
-            return this;
-        }
-
-        /**
-         * Set the reference job name.
-         *
-         * @param referenceJobName
-         *         reference job name
-         * @return issuesRecorder page area
-         */
-        public IssuesRecorder setReferenceJobName(final String referenceJobName) {
-            referenceJobInput.set(referenceJobName);
             return this;
         }
 
