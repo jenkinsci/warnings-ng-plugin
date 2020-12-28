@@ -405,7 +405,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     /**
      * Opens the advanced section.
      */
-    public void openAdvancedOptions() {
+    public final void openAdvancedOptions() {
         if (advancedButton != null && advancedButton.exists()) {
             advancedButton.click();
         }
