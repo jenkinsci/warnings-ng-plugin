@@ -41,6 +41,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.checks.steps.ChecksInfo;
 
 /**
  * Pipeline step that scans report files or the console log for issues. Stores the created issues in an {@link
@@ -1054,6 +1055,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setFailOnError(step.getFailOnError());
             recorder.setTrendChartType(step.getTrendChartType());
             recorder.setSourceDirectory(step.getSourceDirectory());
+            recorder.setChecksInfo(getContext().get(ChecksInfo.class));
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
 

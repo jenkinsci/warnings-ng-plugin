@@ -79,7 +79,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(6)
                 .hasNewSize(2);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL);
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
         assertThat(publisher.extractChecksDetails())
                 .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
@@ -94,7 +94,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 recorder -> recorder.addQualityGate(10, QualityGateType.TOTAL, QualityGateResult.UNSTABLE));
 
         Run<?, ?> build = buildSuccessfully(project);
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL);
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
 
         assertThat(publisher.extractChecksDetails().getConclusion())
                 .isEqualTo(ChecksConclusion.SUCCESS);
@@ -120,7 +120,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         copySingleFileToWorkspace(project, "PVSReport.xml", "PVSReport.plog");
         Run<?, ?> run = buildSuccessfully(project);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL);
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
         ChecksDetails details = publisher.extractChecksDetails();
 
         assertThat(details.getOutput().get().getChecksAnnotations())
@@ -142,7 +142,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(0)
                 .hasNewSize(0);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL)
+        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
                 .extractChecksDetails().getOutput())
                 .isPresent()
                 .get()
@@ -159,7 +159,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(4)
                 .hasNewSize(0);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL)
+        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
                 .extractChecksDetails().getOutput())
                 .isPresent()
                 .get()
@@ -182,7 +182,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(6)
                 .hasNewSize(6);
 
-        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL)
+        assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null)
                 .extractChecksDetails().getOutput())
                 .isPresent()
                 .get()
@@ -199,7 +199,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         copySingleFileToWorkspace(project, "pmd.xml");
         Run<?, ?> run = buildSuccessfully(project);
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL);
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL, null);
         ChecksDetails details = publisher.extractChecksDetails();
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
@@ -308,7 +308,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasTotalSize(6)
                 .hasQualityGateStatus(qualityGateResult.getStatus());
 
-        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL);
+        WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
         assertThat(publisher.extractChecksDetails().getConclusion())
                 .isEqualTo(ChecksConclusion.FAILURE);
     }
