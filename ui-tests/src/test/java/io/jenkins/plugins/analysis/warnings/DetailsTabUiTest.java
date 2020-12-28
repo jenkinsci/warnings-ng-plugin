@@ -18,7 +18,7 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.Header;
 
-import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Integration tests for the details tab part of issue overview page.
@@ -139,7 +139,7 @@ public class DetailsTabUiTest extends AbstractJUnitTest {
         assertThat(issuesDetailsTable).hasSize(10).hasTotal(11);
 
         List<GenericTableRow> tableRowListIssues = issuesDetailsTable.getTableRows();
-        IssuesTableRow firstRow = (IssuesTableRow) tableRowListIssues.get(0);
+        IssuesTableRow firstRow = (IssuesTableRow) tableRowListIssues.get(9);
         firstRow.toggleDetailsRow();
 
         issuesDetailsTable.openTablePage(2);

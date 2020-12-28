@@ -11,7 +11,7 @@ import org.jenkinsci.test.acceptance.po.PageAreaImpl;
 import org.jenkinsci.test.acceptance.po.PostBuildStep;
 
 /**
- * Page object for the IssuesRecorder of the warnings plugin (white mountains release).
+ * Page object for the IssuesRecorder of the Jenkins Warnings Plugin.
  *
  * @author Ullrich Hafner
  */
@@ -28,7 +28,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control advancedButton = control("advanced-button");
     private final Control enabledForFailureCheckBox = control("enabledForFailure");
     private final Control ignoreQualityGate = control("ignoreQualityGate");
-    private final Control overallResultMustBeSuccessCheckBox = control("overallResultMustBeSuccess");
     private final Control aggregatingResults = control("aggregatingResults");
     private final Control sourceCodeEncoding = control("sourceCodeEncoding");
     private final Control sourceDirectory = control("sourceDirectory");
@@ -51,18 +50,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Returns the repeatable add button for the specified property.
-     *
-     * @param propertyName
-     *         the name of the repeatable property
-     *
-     * @return the selected repeatable add button
-     */
-    protected Control findRepeatableAddButtonFor(final String propertyName) {
-        return control(by.xpath("//div[@id='" + propertyName + "']//button[contains(@path,'-add')]"));
-    }
-
-    /**
      * Creates a new page object.
      *
      * @param parent
@@ -75,6 +62,10 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
         ScrollerUtil.hideScrollerTabBar(driver);
         openAdvancedOptions();
+    }
+
+    private Control findRepeatableAddButtonFor(final String propertyName) {
+        return control(by.xpath("//div[@id='" + propertyName + "']//button[contains(@path,'-add')]"));
     }
 
     /**
@@ -173,7 +164,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
      *         enabled for successful or unstable builds only
      */
-    public boolean getEnabledForFailure() {
+    public boolean isEnabledForFailure() {
         return isChecked(enabledForFailureCheckBox);
     }
 
@@ -184,16 +175,12 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      * @return {@code true}  if the results of each static analysis tool should be aggregated into a single result,
      *         {@code false} if every tool should get an individual result.
      */
-    public boolean getAggregatingResults() {
+    public boolean isAggregatingResults() {
         return isChecked(aggregatingResults);
     }
 
-    public boolean getIgnoreQualityGate() {
+    public boolean isIgnoringQualityGate() {
         return isChecked(ignoreQualityGate);
-    }
-
-    public String getOverallResultMustBeSuccess() {
-        return overallResultMustBeSuccessCheckBox.get();
     }
 
     public String getSourceDirectory() {
@@ -209,15 +196,15 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      *
      * @return {@code true} if SCM blaming should be disabled
      */
-    public boolean getSkipBlames() {
+    public boolean isSkipBlames() {
         return isChecked(skipBlames);
     }
 
-    public boolean getIgnoreFailedBuilds() {
+    public boolean isIgnoringFailedBuilds() {
         return isChecked(ignoreFailedBuilds);
     }
 
-    public boolean getSkipPublishingChecks() {
+    public boolean isSkipPublishingChecks() {
         return isChecked(skipPublishingChecks);
     }
 
@@ -225,7 +212,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return control.resolve().isSelected();
     }
 
-    public boolean getFailOnError() {
+    public boolean isFailingOnError() {
         return isChecked(failOnError);
     }
 
@@ -315,16 +302,6 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     }
 
     /**
-     * Enables or disables the checkbox 'overallResultMustBeSuccess'.
-     *
-     * @param isChecked
-     *         determines if the checkbox should be checked or not
-     */
-    public void setOverallResultMustBeSuccess(final boolean isChecked) {
-        overallResultMustBeSuccessCheckBox.check(isChecked);
-    }
-
-    /**
      * Sets the path to the folder that contains the source code. If not relative and thus not part of the workspace
      * then this folder needs to be added in Jenkins global configuration.
      *
@@ -392,6 +369,8 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
 
     /**
      * Sets the report file pattern.
+     *
+     * @param pattern the pattern to set
      */
     public void setReportFilePattern(final String pattern) {
         reportFilePattern.set(pattern);

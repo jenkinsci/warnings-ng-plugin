@@ -166,7 +166,8 @@ public abstract class AbstractDetailsTable {
      *         the number representing the page to open
      */
     public void openTablePage(final int pageNumber) {
-        resultDetailsPage.clickLink(String.valueOf(pageNumber));
-        this.updateTableRows();
+        WebElement webElement = resultDetailsPage.find(By.linkText(String.valueOf(pageNumber)));
+        webElement.click();
+        updateTableRows();
     }
 }

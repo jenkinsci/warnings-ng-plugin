@@ -21,7 +21,6 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
     private static final String PATTERN = "**/*.txt";
     private static final String ENCODING = "UTF-8";
-    private static final String REFERENCE = "reference";
     private static final String SOURCE_DIRECTORY = "relative";
     private static final String SEVERITY = "NORMAL";
     private static final String REGEX = "testRegex";
