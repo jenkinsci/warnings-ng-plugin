@@ -55,14 +55,14 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
 
         assertThat(issuesRecorder).hasSourceCodeEncoding(ENCODING);
         assertThat(issuesRecorder).hasSourceDirectory(SOURCE_DIRECTORY);
-        assertThat(issuesRecorder).hasAggregatingResults(true);
+        assertThat(issuesRecorder).isAggregatingResults();
         assertThat(issuesRecorder).hasTrendChartType(TrendChartType.TOOLS_ONLY.toString());
-        assertThat(issuesRecorder).hasSkipBlames(true);
-        assertThat(issuesRecorder).hasEnabledForFailure(true);
-        assertThat(issuesRecorder).hasIgnoreQualityGate(true);
-        assertThat(issuesRecorder).hasIgnoreFailedBuilds(true);
-        assertThat(issuesRecorder).hasSkipPublishingChecks(true);
-        assertThat(issuesRecorder).hasFailOnError(true);
+        assertThat(issuesRecorder).isSkipBlames();
+        assertThat(issuesRecorder).isEnabledForFailure();
+        assertThat(issuesRecorder).isIgnoringQualityGate();
+        assertThat(issuesRecorder).isIgnoringFailedBuilds();
+        assertThat(issuesRecorder).isSkipPublishingChecks();
+        assertThat(issuesRecorder).isFailingOnError();
         assertThat(issuesRecorder).hasHealthThreshold("1");
         assertThat(issuesRecorder).hasUnhealthyThreshold("9");
         assertThat(issuesRecorder).hasHealthSeverity(SEVERITY);
@@ -84,11 +84,11 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         job.configure();
         issuesRecorder.openAdvancedOptions();
 
-        assertThat(issuesRecorder).hasAggregatingResults(false);
-        assertThat(issuesRecorder).hasSkipBlames(false);
-        assertThat(issuesRecorder).hasEnabledForFailure(false);
-        assertThat(issuesRecorder).hasIgnoreQualityGate(false);
-        assertThat(issuesRecorder).hasIgnoreFailedBuilds(false);
-        assertThat(issuesRecorder).hasFailOnError(false);
+        assertThat(issuesRecorder).isNotAggregatingResults();
+        assertThat(issuesRecorder).isNotSkipBlames();
+        assertThat(issuesRecorder).isNotEnabledForFailure();
+        assertThat(issuesRecorder).isNotIgnoringQualityGate();
+        assertThat(issuesRecorder).isNotIgnoringFailedBuilds();
+        assertThat(issuesRecorder).isNotFailingOnError();
     }
 }
