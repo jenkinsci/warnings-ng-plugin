@@ -213,7 +213,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      * Test that publishIssues honors the checks name provided by a withChecks context.
      */
     @Test
-    public void shouldHonorWithChecksContext() {
+    public void shouldHonorWithChecksContextPublishIssues() {
         WorkflowJob project = createPipeline();
         copySingleFileToWorkspace(project, NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage("withChecks('Custom Checks Name') {", createScanForIssuesStep(new CheckStyle()), PUBLISH_ISSUES_STEP, "}"));
@@ -224,7 +224,26 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         assertThat(publishedChecks.size()).isEqualTo(2);
 
         publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
+    }
 
+    /**
+     * Test that recordIssues honors the checks name provided by a withChecks context.
+     */
+    @Test
+    public void shouldHonorWithChecksContextRecordIssues() {
+        WorkflowJob project = createPipeline();
+        copySingleFileToWorkspace(project, NEW_CHECKSTYLE_REPORT);
+        project.setDefinition(asStage(String.format(""
+                + "withChecks('Custom Checks Name') {\n"
+                + "  recordIssues(tools: [%s(pattern: '%s')])\n"
+                + "}", new CheckStyle().getSymbolName(), NEW_CHECKSTYLE_REPORT)));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+
+        assertThat(publishedChecks.size()).isEqualTo(2);
+
+        publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
     }
 
     private ChecksDetails createExpectedCheckStyleDetails() {
