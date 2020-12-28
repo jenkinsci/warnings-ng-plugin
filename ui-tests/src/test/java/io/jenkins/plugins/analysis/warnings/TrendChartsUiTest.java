@@ -2,15 +2,14 @@ package io.jenkins.plugins.analysis.warnings;
 
 import org.junit.Test;
 
-import static net.javacrumbs.jsonunit.assertj.JsonAssertions.assertThatJson;
-
 import org.jenkinsci.test.acceptance.junit.AbstractJUnitTest;
 import org.jenkinsci.test.acceptance.junit.WithPlugins;
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Job;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Ui test for the Trend Charts Table.
@@ -31,26 +30,22 @@ public class TrendChartsUiTest extends AbstractJUnitTest {
     @Test
     public void shouldDisplayDifferentTrendChartsOnClick() {
         FreeStyleJob job = createFreeStyleJob("build_01");
-        job.addPublisher(IssuesRecorder.class, recorder -> recorder.setToolWithPattern("Java", "**/*.txt"));
+        job.addPublisher(IssuesRecorder.class,
+                recorder -> recorder.setToolWithPattern("Java", "**/*.txt"));
         job.save();
 
         Build build = shouldBuildJobSuccessfully(job);
 
         AnalysisResult analysisResultPage = new AnalysisResult(build, "java");
         analysisResultPage.open();
-        analysisResultPage.clickNextOnTrendCarousel();
 
-        assertThat(analysisResultPage.trendChartIsDisplayed(SEVERITIES_TREND_CHART));
-
-        analysisResultPage.clickNextOnTrendCarousel();
-        waitFor().until(() -> !analysisResultPage.trendChartIsDisplayed(TOOLS_TREND_CHART));
-
-        assertThat(analysisResultPage.trendChartIsDisplayed(TOOLS_TREND_CHART));
+        assertThat(analysisResultPage.trendChartIsDisplayed(SEVERITIES_TREND_CHART)).isTrue();
 
         analysisResultPage.clickNextOnTrendCarousel();
-        waitFor().until(() -> !analysisResultPage.trendChartIsDisplayed(NEW_VERSUS_FIXED_TREND_CHART));
+        assertThat(analysisResultPage.trendChartIsDisplayed(TOOLS_TREND_CHART)).isTrue();
 
-        assertThat(analysisResultPage.trendChartIsDisplayed(NEW_VERSUS_FIXED_TREND_CHART));
+        analysisResultPage.clickNextOnTrendCarousel();
+        assertThat(analysisResultPage.trendChartIsDisplayed(NEW_VERSUS_FIXED_TREND_CHART)).isTrue();
     }
 
     /** Verifies all Charts after a series of 2 builds. */

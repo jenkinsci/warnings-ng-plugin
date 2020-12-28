@@ -10,13 +10,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
+
 import com.gargoylesoftware.htmlunit.ScriptResult;
 import com.google.inject.Injector;
+
 import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
+
 import io.jenkins.plugins.analysis.warnings.BlamesTable.BlamesTableRowType;
 import io.jenkins.plugins.analysis.warnings.ForensicsTable.ForensicsTableRowType;
-
 import io.jenkins.plugins.analysis.warnings.IssuesDetailsTable.IssuesTableRowType;
 
 /**
@@ -116,10 +118,6 @@ public class AnalysisResult extends PageObject {
         return IssuesTableRowType.DEFAULT;
     }
 
-    /**
-     *
-     * @return
-     */
     private BlamesTableRowType getBlamesTableType() {
         if (ArrayUtils.contains(DRY_TOOLS, id)) {
             return BlamesTableRowType.DRY;
@@ -188,6 +186,12 @@ public class AnalysisResult extends PageObject {
         return new PropertyDetailsTable(table, this, tab.property);
     }
 
+    /**
+     * Opens the analysis details page, selects the tab {@link Tab#BLAMES} and returns
+     * the {@link PageObject} of the blames table.
+     *
+     * @return page object of the blames table.
+     */
     public BlamesTable openBlamesTable() {
         openTab(Tab.BLAMES);
 
@@ -234,7 +238,7 @@ public class AnalysisResult extends PageObject {
      * @return Select WebElement where the user can choose how many rows should be displayed.
      */
     public Select getLengthSelectElementByActiveTab() {
-        WebElement lengthSelect = find(By.id(this.getActiveTab().property + "_length"));
+        WebElement lengthSelect = find(By.id(getActiveTab().property + "_length"));
         return new Select(lengthSelect.findElement(By.cssSelector("label > select")));
     }
 
@@ -244,7 +248,7 @@ public class AnalysisResult extends PageObject {
      * @return parent WebElement that contains the paginate buttons for a result table.
      */
     public WebElement getInfoElementByActiveTab() {
-        return this.getElement(By.id(this.getActiveTab().property + "_info"));
+        return getElement(By.id(getActiveTab().property + "_info"));
     }
 
     /**
@@ -253,7 +257,7 @@ public class AnalysisResult extends PageObject {
      * @return parent WebElement that contains the paginate buttons for a result table.
      */
     public WebElement getPaginateElementByActiveTab() {
-        return this.getElement(By.id(this.getActiveTab().property + "_paginate"));
+        return getElement(By.id(getActiveTab().property + "_paginate"));
     }
 
     /**
@@ -262,7 +266,7 @@ public class AnalysisResult extends PageObject {
      * @return WebElement where a user can filter the table by text input.
      */
     public WebElement getFilterInputElementByActiveTab() {
-        WebElement filter = find(By.id(this.getActiveTab().property + "_filter"));
+        WebElement filter = find(By.id(getActiveTab().property + "_filter"));
         return filter.findElement(By.cssSelector("label > input"));
     }
 
@@ -296,7 +300,10 @@ public class AnalysisResult extends PageObject {
      * Clicks the next-button to cycle through the Trend Charts.
      */
     public void clickNextOnTrendCarousel() {
-        find(By.className("carousel-control-next-icon")).click();
+        WebElement trendChart = getTrendChart();
+        WebElement activeChart = trendChart.findElement(By.className("active"));
+        trendChart.findElement(By.className("carousel-control-next-icon")).click();
+        waitFor().until(() -> !activeChart.isDisplayed());
     }
 
     /**
@@ -320,7 +327,7 @@ public class AnalysisResult extends PageObject {
      * @return TrendChart as JSON String.
      */
     public String getTrendChartById(final String elementId) {
-        Object result = this.executeScript(String.format(
+        Object result = executeScript(String.format(
                 "delete(window.Array.prototype.toJSON) \n"
                         + "return JSON.stringify(echarts.getInstanceByDom(document.getElementById(\"%s\")).getOption())",
                 elementId));
