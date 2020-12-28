@@ -67,6 +67,9 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .isEqualTo(createExpectedCheckStyleDetails());
     }
 
+    /**
+     * Verifies that {@link WarningChecksPublisher} correctly reports a successful quality gate.
+     */
     @Test
     public void shouldConcludeChecksAsSuccessWhenQualityGateIsPassed() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
@@ -80,16 +83,25 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .isEqualTo(ChecksConclusion.SUCCESS);
     }
 
+    /**
+     * Verifies that {@link WarningChecksPublisher} correctly reports a failed quality gate.
+     */
     @Test
     public void shouldConcludeChecksAsFailureWhenQualityGateIsFailed() {
         assertChecksConclusionIsFailureWithQualityGateResult(QualityGateResult.FAILURE);
     }
 
+    /**
+     * Verifies that {@link WarningChecksPublisher} correctly reports an unstable quality gate.
+     */
     @Test
     public void shouldConcludeChecksAsFailureWhenQualityGateResultIsUnstable() {
         assertChecksConclusionIsFailureWithQualityGateResult(QualityGateResult.UNSTABLE);
     }
 
+    /**
+     * Verifies that {@link WarningChecksPublisher} correctly handles HTML tags in messages.
+     */
     @Test
     public void shouldParseHtmlMessage() {
         FreeStyleProject project = createFreeStyleProject();
@@ -112,6 +124,9 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                         .build());
     }
 
+    /**
+     * Verifies that {@link WarningChecksPublisher} correctly handles the special case of zero issues.
+     */
     @Test
     public void shouldReportNoIssuesInTitle() {
         FreeStyleProject project = createFreeStyleProject();
@@ -129,6 +144,9 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasFieldOrPropertyWithValue("title", Optional.of("No issues."));
     }
 
+    /**
+     * Verifies that {@link WarningChecksPublisher} correctly shows only the totals in the title if there are no new issues.
+     */
     @Test
     public void shouldReportOnlyTotalIssuesInTitleWhenNoNewIssues() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT);
@@ -146,6 +164,9 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasFieldOrPropertyWithValue("title", Optional.of("No new issues, 4 total."));
     }
 
+    /**
+     * Verifies that {@link WarningChecksPublisher} correctly shows the totals and the new issues in the title.
+     */
     @Test
     public void shouldReportOnlyNewIssuesInTitleWhenAllIssuesAreNew() {
         FreeStyleProject project = createFreeStyleProject();
@@ -169,6 +190,9 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasFieldOrPropertyWithValue("title", Optional.of("6 new issues."));
     }
 
+    /**
+     * Verifies that {@link WarningChecksPublisher} correctly ignores the columns if the issue refers to several lines.
+     */
     @Test
     public void shouldIgnoreColumnsWhenBuildMultipleLineAnnotation() {
         FreeStyleProject project = createFreeStyleProject();
@@ -197,14 +221,13 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
 
         ChecksOutput output = new ChecksOutputBuilder()
                 .withTitle("2 new issues, 6 total.")
-                .withSummary("## 6 issues in total:\n"
-                        + "- ### 2 new issues\n"
-                        + "- ### 4 outstanding issues\n"
-                        + "- ### 2 delta issues\n"
-                        + "- ### 0 fixed issues")
-                .withText("## Total Issue Statistics:\n* Error: 6\n* High: 0\n* Normal: 0\n* Low: 0\n"
-                        + "## New Issue Statistics:\n* Error: 2\n* High: 0\n* Normal: 0\n* Low: 0\n"
-                        + "## Delta Issue Statistics:\n* Error: 2\n* High: 0\n* Normal: 0\n* Low: 0\n")
+                .withSummary("|Total|New|Outstanding|Fixed|Trend\n"
+                        + "|:-:|:-:|:-:|:-:|:-:\n"
+                        + "|6|2|4|0|:-1:\n")
+                .withText("## Severity distribution of new issues\n"
+                        + "|Error|Warning High|Warning Normal|Warning Low\n"
+                        + "|:-:|:-:|:-:|:-:\n"
+                        + "|2|0|0|0\n")
                 .addAnnotation(new ChecksAnnotationBuilder()
                         .withPath("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins"
                                 + "/tasks/parser/CsharpNamespaceDetector.java")

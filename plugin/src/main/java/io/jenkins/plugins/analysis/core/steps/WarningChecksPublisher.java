@@ -97,33 +97,66 @@ class WarningChecksPublisher {
         }
     }
 
+    private String formatColumns(final Object[] columns) {
+        StringBuilder row = new StringBuilder();
+        for (Object column : columns) {
+            row.append(String.format("|%s", column));
+        }
+        row.append('\n');
+        return row.toString();
+    }
+
     private String extractChecksSummary(final IssuesStatistics statistics) {
-        return String.format("## %d issues in total:\n"
-                        + "- ### %d new issues\n"
-                        + "- ### %d outstanding issues\n"
-                        + "- ### %d delta issues\n"
-                        + "- ### %d fixed issues",
-                statistics.getTotalSize(), statistics.getNewSize(), statistics.getTotalSize() - statistics.getNewSize(),
-                statistics.getDeltaSize(), statistics.getFixedSize());
+        StringBuilder summary = new StringBuilder();
+
+        summary.append(formatColumns(
+                new String[] {"Total", "New", "Outstanding", "Fixed", "Trend"}));
+        summary.append(formatColumns(new String[] {":-:", ":-:", ":-:", ":-:", ":-:"}));
+        summary.append(formatColumns(new Object[] {
+                statistics.getTotalSize(),
+                statistics.getNewSize(),
+                statistics.getTotalSize() - statistics.getNewSize(),
+                statistics.getFixedSize(),
+                getTrendEmoji(statistics)}));
+
+        return summary.toString();
+    }
+
+    private String getTrendEmoji(final IssuesStatistics statistics) {
+        if (statistics.getTotalSize() == 0) {
+            return ":clap:";
+        }
+        if (statistics.getFixedSize() > statistics.getNewSize()) {
+            return ":+1:";
+        }
+        if (statistics.getNewSize() > 0) {
+            return ":-1:";
+        }
+        return ":zzz:";
     }
 
     private String extractChecksText(final IssuesStatistics statistics) {
-        return "## Total Issue Statistics:\n"
-                + generateSeverityText(statistics.getTotalLowSize(), statistics.getTotalNormalSize(),
-                statistics.getTotalHighSize(), statistics.getTotalErrorSize())
-                + "## New Issue Statistics:\n"
-                + generateSeverityText(statistics.getNewLowSize(), statistics.getNewNormalSize(),
-                statistics.getNewHighSize(), statistics.getNewErrorSize())
-                + "## Delta Issue Statistics:\n"
-                + generateSeverityText(statistics.getDeltaLowSize(), statistics.getDeltaNormalSize(),
-                statistics.getDeltaHighSize(), statistics.getDeltaErrorSize());
+        if (statistics.getNewSize() == 0) {
+            return "## Severity distribution of all issues\n"
+                + generateSeverityText(statistics.getTotalErrorSize(), statistics.getTotalHighSize(),
+                statistics.getTotalNormalSize(), statistics.getTotalLowSize());
+        }
+        else {
+            return "## Severity distribution of new issues\n"
+                    + generateSeverityText(statistics.getNewErrorSize(), statistics.getNewHighSize(),
+                    statistics.getNewNormalSize(), statistics.getNewLowSize());
+        }
     }
 
-    private String generateSeverityText(final int low, final int normal, final int high, final int error) {
-        return "* Error: " + error + "\n"
-                + "* High: " + high + "\n"
-                + "* Normal: " + normal + "\n"
-                + "* Low: " + low + "\n";
+    private String generateSeverityText(final int error, final int high, final int normal, final int low) {
+        StringBuilder summary = new StringBuilder();
+
+        summary.append(formatColumns(
+                new String[] {"Error", "Warning High", "Warning Normal", "Warning Low"}));
+        summary.append(formatColumns(new String[] {":-:", ":-:", ":-:", ":-:"}));
+        summary.append(formatColumns(new Object[] {error, high, normal, low}));
+
+        return summary.toString();
     }
 
     private ChecksConclusion extractChecksConclusion(final QualityGateStatus status) {
