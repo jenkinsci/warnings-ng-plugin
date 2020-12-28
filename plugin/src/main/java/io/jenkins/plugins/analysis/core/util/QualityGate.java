@@ -305,6 +305,8 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
 
         @VisibleForTesting
         QualityGateDescriptor(final JenkinsFacade jenkinsFacade) {
+            super();
+
             jenkins = jenkinsFacade;
         }
 
