@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
 
+import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -300,6 +301,19 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
     @Extension
     public static class QualityGateDescriptor extends Descriptor<QualityGate> {
         private final ModelValidation modelValidation = new ModelValidation();
+        private final JenkinsFacade jenkins;
+
+        @VisibleForTesting
+        QualityGateDescriptor(final JenkinsFacade jenkinsFacade) {
+            jenkins = jenkinsFacade;
+        }
+
+        /**
+         * Creates a new descriptor.
+         */
+        public QualityGateDescriptor() {
+            this(new JenkinsFacade());
+        }
 
         /**
          * Return the model for the select widget.
@@ -310,7 +324,7 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         public ListBoxModel doFillTypeItems() {
             ListBoxModel model = new ListBoxModel();
 
-            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+            if (jenkins.hasPermission(Item.CONFIGURE)) {
                 for (QualityGateType qualityGateType : QualityGateType.values()) {
                     model.add(qualityGateType.getDisplayName(), qualityGateType.name());
                 }
@@ -328,7 +342,11 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          * @return the validation result
          */
         @SuppressWarnings("WeakerAccess")
+        @POST
         public FormValidation doCheckThreshold(@QueryParameter final int threshold) {
+            if (!jenkins.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             return modelValidation.validateThreshold(threshold);
         }
     }

@@ -1297,7 +1297,11 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             return model.validateHealthy(healthy, unhealthy);
         }
 
@@ -1311,7 +1315,11 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             return model.validateUnhealthy(healthy, unhealthy);
         }
 

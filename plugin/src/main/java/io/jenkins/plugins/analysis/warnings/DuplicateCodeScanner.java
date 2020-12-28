@@ -15,6 +15,8 @@ import j2html.tags.UnescapedText;
 
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
 
@@ -148,6 +150,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
     /** Descriptor for this static analysis tool. */
     abstract static class DryDescriptor extends ReportScanningToolDescriptor {
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 
         /**
@@ -170,8 +173,12 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckHighThreshold(@QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             return VALIDATION.validateHigh(highThreshold, normalThreshold);
         }
 
@@ -185,8 +192,12 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckNormalThreshold(@QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             return VALIDATION.validateNormal(highThreshold, normalThreshold);
         }
     }

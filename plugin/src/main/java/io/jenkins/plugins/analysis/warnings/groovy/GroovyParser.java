@@ -356,6 +356,9 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         @POST
         public FormValidation doCheckExample(@QueryParameter final String example,
                 @QueryParameter final String regexp, @QueryParameter final String script) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             if (isNotAllowedToRunScripts()) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }

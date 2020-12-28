@@ -287,7 +287,7 @@ public class OpenTasks extends Tool {
                 @QueryParameter final String low,
                 @QueryParameter final boolean ignoreCase,
                 @QueryParameter final boolean asRegexp) {
-            if (StringUtils.isEmpty(example)) {
+            if (StringUtils.isEmpty(example) || !JENKINS.hasPermission(Item.CONFIGURE)) {
                 return FormValidation.ok();
             }
 
