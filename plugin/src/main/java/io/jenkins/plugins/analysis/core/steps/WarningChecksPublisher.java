@@ -97,7 +97,7 @@ class WarningChecksPublisher {
         }
     }
 
-    private String formatColumns(final Object[] columns) {
+    private String formatColumns(final Object... columns) {
         StringBuilder row = new StringBuilder();
         for (Object column : columns) {
             row.append(String.format("|%s", column));
