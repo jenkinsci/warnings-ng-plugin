@@ -1058,6 +1058,13 @@ In order to disable the checks feature, set the property `skipPublishingChecks` 
 recordIssues skipPublishingChecks: true, tool: java(pattern: '*.log')
 ```
 
+The publisher will respect a `withChecks` context:
+```groovy
+withChecks('My Custom Checks Name') {
+  recordIssues tool: java(pattern: '*.log')
+}
+```
+
 ## Transition from the static analysis suite
 
 Previously the same set of features has been provided by the plugins of the static analysis suite 

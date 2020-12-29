@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
+import io.jenkins.plugins.checks.steps.ChecksInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
@@ -872,9 +874,9 @@ public class PublishIssuesStep extends Step implements Serializable {
             ResultAction action = publisher.attachAction(step.getTrendChartType());
 
             if (!step.isSkipPublishingChecks()) {
-                WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, getTaskListener());
+                WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class));
                 checksPublisher.publishChecks(
-                        step.isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
+                        isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
             }
 
             return action;
