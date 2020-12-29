@@ -90,9 +90,9 @@ class WarningChecksPublisher {
 
     private String extractReferenceBuild(final AnalysisResult result,
             final StaticAnalysisLabelProvider labelProvider) {
-        return action.getResult()
-                .getReferenceBuild()
-                .map(labelProvider::getReferenceBuild).map(DomContent::render)
+        return result.getReferenceBuild()
+                .map(labelProvider::getReferenceBuild)
+                .map(DomContent::render)
                 .orElse(StringUtils.EMPTY);
     }
 
