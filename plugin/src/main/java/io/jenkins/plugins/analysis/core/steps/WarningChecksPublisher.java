@@ -14,6 +14,8 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 
+import j2html.tags.DomContent;
+
 import hudson.model.TaskListener;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -62,18 +64,27 @@ class WarningChecksPublisher {
 
         StaticAnalysisLabelProvider labelProvider = action.getLabelProvider();
 
+        String summary = extractChecksSummary(totals) + extractReferenceBuild(result, labelProvider);
         return new ChecksDetailsBuilder()
                 .withName(labelProvider.getName())
                 .withStatus(ChecksStatus.COMPLETED)
                 .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
                 .withOutput(new ChecksOutputBuilder()
                         .withTitle(extractChecksTitle(totals))
-                        .withSummary(extractChecksSummary(totals))
+                        .withSummary(summary)
                         .withText(extractChecksText(totals))
                         .withAnnotations(extractChecksAnnotations(result.getNewIssues(), labelProvider))
                         .build())
                 .withDetailsURL(action.getAbsoluteUrl())
                 .build();
+    }
+
+    private String extractReferenceBuild(final AnalysisResult result,
+            final StaticAnalysisLabelProvider labelProvider) {
+        return action.getResult()
+                .getReferenceBuild()
+                .map(labelProvider::getReferenceBuild).map(DomContent::render)
+                .orElse(StringUtils.EMPTY);
     }
 
     private String extractChecksTitle(final IssuesStatistics statistics) {
@@ -107,19 +118,15 @@ class WarningChecksPublisher {
     }
 
     private String extractChecksSummary(final IssuesStatistics statistics) {
-        StringBuilder summary = new StringBuilder();
-
-        summary.append(formatColumns(
-                new String[] {"Total", "New", "Outstanding", "Fixed", "Trend"}));
-        summary.append(formatColumns(new String[] {":-:", ":-:", ":-:", ":-:", ":-:"}));
-        summary.append(formatColumns(new Object[] {
+        String sizes = formatColumns(
                 statistics.getTotalSize(),
                 statistics.getNewSize(),
                 statistics.getTotalSize() - statistics.getNewSize(),
                 statistics.getFixedSize(),
-                getTrendEmoji(statistics)}));
-
-        return summary.toString();
+                getTrendEmoji(statistics));
+        return formatColumns("Total", "New", "Outstanding", "Fixed", "Trend")
+                + formatColumns(":-:", ":-:", ":-:", ":-:", ":-:")
+                + sizes;
     }
 
     private String getTrendEmoji(final IssuesStatistics statistics) {
@@ -138,8 +145,8 @@ class WarningChecksPublisher {
     private String extractChecksText(final IssuesStatistics statistics) {
         if (statistics.getNewSize() == 0) {
             return "## Severity distribution of all issues\n"
-                + generateSeverityText(statistics.getTotalErrorSize(), statistics.getTotalHighSize(),
-                statistics.getTotalNormalSize(), statistics.getTotalLowSize());
+                    + generateSeverityText(statistics.getTotalErrorSize(), statistics.getTotalHighSize(),
+                    statistics.getTotalNormalSize(), statistics.getTotalLowSize());
         }
         else {
             return "## Severity distribution of new issues\n"
@@ -149,14 +156,9 @@ class WarningChecksPublisher {
     }
 
     private String generateSeverityText(final int error, final int high, final int normal, final int low) {
-        StringBuilder summary = new StringBuilder();
-
-        summary.append(formatColumns(
-                new String[] {"Error", "Warning High", "Warning Normal", "Warning Low"}));
-        summary.append(formatColumns(new String[] {":-:", ":-:", ":-:", ":-:"}));
-        summary.append(formatColumns(new Object[] {error, high, normal, low}));
-
-        return summary.toString();
+        return formatColumns("Error", "Warning High", "Warning Normal", "Warning Low")
+                + formatColumns(":-:", ":-:", ":-:", ":-:")
+                + formatColumns(error, high, normal, low);
     }
 
     private ChecksConclusion extractChecksConclusion(final QualityGateStatus status) {

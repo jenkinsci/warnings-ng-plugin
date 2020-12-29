@@ -40,8 +40,8 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
     private static final String NEW_CHECKSTYLE_REPORT = "checkstyle1.xml";
 
     /**
-     * Verifies that {@link WarningChecksPublisher} constructs the {@link ChecksDetails} correctly
-     * with only new issues.
+     * Verifies that {@link WarningChecksPublisher} constructs the {@link ChecksDetails} correctly with only new
+     * issues.
      */
     @Test
     public void shouldCreateChecksDetailsWithNewIssuesAsAnnotations() {
@@ -63,8 +63,16 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         assertThat(publisher.extractChecksDetails())
                 .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
-                .ignoringFields("detailsURL")
+                .ignoringFields("detailsURL", "output.value.summary.value")
                 .isEqualTo(createExpectedCheckStyleDetails());
+        assertThat(publisher.extractChecksDetails().getOutput()).isPresent().get().satisfies(
+                output -> assertThat(output.getSummary()).isPresent().get().asString()
+                        .startsWith("|Total|New|Outstanding|Fixed|Trend\n"
+                                + "|:-:|:-:|:-:|:-:|:-:\n"
+                                + "|6|2|4|0|:-1:\n"
+                                + "Reference build: <a href=\"http://localhost:")
+                        .endsWith("#1</a>")
+        );
     }
 
     /**
@@ -145,7 +153,8 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
     }
 
     /**
-     * Verifies that {@link WarningChecksPublisher} correctly shows only the totals in the title if there are no new issues.
+     * Verifies that {@link WarningChecksPublisher} correctly shows only the totals in the title if there are no new
+     * issues.
      */
     @Test
     public void shouldReportOnlyTotalIssuesInTitleWhenNoNewIssues() {
@@ -221,9 +230,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
 
         ChecksOutput output = new ChecksOutputBuilder()
                 .withTitle("2 new issues, 6 total.")
-                .withSummary("|Total|New|Outstanding|Fixed|Trend\n"
-                        + "|:-:|:-:|:-:|:-:|:-:\n"
-                        + "|6|2|4|0|:-1:\n")
+                .withSummary("") // summary value is checked directly since it is using a random port
                 .withText("## Severity distribution of new issues\n"
                         + "|Error|Warning High|Warning Normal|Warning Low\n"
                         + "|:-:|:-:|:-:|:-:\n"
