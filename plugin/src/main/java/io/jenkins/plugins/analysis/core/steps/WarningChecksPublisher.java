@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.steps;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,7 @@ import org.jsoup.nodes.TextNode;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import hudson.model.TaskListener;
 
@@ -31,6 +33,7 @@ import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksPublisher;
 import io.jenkins.plugins.checks.api.ChecksPublisherFactory;
 import io.jenkins.plugins.checks.api.ChecksStatus;
+import io.jenkins.plugins.checks.steps.ChecksInfo;
 
 /**
  * Publishes warnings as checks to scm platforms.
@@ -40,10 +43,13 @@ import io.jenkins.plugins.checks.api.ChecksStatus;
 class WarningChecksPublisher {
     private final ResultAction action;
     private final TaskListener listener;
+    @CheckForNull
+    private final ChecksInfo checksInfo;
 
-    WarningChecksPublisher(final ResultAction action, final TaskListener listener) {
+    WarningChecksPublisher(final ResultAction action, final TaskListener listener, @CheckForNull final ChecksInfo checksInfo) {
         this.action = action;
         this.listener = listener;
+        this.checksInfo = checksInfo;
     }
 
     /**
@@ -62,8 +68,12 @@ class WarningChecksPublisher {
 
         StaticAnalysisLabelProvider labelProvider = action.getLabelProvider();
 
+        String checksName = Optional.ofNullable(checksInfo).map(ChecksInfo::getName)
+                .filter(StringUtils::isNotEmpty)
+                .orElse(labelProvider.getName());
+
         return new ChecksDetailsBuilder()
-                .withName(labelProvider.getName())
+                .withName(checksName)
                 .withStatus(ChecksStatus.COMPLETED)
                 .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
                 .withOutput(new ChecksOutputBuilder()

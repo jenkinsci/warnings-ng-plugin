@@ -57,6 +57,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.RunResultHandler;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.checks.steps.ChecksInfo;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
@@ -111,6 +112,9 @@ public class IssuesRecorder extends Recorder {
     private transient boolean isForensicsDisabled;
 
     private boolean skipPublishingChecks; // by default, checks will be published
+
+    @CheckForNull
+    private ChecksInfo checksInfo;
 
     private String id;
     private String name;
@@ -605,6 +609,10 @@ public class IssuesRecorder extends Recorder {
         this.filters = new ArrayList<>(filters);
     }
 
+    public void setChecksInfo(@CheckForNull final ChecksInfo checksInfo) {
+        this.checksInfo = checksInfo;
+    }
+
     @Override
     public BuildStepMonitor getRequiredMonitorService() {
         return BuildStepMonitor.NONE;
@@ -751,7 +759,7 @@ public class IssuesRecorder extends Recorder {
         ResultAction action = publisher.attachAction(trendChartType);
 
         if (!skipPublishingChecks) {
-            WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, listener);
+            WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, listener, checksInfo);
             checksPublisher.publishChecks();
         }
     }

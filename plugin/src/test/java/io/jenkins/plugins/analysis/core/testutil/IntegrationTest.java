@@ -584,6 +584,18 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
+     * Creates a pipeline step that records issues of the specified tool.
+     *
+     * @param tool
+     *         the class of the tool to use
+     *
+     * @return the pipeline step
+     */
+    protected String createRecordIssuesStep(final ReportScanningTool tool) {
+        return String.format("recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])", tool.getSymbolName());
+    }
+
+    /**
      * Wraps the specified steps into a stage.
      *
      * @param steps
