@@ -113,6 +113,7 @@ public class IssuesRecorder extends Recorder {
 
     private boolean skipPublishingChecks; // by default, checks will be published
 
+    @CheckForNull
     private ChecksInfo checksInfo;
 
     private String id;
@@ -594,7 +595,7 @@ public class IssuesRecorder extends Recorder {
         this.filters = new ArrayList<>(filters);
     }
 
-    public void setChecksInfo(final ChecksInfo checksInfo) {
+    public void setChecksInfo(@CheckForNull final ChecksInfo checksInfo) {
         this.checksInfo = checksInfo;
     }
 

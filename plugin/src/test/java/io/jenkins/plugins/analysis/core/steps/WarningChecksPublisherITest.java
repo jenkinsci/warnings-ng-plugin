@@ -209,21 +209,63 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasFieldOrPropertyWithValue("endColumn", Optional.empty());
     }
 
+
+
+    /**
+     * Test that publishIssues uses correct default name.
+     */
+    @Test
+    public void shouldUseDefaultChecksNamePublishIssues() {
+        WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
+        project.setDefinition(asStage(createScanForIssuesStep(new CheckStyle()), PUBLISH_ISSUES_STEP));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+
+        assertThat(publishedChecks).hasSize(1);
+
+        assertThat(publishedChecks.get(0).getName()).isPresent().get().isEqualTo("CheckStyle");
+
+        assertThat(publishedChecks.get(0).getOutput()).isPresent().hasValueSatisfying(
+                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
+    }
+
+    /**
+     * Test that recordIssues uses correct default name.
+     */
+    @Test
+    public void shouldUseDefaultChecksNameRecordIssues() {
+        WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
+        project.setDefinition(asStage(createRecordIssuesStep(new CheckStyle())));
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+
+        assertThat(publishedChecks).hasSize(1);
+
+        assertThat(publishedChecks.get(0).getName()).isPresent().get().isEqualTo("CheckStyle");
+
+        assertThat(publishedChecks.get(0).getOutput()).isPresent().hasValueSatisfying(
+                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
+    }
+
     /**
      * Test that publishIssues honors the checks name provided by a withChecks context.
      */
     @Test
     public void shouldHonorWithChecksContextPublishIssues() {
-        WorkflowJob project = createPipeline();
-        copySingleFileToWorkspace(project, NEW_CHECKSTYLE_REPORT);
+        WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
         project.setDefinition(asStage("withChecks('Custom Checks Name') {", createScanForIssuesStep(new CheckStyle()), PUBLISH_ISSUES_STEP, "}"));
         buildSuccessfully(project);
 
         List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
 
-        assertThat(publishedChecks.size()).isEqualTo(2);
+        assertThat(publishedChecks).hasSize(2);  // First from 'In progress' check provided by withChecks, second from publishIssues
 
         publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
+
+        assertThat(publishedChecks.get(1).getOutput()).isPresent().hasValueSatisfying(
+                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
     }
 
     /**
@@ -231,19 +273,18 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      */
     @Test
     public void shouldHonorWithChecksContextRecordIssues() {
-        WorkflowJob project = createPipeline();
-        copySingleFileToWorkspace(project, NEW_CHECKSTYLE_REPORT);
-        project.setDefinition(asStage(String.format(""
-                + "withChecks('Custom Checks Name') {\n"
-                + "  recordIssues(tools: [%s(pattern: '%s')])\n"
-                + "}", new CheckStyle().getSymbolName(), NEW_CHECKSTYLE_REPORT)));
+        WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
+        project.setDefinition(asStage("withChecks('Custom Checks Name') {", createRecordIssuesStep(new CheckStyle()), "}"));
         buildSuccessfully(project);
 
         List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
 
-        assertThat(publishedChecks.size()).isEqualTo(2);
+        assertThat(publishedChecks).hasSize(2);  // First from 'In progress' check provided by withChecks, second from recordIssues
 
         publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
+
+        assertThat(publishedChecks.get(1).getOutput()).isPresent().hasValueSatisfying(
+                output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
     }
 
     private ChecksDetails createExpectedCheckStyleDetails() {

@@ -14,6 +14,7 @@ import org.jsoup.nodes.TextNode;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import hudson.model.TaskListener;
 
@@ -42,9 +43,10 @@ import io.jenkins.plugins.checks.steps.ChecksInfo;
 class WarningChecksPublisher {
     private final ResultAction action;
     private final TaskListener listener;
+    @CheckForNull
     private final ChecksInfo checksInfo;
 
-    WarningChecksPublisher(final ResultAction action, final TaskListener listener, final ChecksInfo checksInfo) {
+    WarningChecksPublisher(final ResultAction action, final TaskListener listener, @CheckForNull final ChecksInfo checksInfo) {
         this.action = action;
         this.listener = listener;
         this.checksInfo = checksInfo;
