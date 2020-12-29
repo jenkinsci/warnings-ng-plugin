@@ -35,6 +35,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control ignoreFailedBuilds = control("ignoreFailedBuilds");
     private final Control failOnError = control("failOnError");
     private final Control skipPublishingChecks = control("skipPublishingChecks");
+    private final Control publishAllIssues = control("publishAllIssues");
     private final Control reportFilePattern = control("/toolProxies/tool/pattern");
     private final Control trendChartType = control("trendChartType");
     private final Control healthyThreshold = control("healthy");
@@ -208,6 +209,10 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return isChecked(skipPublishingChecks);
     }
 
+    public boolean isPublishAllIssues() {
+        return isChecked(publishAllIssues);
+    }
+
     private boolean isChecked(final Control control) {
         return control.resolve().isSelected();
     }
@@ -365,6 +370,16 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
         this.skipPublishingChecks.check(skipPublishingChecks);
+    }
+
+    /**
+     * Sets whether all issues should be published using the Checks API. If set to {@code false} only new issues will
+     * be published.
+     *
+     * @param publishAllIssues {@code true} if all issues should be published, {@code false} if only new issues should be published
+     */
+    public void setPublishAllIssues(final boolean publishAllIssues) {
+        this.publishAllIssues.check(publishAllIssues);
     }
 
     /**

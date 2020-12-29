@@ -47,6 +47,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -111,6 +112,7 @@ public class IssuesRecorder extends Recorder {
     private transient boolean isForensicsDisabled;
 
     private boolean skipPublishingChecks; // by default, checks will be published
+    private boolean publishAllIssues; // by default, only new issues will be published
 
     private String id;
     private String name;
@@ -406,6 +408,21 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
         this.skipPublishingChecks = skipPublishingChecks;
+    }
+
+    /**
+     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
+     * be published.
+     *
+     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
+     */
+    public boolean isPublishAllIssues() {
+        return publishAllIssues;
+    }
+
+    @DataBoundSetter
+    public void setPublishAllIssues(final boolean publishAllIssues) {
+        this.publishAllIssues = publishAllIssues;
     }
 
     /**
@@ -752,7 +769,8 @@ public class IssuesRecorder extends Recorder {
 
         if (!skipPublishingChecks) {
             WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, listener);
-            checksPublisher.publishChecks();
+            checksPublisher.publishChecks(
+                    isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
         }
     }
 

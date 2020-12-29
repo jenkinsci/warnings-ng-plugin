@@ -10,6 +10,9 @@
   <f:entry field="skipPublishingChecks">
     <f:checkbox title="${%title.skipPublishingChecks}" />
   </f:entry>
+  <f:entry field="publishAllIssues">
+    <f:checkbox title="${%title.publishAllIssues}" />
+  </f:entry>
   <f:entry field="failOnError">
     <f:checkbox title="${%title.failOnError}"/>
   </f:entry>

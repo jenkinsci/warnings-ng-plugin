@@ -1033,20 +1033,23 @@ Examples:
 
 :warning: This feature requires:
 * the installation of an additional plugin: [GitHub Checks Plugin](https://github.com/jenkinsci/github-checks-plugin)
-* the configuration of GitHub App credentails, see [this guide](https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc) for more details
+* the configuration of GitHub App credentials, see [this guide](https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc) for more details
 
-If not disabled in the job configuration, this plugin will publish warnings to GitHub through [GitHub checks API](https://docs.github.com/en/rest/reference/checks).
+If not disabled in the job configuration, this plugin will publish warnings to GitHub through 
+[GitHub checks API](https://docs.github.com/en/rest/reference/checks).
 
-Each analysis tool is published as an individual check, the quality gate is published as the check result.
+The plugin publishes the results of each analysis tool as an individual check, the quality gate is visible as check result.
+You can choose whether to report all or ony new issues by toggling the property `publishAllIssues`.
 
 ![check quality gate](images/check-quality-gate.png)
 
-
-In the *Details* view of each check ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), issues statistics will be displayed.
+In the *Details* view of each check ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), 
+issues statistics will be displayed.
 
 ![checks](images/checks.png)
 
-When new issues are produced by a pull request, they will be added as annotations below the code where the issues are introduced.
+When a new pull request or commit causes new issues, they will be added as annotations below the code where the issues 
+have been reported. 
 
 ![check annotation](images/check-annotation.png)
 

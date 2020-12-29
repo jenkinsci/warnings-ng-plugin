@@ -43,6 +43,7 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         issuesRecorder.setIgnoreQualityGate(true);
         issuesRecorder.setIgnoreFailedBuilds(true);
         issuesRecorder.setSkipPublishingChecks(true);
+        issuesRecorder.setPublishAllIssues(true);
         issuesRecorder.setFailOnError(true);
         issuesRecorder.setHealthReport(1, 9, SEVERITY);
         issuesRecorder.setReportFilePattern(PATTERN);
@@ -62,6 +63,7 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         assertThat(issuesRecorder).isIgnoringQualityGate();
         assertThat(issuesRecorder).isIgnoringFailedBuilds();
         assertThat(issuesRecorder).isSkipPublishingChecks();
+        assertThat(issuesRecorder).isPublishAllIssues();
         assertThat(issuesRecorder).isFailingOnError();
         assertThat(issuesRecorder).hasHealthThreshold("1");
         assertThat(issuesRecorder).hasUnhealthyThreshold("9");
@@ -75,6 +77,7 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         // Now invert all booleans:
         issuesRecorder.setAggregatingResults(false);
         issuesRecorder.setSkipBlames(false);
+        issuesRecorder.setPublishAllIssues(false);
         issuesRecorder.setEnabledForFailure(false);
         issuesRecorder.setIgnoreQualityGate(false);
         issuesRecorder.setIgnoreFailedBuilds(false);
@@ -85,7 +88,7 @@ public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
         issuesRecorder.openAdvancedOptions();
 
         assertThat(issuesRecorder).isNotAggregatingResults();
-        assertThat(issuesRecorder).isNotSkipBlames();
+        assertThat(issuesRecorder).isNotPublishAllIssues();
         assertThat(issuesRecorder).isNotEnabledForFailure();
         assertThat(issuesRecorder).isNotIgnoringQualityGate();
         assertThat(issuesRecorder).isNotIgnoringFailedBuilds();

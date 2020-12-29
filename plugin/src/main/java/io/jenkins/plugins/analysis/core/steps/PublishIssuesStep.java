@@ -28,6 +28,7 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -60,6 +61,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private boolean failOnError = false; // by default, it should not fail on error
 
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
+    private boolean publishAllIssues; // by default, only new issues will be published
 
     private int healthy;
     private int unhealthy;
@@ -162,6 +164,21 @@ public class PublishIssuesStep extends Step implements Serializable {
     @SuppressWarnings("unused") // Used by Stapler
     public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
         this.skipPublishingChecks = skipPublishingChecks;
+    }
+
+    /**
+     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
+     * be published.
+     *
+     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
+     */
+    public boolean isPublishAllIssues() {
+        return publishAllIssues;
+    }
+
+    @DataBoundSetter
+    public void setPublishAllIssues(final boolean publishAllIssues) {
+        this.publishAllIssues = publishAllIssues;
     }
 
     /**
@@ -856,7 +873,8 @@ public class PublishIssuesStep extends Step implements Serializable {
 
             if (!step.isSkipPublishingChecks()) {
                 WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, getTaskListener());
-                checksPublisher.publishChecks();
+                checksPublisher.publishChecks(
+                        step.isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
             }
 
             return action;

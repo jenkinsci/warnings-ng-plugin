@@ -13,6 +13,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
@@ -60,19 +61,26 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasNewSize(2);
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL);
-        assertThat(publisher.extractChecksDetails())
+        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES))
                 .hasFieldOrPropertyWithValue("detailsURL", Optional.of(getResultAction(run).getAbsoluteUrl()))
                 .usingRecursiveComparison()
                 .ignoringFields("detailsURL", "output.value.summary.value")
                 .isEqualTo(createExpectedCheckStyleDetails());
-        assertThat(publisher.extractChecksDetails().getOutput()).isPresent().get().satisfies(
-                output -> assertThat(output.getSummary()).isPresent().get().asString()
-                        .startsWith("|Total|New|Outstanding|Fixed|Trend\n"
-                                + "|:-:|:-:|:-:|:-:|:-:\n"
-                                + "|6|2|4|0|:-1:\n"
-                                + "Reference build: <a href=\"http://localhost:")
-                        .endsWith("#1</a>")
-        );
+        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput()).isPresent()
+                .get()
+                .satisfies(
+                        output -> {
+                            assertThat(output.getSummary()).isPresent().get().asString()
+                                    .startsWith("|Total|New|Outstanding|Fixed|Trend\n"
+                                            + "|:-:|:-:|:-:|:-:|:-:\n"
+                                            + "|6|2|4|0|:-1:\n"
+                                            + "Reference build: <a href=\"http://localhost:")
+                                    .endsWith("#1</a>");
+                            assertThat(output.getChecksAnnotations()).hasSize(2);
+                        });
+        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_ALL_ISSUES).getOutput())
+                .isPresent().get().satisfies(
+                        output -> assertThat(output.getChecksAnnotations()).hasSize(6));
     }
 
     /**
@@ -87,7 +95,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         Run<?, ?> build = buildSuccessfully(project);
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL);
 
-        assertThat(publisher.extractChecksDetails().getConclusion())
+        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getConclusion())
                 .isEqualTo(ChecksConclusion.SUCCESS);
     }
 
@@ -121,7 +129,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         Run<?, ?> run = buildSuccessfully(project);
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL);
-        ChecksDetails details = publisher.extractChecksDetails();
+        ChecksDetails details = publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES);
 
         assertThat(details.getOutput().get().getChecksAnnotations())
                 .usingElementComparatorOnFields("message")
@@ -146,7 +154,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasNewSize(0);
 
         assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL)
-                .extractChecksDetails().getOutput())
+                .extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("No issues."));
@@ -167,7 +175,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasNewSize(0);
 
         assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL)
-                .extractChecksDetails().getOutput())
+                .extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("No new issues, 4 total."));
@@ -193,7 +201,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasNewSize(6);
 
         assertThat(new WarningChecksPublisher(getResultAction(run), TaskListener.NULL)
-                .extractChecksDetails().getOutput())
+                .extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getOutput())
                 .isPresent()
                 .get()
                 .hasFieldOrPropertyWithValue("title", Optional.of("6 new issues."));
@@ -213,7 +221,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         Run<?, ?> run = buildSuccessfully(project);
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(run), TaskListener.NULL);
-        ChecksDetails details = publisher.extractChecksDetails();
+        ChecksDetails details = publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES);
 
         assertThat(details.getOutput().get().getChecksAnnotations().get(0))
                 .hasFieldOrPropertyWithValue("startLine", Optional.of(123))
@@ -301,7 +309,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasQualityGateStatus(qualityGateResult.getStatus());
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL);
-        assertThat(publisher.extractChecksDetails().getConclusion())
+        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getConclusion())
                 .isEqualTo(ChecksConclusion.FAILURE);
     }
 }

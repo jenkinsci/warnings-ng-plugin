@@ -40,6 +40,11 @@ import io.jenkins.plugins.checks.api.ChecksStatus;
  * @author Kezhi Xiong
  */
 class WarningChecksPublisher {
+    enum AnnotationScope {
+        PUBLISH_ALL_ISSUES,
+        PUBLISH_NEW_ISSUES
+    }
+
     private final ResultAction action;
     private final TaskListener listener;
 
@@ -49,22 +54,26 @@ class WarningChecksPublisher {
     }
 
     /**
-     * Publishes checks to platforms. Afterwards, all warnings are available in corresponding platform's UI, e.g. GitHub
-     * checks.
+     * Publishes checks to the selected SCM platform. Afterwards, all warnings are available in corresponding platform's
+     * UI, e.g., GitHub checks.
+     *
+     * @param annotationScope
+     *         scope of the annotations to publish
      */
-    void publishChecks() {
+    void publishChecks(final AnnotationScope annotationScope) {
         ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner(), listener);
-        publisher.publish(extractChecksDetails());
+        publisher.publish(extractChecksDetails(annotationScope));
     }
 
     @VisibleForTesting
-    ChecksDetails extractChecksDetails() {
+    ChecksDetails extractChecksDetails(final AnnotationScope annotationScope) {
         AnalysisResult result = action.getResult();
         IssuesStatistics totals = result.getTotals();
 
         StaticAnalysisLabelProvider labelProvider = action.getLabelProvider();
 
         String summary = extractChecksSummary(totals) + extractReferenceBuild(result, labelProvider);
+        Report issues = annotationScope == AnnotationScope.PUBLISH_NEW_ISSUES ? result.getNewIssues() : result.getIssues();
         return new ChecksDetailsBuilder()
                 .withName(labelProvider.getName())
                 .withStatus(ChecksStatus.COMPLETED)
@@ -73,7 +82,7 @@ class WarningChecksPublisher {
                         .withTitle(extractChecksTitle(totals))
                         .withSummary(summary)
                         .withText(extractChecksText(totals))
-                        .withAnnotations(extractChecksAnnotations(result.getNewIssues(), labelProvider))
+                        .withAnnotations(extractChecksAnnotations(issues, labelProvider))
                         .build())
                 .withDetailsURL(action.getAbsoluteUrl())
                 .build();
