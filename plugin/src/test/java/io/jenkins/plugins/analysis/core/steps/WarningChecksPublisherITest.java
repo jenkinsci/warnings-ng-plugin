@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
 import org.apache.commons.lang3.StringUtils;
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.After;
 import org.junit.Test;
+import org.jvnet.hudson.test.TestExtension;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
 import hudson.model.Run;
@@ -32,7 +32,7 @@ import io.jenkins.plugins.checks.api.ChecksDetails.ChecksDetailsBuilder;
 import io.jenkins.plugins.checks.api.ChecksOutput;
 import io.jenkins.plugins.checks.api.ChecksOutput.ChecksOutputBuilder;
 import io.jenkins.plugins.checks.api.ChecksStatus;
-import org.jvnet.hudson.test.TestExtension;
+import io.jenkins.plugins.checks.util.CapturingChecksPublisher;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -58,7 +58,6 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
     public void clearPublisher() {
         PUBLISHER_FACTORY.getPublishedChecks().clear();
     }
-
 
     /**
      * Verifies that {@link WarningChecksPublisher} constructs the {@link ChecksDetails} correctly with only new
@@ -98,8 +97,8 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                                     .endsWith("#1</a>");
                             assertThat(output.getChecksAnnotations()).hasSize(2);
                         });
-        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_ALL_ISSUES).getOutput())
-                .isPresent().get().satisfies(
+        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_ALL_ISSUES).getOutput()).isPresent().get()
+                .satisfies(
                         output -> assertThat(output.getChecksAnnotations()).hasSize(6));
     }
 
@@ -250,10 +249,8 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasFieldOrPropertyWithValue("endColumn", Optional.empty());
     }
 
-
-
     /**
-     * Test that publishIssues uses correct default name.
+     * Tests that {@code publishIssues} uses correct default name.
      */
     @Test
     public void shouldUseDefaultChecksNamePublishIssues() {
@@ -272,7 +269,40 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
     }
 
     /**
-     * Test that recordIssues uses correct default name.
+     * Tests that {@code recordIssues} either reports all or only new issues.
+     */
+    @Test
+    public void shouldReportSelectedIssues() {
+        buildCheckForNewAndOutstandingWarnings(AnnotationScope.PUBLISH_NEW_ISSUES, 2);
+        buildCheckForNewAndOutstandingWarnings(AnnotationScope.PUBLISH_ALL_ISSUES, 6);
+    }
+
+    private void buildCheckForNewAndOutstandingWarnings(final AnnotationScope scope, final int expectedSize) {
+        WorkflowJob project = createPipelineWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT);
+        project.setDefinition(asStage(String.format(
+                "recordIssues(tool: checkStyle(pattern: '**/*issues.txt', reportEncoding:'UTF-8'), publishAllIssues: '%s')",
+                scope == AnnotationScope.PUBLISH_ALL_ISSUES)));
+        buildSuccessfully(project);
+        clearPublisher();
+
+        copyMultipleFilesToWorkspaceWithSuffix(project, NEW_CHECKSTYLE_REPORT);
+        buildSuccessfully(project);
+
+        List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
+
+        assertThat(publishedChecks).hasSize(1);
+
+        ChecksDetails details = publishedChecks.get(0);
+        assertThat(details.getName()).isPresent().get().isEqualTo("CheckStyle");
+        assertThat(details.getOutput()).isPresent().hasValueSatisfying(
+                output -> {
+                    assertThat(output.getTitle()).isPresent().get().isEqualTo("2 new issues, 6 total.");
+                    assertThat(output.getChecksAnnotations()).hasSize(expectedSize);
+                });
+    }
+
+    /**
+     * Tests that {@code recordIssues} uses correct default name.
      */
     @Test
     public void shouldUseDefaultChecksNameRecordIssues() {
@@ -284,24 +314,26 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
 
         assertThat(publishedChecks).hasSize(1);
 
-        assertThat(publishedChecks.get(0).getName()).isPresent().get().isEqualTo("CheckStyle");
-
-        assertThat(publishedChecks.get(0).getOutput()).isPresent().hasValueSatisfying(
+        ChecksDetails details = publishedChecks.get(0);
+        assertThat(details.getName()).isPresent().get().isEqualTo("CheckStyle");
+        assertThat(details.getOutput()).isPresent().hasValueSatisfying(
                 output -> assertThat(output.getTitle()).isPresent().get().isEqualTo("No new issues, 6 total."));
     }
 
     /**
-     * Test that publishIssues honors the checks name provided by a withChecks context.
+     * Tests that {@code publishIssues} honors the checks name provided by a {@code withChecks} context.
      */
     @Test
     public void shouldHonorWithChecksContextPublishIssues() {
         WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
-        project.setDefinition(asStage("withChecks('Custom Checks Name') {", createScanForIssuesStep(new CheckStyle()), PUBLISH_ISSUES_STEP, "}"));
+        project.setDefinition(asStage("withChecks('Custom Checks Name') {", createScanForIssuesStep(new CheckStyle()),
+                PUBLISH_ISSUES_STEP, "}"));
         buildSuccessfully(project);
 
         List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
 
-        assertThat(publishedChecks).hasSize(2);  // First from 'In progress' check provided by withChecks, second from publishIssues
+        assertThat(publishedChecks).hasSize(
+                2);  // First from 'In progress' check provided by withChecks, second from publishIssues
 
         publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
 
@@ -310,17 +342,19 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
     }
 
     /**
-     * Test that recordIssues honors the checks name provided by a withChecks context.
+     * Tests that {@code recordIssues} honors the checks name provided by a {@code withChecks} context.
      */
     @Test
     public void shouldHonorWithChecksContextRecordIssues() {
         WorkflowJob project = createPipelineWithWorkspaceFiles(NEW_CHECKSTYLE_REPORT);
-        project.setDefinition(asStage("withChecks('Custom Checks Name') {", createRecordIssuesStep(new CheckStyle()), "}"));
+        project.setDefinition(
+                asStage("withChecks('Custom Checks Name') {", createRecordIssuesStep(new CheckStyle()), "}"));
         buildSuccessfully(project);
 
         List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
 
-        assertThat(publishedChecks).hasSize(2);  // First from 'In progress' check provided by withChecks, second from recordIssues
+        assertThat(publishedChecks).hasSize(
+                2);  // First from 'In progress' check provided by withChecks, second from recordIssues
 
         publishedChecks.forEach(check -> assertThat(check.getName()).isPresent().get().isEqualTo("Custom Checks Name"));
 
@@ -407,7 +441,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                 .hasQualityGateStatus(qualityGateResult.getStatus());
 
         WarningChecksPublisher publisher = new WarningChecksPublisher(getResultAction(build), TaskListener.NULL, null);
-        assertThat(publisher.extractChecksDetails().getConclusion(AnnotationScope.PUBLISH_NEW_ISSUES))
+        assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES).getConclusion())
                 .isEqualTo(ChecksConclusion.FAILURE);
     }
 }
