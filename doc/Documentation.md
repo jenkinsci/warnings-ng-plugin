@@ -1036,10 +1036,9 @@ Examples:
 * the configuration of GitHub App credentials, see [this guide](https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc) for more details
 
 If not disabled in the job configuration, this plugin will publish warnings to GitHub through 
-[GitHub checks API](https://docs.github.com/en/rest/reference/checks).
-
-The plugin publishes the results of each analysis tool as an individual check, the quality gate is visible as check result.
-You can choose whether to report all or ony new issues by toggling the property `publishAllIssues`.
+[GitHub checks API](https://docs.github.com/en/rest/reference/checks). It publishes the results of each analysis tool
+as an individual check. If a quality gate has been configured, then the result will be published as check result 
+(success or failed).
 
 ![check quality gate](images/check-quality-gate.png)
 
@@ -1048,8 +1047,14 @@ issues statistics will be displayed.
 
 ![checks](images/checks.png)
 
-When a new pull request or commit causes new issues, they will be added as annotations below the code where the issues 
-have been reported. 
+When a new pull request or commit causes new issues, these issues will be added as annotations right below the source
+code. You can also choose to show all issues by toggling the property `publishAllIssues`. In this case not only new issues
+will be highlighted but also outstanding ones. (Note: GitHub renders annotations only for source
+code blocks that have been changed in a commit.)
+
+```groovy
+recordIssues publishAllIssues: true, tool: java(pattern: '*.log')
+```
 
 ![check annotation](images/check-annotation.png)
 
