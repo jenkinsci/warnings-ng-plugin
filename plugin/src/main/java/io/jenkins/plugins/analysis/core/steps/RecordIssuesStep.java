@@ -84,6 +84,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean isBlameDisabled;
 
     private boolean skipPublishingChecks; // by default, checks will be published
+    private boolean publishAllIssues; // by default, only new issues will be published
 
     private String id;
     private String name;
@@ -826,6 +827,21 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
+     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
+     * be published.
+     *
+     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
+     */
+    public boolean isPublishAllIssues() {
+        return publishAllIssues;
+    }
+
+    @DataBoundSetter
+    public void setPublishAllIssues(final boolean publishAllIssues) {
+        this.publishAllIssues = publishAllIssues;
+    }
+
+    /**
      * Returns whether recording should be enabled for failed builds as well.
      *
      * @return {@code true}  if recording should be enabled for failed builds as well, {@code false} if recording is
@@ -1058,6 +1074,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.getBlameDisabled());
             recorder.setSkipPublishingChecks(step.isSkipPublishingChecks());
+            recorder.setPublishAllIssues(step.isPublishAllIssues());
             recorder.setId(step.getId());
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());

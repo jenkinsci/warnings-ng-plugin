@@ -1033,20 +1033,28 @@ Examples:
 
 :warning: This feature requires:
 * the installation of an additional plugin: [GitHub Checks Plugin](https://github.com/jenkinsci/github-checks-plugin)
-* the configuration of GitHub App credentails, see [this guide](https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc) for more details
+* the configuration of GitHub App credentials, see [this guide](https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc) for more details
 
-If not disabled in the job configuration, this plugin will publish warnings to GitHub through [GitHub checks API](https://docs.github.com/en/rest/reference/checks).
-
-Each analysis tool is published as an individual check, the quality gate is published as the check result.
+If not disabled in the job configuration, this plugin will publish warnings to GitHub through 
+[GitHub checks API](https://docs.github.com/en/rest/reference/checks). It publishes the results of each analysis tool
+as an individual check. If a quality gate has been configured, then the result will be published as check result 
+(success or failed).
 
 ![check quality gate](images/check-quality-gate.png)
 
-
-In the *Details* view of each check ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), issues statistics will be displayed.
+In the *Details* view of each check ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), 
+issues statistics will be displayed.
 
 ![checks](images/checks.png)
 
-When new issues are produced by a pull request, they will be added as annotations below the code where the issues are introduced.
+When a new pull request or commit causes new issues, these issues will be added as annotations right below the source
+code. You can also choose to show all issues by toggling the property `publishAllIssues`. In this case not only new issues
+will be highlighted but also outstanding ones. (Note: GitHub renders annotations only for source
+code blocks that have been changed in a commit.)
+
+```groovy
+recordIssues publishAllIssues: true, tool: java(pattern: '*.log')
+```
 
 ![check annotation](images/check-annotation.png)
 

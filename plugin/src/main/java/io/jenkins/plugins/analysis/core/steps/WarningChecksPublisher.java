@@ -16,6 +16,8 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
+import j2html.tags.DomContent;
+
 import hudson.model.TaskListener;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
@@ -40,7 +42,13 @@ import io.jenkins.plugins.checks.steps.ChecksInfo;
  *
  * @author Kezhi Xiong
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 class WarningChecksPublisher {
+    enum AnnotationScope {
+        PUBLISH_ALL_ISSUES,
+        PUBLISH_NEW_ISSUES
+    }
+
     private final ResultAction action;
     private final TaskListener listener;
     @CheckForNull
@@ -53,16 +61,19 @@ class WarningChecksPublisher {
     }
 
     /**
-     * Publishes checks to platforms. Afterwards, all warnings are available in corresponding platform's UI, e.g. GitHub
-     * checks.
+     * Publishes checks to the selected SCM platform. Afterwards, all warnings are available in corresponding platform's
+     * UI, e.g., GitHub checks.
+     *
+     * @param annotationScope
+     *         scope of the annotations to publish
      */
-    void publishChecks() {
+    void publishChecks(final AnnotationScope annotationScope) {
         ChecksPublisher publisher = ChecksPublisherFactory.fromRun(action.getOwner(), listener);
-        publisher.publish(extractChecksDetails());
+        publisher.publish(extractChecksDetails(annotationScope));
     }
 
     @VisibleForTesting
-    ChecksDetails extractChecksDetails() {
+    ChecksDetails extractChecksDetails(final AnnotationScope annotationScope) {
         AnalysisResult result = action.getResult();
         IssuesStatistics totals = result.getTotals();
 
@@ -72,18 +83,28 @@ class WarningChecksPublisher {
                 .filter(StringUtils::isNotEmpty)
                 .orElse(labelProvider.getName());
 
+        String summary = extractChecksSummary(totals) + extractReferenceBuild(result, labelProvider);
+        Report issues = annotationScope == AnnotationScope.PUBLISH_NEW_ISSUES ? result.getNewIssues() : result.getIssues();
         return new ChecksDetailsBuilder()
                 .withName(checksName)
                 .withStatus(ChecksStatus.COMPLETED)
                 .withConclusion(extractChecksConclusion(result.getQualityGateStatus()))
                 .withOutput(new ChecksOutputBuilder()
                         .withTitle(extractChecksTitle(totals))
-                        .withSummary(extractChecksSummary(totals))
+                        .withSummary(summary)
                         .withText(extractChecksText(totals))
-                        .withAnnotations(extractChecksAnnotations(result.getNewIssues(), labelProvider))
+                        .withAnnotations(extractChecksAnnotations(issues, labelProvider))
                         .build())
                 .withDetailsURL(action.getAbsoluteUrl())
                 .build();
+    }
+
+    private String extractReferenceBuild(final AnalysisResult result,
+            final StaticAnalysisLabelProvider labelProvider) {
+        return result.getReferenceBuild()
+                .map(labelProvider::getReferenceBuild)
+                .map(DomContent::render)
+                .orElse(StringUtils.EMPTY);
     }
 
     private String extractChecksTitle(final IssuesStatistics statistics) {
@@ -107,33 +128,57 @@ class WarningChecksPublisher {
         }
     }
 
+    private String formatColumns(final Object... columns) {
+        StringBuilder row = new StringBuilder();
+        for (Object column : columns) {
+            row.append(String.format("|%s", column));
+        }
+        row.append('\n');
+        return row.toString();
+    }
+
     private String extractChecksSummary(final IssuesStatistics statistics) {
-        return String.format("## %d issues in total:\n"
-                        + "- ### %d new issues\n"
-                        + "- ### %d outstanding issues\n"
-                        + "- ### %d delta issues\n"
-                        + "- ### %d fixed issues",
-                statistics.getTotalSize(), statistics.getNewSize(), statistics.getTotalSize() - statistics.getNewSize(),
-                statistics.getDeltaSize(), statistics.getFixedSize());
+        String sizes = formatColumns(
+                statistics.getTotalSize(),
+                statistics.getNewSize(),
+                statistics.getTotalSize() - statistics.getNewSize(),
+                statistics.getFixedSize(),
+                getTrendEmoji(statistics));
+        return formatColumns("Total", "New", "Outstanding", "Fixed", "Trend")
+                + formatColumns(":-:", ":-:", ":-:", ":-:", ":-:")
+                + sizes;
+    }
+
+    private String getTrendEmoji(final IssuesStatistics statistics) {
+        if (statistics.getTotalSize() == 0) {
+            return ":clap:";
+        }
+        if (statistics.getFixedSize() > statistics.getNewSize()) {
+            return ":+1:";
+        }
+        if (statistics.getNewSize() > 0) {
+            return ":-1:";
+        }
+        return ":zzz:";
     }
 
     private String extractChecksText(final IssuesStatistics statistics) {
-        return "## Total Issue Statistics:\n"
-                + generateSeverityText(statistics.getTotalLowSize(), statistics.getTotalNormalSize(),
-                statistics.getTotalHighSize(), statistics.getTotalErrorSize())
-                + "## New Issue Statistics:\n"
-                + generateSeverityText(statistics.getNewLowSize(), statistics.getNewNormalSize(),
-                statistics.getNewHighSize(), statistics.getNewErrorSize())
-                + "## Delta Issue Statistics:\n"
-                + generateSeverityText(statistics.getDeltaLowSize(), statistics.getDeltaNormalSize(),
-                statistics.getDeltaHighSize(), statistics.getDeltaErrorSize());
+        if (statistics.getNewSize() == 0) {
+            return "## Severity distribution of all issues\n"
+                    + generateSeverityText(statistics.getTotalErrorSize(), statistics.getTotalHighSize(),
+                    statistics.getTotalNormalSize(), statistics.getTotalLowSize());
+        }
+        else {
+            return "## Severity distribution of new issues\n"
+                    + generateSeverityText(statistics.getNewErrorSize(), statistics.getNewHighSize(),
+                    statistics.getNewNormalSize(), statistics.getNewLowSize());
+        }
     }
 
-    private String generateSeverityText(final int low, final int normal, final int high, final int error) {
-        return "* Error: " + error + "\n"
-                + "* High: " + high + "\n"
-                + "* Normal: " + normal + "\n"
-                + "* Low: " + low + "\n";
+    private String generateSeverityText(final int error, final int high, final int normal, final int low) {
+        return formatColumns("Error", "Warning High", "Warning Normal", "Warning Low")
+                + formatColumns(":-:", ":-:", ":-:", ":-:")
+                + formatColumns(error, high, normal, low);
     }
 
     private ChecksConclusion extractChecksConclusion(final QualityGateStatus status) {

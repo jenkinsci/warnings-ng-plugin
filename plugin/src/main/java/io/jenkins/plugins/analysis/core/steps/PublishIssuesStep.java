@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
-import io.jenkins.plugins.checks.steps.ChecksInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
@@ -30,6 +28,7 @@ import hudson.model.TaskListener;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -40,6 +39,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.checks.steps.ChecksInfo;
 
 /**
  * Publish issues created by a static analysis build. The recorded issues are stored as a {@link ResultAction} in the
@@ -47,7 +47,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  * Otherwise a default ID is used to publish the results. In any case, the computed ID can be overwritten by specifying
  * an ID as step parameter.
  */
-@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass"})
+@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessiveImports", "PMD.ExcessivePublicCount", "PMD.DataClass", "PMD.GodClass", "PMD.TooManyFields"})
 public class PublishIssuesStep extends Step implements Serializable {
     private static final long serialVersionUID = -1833335402353771148L;
 
@@ -62,6 +62,7 @@ public class PublishIssuesStep extends Step implements Serializable {
     private boolean failOnError = false; // by default, it should not fail on error
 
     private boolean skipPublishingChecks; // by default, warnings should be published to SCM platforms
+    private boolean publishAllIssues; // by default, only new issues will be published
 
     private int healthy;
     private int unhealthy;
@@ -164,6 +165,21 @@ public class PublishIssuesStep extends Step implements Serializable {
     @SuppressWarnings("unused") // Used by Stapler
     public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
         this.skipPublishingChecks = skipPublishingChecks;
+    }
+
+    /**
+     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
+     * be published.
+     *
+     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
+     */
+    public boolean isPublishAllIssues() {
+        return publishAllIssues;
+    }
+
+    @DataBoundSetter
+    public void setPublishAllIssues(final boolean publishAllIssues) {
+        this.publishAllIssues = publishAllIssues;
     }
 
     /**
@@ -858,7 +874,8 @@ public class PublishIssuesStep extends Step implements Serializable {
 
             if (!step.isSkipPublishingChecks()) {
                 WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, getTaskListener(), getContext().get(ChecksInfo.class));
-                checksPublisher.publishChecks();
+                checksPublisher.publishChecks(
+                        step.isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
             }
 
             return action;
