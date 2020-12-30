@@ -42,6 +42,7 @@ import io.jenkins.plugins.checks.steps.ChecksInfo;
  *
  * @author Kezhi Xiong
  */
+@SuppressWarnings("PMD.ExcessiveImports")
 class WarningChecksPublisher {
     enum AnnotationScope {
         PUBLISH_ALL_ISSUES,
