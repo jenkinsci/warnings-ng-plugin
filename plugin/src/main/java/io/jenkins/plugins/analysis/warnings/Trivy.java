@@ -12,57 +12,61 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  * aquasec Trivy is a container vulnerability scanner.
  * </p>
  * <p>
- * <strong>Usage: </strong>trivy image -f json -o results.json golang:1.12-alpine
+ * <strong>Usage: </strong>trivy image -f json -o results.json
+ * golang:1.12-alpine
  * </p>
  *
  * @author Thomas Fürer - tfuerer.javanet@gmail.com
  *
  */
 public class Trivy extends ReportScanningTool {
-  private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-  @DataBoundConstructor
-  public Trivy() {
-    super();
-  }
-
-  @Override
-  public IssueParser createParser() {
-    return new TrivyParser();
-  }
-
-  @Extension
-  public static class Descriptor extends ReportScanningToolDescriptor {
-
-    public Descriptor() {
-      super("trivy-vulnerabilityscanning");
+    /** construct a new instance of Trivy**/
+    @DataBoundConstructor
+    public Trivy() {
+        super();
     }
 
     @Override
-    public String getDisplayName() {
-      return "aquasec trivy vulnerability scanner";
+    public IssueParser createParser() {
+        return new TrivyParser();
     }
 
-    @Override
-    public String getHelp() {
-      return "Reads trivy json data. "
-          + "Use commandline <code>trivy image -f json -o results.json 'image'</code>"
-          + "See <a href='https://github.com/aquasecurity/trivy'>" + "tivy on Github</a> for usage details.";
-    }
+    /** Descriptor for this static analysis tool. */
+    @Extension
+    public static class Descriptor extends ReportScanningToolDescriptor {
 
-    @Override
-    public boolean canScanConsoleLog() {
-      return false;
-    }
+        /** Creates the descriptor instance. */
+        public Descriptor() {
+            super("trivy-vulnerabilityscanning");
+        }
 
-    @Override
-    public String getUrl() {
-      return "https://github.com/aquasecurity/trivy";
-    }
+        @Override
+        public String getDisplayName() {
+            return "aquasec trivy vulnerability scanner";
+        }
 
-    @Override
-    public boolean isPostProcessingEnabled() {
-      return false;
+        @Override
+        public String getHelp() {
+            return "Reads trivy json data. "
+                    + "Use commandline <code>trivy image -f json -o results.json 'image'</code>"
+                    + "See <a href='https://github.com/aquasecurity/trivy'>" + "tivy on Github</a> for usage details.";
+        }
+
+        @Override
+        public boolean canScanConsoleLog() {
+            return false;
+        }
+
+        @Override
+        public String getUrl() {
+            return "https://github.com/aquasecurity/trivy";
+        }
+
+        @Override
+        public boolean isPostProcessingEnabled() {
+            return false;
+        }
     }
-  }
 }
