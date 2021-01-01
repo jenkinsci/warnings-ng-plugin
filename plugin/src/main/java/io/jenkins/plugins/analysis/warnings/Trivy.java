@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.annotation.Nonnull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.IssueParser;
@@ -40,7 +38,6 @@ public class Trivy extends ReportScanningTool {
       super("trivy-vulnerabilityscanning");
     }
 
-    @Nonnull
     @Override
     public String getDisplayName() {
       return "aquasec trivy vulnerability scanner";
@@ -49,7 +46,7 @@ public class Trivy extends ReportScanningTool {
     @Override
     public String getHelp() {
       return "Reads trivy json data. "
-          + "Use commandline <code>trivy image -f json -o results.json <image>"
+          + "Use commandline <code>trivy image -f json -o results.json 'image'</code>"
           + "See <a href='https://github.com/aquasecurity/trivy'>" + "tivy on Github</a> for usage details.";
     }
 
