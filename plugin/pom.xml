@@ -26,8 +26,8 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>9.5.0-SNAPSHOT</analysis-model-api.version>
-    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
+    <analysis-model-api.version>9.5.0-rc352.f367da82f93f</analysis-model-api.version>
+    <analysis-model-tests.version>9.5.0-rc3841.4bd1741b5875</analysis-model-tests.version>
     <forensics-api-plugin.version>0.8.0</forensics-api-plugin.version>
     <plugin-util-api.version>1.6.1</plugin-util-api.version>
 
@@ -349,7 +349,7 @@
     <dependency>
       <groupId>edu.hm.hafner</groupId>
       <artifactId>analysis-model</artifactId>
-      <version>9.5.0-SNAPSHOT</version>
+      <version>${analysis-model-tests.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
       <exclusions>
