@@ -10,6 +10,8 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.NoSuchElementException;
 
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
@@ -20,6 +22,15 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 class PropertyStatisticsTest {
     private static final String KEY = "key";
 
+    public AgeBuilder getAgeBuilder(String age) {
+        return new AgeBuilder() {
+            @Override
+            public String apply(final Integer integer) {
+                return age;
+            }
+        };
+    }
+
     /**
      * Verifies that getTotal() returns the total number of issues if there is one issues.
      */
@@ -29,7 +40,7 @@ class PropertyStatisticsTest {
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setCategory("error").build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         assertThat(statistics).hasTotal(issues.size());
     }
@@ -44,7 +55,7 @@ class PropertyStatisticsTest {
         issues.add(builder.setCategory("errorA").build());
         issues.add(builder.setCategory("errorB").build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         assertThat(statistics).hasTotal(2);
     }
@@ -56,7 +67,7 @@ class PropertyStatisticsTest {
     void shouldReturnTotalNumberZero() {
         Report issues = new Report();
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         assertThat(statistics).hasTotal(0);
     }
@@ -66,7 +77,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnPropertyString() {
-        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity(), getAgeBuilder("1"));
 
         String actualProperty = statistics.getProperty();
 
@@ -78,7 +89,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnDisplayNameString() {
-        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity(), getAgeBuilder("1"));
 
         String actualDisplayName = statistics.getDisplayName("name");
 
@@ -89,7 +100,7 @@ class PropertyStatisticsTest {
     @Test
     void shouldReturnToolTip() {
         PropertyStatistics statistics = new PropertyStatistics(
-                new Report(), "category", string -> string.equals(KEY) ? KEY : "tooltip");
+                new Report(), "category", string -> string.equals(KEY) ? KEY : "tooltip", getAgeBuilder("1"));
 
         assertThat(statistics.getDisplayName(KEY)).isEqualTo(KEY);
         assertThat(statistics.getToolTip(KEY)).isEmpty();
@@ -107,7 +118,7 @@ class PropertyStatisticsTest {
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setCategory(KEY).build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         assertThat(statistics).hasOnlyKeys(KEY);
     }
@@ -122,7 +133,7 @@ class PropertyStatisticsTest {
         issues.add(builder.setCategory("keyA").build());
         issues.add(builder.setCategory("keyB").build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         assertThat(statistics).hasOnlyKeys("keyA", "keyB");
     }
@@ -136,7 +147,7 @@ class PropertyStatisticsTest {
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setCategory("").build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         assertThat(statistics).hasOnlyKeys("");
     }
@@ -146,7 +157,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnEmptyKeys() {
-        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity(), getAgeBuilder("1"));
 
         Set<String> actualProperty = statistics.getKeys();
 
@@ -160,7 +171,7 @@ class PropertyStatisticsTest {
     void shouldReturnMaxValueZero() {
         Report issues = new Report();
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         int value = statistics.getMax();
 
@@ -175,7 +186,7 @@ class PropertyStatisticsTest {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         int value = statistics.getMax();
 
@@ -191,7 +202,7 @@ class PropertyStatisticsTest {
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setCategory("ab").setPackageName("P1").build());
         issues.add(builder.setCategory("ab").setPackageName("P2").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         int value = statistics.getMax();
 
@@ -208,7 +219,7 @@ class PropertyStatisticsTest {
         issues.add(builder.setCategory("ab").setPackageName("P1").build());
         issues.add(builder.setCategory("ab").setPackageName("P2").build());
         issues.add(builder.setCategory("abc").setPackageName("P2").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         int value = statistics.getMax();
 
@@ -220,7 +231,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnCountEmpty() {
-        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity(), getAgeBuilder("1"));
 
         String key = KEY;
         assertThatThrownBy(() -> statistics.getCount(key))
@@ -236,7 +247,7 @@ class PropertyStatisticsTest {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getCount(KEY);
 
@@ -254,7 +265,7 @@ class PropertyStatisticsTest {
         issues.add(builder.setCategory(KEY).setPackageName("P1").build());
         issues.add(builder.setCategory(KEY).setPackageName("P2").build());
         issues.add(builder.setCategory("key1").setPackageName("P1").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getCount(KEY);
 
@@ -269,7 +280,7 @@ class PropertyStatisticsTest {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getHighCount(KEY);
 
@@ -287,7 +298,7 @@ class PropertyStatisticsTest {
         issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
         issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
         issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getHighCount(KEY);
 
@@ -302,7 +313,7 @@ class PropertyStatisticsTest {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getHighCount(KEY);
 
@@ -315,7 +326,7 @@ class PropertyStatisticsTest {
     @Test
     void shouldReturnHighCountException() {
         Report issues = new Report();
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         assertThatThrownBy(() -> statistics.getHighCount(KEY))
                 .isInstanceOf(NoSuchElementException.class)
@@ -330,7 +341,7 @@ class PropertyStatisticsTest {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getNormalCount(KEY);
 
@@ -348,7 +359,7 @@ class PropertyStatisticsTest {
         issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
         issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
         issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getNormalCount(KEY);
 
@@ -360,7 +371,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnNormalCountException() {
-        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity(), getAgeBuilder("1"));
 
         assertThatThrownBy(() -> statistics.getNormalCount(KEY))
                 .isInstanceOf(NoSuchElementException.class)
@@ -375,7 +386,7 @@ class PropertyStatisticsTest {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getNormalCount(KEY);
 
@@ -390,7 +401,7 @@ class PropertyStatisticsTest {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getLowCount(KEY);
 
@@ -402,7 +413,7 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnLowCountException() {
-        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity(), getAgeBuilder("1"));
 
         assertThatThrownBy(() -> statistics.getLowCount(KEY))
                 .isInstanceOf(NoSuchElementException.class)
@@ -420,7 +431,7 @@ class PropertyStatisticsTest {
         issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
         issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
         issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getLowCount(KEY);
 
@@ -435,9 +446,86 @@ class PropertyStatisticsTest {
         Report issues = new Report();
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
 
         long value = statistics.getLowCount(KEY);
+
+        assertThat(value).isEqualTo(0);
+    }
+
+    /**
+     * Verifies that getNewIssues() returns the total count of issues with age 1.
+     * In this case all issues have age 2, so there are 0 new issues.
+     */
+    @Test
+    void shouldReturnZeroNewIssues() {
+        Report issues = new Report();
+        IssueBuilder builder = new IssueBuilder();
+        issues.add(builder.setCategory(KEY).setOrigin("A").build());
+        issues.add(builder.setCategory(KEY).setOrigin("B").build());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("2"));
+
+        int newIssues = statistics.getTotalNewIssues();
+
+        assertThat(newIssues).isEqualTo(0);
+    }
+
+    /**
+     * Verifies that getNewIssues() returns the total count of issues with age 1
+     * In this case all issues have age 1, so there are 2 new issues.
+     */
+    @Test
+    void shouldReturnTwoNewIssues() {
+        Report issues = new Report();
+        IssueBuilder builder = new IssueBuilder();
+        issues.add(builder.setCategory(KEY).setOrigin("A").build());
+        issues.add(builder.setCategory(KEY).setOrigin("B").build());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
+
+        int newIssues = statistics.getTotalNewIssues();
+
+        assertThat(newIssues).isEqualTo(2);
+    }
+
+    /**
+     * Verifies that getNewCount() throw an exception.
+     */
+    @Test
+    void shouldReturnNewCountEmpty() {
+        PropertyStatistics statistics = new PropertyStatistics(new Report(), "category", Function.identity(), getAgeBuilder("1"));
+
+        String key = KEY;
+        assertThatThrownBy(() -> statistics.getNewCount(key))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessageContaining(key);
+    }
+
+    /**
+     * Verifies that getNewCount() returns one if there is one new issues for the specified property instance.
+     */
+    @Test
+    void shouldReturnNewCountOne() {
+        Report issues = new Report();
+        IssueBuilder builder = new IssueBuilder();
+        issues.add(builder.setCategory(KEY).build());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("1"));
+
+        long value = statistics.getNewCount(KEY);
+
+        assertThat(value).isEqualTo(1);
+    }
+
+    /**
+     * Verifies that getNewCount() returns  zero if there is one issues for the specified property instance, but it isn't new.
+     */
+    @Test
+    void shouldReturnNewCountZero() {
+        Report issues = new Report();
+        IssueBuilder builder = new IssueBuilder();
+        issues.add(builder.setCategory(KEY).build());
+        PropertyStatistics statistics = new PropertyStatistics(issues, "category", Function.identity(), getAgeBuilder("2"));
+
+        long value = statistics.getNewCount(KEY);
 
         assertThat(value).isEqualTo(0);
     }

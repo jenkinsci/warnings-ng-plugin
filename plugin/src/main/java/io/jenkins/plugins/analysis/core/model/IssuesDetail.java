@@ -33,6 +33,8 @@ import io.jenkins.plugins.analysis.core.charts.SeverityPieChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.charts.TrendChart;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.DefaultAgeBuilder;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver;
@@ -502,7 +504,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         else {
             propertyFormatter = Function.identity();
         }
-        return new PropertyStatistics(report, propertyName, propertyFormatter);
+        return new PropertyStatistics(report, propertyName, propertyFormatter, getLabelProvider().getAgeBuilder(owner,  getUrl()));
     }
 
     @Override

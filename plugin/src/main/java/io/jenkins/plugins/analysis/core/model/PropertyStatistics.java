@@ -10,6 +10,9 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.NoSuchElementException;
 
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
+import static edu.hm.hafner.util.IntegerParser.*;
+
 /**
  * Groups issue by a specified property, like package name or origin. Provides statistics for this property in order to
  * draw graphs or show the result in tables.
@@ -19,8 +22,10 @@ import edu.hm.hafner.util.NoSuchElementException;
 public class PropertyStatistics {
     private final Map<String, ? extends Report> issuesByProperty;
     private final Function<String, String> propertyFormatter;
+    private final AgeBuilder ageBuilder;
     private final String property;
     private final int total;
+    private final int totalNewIssues;
 
     /**
      * Creates a new instance of {@link PropertyStatistics}.
@@ -33,11 +38,18 @@ public class PropertyStatistics {
      *         the formatter that show the property
      */
     PropertyStatistics(final Report report,
-            final String property, final Function<String, String> propertyFormatter) {
+            final String property, final Function<String, String> propertyFormatter,
+            final AgeBuilder ageBuilder) {
         this.property = property;
         this.propertyFormatter = propertyFormatter;
+        this.ageBuilder = ageBuilder;
         issuesByProperty = report.groupByProperty(property);
         total = report.size();
+        totalNewIssues = (int)report.stream()
+                .filter(is ->
+                    ageBuilder.apply(parseInt(is.getReference())).equals("1")
+                )
+                .count();
     }
 
     /**
@@ -47,6 +59,15 @@ public class PropertyStatistics {
      */
     public int getTotal() {
         return total;
+    }
+
+    /**
+     * Returns the amount of issues introduced since the last build
+     *
+     * @return the amount of new issues
+     */
+    public int getTotalNewIssues() {
+        return totalNewIssues;
     }
 
     /**
@@ -113,6 +134,22 @@ public class PropertyStatistics {
      */
     public long getCount(final String key) {
         return getReportFor(key).size();
+    }
+
+    /**
+     * Returns the new number of issues for the specified property instance.
+     *
+     * @param key
+     *         the property instance
+     *
+     * @return the new number of issues
+     */
+    public long getNewCount(final String key) {
+        return getReportFor(key).stream()
+                .filter(is ->
+                        ageBuilder.apply(parseInt(is.getReference())).equals("1")
+                )
+                .count();
     }
 
     /**
