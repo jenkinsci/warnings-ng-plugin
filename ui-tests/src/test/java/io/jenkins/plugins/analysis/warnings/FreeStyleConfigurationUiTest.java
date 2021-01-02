@@ -18,7 +18,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  * @author Ullrich Hafner
  */
 @WithPlugins("warnings-ng")
-public class FreeStyleConfigurationUITest extends AbstractJUnitTest {
+public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
     private static final String PATTERN = "**/*.txt";
     private static final String ENCODING = "UTF-8";
     private static final String SOURCE_DIRECTORY = "relative";

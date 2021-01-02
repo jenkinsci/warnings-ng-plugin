@@ -37,7 +37,7 @@ import static org.assertj.core.api.Assertions.*;
 @Category(DockerTest.class)
 @WithPlugins({"git", "git-forensics"})
 @WithCredentials(credentialType = WithCredentials.SSH_USERNAME_PRIVATE_KEY, values = {"gitplugin", "/org/jenkinsci/test/acceptance/docker/fixtures/GitContainer/unsafe"})
-public class GitBlamerAndForensicsUITest extends AbstractJUnitTest {
+public class GitBlamerAndForensicsUiTest extends AbstractJUnitTest {
     @Inject
     private DockerContainerHolder<GitContainer> gitServer;
 

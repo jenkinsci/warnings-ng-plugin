@@ -18,7 +18,7 @@ import static io.jenkins.plugins.analysis.warnings.Assertions.*;
  *
  * @author Lukas Kirner
  */
-public class DashboardViewPortletUITest extends UiTest {
+public class DashboardViewPortletUiTest extends UiTest {
     private static final String DASHBOARD_PREFIX = "dashboard_test/";
 
     /**
