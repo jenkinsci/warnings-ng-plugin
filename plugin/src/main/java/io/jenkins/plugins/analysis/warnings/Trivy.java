@@ -22,7 +22,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 public class Trivy extends ReportScanningTool {
     private static final long serialVersionUID = 1L;
 
-    /** construct a new instance of Trivy**/
+    /** construct a new instance of Trivy.**/
     @DataBoundConstructor
     public Trivy() {
         super();
