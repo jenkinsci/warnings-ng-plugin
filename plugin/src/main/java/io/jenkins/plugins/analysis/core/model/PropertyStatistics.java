@@ -49,7 +49,7 @@ public class PropertyStatistics {
         total = report.size();
         totalNewIssues = (int)report.stream()
                 .filter(is ->
-                    ageBuilder.apply(parseInt(is.getReference())).equals("1")
+                    "1".equals(ageBuilder.apply(parseInt(is.getReference())))
                 )
                 .count();
     }
@@ -149,7 +149,7 @@ public class PropertyStatistics {
     public long getNewCount(final String key) {
         return getReportFor(key).stream()
                 .filter(is ->
-                        ageBuilder.apply(parseInt(is.getReference())).equals("1")
+                        "1".equals(ageBuilder.apply(parseInt(is.getReference())))
                 )
                 .count();
     }
