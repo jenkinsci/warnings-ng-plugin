@@ -36,6 +36,8 @@ public class PropertyStatistics {
      *         the property to show the details for
      * @param propertyFormatter
      *         the formatter that show the property
+     * @param ageBuilder
+     *          the agebuilder to get the age of an issue
      */
     PropertyStatistics(final Report report,
             final String property, final Function<String, String> propertyFormatter,
@@ -62,7 +64,7 @@ public class PropertyStatistics {
     }
 
     /**
-     * Returns the amount of issues introduced since the last build
+     * Returns the amount of issues introduced since the last build.
      *
      * @return the amount of new issues
      */
