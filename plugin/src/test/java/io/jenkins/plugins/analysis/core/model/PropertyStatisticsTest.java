@@ -22,7 +22,7 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 class PropertyStatisticsTest {
     private static final String KEY = "key";
 
-    public AgeBuilder getAgeBuilder(String age) {
+    public AgeBuilder getAgeBuilder(final String age) {
         return new AgeBuilder() {
             @Override
             public String apply(final Integer integer) {
