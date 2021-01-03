@@ -23,12 +23,7 @@ class PropertyStatisticsTest {
     private static final String KEY = "key";
 
     public AgeBuilder getAgeBuilder(final String age) {
-        return new AgeBuilder() {
-            @Override
-            public String apply(final Integer integer) {
-                return age;
-            }
-        };
+        return integer -> age;
     }
 
     /**
