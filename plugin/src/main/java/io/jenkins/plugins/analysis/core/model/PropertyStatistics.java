@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -10,9 +11,6 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.NoSuchElementException;
 
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-import static edu.hm.hafner.util.IntegerParser.*;
-
 /**
  * Groups issue by a specified property, like package name or origin. Provides statistics for this property in order to
  * draw graphs or show the result in tables.
@@ -21,8 +19,8 @@ import static edu.hm.hafner.util.IntegerParser.*;
  */
 public class PropertyStatistics {
     private final Map<String, ? extends Report> issuesByProperty;
+    private final Map<String, ? extends Report> newIssuesByProperty;
     private final Function<String, String> propertyFormatter;
-    private final AgeBuilder ageBuilder;
     private final String property;
     private final int total;
     private final int totalNewIssues;
@@ -32,26 +30,21 @@ public class PropertyStatistics {
      *
      * @param report
      *         the issues that should be grouped by property
+     * @param newIssues
+     *         the new issues that should be grouped by property
      * @param property
      *         the property to show the details for
      * @param propertyFormatter
      *         the formatter that show the property
-     * @param ageBuilder
-     *          the agebuilder to get the age of an issue
      */
-    PropertyStatistics(final Report report,
-            final String property, final Function<String, String> propertyFormatter,
-            final AgeBuilder ageBuilder) {
+    PropertyStatistics(final Report report, final Report newIssues,
+            final String property, final Function<String, String> propertyFormatter) {
         this.property = property;
         this.propertyFormatter = propertyFormatter;
-        this.ageBuilder = ageBuilder;
         issuesByProperty = report.groupByProperty(property);
+        newIssuesByProperty = newIssues.groupByProperty(property);
         total = report.size();
-        totalNewIssues = (int)report.stream()
-                .filter(is ->
-                    "1".equals(ageBuilder.apply(parseInt(is.getReference())))
-                )
-                .count();
+        totalNewIssues = newIssues.size();
     }
 
     /**
@@ -147,11 +140,9 @@ public class PropertyStatistics {
      * @return the new number of issues
      */
     public long getNewCount(final String key) {
-        return getReportFor(key).stream()
-                .filter(is ->
-                        "1".equals(ageBuilder.apply(parseInt(is.getReference())))
-                )
-                .count();
+        return getNewReportFor(key)
+                .map(Report::size)
+                .orElse(0);
     }
 
     /**
@@ -207,6 +198,13 @@ public class PropertyStatistics {
             return issuesByProperty.get(key);
         }
         throw new NoSuchElementException("There is no report for key '%s'", key);
+    }
+
+    private Optional<Report> getNewReportFor(final String key) {
+        if (newIssuesByProperty.containsKey(key)) {
+            return Optional.of(newIssuesByProperty.get(key));
+        }
+        return Optional.empty();
     }
 }
 
