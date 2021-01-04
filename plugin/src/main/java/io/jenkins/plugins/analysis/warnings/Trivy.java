@@ -1,5 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
+import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.DataBoundConstructor;
 
 import edu.hm.hafner.analysis.IssueParser;
@@ -11,10 +12,10 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  * <p>
  * aquasec Trivy is a container vulnerability scanner.
  * </p>
- * <p>
- * <strong>Usage: </strong>trivy image -f json -o results.json
- * golang:1.12-alpine
- * </p>
+ * <strong>Usage:</strong>
+ * <pre>
+ * {@code trivy image -f json -o results.json golang:1.12-alpine}
+ * </pre>
  *
  * @author Thomas Fürer - tfuerer.javanet@gmail.com
  *
@@ -34,17 +35,18 @@ public class Trivy extends ReportScanningTool {
     }
 
     /** Descriptor for this static analysis tool. */
+    @Symbol("trivy")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
 
         /** Creates the descriptor instance. */
         public Descriptor() {
-            super("trivy-vulnerabilityscanning");
+            super("trivy");
         }
 
         @Override
         public String getDisplayName() {
-            return "aquasec trivy vulnerability scanner";
+            return Messages.Warnings_Trivy_ParserName();
         }
 
         @Override
