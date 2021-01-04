@@ -21,13 +21,13 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.7.0</revision>
+    <revision>8.6.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>9.5.0</analysis-model-api.version>
-    <analysis-model-tests.version>9.5.0</analysis-model-tests.version>
+    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <forensics-api-plugin.version>0.8.0</forensics-api-plugin.version>
     <plugin-util-api.version>1.6.1</plugin-util-api.version>
 
