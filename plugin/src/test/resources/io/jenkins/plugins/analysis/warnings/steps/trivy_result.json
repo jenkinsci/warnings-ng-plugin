@@ -1,0 +1,126 @@
+[
+  {
+    "Target": "jenkins/jenkins:lts-centos (centos 8.2.2004)",
+    "Type": "centos",
+    "Vulnerabilities": [
+      {
+        "VulnerabilityID": "CVE-2017-6519",
+        "PkgName": "avahi-libs",
+        "InstalledVersion": "0.7-19.el8",
+        "Layer": {
+          "Digest": "sha256:0719ac283bd10fb36d05f8e2f6d0a9aaa3e856b89dfceeba2ad3c62066eb61c2",
+          "DiffID": "sha256:7689e1853b9d8251f4e9320c0941e3efebb7cda52c766bcbd3af05466df7c8c0"
+        },
+        "SeveritySource": "redhat",
+        "Title": "avahi: Multicast DNS responds to unicast queries outside of local network",
+        "Description": "avahi-daemon in Avahi through 0.6.32 and 0.7 inadvertently responds to IPv6 unicast queries with source addresses that are not on-link, which allows remote attackers to cause a denial of service (traffic amplification) and may cause information leakage by obtaining potentially sensitive  information from the responding device via port-5353 UDP packets.  NOTE: this may overlap CVE-2015-2809.",
+        "Severity": "LOW",
+        "CweIDs": [
+          "CWE-346"
+        ],
+        "CVSS": {
+          "nvd": {
+            "V2Vector": "AV:N/AC:L/Au:N/C:P/I:N/A:P",
+            "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:N/A:H",
+            "V2Score": 6.4,
+            "V3Score": 9.1
+          },
+          "redhat": {
+            "V3Vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:N/S:C/C:N/I:N/A:L",
+            "V3Score": 5.8
+          }
+        },
+        "References": [
+          "https://bugzilla.redhat.com/show_bug.cgi?id=1426712",
+          "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2017-6519",
+          "https://github.com/lathiat/avahi/issues/203",
+          "https://github.com/lathiat/avahi/issues/203#issuecomment-449536790",
+          "https://linux.oracle.com/cve/CVE-2017-6519.html",
+          "https://linux.oracle.com/errata/ELSA-2020-1176.html",
+          "https://lists.apache.org/thread.html/r1b103833cb5bc8466e24ff0ecc5e75b45a705334ab6a444e64e840a0@%3Cissues.bookkeeper.apache.org%3E",
+          "https://usn.ubuntu.com/3876-1/",
+          "https://usn.ubuntu.com/3876-2/",
+          "https://usn.ubuntu.com/usn/usn-3876-1",
+          "https://usn.ubuntu.com/usn/usn-3876-2",
+          "https://www.kb.cert.org/vuls/id/550620",
+          "https://www.secfu.net/advisories"
+        ],
+        "PublishedDate": "2017-05-01T01:59:00Z",
+        "LastModifiedDate": "2020-07-29T12:15:00Z"
+      },
+      {
+        "VulnerabilityID": "CVE-2020-8619",
+        "PkgName": "bind-export-libs",
+        "InstalledVersion": "32:9.11.13-6.el8_2.1",
+        "FixedVersion": "32:9.11.20-5.el8",
+        "Layer": {
+          "Digest": "sha256:0719ac283bd10fb36d05f8e2f6d0a9aaa3e856b89dfceeba2ad3c62066eb61c2",
+          "DiffID": "sha256:7689e1853b9d8251f4e9320c0941e3efebb7cda52c766bcbd3af05466df7c8c0"
+        },
+        "SeveritySource": "redhat",
+        "Title": "bind: asterisk character in an empty non-terminal can cause an assertion failure in rbtdb.c",
+        "Description": "In ISC BIND9 versions BIND 9.11.14 -\u003e 9.11.19, BIND 9.14.9 -\u003e 9.14.12, BIND 9.16.0 -\u003e 9.16.3, BIND Supported Preview Edition 9.11.14-S1 -\u003e 9.11.19-S1: Unless a nameserver is providing authoritative service for one or more zones and at least one zone contains an empty non-terminal entry containing an asterisk (\"*\") character, this defect cannot be encountered. A would-be attacker who is allowed to change zone content could theoretically introduce such a record in order to exploit this condition to cause denial of service, though we consider the use of this vector unlikely because any such attack would require a significant privilege level and be easily traceable.",
+        "Severity": "MEDIUM",
+        "CweIDs": [
+          "CWE-404"
+        ],
+        "CVSS": {
+          "nvd": {
+            "V2Vector": "AV:N/AC:L/Au:S/C:N/I:N/A:P",
+            "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H",
+            "V2Score": 4,
+            "V3Score": 4.9
+          },
+          "redhat": {
+            "V3Vector": "CVSS:3.1/AV:N/AC:L/PR:H/UI:N/S:U/C:N/I:N/A:H",
+            "V3Score": 4.9
+          }
+        },
+        "References": [
+          "http://lists.opensuse.org/opensuse-security-announce/2020-10/msg00041.html",
+          "http://lists.opensuse.org/opensuse-security-announce/2020-10/msg00044.html",
+          "https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2020-8619",
+          "https://kb.isc.org/docs/cve-2020-8619",
+          "https://linux.oracle.com/cve/CVE-2020-8619.html",
+          "https://linux.oracle.com/errata/ELSA-2020-4500.html",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/CNFTTYJ5JJJJ6QG3AHXJGDIIEYMDFWFW/",
+          "https://lists.fedoraproject.org/archives/list/package-announce@lists.fedoraproject.org/message/EIOXMJX4N3LBKC65OXNBE52W4GAS7QEX/",
+          "https://security.netapp.com/advisory/ntap-20200625-0003/",
+          "https://usn.ubuntu.com/4399-1/",
+          "https://usn.ubuntu.com/usn/usn-4399-1",
+          "https://www.debian.org/security/2020/dsa-4752"
+        ],
+        "PublishedDate": "2020-06-17T22:15:00Z",
+        "LastModifiedDate": "2020-10-20T12:15:00Z"
+      },
+      {
+        "VulnerabilityID": "CVE-2020-9999",
+        "PkgName": "generatedSample",
+        "InstalledVersion": "32:9.11.13-6.el8_2.1",
+        "FixedVersion": "32:9.11.20-5.el8",
+        "Layer": {
+          "Digest": "sha256:0719ac283bd10fb36d05f8e2f6d0a9aaa3e856b89dfceeba2ad3c62066eb61c2",
+          "DiffID": "sha256:7689e1853b9d8251f4e9320c0941e3efebb7cda52c766bcbd3af05466df7c8c0"
+        },
+        "SeveritySource": "generated",
+        "Title": "generated isse for testing",
+        "Description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor ",
+        "Severity": "HIGH"
+      },
+      {
+        "VulnerabilityID": "CVE-2020-9999",
+        "PkgName": "generatedSample",
+        "InstalledVersion": "32:9.11.13-6.el8_2.1",
+        "FixedVersion": "32:9.11.20-5.el8",
+        "Layer": {
+          "Digest": "sha256:0719ac283bd10fb36d05f8e2f6d0a9aaa3e856b89dfceeba2ad3c62066eb61c2",
+          "DiffID": "sha256:7689e1853b9d8251f4e9320c0941e3efebb7cda52c766bcbd3af05466df7c8c0"
+        },
+        "SeveritySource": "generated",
+        "Title": "generated isse for testing",
+        "Description": "",
+        "Severity": "CRITICAL"
+      }
+    ]
+  }
+]

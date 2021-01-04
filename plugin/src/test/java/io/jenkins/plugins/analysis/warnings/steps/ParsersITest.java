@@ -1,15 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -17,8 +17,6 @@ import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.*;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
-
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Integration tests of all parsers of the warnings plug-in in pipelines.
@@ -912,6 +910,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFindAllBrakemanIssues() {
         shouldFindIssuesOfTool(32, new Brakeman(), "brakeman.json");
+    }
+
+    /** Runs the trivy parser on an output file that contains 4 issues. */
+    @Test
+    public void shouldFindAllTrivyIssues() {
+        shouldFindIssuesOfTool(4, new Trivy(), "trivy_result.json");
     }
 
     private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,

@@ -188,3 +188,12 @@ The OT-Dockerlinter icon is referenced from https://github.com/opstree/OT-Docker
 No modification has been made only converted to PNG and resized
 
 ------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+Trivy icons:
+
+The trivy icons 24x24 & 48x48 are resized on the original from https://github.com/aquasecurity/trivy/blob/main/imgs/logo.png.
+Apache License Version 2.0
+The lettering was removed to have a better fitting.
+
+------------------------------------------------------------------------------
