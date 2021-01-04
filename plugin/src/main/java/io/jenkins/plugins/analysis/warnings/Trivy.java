@@ -14,10 +14,10 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  *
  * <p>
  * Usage:
+ * </p>
  * <pre>
  * {@code trivy image -f json -o results.json golang:1.12-alpine}
  * </pre>
- * </p>
  *
  * @author Thomas Fürer - tfuerer.javanet@gmail.com
  *
