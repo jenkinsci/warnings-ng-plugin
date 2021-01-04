@@ -918,6 +918,12 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(4, new Trivy(), "trivy_result.json");
     }
 
+    /** Runs the qt translation parser on an output file that contains 5 issues. */
+    @Test
+    public void shouldFindAllQtTranslationIssues() {
+        shouldFindIssuesOfTool(4, new QtTranslation(), "qttranslation.ts");
+    }
+
     private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
         String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
