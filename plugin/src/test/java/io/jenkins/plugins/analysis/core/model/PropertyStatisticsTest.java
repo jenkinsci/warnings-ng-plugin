@@ -31,7 +31,7 @@ class PropertyStatisticsTest {
         IssueBuilder builder = new IssueBuilder();
         issues.add(builder.setCategory("error").build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(),"category", Function.identity());
+        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
 
         assertThat(statistics).hasTotal(issues.size());
     }
