@@ -60,10 +60,10 @@ class DetailFactoryTest {
     }
 
     @Test
-    void shouldReturnFixedWarningsDetailWhenCalledWithFixedLink() {
-        FixedWarningsDetail details = createTrendDetails("fixed", RUN, createResult(),
+    void shouldReturnFixedIssuesDetailWhenCalledWithFixedLink() {
+        IssuesDetail details = createTrendDetails("fixed", RUN, createResult(),
                 ALL_ISSUES, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent(),
-                FixedWarningsDetail.class);
+                IssuesDetail.class);
         assertThat(details).hasIssues(FIXED_ISSUES);
         assertThat(details).hasFixedIssues(FIXED_ISSUES);
         assertThat(details).hasNewIssues(NO_ISSUES);
