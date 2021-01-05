@@ -190,6 +190,15 @@ No modification has been made only converted to PNG and resized
 ------------------------------------------------------------------------------
 
 ------------------------------------------------------------------------------
+
+Qt icons:
+
+The Qt icons 24x24 & 48x48 are generated from the qt_logo_green_rgb.svg (https://brand.qt.io/design#logos).
+The Qt icon is licensed as "Fair Use" (see here for more details: https://www.qt.io/trademark/).
+
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
 Trivy icons:
 
 The trivy icons 24x24 & 48x48 are resized on the original from https://github.com/aquasecurity/trivy/blob/main/imgs/logo.png.
