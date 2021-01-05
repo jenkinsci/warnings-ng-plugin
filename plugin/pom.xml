@@ -66,7 +66,7 @@
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.14</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
-    <httpcomponents-client.version>4.5.12-1.0</httpcomponents-client.version>
+    <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
     <configuration-as-code.version>1.36</configuration-as-code.version>
     <job-dsl.version>1.77</job-dsl.version>
     <envinject.version>2.3.0</envinject.version>
