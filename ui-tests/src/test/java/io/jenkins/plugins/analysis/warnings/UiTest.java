@@ -204,6 +204,7 @@ abstract class UiTest extends AbstractJUnitTest {
         AnalysisResult pmdDetails = pmd.openOverallResult();
         assertThat(pmdDetails).hasActiveTab(Tab.CATEGORIES)
                 .hasTotal(2)
+                .hasTotalNew(0)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.TYPES, Tab.ISSUES);
 
         assertThat(openInfoView(build, PMD_ID))

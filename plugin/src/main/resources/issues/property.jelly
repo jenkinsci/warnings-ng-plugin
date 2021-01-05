@@ -23,18 +23,21 @@
           <colgroup>
             <col class="col-width-5"/>
             <col class="col-width-1"/>
-            <col class="col-width-6"/>
+            <col class="col-width-1"/>
+            <col class="col-width-5"/>
           </colgroup>
           <thead>
             <tr>
               <th>${name}</th>
               <th>${%Total}</th>
+              <th>${%New}</th>
               <th class="no-sort">${%Distribution}</th>
             </tr>
           </thead>
           <tbody>
             <j:forEach var="key" items="${t.keys}">
               <j:set var="count" value="${t.getCount(key)}"/>
+              <j:set var="newCount" value="${t.getNewCount(key)}"/>
               <tr>
                 <td>
                   <a href="${t.property}.${key.hashCode()}/"
@@ -42,6 +45,7 @@
                     ${t.getDisplayName(key)}</a>
                 </td>
                 <td>${count}</td>
+                <td>${newCount}</td>
                 <td>
                   <issues:severity-distribution max="${t.max}" error="${t.getErrorsCount(key)}"
                                                 high="${t.getHighCount(key)}"
@@ -53,6 +57,7 @@
               <tr>
                 <td>${%Total}</td>
                 <td>${t.total}</td>
+                <td>${t.totalNewIssues}</td>
                 <td/>
               </tr>
             </tfoot>

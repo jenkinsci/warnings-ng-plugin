@@ -101,8 +101,18 @@ public class AnalysisResult extends PageObject {
      */
     public int getTotal() {
         String total = find(By.tagName("tfoot")).getText();
+        return Integer.parseInt(total.split(" ")[1]);
+    }
 
-        return Integer.parseInt(StringUtils.substringAfter(total, "Total "));
+    /**
+     * Returns the total number of new issues. This method requires that one of the tabs is shown that shows the total
+     * number of issues in the footer. I.e. the {@link Tab#ISSUES} and {@link Tab#BLAMES}.
+     *
+     * @return the total number of new issues
+     */
+    public int getTotalNew() {
+        String total = find(By.tagName("tfoot")).getText();
+        return Integer.parseInt(total.split(" ")[2]);
     }
 
     /**

@@ -79,11 +79,12 @@ public class PropertyTable extends PageObject {
 
         HtmlTableRow header = tableHeaderRows.get(0);
         List<HtmlTableCell> cells = header.getCells();
-        assertThat(cells).hasSize(3);
+        assertThat(cells).hasSize(4);
 
         propertyName = cells.get(0).getTextContent();
         assertThat(cells.get(1).getTextContent()).isEqualTo("Total");
-        assertThat(cells.get(2).getTextContent()).isEqualTo("Distribution");
+        assertThat(cells.get(2).getTextContent()).isEqualTo("New");
+        assertThat(cells.get(3).getTextContent()).isEqualTo("Distribution");
 
         List<HtmlTableBody> bodies = table.getBodies();
         assertThat(bodies).hasSize(1);
@@ -140,10 +141,10 @@ public class PropertyTable extends PageObject {
          *         the values given as {@link HtmlTableCell}
          */
         public PropertyRow(final List<HtmlTableCell> columns) {
-            assertThat(columns).hasSize(3);
+            assertThat(columns).hasSize(4);
             name = columns.get(0).getTextContent();
             size = Integer.parseInt(columns.get(1).getTextContent());
-            String style = columns.get(2).getFirstElementChild().getFirstElementChild().getAttribute("style");
+            String style = columns.get(3).getFirstElementChild().getFirstElementChild().getAttribute("style");
             Matcher matcher = WIDTH.matcher(style);
             assertThat(matcher.matches()).isTrue();
             width = Integer.parseInt(matcher.group(1));

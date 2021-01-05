@@ -502,7 +502,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         else {
             propertyFormatter = Function.identity();
         }
-        return new PropertyStatistics(report, propertyName, propertyFormatter);
+        return new PropertyStatistics(report, newIssues, propertyName, propertyFormatter);
     }
 
     @Override
