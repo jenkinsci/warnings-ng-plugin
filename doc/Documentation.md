@@ -57,7 +57,7 @@ You still need to enable and configure the static analysis tool in your build fi
     * [Importing a parser using configuration as code (JCasC)](#importing-a-parser-using-configuration-as-code-jcasc)
     * [Using the defined tool](#using-the-defined-tool)
   * [Properties to process the affected source code files](#properties-to-process-the-affected-source-code-files)
-  * [Control the selection of the reference build (baseline)](#control-the-selection-of-the-reference-build-baseline)
+  * [Control the selection of the reference build (baseline)](#configure-the-selection-of-the-reference-build-baseline)
   * [Filtering issues](#filtering-issues)
   * [Quality gate configuration](#quality-gate-configuration)
   * [Health report configuration](#health-report-configuration)
