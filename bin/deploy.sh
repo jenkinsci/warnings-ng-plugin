@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 JENKINS_HOME=../docker/volumes/jenkins-home
 
 echo "Installing plugin ${1} in $JENKINS_HOME"
