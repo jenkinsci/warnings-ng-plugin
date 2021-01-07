@@ -33,12 +33,6 @@ updates:
       - dependency-name: org.ow2.asm:asm
         versions:
           - "> 5.0.4"
-      - dependency-name: org.apache.maven.plugins:maven-surefire-plugin
-        versions:
-          - "3.0.0-M5"
-      - dependency-name: org.apache.maven.plugins:maven-failsafe-plugin
-        versions:
-          - "3.0.0-M5"
       - dependency-name: org.webjars:popper.js
         versions:
           - ">= 2.0.0"
