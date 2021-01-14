@@ -77,7 +77,7 @@ class TaskScanner {
     TaskScanner(final @CheckForNull String highTags, final @CheckForNull String normalTags,
             final @CheckForNull String lowTags,
             final CaseMode caseMode, final MatcherMode matcherMode) {
-        this.isUppercase = caseMode == CaseMode.IGNORE_CASE;
+        isUppercase = caseMode == CaseMode.IGNORE_CASE;
         if (StringUtils.isNotBlank(highTags)) {
             patterns.put(Severity.WARNING_HIGH, compile(highTags, caseMode, matcherMode));
         }
@@ -246,10 +246,10 @@ class TaskScanner {
                 if (patterns.containsKey(severity)) {
                     Matcher matcher = patterns.get(severity).matcher(line);
                     if (matcher.matches() && matcher.groupCount() == 2) {
-                        String message = matcher.group(2).trim();
+                        String message = StringUtils.defaultString(matcher.group(2)).trim();
                         builder.setMessage(StringUtils.removeStart(message, ":").trim());
 
-                        String tag = matcher.group(1);
+                        String tag = StringUtils.defaultString(matcher.group(1));
                         if (isUppercase) {
                             builder.setType(StringUtils.upperCase(tag));
                         }
