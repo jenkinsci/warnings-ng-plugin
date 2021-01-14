@@ -6,7 +6,10 @@ import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
@@ -111,11 +114,27 @@ class TaskScannerTest extends ResourceTest {
     }
 
     /**
+     * Gracefully handles patterns that contain optional groups.
+     *
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-64622">Issue 64622</a>
+     */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-64622")
+    void shouldHandleEmptyMatchWithRegExp() {
+        Report tasks = new TaskScannerBuilder()
+                .setHighTasks("(a)?(b)?.*")
+                .setMatcherMode(MatcherMode.REGEXP_MATCH)
+                .build()
+                .scanTasks(Arrays.asList("-", "-").iterator(), ISSUE_BUILDER);
+
+        assertThat(tasks).hasSize(2);
+    }
+
+    /**
      * Parses a warning log with characters in different locale.
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-22744">Issue 22744</a>
      */
-    @Test
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-22744")
     void issue22744() {
         Report tasks = new TaskScannerBuilder()
                 .setHighTasks("FIXME")
@@ -377,11 +396,19 @@ class TaskScannerTest extends ResourceTest {
     }
 
     private Iterator<String> read(final String fileName) {
-        return asStream(fileName).iterator();
+        try (Stream<String> file = asStream(fileName)) {
+            return file.collect(Collectors.toList()).iterator();
+        }
     }
 
     private Iterator<String> read(final String fileName, final String charset) {
-        return asStream(fileName, Charset.forName(charset)).iterator();
+        try (Stream<String> file = asStream(fileName, Charset.forName(charset))) {
+            return asIterator(file);
+        }
+    }
+
+    private Iterator<String> asIterator(final Stream<String> file) {
+        return file.collect(Collectors.toList()).iterator();
     }
 
     private void assertThatReportHasSeverities(final Report report, final int expectedSizeError,
