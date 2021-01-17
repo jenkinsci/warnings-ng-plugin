@@ -83,7 +83,7 @@ class WarningChecksPublisher {
                 .filter(StringUtils::isNotEmpty)
                 .orElse(labelProvider.getName());
 
-        String summary = extractChecksSummary(totals) + extractReferenceBuild(result, labelProvider);
+        String summary = extractChecksSummary(totals) + "\n" + extractReferenceBuild(result, labelProvider);
         Report issues = annotationScope == AnnotationScope.PUBLISH_NEW_ISSUES ? result.getNewIssues() : result.getIssues();
         return new ChecksDetailsBuilder()
                 .withName(checksName)
