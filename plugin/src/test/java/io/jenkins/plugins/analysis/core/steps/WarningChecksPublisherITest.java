@@ -93,7 +93,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
                             assertThat(output.getSummary()).isPresent().get().asString()
                                     .startsWith("|Total|New|Outstanding|Fixed|Trend\n"
                                             + "|:-:|:-:|:-:|:-:|:-:\n"
-                                            + "|6|2|4|0|:-1:\n"
+                                            + "|6|2|4|0|:-1:\n\n"
                                             + "Reference build: <a href=\"http://localhost:")
                                     .endsWith("#1</a>");
                             assertThat(output.getChecksAnnotations()).hasSize(2);
