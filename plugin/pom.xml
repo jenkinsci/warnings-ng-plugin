@@ -478,7 +478,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ansicolor</artifactId>
-      <version>0.7.3</version>
+      <version>0.7.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>
