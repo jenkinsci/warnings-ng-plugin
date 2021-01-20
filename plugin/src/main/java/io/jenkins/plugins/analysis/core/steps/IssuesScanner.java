@@ -49,7 +49,6 @@ import io.jenkins.plugins.forensics.miner.MinerService;
 import io.jenkins.plugins.forensics.miner.RepositoryStatistics;
 
 import static io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.*;
-import static java.util.Collections.*;
 
 /**
  * Scans report files or the console log for issues.
@@ -66,6 +65,7 @@ class IssuesScanner {
     private final Tool tool;
     private final List<RegexpFilter> filters;
     private final TaskListener listener;
+    private final String scm;
     private final BlameMode blameMode;
 
     enum BlameMode {
@@ -76,7 +76,7 @@ class IssuesScanner {
     IssuesScanner(final Tool tool, final List<RegexpFilter> filters, final Charset sourceCodeEncoding,
             final FilePath workspace, final String sourceDirectory, final Run<?, ?> run,
             final FilePath jenkinsRootDir, final TaskListener listener,
-            final BlameMode blameMode) {
+            final String scm, final BlameMode blameMode) {
         this.filters = new ArrayList<>(filters);
         this.sourceCodeEncoding = sourceCodeEncoding;
         this.tool = tool;
@@ -85,6 +85,7 @@ class IssuesScanner {
         this.run = run;
         this.jenkinsRootDir = jenkinsRootDir;
         this.listener = listener;
+        this.scm = scm;
         this.blameMode = blameMode;
     }
 
@@ -150,8 +151,10 @@ class IssuesScanner {
             FilteredLog log = new FilteredLog("Errors while determining a supported blamer for "
                     + run.getFullDisplayName());
             report.logInfo("Creating SCM blamer to obtain author and commit information for affected files");
-            Blamer blamer = BlamerFactory.findBlamer(run,
-                    singleton(getPermittedSourceDirectory(report)), listener, log);
+            if (!StringUtils.isBlank(scm)) {
+                report.logInfo("-> Filtering SCMs by key '%s'", scm);
+            }
+            Blamer blamer = BlamerFactory.findBlamer(scm, run, workspace, listener, log);
             log.logSummary();
             log.getInfoMessages().forEach(report::logInfo);
             log.getErrorMessages().forEach(report::logError);

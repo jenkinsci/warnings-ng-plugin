@@ -38,6 +38,7 @@ public class ScanForIssuesStep extends Step {
     private boolean isBlameDisabled;
 
     private List<RegexpFilter> filters = new ArrayList<>();
+    private String scm = StringUtils.EMPTY;
 
     /**
      * Creates a new instance of {@link ScanForIssuesStep}.
@@ -72,6 +73,22 @@ public class ScanForIssuesStep extends Step {
     @DataBoundSetter
     public void setFilters(final List<RegexpFilter> filters) {
         this.filters = new ArrayList<>(filters);
+    }
+
+    /**
+     * Sets the SCM that should be used to find the reference build for. The reference recorder will select the SCM
+     * based on a substring comparison, there is no need to specify the full name.
+     *
+     * @param scm
+     *         the ID of the SCM to use (a substring of the full ID)
+     */
+    @DataBoundSetter
+    public void setScm(final String scm) {
+        this.scm = scm;
+    }
+
+    public String getScm() {
+        return scm;
     }
 
     /**
@@ -163,6 +180,7 @@ public class ScanForIssuesStep extends Step {
         private final boolean isBlameDisabled;
         private final List<RegexpFilter> filters;
         private final String sourceDirectory;
+        private final String scm;
 
         /**
          * Creates a new instance of the step execution object.
@@ -180,6 +198,7 @@ public class ScanForIssuesStep extends Step {
             isBlameDisabled = step.getBlameDisabled();
             filters = step.getFilters();
             sourceDirectory = step.getSourceDirectory();
+            scm = step.getScm();
         }
 
         @Override
@@ -190,7 +209,7 @@ public class ScanForIssuesStep extends Step {
             IssuesScanner issuesScanner = new IssuesScanner(tool, filters,
                     getCharset(sourceCodeEncoding), workspace, sourceDirectory,
                     getRun(), new FilePath(getRun().getRootDir()), listener,
-                    isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
+                    scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
             return issuesScanner.scan();
         }

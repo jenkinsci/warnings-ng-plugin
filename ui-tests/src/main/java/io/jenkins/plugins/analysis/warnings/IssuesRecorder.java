@@ -41,6 +41,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
     private final Control healthyThreshold = control("healthy");
     private final Control unhealthyThreshold = control("unhealthy");
     private final Control healthSeverity = control("minimumSeverity");
+    private final Control scm = control("scm");
 
     /**
      * Determines the result of the quality gate.
@@ -192,6 +193,10 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         return trendChartType.get();
     }
 
+    public String getScm() {
+        return scm.get();
+    }
+
     /**
      * Returns whether SCM blaming should be disabled.
      *
@@ -263,6 +268,7 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
         }
     }
 
+
     /**
      * Sets the source code encoding to the specified value.
      *
@@ -327,6 +333,17 @@ public class IssuesRecorder extends AbstractStep implements PostBuildStep {
      */
     public void setAggregatingResults(final boolean aggregatingResults) {
         this.aggregatingResults.check(aggregatingResults);
+    }
+
+    /**
+     * Sets the SCM that should be used to find the reference build for. The reference recorder will select the SCM
+     * based on a substring comparison, there is no need to specify the full name.
+     *
+     * @param scm
+     *         the ID of the SCM to use (a substring of the full ID)
+     */
+    public void setScm(final String scm) {
+        this.scm.set(scm);
     }
 
     /**

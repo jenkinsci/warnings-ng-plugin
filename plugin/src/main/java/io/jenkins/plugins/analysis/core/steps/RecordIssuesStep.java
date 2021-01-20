@@ -94,6 +94,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
     private boolean failOnError;
+    private String scm = StringUtils.EMPTY;
 
     /**
      * Creates a new instance of {@link RecordIssuesStep}.
@@ -103,6 +104,22 @@ public class RecordIssuesStep extends Step implements Serializable {
         super();
 
         // empty constructor required for Stapler
+    }
+
+    /**
+     * Sets the SCM that should be used to find the reference build for. The reference recorder will select the SCM
+     * based on a substring comparison, there is no need to specify the full name.
+     *
+     * @param scm
+     *         the ID of the SCM to use (a substring of the full ID)
+     */
+    @DataBoundSetter
+    public void setScm(final String scm) {
+        this.scm = scm;
+    }
+
+    public String getScm() {
+        return scm;
     }
 
     /**
@@ -1073,6 +1090,7 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setEnabledForFailure(step.getEnabledForFailure());
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.getBlameDisabled());
+            recorder.setScm(step.getScm());
             recorder.setSkipPublishingChecks(step.isSkipPublishingChecks());
             recorder.setPublishAllIssues(step.isPublishAllIssues());
             recorder.setId(step.getId());
