@@ -1,10 +1,11 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:c="/controls">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:f="/lib/form" xmlns:i="/issues" xmlns:c="/controls" xmlns:s="/forensics">
 
   <st:documentation>
     Provides all required input fields to scan for issues.
   </st:documentation>
 
+  <s:scm/>
   <f:entry field="skipBlames">
     <f:checkbox title="${%title.blameDisabled}" />
   </f:entry>
