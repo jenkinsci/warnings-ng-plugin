@@ -29,7 +29,7 @@ import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
 /**
  * Scan files or the console log for issues.
  */
-@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessivePublicCount", "PMD.ExcessiveImports"})
+@SuppressWarnings({"InstanceVariableMayNotBeInitialized", "PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.DataClass"})
 public class ScanForIssuesStep extends Step {
     private Tool tool;
 
