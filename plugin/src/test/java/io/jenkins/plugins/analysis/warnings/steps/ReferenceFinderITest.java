@@ -65,7 +65,7 @@ public class ReferenceFinderITest extends IntegrationTestWithJenkinsPerTest {
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
-        assertThat(result.getReferenceBuild().isPresent());
+        assertThat(result.getReferenceBuild()).isPresent();
         assertThat(result.getReferenceBuild().get().getId()).isEqualTo(firstReferenceResult.getOwner().getId());
         assertThat(result.getReferenceBuild().get().getId()).isEqualTo("1");
 
