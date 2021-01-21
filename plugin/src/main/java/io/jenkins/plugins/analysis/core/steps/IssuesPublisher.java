@@ -199,7 +199,14 @@ class IssuesPublisher {
     }
 
     private History findConfiguredReference(final ResultSelector selector, final Report issues) {
-        issues.logError("Setting the reference job has been deprecated, please use the new reference recorder");
+        final String message = "Setting the reference job has been deprecated, please use the new reference recorder";
+        if (failOnErrors) {
+            // Log at info level otherwise this will fail the build, even if everything else is ok.
+            issues.logInfo(message);
+        }
+        else {
+            issues.logError(message);
+        }
 
         Optional<Job<?, ?>> referenceJob = new JenkinsFacade().getJob(referenceJobName);
         if (referenceJob.isPresent()) {
