@@ -125,6 +125,8 @@ public class IssuesRecorder extends Recorder {
 
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
+    private String scm = StringUtils.EMPTY;
+
     /**
      * Creates a new instance of {@link IssuesRecorder}.
      */
@@ -157,7 +159,26 @@ public class IssuesRecorder extends Recorder {
                 qualityGates.addAll(QualityGate.map(thresholds));
             }
         }
+        if (scm == null) {
+            scm = StringUtils.EMPTY;
+        }
         return this;
+    }
+
+    /**
+     * Sets the SCM that should be used to find the reference build for. The reference recorder will select the SCM
+     * based on a substring comparison, there is no need to specify the full name.
+     *
+     * @param scm
+     *         the ID of the SCM to use (a substring of the full ID)
+     */
+    @DataBoundSetter
+    public void setScm(final String scm) {
+        this.scm = scm;
+    }
+
+    public String getScm() {
+        return scm;
     }
 
     /**
@@ -731,7 +752,8 @@ public class IssuesRecorder extends Recorder {
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
                 workspace, sourceDirectory, run,
-                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
+                new FilePath(run.getRootDir()), listener,
+                scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
         return issuesScanner.scan();
     }

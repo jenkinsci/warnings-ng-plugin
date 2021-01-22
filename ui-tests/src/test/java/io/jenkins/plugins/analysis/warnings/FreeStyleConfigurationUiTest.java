@@ -24,6 +24,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
     private static final String SOURCE_DIRECTORY = "relative";
     private static final String SEVERITY = "NORMAL";
     private static final String REGEX = "testRegex";
+    private static final String SCM = "SCM";
 
     /**
      * Verifies that job configuration screen correctly modifies the properties of an {@link IssuesRecorder} instance.
@@ -36,6 +37,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
 
         issuesRecorder.setSourceCodeEncoding(ENCODING);
         issuesRecorder.setSourceDirectory(SOURCE_DIRECTORY);
+        issuesRecorder.setScm(SCM);
         issuesRecorder.setAggregatingResults(true);
         issuesRecorder.setTrendChartType(TrendChartType.TOOLS_ONLY);
         issuesRecorder.setSkipBlames(true);
@@ -56,6 +58,7 @@ public class FreeStyleConfigurationUiTest extends AbstractJUnitTest {
 
         assertThat(issuesRecorder).hasSourceCodeEncoding(ENCODING);
         assertThat(issuesRecorder).hasSourceDirectory(SOURCE_DIRECTORY);
+        assertThat(issuesRecorder).hasScm(SCM);
         assertThat(issuesRecorder).isAggregatingResults();
         assertThat(issuesRecorder).hasTrendChartType(TrendChartType.TOOLS_ONLY.toString());
         assertThat(issuesRecorder).isSkipBlames();
