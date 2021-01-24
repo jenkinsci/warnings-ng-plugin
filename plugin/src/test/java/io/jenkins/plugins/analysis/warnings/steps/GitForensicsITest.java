@@ -1,12 +1,22 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import java.io.IOException;
+import java.util.Collections;
+
 import org.junit.Test;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import hudson.model.FreeStyleProject;
+import hudson.plugins.git.BranchSpec;
+import hudson.plugins.git.GitSCM;
+import hudson.plugins.git.extensions.impl.RelativeTargetDirectory;
+import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.forensics.blame.FileBlame;
+import io.jenkins.plugins.forensics.miner.RepositoryMinerStep;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -18,9 +28,11 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String JAVA_ONE_WARNING = "java-start-rev0.txt";
     private static final String PUBLISH_ISSUES_STEP = "publishIssues issues:[issues]";
+    private static final String FORENSICS_API_PLUGIN = "https://github.com/jenkinsci/forensics-api-plugin.git";
+    private static final String COMMIT = "a6d0ef09ab3c418e370449a884da99b8190ae950";
     private static final String CHECKOUT_FORENSICS_API = "checkout([$class: 'GitSCM', "
-            + "branches: [[name: 'a6d0ef09ab3c418e370449a884da99b8190ae950' ]],\n"
-            + "userRemoteConfigs: [[url: 'https://github.com/jenkinsci/forensics-api-plugin.git']],\n"
+            + "branches: [[name: '" + COMMIT + "' ]],\n"
+            + "userRemoteConfigs: [[url: '" + FORENSICS_API_PLUGIN + "']],\n"
             + "extensions: [[$class: 'RelativeTargetDirectory', \n"
             + "            relativeTargetDir: 'forensics-api']]])";
     private static final String MINE_REPOSITORY = "mineRepository()";
@@ -50,6 +62,27 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')");
     }
 
+    /**
+     * Checks out an existing Git repository and starts a freestyle job. Verifies that the
+     * Git forensics plugin is correctly invoked.
+     */
+    @Test
+    public void shouldObtainBlamesAndForensicsInFreestyleJob() throws IOException {
+        FreeStyleProject job = createFreeStyleProject();
+
+        createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
+
+        GitSCM scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
+                Collections.singletonList(new BranchSpec(COMMIT)),
+                false, Collections.emptyList(), null, null,
+                Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
+        job.setScm(scm);
+        job.getPublishersList().add(new RepositoryMinerStep());
+        enableGenericWarnings(job, recorder -> recorder.setPublishAllIssues(true), new Java());
+
+        verifyBlaming(job);
+    }
+
     private void runStepAndVerifyBlamesAndForensics(final String step) {
         WorkflowJob job = createPipelineWithWorkspaceFiles();
 
@@ -57,6 +90,10 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
         job.setDefinition(asStage(CHECKOUT_FORENSICS_API, MINE_REPOSITORY, step));
 
+        verifyBlaming(job);
+    }
+
+    private void verifyBlaming(final ParameterizedJob<?, ?> job) {
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(1).hasNewSize(0).hasFixedSize(0);
@@ -77,7 +114,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Checks out an existing Git repository and starts a pipeline with the scan and publish steps. Verifies that the
-     * Git forensics plugin is correctly invoked.
+     * Git forensics plugin is correctly skipped.
      */
     @Test
     public void shouldSkipBlamesAndForensicsWithScanAndPublishIssuesSteps() {
@@ -90,7 +127,7 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Checks out an existing Git repository and starts a pipeline with the record step. Verifies that the Git forensics
-     * plugin is correctly invoked.
+     * plugin is correctly skipped.
      */
     @Test
     public void shouldSkipBlamesAndForensicsWithRecordIssuesStep() {
@@ -100,10 +137,35 @@ public class GitForensicsITest extends IntegrationTestWithJenkinsPerSuite {
                 + "tool: java(pattern:'**/*issues.txt', reportEncoding:'UTF-8')");
     }
 
+    /**
+     * Checks out an existing Git repository and starts a freestyle job. Verifies that the Git forensics
+     * plugin is correctly skipped.
+     */
+    @Test
+    public void shouldSkipBlamesAndForensicsInFreestyleJob() throws IOException {
+        FreeStyleProject job = createFreeStyleProject();
+
+        createFileInWorkspace(job, "java-issues.txt", createJavaWarning(SCM_RESOLVER, AFFECTED_LINE));
+
+        GitSCM scm = new GitSCM(GitSCM.createRepoList(FORENSICS_API_PLUGIN, null),
+                Collections.singletonList(new BranchSpec(COMMIT)),
+                false, Collections.emptyList(), null, null,
+                Collections.singletonList(new RelativeTargetDirectory("forensics-api")));
+        job.setScm(scm);
+        job.getPublishersList().add(new RepositoryMinerStep());
+        enableGenericWarnings(job, recorder -> recorder.setScm("nothing"), new Java());
+
+        verifySkippedScm(job);
+    }
+
     private void runStepAndVerifyScmSkipping(final String step) {
         WorkflowJob job = createPipelineWithWorkspaceFiles(JAVA_ONE_WARNING);
         job.setDefinition(asStage(CHECKOUT_FORENSICS_API, MINE_REPOSITORY, step));
 
+        verifySkippedScm(job);
+    }
+
+    private void verifySkippedScm(final ParameterizedJob<?, ?> job) {
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
         assertThat(result).hasTotalSize(1).hasNewSize(0).hasFixedSize(0);
