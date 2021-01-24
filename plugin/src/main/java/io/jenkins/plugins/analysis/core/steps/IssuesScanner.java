@@ -107,7 +107,7 @@ class IssuesScanner {
     private RepositoryStatistics getRepositoryStatistics(final Report report) {
         MinerService minerService = new MinerService();
         FilteredLog log = new FilteredLog("Errors while obtaining repository statistics");
-        RepositoryStatistics statistics = minerService.queryStatisticsFor(run, report.getFiles(), log);
+        RepositoryStatistics statistics = minerService.queryStatisticsFor(scm, run, report.getFiles(), log);
         log.getErrorMessages().forEach(report::logError);
         log.getInfoMessages().forEach(report::logInfo);
         return statistics;

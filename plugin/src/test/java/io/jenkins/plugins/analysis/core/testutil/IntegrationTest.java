@@ -455,6 +455,12 @@ public abstract class IntegrationTest extends ResourceTest {
         }
     }
 
+    protected String createJavaWarning(final String fileName, final int lineNumber) {
+        return String.format(
+                "[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated%n", fileName,
+                lineNumber);
+    }
+
     /**
      * Creates a pre-defined filename for a workspace file.
      *

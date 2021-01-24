@@ -89,12 +89,6 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 new PropertyRow("two", 1));
     }
 
-    private String createJavaWarning(final String fileName, final int lineNumber) {
-        return String.format(
-                "[WARNING] %s:[%d,42] [deprecation] path.AClass in path has been deprecated%n", fileName,
-                lineNumber);
-    }
-
     /**
      * Verifies that the output is correct if there exist various namespaces (C#) and packages (Java) at the same time
      * in the expected HTML output.
