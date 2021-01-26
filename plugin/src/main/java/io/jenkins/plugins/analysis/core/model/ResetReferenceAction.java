@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import hudson.model.Action;
 
@@ -30,19 +30,19 @@ public class ResetReferenceAction implements Action {
         return id;
     }
 
-    @Nullable
+    @CheckForNull
     @Override
     public String getIconFileName() {
         return null;
     }
 
-    @Nullable
+    @CheckForNull
     @Override
     public String getDisplayName() {
         return null;
     }
 
-    @Nullable
+    @CheckForNull
     @Override
     public String getUrlName() {
         return null;

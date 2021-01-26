@@ -1,20 +1,24 @@
 package io.jenkins.plugins.analysis.core.steps;
 
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
+import hudson.model.Item;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
- * Descriptor base class for all analysis steps. Provides generic validation methods,
- * and list box models for UI select elements.
+ * Descriptor base class for all analysis steps. Provides generic validation methods, and list box models for UI select
+ * elements.
  *
  * @author Ullrich Hafner
  */
 public abstract class AnalysisStepDescriptor extends StepDescriptor {
+    private static final JenkinsFacade JENKINS = new JenkinsFacade();
     private final ModelValidation model = new ModelValidation();
 
     /**
@@ -22,8 +26,12 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return a model with all available charsets
      */
+    @POST
     public ComboBoxModel doFillSourceCodeEncodingItems() {
-        return model.getAllCharsets();
+        if (JENKINS.hasPermission(Item.CONFIGURE)) {
+            return model.getAllCharsets();
+        }
+        return new ComboBoxModel();
     }
 
     /**
@@ -34,7 +42,12 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
+    @POST
     public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            return FormValidation.ok();
+        }
+
         return model.validateCharset(reportEncoding);
     }
 
@@ -46,7 +59,12 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
+    @POST
     public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            return FormValidation.ok();
+        }
+
         return model.validateCharset(sourceCodeEncoding);
     }
 
@@ -55,29 +73,28 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return a model with all available severity filters
      */
+    @POST
     public ListBoxModel doFillMinimumSeverityItems() {
-        return model.getAllSeverityFilters();
+        if (JENKINS.hasPermission(Item.CONFIGURE)) {
+            return model.getAllSeverityFilters();
+        }
+        return new ListBoxModel();
+
     }
 
     /**
      * Returns the model with the possible reference jobs.
      *
      * @return the model with the possible reference jobs
+     * @deprecated not used anymore, part of forensics plugin
      */
+    @Deprecated
+    @POST
     public ComboBoxModel doFillReferenceJobNameItems() {
-        return model.getAllJobs();
-    }
-
-    /**
-     * Performs on-the-fly validation of the reference job.
-     *
-     * @param referenceJobName
-     *         the reference job
-     *
-     * @return the validation result
-     */
-    public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
-        return model.validateJob(referenceJobName);
+        if (JENKINS.hasPermission(Item.CONFIGURE)) {
+            return model.getAllJobs();
+        }
+        return new ComboBoxModel();
     }
 
     /**
@@ -90,7 +107,11 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
+    @POST
     public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            return FormValidation.ok();
+        }
         return model.validateHealthy(healthy, unhealthy);
     }
 
@@ -104,7 +125,11 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
+    @POST
     public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            return FormValidation.ok();
+        }
         return model.validateUnhealthy(healthy, unhealthy);
     }
 
@@ -113,8 +138,12 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return a model with all  aggregation trend chart positions
      */
+    @POST
     public ListBoxModel doFillTrendChartTypeItems() {
-        return model.getAllTrendChartTypes();
+        if (JENKINS.hasPermission(Item.CONFIGURE)) {
+            return model.getAllTrendChartTypes();
+        }
+        return new ListBoxModel();
     }
 
     /**
@@ -125,7 +154,12 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
+    @POST
     public FormValidation doCheckId(@QueryParameter final String id) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            return FormValidation.ok();
+        }
+
         return model.validateId(id);
     }
 }

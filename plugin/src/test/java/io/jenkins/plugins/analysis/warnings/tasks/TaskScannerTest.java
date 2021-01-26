@@ -1,9 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
 
@@ -32,8 +38,31 @@ class TaskScannerTest extends ResourceTest {
     private static final IssueBuilder ISSUE_BUILDER = new IssueBuilder();
 
     @Test
+    void shouldReportFileExceptionError() {
+        TaskScanner scanner = new TaskScannerBuilder().build();
+
+        Report report = scanner.scan(new File("").toPath(), StandardCharsets.UTF_8);
+
+        assertThat(report.getErrorMessages()).contains("Exception while reading the source code file '':");
+    }
+
+    @Test
+    void shouldHandleMalformedInputException() {
+        TaskScanner scanner = new TaskScannerBuilder().build();
+
+        Path pathToFile = getResourceAsFile("file-with-strange-characters.txt");
+        Report report = scanner.scan(pathToFile, StandardCharsets.UTF_8);
+
+        assertThat(report.getErrorMessages()).isNotEmpty().contains("Can't read source file '"
+                + pathToFile.toString()
+                + "', defined encoding 'UTF-8' seems to be wrong");
+    }
+
+    @Test
     void shouldReportErrorIfPatternIsInvalid() {
-        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\").setMatcherMode(MatcherMode.REGEXP_MATCH).build();
+        TaskScanner scanner = new TaskScannerBuilder().setHighTasks("\\")
+                .setMatcherMode(MatcherMode.REGEXP_MATCH)
+                .build();
 
         Report report = scanner.scanTasks(read(FILE_WITH_TASKS), ISSUE_BUILDER);
 
@@ -42,7 +71,7 @@ class TaskScannerTest extends ResourceTest {
                 + "'Unexpected internal error near index 1";
         assertThat(report.getErrorMessages()).hasSize(1);
         assertThat(report.getErrorMessages().get(0)).startsWith(errorMessage);
-        
+
         assertThat(scanner.isInvalidPattern()).isTrue();
         assertThat(scanner.getErrors()).startsWith(errorMessage);
     }
@@ -85,11 +114,27 @@ class TaskScannerTest extends ResourceTest {
     }
 
     /**
+     * Gracefully handles patterns that contain optional groups.
+     *
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-64622">Issue 64622</a>
+     */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-64622")
+    void shouldHandleEmptyMatchWithRegExp() {
+        Report tasks = new TaskScannerBuilder()
+                .setHighTasks("(a)?(b)?.*")
+                .setMatcherMode(MatcherMode.REGEXP_MATCH)
+                .build()
+                .scanTasks(Arrays.asList("-", "-").iterator(), ISSUE_BUILDER);
+
+        assertThat(tasks).hasSize(2);
+    }
+
+    /**
      * Parses a warning log with characters in different locale.
      *
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-22744">Issue 22744</a>
      */
-    @Test
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-22744")
     void issue22744() {
         Report tasks = new TaskScannerBuilder()
                 .setHighTasks("FIXME")
@@ -108,7 +153,8 @@ class TaskScannerTest extends ResourceTest {
         assertThat(tasks.get(1)).hasSeverity(Severity.WARNING_NORMAL)
                 .hasType("TODO")
                 .hasLineStart(5)
-                .hasMessage("\u043f\u0440\u0438\u043c\u0435\u0440 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c");
+                .hasMessage(
+                        "\u043f\u0440\u0438\u043c\u0435\u0440 \u043a\u043e\u043c\u043c\u0435\u043d\u0442\u0430\u0440\u0438\u044f \u043d\u0430 \u0440\u0443\u0441\u0441\u043a\u043e\u043c");
     }
 
     /**
@@ -332,12 +378,37 @@ class TaskScannerTest extends ResourceTest {
         assertThat(tasks).hasSize(0);
     }
 
+    /**
+     * Checks whether ignoring parts of a file works.
+     */
+    @Test
+    void shouldIgnoreItsOwnConfigurationWithIgnoreSectionMark() {
+        Report tasks = new TaskScannerBuilder().setHighTasks("FIXME")
+                .setNormalTasks("TODO")
+                .setLowTasks("REVIEW")
+                .setHighTasks("FIXME")
+                .setCaseMode(CaseMode.CASE_SENSITIVE)
+                .setMatcherMode(MatcherMode.STRING_MATCH)
+                .build()
+                .scanTasks(read("file-with-tasks-and-ignore-section.txt"), ISSUE_BUILDER);
+
+        assertThat(tasks).hasSize(0);
+    }
+
     private Iterator<String> read(final String fileName) {
-        return asStream(fileName).iterator();
+        try (Stream<String> file = asStream(fileName)) {
+            return file.collect(Collectors.toList()).iterator();
+        }
     }
 
     private Iterator<String> read(final String fileName, final String charset) {
-        return asStream(fileName, Charset.forName(charset)).iterator();
+        try (Stream<String> file = asStream(fileName, Charset.forName(charset))) {
+            return asIterator(file);
+        }
+    }
+
+    private Iterator<String> asIterator(final Stream<String> file) {
+        return file.collect(Collectors.toList()).iterator();
     }
 
     private void assertThatReportHasSeverities(final Report report, final int expectedSizeError,

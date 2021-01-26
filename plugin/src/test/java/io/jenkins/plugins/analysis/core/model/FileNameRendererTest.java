@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.Run;
@@ -78,7 +78,7 @@ class FileNameRendererTest {
         return new FileNameRenderer(createBuildStub(), createBuildFolderStub(isAccessible));
     }
 
-    @Nullable
+    @CheckForNull
     private Run<?, ?> createBuildStub() {
         return mock(Run.class);
     }

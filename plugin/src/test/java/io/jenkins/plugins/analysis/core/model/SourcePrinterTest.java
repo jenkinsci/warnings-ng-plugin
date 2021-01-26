@@ -118,7 +118,26 @@ class SourcePrinterTest extends ResourceTest {
                 .isEqualToIgnoringWhitespace("Hello <b>Description</b>");
     }
 
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-55679")
+    @Test
+    void shouldAddBreakOnNewLine() {
+        IssueBuilder builder = new IssueBuilder();
+        Issue issue = builder.setLineStart(7).setMessage("Hello <b>MessageLine1\nLine2\nLine3</b>").build();
+
+        SourcePrinter printer = new SourcePrinter();
+
+        Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
+                NO_DESCRIPTION, ICON_URL));
+
+        assertThatCodeIsEqualToSourceText(document);
+
+        assertThat(document.getElementsByClass("analysis-warning-title").html())
+                .isEqualTo("Hello <b>MessageLine1<br>Line2<br>Line3</b>");
+        assertThat(document.getElementsByClass("analysis-detail")).isEmpty();
+        assertThat(document.getElementsByClass("collapse-panel")).isEmpty();
+    }
+
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-55679")
     void shouldRenderXmlFiles() {
         SourcePrinter printer = new SourcePrinter();
 

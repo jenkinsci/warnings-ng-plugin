@@ -124,7 +124,7 @@ public class IssuesChartPortlet extends DashboardPortlet {
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public String getTrend() {
+    public String getBuildTrendModel() {
         SeverityTrendChart severityChart = new SeverityTrendChart();
 
         List<Iterable<? extends BuildResult<AnalysisBuildResult>>> histories = jobs.stream()
@@ -137,6 +137,17 @@ public class IssuesChartPortlet extends DashboardPortlet {
 
         return new JacksonFacade().toJson(
                 severityChart.aggregate(histories, new ChartModelConfiguration(AxisType.DATE)));
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
+     *
+     * @return the UI model as JSON
+     * @deprecated replaced by {@link #getBuildTrendModel()} which is called from JS file
+     */
+    @JavaScriptMethod @Deprecated @SuppressWarnings("unused") // Called by jelly view
+    public String getTrend() {
+        return getBuildTrendModel();
     }
 
     /**

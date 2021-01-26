@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.http.HttpResponse;
@@ -12,6 +13,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -48,7 +50,9 @@ class RemoteAxivionDashboard implements AxivionDashboard {
         try (CloseableHttpClient client =
                      HttpClients.custom().setDefaultCredentialsProvider(credentialsProvider).build()) {
 
-            HttpGet httpget = new HttpGet(projectUrl + "/issues?kind=" + kind);
+            URIBuilder uriBuilder = new URIBuilder(projectUrl + "/issues");
+            uriBuilder.setParameter("kind", kind.toString());
+            HttpGet httpget = new HttpGet(uriBuilder.build());
             httpget.addHeader(new BasicHeader("Accept", "application/json"));
             BasicHeader userAgent = new BasicHeader(X_AXIVION_USER_AGENT, API_USER_AGENT);
             httpget.addHeader(userAgent);
@@ -66,7 +70,7 @@ class RemoteAxivionDashboard implements AxivionDashboard {
                 return convertToJson(legacyResponse);
             }
         }
-        catch (IOException e) {
+        catch (IOException | URISyntaxException e) {
             throw new ParsingException(e, "Cannot retrieve information from dashboard");
         }
     }

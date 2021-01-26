@@ -4,8 +4,8 @@
   <f:entry title="${%Name}" field="name">
     <f:textbox default="${descriptor.getDisplayName()}"/>
   </f:entry>
-  <f:entry title="${%hide.title}" description="${%hide.description}" field="hideCleanJobs">
-    <f:checkbox />
+  <f:entry field="hideCleanJobs">
+    <f:checkbox title="${%hide.title}"/>
   </f:entry>
   <f:entry title="${%Height of the chart}" field="height">
     <f:number default="400"/>

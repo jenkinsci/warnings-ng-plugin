@@ -16,7 +16,7 @@
         <bs:card title="${%Error Messages}" fontAwesomeIcon="exclamation-triangle">
 
           <pre>
-            <samp id="errors">
+            <samp id="errors" class="log-output">
               <j:forEach var="message" items="${it.errorMessages}">
                 <div>
                   ${message}
@@ -36,7 +36,7 @@
       <bs:card title="${%Information Messages}" fontAwesomeIcon="info-circle">
 
         <pre>
-          <samp id="info">
+          <samp id="info" class="log-output">
             <j:forEach var="message" items="${messages}">
               <div>
                 ${message}

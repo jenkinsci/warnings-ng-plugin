@@ -6,8 +6,8 @@ import java.util.Optional;
 
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.echarts.BuildResult;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import hudson.model.Result;
 import hudson.model.Run;
@@ -151,7 +151,7 @@ public class AnalysisHistory implements History {
         return Optional.empty();
     }
 
-    private static Optional<Run<?, ?>> getRunWithResult(final @Nullable Run<?, ?> start,
+    private static Optional<Run<?, ?>> getRunWithResult(final @CheckForNull Run<?, ?> start,
             final ResultSelector selector,
             final QualityGateEvaluationMode qualityGateEvaluationMode,
             final JobResultEvaluationMode jobResultEvaluationMode) {

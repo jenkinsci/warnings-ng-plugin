@@ -23,6 +23,7 @@ to a job:
 1. The plugin scans the console log of a Jenkins build or files in the workspace of your job for any kind of issues. 
 There are more than hundred [report formats](../SUPPORTED-FORMATS.md) supported. Among the problems it can detect:
     - errors from your compiler (C, C#, Java, etc.)
+    - failures from your test reports (JUnit, etc.)
     - warnings from a static analysis tool (CheckStyle, StyleCop, SpotBugs, etc.)
     - duplications from a copy-and-paste detector (CPD, Simian, etc.)
     - vulnerabilities
@@ -34,6 +35,8 @@ main build page. From there you can also dive into the details:
     - list of all issues including helpful comments from the reporting tool
     - annotated source code of the affected files
     - trend charts of the issues 
+    - blames that identify the origin (commit, author, etc.) of a warning
+    - forensics that give insight to your SCM history
    
 :exclamation: The plugin does not run the static analysis, it just visualizes the results reported by such tools. 
 You still need to enable and configure the static analysis tool in your build file or Jenkinsfile. 
@@ -54,7 +57,7 @@ You still need to enable and configure the static analysis tool in your build fi
     * [Importing a parser using configuration as code (JCasC)](#importing-a-parser-using-configuration-as-code-jcasc)
     * [Using the defined tool](#using-the-defined-tool)
   * [Properties to process the affected source code files](#properties-to-process-the-affected-source-code-files)
-  * [Control the selection of the reference build (baseline)](#control-the-selection-of-the-reference-build-baseline)
+  * [Control the selection of the reference build (baseline)](#configure-the-selection-of-the-reference-build-baseline)
   * [Filtering issues](#filtering-issues)
   * [Quality gate configuration](#quality-gate-configuration)
   * [Health report configuration](#health-report-configuration)
@@ -86,6 +89,7 @@ You still need to enable and configure the static analysis tool in your build fi
     * [Summary of the analysis result](#summary-of-the-analysis-result)
     * [Details of the analysis result](#details-of-the-analysis-result)
   * [Token macro support](#token-macro-support)
+  * [Warnings Checks (for GitHub projects)](#warnings-checks-for-github-projects)
 * [Transition from the static analysis suite](#transition-from-the-static-analysis-suite)
   * [Migration of Pipelines](#migration-of-pipelines)
   * [Migration of all other jobs](#migration-of-all-other-jobs)
@@ -169,11 +173,11 @@ If none of the built-in tools works in your project you have several ways to add
 A simple way to get the analysis results of your tool into the Warnings plugin is to export the information into one
 of the already supported formats. E.g., several tools export their issues into the CheckStyle or PMD format. If you
 want to use all features of the Warnings Plugin it would be even better if you would export the information into the
-*native* [XML](../src/test/resources/io/jenkins/plugins/analysis/warnings/warnings-issues.xml) or 
-[JSON](../src/test/resources/io/jenkins/plugins/analysis/warnings/issues.json) format (this parser uses the ID `issues`).  
+*native* [XML](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/steps/warnings-issues.xml) or 
+[JSON](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/steps/issues.json) format (this parser uses the ID `issues`).  
 These formats are already registered in the user interface and you can use them out-of-the-box. You can even provide
 issues in a simple log file that contains single lines of JSON issues, see 
-[example](../src/test/resources/io/jenkins/plugins/analysis/warnings/json-issues.log).
+[example](../plugin/src/test/resources/io/jenkins/plugins/analysis/warnings/steps/json-issues.log).
 
 Here is an example step that can be used to parse the native JSON (or XML) format:
 
@@ -266,6 +270,9 @@ In order to let the plugin display those files you can add an additional source 
 
 ![affected files configuration](images/affected-files.png) 
 
+To enable additional source directories for scanning, the directories have to be added in the global configuration. 
+To select enabled directories for scanning, the directories have to be configured on job level.
+
 An example pipeline with these options is shown in the following snippet, note that the encoding of the report 
 files may be set differently if required:
 
@@ -291,32 +298,115 @@ unclassified:
 ``` 
 
 
-### Control the selection of the reference build (baseline)
+### Configure the selection of the reference build (baseline)
 
-One important feature of the Warnings Next Generation plugin is the classification of issues as new, outstanding and fixed:
+One unique feature of the Warnings Next Generation plugin is the classification of issues as new, outstanding and fixed:
 - **new**: all issues, that are part of the current report but have not been shown up in the reference report
 - **fixed**: all issues, that are part of the reference report but are not present in the current report anymore
 - **outstanding**: all issues, that are part of the current and reference report
+Using this classification one can see what new issues have been caused by a pull request, or if
+ new and fixed issues are in balance or if the quality of the project is degenerating or improving.
 
 In order to compute this classification, the plugin requires a reference build (baseline). New, fixed, and outstanding
-issues are then computed by comparing the issues in the current build and in the baseline. There are three options that
-control the selection of the reference build. 
+issues are then computed by comparing the issues in the current build and in the baseline.
+Starting with release 8.5.0 the selection of the reference build is delegated to the 
+[Forensics API plugin](https://github.com/jenkinsci/forensics-api-plugin) and the corresponding Git implementation in the
+[Git Forensics plugin](https://github.com/jenkinsci/git-forensics-plugin). This new implementation in the Git Forensics 
+plugin is much more versatile than the old default implementation that simply returned a previous build of a configurable 
+Jenkins job.
 
-![reference build configuration](images/reference.png) 
+When selecting a baseline, we need to distinguish two different use cases, which are documented in the next sections.
 
-An example pipeline with these options is shown in the following snippet:
+### Selecting a baseline from the current job
+
+When a team wants to investigate how the quality of the project changes over the time, we need to simply
+look back in the history of the same Jenkins job and select another build that we can use to compare the results 
+with. Such a Jenkins job typically build the main branch of the source control system. 
+This behavior was part of the Warnings' Plugin since the beginning and is still available. You do not need to
+configure anything to get this functionality: just skip the computation of the reference build (see next section). 
+You can affect the selection of the reference build with the following properties:
+
+- `ignoreQualityGate`: This option is only available if you have a quality gate enabled for your job. Then you can
+  enable this option to always select the previous build as baseline. That means, that the plugin marks only those
+  issues as new, that have been submitted in the current build. Previously new issues in older builds will the plugin
+  convert and classify as outstanding issues. Think carefully before selecting this option because then manually
+  starting a new build (without source code changes) simply will convert all previously new issues to outstanding.
+  Therefore, this option is disabled by default: a reference build is always a build that passed all quality gates. As
+  soon as a build does not pass the quality gate, the reference will be frozen until all new issues will be resolved 
+  again. This means, that new issues will be aggregated from build to build until the original cause for the failure 
+  and all those additional new issues have been resolved. This helps much more to keep your project clean: as soon as 
+  there are new issues, Jenkins will mark all builds as unstable until the issues have been resolved.
+
+- `ignoreFailedBuilds`: This option determines if failed builds should be selected as baseline or not.
+  This option is enabled by default, since analysis results might be inaccurate if the build failed.
+  If unchecked, every build that contains a static analysis result will be considered as a baseline, 
+  even if the build failed.
+
+You can use checkboxes to change the default values of these options, see image below.
+
+![reference build configuration](images/reference-warnings.png)
+
+These options are available for pipelines as well: 
 
 ```groovy
-recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true, referenceJobName: 'my-project/master'
+recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true
 ```
 
-In pipelines you also have the additional option to specify a specific build that should be used as reference. Such
-a build needs to be computed in your pipeline before you call the `recordIssues`  step. 
+### Selecting a baseline in the target job
+
+:warning: This feature requires the installation of an additional plugin:
+[Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
+
+For more complex branch source projects (i.e., projects that build several branches and pull requests in a 
+connected job hierarchy) it makes more sense to select a reference build from a job
+that builds the actual target branch (i.e., the branch the current changes will be merged into). Here one typically is
+interested what changed in the branch or pull request over the main branch (or any other
+target branch). That means we want to see what new warnings will be submitted by a branch or pull request
+if the team merges the changes. 
+
+If you are using a Git branch source project, the Jenkins job that builds the target branch 
+will be selected automatically by running the reference recorder step. Simply call the step `discoverGitReferenceBuild` 
+before any of static analysis steps:
 
 ```groovy
-recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true, 
-        referenceJobName: 'my-project/master', referenceBuildId: '1'
+discoverGitReferenceBuild
+recordIssues tool: checkStyle(pattern: 'checkstyle-result.xml')
 ```
+
+Selecting the correct reference build is not that easy as it looks, since the main branch of a project will evolve 
+more frequently than a specific feature or bugfix branch. That means if we want to compare the results of a pull 
+request with the results of the main branch we need to select a build from the main branch that contains only 
+commits that are also part of the branch of the associated pull request.    
+
+Therefore, the Git Forensics plugin automatically tracks all commits of a Jenkins build and uses this information to 
+identify a build in the target branch that matches best with the commits in the current branch. Please have a look
+at the [documentation of the Git Forensics plugin](https://github.com/jenkinsci/git-forensics-plugin) to see how 
+this is achieved in detail. 
+
+This algorithm can be used for plain Git SCM freestyle projects or pipelines as well. In this case, we cannot get
+the target branch information automatically from the Git branch source API. Therefore, you need to manually 
+specify the Jenkins job that builds the target branch in the parameter `referenceJob`. See the following sample pipeline 
+snippet for an example on how to discover a baseline from such a reference job:
+
+```groovy
+    discoverGitReferenceBuild referenceJob: 'my-reference-job'
+    recordIssues tool: checkStyle(pattern: 'checkstyle-result.xml')
+```
+
+Please note that the parameter `referenceJob` can be used even for non Git projects: in that case, the algorithm selects 
+the baseline from the specified job using the same techniques as described in 
+[the previous section](#selecting-a-baseline-from-the-current-job). However, this may lead to inaccurate results if the
+main branch diverged too heavily from the starting point of the current branch. See the following sample 
+snippet that shows the relevant options for this feature. 
+
+```groovy
+    discoverGitReferenceBuild referenceJob: 'my-project/main-branch'
+    recordIssues tool: java(), ignoreQualityGate: false, ignoreFailedBuilds: true
+```
+
+A corresponding Freestyle configuration is given in the following screenshot. 
+
+![reference build configuration](images/reference-step.png)
 
 
 ### Filtering issues
@@ -349,7 +439,7 @@ recordIssues tool: java(pattern: '*.log'), qualityGates: [[threshold: 1, type: '
 ```
 
 The type determines the property that will be picked to evaluate the quality gate. Refer to the enum 
-[QualityGateType](../src/main/java/io/jenkins/plugins/analysis/core/util/QualityGate.java) to see which different
+[QualityGateType](../plugin/src/main/java/io/jenkins/plugins/analysis/core/util/QualityGate.java) to see which different
 types are supported.
  
 ### Health report configuration
@@ -396,7 +486,7 @@ pattern 'MyFile.\*.java' are included. Issues with category 'WHITESPACE' will be
 step will be executed even if the build failed. 
 
 In order to see all configuration options you can investigate the 
-[step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java).
+[step implementation](../plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/IssuesRecorder.java).
 
 #### Declarative Pipeline configuration 
 
@@ -445,12 +535,12 @@ a single result. Then you need to split scanning and aggregation. The plugin pro
 two steps:
 - `scanForIssues`: this step scans a report file or the console log with a particular parser and creates an 
   intermediate 
-  [AnnotatedReport](../src/main/java/io/jenkins/plugins/analysis/core/steps/AnnotatedReport.java) 
+  [AnnotatedReport](../plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/AnnotatedReport.java) 
   object that contains the report. See 
-  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssuesStep.java) for details.
+  [step implementation](../plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/ScanForIssuesStep.java) for details.
 - `publishIssues`: this step publishes a new report in your build that contains the aggregated results
   of several `scanForIssues` steps. See 
-  [step implementation](../src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java) for details.
+  [step implementation](../plugin/src/main/java/io/jenkins/plugins/analysis/core/steps/PublishIssuesStep.java) for details.
 
 Example: 
 ```
@@ -495,7 +585,7 @@ node {
             issues: [checkstyle, pmd, spotbugs], 
             filters: [includePackage('io.jenkins.plugins.analysis.*')]
     }
-
+}
 ``` 
   
 ## New features
@@ -620,7 +710,8 @@ child row within the table.
 
 If not disabled in the job configuration, the plugin will execute `git blame` to determine who is the responsible 
 'author' of an issue. In the corresponding *SCM Blames* view all issues will be listed with author name, email and
-commit ID. 
+commit ID. If available by the corresponding SCM plugin, you can also directly navigate to the affected commit using
+the configured repository browser.
   
 ![source control overview](images/git.png) 
 
@@ -634,21 +725,22 @@ recordIssues blameDisabled: true, tool: java(pattern: '*.log')
 :warning: This feature requires the installation of an additional plugin: 
 [Git Forensics Plugin](https://github.com/jenkinsci/git-forensics-plugin).
 
-If not disabled in the job configuration, the plugin will mine the source code repository in the style of 
+If the Git Forensics plugin has been configured to mine the source code repository in the style of 
 [Code as a Crime Scene](https://www.adamtornhill.com/articles/crimescene/codeascrimescene.htm) 
-(Adam Tornhill, November 2013) to determine statistics of the affected files.
-In the corresponding *SCM Forensics* view all issues will be listed with the following properties of the affected files:
-- total number of commits
-- total number of different authors
+(Adam Tornhill, November 2013) then this information will be shown in an additional view side by side with the issues.
+In this *SCM Forensics* view all issues will be listed with the following properties of the affected files:
+- commits count
+- different authors count
 - creation time
 - last modification time
+- lines of code (from the commit details)
+- code churn (changed lines since created)
   
 ![source control overview](images/forensics-view.png) 
 
-In order to disable the forensics feature, set the property `forensicsDisabled` to `true`, see the following example:
-```groovy
-recordIssues forensicsDisabled: true, tool: java(pattern: '*.log')
-```
+If a project contains many issues, then this view will give you a hint, which files you should improve first. Files
+that have many lines, many changed lines, many different authors, or many commits are frequently touched in your project
+and typically require a special attention.  
 
 ### Source code view
 
@@ -694,7 +786,7 @@ The plugin provides the following REST API endpoints.
 
 All static analysis tools that have been configured in a build can be queried by using the URL 
 `[build-url]/warnings-ng/api/json` (or `[build-url]/warnings-ng/api/xml`). This aggregation shows ID, name, URL and 
-total number of issues for each tool.
+total number of issues, and breakdown of issue count by severity for each tool.
 
 ```json
 {
@@ -704,49 +796,81 @@ total number of issues for each tool.
       "id": "maven",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/maven",
       "name": "Maven Warnings",
-      "size": 9
+      "size": 9,
+      "errorSize": 0,
+      "highSize": 6,
+      "normalSize": 1,
+      "lowSize": 2
     },
     {
       "id": "java",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/java",
       "name": "Java Warnings",
-      "size": 1
+      "size": 1,
+      "errorSize": 1,
+      "highSize": 0,
+      "normalSize": 0, 
+      "lowSize": 0
     },
     {
       "id": "javadoc",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/javadoc",
       "name": "JavaDoc Warnings",
-      "size": 0
+      "size": 0,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 0,
+      "lowSize": 0
     },
     {
       "id": "checkstyle",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/checkstyle",
       "name": "CheckStyle Warnings",
-      "size": 0
+      "size": 0,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 0,
+      "lowSize": 0
     },
     {
       "id": "pmd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/pmd",
       "name": "PMD Warnings",
-      "size": 671
+      "size": 671,
+      "errorSize": 0,
+      "highSize": 1,
+      "normalSize": 70,
+      "lowSize": 600
     },
     {
       "id": "spotbugs",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/spotbugs",
       "name": "SpotBugs Warnings",
-      "size": 0
+      "size": 0,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 0,
+      "lowSize": 0
     },
     {
       "id": "cpd",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/cpd",
       "name": "CPD Warnings",
-      "size": 123
+      "size": 123,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 23,
+      "lowSize": 100
     },
     {
       "id": "open-tasks",
       "latestUrl": "http://localhost:8080/view/White%20Mountains/job/New%20-%20Pipeline%20-%20Simple%20Model/26/open-tasks",
       "name": "Open Tasks Scanner Warnings",
-      "size": 11
+      "size": 11,
+      "errorSize": 0,
+      "highSize": 0,
+      "normalSize": 11,
+      "lowSize": 0
     }
   ]
 }
@@ -904,6 +1028,47 @@ Examples:
 - `${ANALYSIS_ISSUES_COUNT}`: expands to the aggregated number of issues of all analysis tools
 - `${ANALYSIS_ISSUES_COUNT, tool="checkstyle"}`: expands to the total number of **CheckStyle** issues
 - `${ANALYSIS_ISSUES_COUNT, tool="checkstyle", type="NEW"}`: expands to the number of new **CheckStyle** issues
+
+### Warnings Checks (for GitHub projects)
+
+:warning: This feature requires:
+* the installation of an additional plugin: [GitHub Checks Plugin](https://github.com/jenkinsci/github-checks-plugin)
+* the configuration of GitHub App credentials, see [this guide](https://github.com/jenkinsci/github-branch-source-plugin/blob/master/docs/github-app.adoc) for more details
+
+If not disabled in the job configuration, this plugin will publish warnings to GitHub through 
+[GitHub checks API](https://docs.github.com/en/rest/reference/checks). It publishes the results of each analysis tool
+as an individual check. If a quality gate has been configured, then the result will be published as check result 
+(success or failed).
+
+![check quality gate](images/check-quality-gate.png)
+
+In the *Details* view of each check ([example](https://github.com/jenkinsci/warnings-ng-plugin/pull/593/checks?check_run_id=1026691589)), 
+issues statistics will be displayed.
+
+![checks](images/checks.png)
+
+When a new pull request or commit causes new issues, these issues will be added as annotations right below the source
+code. You can also choose to show all issues by toggling the property `publishAllIssues`. In this case not only new issues
+will be highlighted but also outstanding ones. (Note: GitHub renders annotations only for source
+code blocks that have been changed in a commit.)
+
+```groovy
+recordIssues publishAllIssues: true, tool: java(pattern: '*.log')
+```
+
+![check annotation](images/check-annotation.png)
+
+In order to disable the checks feature, set the property `skipPublishingChecks` to `true`:
+```groovy
+recordIssues skipPublishingChecks: true, tool: java(pattern: '*.log')
+```
+
+The publisher will respect a `withChecks` context:
+```groovy
+withChecks('My Custom Checks Name') {
+  recordIssues tool: java(pattern: '*.log')
+}
+```
 
 ## Transition from the static analysis suite
 

@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 
@@ -18,26 +19,32 @@ import edu.hm.hafner.util.NoSuchElementException;
  */
 public class PropertyStatistics {
     private final Map<String, ? extends Report> issuesByProperty;
+    private final Map<String, ? extends Report> newIssuesByProperty;
     private final Function<String, String> propertyFormatter;
     private final String property;
     private final int total;
+    private final int totalNewIssues;
 
     /**
      * Creates a new instance of {@link PropertyStatistics}.
      *
      * @param report
      *         the issues that should be grouped by property
+     * @param newIssues
+     *         the new issues that should be grouped by property
      * @param property
      *         the property to show the details for
      * @param propertyFormatter
      *         the formatter that show the property
      */
-    PropertyStatistics(final Report report,
+    PropertyStatistics(final Report report, final Report newIssues,
             final String property, final Function<String, String> propertyFormatter) {
         this.property = property;
         this.propertyFormatter = propertyFormatter;
         issuesByProperty = report.groupByProperty(property);
+        newIssuesByProperty = newIssues.groupByProperty(property);
         total = report.size();
+        totalNewIssues = newIssues.size();
     }
 
     /**
@@ -47,6 +54,15 @@ public class PropertyStatistics {
      */
     public int getTotal() {
         return total;
+    }
+
+    /**
+     * Returns the amount of issues introduced since the last build.
+     *
+     * @return the amount of new issues
+     */
+    public int getTotalNewIssues() {
+        return totalNewIssues;
     }
 
     /**
@@ -116,6 +132,20 @@ public class PropertyStatistics {
     }
 
     /**
+     * Returns the new number of issues for the specified property instance.
+     *
+     * @param key
+     *         the property instance
+     *
+     * @return the new number of issues
+     */
+    public long getNewCount(final String key) {
+        return getNewReportFor(key)
+                .map(Report::size)
+                .orElse(0);
+    }
+
+    /**
      * Returns the number of issues with severity {@link Severity#ERROR} for the specified property instance.
      *
      * @param key
@@ -168,6 +198,13 @@ public class PropertyStatistics {
             return issuesByProperty.get(key);
         }
         throw new NoSuchElementException("There is no report for key '%s'", key);
+    }
+
+    private Optional<Report> getNewReportFor(final String key) {
+        if (newIssuesByProperty.containsKey(key)) {
+            return Optional.of(newIssuesByProperty.get(key));
+        }
+        return Optional.empty();
     }
 }
 

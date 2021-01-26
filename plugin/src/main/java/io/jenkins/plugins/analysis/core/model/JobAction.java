@@ -9,7 +9,7 @@ import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.hm.hafner.echarts.LinesChartModel;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.StaplerResponse;
@@ -139,7 +139,7 @@ public class JobAction implements Action, AsyncTrendChart {
      * @return the icon URL for the side-panel in the job screen
      */
     @Override
-    @Nullable
+    @CheckForNull
     public String getIconFileName() {
         return createBuildHistory().getBaselineResult()
                 .map(result -> Jenkins.RESOURCE_PATH + labelProvider.getSmallIconUrl())

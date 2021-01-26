@@ -15,14 +15,12 @@
 
   <st:adjunct includes="io.jenkins.plugins.echarts"/>
 
-  <script src="${resURL}/plugin/warnings-ng/js/simple-trend-chart.js"/>
-
   <script>
-    var view = <st:bind value="${it}"/>
+      {
+          const trendProxy = <st:bind value="${it}"/>;
 
-    view.getTrend(function (lineModel) {
-        renderTrendChart('${it.id}-issues-chart', lineModel.responseJSON);
-    });
+          echartsJenkinsApi.renderTrendChart('${it.id}-issues-chart', `false`, trendProxy);
+      }
   </script>
 
 </j:jelly>

@@ -7,13 +7,16 @@ import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
+import hudson.model.Item;
 import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.warnings.Messages;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Selects a {@link GroovyParser} using the specified ID.
@@ -96,12 +99,16 @@ public class GroovyScript extends ReportScanningTool {
          * @return the model of the list box
          */
         @SuppressWarnings("unused") // Called from config.jelly
+        @POST
         public ListBoxModel doFillParserIdItems() {
-            ListBoxModel options = ParserConfiguration.getInstance().asListBoxModel();
-            if (options.isEmpty()) {
-                return options.add(Messages.Warnings_Groovy_NoParsersDefined());
+            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+                ListBoxModel options = ParserConfiguration.getInstance().asListBoxModel();
+                if (options.isEmpty()) {
+                    return options.add(Messages.Warnings_Groovy_NoParsersDefined());
+                }
+                return options;
             }
-            return options;
+            return new ListBoxModel();
         }
     }
 }

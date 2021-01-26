@@ -13,12 +13,15 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.Run;
+import hudson.model.View;
 import hudson.util.ListBoxModel;
 import hudson.views.ListViewColumn;
 import hudson.views.ListViewColumnDescriptor;
@@ -29,6 +32,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ToolSelection;
 import io.jenkins.plugins.analysis.core.util.IssuesStatistics.StatisticProperties;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
 
@@ -39,7 +43,7 @@ import static io.jenkins.plugins.analysis.core.model.ToolSelection.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.DataClass")
+@SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveImports"})
 public class IssuesTotalColumn extends ListViewColumn {
     private boolean selectTools = false;
     private List<ToolSelection> tools = new ArrayList<>();
@@ -60,8 +64,11 @@ public class IssuesTotalColumn extends ListViewColumn {
      *
      * @return this
      */
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE", justification = "Deserialization of instances that do not have all fields yet")
     protected Object readResolve() {
-        type = StatisticProperties.TOTAL;
+        if (type == null) {
+            type = StatisticProperties.TOTAL;
+        }
 
         return this;
     }
@@ -237,13 +244,15 @@ public class IssuesTotalColumn extends ListViewColumn {
          *
          * @return the quality gate types
          */
+        @POST
         public ListBoxModel doFillTypeItems() {
             ListBoxModel model = new ListBoxModel();
 
-            for (StatisticProperties qualityGateType : StatisticProperties.values()) {
-                model.add(qualityGateType.getDisplayName(), qualityGateType.name());
+            if (new JenkinsFacade().hasPermission(View.CONFIGURE)) {
+                for (StatisticProperties qualityGateType : StatisticProperties.values()) {
+                    model.add(qualityGateType.getDisplayName(), qualityGateType.name());
+                }
             }
-
             return model;
         }
     }

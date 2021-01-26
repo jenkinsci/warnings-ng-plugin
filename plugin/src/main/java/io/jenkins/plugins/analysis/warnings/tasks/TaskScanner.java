@@ -22,9 +22,10 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
+
 
 /**
  * Scans a given input stream for open tasks.
@@ -73,10 +74,10 @@ class TaskScanner {
      * @param matcherMode
      *         if tag identifiers should be treated as regular expression
      */
-    TaskScanner(final @Nullable String highTags, final @Nullable String normalTags,
-            final @Nullable String lowTags,
+    TaskScanner(final @CheckForNull String highTags, final @CheckForNull String normalTags,
+            final @CheckForNull String lowTags,
             final CaseMode caseMode, final MatcherMode matcherMode) {
-        this.isUppercase = caseMode == CaseMode.IGNORE_CASE;
+        isUppercase = caseMode == CaseMode.IGNORE_CASE;
         if (StringUtils.isNotBlank(highTags)) {
             patterns.put(Severity.WARNING_HIGH, compile(highTags, caseMode, matcherMode));
         }
@@ -232,17 +233,23 @@ class TaskScanner {
             return report;
         }
 
+        IgnoreSection inIgnoreSection = new IgnoreSection();
+
         for (int lineNumber = 1; lines.hasNext(); lineNumber++) {
             String line = lines.next();
+
+            if (inIgnoreSection.matches(line)) {
+                continue;
+            }
 
             for (Severity severity : Severity.getPredefinedValues()) {
                 if (patterns.containsKey(severity)) {
                     Matcher matcher = patterns.get(severity).matcher(line);
                     if (matcher.matches() && matcher.groupCount() == 2) {
-                        String message = matcher.group(2).trim();
+                        String message = StringUtils.defaultString(matcher.group(2)).trim();
                         builder.setMessage(StringUtils.removeStart(message, ":").trim());
 
-                        String tag = matcher.group(1);
+                        String tag = StringUtils.defaultString(matcher.group(1));
                         if (isUppercase) {
                             builder.setType(StringUtils.upperCase(tag));
                         }
@@ -255,6 +262,24 @@ class TaskScanner {
             }
         }
         return report;
+    }
+
+    private static class IgnoreSection {
+        private static final String IGNORE_BEGIN = " task-scanner-ignore-begin";
+        private static final String IGNORE_END = " task-scanner-ignore-end";
+
+        private boolean ignore = false;
+
+        public boolean matches(final String line) {
+            if (line.contains(IGNORE_BEGIN)) {
+                ignore = true;
+            }
+            else if (line.contains(IGNORE_END)) {
+                ignore = false;
+            }
+
+            return ignore;
+        }
     }
 }
 

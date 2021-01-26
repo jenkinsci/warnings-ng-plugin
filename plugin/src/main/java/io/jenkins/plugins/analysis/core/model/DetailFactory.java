@@ -18,6 +18,7 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.NoSuchElementException;
 import edu.hm.hafner.util.VisibleForTesting;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import hudson.model.Run;
 
@@ -134,6 +135,7 @@ public class DetailFactory {
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")
+    @SuppressFBWarnings("IMPROPER_UNICODE")
     private Object createNewDetailView(final String link, final Run<?, ?> owner, final AnalysisResult result,
             final Report allIssues, final Report newIssues, final Report outstandingIssues, final Report fixedIssues,
             final Charset sourceEncoding, final IssuesDetail parent, final StaticAnalysisLabelProvider labelProvider) {
@@ -177,9 +179,18 @@ public class DetailFactory {
     }
 
     private String getDisplayNameOfDetails(final String property, final Report selectedIssues) {
+        if ("origin".equals(property)) {
+            LabelProviderFactory factory = createFactory();
+            return factory.create(getPropertyValueAsString(property, selectedIssues)).getName();
+        }
         return getColumnHeaderFor(selectedIssues, property)
                 + " "
                 + getPropertyValueAsString(property, selectedIssues);
+    }
+
+    @VisibleForTesting
+    private LabelProviderFactory createFactory() {
+        return new LabelProviderFactory(jenkins);
     }
 
     private String getPropertyValueAsString(final String property, final Report selectedIssues) {

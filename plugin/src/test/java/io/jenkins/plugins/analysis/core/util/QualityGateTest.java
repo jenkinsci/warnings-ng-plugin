@@ -4,11 +4,15 @@ import org.junit.jupiter.api.Test;
 
 import edu.hm.hafner.util.SerializableTest;
 
-import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
+import hudson.model.Item;
+
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateDescriptor;
+import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link QualityGate}.
@@ -18,7 +22,10 @@ import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 class QualityGateTest extends SerializableTest<QualityGate> {
     @Test
     void shouldValidateThreshold() {
-        QualityGateDescriptor descriptor = new QualityGateDescriptor();
+        JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
+        when(jenkinsFacade.hasPermission(Item.CONFIGURE)).thenReturn(true);
+
+        QualityGateDescriptor descriptor = new QualityGateDescriptor(jenkinsFacade);
 
         assertThat(descriptor.doCheckThreshold(0))
                 .isError()

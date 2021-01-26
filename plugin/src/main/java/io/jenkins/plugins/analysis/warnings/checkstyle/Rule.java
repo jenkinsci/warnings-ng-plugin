@@ -2,6 +2,8 @@ package io.jenkins.plugins.analysis.warnings.checkstyle;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Java Bean class representing a Checkstyle rule.
  *
@@ -70,6 +72,7 @@ public class Rule {
      * @param topic
      *         the topic that might contain the description
      */
+    @SuppressFBWarnings("IMPROPER_UNICODE")
     public void setDescription(final Topic topic) {
         if (DESCRIPTION_SUBSECTION_NAME.equalsIgnoreCase(topic.getName())) {
             description = topic.getValue();

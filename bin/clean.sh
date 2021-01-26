@@ -1,19 +1,9 @@
 #!/bin/bash
 
-JENKINS_HOME=../docker/volumes/jenkins-home
+set -e
 
-mvn clean install -Djenkins.test.timeout=1000 || { echo "Build failed"; exit 1; }
+(cd plugin; mvn clean install -Djenkins.test.timeout=1000 || { echo "Build failed"; exit 1; })
 
-echo "Installing plugin in $JENKINS_HOME"
-rm -rf $JENKINS_HOME/plugins/warnings-ng*
-cp -fv target/warnings-ng.hpi $JENKINS_HOME/plugins/warnings-ng.jpi
-
-CURRENT_UID="$(id -u):$(id -g)"
-export CURRENT_UID
-IS_RUNNING=$(docker-compose ps -q jenkins-master)
-if [[ "$IS_RUNNING" != "" ]]; then
-    docker-compose restart
-    echo "Restarting Jenkins (docker compose with user ID ${CURRENT_UID}) ..."
-fi
+$(dirname "$0")/deploy.sh warnings-ng
 
 

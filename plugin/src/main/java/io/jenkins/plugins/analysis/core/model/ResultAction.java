@@ -7,7 +7,7 @@ import java.util.Collections;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 import org.kohsuke.stapler.StaplerProxy;
@@ -24,6 +24,7 @@ import jenkins.tasks.SimpleBuildStep.LastBuildAction;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Controls the live cycle of the analysis results in a job. This action persists the results of a build and displays a
@@ -184,11 +185,11 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      */
     @SuppressWarnings("deprecation") // this is the only way for remote API calls to obtain the absolute path
     public String getAbsoluteUrl() {
-        return getOwner().getAbsoluteUrl();
+        return new JenkinsFacade().getAbsoluteUrl(StringUtils.removeEnd(getOwner().getUrl(), "/"), getUrlName());
     }
 
     @Override
-    @Nullable
+    @CheckForNull
     public HealthReport getBuildHealth() {
         return new HealthReportBuilder().computeHealth(healthDescriptor, getLabelProvider(),
                 getResult().getSizePerSeverity());

@@ -9,11 +9,16 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.Ensure;
+import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.model.AbstractDescribableImpl;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.FormValidation;
+
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Defines a filter criteria based on a regular expression for {@link Report}.
@@ -56,6 +61,22 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
 
     /** Descriptor for a filter. */
     public abstract static class RegexpFilterDescriptor extends Descriptor<RegexpFilter> {
+        private final JenkinsFacade jenkinsFacade;
+
+        /**
+         * Creates a new {@link RegexpFilterDescriptor}.
+         */
+        public RegexpFilterDescriptor() {
+            this(new JenkinsFacade());
+        }
+
+        @VisibleForTesting
+        RegexpFilterDescriptor(final JenkinsFacade jenkinsFacade) {
+            super();
+
+            this.jenkinsFacade = jenkinsFacade;
+        }
+
         /**
          * Performs on-the-fly validation on threshold for high warnings.
          *
@@ -64,7 +85,12 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckPattern(@QueryParameter final String pattern) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             try {
                 if (StringUtils.isBlank(pattern)) {
                     return FormValidation.ok(Messages.pattern_blank());

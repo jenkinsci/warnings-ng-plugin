@@ -1,8 +1,8 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:i="/issues" xmlns:f="/lib/form" xmlns:c="/lib/credentials">
+<j:jelly xmlns:j="jelly:core" xmlns:i="/issues" xmlns:f="/lib/form" xmlns:c="/lib/credentials" xmlns:co="/controls">
 
   <f:entry title="${%title.projectUrl}" field="projectUrl" description="${%description.projectUrl}">
-    <f:textbox/>
+    <co:safe-textbox/>
   </f:entry>
 
   <f:entry title="${%title.credentialsId}" field="credentialsId" description="${%description.credentialsId}">
@@ -10,7 +10,7 @@
   </f:entry>
 
   <f:entry title="${%title.basedir}" field="basedir" description="${%description.basedir}">
-    <f:textbox/>
+    <co:safe-textbox/>
   </f:entry>
 
   <i:tool-defaults/>

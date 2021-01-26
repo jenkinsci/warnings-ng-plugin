@@ -1,4 +1,3 @@
-
 package io.jenkins.plugins.analysis.core.steps;
 
 import java.io.IOException;
@@ -11,13 +10,14 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
@@ -28,6 +28,7 @@ import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
 import hudson.model.BuildListener;
+import hudson.model.Item;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -46,7 +47,7 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesScanner.BlameMode;
-import io.jenkins.plugins.analysis.core.steps.IssuesScanner.ForensicsMode;
+import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationScope;
 import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -57,6 +58,8 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.RunResultHandler;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.checks.steps.ChecksInfo;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Freestyle or Maven job {@link Recorder} that scans report files or the console log for issues. Stores the created
@@ -74,10 +77,9 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveClassLength", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.GodClass", "PMD.CyclomaticComplexity", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class IssuesRecorder extends Recorder {
-    static final String NO_REFERENCE_JOB = "-";
-    static final String NO_REFERENCE_BUILD = "-";
+    static final String NO_REFERENCE_DEFINED = "-";
     static final String DEFAULT_ID = "analysis";
 
     private List<Tool> analysisTools = new ArrayList<>();
@@ -102,7 +104,19 @@ public class IssuesRecorder extends Recorder {
     private boolean isAggregatingResults;
 
     private boolean isBlameDisabled;
-    private boolean isForensicsDisabled;
+    /**
+     * Not used anymore.
+     *
+     * @deprecated since 8.5.0
+     */
+    @Deprecated
+    private transient boolean isForensicsDisabled;
+
+    private boolean skipPublishingChecks; // by default, checks will be published
+    private boolean publishAllIssues; // by default, only new issues will be published
+
+    @CheckForNull
+    private ChecksInfo checksInfo;
 
     private String id;
     private String name;
@@ -110,6 +124,8 @@ public class IssuesRecorder extends Recorder {
     private List<QualityGate> qualityGates = new ArrayList<>();
 
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
+
+    private String scm = StringUtils.EMPTY;
 
     /**
      * Creates a new instance of {@link IssuesRecorder}.
@@ -143,7 +159,26 @@ public class IssuesRecorder extends Recorder {
                 qualityGates.addAll(QualityGate.map(thresholds));
             }
         }
+        if (scm == null) {
+            scm = StringUtils.EMPTY;
+        }
         return this;
+    }
+
+    /**
+     * Sets the SCM that should be used to find the reference build for. The reference recorder will select the SCM
+     * based on a substring comparison, there is no need to specify the full name.
+     *
+     * @param scm
+     *         the ID of the SCM to use (a substring of the full ID)
+     */
+    @DataBoundSetter
+    public void setScm(final String scm) {
+        this.scm = scm;
+    }
+
+    public String getScm() {
+        return scm;
     }
 
     /**
@@ -226,7 +261,7 @@ public class IssuesRecorder extends Recorder {
      * @see #getTools
      * @deprecated this method is only intended to be called by the UI
      */
-    @Nullable
+    @CheckForNull
     @Deprecated
     public List<ToolProxy> getToolProxies() {
         return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
@@ -283,7 +318,7 @@ public class IssuesRecorder extends Recorder {
         return new ArrayList<>(analysisTools);
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -348,18 +383,71 @@ public class IssuesRecorder extends Recorder {
     }
 
     /**
-     * Returns whether SCM forensics should be disabled.
+     * Returns whether SCM blaming should be disabled.
+     *
+     * @return {@code true} if SCM blaming should be disabled
+     */
+    public boolean isSkipBlames() {
+        return isBlameDisabled;
+    }
+
+    @DataBoundSetter
+    public void setSkipBlames(final boolean skipBlames) {
+        isBlameDisabled = skipBlames;
+    }
+
+    /**
+     * Not used anymore.
      *
      * @return {@code true} if SCM forensics should be disabled
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
      */
     @SuppressWarnings("PMD.BooleanGetMethodName")
+    @Deprecated
     public boolean getForensicsDisabled() {
         return isForensicsDisabled;
     }
 
+    /**
+     * Not used anymore.
+     *
+     * @param forensicsDisabled
+     *         not used
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
+     */
     @DataBoundSetter
+    @Deprecated
     public void setForensicsDisabled(final boolean forensicsDisabled) {
         isForensicsDisabled = forensicsDisabled;
+    }
+
+    /**
+     * Returns whether publishing checks should be skipped.
+     *
+     * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
+     */
+    public boolean isSkipPublishingChecks() {
+        return skipPublishingChecks;
+    }
+
+    @DataBoundSetter
+    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+        this.skipPublishingChecks = skipPublishingChecks;
+    }
+
+    /**
+     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
+     * be published.
+     *
+     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
+     */
+    public boolean isPublishAllIssues() {
+        return publishAllIssues;
+    }
+
+    @DataBoundSetter
+    public void setPublishAllIssues(final boolean publishAllIssues) {
+        this.publishAllIssues = publishAllIssues;
     }
 
     /**
@@ -441,7 +529,7 @@ public class IssuesRecorder extends Recorder {
      */
     @DataBoundSetter
     public void setReferenceJobName(final String referenceJobName) {
-        if (NO_REFERENCE_JOB.equals(referenceJobName)) {
+        if (NO_REFERENCE_DEFINED.equals(referenceJobName)) {
             this.referenceJobName = StringUtils.EMPTY;
         }
         this.referenceJobName = referenceJobName;
@@ -449,13 +537,13 @@ public class IssuesRecorder extends Recorder {
 
     /**
      * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
-     * then {@link #NO_REFERENCE_JOB} is returned.
+     * then {@link #NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the name of reference job, or {@link #NO_REFERENCE_JOB} if undefined
+     * @return the name of reference job, or {@link #NO_REFERENCE_DEFINED} if undefined
      */
     public String getReferenceJobName() {
         if (StringUtils.isBlank(referenceJobName)) {
-            return NO_REFERENCE_JOB;
+            return NO_REFERENCE_DEFINED;
         }
         return referenceJobName;
     }
@@ -467,7 +555,7 @@ public class IssuesRecorder extends Recorder {
      *         the build id of the reference job
      */
     public void setReferenceBuildId(final String referenceBuildId) {
-        if (NO_REFERENCE_BUILD.equals(referenceBuildId)) {
+        if (NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
             this.referenceBuildId = StringUtils.EMPTY;
         }
         else {
@@ -477,13 +565,13 @@ public class IssuesRecorder extends Recorder {
 
     /**
      * Returns the reference build id to get the results for the issue difference computation.  If the build id not
-     * defined, then {@link #NO_REFERENCE_BUILD} is returned.
+     * defined, then {@link #NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the build id of the reference job, or {@link #NO_REFERENCE_BUILD} if undefined.
+     * @return the build id of the reference job, or {@link #NO_REFERENCE_DEFINED} if undefined.
      */
     public String getReferenceBuildId() {
         if (StringUtils.isBlank(referenceBuildId)) {
-            return NO_REFERENCE_BUILD;
+            return NO_REFERENCE_DEFINED;
         }
         return referenceBuildId;
     }
@@ -518,7 +606,7 @@ public class IssuesRecorder extends Recorder {
         this.unhealthy = unhealthy;
     }
 
-    @Nullable
+    @CheckForNull
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
@@ -557,6 +645,10 @@ public class IssuesRecorder extends Recorder {
     @DataBoundSetter
     public void setFilters(final List<RegexpFilter> filters) {
         this.filters = new ArrayList<>(filters);
+    }
+
+    public void setChecksInfo(@CheckForNull final ChecksInfo checksInfo) {
+        this.checksInfo = checksInfo;
     }
 
     @Override
@@ -660,8 +752,8 @@ public class IssuesRecorder extends Recorder {
             final Tool tool) throws IOException, InterruptedException {
         IssuesScanner issuesScanner = new IssuesScanner(tool, getFilters(), getSourceCodeCharset(),
                 workspace, sourceDirectory, run,
-                new FilePath(run.getRootDir()), listener, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED,
-                isForensicsDisabled ? ForensicsMode.DISABLED : ForensicsMode.ENABLED);
+                new FilePath(run.getRootDir()), listener,
+                scm, isBlameDisabled ? BlameMode.DISABLED : BlameMode.ENABLED);
 
         return issuesScanner.scan();
     }
@@ -700,10 +792,16 @@ public class IssuesRecorder extends Recorder {
         qualityGate.addAll(qualityGates);
         IssuesPublisher publisher = new IssuesPublisher(run, report,
                 new HealthDescriptor(healthy, unhealthy, minimumSeverity), qualityGate,
-                reportName, referenceJobName, referenceBuildId, ignoreQualityGate, ignoreFailedBuilds,
+                reportName, getReferenceJobName(), getReferenceBuildId(), ignoreQualityGate, ignoreFailedBuilds,
                 getSourceCodeCharset(),
                 new LogHandler(listener, loggerName, report.getReport()), statusHandler, failOnError);
-        publisher.attachAction(trendChartType);
+        ResultAction action = publisher.attachAction(trendChartType);
+
+        if (!skipPublishingChecks) {
+            WarningChecksPublisher checksPublisher = new WarningChecksPublisher(action, listener, checksInfo);
+            checksPublisher.publishChecks(
+                    isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
+        }
     }
 
     /**
@@ -1137,6 +1235,9 @@ public class IssuesRecorder extends Recorder {
     @Symbol("recordIssues")
     @SuppressWarnings("unused") // most methods are used by the corresponding jelly view
     public static class Descriptor extends BuildStepDescriptor<Publisher> {
+
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
+
         /** Retain backward compatibility. */
         @Initializer(before = InitMilestone.PLUGINS_STARTED)
         public static void addAliases() {
@@ -1165,7 +1266,12 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckId(@QueryParameter final String id) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.validateId(id);
         }
 
@@ -1174,8 +1280,12 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all available charsets
          */
+        @POST
         public ComboBoxModel doFillSourceCodeEncodingItems() {
-            return model.getAllCharsets();
+            if (JENKINS.hasPermission(Item.CONFIGURE)) {
+                return model.getAllCharsets();
+            }
+            return new ComboBoxModel();
         }
 
         /**
@@ -1183,29 +1293,12 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all available severity filters
          */
+        @POST
         public ListBoxModel doFillMinimumSeverityItems() {
-            return model.getAllSeverityFilters();
-        }
-
-        /**
-         * Returns the model with the possible reference jobs.
-         *
-         * @return the model with the possible reference jobs
-         */
-        public ComboBoxModel doFillReferenceJobNameItems() {
-            return model.getAllJobs();
-        }
-
-        /**
-         * Performs on-the-fly validation of the reference job.
-         *
-         * @param referenceJobName
-         *         the reference job
-         *
-         * @return the validation result
-         */
-        public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
-            return model.validateJob(referenceJobName);
+            if (JENKINS.hasPermission(Item.CONFIGURE)) {
+                return model.getAllSeverityFilters();
+            }
+            return new ListBoxModel();
         }
 
         /**
@@ -1216,7 +1309,12 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.validateCharset(reportEncoding);
         }
 
@@ -1228,7 +1326,12 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.validateCharset(sourceCodeEncoding);
         }
 
@@ -1242,7 +1345,11 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             return model.validateHealthy(healthy, unhealthy);
         }
 
@@ -1256,7 +1363,11 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
             return model.validateUnhealthy(healthy, unhealthy);
         }
 
@@ -1265,8 +1376,12 @@ public class IssuesRecorder extends Recorder {
          *
          * @return a model with all  aggregation trend chart positions
          */
+        @POST
         public ListBoxModel doFillTrendChartTypeItems() {
-            return model.getAllTrendChartTypes();
+            if (JENKINS.hasPermission(Item.CONFIGURE)) {
+                return model.getAllTrendChartTypes();
+            }
+            return new ListBoxModel();
         }
 
         /**
@@ -1279,8 +1394,13 @@ public class IssuesRecorder extends Recorder {
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String sourceDirectory) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+                return FormValidation.ok();
+            }
+
             return model.doCheckSourceDirectory(project, sourceDirectory);
         }
     }

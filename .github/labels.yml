@@ -1,0 +1,33 @@
+- name: bug
+  description: Bugs or performance problems
+  color: CC0000
+- name: feature
+  color: 1d76db
+  description: New features
+- name: enhancement
+  description: Enhancement of existing functionality
+  color: 0366d6
+- name: deprecated
+  description: Deprecating API
+  color: f4c21d
+- name: removed
+  description: Removing API
+  color: e4b21d
+- name: tests
+  description: Enhancement of tests
+  color: 0e8a16
+- name: documentation
+  description: Enhancement of documentation
+  color: bfafea
+- name: internal
+  description: Internal changes without user or API impact
+  color: e6e6e6
+- name: dependencies
+  description: Update of dependencies
+  color: e6e6e6
+- name: java
+  desccription: Pull requests that update Maven Java dependencies
+  color: b6b6b6
+- name: github_actions
+  desccription: Pull requests that update Github Actions code
+  color: 909090

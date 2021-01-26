@@ -9,6 +9,7 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
 import io.jenkins.plugins.analysis.core.filter.IncludeType.DescriptorImpl;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter.RegexpFilterDescriptor;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -43,7 +44,10 @@ class RegexpFilterTest {
 
     @Test
     void shouldValidatePattern() {
-        RegexpFilterDescriptor descriptor = new DescriptorImpl();
+        JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
+        when(jenkinsFacade.hasPermission(any())).thenReturn(true);
+
+        RegexpFilterDescriptor descriptor = new DescriptorImpl(jenkinsFacade);
         assertThat(descriptor.doCheckPattern(null)).isOk().hasMessage(Messages.pattern_blank());
         assertThat(descriptor.doCheckPattern(StringUtils.EMPTY)).isOk().hasMessage(Messages.pattern_blank());
         assertThat(descriptor.doCheckPattern("one brace (")).isError();

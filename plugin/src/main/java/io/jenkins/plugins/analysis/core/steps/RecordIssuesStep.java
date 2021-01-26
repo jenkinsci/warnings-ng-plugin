@@ -12,8 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.collections.impl.factory.Sets;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -41,11 +41,11 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.StageResultHandler;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.checks.steps.ChecksInfo;
 
 /**
- * Pipeline step that scans report files or the console log for issues. Stores the created
- * issues in an {@link AnalysisResult}. The result is attached to the {@link Run} by registering a {@link
- * ResultAction}.
+ * Pipeline step that scans report files or the console log for issues. Stores the created issues in an {@link
+ * AnalysisResult}. The result is attached to the {@link Run} by registering a {@link ResultAction}.
  * <p>
  * Additional features:
  * <ul>
@@ -58,7 +58,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
  * </li>
  * </ul>
  */
-@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass"})
+@SuppressWarnings({"PMD.ExcessivePublicCount", "PMD.ExcessiveImports", "PMD.TooManyFields", "PMD.DataClass", "PMD.CyclomaticComplexity", "PMD.ExcessiveClassLength", "PMD.GodClass"})
 public class RecordIssuesStep extends Step implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -82,7 +82,9 @@ public class RecordIssuesStep extends Step implements Serializable {
     private boolean isAggregatingResults;
 
     private boolean isBlameDisabled;
-    private boolean isForensicsDisabled;
+
+    private boolean skipPublishingChecks; // by default, checks will be published
+    private boolean publishAllIssues; // by default, only new issues will be published
 
     private String id;
     private String name;
@@ -92,6 +94,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     private TrendChartType trendChartType = TrendChartType.AGGREGATION_TOOLS;
 
     private boolean failOnError;
+    private String scm = StringUtils.EMPTY;
 
     /**
      * Creates a new instance of {@link RecordIssuesStep}.
@@ -101,6 +104,22 @@ public class RecordIssuesStep extends Step implements Serializable {
         super();
 
         // empty constructor required for Stapler
+    }
+
+    /**
+     * Sets the SCM that should be used to find the reference build for. The reference recorder will select the SCM
+     * based on a substring comparison, there is no need to specify the full name.
+     *
+     * @param scm
+     *         the ID of the SCM to use (a substring of the full ID)
+     */
+    @DataBoundSetter
+    public void setScm(final String scm) {
+        this.scm = scm;
+    }
+
+    public String getScm() {
+        return scm;
     }
 
     /**
@@ -140,7 +159,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -165,7 +185,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -190,7 +211,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -215,7 +237,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -240,7 +263,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -265,7 +289,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -290,7 +315,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -315,7 +341,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -340,7 +367,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -365,7 +393,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -390,7 +419,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -415,7 +445,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -440,7 +471,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -465,7 +497,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -490,7 +523,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -515,7 +549,8 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @param size
      *         number of issues
      *
-     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType, QualityGate.QualityGateResult)}
+     * @deprecated replaced by {@link RecordIssuesStep#addQualityGate(int, QualityGate.QualityGateType,
+     *         QualityGate.QualityGateResult)}
      */
     @Deprecated
     @DataBoundSetter
@@ -583,7 +618,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      * @see #getTools
      * @deprecated this method is only intended to be called by the UI
      */
-    @Nullable
+    @CheckForNull
     @Deprecated
     public List<ToolProxy> getToolProxies() {
         return analysisTools.stream().map(ToolProxy::new).collect(Collectors.toList());
@@ -676,12 +711,12 @@ public class RecordIssuesStep extends Step implements Serializable {
      *
      * @return {@code null}
      */
-    @Nullable
+    @CheckForNull
     public Tool getTool() {
         return null;
     }
 
-    @Nullable
+    @CheckForNull
     public String getSourceCodeEncoding() {
         return sourceCodeEncoding;
     }
@@ -734,30 +769,93 @@ public class RecordIssuesStep extends Step implements Serializable {
      * Returns whether SCM blaming should be disabled.
      *
      * @return {@code true} if SCM blaming should be disabled
+     * @deprecated use {@link #isSkipBlames()}
      */
     @SuppressWarnings("PMD.BooleanGetMethodName")
+    @Deprecated
     public boolean getBlameDisabled() {
         return isBlameDisabled;
     }
 
+    /**
+     * Determines whether to skip the SCM blaming.
+     * 
+     * @param blameDisabled {@code true} if SCM blaming should be disabled
+     * @deprecated use {@link #setSkipBlames(boolean)}
+     */
+    @Deprecated
     @DataBoundSetter
     public void setBlameDisabled(final boolean blameDisabled) {
         isBlameDisabled = blameDisabled;
     }
 
     /**
-     * Returns whether SCM forensics should be disabled.
+     * Returns whether SCM blaming should be disabled.
      *
-     * @return {@code true} if SCM forensics should be disabled
+     * @return {@code true} if SCM blaming should be disabled
      */
-    @SuppressWarnings("PMD.BooleanGetMethodName")
-    public boolean getForensicsDisabled() {
-        return isForensicsDisabled;
+    public boolean isSkipBlames() {
+        return isBlameDisabled;
     }
 
     @DataBoundSetter
+    public void setSkipBlames(final boolean skipBlames) {
+        isBlameDisabled = skipBlames;
+    }
+
+    /**
+     * Not used anymore.
+     *
+     * @return {@code true} if SCM forensics should be disabled
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
+     */
+    @SuppressWarnings("PMD.BooleanGetMethodName")
+    @Deprecated
+    public boolean getForensicsDisabled() {
+        return false;
+    }
+
+    /**
+     * Not used anymore.
+     *
+     * @param forensicsDisabled
+     *         not used
+     *
+     * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
+     */
+    @DataBoundSetter
+    @Deprecated
     public void setForensicsDisabled(final boolean forensicsDisabled) {
-        isForensicsDisabled = forensicsDisabled;
+        // do nothing
+    }
+
+    /**
+     * Returns whether publishing checks should be skipped.
+     *
+     * @return {@code true} if publishing checks should be skipped, {@code false} otherwise
+     */
+    public boolean isSkipPublishingChecks() {
+        return skipPublishingChecks;
+    }
+
+    @DataBoundSetter
+    public void setSkipPublishingChecks(final boolean skipPublishingChecks) {
+        this.skipPublishingChecks = skipPublishingChecks;
+    }
+
+    /**
+     * Returns whether all issues should be published using the Checks API. If set to {@code false} only new issues will
+     * be published.
+     *
+     * @return {@code true} if all issues should be published, {@code false} if only new issues should be published
+     */
+    public boolean isPublishAllIssues() {
+        return publishAllIssues;
+    }
+
+    @DataBoundSetter
+    public void setPublishAllIssues(final boolean publishAllIssues) {
+        this.publishAllIssues = publishAllIssues;
     }
 
     /**
@@ -839,7 +937,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      */
     @DataBoundSetter
     public void setReferenceJobName(final String referenceJobName) {
-        if (IssuesRecorder.NO_REFERENCE_JOB.equals(referenceJobName)) {
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceJobName)) {
             this.referenceJobName = StringUtils.EMPTY;
         }
         this.referenceJobName = referenceJobName;
@@ -847,13 +945,13 @@ public class RecordIssuesStep extends Step implements Serializable {
 
     /**
      * Returns the reference job to get the results for the issue difference computation. If the job is not defined,
-     * then {@link IssuesRecorder#NO_REFERENCE_JOB} is returned.
+     * then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the name of reference job, or {@link IssuesRecorder#NO_REFERENCE_JOB} if undefined
+     * @return the name of reference job, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
      */
     public String getReferenceJobName() {
         if (StringUtils.isBlank(referenceJobName)) {
-            return IssuesRecorder.NO_REFERENCE_JOB;
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
         }
         return referenceJobName;
     }
@@ -866,7 +964,7 @@ public class RecordIssuesStep extends Step implements Serializable {
      */
     @DataBoundSetter
     public void setReferenceBuildId(final String referenceBuildId) {
-        if (IssuesRecorder.NO_REFERENCE_BUILD.equals(referenceBuildId)) {
+        if (IssuesRecorder.NO_REFERENCE_DEFINED.equals(referenceBuildId)) {
             this.referenceBuildId = StringUtils.EMPTY;
         }
         else {
@@ -875,14 +973,14 @@ public class RecordIssuesStep extends Step implements Serializable {
     }
 
     /**
-     * Returns the reference build id of the reference job to get the results for the issue difference computation.
-     * If the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_BUILD} is returned.
+     * Returns the reference build id of the reference job to get the results for the issue difference computation. If
+     * the build id is not defined, then {@link IssuesRecorder#NO_REFERENCE_DEFINED} is returned.
      *
-     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_BUILD} if undefined
+     * @return the reference build id, or {@link IssuesRecorder#NO_REFERENCE_DEFINED} if undefined
      */
     public String getReferenceBuildId() {
         if (StringUtils.isBlank(referenceBuildId)) {
-            return IssuesRecorder.NO_REFERENCE_BUILD;
+            return IssuesRecorder.NO_REFERENCE_DEFINED;
         }
         return referenceBuildId;
     }
@@ -917,7 +1015,7 @@ public class RecordIssuesStep extends Step implements Serializable {
         this.unhealthy = unhealthy;
     }
 
-    @Nullable
+    @CheckForNull
     public String getMinimumSeverity() {
         return minimumSeverity.getName();
     }
@@ -992,13 +1090,16 @@ public class RecordIssuesStep extends Step implements Serializable {
             recorder.setEnabledForFailure(step.getEnabledForFailure());
             recorder.setAggregatingResults(step.getAggregatingResults());
             recorder.setBlameDisabled(step.getBlameDisabled());
-            recorder.setForensicsDisabled(step.getForensicsDisabled());
+            recorder.setScm(step.getScm());
+            recorder.setSkipPublishingChecks(step.isSkipPublishingChecks());
+            recorder.setPublishAllIssues(step.isPublishAllIssues());
             recorder.setId(step.getId());
             recorder.setName(step.getName());
             recorder.setQualityGates(step.getQualityGates());
             recorder.setFailOnError(step.getFailOnError());
             recorder.setTrendChartType(step.getTrendChartType());
             recorder.setSourceDirectory(step.getSourceDirectory());
+            recorder.setChecksInfo(getContext().get(ChecksInfo.class));
             StageResultHandler statusHandler = new PipelineResultHandler(getRun(),
                     getContext().get(FlowNode.class));
 

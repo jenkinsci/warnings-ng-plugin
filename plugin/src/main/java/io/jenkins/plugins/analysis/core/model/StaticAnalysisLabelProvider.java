@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.VisibleForTesting;
-import edu.umd.cs.findbugs.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import j2html.tags.ContainerTag;
 import j2html.tags.DomContent;
@@ -44,7 +44,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     static final String INFO_ICON = "info-circle";
 
     private final String id;
-    @Nullable
+    @CheckForNull
     private String name;
     private final JenkinsFacade jenkins;
 
@@ -66,12 +66,12 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @param name
      *         the name of the static analysis tool
      */
-    public StaticAnalysisLabelProvider(final String id, @Nullable final String name) {
+    public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name) {
         this(id, name, new JenkinsFacade());
     }
 
     @VisibleForTesting
-    StaticAnalysisLabelProvider(final String id, @Nullable final String name, final JenkinsFacade jenkins) {
+    StaticAnalysisLabelProvider(final String id, @CheckForNull final String name, final JenkinsFacade jenkins) {
         this.id = id;
         this.name = SANITIZER.render(name);
         this.jenkins = jenkins;
@@ -153,7 +153,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *
      * @return the name
      */
-    public StaticAnalysisLabelProvider setName(@Nullable final String name) {
+    public StaticAnalysisLabelProvider setName(@CheckForNull final String name) {
         if (StringUtils.isNotBlank(name)) { // don't overwrite with empty
             this.name = name;
         }

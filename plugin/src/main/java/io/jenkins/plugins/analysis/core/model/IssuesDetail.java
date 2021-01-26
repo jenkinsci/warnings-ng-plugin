@@ -41,6 +41,7 @@ import io.jenkins.plugins.analysis.core.util.HealthDescriptor;
 import io.jenkins.plugins.analysis.core.util.LocalizedSeverity;
 import io.jenkins.plugins.datatables.DefaultAsyncTableContentProvider;
 import io.jenkins.plugins.datatables.TableModel;
+import io.jenkins.plugins.forensics.util.CommitDecoratorFactory;
 
 /**
  * Build view that shows the details for a subset of issues.
@@ -242,7 +243,8 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
             return new BlamesModel(report, result.getBlames(),
                     labelProvider.getFileNameRenderer(owner),
                     labelProvider.getAgeBuilder(owner,  getUrl()),
-                    labelProvider);
+                    labelProvider,
+                    CommitDecoratorFactory.findCommitDecorator(owner));
         }
         else if ("forensics".equals(id)) {
             return new ForensicsModel(report, result.getForensics(),
@@ -500,7 +502,7 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         else {
             propertyFormatter = Function.identity();
         }
-        return new PropertyStatistics(report, propertyName, propertyFormatter);
+        return new PropertyStatistics(report, newIssues, propertyName, propertyFormatter);
     }
 
     @Override
