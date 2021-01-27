@@ -66,16 +66,20 @@ public class ForensicsModel extends DetailsTableModel {
         columns.add(createDetailsColumn());
         columns.add(createFileColumn().setWidth(2));
         columns.add(createAgeColumn());
-        columns.add(new TableColumn(Messages.Table_Column_AuthorsSize(), "authorsSize"));
-        columns.add(new TableColumn(Messages.Table_Column_CommitsSize(), "commitsSize"));
+        columns.add(new TableColumn(Messages.Table_Column_AuthorsSize(), "authorsSize")
+                .setHeaderClass(ColumnCss.NUMBER));
+        columns.add(new TableColumn(Messages.Table_Column_CommitsSize(), "commitsSize")
+                .setHeaderClass(ColumnCss.NUMBER));
         columns.add(new TableColumn(Messages.Table_Column_LastCommit(), "modifiedAt")
                 .setWidth(2)
                 .setHeaderClass(ColumnCss.DATE));
         columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedAt")
                 .setWidth(2)
                 .setHeaderClass(ColumnCss.DATE));
-        columns.add(new TableColumn(Messages.Table_Column_LOC(), "linesOfCode"));
-        columns.add(new TableColumn(Messages.Table_Column_Churn(), "churn"));
+        columns.add(new TableColumn(Messages.Table_Column_LOC(), "linesOfCode")
+                .setHeaderClass(ColumnCss.NUMBER));
+        columns.add(new TableColumn(Messages.Table_Column_Churn(), "churn")
+                .setHeaderClass(ColumnCss.NUMBER));
 
         return columns;
     }
