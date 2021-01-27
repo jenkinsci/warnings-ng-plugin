@@ -1,18 +1,8 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:c="/charts" xmlns:i="/issues">
+<j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
 
- <j:choose>
-   <j:when test="${from.hasNoIssues()}">
-
-     <i:zero-issues/>
-
-   </j:when>
-   <j:otherwise>
-
-     <c:trend-chart it="${from}" title="${from.trendName}" enableLinks="true"/>
-
-   </j:otherwise>
-
- </j:choose>
+  <j:if test="${!from.trendEmpty}">
+    <c:trend-chart it="${from}" title="${from.trendName}" enableLinks="true"/>
+  </j:if>
 
 </j:jelly>
