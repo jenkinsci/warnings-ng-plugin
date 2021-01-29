@@ -36,6 +36,7 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     private static final String MULTI_LINE_REGEXP = "(WARNING|ERROR)\\s*in\\s*(.*)\\(at line\\s*(\\d+)\\).*"
             + "(?:\\r?\\n[^\\^]*)+(?:\\r?\\n.*[\\^]+.*)\\r?\\n(?:\\s*\\[.*\\]\\s*)?(.*)";
     private static final String SINGLE_LINE_REGEXP = "^\\s*(.*):(\\d+):(.*):\\s*(.*)$";
+    private static final String OK_SCRIPT = ";";
 
     /**
      * Tries to expose JENKINS-35262: multi-line regular expression parser.
@@ -69,13 +70,31 @@ class GroovyParserTest extends SerializableTest<GroovyParser> {
     }
 
     private GroovyParser createParser(final String multiLineRegexp) {
-        return createParser(multiLineRegexp, "empty");
+        return createParser(multiLineRegexp, OK_SCRIPT);
     }
 
     @Test @Issue("JENKINS-60154")
     void shouldThrowExceptionDueToBrokenId() {
         assertThatIllegalArgumentException().isThrownBy(() ->
-                new GroovyParser("broken id", "name", MULTI_LINE_REGEXP, "empty", "example"));
+                new GroovyParser("broken id", "name", MULTI_LINE_REGEXP, OK_SCRIPT, "example"));
+    }
+
+    @Test
+    void shouldThrowExceptionDueToBrokenScript() {
+        GroovyParser groovyParser = new GroovyParser("id", "name", SINGLE_LINE_REGEXP, StringUtils.EMPTY,
+                "example");
+        groovyParser.setJenkinsFacade(createJenkinsFacade());
+        assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
+                .withMessageContaining("Script is not valid");
+    }
+
+    @Test
+    void shouldThrowExceptionDueToBrokenRegExp() {
+        GroovyParser groovyParser = new GroovyParser("id", "name", "one brace (", OK_SCRIPT,
+                "example");
+        groovyParser.setJenkinsFacade(createJenkinsFacade());
+        assertThatIllegalArgumentException().isThrownBy(groovyParser::createParser)
+                .withMessageContaining("RegExp is not valid");
     }
 
     @Test

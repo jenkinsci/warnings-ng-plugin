@@ -177,11 +177,21 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
      * Returns a new parser instance.
      *
      * @return a new parser instance
-     * @throws AssertionError
+     * @throws IllegalArgumentException
      *         if this parsers configuration is not valid
      */
     public IssueParser createParser() {
-        Ensure.that(isValid()).isTrue();
+        DescriptorImpl descriptor = new DescriptorImpl(getJenkinsFacade());
+
+        FormValidation scriptCheck = descriptor.doCheckScript(script);
+        if (scriptCheck.kind == Kind.ERROR) {
+            throw new IllegalArgumentException("Script is not valid: " + scriptCheck.getMessage());
+        }
+
+        FormValidation regexpCheck = descriptor.doCheckRegexp(regexp);
+        if (regexpCheck.kind == Kind.ERROR) {
+            throw new IllegalArgumentException("RegExp is not valid: " + regexpCheck.getMessage());
+        }
 
         if (hasMultiLineSupport()) {
             return new DynamicDocumentParser(regexp, script);
