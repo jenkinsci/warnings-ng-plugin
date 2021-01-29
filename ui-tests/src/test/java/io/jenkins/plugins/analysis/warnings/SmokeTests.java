@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
-
 import java.util.Map;
 
 import org.junit.Test;
@@ -16,10 +15,9 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
-
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
+
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Smoke tests for the Warnings Next Generation Plugin. These tests are invoked during the validation of pull requests
@@ -43,7 +41,7 @@ public class SmokeTests extends UiTest {
 
         createRecordIssuesStep(job, 1);
 
-        job.save();
+        save(job);
 
         Build referenceBuild = buildJob(job);
 
@@ -55,7 +53,9 @@ public class SmokeTests extends UiTest {
                 .contains("[pmd=3]")
                 .contains("[pep8=0]");
 
-        job.configure(() -> createRecordIssuesStep(job, 2));
+        job.configure();
+        createRecordIssuesStep(job, 2);
+        save(job);
 
         Build build = buildJob(job);
 
@@ -133,7 +133,7 @@ public class SmokeTests extends UiTest {
         job.copyResource(WARNINGS_PLUGIN_PREFIX + "build_status_test/build_01");
 
         addAllRecorders(job);
-        job.save();
+        save(job);
 
         buildJob(job);
 

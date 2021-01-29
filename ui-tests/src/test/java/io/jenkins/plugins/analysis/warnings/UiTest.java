@@ -13,6 +13,7 @@ import org.jenkinsci.test.acceptance.plugins.dashboard_view.DashboardView;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenInstallation;
 import org.jenkinsci.test.acceptance.plugins.maven.MavenModuleSet;
 import org.jenkinsci.test.acceptance.po.Build;
+import org.jenkinsci.test.acceptance.po.ConfigurablePageObject;
 import org.jenkinsci.test.acceptance.po.Container;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Job;
@@ -338,13 +339,13 @@ abstract class UiTest extends AbstractJUnitTest {
                         "-> found 8 issues (skipped 0 duplicates)")
                 .hasErrorMessages("Can't create fingerprints for some files:");
 
-        if(referenceBuild > 0) {
+        if (referenceBuild > 0) {
             assertThat(openInfoView(build, PEP8_ID))
                     .hasInfoMessages("Issues delta (vs. reference build): outstanding: 0, new: 8, fixed: 0");
         }
     }
 
-    protected AnalysisResult verifyPep8Details (final AnalysisSummary pep8) {
+    protected AnalysisResult verifyPep8Details(final AnalysisSummary pep8) {
         AnalysisResult pep8Details = pep8.openOverallResult();
         assertThat(pep8Details).hasActiveTab(Tab.ISSUES)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
@@ -385,7 +386,9 @@ abstract class UiTest extends AbstractJUnitTest {
     }
 
     protected void reconfigureJobWithResource(final FreeStyleJob job, final String fileName) {
-        job.configure(() -> job.copyResource(WARNINGS_PLUGIN_PREFIX + fileName));
+        job.configure();
+        job.copyResource(WARNINGS_PLUGIN_PREFIX + fileName);
+        save(job);
     }
 
     protected void copyResourceFilesToWorkspace(final Job job, final String... resources) {
@@ -428,6 +431,10 @@ abstract class UiTest extends AbstractJUnitTest {
 
         groovyConfiguration.enterExampleLogMessage("optparse.py:69:11: E401 multiple imports on one line");
 
-        settings.save();
+        save(settings);
+    }
+
+    void save(final ConfigurablePageObject configurable) {
+        configurable.find(by.button("Save")).click();
     }
 }
