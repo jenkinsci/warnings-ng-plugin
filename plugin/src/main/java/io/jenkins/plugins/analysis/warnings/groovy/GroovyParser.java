@@ -44,7 +44,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 @SuppressWarnings("PMD.ExcessiveImports")
 public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implements Serializable {
     private static final long serialVersionUID = 2447124045452896581L;
-    private static final int MAX_EXAMPLE_SIZE = 4096;
+    static final int MAX_EXAMPLE_SIZE = 4096;
 
     private final String id;
     private final String name;
@@ -97,7 +97,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
 
         return d.doCheckScript(script).kind == Kind.OK
                 && d.doCheckRegexp(regexp).kind == Kind.OK
-                && d.validate(name, Messages.GroovyParser_Error_Name_isEmpty()).kind == Kind.OK;
+                && d.doCheckName(name).kind == Kind.OK;
     }
 
     public String getId() {
@@ -183,6 +183,11 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
     public IssueParser createParser() {
         DescriptorImpl descriptor = new DescriptorImpl(getJenkinsFacade());
 
+        FormValidation nameCheck = descriptor.doCheckName(name);
+        if (nameCheck.kind == Kind.ERROR) {
+            throw new IllegalArgumentException("Name is not valid: " + nameCheck.getMessage());
+        }
+
         FormValidation scriptCheck = descriptor.doCheckScript(script);
         if (scriptCheck.kind == Kind.ERROR) {
             throw new IllegalArgumentException("Script is not valid: " + scriptCheck.getMessage());
@@ -239,13 +244,6 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             super();
             
             this.jenkinsFacade = jenkinsFacade;
-        }
-
-        private FormValidation validate(final String name, final String message) {
-            if (StringUtils.isBlank(name)) {
-                return FormValidation.error(message);
-            }
-            return FormValidation.ok();
         }
 
         /**
