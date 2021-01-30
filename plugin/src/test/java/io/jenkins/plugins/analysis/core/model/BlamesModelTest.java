@@ -35,18 +35,18 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         BlamesModel model = createModel(report, blames);
 
         String columnDefinitions = model.getColumnsDefinition();
-        assertThatJson(columnDefinitions).isArray().hasSize(7);
+        assertThatJson(columnDefinitions).isArray().hasSize(8);
 
-        String[] columns = {"description", "fileName", "age", "author", "email", "commit", "addedAt"};
+        String[] columns = {"description", "fileName", "age", "author", "email", "commit", "addedAt", "descriptionContent"};
         for (int column = 0; column < columns.length; column++) {
             verifyColumnProperty(model, column, columns[column]);
         }
         verifyFileNameColumn(columnDefinitions);
 
         assertThat(getLabels(model))
-                .containsExactly("Details", "File", "Age", "Author", "Email", "Commit", "Added");
+                .containsExactly("Details", "File", "Age", "Author", "Email", "Commit", "Added", "Hiddendetails");
         assertThat(getWidths(model))
-                .containsExactly(1, 1, 1, 1, 1, 1, 1);
+                .containsExactly(1, 1, 1, 1, 1, 1, 1, 0);
 
         assertThat(model.getRows()).hasSize(2);
     }

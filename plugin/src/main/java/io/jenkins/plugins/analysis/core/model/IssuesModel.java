@@ -63,6 +63,7 @@ public class IssuesModel extends DetailsTableModel {
         }
         columns.add(createSeverityColumn());
         columns.add(createAgeColumn());
+        columns.add(createHiddenDetailsColumn());
         return columns;
     }
 

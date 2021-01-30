@@ -72,6 +72,7 @@ public class BlamesModel extends DetailsTableModel {
         columns.add(new TableColumn(Messages.Table_Column_Commit(), "commit"));
         columns.add(new TableColumn(Messages.Table_Column_AddedAt(), "addedAt")
                 .setHeaderClass(ColumnCss.DATE));
+        columns.add(createHiddenDetailsColumn());
 
         return columns;
     }
