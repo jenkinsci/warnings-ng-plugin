@@ -110,7 +110,7 @@ public abstract class DetailsTableModel extends TableModel {
     }
 
     protected TableColumn createAgeColumn() {
-        return new TableColumn(Messages.Table_Column_Age(), "age");
+        return new TableColumn(Messages.Table_Column_Age(), "age").setHeaderClass(ColumnCss.NUMBER);
     }
 
     protected TableColumn createSeverityColumn() {

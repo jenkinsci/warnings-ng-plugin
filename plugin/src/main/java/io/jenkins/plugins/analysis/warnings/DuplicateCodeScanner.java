@@ -28,6 +28,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.datatables.TableColumn;
+import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider.*;
@@ -322,15 +323,16 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         public List<TableColumn> getColumns() {
             List<TableColumn> columns = new ArrayList<>();
 
-            columns.add(new TableColumn(Messages.DRY_Table_Column_Details(), "description"));
-            columns.add(new TableColumn(Messages.DRY_Table_Column_File(), "fileName", "string").setWidth(2));
+            columns.add(createDetailsColumn());
+            columns.add(createFileColumn().setWidth(2));
             if (getReport().hasPackages()) {
                 columns.add(new TableColumn(Messages.DRY_Table_Column_Package(), "packageName").setWidth(2));
             }
             columns.add(new TableColumn(Messages.DRY_Table_Column_Severity(), "severity"));
-            columns.add(new TableColumn(Messages.DRY_Table_Column_LinesCount(), "linesCount"));
+            columns.add(new TableColumn(Messages.DRY_Table_Column_LinesCount(), "linesCount")
+                    .setHeaderClass(ColumnCss.NUMBER));
             columns.add(new TableColumn(Messages.DRY_Table_Column_DuplicatedIn(), "duplicatedIn").setWidth(3));
-            columns.add(new TableColumn(Messages.DRY_Table_Column_Age(), "age"));
+            columns.add(createAgeColumn());
             return columns;
         }
 
