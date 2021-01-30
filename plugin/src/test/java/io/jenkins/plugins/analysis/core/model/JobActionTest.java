@@ -1,11 +1,16 @@
 package io.jenkins.plugins.analysis.core.model;
 
+import java.io.IOException;
 import java.util.Collections;
 
 import org.junit.jupiter.api.Test;
 
+import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerResponse;
 import hudson.model.Job;
 import hudson.model.Run;
+
+import io.jenkins.plugins.analysis.core.util.TrendChartType;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -14,6 +19,7 @@ import static org.mockito.Mockito.*;
  * Tests the class {@link JobAction}.
  * 
  * @author Kasper Heyndrickx
+ * @author Ullrich Hafner
  */
 class JobActionTest {
     private static final String LINK_NAME = "link-name";
@@ -22,62 +28,74 @@ class JobActionTest {
     private static final String ANALYSIS_ID = "analysis-id";
 
     @Test
-    void shouldUseLabelProviderLinkNameAsDisplayName() {
-        Job<?, ?> job = mock(Job.class);
+    void shouldUseLabelProvider() {
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
         when(labelProvider.getLinkName()).thenReturn(LINK_NAME);
+        when(labelProvider.getTrendName()).thenReturn(TREND_NAME);
+        when(labelProvider.getId()).thenReturn(ID);
+
+        Job<?, ?> job = mock(Job.class);
+
         JobAction action = new JobAction(job, labelProvider, 1);
         assertThat(action.getDisplayName()).isEqualTo(LINK_NAME);
-    }
-    
-    @Test
-    void shouldUseLabelProviderTrendNameAsTrendName() {
-        Job<?, ?> job = mock(Job.class);
-        StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
-        when(labelProvider.getTrendName()).thenReturn(TREND_NAME); 
-        JobAction action = new JobAction(job, labelProvider, 1);
-        assertThat(action.getTrendName()).isEqualTo(TREND_NAME); 
-    } 
-
-    @Test
-    void shouldUseLabelProviderIDAsID() {
-        Job<?, ?> job = mock(Job.class);
-        StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
-        when(labelProvider.getId()).thenReturn(ID); 
-        JobAction action = new JobAction(job, labelProvider, 1);
-        assertThat(action.getId()).isEqualTo(ID); 
-    } 
-
-    @Test
-    void shouldSetOwner() {
-        Job<?, ?> job = mock(Job.class);
-        StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
-        JobAction action = new JobAction(job, labelProvider, 1);
-        assertThat(action.getOwner()).isEqualTo(job); 
+        assertThat(action.getTrendName()).isEqualTo(TREND_NAME);
+        assertThat(action.getId()).isEqualTo(ID);
+        assertThat(action.getUrlName()).isEqualTo(ID);
+        assertThat(action.getOwner()).isEqualTo(job);
     }
 
-    @Test @SuppressWarnings("rawtypes")
-    void shouldShowIconIfThereIsABuildResultAvailable() {
-        Job job = mock(Job.class);
+    @Test
+    void shouldShowIconIfThereIsABuildResultAvailable() throws IOException {
         StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
         when(labelProvider.getId()).thenReturn(ANALYSIS_ID);
 
+        Job<?, ?> job = mock(Job.class);
         JobAction action = new JobAction(job, labelProvider, 1);
-
         assertThat(action.getIconFileName()).isNull();
 
-        Run<?, ?> reference = createValidReferenceBuild();
-        when(job.getLastCompletedBuild()).thenReturn(reference);
+        Run<?, ?> reference = createValidReferenceBuild(0);
+        when(job.getLastCompletedBuild()).thenAnswer(i -> reference);
 
         assertThat(action.getIconFileName()).isNotEmpty();
+        assertThat(action.isTrendVisible()).isFalse();
+        assertThat(action.isTrendEmpty()).isTrue();
+
+        Run<?, ?> referenceWithIssues = createValidReferenceBuild(1);
+        when(reference.getPreviousBuild()).thenAnswer(i -> referenceWithIssues);
+
+        assertThat(action.isTrendEmpty()).isFalse();
+        assertThat(action.isTrendVisible()).isTrue();
+
+        StaplerResponse response = mock(StaplerResponse.class);
+        action.doIndex(mock(StaplerRequest.class), response);
+
+        verify(response).sendRedirect2("../0/" + ANALYSIS_ID);
+
+        JobAction hiddenAction = new JobAction(job, labelProvider, 1, TrendChartType.NONE);
+        assertThat(hiddenAction.isTrendVisible()).isFalse();
     }
 
-    private Run<?, ?> createValidReferenceBuild() {
+    @Test
+    void shouldRedirect() throws IOException {
+        StaticAnalysisLabelProvider labelProvider = mock(StaticAnalysisLabelProvider.class);
+        Job<?, ?> job = mock(Job.class);
+        JobAction action = new JobAction(job, labelProvider, 1);
+
+        StaplerRequest request = mock(StaplerRequest.class);
+        action.doIndex(request, mock(StaplerResponse.class));
+
+        verifyNoInteractions(request);
+    }
+
+    private Run<?, ?> createValidReferenceBuild(final int issuesSize) {
         Run<?, ?> reference = mock(Run.class);
-        ResultAction result = mock(ResultAction.class);
-        when(result.getResult()).thenReturn(mock(AnalysisResult.class));
-        when(result.getId()).thenReturn(ANALYSIS_ID);
-        when(reference.getActions(ResultAction.class)).thenReturn(Collections.singletonList(result));
+        ResultAction action = mock(ResultAction.class);
+        when(action.getOwner()).thenAnswer(i -> reference);
+        AnalysisResult result = mock(AnalysisResult.class);
+        when(result.getTotalSize()).thenReturn(issuesSize);
+        when(action.getResult()).thenReturn(result);
+        when(action.getId()).thenReturn(ANALYSIS_ID);
+        when(reference.getActions(ResultAction.class)).thenReturn(Collections.singletonList(action));
         return reference;
     }
 }

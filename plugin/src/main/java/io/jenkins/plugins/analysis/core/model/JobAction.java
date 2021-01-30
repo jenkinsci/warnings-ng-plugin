@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.core.model;
 import java.io.IOException;
 import java.util.Optional;
 
+import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
 import edu.hm.hafner.echarts.LinesChartModel;
@@ -18,6 +19,7 @@ import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
+import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.echarts.AsyncTrendChart;
 
@@ -200,6 +202,22 @@ public class JobAction implements Action, AsyncTrendChart {
     @Override
     public boolean isTrendVisible() {
         return trendChartType != TrendChartType.NONE && createBuildHistory().hasMultipleResults();
+    }
+
+    /**
+     * Returns whether the trend chart is empty. The trend is empty if all builds have zero issues.
+     *
+     * @return {@code true} if the trend is empty, false otherwise
+     */
+    @SuppressWarnings("unused") // Called by jelly view
+    public boolean isTrendEmpty() {
+        History results = createBuildHistory();
+        for (BuildResult<AnalysisBuildResult> result : results) {
+            if (result.getResult().getTotalSize() > 0) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
