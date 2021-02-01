@@ -85,6 +85,61 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getConsoleLog(build)).contains("[id=checkstyle]");
     }
 
+    /**
+     * Runs a pipeline and verifies the {@code recordIssues} step has some whitelisted methods.
+     */
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-63109")
+    public void shouldWhitelistRecorderApi() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+
+        configureRecorder(job, "checkstyle1");
+        Run<?, ?> baseline = buildSuccessfully(job);
+
+        assertThat(getConsoleLog(baseline)).contains("[reportsSize=" + 1 + "]");
+        assertThat(getConsoleLog(baseline)).contains("[totalSize=" + 3 + "]");
+        assertThat(getConsoleLog(baseline)).contains("[newSize=" + 0 + "]");
+        assertThat(getConsoleLog(baseline)).contains("[fixedSize=" + 0 + "]");
+        assertThat(getConsoleLog(baseline)).contains("[qualityGate=" + "PASSED" + "]");
+        assertThat(getConsoleLog(baseline)).contains("[id=checkstyle]");
+        assertThat(getConsoleLog(baseline)).contains(
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ",
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ",
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ");
+        assertThat(getConsoleLog(baseline)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(42,0): LineLengthCheck: Sizes: Zeile ");
+        assertThat(getConsoleLog(baseline)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ");
+
+        configureRecorder(job, "checkstyle2");
+        Run<?, ?> build = buildWithResult(job, Result.UNSTABLE);
+        assertThat(getConsoleLog(build)).contains("[reportsSize=" + 1 + "]");
+        assertThat(getConsoleLog(build)).contains("[totalSize=" + 4 + "]");
+        assertThat(getConsoleLog(build)).contains("[newSize=" + 3 + "]");
+        assertThat(getConsoleLog(build)).contains("[fixedSize=" + 2 + "]");
+        assertThat(getConsoleLog(build)).contains("[qualityGate=" + "WARNING" + "]");
+        assertThat(getConsoleLog(build)).contains("[id=checkstyle]");
+        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(29,0): LineLengthCheck: Sizes: Zeile ");
+        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(30,21): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.");
+        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(37,9): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.");
+        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ");
+    }
+
+    private void configureRecorder(final WorkflowJob job, final String fileName) {
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         def reports = recordIssues tool: checkStyle(pattern: '**/" + fileName + "*'), qualityGates: [[threshold: 4, type: 'TOTAL', unstable: true]]\n"
+                + "         echo '[reportsSize=' + reports.size() + ']' \n"
+                + "         def result = reports.get(0) \n"
+                + "         echo '[totalSize=' + result.getTotals().getTotalSize() + ']' \n"
+                + "         echo '[newSize=' + result.getTotals().getNewSize() + ']' \n"
+                + "         echo '[fixedSize=' + result.getTotals().getFixedSize() + ']' \n"
+                + "         echo '[qualityGate=' + result.getQualityGateStatus() + ']' \n"
+                + "         echo '[id=' + result.getId() + ']' \n"
+                + "         result.getIssues().each { issue ->\n"
+                + "             echo issue.toString()\n"
+                + "         }"
+                + "  }\n"
+                + "}", true));
+    }
+
     private void configureScanner(final WorkflowJob job, final String fileName) {
         job.setDefinition(new CpsFlowDefinition("node {\n"
                 + "  stage ('Integration Test') {\n"
