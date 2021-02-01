@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -275,22 +276,37 @@ class IssuesScanner {
         private void resolvePaths(final Report report) {
             report.logInfo("Resolving file names for all issues in source directory '%s'", sourceDirectory);
 
-            FileNameResolver generator = new FileNameResolver();
-            generator.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
+            try {
+                FileNameResolver generator = new FileNameResolver();
+                generator.run(report, sourceDirectory, ConsoleLogHandler::isInConsoleLog);
+            }
+            catch (InvalidPathException exception) {
+                report.logException(exception, "Resolving of file names aborted");
+            }
         }
 
         private void resolveModuleNames(final Report report, final File workspace) {
             report.logInfo("Resolving module names from module definitions (build.xml, pom.xml, or Manifest.mf files)");
 
-            ModuleResolver resolver = new ModuleResolver();
-            resolver.run(report, new ModuleDetector(workspace.toPath(), new DefaultFileSystem()));
+            try {
+                ModuleResolver resolver = new ModuleResolver();
+                resolver.run(report, new ModuleDetector(workspace.toPath(), new DefaultFileSystem()));
+            }
+            catch (InvalidPathException exception) {
+                report.logException(exception, "Resolving of modul names aborted");
+            }
         }
 
         private void resolvePackageNames(final Report report) {
             report.logInfo("Resolving package names (or namespaces) by parsing the affected files");
 
-            PackageNameResolver resolver = new PackageNameResolver();
-            resolver.run(report, getCharset());
+            try {
+                PackageNameResolver resolver = new PackageNameResolver();
+                resolver.run(report, getCharset());
+            }
+            catch (InvalidPathException exception) {
+                report.logException(exception, "Resolving of package names aborted");
+            }
         }
 
         private Charset getCharset() {
