@@ -101,9 +101,12 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getConsoleLog(baseline)).contains("[fixedSize=" + 0 + "]");
         assertThat(getConsoleLog(baseline)).contains("[qualityGate=" + "PASSED" + "]");
         assertThat(getConsoleLog(baseline)).contains("[id=checkstyle]");
-        assertThat(getConsoleLog(baseline)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ist nicht für Vererbung entworfen - muss abstract, final oder leer sein.");
-        assertThat(getConsoleLog(baseline)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(42,0): LineLengthCheck: Sizes: Zeile länger als 80 Zeichen");
-        assertThat(getConsoleLog(baseline)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein.");
+        assertThat(getConsoleLog(baseline)).contains(
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ",
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ",
+                "X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ");
+        assertThat(getConsoleLog(baseline)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(42,0): LineLengthCheck: Sizes: Zeile ");
+        assertThat(getConsoleLog(baseline)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ");
 
         configureRecorder(job, "checkstyle2");
         Run<?, ?> build = buildWithResult(job, Result.UNSTABLE);
@@ -113,10 +116,10 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(getConsoleLog(build)).contains("[fixedSize=" + 2 + "]");
         assertThat(getConsoleLog(build)).contains("[qualityGate=" + "WARNING" + "]");
         assertThat(getConsoleLog(build)).contains("[id=checkstyle]");
-        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(29,0): LineLengthCheck: Sizes: Zeile länger als 80 Zeichen");
+        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(29,0): LineLengthCheck: Sizes: Zeile ");
         assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(30,21): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.");
         assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(37,9): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.");
-        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein.");
+        assertThat(getConsoleLog(build)).contains("X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ");
     }
 
     private void configureRecorder(final WorkflowJob job, final String fileName) {
