@@ -9,6 +9,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 
+import j2html.tags.DomContentJoiner;
 import j2html.tags.UnescapedText;
 
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
@@ -187,7 +188,8 @@ public abstract class DetailsTableModel extends TableModel {
                 details = new UnescapedText(additionalDescription);
             }
             else {
-                details = join(p(strong().with(new UnescapedText(issue.getMessage()))), additionalDescription);
+                details = DomContentJoiner.join(" ", false,
+                        p(strong().with(new UnescapedText(issue.getMessage()))), additionalDescription);
             }
             return TableColumn.renderDetailsColumn(render(details), jenkinsFacade);
         }
