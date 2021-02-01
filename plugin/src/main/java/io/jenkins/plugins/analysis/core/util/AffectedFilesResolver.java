@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import edu.hm.hafner.analysis.FilteredLog;
 import edu.hm.hafner.analysis.Issue;
@@ -152,7 +153,7 @@ public class AffectedFilesResolver {
         RemoteFacade(final FilePath buildFolder, final FilePath agentWorkspace) {
             this.buildFolder = buildFolder;
             channel = agentWorkspace.getChannel();
-            this.affectedFilesPrefix = PATH_UTIL.getAbsolutePath(agentWorkspace.getRemote());
+            affectedFilesPrefix = PATH_UTIL.getAbsolutePath(agentWorkspace.getRemote());
         }
 
         boolean exists(final String fileName) {
@@ -180,7 +181,11 @@ public class AffectedFilesResolver {
         boolean isInWorkspace(final String fileName) {
             String sourceFile = PATH_UTIL.getAbsolutePath(createFile(fileName).getRemote());
 
-            return sourceFile.startsWith(affectedFilesPrefix);
+            return isInWorkspace(sourceFile, affectedFilesPrefix);
+        }
+
+        boolean isInWorkspace(final String sourceFile, final String workspace) {
+            return Paths.get(sourceFile).startsWith(Paths.get(workspace));
         }
 
         public void copy(final String from, final String to) throws IOException, InterruptedException {

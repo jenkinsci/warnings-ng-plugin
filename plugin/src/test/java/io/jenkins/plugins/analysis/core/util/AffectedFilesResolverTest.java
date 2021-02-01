@@ -14,6 +14,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.PathUtil;
+import edu.hm.hafner.util.ResourceTest;
 
 import hudson.FilePath;
 import hudson.remoting.VirtualChannel;
@@ -21,6 +22,7 @@ import hudson.remoting.VirtualChannel;
 import io.jenkins.plugins.analysis.core.util.AffectedFilesResolver.RemoteFacade;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assumptions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -28,7 +30,7 @@ import static org.mockito.Mockito.*;
  *
  * @author Ullrich Hafner
  */
-class AffectedFilesResolverTest {
+class AffectedFilesResolverTest extends ResourceTest {
     private static final FilePath BUILD_ROOT = new FilePath(new File("builds"));
     private static final String FILE_NAME = "file.txt";
 
@@ -75,6 +77,27 @@ class AffectedFilesResolverTest {
         assertThat(message).contains("0 not in workspace");
         assertThat(message).contains("0 not-found");
         assertThat(message).contains("0 with I/O error");
+    }
+
+    @Test
+    void shouldComparePathsOnUnix() {
+        RemoteFacade remoteFacade = new RemoteFacade(BUILD_ROOT, BUILD_ROOT);
+        assertThat(remoteFacade.isInWorkspace("/a/b.c", "/a")).isTrue();
+        assertThat(remoteFacade.isInWorkspace("/a/b.c", "/")).isTrue();
+        assertThat(remoteFacade.isInWorkspace("/a/b.c", "/a/b")).isFalse();
+    }
+
+    @Test @org.jvnet.hudson.test.Issue("JENKINS-63782")
+    void shouldComparePathsCaseInsensitiveOnWindows() {
+        assumeThat(isWindows()).isTrue();
+
+        RemoteFacade remoteFacade = new RemoteFacade(BUILD_ROOT, BUILD_ROOT);
+
+        assertThat(remoteFacade.isInWorkspace("C:\\a\\b.c", "C:\\a")).isTrue();
+        assertThat(remoteFacade.isInWorkspace("C:\\a\\b.c", "C:\\")).isTrue();
+        assertThat(remoteFacade.isInWorkspace("C:\\a\\b.c", "C:\\A")).isTrue();
+        assertThat(remoteFacade.isInWorkspace("C:\\A\\b.c", "C:\\a")).isTrue();
+        assertThat(remoteFacade.isInWorkspace("c:\\a\\b.c", "C:\\a")).isTrue();
     }
 
     @Test
