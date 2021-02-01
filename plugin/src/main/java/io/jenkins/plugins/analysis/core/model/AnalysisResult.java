@@ -352,6 +352,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return statistics;
     }
 
+    @Whitelisted
     @Override
     public String getId() {
         return id;
@@ -408,6 +409,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *
      * @return all issues
      */
+    @Whitelisted
     public Report getIssues() {
         Report merged = new Report();
         merged.addAll(getNewIssues(), getOutstandingIssues());
@@ -420,6 +422,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *
      * @return all outstanding issues
      */
+    @Whitelisted
     public Report getOutstandingIssues() {
         return getIssues(AnalysisResult::getOutstandingIssuesReference, AnalysisResult::setOutstandingIssuesReference,
                 "outstanding");
@@ -431,6 +434,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *
      * @return all new issues
      */
+    @Whitelisted
     public Report getNewIssues() {
         return getIssues(AnalysisResult::getNewIssuesReference, AnalysisResult::setNewIssuesReference,
                 "new");
@@ -442,6 +446,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *
      * @return all fixed issues
      */
+    @Whitelisted
     public Report getFixedIssues() {
         return getIssues(AnalysisResult::getFixedIssuesReference, AnalysisResult::setFixedIssuesReference,
                 "fixed");
@@ -517,6 +522,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         return qualityGateStatus.isSuccessful();
     }
 
+    @Whitelisted
     @Override
     public QualityGateStatus getQualityGateStatus() {
         return qualityGateStatus;

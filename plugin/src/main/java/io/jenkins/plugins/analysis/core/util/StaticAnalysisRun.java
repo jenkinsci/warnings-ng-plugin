@@ -16,6 +16,7 @@ public interface StaticAnalysisRun extends AnalysisBuildResult {
      *
      * @return the ID
      */
+    @Whitelisted
     String getId();
 
     /**

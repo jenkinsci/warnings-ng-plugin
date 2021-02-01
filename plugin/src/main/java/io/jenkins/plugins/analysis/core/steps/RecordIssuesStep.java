@@ -1064,7 +1064,7 @@ public class RecordIssuesStep extends Step implements Serializable {
     /**
      * Actually performs the execution of the associated step.
      */
-    static class Execution extends AnalysisExecution<Void> {
+    static class Execution extends AnalysisExecution<List<AnalysisResult>> {
         private static final long serialVersionUID = -2840020502160375407L;
 
         private final RecordIssuesStep step;
@@ -1075,7 +1075,7 @@ public class RecordIssuesStep extends Step implements Serializable {
         }
 
         @Override
-        protected Void run() throws IOException, InterruptedException {
+        protected List<AnalysisResult> run() throws IOException, InterruptedException {
             IssuesRecorder recorder = new IssuesRecorder();
             recorder.setTools(step.getTools());
             recorder.setSourceCodeEncoding(step.getSourceCodeEncoding());
@@ -1105,8 +1105,8 @@ public class RecordIssuesStep extends Step implements Serializable {
 
             FilePath workspace = getWorkspace();
             workspace.mkdirs();
-            recorder.perform(getRun(), workspace, getTaskListener(), statusHandler);
-            return null;
+
+            return recorder.perform(getRun(), workspace, getTaskListener(), statusHandler);
         }
 
     }

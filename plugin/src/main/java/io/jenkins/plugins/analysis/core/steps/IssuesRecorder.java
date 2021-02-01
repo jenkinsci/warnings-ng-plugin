@@ -413,6 +413,7 @@ public class IssuesRecorder extends Recorder {
      *
      * @param forensicsDisabled
      *         not used
+     *
      * @deprecated Forensics will be automatically skipped if the Forensics recorder is not activated.
      */
     @DataBoundSetter
@@ -686,16 +687,19 @@ public class IssuesRecorder extends Recorder {
      *         the logger
      * @param statusHandler
      *         reports the status for the build or for the stage
+     *
+     * @return the created results
      */
-    void perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+    List<AnalysisResult> perform(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final StageResultHandler statusHandler) throws InterruptedException, IOException {
         Result overallResult = run.getResult();
         if (isEnabledForFailure || overallResult == null || overallResult.isBetterOrEqualTo(Result.UNSTABLE)) {
-            record(run, workspace, listener, statusHandler);
+            return record(run, workspace, listener, statusHandler);
         }
         else {
             LogHandler logHandler = new LogHandler(listener, createLoggerPrefix());
             logHandler.log("Skipping execution of recorder since overall result is '%s'", overallResult);
+            return Collections.emptyList();
         }
     }
 
@@ -703,15 +707,16 @@ public class IssuesRecorder extends Recorder {
         return analysisTools.stream().map(Tool::getActualName).collect(Collectors.joining());
     }
 
-    private void record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
+    private List<AnalysisResult> record(final Run<?, ?> run, final FilePath workspace, final TaskListener listener,
             final StageResultHandler statusHandler) throws IOException, InterruptedException {
+        List<AnalysisResult> results = new ArrayList<>();
         if (isAggregatingResults && analysisTools.size() > 1) {
             AnnotatedReport totalIssues = new AnnotatedReport(StringUtils.defaultIfEmpty(id, DEFAULT_ID));
             for (Tool tool : analysisTools) {
                 totalIssues.add(scanWithTool(run, workspace, listener, tool), tool.getActualId());
             }
             String toolName = StringUtils.defaultIfEmpty(getName(), Messages.Tool_Default_Name());
-            publishResult(run, listener, toolName, totalIssues, toolName, statusHandler);
+            results.add(publishResult(run, listener, toolName, totalIssues, toolName, statusHandler));
         }
         else {
             for (Tool tool : analysisTools) {
@@ -725,9 +730,11 @@ public class IssuesRecorder extends Recorder {
                     report.logInfo("Ignoring name='%s' and id='%s' when publishing non-aggregating reports",
                             name, id);
                 }
-                publishResult(run, listener, tool.getActualName(), report, getReportName(tool), statusHandler);
+                results.add(
+                        publishResult(run, listener, tool.getActualName(), report, getReportName(tool), statusHandler));
             }
         }
+        return results;
     }
 
     /**
@@ -782,8 +789,10 @@ public class IssuesRecorder extends Recorder {
      *         the name of the report (might be empty)
      * @param statusHandler
      *         the status handler to use
+     *
+     * @return the created results
      */
-    void publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
+    AnalysisResult publishResult(final Run<?, ?> run, final TaskListener listener, final String loggerName,
             final AnnotatedReport report, final String reportName, final StageResultHandler statusHandler) {
         QualityGateEvaluator qualityGate = new QualityGateEvaluator();
         if (qualityGates.isEmpty()) {
@@ -802,6 +811,8 @@ public class IssuesRecorder extends Recorder {
             checksPublisher.publishChecks(
                     isPublishAllIssues() ? AnnotationScope.PUBLISH_ALL_ISSUES : AnnotationScope.PUBLISH_NEW_ISSUES);
         }
+
+        return action.getResult();
     }
 
     /**
