@@ -33,7 +33,7 @@
 
     <font-awesome-api.version>5.15.1-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-2</jquery3-api.version>
-    <bootstrap4-api.version>4.5.3-2</bootstrap4-api.version>
+    <bootstrap4-api.version>4.6.0-1</bootstrap4-api.version>
     <data-tables-api.version>1.10.23-1</data-tables-api.version>
     <echarts-api.version>4.9.0-3</echarts-api.version>
 
@@ -58,7 +58,7 @@
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
-    <token-macro.version>2.12</token-macro.version>
+    <token-macro.version>2.15</token-macro.version>
     <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
     <matrix-project.version>1.18</matrix-project.version>
     <junit-plugin.version>1.35</junit-plugin.version>
@@ -349,7 +349,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
-      <version>0.9.0</version>
+      <version>0.9.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
