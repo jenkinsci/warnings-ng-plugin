@@ -48,7 +48,7 @@
     <json.version>20201115</json.version>
     <jackson2-api.version>2.11.1</jackson2-api.version>
 
-    <pmd.version>6.29.0</pmd.version>
+    <pmd.version>6.31.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.8.2</xmlunit.version>
