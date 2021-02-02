@@ -626,6 +626,9 @@ In order to see the trend of the analysis results, several charts show the issue
 
 In the job overview page trends for all static analysis results are shown and an additional aggregation trend (if several results are available). 
 You can configure the position of this aggregation trend in the pipeline script (or freestyle job configuration):
+
+![job trend seletion](images/trend-selection.png)
+
 - `AGGREGATION_TOOLS`: The aggregation trend is shown **before** all other analysis tool trend charts.
 - `TOOLS_AGGREGATION`: The aggregation trend is shown **after** all other analysis tool trend charts.
 - `TOOLS_ONLY`: The aggregation trend is not shown, only the analysis tool trend charts are shown.
