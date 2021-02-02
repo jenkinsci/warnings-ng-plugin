@@ -94,7 +94,7 @@ public class JobAction implements Action, AsyncTrendChart {
 
     @Override
     public String getDisplayName() {
-        return labelProvider.getLinkName();
+        return labelProvider.getRawLinkName();
     }
 
     /**

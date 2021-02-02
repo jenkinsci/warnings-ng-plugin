@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.jvnet.hudson.test.Issue;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
@@ -19,6 +20,17 @@ class StaticAnalysisLabelProviderTest {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String OTHER_NAME = "other";
+
+    @Test @Issue("JENKINS-61834")
+    void shouldNotEscapeHtmlEntities() {
+        StaticAnalysisLabelProvider labelProvider = new StaticAnalysisLabelProvider(ID, "C++");
+
+        assertThat(labelProvider).hasId(ID);
+        assertThat(labelProvider).hasName("C&#43;&#43;");
+        assertThat(labelProvider.getLinkName()).contains("C&#43;&#43;");
+        assertThat(labelProvider.getRawLinkName()).contains("C++");
+        assertThat(labelProvider.getTrendName()).contains("C&#43;&#43;");
+    }
 
     @Test
     void shouldReturnIdAndNameOfConstructorParametersInAllDisplayProperties() {

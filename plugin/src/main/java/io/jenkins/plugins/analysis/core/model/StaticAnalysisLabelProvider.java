@@ -45,6 +45,8 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
     private final String id;
     @CheckForNull
+    private String rawName;
+    @CheckForNull
     private String name;
     private final JenkinsFacade jenkins;
 
@@ -73,8 +75,16 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     @VisibleForTesting
     StaticAnalysisLabelProvider(final String id, @CheckForNull final String name, final JenkinsFacade jenkins) {
         this.id = id;
-        this.name = SANITIZER.render(name);
         this.jenkins = jenkins;
+
+        setNameAndRawName(name);
+    }
+
+    private void setNameAndRawName(final String name) {
+        if (StringUtils.isNotBlank(name)) { // don't overwrite with empty
+            this.rawName = name;
+            this.name = SANITIZER.render(name);
+        }
     }
 
     /**
@@ -154,9 +164,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @return the name
      */
     public StaticAnalysisLabelProvider setName(@CheckForNull final String name) {
-        if (StringUtils.isNotBlank(name)) { // don't overwrite with empty
-            this.name = name;
-        }
+        setNameAndRawName(name);
 
         return this;
     }
@@ -167,12 +175,24 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     }
 
     /**
-     * Returns the name of the link to the results in Jenkins' side panel.
+     * Returns the name of the link to the results. The name will be sanitized and may contain HTML entities.
      *
      * @return the name of the side panel link
      */
     public String getLinkName() {
         return Messages.Tool_Link_Name(getName());
+    }
+
+    /**
+     * Returns the name of the link to the results in Jenkins' side panel.
+     *
+     * @return the name of the side panel link
+     */
+    public String getRawLinkName() {
+        if (StringUtils.isNotBlank(rawName)) {
+            return Messages.Tool_Link_Name(rawName);
+        }
+        return Messages.Tool_Link_Name(getDefaultName());
     }
 
     /**
