@@ -37,7 +37,7 @@ class BlamesModelTest extends AbstractDetailsModelTest {
         String columnDefinitions = model.getColumnsDefinition();
         assertThatJson(columnDefinitions).isArray().hasSize(8);
 
-        String[] columns = {"description", "fileName", "age", "author", "email", "commit", "addedAt", "descriptionContent"};
+        String[] columns = {"description", "fileName", "age", "author", "email", "commit", "addedAt", "message"};
         for (int column = 0; column < columns.length; column++) {
             verifyColumnProperty(model, column, columns[column]);
         }

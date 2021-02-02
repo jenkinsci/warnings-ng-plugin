@@ -34,7 +34,7 @@ class ForensicsModelTest extends AbstractDetailsModelTest {
         assertThatJson(columnDefinitions).isArray().hasSize(10);
 
         String[] columns = {"description", "fileName", "age", "authorsSize",
-                "commitsSize", "modifiedAt", "addedAt", "linesOfCode", "churn", "descriptionContent"};
+                "commitsSize", "modifiedAt", "addedAt", "linesOfCode", "churn", "message"};
         for (int column = 0; column < columns.length; column++) {
             verifyColumnProperty(model, column, columns[column]);
         }

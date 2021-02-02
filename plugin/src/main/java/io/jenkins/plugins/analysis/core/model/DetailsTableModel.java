@@ -107,7 +107,7 @@ public abstract class DetailsTableModel extends TableModel {
     }
 
     protected TableColumn createHiddenDetailsColumn() {
-        return new TableColumn("Hiddendetails", "descriptionContent")
+        return new TableColumn("Hiddendetails", "message")
             .setHeaderClass(ColumnCss.HIDDEN)
             .setWidth(0);
     }
@@ -142,7 +142,7 @@ public abstract class DetailsTableModel extends TableModel {
         private static final Sanitizer SANITIZER = new Sanitizer();
 
         private final String description;
-        private final String descriptionContent;
+        private final String message;
         private final DetailedColumnDefinition fileName;
         private final String age;
         private final JenkinsFacade jenkinsFacade;
@@ -167,8 +167,8 @@ public abstract class DetailsTableModel extends TableModel {
                 final Issue issue,
                 final JenkinsFacade jenkinsFacade) {
             this.jenkinsFacade = jenkinsFacade;
-            descriptionContent = getDetailsContent(issue, descriptionProvider.getDescription(issue));
-            description = formatDetails(descriptionContent);
+            message = render(issue.getMessage());
+            description = formatDetails(issue, descriptionProvider.getDescription(issue));
             age = ageBuilder.apply(parseInt(issue.getReference()));
             fileName = createFileName(fileNameRenderer, issue);
         }
@@ -179,18 +179,18 @@ public abstract class DetailsTableModel extends TableModel {
         }
 
         /**
-         * Get the raw content of the details column. This is used to add to a hidden column that is never visible,
-         * but is used for searching.
-         * See {@link #formatDetails(String) formatDetails} for the visible column.
+         * Formats the text of the details column. The details column is not directly shown, it rather is a hidden
+         * element that is expanded if the corresponding button is selected. The actual text value is stored in the
+         * {@code data-description} attribute.
          *
          * @param issue
          *         the issue in a table row
          * @param additionalDescription
          *         additional description of the issue
          *
-         * @return the raw details content.
+         * @return the formatted column
          */
-        private String getDetailsContent(final Issue issue, final String additionalDescription) {
+        private String formatDetails(final Issue issue, final String additionalDescription) {
             UnescapedText details;
             if (StringUtils.isBlank(issue.getMessage())) {
                 details = new UnescapedText(additionalDescription);
@@ -199,21 +199,7 @@ public abstract class DetailsTableModel extends TableModel {
                 details = DomContentJoiner.join(" ", false,
                         p(strong().with(new UnescapedText(issue.getMessage()))), additionalDescription);
             }
-            return render(details);
-        }
-
-        /**
-         * Formats the text of the details column. The details column is not directly shown, it rather is a hidden
-         * element that is expanded if the corresponding button is selected. The actual text value is stored in the
-         * {@code data-description} attribute.
-         *
-         * @param detailsContent
-         *         The actual text value to put in the details column
-         *
-         * @return the formatted column
-         */
-        private String formatDetails(final String detailsContent) {
-            return TableColumn.renderDetailsColumn(detailsContent, jenkinsFacade);
+            return TableColumn.renderDetailsColumn(render(details), jenkinsFacade);
         }
 
         /**
@@ -272,8 +258,8 @@ public abstract class DetailsTableModel extends TableModel {
             return description;
         }
 
-        public String getDescriptionContent() {
-            return descriptionContent;
+        public String getMessage() {
+            return message;
         }
 
         public DetailedColumnDefinition getFileName() {
