@@ -18,6 +18,8 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 public class Doxygen extends ReportScanningTool {
     private static final long serialVersionUID = -958188599615335136L;
     private static final String ID = "doxygen";
+    private static final String DOXYGEN_WARNING_PATTERN =
+        "(?:(.+?):(\\d+):(?:(\\d+):)?)? ?([wW]arning|.*[Ee]rror): (.*)$";
 
     /** Creates a new instance of {@link Doxygen}. */
     @DataBoundConstructor
@@ -28,7 +30,7 @@ public class Doxygen extends ReportScanningTool {
 
     @Override
     public IssueParser createParser() {
-        return new Gcc4CompilerParser();
+        return new Gcc4CompilerParser(DOXYGEN_WARNING_PATTERN);
     }
 
     /** Descriptor for this static analysis tool. */
