@@ -365,6 +365,12 @@
 
     <!-- Jenkins Plug-in Dependencies required for integration tests -->
     <dependency>
+      <groupId>com.parasoft</groupId>
+      <artifactId>parasoft-findings</artifactId>
+      <version>10.5.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>flexible-publish</artifactId>
       <version>${flexible-publish.version}</version>

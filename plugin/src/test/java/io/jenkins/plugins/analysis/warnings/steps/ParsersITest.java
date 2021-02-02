@@ -3,14 +3,13 @@ package io.jenkins.plugins.analysis.warnings.steps;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Test;
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+import org.junit.Test;
+
+import com.parasoft.xtest.reports.jenkins.tool.ParasoftTool;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
-
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
-
-import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
@@ -69,6 +68,13 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             + "files&#61;&#34;$files $directory/$i&#34;\n"
             + "done</code></pre>";
 
+    /** Runs the Parasoft parser (part of the parasoft-findings plugin) on a file that contains 5 issues. */
+    @Test
+    public void shouldReadParasoftWarnings() {
+        shouldFindIssuesOfTool(5, new ParasoftTool(), "parasoft.xml");
+    }
+
+    /** Runs the native parser on a file that contains 9 issues. */
     @Test
     void shouldFindAllRevapiIssues() {
         shouldFindIssuesOfTool(7, new RevApi(), "revapi-result.json");
@@ -992,7 +998,7 @@ class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     void shouldFindAllCodeGeneratorIssues() {
         shouldFindIssuesOfTool(8, new CodeGenerator(), "CodeGenerator.log");
     }
-    
+
     /** Runs the trivy parser on an output file that contains 4 issues. */
     @Test
     void shouldFindAllTrivyIssues() {
