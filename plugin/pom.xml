@@ -12,7 +12,7 @@
   <artifactId>warnings-ng</artifactId>
   <packaging>hpi</packaging>
   <name>Warnings Next Generation Plugin</name>
-  <version>8.8.0</version>
+  <version>${revision}${changelist}</version>
 
   <description>Jenkins Warnings Next Generation plugin collects compiler warnings or issues reported by static
     analysis tools and visualizes the results. It has built-in support for numerous static analysis tools
@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.8.0</revision>
+    <revision>8.9.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
@@ -748,7 +748,7 @@
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>v8.8.0</tag>
+    <tag>${scmTag}</tag>
   </scm>
 
   <repositories>
