@@ -1,5 +1,9 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import java.util.Map;
+
+import edu.umd.cs.findbugs.annotations.NonNull;
+
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
@@ -161,5 +165,14 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
         }
 
         return model.validateId(id);
+    }
+
+    @Override
+    public String argumentsToString(@NonNull final Map<String, Object> namedArgs) {
+        String formatted = super.argumentsToString(namedArgs);
+        if (formatted != null) {
+            return formatted;
+        }
+        return namedArgs.toString();
     }
 }
