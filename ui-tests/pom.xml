@@ -16,7 +16,7 @@
   <name>UI Tests of Warnings Plugin</name>
 
   <properties>
-    <jenkins.version>2.249.3</jenkins.version>
+    <jenkins.version>2.263.3</jenkins.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
     <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
@@ -98,6 +98,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration>
               <reuseForks>false</reuseForks>
+              <trimStackTrace>false</trimStackTrace> <!-- SUREFIRE-1798 -->
               <environmentVariables>
                 <PLUGINS_DIR>../plugin/target/test-classes/test-dependencies</PLUGINS_DIR>
                 <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
@@ -166,10 +167,11 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <reuseForks>false</reuseForks>
+          <trimStackTrace>false</trimStackTrace> <!-- SUREFIRE-1798 -->
           <environmentVariables>
             <PLUGINS_DIR>../plugin/target/test-classes/test-dependencies</PLUGINS_DIR>
             <JENKINS_VERSION>${jenkins.version}</JENKINS_VERSION>
-            <BROWSER>firefox-container</BROWSER>
+            <BROWSER>chrome-container</BROWSER>
           </environmentVariables>
           <rerunFailingTestsCount>1</rerunFailingTestsCount>
           <includes>
