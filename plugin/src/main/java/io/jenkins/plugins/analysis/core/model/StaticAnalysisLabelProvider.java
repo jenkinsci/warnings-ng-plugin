@@ -80,10 +80,10 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         setNameAndRawName(name);
     }
 
-    private void setNameAndRawName(final String name) {
-        if (StringUtils.isNotBlank(name)) { // don't overwrite with empty
-            this.rawName = name;
-            this.name = SANITIZER.render(name);
+    private void setNameAndRawName(final String originalName) {
+        if (StringUtils.isNotBlank(originalName)) { // don't overwrite with empty
+            rawName = originalName;
+            name = SANITIZER.render(originalName);
         }
     }
 
