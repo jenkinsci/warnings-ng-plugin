@@ -688,9 +688,9 @@
               </item>
               <item>
                 <regex>true</regex>
-                <code>java.method.removed</code>
-                <methodName>do[A-Z].*</methodName>
-                <justification>Form validation methods are no API methods</justification>
+                <code>java.field.enumConstantOrderChanged</code>
+                <classQualifiedName>io.jenkins.plugins.analysis.core.util.TrendChartType</classQualifiedName>
+                <justification>Internal API to render the available trends.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>

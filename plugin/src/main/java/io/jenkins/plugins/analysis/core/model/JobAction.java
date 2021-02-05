@@ -201,7 +201,11 @@ public class JobAction implements Action, AsyncTrendChart {
     @SuppressWarnings("unused") // Called by jelly view
     @Override
     public boolean isTrendVisible() {
-        return trendChartType != TrendChartType.NONE && createBuildHistory().hasMultipleResults();
+        return isTrendEnabled() && createBuildHistory().hasMultipleResults();
+    }
+
+    private boolean isTrendEnabled() {
+        return trendChartType != TrendChartType.NONE && trendChartType != TrendChartType.AGGREGATION_ONLY;
     }
 
     /**

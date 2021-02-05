@@ -95,6 +95,10 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         project = createAggregationJob(TrendChartType.TOOLS_ONLY);
         assertThatCheckstyleAndEclipseChartExist(project, true);
         assertThatAggregationChartDoesNotExists(project);
+
+        project = createAggregationJob(TrendChartType.AGGREGATION_ONLY);
+        assertThatCheckstyleAndEclipseChartExist(project, false);
+        assertThatAggregationChartExists(project, true);
     }
 
     private ReportScanningTool createCheckStyle() {
@@ -130,9 +134,19 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         ));
 
         buildSuccessfully(job);
-        buildSuccessfully(job);
+
         assertThatAggregationChartDoesNotExists(job);
         assertThatCheckstyleAndEclipseChartExist(job, true);
+
+        job.setDefinition(asStage("recordIssues tools: ["
+                + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
+                + "eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')], trendChartType: 'AGGREGATION_ONLY'"
+        ));
+
+        buildSuccessfully(job);
+
+        assertThatAggregationChartExists(job, true);
+        assertThatCheckstyleAndEclipseChartExist(job, false);
 
         job.setDefinition(asStage("recordIssues tools: ["
                 + "checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8'),"
@@ -140,7 +154,20 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         ));
 
         buildSuccessfully(job);
+
+        assertThatAggregationChartDoesNotExists(job);
+        assertThatCheckstyleAndEclipseChartExist(job, false);
+
+        job.setDefinition(
+                asStage("def checkstyle = scanForIssues tool: checkStyle(pattern:'**/checkstyle.xml', reportEncoding:'UTF-8')",
+                        "publishIssues issues:[checkstyle], trendChartType: 'AGGREGATION_ONLY'",
+                        "def eclipse = scanForIssues tool: eclipse(pattern:'**/eclipse.txt', reportEncoding:'UTF-8')",
+                        "publishIssues issues:[eclipse], trendChartType: 'AGGREGATION_ONLY'"
+                ));
+
         buildSuccessfully(job);
+
+        assertThatAggregationChartExists(job, true);
         assertThatCheckstyleAndEclipseChartExist(job, false);
     }
 

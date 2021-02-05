@@ -131,7 +131,7 @@ class IssuesPublisher {
                 = new ResultAction(run, result, healthDescriptor, getId(), name, sourceCodeEncoding, trendChartType);
         run.addAction(action);
 
-        if (trendChartType == TrendChartType.TOOLS_AGGREGATION) {
+        if (trendChartType == TrendChartType.TOOLS_AGGREGATION || trendChartType == TrendChartType.AGGREGATION_ONLY) {
             run.addOrReplaceAction(new AggregationAction());
         }
 
@@ -241,7 +241,7 @@ class IssuesPublisher {
         Run<?, ?> reference = referenceFinder.findReference(run, log)
                 .orElseGet(() -> {
                     log.logInfo("Obtaining reference build from same job (%s)", run.getParent().getDisplayName());
-                    return this.run;
+                    return run;
                 });
         log.getInfoMessages().forEach(issues::logInfo);
         log.getErrorMessages().forEach(issues::logError);

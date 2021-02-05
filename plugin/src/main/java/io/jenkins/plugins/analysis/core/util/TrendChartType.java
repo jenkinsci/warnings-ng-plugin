@@ -10,6 +10,8 @@ public enum TrendChartType {
     TOOLS_AGGREGATION,
     /** The aggregation trend is not shown, only the analysis tool trend charts are shown. */
     TOOLS_ONLY,
+    /** The aggregation trend is only shown, no other analysis tool trend charts are shown. */
+    AGGREGATION_ONLY,
     /** Neither the aggregation trend nor analysis tool trend charts are shown. */
     NONE
 }
