@@ -80,6 +80,7 @@ public class ForensicsModel extends DetailsTableModel {
                 .setHeaderClass(ColumnCss.NUMBER));
         columns.add(new TableColumn(Messages.Table_Column_Churn(), "churn")
                 .setHeaderClass(ColumnCss.NUMBER));
+        columns.add(createHiddenDetailsColumn());
 
         return columns;
     }

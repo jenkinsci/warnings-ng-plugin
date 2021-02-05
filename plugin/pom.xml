@@ -34,7 +34,7 @@
     <font-awesome-api.version>5.15.2-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-2</jquery3-api.version>
     <bootstrap4-api.version>4.6.0-1</bootstrap4-api.version>
-    <data-tables-api.version>1.10.23-1</data-tables-api.version>
+    <data-tables-api.version>1.10.23-2-rc378.840ba07d8947</data-tables-api.version>
     <echarts-api.version>4.9.0-3</echarts-api.version>
 
     <commons.lang.version>3.11</commons.lang.version>
@@ -349,7 +349,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
-      <version>0.9.1</version>
+      <version>0.9.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -490,7 +490,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ansicolor</artifactId>
-      <version>0.7.5</version>
+      <version>0.7.4</version>
       <scope>test</scope>
     </dependency>
     <dependency>

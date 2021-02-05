@@ -106,6 +106,12 @@ public abstract class DetailsTableModel extends TableModel {
         return new TableColumn(Messages.Table_Column_Details(), "description").setHeaderClass(ColumnCss.NO_SORT);
     }
 
+    protected TableColumn createHiddenDetailsColumn() {
+        return new TableColumn("Hiddendetails", "message")
+            .setHeaderClass(ColumnCss.HIDDEN)
+            .setWidth(0);
+    }
+
     protected TableColumn createFileColumn() {
         return new TableColumn(Messages.Table_Column_File(), "fileName", "string");
     }
@@ -136,6 +142,7 @@ public abstract class DetailsTableModel extends TableModel {
         private static final Sanitizer SANITIZER = new Sanitizer();
 
         private final String description;
+        private final String message;
         private final DetailedColumnDefinition fileName;
         private final String age;
         private final JenkinsFacade jenkinsFacade;
@@ -160,6 +167,7 @@ public abstract class DetailsTableModel extends TableModel {
                 final Issue issue,
                 final JenkinsFacade jenkinsFacade) {
             this.jenkinsFacade = jenkinsFacade;
+            message = render(issue.getMessage());
             description = formatDetails(issue, descriptionProvider.getDescription(issue));
             age = ageBuilder.apply(parseInt(issue.getReference()));
             fileName = createFileName(fileNameRenderer, issue);
@@ -248,6 +256,10 @@ public abstract class DetailsTableModel extends TableModel {
 
         public String getDescription() {
             return description;
+        }
+
+        public String getMessage() {
+            return message;
         }
 
         public DetailedColumnDefinition getFileName() {
