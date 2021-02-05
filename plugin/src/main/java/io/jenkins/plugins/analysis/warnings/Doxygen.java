@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
+import edu.hm.hafner.analysis.parser.DoxygenParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -18,8 +18,6 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 public class Doxygen extends ReportScanningTool {
     private static final long serialVersionUID = -958188599615335136L;
     private static final String ID = "doxygen";
-    private static final String DOXYGEN_WARNING_PATTERN =
-        "(?:(.+?):(\\d+):(?:(\\d+):)?)? ?([wW]arning|.*[Ee]rror): (.*)$";
 
     /** Creates a new instance of {@link Doxygen}. */
     @DataBoundConstructor
@@ -30,7 +28,7 @@ public class Doxygen extends ReportScanningTool {
 
     @Override
     public IssueParser createParser() {
-        return new Gcc4CompilerParser(DOXYGEN_WARNING_PATTERN);
+        return new DoxygenParser();
     }
 
     /** Descriptor for this static analysis tool. */
