@@ -632,6 +632,7 @@ You can configure the position of this aggregation trend in the pipeline script 
 - `AGGREGATION_TOOLS`: The aggregation trend is shown **before** all other analysis tool trend charts.
 - `TOOLS_AGGREGATION`: The aggregation trend is shown **after** all other analysis tool trend charts.
 - `TOOLS_ONLY`: The aggregation trend is not shown, only the analysis tool trend charts are shown.
+- `AGGREGATION_ONLY`: The aggregation trend is only shown, no other analysis tool trend charts are shown.
 - `NONE`: Neither the aggregation trend nor analysis tool trend charts are shown. 
 
 In the details page you can cycle through the available charts by using the carousel control. The following different trend chart types are currently available:
