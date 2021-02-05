@@ -1,7 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.Gcc4CompilerParser;
+import edu.hm.hafner.analysis.parser.DoxygenParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -28,7 +28,7 @@ public class Doxygen extends ReportScanningTool {
 
     @Override
     public IssueParser createParser() {
-        return new Gcc4CompilerParser();
+        return new DoxygenParser();
     }
 
     /** Descriptor for this static analysis tool. */

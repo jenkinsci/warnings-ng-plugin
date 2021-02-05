@@ -855,7 +855,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the Doxygen parser on an output file that contains 18 issues. */
     @Test
     public void shouldFindAllDoxygenIssues() {
-        shouldFindIssuesOfTool(18, new Doxygen(), "doxygen.txt");
+        shouldFindIssuesOfTool(19, new Doxygen(), "doxygen.txt");
     }
 
     /** Runs the Dr. Memory parser on an output file that contains 8 issues. */
