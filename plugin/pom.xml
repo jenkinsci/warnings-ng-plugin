@@ -627,6 +627,10 @@
       <url>https://repo.jenkins-ci.org/public/</url>
     </repository>
     <repository>
+      <id>repo.parasoft.com</id>
+      <url>https://github.com/jenkinsci/parasoft-findings-plugin/tree/master/repository</url>
+    </repository>
+    <repository>
       <id>incrementals.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/incrementals/</url>
     </repository>
