@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import io.jenkins.plugins.analysis.warnings.PyLint.PyLintDescriptions;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests the class {@link PyLintDescriptions}.
