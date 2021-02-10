@@ -688,9 +688,9 @@
               </item>
               <item>
                 <regex>true</regex>
-                <code>java.field.enumConstantOrderChanged</code>
-                <classQualifiedName>io.jenkins.plugins.analysis.core.util.TrendChartType</classQualifiedName>
-                <justification>Internal API to render the available trends.</justification>
+                <code>java.method.numberOfParametersChanged</code>
+                <methodName>do[A-Z].*</methodName>
+                <justification>Validation methods are internal API.</justification>
               </item>
               <item>
                 <code>java.method.added</code>

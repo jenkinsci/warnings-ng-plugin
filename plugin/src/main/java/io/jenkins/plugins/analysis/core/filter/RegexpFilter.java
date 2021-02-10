@@ -11,9 +11,11 @@ import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 import edu.hm.hafner.util.Ensure;
 import edu.hm.hafner.util.VisibleForTesting;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
@@ -80,14 +82,17 @@ public abstract class RegexpFilter extends AbstractDescribableImpl<RegexpFilter>
         /**
          * Performs on-the-fly validation on threshold for high warnings.
          *
+         * @param project
+         *         the project that is configured
          * @param pattern
          *         the pattern to check
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckPattern(@QueryParameter final String pattern) {
-            if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String pattern) {
+            if (!jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 

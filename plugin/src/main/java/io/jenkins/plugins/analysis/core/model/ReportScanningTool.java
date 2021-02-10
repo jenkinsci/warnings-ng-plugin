@@ -234,11 +234,13 @@ public abstract class ReportScanningTool extends Tool {
         /**
          * Returns a model with all available charsets.
          *
+         * @param project
+         *         the project that is configured
          * @return a model with all available charsets
          */
         @POST
-        public ComboBoxModel doFillReportEncodingItems() {
-            if (JENKINS.hasPermission(Item.CONFIGURE)) {
+        public ComboBoxModel doFillReportEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
+            if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return model.getAllCharsets();
             }
             return new ComboBoxModel();
@@ -247,14 +249,17 @@ public abstract class ReportScanningTool extends Tool {
         /**
          * Performs on-the-fly validation of the character encoding.
          *
+         * @param project
+         *         the project that is configured
          * @param reportEncoding
          *         the character encoding
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckReportEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String reportEncoding) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
@@ -265,7 +270,7 @@ public abstract class ReportScanningTool extends Tool {
          * Performs on-the-fly validation on the ant pattern for input files.
          *
          * @param project
-         *         the project
+         *         the project that is configured
          * @param pattern
          *         the file pattern
          *
@@ -274,7 +279,7 @@ public abstract class ReportScanningTool extends Tool {
         @POST
         public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String pattern) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 

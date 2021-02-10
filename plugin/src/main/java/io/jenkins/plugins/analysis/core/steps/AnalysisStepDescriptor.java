@@ -4,9 +4,11 @@ import java.util.Map;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
+import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
@@ -28,11 +30,13 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Returns a model with all available charsets.
      *
+     * @param project
+     *         the project that is configured
      * @return a model with all available charsets
      */
     @POST
-    public ComboBoxModel doFillSourceCodeEncodingItems() {
-        if (JENKINS.hasPermission(Item.CONFIGURE)) {
+    public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return model.getAllCharsets();
         }
         return new ComboBoxModel();
@@ -41,14 +45,17 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Performs on-the-fly validation of the character encoding.
      *
+     * @param project
+     *         the project that is configured
      * @param reportEncoding
      *         the character encoding
      *
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
-        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+    public FormValidation doCheckReportEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String reportEncoding) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }
 
@@ -58,14 +65,17 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Performs on-the-fly validation on the character encoding.
      *
+     * @param project
+     *         the project that is configured
      * @param sourceCodeEncoding
      *         the character encoding
      *
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
-        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+    public FormValidation doCheckSourceCodeEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String sourceCodeEncoding) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }
 
@@ -75,11 +85,13 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Returns a model with all available severity filters.
      *
+     * @param project
+     *         the project that is configured
      * @return a model with all available severity filters
      */
     @POST
-    public ListBoxModel doFillMinimumSeverityItems() {
-        if (JENKINS.hasPermission(Item.CONFIGURE)) {
+    public ListBoxModel doFillMinimumSeverityItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return model.getAllSeverityFilters();
         }
         return new ListBoxModel();
@@ -89,13 +101,15 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Returns the model with the possible reference jobs.
      *
+     * @param project
+     *         the project that is configured
      * @return the model with the possible reference jobs
      * @deprecated not used anymore, part of forensics plugin
      */
     @Deprecated
     @POST
-    public ComboBoxModel doFillReferenceJobNameItems() {
-        if (JENKINS.hasPermission(Item.CONFIGURE)) {
+    public ComboBoxModel doFillReferenceJobNameItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return model.getAllJobs();
         }
         return new ComboBoxModel();
@@ -104,6 +118,8 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Performs on-the-fly validation of the health report thresholds.
      *
+     * @param project
+     *         the project that is configured
      * @param healthy
      *         the healthy threshold
      * @param unhealthy
@@ -112,8 +128,9 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
-        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+    public FormValidation doCheckHealthy(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }
         return model.validateHealthy(healthy, unhealthy);
@@ -122,6 +139,8 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Performs on-the-fly validation of the health report thresholds.
      *
+     * @param project
+     *         the project that is configured
      * @param healthy
      *         the healthy threshold
      * @param unhealthy
@@ -130,8 +149,9 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
-        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+    public FormValidation doCheckUnhealthy(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }
         return model.validateUnhealthy(healthy, unhealthy);
@@ -140,11 +160,13 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Returns a model with all aggregation trend chart positions.
      *
+     * @param project
+     *         the project that is configured
      * @return a model with all  aggregation trend chart positions
      */
     @POST
-    public ListBoxModel doFillTrendChartTypeItems() {
-        if (JENKINS.hasPermission(Item.CONFIGURE)) {
+    public ListBoxModel doFillTrendChartTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return model.getAllTrendChartTypes();
         }
         return new ListBoxModel();
@@ -153,14 +175,17 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
     /**
      * Performs on-the-fly validation of the ID.
      *
+     * @param project
+     *         the project that is configured
      * @param id
      *         the ID of the tool
      *
      * @return the validation result
      */
     @POST
-    public FormValidation doCheckId(@QueryParameter final String id) {
-        if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+    public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String id) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
             return FormValidation.ok();
         }
 

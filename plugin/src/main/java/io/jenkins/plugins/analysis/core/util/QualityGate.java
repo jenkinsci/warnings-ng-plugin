@@ -10,11 +10,13 @@ import java.util.function.Function;
 import edu.hm.hafner.util.VisibleForTesting;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.FormValidation;
@@ -320,13 +322,15 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         /**
          * Return the model for the select widget.
          *
+         * @param project
+         *         the project that is configured
          * @return the quality gate types
          */
         @POST
-        public ListBoxModel doFillTypeItems() {
+        public ListBoxModel doFillTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
             ListBoxModel model = new ListBoxModel();
 
-            if (jenkins.hasPermission(Item.CONFIGURE)) {
+            if (jenkins.hasPermission(Item.CONFIGURE, project)) {
                 for (QualityGateType qualityGateType : QualityGateType.values()) {
                     model.add(qualityGateType.getDisplayName(), qualityGateType.name());
                 }
@@ -338,6 +342,8 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
         /**
          * Performs on-the-fly validation of the quality gate threshold.
          *
+         * @param project
+         *         the project that is configured
          * @param threshold
          *         the threshold
          *
@@ -345,8 +351,9 @@ public class QualityGate extends AbstractDescribableImpl<QualityGate> implements
          */
         @SuppressWarnings("WeakerAccess")
         @POST
-        public FormValidation doCheckThreshold(@QueryParameter final int threshold) {
-            if (!jenkins.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckThreshold(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final int threshold) {
+            if (!jenkins.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return modelValidation.validateThreshold(threshold);
