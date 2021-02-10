@@ -625,7 +625,7 @@ use the same severity for all issues.
 In order to see the trend of the analysis results, several charts show the issues per build. These charts are shown in the details page as well as in the job overview. 
 
 In the job overview page trends for all static analysis results are shown and an additional aggregation trend (if several results are available). 
-You can configure the position of this aggregation trend in the pipeline script (or freestyle job configuration):
+You can configure the position of this aggregation trend in the pipeline script using the property `trendChartType` (or use the freestyle job configuration in Jenkins' user interface):
 
 ![job trend seletion](images/trend-selection.png)
 
