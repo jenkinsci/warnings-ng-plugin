@@ -9,12 +9,14 @@ import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.FilePath;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.model.Run;
@@ -167,14 +169,16 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         /**
          * Performs on-the-fly validation of the ID.
          *
+         * @param project
+         *         the project that is configured
          * @param id
          *         the ID of the tool
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@QueryParameter final String id) {
-            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckId(@AncestorInPath final AbstractProject project, @QueryParameter final String id) {
+            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 

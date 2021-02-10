@@ -13,9 +13,11 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.UnescapedText;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
+import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
@@ -167,6 +169,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         /**
          * Performs on-the-fly validation on threshold for high warnings.
          *
+         * @param project
+         *         the project that is configured
          * @param highThreshold
          *         the threshold for high warnings
          * @param normalThreshold
@@ -175,9 +179,10 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckHighThreshold(@QueryParameter("highThreshold") final int highThreshold,
+        public FormValidation doCheckHighThreshold(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return VALIDATION.validateHigh(highThreshold, normalThreshold);
@@ -186,6 +191,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         /**
          * Performs on-the-fly validation on threshold for normal warnings.
          *
+         * @param project
+         *         the project that is configured
          * @param highThreshold
          *         the threshold for high warnings
          * @param normalThreshold
@@ -194,9 +201,10 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckNormalThreshold(@QueryParameter("highThreshold") final int highThreshold,
+        public FormValidation doCheckNormalThreshold(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return VALIDATION.validateNormal(highThreshold, normalThreshold);

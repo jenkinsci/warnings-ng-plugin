@@ -10,12 +10,14 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.util.StringContainsUtils;
 import edu.hm.hafner.util.VisibleForTesting;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
 import hudson.model.Item;
 import hudson.util.ComboBoxModel;
@@ -107,12 +109,14 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
         /**
          * Returns a model that contains all static analysis tool IDs of all jobs.
          *
+         * @param project
+         *         the project that is configured
          * @return a model with all static analysis tool IDs of all jobs
          */
         @POST
-        public ComboBoxModel doFillIdItems() {
+        public ComboBoxModel doFillIdItems(@AncestorInPath final AbstractProject<?, ?> project) {
             ComboBoxModel model = new ComboBoxModel();
-            if (jenkinsFacade.hasPermission(Item.CONFIGURE)) {
+            if (jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
                 model.addAll(collectAvailableIds());
             }
             return model;
@@ -128,14 +132,17 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
         /**
          * Performs on-the-fly validation of the ID.
          *
+         * @param project
+         *         the project that is configured
          * @param id
          *         the ID of the tool
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@QueryParameter final String id) {
-            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String id) {
+            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             if (collectAvailableIds().contains(id)) {

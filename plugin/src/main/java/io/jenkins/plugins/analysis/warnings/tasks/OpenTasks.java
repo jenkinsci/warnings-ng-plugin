@@ -225,7 +225,7 @@ public class OpenTasks extends Tool {
          * Performs on-the-fly validation on the ant pattern for input files.
          *
          * @param project
-         *         the project
+         *         the project that is configured
          * @param includePattern
          *         the file pattern
          *
@@ -234,7 +234,7 @@ public class OpenTasks extends Tool {
         @POST
         public FormValidation doCheckIncludePattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String includePattern) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
@@ -245,7 +245,7 @@ public class OpenTasks extends Tool {
          * Performs on-the-fly validation on the ant pattern for input files.
          *
          * @param project
-         *         the project
+         *         the project that is configured
          * @param excludePattern
          *         the file pattern
          *
@@ -254,7 +254,7 @@ public class OpenTasks extends Tool {
         @POST
         public FormValidation doCheckExcludePattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String excludePattern) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
@@ -264,6 +264,8 @@ public class OpenTasks extends Tool {
         /**
          * Validates the example text that will be scanned for open tasks.
          *
+         * @param project
+         *         the project that is configured
          * @param example
          *         the text to be scanned for open tasks
          * @param high
@@ -281,13 +283,14 @@ public class OpenTasks extends Tool {
          */
         @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
         @POST
-        public FormValidation doCheckExample(@QueryParameter final String example,
+        public FormValidation doCheckExample(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String example,
                 @QueryParameter final String high,
                 @QueryParameter final String normal,
                 @QueryParameter final String low,
                 @QueryParameter final boolean ignoreCase,
                 @QueryParameter final boolean asRegexp) {
-            if (StringUtils.isEmpty(example) || !JENKINS.hasPermission(Item.CONFIGURE)) {
+            if (StringUtils.isEmpty(example) || !JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 

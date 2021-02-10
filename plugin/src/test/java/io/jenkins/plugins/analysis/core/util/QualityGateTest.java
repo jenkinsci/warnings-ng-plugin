@@ -23,18 +23,18 @@ class QualityGateTest extends SerializableTest<QualityGate> {
     @Test
     void shouldValidateThreshold() {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
-        when(jenkinsFacade.hasPermission(Item.CONFIGURE)).thenReturn(true);
+        when(jenkinsFacade.hasPermission(Item.CONFIGURE, null)).thenReturn(true);
 
         QualityGateDescriptor descriptor = new QualityGateDescriptor(jenkinsFacade);
 
-        assertThat(descriptor.doCheckThreshold(0))
+        assertThat(descriptor.doCheckThreshold(null, 0))
                 .isError()
                 .hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
-        assertThat(descriptor.doCheckThreshold(-1))
+        assertThat(descriptor.doCheckThreshold(null, -1))
                 .isError()
                 .hasMessage(Messages.FieldValidator_Error_NegativeThreshold());
 
-        assertThat(descriptor.doCheckThreshold(1))
+        assertThat(descriptor.doCheckThreshold(null, 1))
                 .isOk();
     }
 

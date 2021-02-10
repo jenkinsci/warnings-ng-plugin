@@ -7,6 +7,8 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
+import hudson.model.Item;
+
 import io.jenkins.plugins.analysis.core.filter.IncludeType.DescriptorImpl;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter.RegexpFilterDescriptor;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -45,15 +47,15 @@ class RegexpFilterTest {
     @Test
     void shouldValidatePattern() {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
-        when(jenkinsFacade.hasPermission(any())).thenReturn(true);
+        when(jenkinsFacade.hasPermission(Item.CONFIGURE, null)).thenReturn(true);
 
         RegexpFilterDescriptor descriptor = new DescriptorImpl(jenkinsFacade);
-        assertThat(descriptor.doCheckPattern(null)).isOk().hasMessage(Messages.pattern_blank());
-        assertThat(descriptor.doCheckPattern(StringUtils.EMPTY)).isOk().hasMessage(Messages.pattern_blank());
-        assertThat(descriptor.doCheckPattern("one brace (")).isError();
-        assertThat(descriptor.doCheckPattern("backslash \\")).isError();
+        assertThat(descriptor.doCheckPattern(null, null)).isOk().hasMessage(Messages.pattern_blank());
+        assertThat(descriptor.doCheckPattern(null, StringUtils.EMPTY)).isOk().hasMessage(Messages.pattern_blank());
+        assertThat(descriptor.doCheckPattern(null, "one brace (")).isError();
+        assertThat(descriptor.doCheckPattern(null, "backslash \\")).isError();
 
-        assertThat(descriptor.doCheckPattern("^.*[a-z]")).isOk();
+        assertThat(descriptor.doCheckPattern(null, "^.*[a-z]")).isOk();
     }
     
     @Test
