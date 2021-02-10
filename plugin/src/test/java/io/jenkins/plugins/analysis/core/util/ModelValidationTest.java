@@ -102,6 +102,14 @@ class ModelValidationTest {
     }
 
     @Test
+    void doFillTrendChartOptions() {
+        ModelValidation model = new ModelValidation();
+        ListBoxModel allFilters = model.getAllTrendChartTypes();
+
+        assertThat(allFilters).hasSize(TrendChartType.values().length);
+    }
+
+    @Test
     void doFillReferenceJobItemsShouldBeNotEmpty() {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getAllJobNames()).thenReturn(new HashSet<>());

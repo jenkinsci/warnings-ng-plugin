@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.10.0</revision>
+    <revision>8.9.1</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
@@ -691,6 +691,11 @@
                 <code>java.field.enumConstantOrderChanged</code>
                 <classQualifiedName>io.jenkins.plugins.analysis.core.util.TrendChartType</classQualifiedName>
                 <justification>Internal API to render the available trends.</justification>
+              </item>
+              <item>
+                <code>java.method.added</code>
+                <classSimpleName>Messages</classSimpleName>
+                <justification>Messages are now external API.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>

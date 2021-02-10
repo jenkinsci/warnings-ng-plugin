@@ -158,6 +158,7 @@ public class ModelValidation {
         options.add(Messages.AggregationChart_AGGREGATION_TOOLS(), TrendChartType.AGGREGATION_TOOLS.name());
         options.add(Messages.AggregationChart_TOOLS_AGGREGATION(), TrendChartType.TOOLS_AGGREGATION.name());
         options.add(Messages.AggregationChart_TOOLS_ONLY(), TrendChartType.TOOLS_ONLY.name());
+        options.add(Messages.AggregationChart_AGGREGATION_ONLY(), TrendChartType.AGGREGATION_ONLY.name());
         options.add(Messages.AggregationChart_NONE(), TrendChartType.NONE.name());
         return options;
     }
