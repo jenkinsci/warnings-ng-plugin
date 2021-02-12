@@ -349,7 +349,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
-      <version>0.9.1</version>
+      <version>0.9.2</version>
       <scope>test</scope>
     </dependency>
     <dependency>
