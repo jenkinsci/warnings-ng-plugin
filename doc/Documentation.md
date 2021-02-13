@@ -727,9 +727,9 @@ the configured repository browser.
   
 ![source control overview](images/git.png) 
 
-In order to disable the blame feature, set the property `blameDisabled` to `true`, see the following example:
+In order to disable the blame feature, set the property `skipBlames` to `true`, see the following example:
 ```groovy
-recordIssues blameDisabled: true, tool: java(pattern: '*.log')
+recordIssues skipBlames: true, tool: java(pattern: '*.log')
 ```
 
 ### Repository forensics (for Git projects)
