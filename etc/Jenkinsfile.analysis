@@ -8,8 +8,8 @@ node {
             sh 'mvn -ntp -V -e clean verify -f plugin/pom.xml -Dmaven.test.failure.ignore -DskipITs'
         }
 
-        discoverGitReferenceBuild
-        mineRepository
+        discoverGitReferenceBuild()
+        mineRepository()
         recordIssues tools: [java(), javaDoc()], aggregatingResults: 'true', id: 'java', name: 'Java'
         recordIssues tool: errorProne()
         junit testResults: '**/target/*-reports/TEST-*.xml'
