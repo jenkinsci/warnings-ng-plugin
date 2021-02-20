@@ -67,7 +67,7 @@ final class DefaultTransformations {
                     + "</i> to <i>"
                     + getString(payload, "targetEntityType")
                     + " &lt;"
-                    + getString(payload, "sourceEntity")
+                    + getString(payload, "targetEntity")
                     + "&gt;</i>"
                     + createLink(rawIssue, getInt(payload, "id"));
         }
