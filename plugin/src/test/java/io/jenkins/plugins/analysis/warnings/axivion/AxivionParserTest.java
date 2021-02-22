@@ -96,7 +96,7 @@ class AxivionParserTest {
         assertThat(issue.getPackageName()).isEqualTo("-");
         assertThat(issue.getModuleName()).isEqualTo("-");
         assertThat(issue.getDescription()).isEqualTo(
-                "Unexpected dependency from <i>Cluster &lt;gravis2:main&gt;</i> to <i>Cluster &lt;gravis2:dg model&gt;</i><p>Cause is a <i>Static_Call</i> dependency from <i>Method &lt;open_file_dialog&gt;</i> to <i>Method &lt;open_file_dialog&gt;</i><p><a target=\"_blank\" rel=\"noopener noreferrer\" href=\"testUrl/issues/AV26941\">More details</a>");
+                "Unexpected dependency from <i>Cluster &lt;gravis2:main&gt;</i> to <i>Cluster &lt;gravis2:dg model&gt;</i><p>Cause is a <i>Static_Call</i> dependency from <i>Method &lt;open_file_dialog&gt;</i> to <i>Method &lt;get_basepath&gt;</i><p><a target=\"_blank\" rel=\"noopener noreferrer\" href=\"testUrl/issues/AV26941\">More details</a>");
     }
 
     @Test
