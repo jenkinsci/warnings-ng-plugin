@@ -17,9 +17,6 @@
 
   <properties>
     <jenkins.version>2.263.3</jenkins.version>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <java.version>1.8</java.version>
-    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
     <json-smart.version>2.3</json-smart.version>
   </properties>
 
@@ -192,16 +189,6 @@
             </goals>
           </execution>
         </executions>
-      </plugin>
-      <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>${maven-compiler-plugin.version}</version>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-          <testSource>${java.version}</testSource>
-          <testTarget>${java.version}</testTarget>
-        </configuration>
       </plugin>
     </plugins>
   </build>
