@@ -28,25 +28,24 @@
 
     <analysis-model-api.version>9.8.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.10.1</forensics-api-plugin.version>
-    <plugin-util-api.version>1.7.1</plugin-util-api.version>
 
+    <forensics-api-plugin.version>1.0.0-rc830.e2ec7c824d46</forensics-api-plugin.version>
+    <plugin-util-api.version>2.0.0-rc276.3347381c7e4d</plugin-util-api.version>
+
+    <data-tables-api.version>1.10.23-3-rc391.920c10987e49</data-tables-api.version>
+    <echarts-api.version>4.9.0-4-rc351.79d6c6255205</echarts-api.version>
     <font-awesome-api.version>5.15.2-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-2</jquery3-api.version>
     <bootstrap4-api.version>4.6.0-1</bootstrap4-api.version>
-    <data-tables-api.version>1.10.23-2</data-tables-api.version>
-    <echarts-api.version>4.9.0-3</echarts-api.version>
 
-    <commons.lang.version>3.11</commons.lang.version>
-    <commons.io.version>2.8.0</commons.io.version>
     <commons.digester.version>2.1</commons.digester.version>
     <commons.digester3.version>3.2</commons.digester3.version>
     <commons.text.version>1.9</commons.text.version>
+
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
     <json.version>20201115</json.version>
-    <jackson2-api.version>2.11.1</jackson2-api.version>
 
     <pmd.version>6.29.0</pmd.version>
 
@@ -62,7 +61,6 @@
     <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
     <matrix-project.version>1.18</matrix-project.version>
     <junit-plugin.version>1.35</junit-plugin.version>
-    <structs.version>1.21</structs.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.14</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
@@ -119,16 +117,6 @@
         <artifactId>code-coverage-api</artifactId>
         <version>1.2.0</version>
       </dependency>
-      <dependency>
-        <groupId>edu.hm.hafner</groupId>
-        <artifactId>codingstyle</artifactId>
-        <version>2.0.4</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>junit</artifactId>
-        <version>1.37</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -144,16 +132,6 @@
       <groupId>org.eclipse.collections</groupId>
       <artifactId>eclipse-collections</artifactId>
       <version>${eclipse-collections.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${commons.lang.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons.io.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
@@ -262,7 +240,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jackson2-api</artifactId>
-      <version>${jackson2-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -283,7 +260,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>structs</artifactId>
-      <version>${structs.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -388,6 +364,12 @@
       <artifactId>xmlunit-assertj</artifactId>
       <version>${xmlunit.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>net.bytebuddy</groupId>
+          <artifactId>byte-buddy</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -522,6 +504,10 @@
         <exclusion>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.jenkins-ci.plugins</groupId>
+          <artifactId>pitmutation</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

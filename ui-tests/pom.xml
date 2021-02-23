@@ -18,6 +18,7 @@
   <properties>
     <jenkins.version>2.263.3</jenkins.version>
     <json-smart.version>2.3</json-smart.version>
+    <json-unit-assertj.version>2.24.0</json-unit-assertj.version>
   </properties>
 
   <dependencies>
@@ -41,13 +42,13 @@
     <dependency>
       <groupId>net.javacrumbs.json-unit</groupId>
       <artifactId>json-unit-assertj</artifactId>
-      <version>2.24.0</version>
+      <version>${json-unit-assertj.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.javacrumbs.json-unit</groupId>
       <artifactId>json-unit-json-path</artifactId>
-      <version>2.24.0</version>
+      <version>${json-unit-assertj.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
