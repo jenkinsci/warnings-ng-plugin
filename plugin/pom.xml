@@ -30,7 +30,7 @@
     <analysis-model-tests.version>9.8.0</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.0.0-rc830.e2ec7c824d46</forensics-api-plugin.version>
-    <plugin-util-api.version>2.0.0-rc276.3347381c7e4d</plugin-util-api.version>
+    <plugin-util-api.version>2.0.0-rc278.241f36dbbad8</plugin-util-api.version>
 
     <data-tables-api.version>1.10.23-3-rc391.920c10987e49</data-tables-api.version>
     <echarts-api.version>4.9.0-4-rc351.79d6c6255205</echarts-api.version>
