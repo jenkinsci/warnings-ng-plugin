@@ -242,7 +242,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
 
         DescriptorImpl(final JenkinsFacade jenkinsFacade) {
             super();
-            
+
             this.jenkinsFacade = jenkinsFacade;
         }
 
@@ -324,8 +324,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
                 return FormValidation.ok();
             }
-
-            if (isNotAllowedToRunScripts()) {
+            if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
             try {
@@ -343,10 +342,6 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
                 return FormValidation.error(
                         Messages.GroovyParser_Error_Script_invalid(exception.getLocalizedMessage()));
             }
-        }
-
-        private boolean isNotAllowedToRunScripts() {
-            return !jenkinsFacade.hasPermission(Jenkins.RUN_SCRIPTS);
         }
 
         /**
@@ -367,7 +362,7 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
             if (!jenkinsFacade.hasPermission(Item.CONFIGURE)) {
                 return FormValidation.ok();
             }
-            if (isNotAllowedToRunScripts()) {
+            if (!jenkinsFacade.hasPermission(Jenkins.ADMINISTER)) {
                 return NO_RUN_SCRIPT_PERMISSION_WARNING;
             }
             if (StringUtils.isNotBlank(example) && StringUtils.isNotBlank(regexp) && StringUtils.isNotBlank(script)) {

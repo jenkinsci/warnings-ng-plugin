@@ -193,7 +193,7 @@ public class DryITest extends IntegrationTestWithJenkinsPerSuite {
                 .map(row -> (DuplicationRow) row)
                 .filter(row -> row.getSeverity().contains(severity))
                 .map(DuplicationRow::getLinesCount)
-                .map(Integer::new)
+                .map(Integer::valueOf)
                 .forEach(count -> assertThat(count).isBetween(min, max));
     }
 

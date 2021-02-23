@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -71,14 +69,5 @@ class ReportXmlStreamTest extends ResourceTest {
                 .hasModuleName("Static Analysis Model and Parsers")
                 .hasPackageName("edu.hm.hafner.analysis")
                 .hasFileName("/var/data/workspace/pipeline-analysis-model/src/main/java/edu/hm/hafner/analysis/Report.java");
-    }
-
-    private Path createTempFile() {
-        try {
-            return Files.createTempFile("test", ".xml");
-        }
-        catch (IOException exception) {
-            throw new AssertionError(exception);
-        }
     }
 }
