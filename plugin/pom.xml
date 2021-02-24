@@ -524,8 +524,8 @@
           <artifactId>spotbugs-annotations</artifactId>
         </exclusion>
         <exclusion>
-          <groupId>org.jenkins-ci.plugins</groupId>
-          <artifactId>pitmutation</artifactId>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
