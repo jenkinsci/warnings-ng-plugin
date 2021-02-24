@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.io.UnsupportedEncodingException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -86,11 +87,11 @@ public class PyLint extends ReportScanningTool {
 
         @Override
         public String getHelp() {
-            return "<p>Create a ./pylintrc that contains:" 
+            return "<p>Create a ./pylintrc that contains:"
                     + "<p><code>msg-template={path}:{module}:{line}: [{msg_id}({symbol}), {obj}] {msg}</code></p>"
-                    + "</p>" 
-                    + "<p>Start pylint using the command:" 
-                    + "<p><code>pylint --rcfile=./pylintrc CODE > pylint.log</code></p>" 
+                    + "</p>"
+                    + "<p>Start pylint using the command:"
+                    + "<p><code>pylint --rcfile=./pylintrc CODE > pylint.log</code></p>"
                     + "</p>";
         }
     }
@@ -106,8 +107,8 @@ public class PyLint extends ReportScanningTool {
         int initialize() {
             JSONParser parser = new JSONParser(JSONParser.MODE_JSON_SIMPLE);
 
-            try {
-                JSONArray elements = (JSONArray) parser.parse(PyLint.class.getResourceAsStream("pylint-descriptions.json"));
+            try (InputStream inputStream = PyLint.class.getResourceAsStream("pylint-descriptions.json")) {
+                JSONArray elements = (JSONArray) parser.parse(inputStream);
                 for (Object element : elements) {
                     JSONObject object = (JSONObject) element;
                     String description = object.getAsString("description");
@@ -115,7 +116,7 @@ public class PyLint extends ReportScanningTool {
                     descriptionById.put(object.getAsString("code"), description);
                 }
             }
-            catch (ParseException | UnsupportedEncodingException ignored) {
+            catch (ParseException | IOException ignored) {
                 // ignore all exceptions
             }
 

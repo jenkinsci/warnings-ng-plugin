@@ -13,18 +13,17 @@ import org.jenkinsci.test.acceptance.po.ListView;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Page object to configure the issues column in a {@link ListView}
+ * Page object to configure the issues column in a {@link ListView}.
  *
  * @author Andreas Riepl
  * @author Oliver Scholz
  */
 public class IssuesColumnConfiguration extends PageObject {
-
     private String jobName;
     private ListView listView;
 
     /**
-     * Creates a new issue column configuration page object
+     * Creates a new issue column configuration page object.
      *
      * @param injector
      *         injector
@@ -36,7 +35,7 @@ public class IssuesColumnConfiguration extends PageObject {
     }
 
     /**
-     * Creates a new issue column configuration page object
+     * Creates a new issue column configuration page object.
      *
      * @param context
      *         context
@@ -48,12 +47,14 @@ public class IssuesColumnConfiguration extends PageObject {
     }
 
     /**
-     * Creates a new issue column configuration page object
+     * Creates a new issue column configuration page object.
      *
      * @param parent
      *         the build that contains the static analysis results
      * @param jobName
      *         the name of the jenkins job
+     * @param listView
+     *         the associated view
      */
     public IssuesColumnConfiguration(final Build parent, final String jobName, final ListView listView) {
         super(parent, parent.url(""));
@@ -63,23 +64,25 @@ public class IssuesColumnConfiguration extends PageObject {
     }
 
     /**
-     * checks the option "select subset of tools" and fills in a tool name
+     * checks the option "select subset of tools" and fills in a tool name.
      *
-     * @param toolId the tool to select
+     * @param toolId
+     *         the tool to select
      */
     public void selectSubsetOfTools(final String toolId) {
-        this.listView.check("Select subset of tools");
-        this.listView.fillIn("_.id", toolId);
+        listView.check("Select subset of tools");
+        listView.fillIn("_.id", toolId);
     }
 
     /**
-     * selects a type from the "Type"-dropdown
+     * selects a type from the "Type"-dropdown.
      *
-     * @param statisticProperty Property object holding the display name
+     * @param statisticProperty
+     *         Property object holding the display name
      */
     public void selectType(final StatisticProperties statisticProperty) {
         // scroll to bottom of page to ensure visibility of dropdown
-        JavascriptExecutor js = ((JavascriptExecutor) driver);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
         js.executeScript("window.scrollTo(0, document.body.scrollHeight)");
 
         Select typeSelect = new Select(driver.findElement(By.name("_.type")));

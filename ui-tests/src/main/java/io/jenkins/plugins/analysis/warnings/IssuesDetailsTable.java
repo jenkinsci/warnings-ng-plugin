@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
@@ -215,6 +217,7 @@ public class IssuesDetailsTable {
             title = property;
         }
 
+        @SuppressFBWarnings("IMPROPER_UNICODE")
         static Header fromTitle(final String title) {
             for (Header value : values()) {
                 if (value.title.equalsIgnoreCase(title)) {

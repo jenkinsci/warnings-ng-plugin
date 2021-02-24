@@ -117,21 +117,23 @@ class ReportXmlStream extends AbstractXmlStream<Report> {
         private final RobustReflectionConverter ref;
 
         ReportConverter(final Mapper mapper, final ReflectionProvider reflectionProvider) {
-            this.ref = new RobustReflectionConverter(mapper, reflectionProvider);
+            ref = new RobustReflectionConverter(mapper, reflectionProvider);
         }
 
         @Override
         public void marshal(final Object source, final HierarchicalStreamWriter writer,
                 final MarshallingContext context) {
-            this.ref.marshal(source, writer, context);
+            ref.marshal(source, writer, context);
         }
 
         @Override
         public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
-            Object unmarshal = this.ref.unmarshal(reader, context);
+            Object unmarshal = ref.unmarshal(reader, context);
             if (unmarshal instanceof Report) {
                 try {
-                    ((Report) unmarshal).isEmpty();
+                    if (((Report) unmarshal).isEmpty()) {
+                        return new Report();
+                    }
                 }
                 catch (NullPointerException npe) { // NOPMD
                     return new Report(); // FIXME: workaround for JENKINS-63659, remove in 8.6.0
