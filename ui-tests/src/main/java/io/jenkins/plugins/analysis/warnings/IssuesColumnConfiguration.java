@@ -19,7 +19,6 @@ import org.jenkinsci.test.acceptance.po.PageObject;
  * @author Oliver Scholz
  */
 public class IssuesColumnConfiguration extends PageObject {
-    private String jobName;
     private ListView listView;
 
     /**
@@ -59,7 +58,6 @@ public class IssuesColumnConfiguration extends PageObject {
     public IssuesColumnConfiguration(final Build parent, final String jobName, final ListView listView) {
         super(parent, parent.url(""));
 
-        this.jobName = jobName;
         this.listView = listView;
     }
 
