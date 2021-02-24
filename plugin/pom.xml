@@ -36,7 +36,7 @@
     <echarts-api.version>4.9.0-4-rc353.37214cc4c96e</echarts-api.version>
     <font-awesome-api.version>5.15.2-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-2</jquery3-api.version>
-    <bootstrap4-api.version>4.6.0-1</bootstrap4-api.version>
+    <bootstrap4-api.version>4.6.0-2-rc333.2b112c91d60f</bootstrap4-api.version>
 
     <commons.digester.version>2.1</commons.digester.version>
     <commons.digester3.version>3.2</commons.digester3.version>
