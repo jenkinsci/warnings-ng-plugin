@@ -108,7 +108,7 @@ class DeltaReportTest {
         DeltaReport deltaReport = new DeltaReport(report, history, 0);
         IssuesStatistics issuesStatistics = deltaReport.getStatistics();
         IssuesStatisticsAssert.assertThat(issuesStatistics)
-                .isNotNull()..usingRecursiveComparison()
+                .isNotNull().usingRecursiveComparison()
                 .isEqualTo(compareIssuesStatistics);
     }
 
