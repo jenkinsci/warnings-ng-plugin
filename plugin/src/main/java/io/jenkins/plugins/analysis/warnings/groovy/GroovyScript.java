@@ -6,10 +6,12 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
+import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.util.ListBoxModel;
 
@@ -96,12 +98,15 @@ public class GroovyScript extends ReportScanningTool {
          * Returns all registered Groovy parsers. These are packed into a {@link ListBoxModel} in order to show them in
          * the list box of the config.jelly view part.
          *
+         * @param project
+         *         the project that is configured
+         *
          * @return the model of the list box
          */
         @SuppressWarnings("unused") // Called from config.jelly
         @POST
-        public ListBoxModel doFillParserIdItems() {
-            if (new JenkinsFacade().hasPermission(Item.CONFIGURE)) {
+        public ListBoxModel doFillParserIdItems(@AncestorInPath final AbstractProject<?, ?> project) {
+            if (new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 ListBoxModel options = ParserConfiguration.getInstance().asListBoxModel();
                 if (options.isEmpty()) {
                     return options.add(Messages.Warnings_Groovy_NoParsersDefined());
