@@ -39,7 +39,7 @@ public class TaskScannerBenchmark extends ResourceTest {
      * BenchmarkRunner - runs all benchmark tests in this class.
      */
     @Test
-    public void benchmark() {
+    public void benchmark() throws Exception {
         Options opt = new OptionsBuilder()
                 .include(getClass().getName() + ".*")
                 .addProfiler(StackProfiler.class)
