@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,9 +39,9 @@ public class TaskScannerBenchmark extends ResourceTest {
      * BenchmarkRunner - runs all benchmark tests in this class.
      */
     @Test
-    public void benchmark() throws Exception {
+    public void benchmark() {
         Options opt = new OptionsBuilder()
-                .include(this.getClass().getName() + ".*")
+                .include(getClass().getName() + ".*")
                 .addProfiler(StackProfiler.class)
                 .build();
 
@@ -94,7 +95,11 @@ public class TaskScannerBenchmark extends ResourceTest {
 
         private Path getResourceAsFile(final String fileName) {
             try {
-                return Paths.get(TaskScannerBenchmark.class.getResource(fileName).toURI());
+                URL resource = TaskScannerBenchmark.class.getResource(fileName);
+                if (resource == null) {
+                    throw new IllegalArgumentException("Could not find file " + fileName);
+                }
+                return Paths.get(resource.toURI());
             }
             catch (URISyntaxException exception) {
                 throw new AssertionError("Can't open file " + fileName, exception);

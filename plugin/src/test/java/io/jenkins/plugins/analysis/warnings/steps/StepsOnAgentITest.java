@@ -84,7 +84,7 @@ public class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
 
         ResultAction first;
         ResultAction second;
-        if (actions.get(0).getId().equals("java-1")) {
+        if ("java-1".equals(actions.get(0).getId())) {
             first = actions.get(0);
             second = actions.get(1);
         }

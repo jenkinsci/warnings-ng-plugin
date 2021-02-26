@@ -177,7 +177,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(results).hasSize(2);
 
         for (AnalysisResult element : results) {
-            if (element.getId().equals("checkstyle")) {
+            if ("checkstyle".equals(element.getId())) {
                 assertThat(element).hasTotalSize(6);
             }
             else {
@@ -580,7 +580,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         return project;
     }
 
-    private void assertThatIssuesRowValuesAreCorrect(IssuesRow row, final String expectedFileDisplayName,
+    private void assertThatIssuesRowValuesAreCorrect(final IssuesRow row, final String expectedFileDisplayName,
             final String expectedSeverity, final String expectedCategory, final String expectedType,
             final String expectedAge) {
         assertThat(row.getFileName().getDisplay()).isEqualTo(expectedFileDisplayName);
@@ -594,13 +594,11 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         final Matcher matcher = TAG_REGEX.matcher(str);
         if (matcher.find()) {
             return matcher.group(1);
-        } 
+        }
         return str;
     }
     private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
         IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
-        Object row = issuesDetail.getTableModel("issues").getRows().get(rowNumber);
-
-        return (IssuesRow) row;
+        return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);
     }
 }

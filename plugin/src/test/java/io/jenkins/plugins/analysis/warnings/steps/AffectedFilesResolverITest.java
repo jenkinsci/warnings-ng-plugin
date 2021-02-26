@@ -255,9 +255,7 @@ public class AffectedFilesResolverITest extends IntegrationTestWithJenkinsPerSui
 
     private IssuesRow getIssuesModel(final AnalysisResult result, final int rowNumber) {
         IssuesDetail issuesDetail = (IssuesDetail) result.getOwner().getAction(ResultAction.class).getTarget();
-        Object row = issuesDetail.getTableModel("issues").getRows().get(rowNumber);
-
-        return (IssuesRow) row;
+        return (IssuesRow) issuesDetail.getTableModel("issues").getRows().get(rowNumber);
     }
 
     private void prepareGccLog(final FreeStyleProject job) {

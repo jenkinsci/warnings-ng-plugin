@@ -50,12 +50,10 @@ public class IssuesColumnConfiguration extends PageObject {
      *
      * @param parent
      *         the build that contains the static analysis results
-     * @param jobName
-     *         the name of the jenkins job
      * @param listView
      *         the associated view
      */
-    public IssuesColumnConfiguration(final Build parent, final String jobName, final ListView listView) {
+    public IssuesColumnConfiguration(final Build parent, final ListView listView) {
         super(parent, parent.url(""));
 
         this.listView = listView;

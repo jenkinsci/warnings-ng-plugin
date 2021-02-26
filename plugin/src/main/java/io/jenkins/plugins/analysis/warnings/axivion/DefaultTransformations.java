@@ -45,7 +45,7 @@ final class DefaultTransformations {
     }
 
     private static String createDescription(final AxRawIssue rawIssue, final JsonObject payload) {
-        if (getString(payload, "violationType").equals("Divergence")) {
+        if ("Divergence".equals(getString(payload, "violationType"))) {
             return "Unexpected dependency from <i>"
                     + getString(payload, "architectureSourceType")
                     + " &lt;"

@@ -1,15 +1,15 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.junit.Test;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+
+import org.jenkinsci.plugins.workflow.job.WorkflowJob;
+
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
@@ -18,12 +18,14 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.warnings.*;
 import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+
 /**
  * Integration tests of all parsers of the warnings plug-in in pipelines.
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.CouplingBetweenObjects", "PMD.ExcessivePublicCount", "PMD.CyclomaticComplexity", "PMD.GodClass", "ClassDataAbstractionCoupling", "ClassFanOutComplexity"})
 public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String CODE_FRAGMENT = "<pre><code>#\n"
             + "\n"
@@ -300,8 +302,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the CPD parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllCpdIssues() {
-        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new Cpd(), "cpd.xml");
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new Cpd(), "cpd.xml");
+        Report report = findIssuesWithoutAnsiColorPlugin(2, new Cpd(), "cpd.xml");
+        Report reportAnsi = findIssuesWithAnsiColorPlugin(2, new Cpd(), "cpd.xml");
 
         assertThatDescriptionOfIssueIsSet(new Cpd(), report.get(0), CODE_FRAGMENT);
         assertThatDescriptionOfIssueIsSet(new Cpd(), reportAnsi.get(0), CODE_FRAGMENT);
@@ -316,8 +318,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the DupFinder parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllDupFinderIssues() {
-        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
+        Report report = findIssuesWithoutAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
+        Report reportAnsi = findIssuesWithAnsiColorPlugin(2, new DupFinder(), "dupfinder.xml");
 
         assertThatDescriptionOfIssueIsSet(new DupFinder(), report.get(0),
                 "<pre><code>if (items &#61;&#61; null) throw new ArgumentNullException(&#34;items&#34;);</code></pre>");
@@ -352,8 +354,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the PMD parser on an output file that contains 262 issues (PMD 6.1.0). */
     @Test
     public void shouldFindAllPmdIssues() {
-        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
+        Report report = findIssuesWithoutAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
+        Report reportAnsi = findIssuesWithAnsiColorPlugin(262, new Pmd(), "pmd-6.xml");
 
         assertThatDescriptionOfIssueIsSet(new Pmd(), report.get(0),
                 "A high number of imports can indicate a high degree of coupling within an object.");
@@ -364,8 +366,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the CheckStyle parser on an output file that contains 6 issues. */
     @Test
     public void shouldFindAllCheckStyleIssues() {
-        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
+        Report report = findIssuesWithoutAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
+        Report reportAnsi = findIssuesWithAnsiColorPlugin(6, new CheckStyle(), "checkstyle.xml");
 
         assertThatDescriptionOfIssueIsSet(new CheckStyle(), report.get(2),
                 "<p>Since Checkstyle 3.1</p><p>");
@@ -389,8 +391,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the FindBugs parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllFindBugsIssues() {
-        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
+        Report report = findIssuesWithoutAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
+        Report reportAnsi = findIssuesWithAnsiColorPlugin(2, new FindBugs(), "findbugs-native.xml");
 
         assertThatDescriptionOfIssueIsSet(new FindBugs(), report.get(0),
                 "<p> The fields of this class appear to be accessed inconsistently with respect\n"
@@ -461,10 +463,10 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                         + "to instruct SpotBugs that ignoring the return value of this method is acceptable.\n"
                         + "</p>";
 
-        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
+        Report report = findIssuesWithoutAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), report.get(0), expectedDescription);
 
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
+        Report reportAnsi = findIssuesWithAnsiColorPlugin(2, new SpotBugs(), "spotbugsXml.xml");
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), reportAnsi.get(0), expectedDescription);
     }
 
@@ -477,13 +479,13 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                         + "<p>This rule identifies <b>potential</b> path traversal vulnerabilities. In many cases, the constructed file path cannot be controlled\n"
                         + "by the user. If that is the case, the reported instance is a false positive.</p>";
 
-        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
+        Report report = findIssuesWithoutAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
         Issue issue = report.get(0);
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), issue, expectedDescription);
         assertThat(issue).hasMessage(
                 "java/nio/file/Paths.get(Ljava/lang/String;[Ljava/lang/String;)Ljava/nio/file/Path; reads a file whose location might be specified by user input");
 
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
+        Report reportAnsi = findIssuesWithAnsiColorPlugin(1, new SpotBugs(), "issue55707.xml");
         Issue issueAnsi = reportAnsi.get(0);
         assertThatDescriptionOfIssueIsSet(new SpotBugs(), issueAnsi, expectedDescription);
         assertThat(issueAnsi).hasMessage(
@@ -751,8 +753,8 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     /** Runs the PyLint parser on output files that contains 6 + 19 issues. */
     @Test
     public void shouldFindAllPyLintParserIssues() {
-        Report report = shouldFindIssuesOfToolWithoutAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt", "pylint_parseable.txt");
-        Report reportAnsi = shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt",
+        Report report = findIssuesWithoutAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt", "pylint_parseable.txt");
+        Report reportAnsi = findIssuesWithAnsiColorPlugin(6 + 19, new PyLint(), "pyLint.txt",
                 "pylint_parseable.txt");
 
         assertThatDescriptionOfIssueIsSet(new PyLint(), report.get(1),
@@ -928,34 +930,34 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             final String... fileNames) {
         String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
 
-        shouldFindIssuesOfToolWithPipelineDefinition(defaultPipelineDefinition,
+        findIssuesInPipeline(defaultPipelineDefinition,
                 expectedSizeOfIssues, tool, fileNames);
 
         String ansiPipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
                 + "  " + defaultPipelineDefinition + "\n"
                 + "}";
 
-        shouldFindIssuesOfToolWithPipelineDefinition(ansiPipelineDefinition,
+        findIssuesInPipeline(ansiPipelineDefinition,
                 expectedSizeOfIssues, tool, fileNames);
     }
 
-    private Report shouldFindIssuesOfToolWithoutAnsiColorPlugin(final int expectedSizeOfIssues, final ReportScanningTool tool,
+    private Report findIssuesWithoutAnsiColorPlugin(final int expectedSizeOfIssues, final ReportScanningTool tool,
             final String... fileNames) {
-        return shouldFindIssuesOfToolWithPipelineDefinition(
+        return findIssuesInPipeline(
                 "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')", expectedSizeOfIssues, tool,
                 fileNames);
     }
 
-    private Report shouldFindIssuesOfToolWithWrappedAnsiColorPlugin(final int expectedSizeOfIssues,
+    private Report findIssuesWithAnsiColorPlugin(final int expectedSizeOfIssues,
             final ReportScanningTool tool, final String... fileNames) {
         String pipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
                 + "  recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')\n"
                 + "}";
-        return shouldFindIssuesOfToolWithPipelineDefinition(pipelineDefinition, expectedSizeOfIssues, tool, fileNames);
+        return findIssuesInPipeline(pipelineDefinition, expectedSizeOfIssues, tool, fileNames);
     }
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
-    private Report shouldFindIssuesOfToolWithPipelineDefinition(final String pipelineDefinition,
+    private Report findIssuesInPipeline(final String pipelineDefinition,
             final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
         try {
             WorkflowJob job = createPipeline();
