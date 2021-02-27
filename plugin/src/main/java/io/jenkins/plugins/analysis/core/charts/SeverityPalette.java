@@ -18,16 +18,16 @@ final class SeverityPalette {
      * @return color of the specified severity
      */
     static Palette getColor(final Severity severity) {
-        if (severity == Severity.ERROR) {
+        if (Severity.ERROR.equals(severity)) {
             return Palette.RED;
         }
-        if (severity == Severity.WARNING_HIGH) {
+        if (Severity.WARNING_HIGH.equals(severity)) {
             return Palette.ORANGE;
         }
-        if (severity == Severity.WARNING_NORMAL) {
+        if (Severity.WARNING_NORMAL.equals(severity)) {
             return Palette.YELLOW;
         }
-        if (severity == Severity.WARNING_LOW) {
+        if (Severity.WARNING_LOW.equals(severity)) {
             return Palette.LIME;
         }
         return Palette.PURPLE;

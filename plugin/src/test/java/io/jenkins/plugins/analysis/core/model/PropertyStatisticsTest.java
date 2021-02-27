@@ -10,8 +10,6 @@ import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.util.NoSuchElementException;
 
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
-
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
@@ -91,7 +89,7 @@ class PropertyStatisticsTest {
     @Test
     void shouldReturnToolTip() {
         PropertyStatistics statistics = new PropertyStatistics(
-                new Report(), new Report(), "category", string -> string.equals(KEY) ? KEY : "tooltip");
+                new Report(), new Report(), "category", string -> KEY.equals(string) ? KEY : "tooltip");
 
         assertThat(statistics.getDisplayName(KEY)).isEqualTo(KEY);
         assertThat(statistics.getToolTip(KEY)).isEmpty();

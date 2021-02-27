@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.warnings.tasks;
 
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,6 +18,7 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
@@ -38,9 +40,9 @@ public class TaskScannerBenchmark extends ResourceTest {
      * BenchmarkRunner - runs all benchmark tests in this class.
      */
     @Test
-    public void benchmark() throws Exception {
+    public void benchmark() throws RunnerException {
         Options opt = new OptionsBuilder()
-                .include(this.getClass().getName() + ".*")
+                .include(getClass().getName() + ".*")
                 .addProfiler(StackProfiler.class)
                 .build();
 
@@ -94,7 +96,11 @@ public class TaskScannerBenchmark extends ResourceTest {
 
         private Path getResourceAsFile(final String fileName) {
             try {
-                return Paths.get(TaskScannerBenchmark.class.getResource(fileName).toURI());
+                URL resource = TaskScannerBenchmark.class.getResource(fileName);
+                if (resource == null) {
+                    throw new IllegalArgumentException("Could not find file " + fileName);
+                }
+                return Paths.get(resource.toURI());
             }
             catch (URISyntaxException exception) {
                 throw new AssertionError("Can't open file " + fileName, exception);

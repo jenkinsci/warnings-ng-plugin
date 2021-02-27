@@ -9,6 +9,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.util.ResourceTest;
+
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -63,26 +64,27 @@ class StaticAnalysisToolSuiteTest extends ResourceTest {
 
     private IssueParser createParserStub() {
         IssueParser stub = mock(IssueParser.class);
-        
+
         when(stub.accepts(any())).thenReturn(true);
-        
+
         return stub;
     }
 
     private Report createIssues(final int id) {
         Report issues = new Report();
-        
+
         IssueBuilder issueBuilder = new IssueBuilder();
         issues.add(issueBuilder.setMessage(String.valueOf(id)).build());
-        
+
         return issues;
     }
 
     /**
      * {@link ReportScanningToolSuite} to be used in the tests.
      */
-    private class TestReportScanningToolSuite extends ReportScanningToolSuite {
+    private static class TestReportScanningToolSuite extends ReportScanningToolSuite {
         private static final long serialVersionUID = -1564903699146113905L;
+
         private final Collection<? extends IssueParser> parsers;
 
         TestReportScanningToolSuite(final IssueParser... parsers) {

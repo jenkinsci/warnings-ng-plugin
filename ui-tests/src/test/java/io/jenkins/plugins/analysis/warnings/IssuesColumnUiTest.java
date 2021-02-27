@@ -61,7 +61,7 @@ public class IssuesColumnUiTest extends UiTest {
 
         ListView view = createListView();
 
-        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, job.name, view);
+        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
         columnConfig.selectSubsetOfTools("CheckStyle");
 
         view.save();
@@ -86,7 +86,7 @@ public class IssuesColumnUiTest extends UiTest {
 
         ListView view = createListView();
 
-        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, job.name, view);
+        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
         columnConfig.selectSubsetOfTools("CheckStyle");
 
         view.save();
@@ -114,7 +114,7 @@ public class IssuesColumnUiTest extends UiTest {
 
         ListView view = createListView();
 
-        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, job.name, view);
+        IssuesColumnConfiguration columnConfig = new IssuesColumnConfiguration(build, view);
         columnConfig.selectType(StatisticProperties.TOTAL_HIGH);
 
         view.save();

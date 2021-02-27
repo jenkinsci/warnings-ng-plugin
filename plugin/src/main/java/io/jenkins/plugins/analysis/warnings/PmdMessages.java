@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -11,8 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import net.sourceforge.pmd.Rule;
 import net.sourceforge.pmd.RuleSet;
-import net.sourceforge.pmd.RuleSetNotFoundException;
-import net.sourceforge.pmd.RulesetsFactoryUtils;
+import net.sourceforge.pmd.RuleSetLoader;
 
 import static j2html.TagCreator.*;
 
@@ -33,21 +31,15 @@ public class PmdMessages {
      * @return the number of rule sets
      */
     public int initialize() {
-        try {
-            Iterator<RuleSet> ruleSets = RulesetsFactoryUtils.defaultFactory().getRegisteredRuleSets();
-            while (ruleSets.hasNext()) {
-                RuleSet ruleSet = ruleSets.next();
-                rules.put(ruleSet.getName(), ruleSet);
-            }
-            if (rules.isEmpty()) {
-                LOGGER.log(Level.SEVERE, ERROR_MESSAGE);
-            }
-            return rules.size();
+        RuleSetLoader loader = new RuleSetLoader();
+        List<RuleSet> ruleSets = loader.getStandardRuleSets();
+        for (RuleSet ruleSet : ruleSets) {
+            rules.put(ruleSet.getName(), ruleSet);
         }
-        catch (RuleSetNotFoundException exception) {
-            LOGGER.log(Level.SEVERE, ERROR_MESSAGE, exception);
+        if (rules.isEmpty()) {
+            LOGGER.log(Level.SEVERE, ERROR_MESSAGE);
         }
-        return 0;
+        return rules.size();
     }
 
     /**

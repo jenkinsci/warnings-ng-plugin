@@ -1,5 +1,7 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import java.util.Arrays;
+
 import org.junit.jupiter.api.Test;
 
 import hudson.Launcher;
@@ -7,6 +9,8 @@ import hudson.matrix.MatrixAggregator;
 import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
 import hudson.model.BuildListener;
+import hudson.model.Saveable;
+import hudson.tasks.Publisher;
 import hudson.util.DescribableList;
 
 import static org.assertj.core.api.Assertions.*;
@@ -18,37 +22,35 @@ import static org.mockito.Mockito.*;
  * @author Naveen Sundar
  */
 class MatrixBridgeTest {
-
     @Test
-    void constructMatrixAggregatorWithoutRecorder() {
-        MatrixBuild build = createBuild(false);
-        MatrixAggregator aggregator = createAggregator(build);
+    void shouldNotAggregateIfNoPublisherRegistered() {
+        MatrixBuild build = createBuildWithPublishers();
 
-        assertThat(aggregator).isNull();
+        assertThat(createAggregator(build)).isNull();
     }
 
     @Test
     void constructMatrixAggregatorWithRecorder() {
-        MatrixBuild build = createBuild(true);
-        MatrixAggregator aggregator = createAggregator(build);
+        MatrixBuild build = createBuildWithPublishers(mock(IssuesRecorder.class));
 
-        assertThat(aggregator).isNotNull();
+        assertThat(createAggregator(build)).isNotNull();
     }
 
-    private MatrixBuild createBuild(final boolean withIssueRecorder) {
+    @Test
+    void constructMatrixAggregatorWithRecorderAndSomethingElse() {
+        MatrixBuild build = createBuildWithPublishers(mock(Publisher.class), mock(IssuesRecorder.class));
+
+        assertThat(createAggregator(build)).isNotNull();
+    }
+
+    private MatrixBuild createBuildWithPublishers(final Publisher... publisher) {
         MatrixBuild build = mock(MatrixBuild.class);
+
         MatrixProject matrixProject = mock(MatrixProject.class);
-        DescribableList describableList = mock(DescribableList.class);
+        when(matrixProject.getPublishersList()).thenReturn(
+                new DescribableList<>(Saveable.NOOP, Arrays.asList(publisher)));
 
         when(build.getParent()).thenReturn(matrixProject);
-        when(matrixProject.getPublishersList()).thenReturn(describableList);
-
-        if (withIssueRecorder) {
-            when(describableList.get(IssuesRecorder.class)).thenReturn(mock(IssuesRecorder.class));
-        }
-        else {
-            when(describableList.get(IssuesRecorder.class)).thenReturn(null);
-        }
 
         return build;
     }

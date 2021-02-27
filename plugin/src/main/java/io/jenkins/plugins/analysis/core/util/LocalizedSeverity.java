@@ -17,16 +17,16 @@ public final class LocalizedSeverity {
      * @return localized description of the specified severity
      */
     public static String getLocalizedString(final Severity severity) {
-        if (severity == Severity.ERROR) {
+        if (Severity.ERROR.equals(severity)) {
             return Messages.Severity_Short_Error();
         }
-        if (severity == Severity.WARNING_HIGH) {
+        if (Severity.WARNING_HIGH.equals(severity)) {
             return Messages.Severity_Short_High();
         }
-        if (severity == Severity.WARNING_NORMAL) {
+        if (Severity.WARNING_NORMAL.equals(severity)) {
             return Messages.Severity_Short_Normal();
         }
-        if (severity == Severity.WARNING_LOW) {
+        if (Severity.WARNING_LOW.equals(severity)) {
             return Messages.Severity_Short_Low();
         }
         return severity.getName(); // No i18n support for custom severities
@@ -41,16 +41,16 @@ public final class LocalizedSeverity {
      * @return long localized description of the specified severity
      */
     public static String getLongLocalizedString(final Severity severity) {
-        if (severity == Severity.ERROR) {
+        if (Severity.ERROR.equals(severity)) {
             return Messages.Severity_Long_Error();
         }
-        if (severity == Severity.WARNING_HIGH) {
+        if (Severity.WARNING_HIGH.equals(severity)) {
             return Messages.Severity_Long_High();
         }
-        if (severity == Severity.WARNING_NORMAL) {
+        if (Severity.WARNING_NORMAL.equals(severity)) {
             return Messages.Severity_Long_Normal();
         }
-        if (severity == Severity.WARNING_LOW) {
+        if (Severity.WARNING_LOW.equals(severity)) {
             return Messages.Severity_Long_Low();
         }
         return severity.getName(); // No i18n support for custom severities

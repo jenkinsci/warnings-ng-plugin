@@ -254,10 +254,10 @@ public class IssuesStatistics implements Serializable {
         FIXED(Messages._Statistics_Fixed(), IssuesStatistics::getFixedSize, "fixed");
 
         private final Localizable displayName;
-        private final Function<IssuesStatistics, Integer> sizeGetter;
+        private final SerializableGetter sizeGetter;
         private final String url;
 
-        StatisticProperties(final Localizable displayName, final Function<IssuesStatistics, Integer> sizeGetter,
+        StatisticProperties(final Localizable displayName, final SerializableGetter sizeGetter,
                 final String url) {
             this.displayName = displayName;
             this.sizeGetter = sizeGetter;
@@ -307,6 +307,13 @@ public class IssuesStatistics implements Serializable {
          */
         public int get(final IssuesStatistics statistics) {
             return sizeGetter.apply(statistics);
+        }
+
+        /**
+         * Make sure that the method reference is serializable.
+         */
+        private interface SerializableGetter extends Function<IssuesStatistics, Integer>, Serializable {
+            // nothing to add
         }
     }
 }

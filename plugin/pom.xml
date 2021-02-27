@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>4.7.0</version>
+    <version>5.0.0</version>
     <relativePath />
   </parent>
 
@@ -26,29 +26,28 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>9.8.0</analysis-model-api.version>
-    <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.10.1</forensics-api-plugin.version>
-    <plugin-util-api.version>1.7.1</plugin-util-api.version>
+    <analysis-model-api.version>9.8.1</analysis-model-api.version>
+    <analysis-model-tests.version>9.8.1</analysis-model-tests.version>
 
-    <font-awesome-api.version>5.15.2-1</font-awesome-api.version>
-    <jquery3-api.version>3.5.1-2</jquery3-api.version>
-    <bootstrap4-api.version>4.6.0-1</bootstrap4-api.version>
-    <data-tables-api.version>1.10.23-2</data-tables-api.version>
-    <echarts-api.version>4.9.0-3</echarts-api.version>
+    <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
+    <plugin-util-api.version>2.0.0</plugin-util-api.version>
 
-    <commons.lang.version>3.11</commons.lang.version>
-    <commons.io.version>2.8.0</commons.io.version>
+    <data-tables-api.version>1.10.23-3</data-tables-api.version>
+    <echarts-api.version>4.9.0-4</echarts-api.version>
+    <font-awesome-api.version>5.15.2-2</font-awesome-api.version>
+    <jquery3-api.version>3.5.1-3</jquery3-api.version>
+    <bootstrap4-api.version>4.6.0-2</bootstrap4-api.version>
+    <popper-api.version>1.16.1-2</popper-api.version>
+
     <commons.digester.version>2.1</commons.digester.version>
     <commons.digester3.version>3.2</commons.digester3.version>
-    <commons.text.version>1.9</commons.text.version>
+
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
     <json.version>20201115</json.version>
-    <jackson2-api.version>2.11.1</jackson2-api.version>
 
-    <pmd.version>6.29.0</pmd.version>
+    <pmd.version>6.31.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.8.2</xmlunit.version>
@@ -62,7 +61,6 @@
     <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
     <matrix-project.version>1.18</matrix-project.version>
     <junit-plugin.version>1.35</junit-plugin.version>
-    <structs.version>1.21</structs.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.14</dashboard-view.version>
     <script-security.version>1.62</script-security.version>
@@ -83,8 +81,6 @@
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
-
-    <useBeta>true</useBeta>
   </properties>
 
   <licenses>
@@ -120,14 +116,14 @@
         <version>1.2.0</version>
       </dependency>
       <dependency>
-        <groupId>edu.hm.hafner</groupId>
-        <artifactId>codingstyle</artifactId>
-        <version>2.0.4</version>
+        <groupId>io.jenkins.plugins</groupId>
+        <artifactId>popper-api</artifactId>
+        <version>${popper-api.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.jenkins-ci.plugins</groupId>
-        <artifactId>junit</artifactId>
-        <version>1.37</version>
+        <groupId>com.google.errorprone</groupId>
+        <artifactId>error_prone_annotations</artifactId>
+        <version>2.5.1</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -147,16 +143,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-      <version>${commons.lang.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
-      <version>${commons.io.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
       <artifactId>commons-digester3</artifactId>
       <version>${commons.digester3.version}</version>
       <exclusions>
@@ -165,16 +151,6 @@
           <groupId>asm</groupId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>commons-beanutils</groupId>
-      <artifactId>commons-beanutils</artifactId>
-      <version>1.9.4</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-text</artifactId>
-      <version>${commons.text.version}</version>
     </dependency>
     <dependency>
       <groupId>com.j2html</groupId>
@@ -210,6 +186,14 @@
           <groupId>org.ow2.asm</groupId>
           <artifactId>asm</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -224,6 +208,14 @@
         <exclusion>
           <groupId>org.ow2.asm</groupId>
           <artifactId>asm</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -267,7 +259,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jackson2-api</artifactId>
-      <version>${jackson2-api.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins.workflow</groupId>
@@ -288,7 +279,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>structs</artifactId>
-      <version>${structs.version}</version>
     </dependency>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
@@ -374,6 +364,10 @@
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-annotations</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -393,6 +387,16 @@
       <artifactId>xmlunit-assertj</artifactId>
       <version>${xmlunit.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>net.bytebuddy</groupId>
+          <artifactId>byte-buddy</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.xml.bind</groupId>
+          <artifactId>jakarta.xml.bind-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -527,6 +531,10 @@
         <exclusion>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

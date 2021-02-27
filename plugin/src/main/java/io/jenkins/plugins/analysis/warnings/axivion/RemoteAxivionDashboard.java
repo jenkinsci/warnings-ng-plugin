@@ -24,6 +24,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import edu.hm.hafner.analysis.ParsingException;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Represents an actual dashboard connection to retrieve violations via http.
@@ -42,7 +43,7 @@ class RemoteAxivionDashboard implements AxivionDashboard {
         this.credentials = credentials;
     }
 
-    @Override
+    @Override @SuppressFBWarnings("RCN")
     public JsonObject getIssues(final AxIssueKind kind) {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);

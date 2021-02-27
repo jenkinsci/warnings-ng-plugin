@@ -24,6 +24,7 @@ import static j2html.TagCreator.*;
  * @author Philippe Arteau
  * @author Ullrich Hafner
  */
+@SuppressWarnings("PMD.GodClass")
 public class SourcePrinter {
     private static final Sanitizer SANITIZER = new Sanitizer();
     private final JenkinsFacade jenkinsFacade;

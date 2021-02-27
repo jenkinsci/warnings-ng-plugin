@@ -28,7 +28,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
  * @author Ullrich Hafner
  */
 @Extension
-@Symbol("warningsParsers") 
+@Symbol("warningsParsers")
 public class ParserConfiguration extends GlobalConfigurationItem {
     private List<GroovyParser> parsers = new ArrayList<>();
 
@@ -91,7 +91,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      */
     @SuppressWarnings("unused") // Called from config.jelly
     public boolean canEditParsers() {
-        return new JenkinsFacade().hasPermission(Jenkins.RUN_SCRIPTS);
+        return new JenkinsFacade().hasPermission(Jenkins.ADMINISTER);
     }
 
     /**
@@ -145,7 +145,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
     }
 
     /**
-     * Registers all Groovy parsers as static analysis tools in the {@link LabelProviderFactory} 
+     * Registers all Groovy parsers as static analysis tools in the {@link LabelProviderFactory}
      * so that these parsers can be referenced in actions.
      */
     @Extension
