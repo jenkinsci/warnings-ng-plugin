@@ -18,6 +18,7 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
@@ -39,7 +40,7 @@ public class TaskScannerBenchmark extends ResourceTest {
      * BenchmarkRunner - runs all benchmark tests in this class.
      */
     @Test
-    public void benchmark() throws Exception {
+    public void benchmark() throws RunnerException {
         Options opt = new OptionsBuilder()
                 .include(getClass().getName() + ".*")
                 .addProfiler(StackProfiler.class)
