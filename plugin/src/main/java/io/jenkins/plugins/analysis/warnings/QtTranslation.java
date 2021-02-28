@@ -4,9 +4,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.QtTranslationParser;
 
 import org.kohsuke.stapler.DataBoundConstructor;
-
 import org.jenkinsci.Symbol;
-
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
@@ -65,7 +63,6 @@ public class QtTranslation extends ReportScanningTool {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName(), "qt");
         }
-
 
         @Override
         public String getUrl() {

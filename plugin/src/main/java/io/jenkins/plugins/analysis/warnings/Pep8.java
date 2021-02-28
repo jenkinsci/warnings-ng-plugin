@@ -19,7 +19,7 @@ public class Pep8 extends ReportScanningTool {
     private static final long serialVersionUID = -2199589729419226931L;
     private static final String ID = "pep8";
 
-    /** Creates a new instance of {@link NagFortran}. */
+    /** Creates a new instance of {@link Pep8}. */
     @DataBoundConstructor
     public Pep8() {
         super();

@@ -11,7 +11,7 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 /**
- * Provides a parser and customized messages for Android Lint.
+ * Provides a parser and customized messages for Flake8.
  *
  * @author Ullrich Hafner
  */
