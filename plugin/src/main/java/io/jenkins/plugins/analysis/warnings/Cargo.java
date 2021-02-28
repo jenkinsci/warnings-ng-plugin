@@ -11,7 +11,7 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 
 /**
- * Provides a parser and customized messages for {@code rustc} compiler messages emitted b {@code cargo check
+ * Provides a parser and customized messages for {@code rustc} compiler messages emitted by {@code cargo check
  * --message-format json}.
  *
  * @author Ullrich Hafner
