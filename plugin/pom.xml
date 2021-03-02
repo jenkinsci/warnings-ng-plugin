@@ -57,6 +57,7 @@
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
+    <git-forensics.version>1.0.0</git-forensics.version>
     <token-macro.version>2.13</token-macro.version>
     <jenkins-maven-plugin.version>3.8</jenkins-maven-plugin.version>
     <matrix-project.version>1.18</matrix-project.version>
@@ -341,7 +342,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>git-forensics</artifactId>
-      <version>1.0.0</version>
+      <version>${git-forensics.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
