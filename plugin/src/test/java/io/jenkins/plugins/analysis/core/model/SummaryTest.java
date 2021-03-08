@@ -83,7 +83,7 @@ class SummaryTest {
         AnalysisResult analysisResult = createAnalysisResult(EMPTY_ORIGINS, 0, 0,
                 EMPTY_ERRORS, 0);
         String createdHtml = createSummary(analysisResult).create();
-        assertThat(createdHtml).contains("<div id=\"test-summary\">");
+        assertThat(createdHtml).contains("<span id=\"test-summary\">");
         assertThat(createdHtml).contains("id=\"test-title\"");
     }
 

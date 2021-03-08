@@ -234,7 +234,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      */
     public ContainerTag getTitle(final AnalysisResult result, final boolean hasErrors) {
         String icon = hasErrors ? ERROR_ICON : INFO_ICON;
-        return div(join(getName() + ": ",
+        return span(join(getName() + ": ",
                 getWarningsCount(result),
                 a().withHref(getId() + "/info").with(
                         new UnescapedText(new SvgTag(icon, jenkins).withClasses("info-page-decorator").render())))).withId(
