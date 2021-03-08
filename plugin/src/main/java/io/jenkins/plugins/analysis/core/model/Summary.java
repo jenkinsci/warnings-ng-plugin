@@ -66,7 +66,7 @@ public class Summary {
      * @return the summary
      */
     public String create() {
-        return div(labelProvider.getTitle(analysisResult, !analysisResult.getErrorMessages().isEmpty()),
+        return span(labelProvider.getTitle(analysisResult, !analysisResult.getErrorMessages().isEmpty()),
                 createDescription())
                 .withId(labelProvider.getId() + "-summary")
                 .renderFormatted();
