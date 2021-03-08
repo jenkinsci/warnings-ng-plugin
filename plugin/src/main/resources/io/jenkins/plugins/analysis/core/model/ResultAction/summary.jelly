@@ -1,7 +1,9 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:t="/lib/hudson" xmlns:st="jelly:stapler">
 
-  <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+  <st:once>
+    <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
+  </st:once>
 
   <t:summary icon="${it.hasLargeImage() ? it.largeImageName : icon}">
     <j:out value="${it.summary}"/>
