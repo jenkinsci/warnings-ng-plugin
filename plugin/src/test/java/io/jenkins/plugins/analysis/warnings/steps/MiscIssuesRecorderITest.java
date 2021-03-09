@@ -13,7 +13,7 @@ import org.junit.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty;
+import edu.hm.hafner.analysis.parser.findbugs.FindBugsParser.PriorityProperty;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -28,10 +28,10 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Pmd;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;

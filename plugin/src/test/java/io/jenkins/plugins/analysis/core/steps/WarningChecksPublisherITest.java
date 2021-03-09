@@ -21,9 +21,9 @@ import io.jenkins.plugins.analysis.core.steps.WarningChecksPublisher.AnnotationS
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.PVSStudio;
 import io.jenkins.plugins.analysis.warnings.Pmd;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationBuilder;
 import io.jenkins.plugins.checks.api.ChecksAnnotation.ChecksAnnotationLevel;
 import io.jenkins.plugins.checks.api.ChecksConclusion;

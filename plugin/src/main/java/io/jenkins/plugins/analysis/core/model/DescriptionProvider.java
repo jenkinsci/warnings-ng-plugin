@@ -7,6 +7,7 @@ import edu.hm.hafner.analysis.Issue;
  *
  * @author Ullrich Hafner
  */
+@FunctionalInterface
 public interface DescriptionProvider {
     /**
      * Returns a detailed description of the specified issue.

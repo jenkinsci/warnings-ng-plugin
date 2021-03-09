@@ -51,7 +51,7 @@ public class PVSStudio extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(ID, "PVS-Studio", "pvs");
+            return new IconLabelProvider("PVS-Studio", ID, createDescriptionProvider(), "pvs");
         }
 
         @Override

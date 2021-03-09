@@ -55,7 +55,7 @@ public class ResharperInspectCode extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
+            return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
         }
     }
 }

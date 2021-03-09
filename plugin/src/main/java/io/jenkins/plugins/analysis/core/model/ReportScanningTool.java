@@ -5,10 +5,13 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
 
+import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.registry.ParserDescriptor;
+import edu.hm.hafner.analysis.registry.ParserRegistry;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
@@ -218,6 +221,7 @@ public abstract class ReportScanningTool extends Tool {
     /** Descriptor for {@link ReportScanningTool}. **/
     public abstract static class ReportScanningToolDescriptor extends ToolDescriptor {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
+        private static final ParserRegistry REGISTRY = new ParserRegistry();
 
         private final ModelValidation model = new ModelValidation();
 
@@ -229,6 +233,29 @@ public abstract class ReportScanningTool extends Tool {
          */
         protected ReportScanningToolDescriptor(final String id) {
             super(id);
+        }
+
+        /**
+         * Returns a {@link StaticAnalysisLabelProvider} that will render all tool specific labels.
+         *
+         * @return a tool specific {@link StaticAnalysisLabelProvider}
+         */
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            if (REGISTRY.contains(getId())) {
+                return new StaticAnalysisLabelProvider(getId(), getDisplayName(),
+                        createDescriptionProvider());
+            }
+            return new StaticAnalysisLabelProvider(getId(), getDisplayName());
+        }
+
+        /**
+         * Creates a description provider to obtain detailed issue descriptions.
+         *
+         * @return a description provider
+         */
+        protected RegistryIssueDescriptionProvider createDescriptionProvider() {
+            return new RegistryIssueDescriptionProvider(REGISTRY.get(getId()));
         }
 
         /**
@@ -304,6 +331,22 @@ public abstract class ReportScanningTool extends Tool {
          */
         public boolean canScanConsoleLog() {
             return true;
+        }
+    }
+
+    /**
+     * Extracts a description from the associated {@link ParserDescriptor}.
+     */
+    private static class RegistryIssueDescriptionProvider implements DescriptionProvider {
+        private final ParserDescriptor parserDescriptor;
+
+        RegistryIssueDescriptionProvider(final ParserDescriptor parserDescriptor) {
+            this.parserDescriptor = parserDescriptor;
+        }
+
+        @Override
+        public String getDescription(final Issue issue) {
+            return parserDescriptor.getDescription(issue);
         }
     }
 }

@@ -19,8 +19,8 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.echarts.AsyncTrendChart;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;

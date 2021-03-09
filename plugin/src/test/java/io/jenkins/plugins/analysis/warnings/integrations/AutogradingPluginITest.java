@@ -13,10 +13,10 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Cpd;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.grading.AutoGrader;
 import io.jenkins.plugins.grading.AutoGradingBuildAction;
 

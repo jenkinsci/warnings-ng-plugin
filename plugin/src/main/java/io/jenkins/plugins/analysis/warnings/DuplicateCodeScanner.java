@@ -96,7 +96,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         private static final Sanitizer SANITIZER = new Sanitizer();
 
         protected DryLabelProvider(final String id, final String name) {
-            super(id, name, "dry");
+            super(name, id, EMPTY_DESCRIPTION, "dry");
         }
 
         @Override

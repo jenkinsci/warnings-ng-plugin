@@ -31,7 +31,7 @@ public class RuboCop extends ReportScanningTool {
 
     @Override
     public IssueParser createParser() {
-        return new RuboCopParser(); 
+        return new RuboCopParser();
     }
 
     /** Descriptor for this static analysis tool. */
@@ -51,7 +51,7 @@ public class RuboCop extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(ID, Messages.Warnings_RuboCop_ParserName());
+            return new IconLabelProvider(ID, Messages.Warnings_RuboCop_ParserName(), createDescriptionProvider());
         }
 
         @Override

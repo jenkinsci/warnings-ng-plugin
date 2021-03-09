@@ -26,7 +26,7 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>9.8.1</analysis-model-api.version>
+    <analysis-model-api.version>10.0.0-rc383.15d4f25be1d6</analysis-model-api.version>
     <analysis-model-tests.version>9.8.1</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
@@ -46,8 +46,6 @@
     <j2html.version>1.4.0</j2html.version>
 
     <json.version>20201115</json.version>
-
-    <pmd.version>6.32.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.8.2</xmlunit.version>
@@ -165,58 +163,6 @@
       <version>${jsoup.version}</version>
     </dependency>
 
-    <!-- PMD Messages -->
-    <dependency>
-      <groupId>net.sourceforge.pmd</groupId>
-      <artifactId>pmd-core</artifactId>
-      <version>${pmd.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.ibm.icu</groupId>
-          <artifactId>icu4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>net.sourceforge.saxon</groupId>
-          <artifactId>saxon</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.pmd</groupId>
-      <artifactId>pmd-java</artifactId>
-      <version>${pmd.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>net.sourceforge.saxon</groupId>
-          <artifactId>saxon</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
     <!-- Required Jenkins Plug-in Dependencies -->
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -318,6 +264,12 @@
       <artifactId>token-macro</artifactId>
       <version>${token-macro.version}</version>
       <optional>true</optional>
+      <exclusions>
+        <exclusion>
+          <artifactId>org.ow2.asm</artifactId>
+          <groupId>asm</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>

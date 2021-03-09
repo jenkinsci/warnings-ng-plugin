@@ -184,7 +184,7 @@ public class OpenTasks extends Tool {
     /** Label provider with customized messages. */
     private static class LabelProvider extends IconLabelProvider {
         LabelProvider() {
-            super(ID, Messages.Warnings_OpenTasks_Name());
+            super(ID, Messages.Warnings_OpenTasks_Name(), i -> StringUtils.EMPTY);
         }
 
         @Override

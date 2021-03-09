@@ -1,6 +1,5 @@
-package io.jenkins.plugins.analysis.warnings.checkstyle;
+package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -12,7 +11,6 @@ import hudson.Extension;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-import io.jenkins.plugins.analysis.warnings.Messages;
 
 /**
  * Provides a parser and customized messages for CheckStyle.
@@ -35,34 +33,13 @@ public class CheckStyle extends ReportScanningTool {
         return new CheckStyleParser();
     }
 
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends IconLabelProvider {
-        private final CheckStyleRules rules;
-
-        LabelProvider(final CheckStyleRules rules) {
-            super(ID, Messages.Warnings_CheckStyle_ParserName());
-
-            this.rules = rules;
-        }
-
-        @Override
-        public String getDescription(final Issue issue) {
-            return rules.getDescription(issue.getType());
-        }
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("checkStyle")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
-        private final CheckStyleRules rules;
-
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-
-            rules = new CheckStyleRules();
-            rules.initialize();
         }
 
         @NonNull
@@ -78,7 +55,7 @@ public class CheckStyle extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new LabelProvider(rules);
+            return new IconLabelProvider(ID, Messages.Warnings_CheckStyle_ParserName(), createDescriptionProvider());
         }
 
         @Override

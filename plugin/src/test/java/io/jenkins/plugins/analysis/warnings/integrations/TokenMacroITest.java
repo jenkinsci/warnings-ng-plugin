@@ -37,6 +37,9 @@ public class TokenMacroITest extends IntegrationTestWithJenkinsPerTest {
         verifyConsoleLog(result, 4, 3, 2);
     }
 
+    /**
+     * Runs a pipeline and verifies the expansion of tokens for different severities.
+     */
     @Test
     public void shouldExpandDifferentSeverities() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("all-severities.xml");

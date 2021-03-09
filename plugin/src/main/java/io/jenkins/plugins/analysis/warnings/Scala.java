@@ -53,7 +53,7 @@ public class Scala extends ReportScanningToolSuite {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
+            return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
         }
     }
 }

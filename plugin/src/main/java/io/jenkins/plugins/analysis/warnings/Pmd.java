@@ -1,6 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.pmd.PmdParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -34,34 +33,13 @@ public class Pmd extends ReportScanningTool {
         return new PmdParser();
     }
 
-    /** Provides the labels for the static analysis tool. */
-    private static class LabelProvider extends IconLabelProvider {
-        private final PmdMessages messages;
-
-        LabelProvider(final PmdMessages messages) {
-            super(ID, Messages.Warnings_PMD_ParserName());
-
-            this.messages = messages;
-        }
-
-        @Override
-        public String getDescription(final Issue issue) {
-            return messages.getMessage(issue.getCategory(), issue.getType());
-        }
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("pmdParser")
     @Extension
     public static class Descriptor extends ReportScanningToolDescriptor {
-        private final PmdMessages messages;
-
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-
-            messages = new PmdMessages();
-            messages.initialize();
         }
 
         @Override
@@ -77,7 +55,7 @@ public class Pmd extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new LabelProvider(messages);
+            return new IconLabelProvider(ID, Messages.Warnings_PMD_ParserName(), createDescriptionProvider());
         }
 
         @Override

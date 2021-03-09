@@ -27,8 +27,8 @@ import io.jenkins.plugins.analysis.core.filter.IncludeType;
 import io.jenkins.plugins.analysis.core.filter.RegexpFilter;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Pmd;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
 import static org.assertj.core.api.Assertions.*;
 

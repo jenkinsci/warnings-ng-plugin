@@ -47,10 +47,10 @@ public class JavaDoc extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Warnings_JavaDoc_ParserName();
         }
-       
+
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName(), "java");
+            return new IconLabelProvider(getDisplayName(), getId(), createDescriptionProvider(), "java");
         }
     }
 }

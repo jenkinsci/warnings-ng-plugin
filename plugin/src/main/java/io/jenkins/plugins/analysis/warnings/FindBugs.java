@@ -1,21 +1,19 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.FindBugsParser;
+import edu.hm.hafner.analysis.parser.findbugs.FindBugsParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.jenkinsci.Symbol;
-import org.jvnet.localizer.LocaleProvider;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
-import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
+import static edu.hm.hafner.analysis.parser.findbugs.FindBugsParser.PriorityProperty.*;
 
 /**
  * Provides a parser and customized messages for FindBugs.
@@ -57,37 +55,10 @@ public class FindBugs extends ReportScanningTool {
         return new FindBugsParser(useRankAsPriority ? RANK : CONFIDENCE);
     }
 
-    /** Provides the labels for the static analysis tool. */
-    static class FindBugsLabelProvider extends IconLabelProvider {
-        private final FindBugsMessages messages;
-        /**
-         * Creates a new {@link FindBugsLabelProvider} with the specified ID.
-         *
-         * @param messages
-         *         the details messages
-         * @param id
-         *         the ID
-         * @param name
-         *         the name of the static analysis tool
-         */
-        FindBugsLabelProvider(final FindBugsMessages messages, final String id, final String name) {
-            super(id, name, id);
-
-            this.messages = messages;
-        }
-
-        @Override
-        public String getDescription(final Issue issue) {
-            return messages.getMessage(issue.getType(), LocaleProvider.getLocale());
-        }
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("findBugs")
     @Extension
     public static class FindBugsDescriptor extends ReportScanningToolDescriptor {
-        private final FindBugsMessages messages = new FindBugsMessages();
-
         /** Creates the descriptor instance. */
         public FindBugsDescriptor() {
             this(ID);
@@ -101,12 +72,6 @@ public class FindBugs extends ReportScanningTool {
          */
         public FindBugsDescriptor(final String id) {
             super(id);
-
-            messages.initialize();
-        }
-
-        protected FindBugsMessages getMessages() {
-            return messages;
         }
 
         @NonNull
@@ -117,7 +82,7 @@ public class FindBugs extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new FindBugsLabelProvider(messages, getId(), getDisplayName());
+            return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
         }
 
         @Override

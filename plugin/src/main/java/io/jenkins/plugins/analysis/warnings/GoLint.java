@@ -47,10 +47,10 @@ public class GoLint extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Warnings_GoLintParser_ParserName();
         }
-       
+
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
+            return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
         }
     }
 }

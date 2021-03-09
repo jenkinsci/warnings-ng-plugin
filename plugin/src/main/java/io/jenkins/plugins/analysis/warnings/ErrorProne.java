@@ -53,7 +53,7 @@ public class ErrorProne extends ReportScanningToolSuite {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName(), "bug");
+            return new IconLabelProvider(getDisplayName(), getId(), createDescriptionProvider(),"bug" );
         }
 
         @Override

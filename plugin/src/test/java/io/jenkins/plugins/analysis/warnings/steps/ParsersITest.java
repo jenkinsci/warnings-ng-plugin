@@ -16,7 +16,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.*;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 

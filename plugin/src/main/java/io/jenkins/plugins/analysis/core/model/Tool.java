@@ -177,7 +177,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final AbstractProject project, @QueryParameter final String id) {
+        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String id) {
             if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }

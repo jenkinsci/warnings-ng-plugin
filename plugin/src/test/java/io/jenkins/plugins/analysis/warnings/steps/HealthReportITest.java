@@ -11,8 +11,8 @@ import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 

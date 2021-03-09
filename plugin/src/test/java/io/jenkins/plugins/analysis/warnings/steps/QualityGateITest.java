@@ -23,7 +23,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateType;
 import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 

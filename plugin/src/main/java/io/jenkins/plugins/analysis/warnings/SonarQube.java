@@ -34,7 +34,7 @@ public class SonarQube extends ReportScanningToolSuite {
 
     @Override
     protected Collection<? extends IssueParser> getParsers() {
-        return asList(new SonarQubeIssuesParser(), new SonarQubeDiffParser()); 
+        return asList(new SonarQubeIssuesParser(), new SonarQubeDiffParser());
     }
 
     /** Descriptor for this static analysis tool. */
@@ -54,7 +54,7 @@ public class SonarQube extends ReportScanningToolSuite {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
+            return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
         }
 
         @Override
