@@ -45,7 +45,7 @@
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
-    <json.version>20201115</json.version>
+    <json.version>20210307</json.version>
 
     <pmd.version>6.32.0</pmd.version>
 
