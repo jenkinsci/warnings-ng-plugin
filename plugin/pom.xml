@@ -1,11 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
     <version>5.0.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -26,7 +27,7 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>10.0.0-rc383.15d4f25be1d6</analysis-model-api.version>
+    <analysis-model-api.version>10.0.0-rc386.583a396437e9</analysis-model-api.version>
     <analysis-model-tests.version>9.8.1</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
@@ -264,12 +265,6 @@
       <artifactId>token-macro</artifactId>
       <version>${token-macro.version}</version>
       <optional>true</optional>
-      <exclusions>
-        <exclusion>
-          <artifactId>org.ow2.asm</artifactId>
-          <groupId>asm</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
