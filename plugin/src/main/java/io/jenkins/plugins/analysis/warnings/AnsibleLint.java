@@ -45,10 +45,5 @@ public class AnsibleLint extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Warnings_AnsibleLint_ParserName();
         }
-
-        @Override
-        public String getHelp() {
-            return "Use the flag -p.";
-        }
     }
 }

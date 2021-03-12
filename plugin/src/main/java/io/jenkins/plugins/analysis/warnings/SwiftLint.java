@@ -51,15 +51,5 @@ public class SwiftLint extends ReportScanningTool {
         public boolean canScanConsoleLog() {
             return false;
         }
-
-        @Override
-        public String getHelp() {
-            return "Use configuration reporter: \\”checkstyle\\”.";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/realm/SwiftLint";
-        }
     }
 }

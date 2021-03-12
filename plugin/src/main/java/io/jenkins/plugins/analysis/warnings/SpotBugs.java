@@ -38,18 +38,8 @@ public class SpotBugs extends FindBugs {
         }
 
         @Override
-        public String getPattern() {
-            return "**/spotbugsXml.xml";
-        }
-
-        @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://spotbugs.github.io";
         }
     }
 }

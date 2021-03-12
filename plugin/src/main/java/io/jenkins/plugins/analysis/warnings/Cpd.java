@@ -58,15 +58,5 @@ public class Cpd extends DuplicateCodeScanner {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new LabelProvider();
         }
-
-        @Override
-        public String getPattern() {
-            return "**/cpd.xml";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://pmd.github.io/latest/pmd_userdocs_cpd.html";
-        }
     }
 }

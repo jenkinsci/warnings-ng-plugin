@@ -8,9 +8,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides parsers and customized messages for Flawfinder.
@@ -31,7 +29,7 @@ public class Flawfinder extends ReportScanningTool {
 
     @Override
     public IssueParser createParser() {
-        return new FlawfinderParser(); 
+        return new FlawfinderParser();
     }
 
     /** Descriptor for this static analysis tool. */
@@ -47,16 +45,6 @@ public class Flawfinder extends ReportScanningTool {
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Flawfinder_ParserName();
-        }
-
-        @Override
-        public String getHelp() {
-            return "Use commandline <code>flawfinder -S</code>.";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://dwheeler.com/flawfinder/";
         }
     }
 }

@@ -48,19 +48,8 @@ public class OTDockerLint extends ReportScanningTool {
         }
 
         @Override
-        public String getHelp() {
-            return "Use commandline <code>ot-docker-linter audit --docker.file Dockerfile -o json</code> output.<br/>"
-                    + "See <a href='https://github.com/opstree/OT-Dockerlinter'>ot-docker-linter on Github</a> for usage details.";
-        }
-
-        @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/opstree/OT-Dockerlinter";
         }
 
         @Override

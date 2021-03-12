@@ -53,16 +53,6 @@ public class PVSStudio extends ReportScanningTool {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider("PVS-Studio", ID, createDescriptionProvider(), "pvs");
         }
-
-        @Override
-        public String getPattern() {
-            return "**/*.plog";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://www.viva64.com/en/pvs-studio/";
-        }
     }
 }
 

@@ -46,20 +46,8 @@ public class DockerLint extends ReportScanningTool {
         }
 
         @Override
-        public String getHelp() {
-            return "Use commandline <code>dockerfile_lint -j</code> output.<br/>"
-                    + "See <a href='https://github.com/projectatomic/dockerfile_lint'>"
-                    + "dockerfile_lint on Github</a> for usage details.";
-        }
-
-        @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/projectatomic/dockerfile_lint";
         }
     }
 }

@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.BrakemanParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -44,27 +45,10 @@ public class Brakeman extends ReportScanningTool {
             return false;
         }
 
+        @NonNull
         @Override
         public String getDisplayName() {
             return "Brakeman";
-        }
-
-        @Override
-        public String getHelp() {
-            return "Reads Brakeman JSON reports. "
-                    + "Use commandline <code>brakeman -o brakeman-output.json</code> output.<br/>"
-                    + "See <a href='https://brakemanscanner.org/docs/jenkins/'>"
-                    + "Brakeman documentation</a> for usage details.";
-        }
-
-        @Override
-        public String getPattern() {
-            return "**/brakeman-output.json";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://brakemanscanner.org";
         }
 
         @Override

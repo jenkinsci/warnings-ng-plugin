@@ -56,10 +56,5 @@ public class SonarQube extends ReportScanningToolSuite {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
         }
-
-        @Override
-        public String getPattern() {
-            return "**/sonar-report.json";
-        }
     }
 }

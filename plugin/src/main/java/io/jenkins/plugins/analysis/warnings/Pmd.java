@@ -57,16 +57,6 @@ public class Pmd extends ReportScanningTool {
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(ID, Messages.Warnings_PMD_ParserName(), createDescriptionProvider());
         }
-
-        @Override
-        public String getPattern() {
-            return "**/pmd.xml";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://pmd.github.io";
-        }
     }
 }
 

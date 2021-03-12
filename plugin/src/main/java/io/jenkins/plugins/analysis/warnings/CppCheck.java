@@ -45,10 +45,5 @@ public class CppCheck extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Violations_CPPCheck();
         }
-
-        @Override
-        public String getHelp() {
-            return "Use options --xml --xml-version=2";
-        }
     }
 }

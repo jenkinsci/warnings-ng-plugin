@@ -45,15 +45,5 @@ public class ClangAnalyzer extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Warnings_ClangAnalyzer_ParserName();
         }
-
-        @Override
-        public String getHelp() {
-            return "Use options --analyze --analyzer-output plist-multi-file";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://clang-analyzer.llvm.org";
-        }
     }
 }

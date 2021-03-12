@@ -43,7 +43,7 @@ public class WarningsPlugin extends ReportScanningToolSuite {
     public static class Descriptor extends ReportScanningToolDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
-            super(ID);
+            super(ID, "native");
         }
 
         @NonNull
@@ -62,11 +62,6 @@ public class WarningsPlugin extends ReportScanningToolSuite {
             return p().withText("Create an output file that contains issues in the native Warnings Plugin format, "
                     + "in either XML or JSON. The supported format is identical to the format of the remote API calls. "
                     + "The parser is even capable of reading individual lines of a log file that contains issues in JSON format.").render();
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/jenkinsci/warnings-ng-plugin/blob/master/doc/Documentation.md#export-your-issues-into-a-supported-format";
         }
     }
 }

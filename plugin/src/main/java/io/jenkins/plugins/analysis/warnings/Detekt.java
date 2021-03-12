@@ -51,15 +51,5 @@ public class Detekt extends ReportScanningTool {
         public boolean canScanConsoleLog() {
             return false;
         }
-
-        @Override
-        public String getHelp() {
-            return "Use option --output-format xml.";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://arturbosch.github.io/detekt/";
-        }
     }
 }

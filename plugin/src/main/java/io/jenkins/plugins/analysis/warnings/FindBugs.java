@@ -86,11 +86,6 @@ public class FindBugs extends ReportScanningTool {
         }
 
         @Override
-        public String getPattern() {
-            return "**/findbugsXml.xml";
-        }
-
-        @Override
         public boolean canScanConsoleLog() {
             return false;
         }

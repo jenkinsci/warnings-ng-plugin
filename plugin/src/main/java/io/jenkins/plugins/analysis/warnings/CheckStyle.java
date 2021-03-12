@@ -55,17 +55,8 @@ public class CheckStyle extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(ID, Messages.Warnings_CheckStyle_ParserName(), createDescriptionProvider());
-        }
-
-        @Override
-        public String getPattern() {
-            return "**/checkstyle-result.xml";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://checkstyle.org";
+            return new IconLabelProvider(ID, Messages.Warnings_CheckStyle_ParserName(), createDescriptionProvider(
+            ));
         }
     }
 }

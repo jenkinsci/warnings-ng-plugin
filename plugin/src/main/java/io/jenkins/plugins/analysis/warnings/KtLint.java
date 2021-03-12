@@ -55,16 +55,6 @@ public class KtLint extends ReportScanningTool {
         }
 
         @Override
-        public String getHelp() {
-            return "Use option --reporter=checkstyle.";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://ktlint.github.io";
-        }
-
-        @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
         }

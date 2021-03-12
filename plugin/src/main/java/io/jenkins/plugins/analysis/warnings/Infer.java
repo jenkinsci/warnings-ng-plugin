@@ -50,15 +50,5 @@ public class Infer extends ReportScanningTool {
         public boolean canScanConsoleLog() {
             return false;
         }
-
-        @Override
-        public String getHelp() {
-            return "Use option --pmd-xml.";
-        }
-
-        @Override
-        public String getUrl() {
-            return "http://fbinfer.com";
-        }
     }
 }

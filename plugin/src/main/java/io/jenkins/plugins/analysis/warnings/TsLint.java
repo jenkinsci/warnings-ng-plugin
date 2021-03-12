@@ -51,15 +51,5 @@ public class TsLint extends ReportScanningTool {
         public boolean canScanConsoleLog() {
             return false;
         }
-
-        @Override
-        public String getHelp() {
-            return "Use option --format checkstyle.";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://palantir.github.io/tslint/";
-        }
     }
 }

@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.DScannerParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -11,7 +9,6 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
  * Provides parsers and customized messages for DScanner.
@@ -52,16 +49,6 @@ public class DScanner extends ReportScanningTool {
         @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @Override
-        public String getPattern() {
-            return "**/dscanner-report.json";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/dlang-community/D-Scanner";
         }
     }
 }

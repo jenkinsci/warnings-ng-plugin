@@ -224,6 +224,8 @@ public abstract class ReportScanningTool extends Tool {
         private static final ParserRegistry REGISTRY = new ParserRegistry();
 
         private final ModelValidation model = new ModelValidation();
+        private final RegistryIssueDescriptionProvider descriptionProvider;
+        private ParserDescriptor analysisModelDescriptor;
 
         /**
          * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
@@ -232,7 +234,22 @@ public abstract class ReportScanningTool extends Tool {
          *         the unique ID of the tool
          */
         protected ReportScanningToolDescriptor(final String id) {
+            this(id, id);
+        }
+
+        /**
+         * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
+         *
+         * @param id
+         *         the unique ID of the tool
+         * @param descriptionId
+         *         the description ID of the tool in the analysis model module
+         */
+        protected ReportScanningToolDescriptor(final String id, final String descriptionId) {
             super(id);
+
+            descriptionProvider = createDescriptionProvider();
+            analysisModelDescriptor = REGISTRY.get(descriptionId);
         }
 
         /**
@@ -242,11 +259,7 @@ public abstract class ReportScanningTool extends Tool {
          */
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            if (REGISTRY.contains(getId())) {
-                return new StaticAnalysisLabelProvider(getId(), getDisplayName(),
-                        createDescriptionProvider());
-            }
-            return new StaticAnalysisLabelProvider(getId(), getDisplayName());
+            return new StaticAnalysisLabelProvider(getId(), getDisplayName(), descriptionProvider);
         }
 
         /**
@@ -255,7 +268,7 @@ public abstract class ReportScanningTool extends Tool {
          * @return a description provider
          */
         protected RegistryIssueDescriptionProvider createDescriptionProvider() {
-            return new RegistryIssueDescriptionProvider(REGISTRY.get(getId()));
+            return new RegistryIssueDescriptionProvider(analysisModelDescriptor);
         }
 
         /**
@@ -263,6 +276,7 @@ public abstract class ReportScanningTool extends Tool {
          *
          * @param project
          *         the project that is configured
+         *
          * @return a model with all available charsets
          */
         @POST
@@ -320,7 +334,7 @@ public abstract class ReportScanningTool extends Tool {
          * @return the default pattern
          */
         public String getPattern() {
-            return StringUtils.EMPTY;
+            return analysisModelDescriptor.getPattern();
         }
 
         /**
@@ -331,6 +345,16 @@ public abstract class ReportScanningTool extends Tool {
          */
         public boolean canScanConsoleLog() {
             return true;
+        }
+
+        @Override
+        public String getHelp() {
+            return analysisModelDescriptor.getHelp();
+        }
+
+        @Override
+        public String getUrl() {
+            return analysisModelDescriptor.getUrl();
         }
     }
 

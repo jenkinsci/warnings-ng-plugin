@@ -55,16 +55,6 @@ public class EsLint extends ReportScanningTool {
         }
 
         @Override
-        public String getHelp() {
-            return "Use option --format checkstyle.";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://eslint.org";
-        }
-
-        @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
         }

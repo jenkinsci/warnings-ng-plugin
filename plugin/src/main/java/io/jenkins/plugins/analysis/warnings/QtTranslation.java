@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.QtTranslationParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -44,14 +45,10 @@ public class QtTranslation extends ReportScanningTool {
             super(ID);
         }
 
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_QtTranslation_ParserName();
-        }
-
-        @Override
-        public String getHelp() {
-            return "Reads translation files of Qt, which are created by \"lupdate\" or \"Linguist\".";
         }
 
         @Override
@@ -62,11 +59,6 @@ public class QtTranslation extends ReportScanningTool {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getDisplayName(), getId(), createDescriptionProvider(), "qt");
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://www.qt.io";
         }
     }
 }

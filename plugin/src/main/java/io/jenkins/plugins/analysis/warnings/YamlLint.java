@@ -45,15 +45,5 @@ public class YamlLint extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Warnings_YamlLint_Name();
         }
-
-        @Override
-        public String getUrl() {
-            return "https://yamllint.readthedocs.io/";
-        }
-
-        @Override
-        public String getHelp() {
-            return "Use option -f parsable.";
-        }
     }
 }

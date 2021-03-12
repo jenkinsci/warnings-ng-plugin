@@ -46,10 +46,5 @@ public class Cargo extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Warnings_Cargo_ParserName();
         }
-
-        @Override
-        public String getHelp() {
-            return "Use commandline <code>cargo check --message-format json</code>";
-        }
     }
 }

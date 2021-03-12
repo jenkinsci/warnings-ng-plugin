@@ -47,18 +47,8 @@ public class PhpCodeSniffer extends ReportScanningTool {
         }
 
         @Override
-        public String getHelp() {
-            return "Use option --report=checkstyle.";
-        }
-
-        @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/squizlabs/PHP_CodeSniffer";
         }
     }
 }

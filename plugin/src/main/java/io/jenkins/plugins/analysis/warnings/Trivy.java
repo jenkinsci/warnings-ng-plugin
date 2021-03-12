@@ -2,6 +2,7 @@ package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.TrivyParser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
@@ -49,26 +50,15 @@ public class Trivy extends ReportScanningTool {
             super(ID);
         }
 
+        @NonNull
         @Override
         public String getDisplayName() {
             return Messages.Warnings_Trivy_ParserName();
         }
 
         @Override
-        public String getHelp() {
-            return "Reads trivy json data. "
-                    + "Use commandline <code>trivy image -f json -o results.json 'image'</code>"
-                    + "See <a href='https://github.com/aquasecurity/trivy'>" + "tivy on Github</a> for usage details.";
-        }
-
-        @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/aquasecurity/trivy";
         }
 
         @Override

@@ -53,15 +53,5 @@ public class PyLint extends ReportScanningTool {
         public String getDisplayName() {
             return Messages.Warnings_PyLint_ParserName();
         }
-
-        @Override
-        public String getHelp() {
-            return "<p>Create a ./pylintrc that contains:"
-                    + "<p><code>msg-template={path}:{module}:{line}: [{msg_id}({symbol}), {obj}] {msg}</code></p>"
-                    + "</p>"
-                    + "<p>Start pylint using the command:"
-                    + "<p><code>pylint --rcfile=./pylintrc CODE > pylint.log</code></p>"
-                    + "</p>";
-        }
     }
 }

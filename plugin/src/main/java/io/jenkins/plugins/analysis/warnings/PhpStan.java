@@ -54,16 +54,6 @@ public class PhpStan extends ReportScanningTool {
         }
 
         @Override
-        public String getHelp() {
-            return "Use the options: --no-progress --error-format checkstyle";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/phpstan/phpstan";
-        }
-
-        @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
         }
