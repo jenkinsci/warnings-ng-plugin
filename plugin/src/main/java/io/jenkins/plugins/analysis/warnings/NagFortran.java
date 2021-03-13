@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the NagFortran Compiler.
  *
  * @author Joscha Behrmann
  */
-public class NagFortran extends ReportScanningTool {
+public class NagFortran extends AnalysisModelParser {
     private static final long serialVersionUID = 6623024344311048456L;
     private static final String ID = "nag-fortran";
 
@@ -34,7 +34,7 @@ public class NagFortran extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("nagFortran")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

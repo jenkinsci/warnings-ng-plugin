@@ -15,6 +15,7 @@ import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.util.ListBoxModel;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.warnings.Messages;
@@ -60,7 +61,7 @@ public class GroovyScript extends ReportScanningTool {
         return new StaticAnalysisLabelProvider(parserId, getTool().getName());
     }
 
-    private ReportScanningTool getTool() {
+    private AnalysisModelParser getTool() {
         return ParserConfiguration.getInstance().getParser(parserId);
     }
 

@@ -4,22 +4,22 @@ import org.apache.commons.lang3.StringUtils;
 
 import edu.hm.hafner.analysis.IssueParser;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
- * Converts a {@link GroovyParser} instance to a {@link ReportScanningTool} instance.
+ * Converts a {@link GroovyParser} instance to a {@link AnalysisModelParser} instance.
  *
  * @author Ullrich Hafner
  */
-public class GroovyParserToolAdapter extends ReportScanningTool {
+public class GroovyParserToolAdapter extends AnalysisModelParser {
     private static final long serialVersionUID = -8466615502157837470L;
 
     private final GroovyParser parser;
 
     GroovyParserToolAdapter(final GroovyParser parser) {
         super();
-        
+
         this.parser = parser;
     }
 

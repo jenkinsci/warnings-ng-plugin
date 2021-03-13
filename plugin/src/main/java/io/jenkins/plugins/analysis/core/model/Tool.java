@@ -29,10 +29,10 @@ import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
- * compiler log or static analysis report file, consider deriving from {@link ReportScanningTool}.
+ * compiler log or static analysis report file, consider deriving from {@link AnalysisModelParser}.
  *
  * @author Ullrich Hafner
- * @see ReportScanningTool
+ * @see AnalysisModelParser
  */
 public abstract class Tool extends AbstractDescribableImpl<Tool> implements Serializable {
     private static final long serialVersionUID = 3305739700153168629L;

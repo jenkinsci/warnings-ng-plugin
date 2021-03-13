@@ -10,7 +10,7 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 import static edu.hm.hafner.analysis.parser.findbugs.FindBugsParser.PriorityProperty.*;
@@ -20,7 +20,7 @@ import static edu.hm.hafner.analysis.parser.findbugs.FindBugsParser.PriorityProp
  *
  * @author Ullrich Hafner
  */
-public class FindBugs extends ReportScanningTool {
+public class FindBugs extends AnalysisModelParser {
     private static final long serialVersionUID = 4692318309214830824L;
     private static final String ID = "findbugs";
 
@@ -58,7 +58,7 @@ public class FindBugs extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("findBugs")
     @Extension
-    public static class FindBugsDescriptor extends ReportScanningToolDescriptor {
+    public static class FindBugsDescriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public FindBugsDescriptor() {
             this(ID);

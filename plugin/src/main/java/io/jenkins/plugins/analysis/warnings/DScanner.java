@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides parsers and customized messages for DScanner.
  *
  * @author Andre Pany
  */
-public class DScanner extends ReportScanningTool {
+public class DScanner extends AnalysisModelParser {
     private static final long serialVersionUID = 7656859289383929117L;
     private static final String ID = "dscanner";
 
@@ -34,7 +34,7 @@ public class DScanner extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("dscanner")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for PHP_CodeSniffer. Delegates to {@link CheckStyleParser}.
  *
  * @author Ullrich Hafner
  */
-public class PhpCodeSniffer extends ReportScanningTool {
+public class PhpCodeSniffer extends AnalysisModelParser {
     private static final long serialVersionUID = -7944828406964963020L;
     private static final String ID = "php-code-sniffer";
 
@@ -34,7 +34,7 @@ public class PhpCodeSniffer extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("phpCodeSniffer")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

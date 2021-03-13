@@ -70,7 +70,7 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
      * Static analysis tool that that implements the extension point.
      */
     @SuppressWarnings("unused")
-    public static class TestTool extends ReportScanningTool {
+    public static class TestTool extends AnalysisModelParser {
         private static final long serialVersionUID = 8456938025794683739L;
 
         @Override
@@ -115,7 +115,7 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
         }
 
         private Tool createTool(final String id) {
-            Tool tool = mock(ReportScanningTool.class);
+            Tool tool = mock(AnalysisModelParser.class);
             when(tool.getActualId()).thenReturn(id);
             when(tool.getName()).thenReturn(id);
             when(tool.getLabelProvider()).thenReturn(new StaticAnalysisLabelProvider(id, id));

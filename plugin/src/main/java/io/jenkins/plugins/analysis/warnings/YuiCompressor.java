@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the YUI Compressor.
  *
  * @author Ullrich Hafner
  */
-public class YuiCompressor extends ReportScanningTool {
+public class YuiCompressor extends AnalysisModelParser {
     private static final long serialVersionUID = 4211786637477278304L;
     private static final String ID = "yui";
 
@@ -34,7 +34,7 @@ public class YuiCompressor extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("yuiCompressor")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

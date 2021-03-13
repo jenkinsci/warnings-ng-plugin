@@ -9,7 +9,7 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Andreas Mandel
  */
-public class HadoLint extends ReportScanningTool {
+public class HadoLint extends AnalysisModelParser {
     private static final long serialVersionUID = 42L;
     private static final String ID = "hadolint";
 
@@ -35,7 +35,7 @@ public class HadoLint extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("hadoLint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

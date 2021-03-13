@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for Dr. Memory Errors.
  *
  * @author Ullrich Hafner
  */
-public class DrMemory extends ReportScanningTool {
+public class DrMemory extends AnalysisModelParser {
     private static final long serialVersionUID = -8292426833255285102L;
     private static final String ID = "dr-memory";
 
@@ -34,7 +34,7 @@ public class DrMemory extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("drMemory")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for JsHint.
  *
  * @author Ullrich Hafner
  */
-public class JsHint extends ReportScanningTool {
+public class JsHint extends AnalysisModelParser {
     private static final long serialVersionUID = -871437328498798351L;
     private static final String ID = "js-hint";
 
@@ -34,7 +34,7 @@ public class JsHint extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("jsHint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

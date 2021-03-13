@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for XML-Lint.
  *
  * @author Ullrich Hafner
  */
-public class XmlLint extends ReportScanningTool {
+public class XmlLint extends AnalysisModelParser {
     private static final long serialVersionUID = -8253765174954652451L;
     private static final String ID = "xmllint";
 
@@ -34,7 +34,7 @@ public class XmlLint extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("xmlLint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

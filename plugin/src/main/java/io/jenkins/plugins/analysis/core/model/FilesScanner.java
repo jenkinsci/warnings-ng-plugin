@@ -40,19 +40,19 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
      *
      * @param filePattern
      *         ant file-set pattern to scan for files to parse
-     * @param tool
-     *         the static code analysis tool that reports the issues
      * @param encoding
      *         encoding of the files to parse
      * @param followSymbolicLinks
      *         if the scanner should traverse symbolic links
+     * @param parser
+     *         the parser to use
      */
-    public FilesScanner(final String filePattern, final ReportScanningTool tool, final String encoding,
-            final boolean followSymbolicLinks) {
+    public FilesScanner(final String filePattern, final String encoding,
+            final boolean followSymbolicLinks, final IssueParser parser) {
         super();
 
         this.filePattern = filePattern;
-        this.parser = tool.createParser();
+        this.parser = parser;
         this.encoding = encoding;
         this.followSymbolicLinks = followSymbolicLinks;
     }

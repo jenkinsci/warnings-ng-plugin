@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for CodeNarc.
  *
  * @author Ullrich Hafner
  */
-public class CodeNarc extends ReportScanningTool {
+public class CodeNarc extends AnalysisModelParser {
     private static final long serialVersionUID = 8809406805732162793L;
     private static final String ID = "codenarc";
 
@@ -34,7 +34,7 @@ public class CodeNarc extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("codeNarc")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

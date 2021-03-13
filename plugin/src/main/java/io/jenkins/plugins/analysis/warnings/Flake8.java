@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for Flake8.
  *
  * @author Ullrich Hafner
  */
-public class Flake8 extends ReportScanningTool {
+public class Flake8 extends AnalysisModelParser {
     private static final long serialVersionUID = 2133173655608279071L;
     private static final String ID = "flake8";
 
@@ -34,7 +34,7 @@ public class Flake8 extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("flake8")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Gcc3 Compiler.
  *
  * @author Raphael Furch
  */
-public class Gcc3 extends ReportScanningTool {
+public class Gcc3 extends AnalysisModelParser {
     private static final long serialVersionUID = -8985462824184450486L;
     private static final String ID = "gcc3";
 
@@ -34,7 +34,7 @@ public class Gcc3 extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("gcc3")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

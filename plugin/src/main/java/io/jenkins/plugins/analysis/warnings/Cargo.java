@@ -8,7 +8,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for {@code rustc} compiler messages emitted by {@code cargo check
@@ -16,7 +16,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  *
  * @author Ullrich Hafner
  */
-public class Cargo extends ReportScanningTool {
+public class Cargo extends AnalysisModelParser {
     private static final long serialVersionUID = -3997235880208767455L;
     private static final String ID = "cargo";
 
@@ -35,7 +35,7 @@ public class Cargo extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("cargo")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

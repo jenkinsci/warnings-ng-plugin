@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Clang-Tidy compiler.
  *
  * @author Ullrich Hafner
  */
-public class ClangTidy extends ReportScanningTool {
+public class ClangTidy extends AnalysisModelParser {
     private static final long serialVersionUID = 5834065931433801829L;
     private static final String ID = "clang-tidy";
 
@@ -34,7 +34,7 @@ public class ClangTidy extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("clangTidy")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

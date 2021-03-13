@@ -33,7 +33,7 @@ import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
@@ -968,8 +968,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
         createFileInWorkspace(job, "xxe.xml", adaptedXxeFileContent);
 
-        List<ReportScanningTool> tools = Lists.mutable.of(new CheckStyle(), new Pmd(), new FindBugs(), new JcReport());
-        for (ReportScanningTool tool : tools) {
+        List<AnalysisModelParser> tools = Lists.mutable.of(new CheckStyle(), new Pmd(), new FindBugs(), new JcReport());
+        for (AnalysisModelParser tool : tools) {
             job.setDefinition(asStage(
                     String.format("def issues = scanForIssues tool: %s(pattern:'xxe.xml')",
                             tool.getSymbolName()),

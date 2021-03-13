@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the clang-analyzer.
  *
  * @author Andrey Danin
  */
-public class ClangAnalyzer extends ReportScanningTool {
+public class ClangAnalyzer extends AnalysisModelParser {
     private static final long serialVersionUID = 1L;
     private static final String ID = "clang-analyzer";
 
@@ -34,7 +34,7 @@ public class ClangAnalyzer extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("clangAnalyzer")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

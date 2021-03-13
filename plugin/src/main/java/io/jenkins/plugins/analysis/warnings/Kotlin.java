@@ -8,8 +8,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Sladyn Nunes
  */
-public class Kotlin extends ReportScanningTool {
+public class Kotlin extends AnalysisModelParser {
     private static final long serialVersionUID = -8933886588477373744L;
     private static final String ID = "kotlin";
 
@@ -40,7 +40,7 @@ public class Kotlin extends ReportScanningTool {
      */
     @Symbol("kotlin")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /**
          * Creates the descriptor instance.
          */

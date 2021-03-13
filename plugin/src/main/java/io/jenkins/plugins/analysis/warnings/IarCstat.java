@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the IAR C-Stat static analysis tool.
  *
  * @author Lorenz Aebi
  */
-public class IarCstat extends ReportScanningTool {
+public class IarCstat extends AnalysisModelParser {
     private static final long serialVersionUID = 6672928932731913714L;
     private static final String ID = "iar-cstat";
 
@@ -34,7 +34,7 @@ public class IarCstat extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("iarCstat")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

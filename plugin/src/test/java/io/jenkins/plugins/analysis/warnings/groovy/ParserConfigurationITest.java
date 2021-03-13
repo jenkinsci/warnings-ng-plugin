@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Test;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -46,9 +46,9 @@ public class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite
         Tool tool = provider.getTools().get(0);
         assertThat(tool.getActualId()).isEqualTo("id");
         assertThat(tool.getActualName()).isEqualTo("name");
-        
-        assertThat(tool).isInstanceOf(ReportScanningTool.class);
-        assertThat(((ReportScanningTool)tool).createParser()).isInstanceOf(DynamicLineParser.class);
+
+        assertThat(tool).isInstanceOf(AnalysisModelParser.class);
+        assertThat(((AnalysisModelParser)tool).createParser()).isInstanceOf(DynamicLineParser.class);
     }
 
     private ParserConfiguration getConfiguration() {

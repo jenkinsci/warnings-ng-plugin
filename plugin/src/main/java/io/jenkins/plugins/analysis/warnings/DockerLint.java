@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for {@code dockerfile_lint} json report.
  *
  * @author Andreas Mandel
  */
-public class DockerLint extends ReportScanningTool {
+public class DockerLint extends AnalysisModelParser {
     private static final long serialVersionUID = 42L;
     private static final String ID = "dockerlint";
 
@@ -33,7 +33,7 @@ public class DockerLint extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("dockerLint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

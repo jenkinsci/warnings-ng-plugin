@@ -8,8 +8,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author PVS-Studio Team
  */
-public class PVSStudio extends ReportScanningTool {
+public class PVSStudio extends AnalysisModelParser {
     private static final long serialVersionUID = -1114828406964963020L;
 
     private static final String ID = "pvs-studio"; // history chart title
@@ -37,7 +37,7 @@ public class PVSStudio extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("PVSStudio")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -9,7 +9,7 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -18,7 +18,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  * @author Heiko Thiel
  *
  */
-public class QtTranslation extends ReportScanningTool {
+public class QtTranslation extends AnalysisModelParser {
     private static final long serialVersionUID = 1L;
     private static final String ID = "qt-translation";
 
@@ -39,7 +39,7 @@ public class QtTranslation extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("qtTranslation")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

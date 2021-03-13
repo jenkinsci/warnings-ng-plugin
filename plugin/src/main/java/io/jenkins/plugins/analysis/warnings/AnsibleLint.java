@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Ansible Lint Compiler.
  *
  * @author Ullrich Hafner
  */
-public class AnsibleLint extends ReportScanningTool {
+public class AnsibleLint extends AnalysisModelParser {
     private static final long serialVersionUID = -838846658095256811L;
     private static final String ID = "ansiblelint";
 
@@ -34,7 +34,7 @@ public class AnsibleLint extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("ansibleLint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

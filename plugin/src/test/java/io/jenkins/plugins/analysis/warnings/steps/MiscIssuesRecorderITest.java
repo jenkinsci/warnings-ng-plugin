@@ -23,7 +23,7 @@ import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -138,7 +138,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldCreateResultWithDifferentNameAndId() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        ReportScanningTool configuration = configurePattern(new Eclipse());
+        AnalysisModelParser configuration = configurePattern(new Eclipse());
         String id = "new-id";
         configuration.setId(id);
         String name = "new-name";
@@ -275,8 +275,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldUseSameToolTwice() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "checkstyle-twice.xml");
-        ReportScanningTool first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
-        ReportScanningTool second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
+        AnalysisModelParser first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
+        AnalysisModelParser second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
         second.setId("second");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(false), first, second);
 
@@ -375,7 +375,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldCreateNoFixedWarningsOrNewWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_8_Warnings.txt");
-        ReportScanningTool eclipse = createEclipse("eclipse_8_Warnings-issues.txt");
+        AnalysisModelParser eclipse = createEclipse("eclipse_8_Warnings-issues.txt");
         IssuesRecorder recorder = enableWarnings(project, eclipse);
 
         // First build: baseline
@@ -418,7 +418,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
-    private ReportScanningTool createEclipse(final String pattern) {
+    private AnalysisModelParser createEclipse(final String pattern) {
         return createTool(new Eclipse(), pattern);
     }
 

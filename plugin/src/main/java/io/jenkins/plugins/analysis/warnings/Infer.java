@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for Infer. Delegates to {@link PmdParser}.
  *
  * @author Ullrich Hafner
  */
-public class Infer extends ReportScanningTool {
+public class Infer extends AnalysisModelParser {
     private static final long serialVersionUID = 1536446255698173148L;
     private static final String ID = "infer";
 
@@ -34,7 +34,7 @@ public class Infer extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("infer")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides parsers and customized messages for Flawfinder.
  *
  * @author Dom Postorivo
  */
-public class Flawfinder extends ReportScanningTool {
+public class Flawfinder extends AnalysisModelParser {
     private static final long serialVersionUID = 5543229182821638862L;
 
     private static final String ID = "flawfinder";
@@ -35,7 +35,7 @@ public class Flawfinder extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("flawfinder")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

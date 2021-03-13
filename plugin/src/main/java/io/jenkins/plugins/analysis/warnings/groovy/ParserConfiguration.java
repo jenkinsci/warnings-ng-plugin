@@ -14,9 +14,9 @@ import hudson.util.ListBoxModel;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
 import io.jenkins.plugins.util.GlobalConfigurationItem;
@@ -95,7 +95,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
     }
 
     /**
-     * Returns the parser (wrapped into a {@link ReportScanningTool} instance) with the specified ID.
+     * Returns the parser (wrapped into a {@link AnalysisModelParser} instance) with the specified ID.
      *
      * @param id
      *         the ID of the parser
@@ -104,7 +104,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      * @throws NoSuchElementException
      *         if there is no such parser with the given ID
      */
-    public ReportScanningTool getParser(final String id) {
+    public AnalysisModelParser getParser(final String id) {
         for (GroovyParser parser : parsers) {
             if (parser.getId().equals(id)) {
                 return parser.toStaticAnalysisTool();

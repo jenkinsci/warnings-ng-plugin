@@ -10,8 +10,8 @@ import edu.hm.hafner.analysis.Report;
 
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -106,7 +106,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
      */
     @Test
     public void shouldFindAllIssuesForCheckStyleAlias() {
-        for (ReportScanningTool tool : Arrays.asList(new Detekt(), new EsLint(), new KtLint(), new PhpCodeSniffer(),
+        for (AnalysisModelParser tool : Arrays.asList(new Detekt(), new EsLint(), new KtLint(), new PhpCodeSniffer(),
                 new SwiftLint(), new TsLint())) {
             shouldFindIssuesOfTool(6, tool, "checkstyle.xml");
         }
@@ -925,7 +925,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         shouldFindIssuesOfTool(4, new QtTranslation(), "qttranslation.ts");
     }
 
-    private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final ReportScanningTool tool,
+    private void shouldFindIssuesOfTool(final int expectedSizeOfIssues, final AnalysisModelParser tool,
             final String... fileNames) {
         String defaultPipelineDefinition = "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')";
 
@@ -940,7 +940,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
                 expectedSizeOfIssues, tool, fileNames);
     }
 
-    private Report findIssuesWithoutAnsiColorPlugin(final int expectedSizeOfIssues, final ReportScanningTool tool,
+    private Report findIssuesWithoutAnsiColorPlugin(final int expectedSizeOfIssues, final AnalysisModelParser tool,
             final String... fileNames) {
         return findIssuesInPipeline(
                 "recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')", expectedSizeOfIssues, tool,
@@ -948,7 +948,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     private Report findIssuesWithAnsiColorPlugin(final int expectedSizeOfIssues,
-            final ReportScanningTool tool, final String... fileNames) {
+            final AnalysisModelParser tool, final String... fileNames) {
         String pipelineDefinition = "wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {\n"
                 + "  recordIssues tool: %s(pattern:'**/%s', reportEncoding:'UTF-8')\n"
                 + "}";
@@ -957,7 +957,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
 
     @SuppressWarnings({"illegalcatch", "OverlyBroadCatchBlock", "PMD.LinguisticNaming"})
     private Report findIssuesInPipeline(final String pipelineDefinition,
-            final int expectedSizeOfIssues, final ReportScanningTool tool, final String... fileNames) {
+            final int expectedSizeOfIssues, final AnalysisModelParser tool, final String... fileNames) {
         try {
             WorkflowJob job = createPipeline();
             copyMultipleFilesToWorkspace(job, fileNames);

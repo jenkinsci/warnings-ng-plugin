@@ -5,13 +5,10 @@ import java.nio.charset.Charset;
 
 import org.apache.commons.lang3.StringUtils;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
-import edu.hm.hafner.analysis.registry.ParserDescriptor;
-import edu.hm.hafner.analysis.registry.ParserRegistry;
 import edu.hm.hafner.util.Ensure;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
@@ -27,6 +24,7 @@ import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -42,19 +40,11 @@ import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
  * @author Ullrich Hafner
  */
 public abstract class ReportScanningTool extends Tool {
-    private static final long serialVersionUID = -1962476812276437235L;
-
+    private static final long serialVersionUID = 2250515287336975478L;
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
     // Use negative case to allow defaulting to false and defaulting to existing behaviour.
     private boolean skipSymbolicLinks = false;
-
-    /**
-     * Returns a new parser to scan a log file and return the issues reported in such a file.
-     *
-     * @return the parser to use
-     */
-    public abstract IssueParser createParser();
 
     /**
      * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
@@ -74,6 +64,30 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     /**
+     * Returns the actual pattern to work with. If no user defined pattern is given, then the default pattern is
+     * returned.
+     *
+     * @return the name
+     * @see #setPattern(String)
+     * @see AnalysisModelParserDescriptor#getPattern()
+     */
+    public String getActualPattern() {
+        return StringUtils.defaultIfBlank(pattern, getDescriptor().getPattern());
+    }
+
+    @Override
+    public ReportScanningToolDescriptor getDescriptor() {
+        return (ReportScanningToolDescriptor)super.getDescriptor();
+    }
+
+    /**
+     * Returns a new parser to scan a log file and return the issues reported in such a file.
+     *
+     * @return the parser to use
+     */
+    public abstract IssueParser createParser();
+
+    /**
      * Specify if file scanning skip traversal of symbolic links.
      *
      * @param skipSymbolicLinks
@@ -91,18 +105,6 @@ public abstract class ReportScanningTool extends Tool {
 
     private boolean followSymlinks() {
         return !getSkipSymbolicLinks();
-    }
-
-    /**
-     * Returns the actual pattern to work with. If no user defined pattern is given, then the default pattern is
-     * returned.
-     *
-     * @return the name
-     * @see #setPattern(String)
-     * @see ReportScanningToolDescriptor#getPattern()
-     */
-    public String getActualPattern() {
-        return StringUtils.defaultIfBlank(pattern, getDescriptor().getPattern());
     }
 
     /**
@@ -152,7 +154,8 @@ public abstract class ReportScanningTool extends Tool {
 
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
-            Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding, followSymlinks()));
+            Report report = workspace.act(
+                    new FilesScanner(expandedPattern, reportEncoding, followSymlinks(), createParser()));
 
             logger.log(report);
 
@@ -213,19 +216,15 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    @Override
-    public ReportScanningToolDescriptor getDescriptor() {
-        return (ReportScanningToolDescriptor) super.getDescriptor();
-    }
-
-    /** Descriptor for {@link ReportScanningTool}. **/
-    public abstract static class ReportScanningToolDescriptor extends ToolDescriptor {
+    /**
+     * Descriptor for {@link ReportScanningTool}.
+     *
+     * @author Ullrich Hafner
+     */
+    public static class ReportScanningToolDescriptor extends ToolDescriptor {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
-        private static final ParserRegistry REGISTRY = new ParserRegistry();
 
         private final ModelValidation model = new ModelValidation();
-        private final RegistryIssueDescriptionProvider descriptionProvider;
-        private final ParserDescriptor analysisModelDescriptor;
 
         /**
          * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
@@ -234,41 +233,7 @@ public abstract class ReportScanningTool extends Tool {
          *         the unique ID of the tool
          */
         protected ReportScanningToolDescriptor(final String id) {
-            this(id, id);
-        }
-
-        /**
-         * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
-         *
-         * @param id
-         *         the unique ID of the tool
-         * @param descriptionId
-         *         the description ID of the tool in the analysis model module
-         */
-        protected ReportScanningToolDescriptor(final String id, final String descriptionId) {
             super(id);
-
-            analysisModelDescriptor = REGISTRY.get(descriptionId);
-            descriptionProvider = new RegistryIssueDescriptionProvider(analysisModelDescriptor);
-        }
-
-        /**
-         * Returns a {@link StaticAnalysisLabelProvider} that will render all tool specific labels.
-         *
-         * @return a tool specific {@link StaticAnalysisLabelProvider}
-         */
-        @Override
-        public StaticAnalysisLabelProvider getLabelProvider() {
-            return new StaticAnalysisLabelProvider(getId(), getDisplayName(), descriptionProvider);
-        }
-
-        /**
-         * Returns a description provider to obtain detailed issue descriptions.
-         *
-         * @return a description provider
-         */
-        protected RegistryIssueDescriptionProvider getDescriptionProvider() {
-            return descriptionProvider;
         }
 
         /**
@@ -328,16 +293,6 @@ public abstract class ReportScanningTool extends Tool {
         }
 
         /**
-         * Returns the default filename pattern for this tool. Override if your typically works on a specific file.
-         * Note: if you provide a default pattern then it is not possible to scan Jenkins console log of a build.
-         *
-         * @return the default pattern
-         */
-        public String getPattern() {
-            return analysisModelDescriptor.getPattern();
-        }
-
-        /**
          * Returns whether this parser can scan the console log. Typically, only line based parsers can scan the console
          * log. XML parsers should always parse a given file only.
          *
@@ -347,33 +302,14 @@ public abstract class ReportScanningTool extends Tool {
             return true;
         }
 
-        @Override
-        public String getHelp() {
-            return analysisModelDescriptor.getHelp();
-        }
-
-        @Override
-        public String getUrl() {
-            return analysisModelDescriptor.getUrl();
-        }
-    }
-
-    /**
-     * Extracts a description from the associated {@link ParserDescriptor}.
-     */
-    private static class RegistryIssueDescriptionProvider implements DescriptionProvider {
-        private final ParserDescriptor parserDescriptor;
-
-        RegistryIssueDescriptionProvider(final ParserDescriptor parserDescriptor) {
-            if (parserDescriptor == null) {
-                throw new NullPointerException();
-            }
-            this.parserDescriptor = parserDescriptor;
-        }
-
-        @Override
-        public String getDescription(final Issue issue) {
-            return parserDescriptor.getDescription(issue);
+        /**
+         * Returns the default filename pattern for this tool. Override if your typically works on a specific file.
+         * Note: if you provide a default pattern then it is not possible to scan Jenkins console log of a build.
+         *
+         * @return the default pattern
+         */
+        public String getPattern() {
+            return StringUtils.EMPTY;
         }
     }
 }

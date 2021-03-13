@@ -40,7 +40,7 @@ public class WarningsPlugin extends ReportScanningToolSuite {
     /** Descriptor for this static analysis tool. */
     @Symbol("issues")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID, "native");

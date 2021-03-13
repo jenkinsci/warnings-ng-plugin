@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for Puppet Lint.
  *
  * @author Ullrich Hafner
  */
-public class PuppetLint extends ReportScanningTool {
+public class PuppetLint extends AnalysisModelParser {
     private static final long serialVersionUID = 6585663572231821338L;
     private static final String ID = "puppetlint";
 
@@ -34,7 +34,7 @@ public class PuppetLint extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("puppetLint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

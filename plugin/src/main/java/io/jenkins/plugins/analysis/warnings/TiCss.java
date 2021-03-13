@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Texas Instruments Code Composer Studio compiler.
  *
  * @author Ullrich Hafner
  */
-public class TiCss extends ReportScanningTool {
+public class TiCss extends AnalysisModelParser {
     private static final long serialVersionUID = -7982604310730169143L;
     private static final String ID = "code-composer";
 
@@ -34,7 +34,7 @@ public class TiCss extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("tiCss")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

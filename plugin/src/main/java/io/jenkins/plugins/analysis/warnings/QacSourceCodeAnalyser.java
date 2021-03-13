@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the PRQA QA-C Sourcecode Analyser.
  *
  * @author Ullrich Hafner
  */
-public class QacSourceCodeAnalyser extends ReportScanningTool {
+public class QacSourceCodeAnalyser extends AnalysisModelParser {
     private static final long serialVersionUID = 3092674431567484628L;
     private static final String ID = "qac";
 
@@ -34,7 +34,7 @@ public class QacSourceCodeAnalyser extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("qacSourceCodeAnalyser")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

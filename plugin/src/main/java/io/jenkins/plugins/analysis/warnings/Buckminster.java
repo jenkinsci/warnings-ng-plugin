@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Buckminster Compiler.
  *
  * @author Ullrich Hafner
  */
-public class Buckminster extends ReportScanningTool {
+public class Buckminster extends AnalysisModelParser {
     private static final long serialVersionUID = 7067423260823622207L;
     private static final String ID = "buckminster";
 
@@ -34,7 +34,7 @@ public class Buckminster extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("buckminster")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

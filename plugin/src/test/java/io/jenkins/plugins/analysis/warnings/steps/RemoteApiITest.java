@@ -18,7 +18,7 @@ import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 import hudson.model.Run;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.restapi.AnalysisResultApi;
 import io.jenkins.plugins.analysis.core.restapi.ReportApi;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -166,8 +166,8 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
         fail("No node found with id %s in %s", expectedId, tools.toString(2));
     }
 
-    private ReportScanningTool createCheckstyle(final String pattern) {
-        ReportScanningTool tool = createTool(new CheckStyle(), pattern);
+    private AnalysisModelParser createCheckstyle(final String pattern) {
+        AnalysisModelParser tool = createTool(new CheckStyle(), pattern);
         tool.setReportEncoding("UTF-8");
         return tool;
     }

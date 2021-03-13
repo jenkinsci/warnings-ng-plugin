@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for Oracle Invalids.
  *
  * @author Ullrich Hafner
  */
-public class Invalids extends ReportScanningTool {
+public class Invalids extends AnalysisModelParser {
     private static final long serialVersionUID = 8400984149210830144L;
     private static final String ID = "invalids";
 
@@ -34,7 +34,7 @@ public class Invalids extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("invalids")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the MsBuild Tool.
  *
  * @author Joscha Behrmann
  */
-public class MsBuild extends ReportScanningTool {
+public class MsBuild extends AnalysisModelParser {
     private static final long serialVersionUID = -6022797743536264094L;
     private static final String ID = "msbuild";
 
@@ -34,7 +34,7 @@ public class MsBuild extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("msBuild")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

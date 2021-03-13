@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Perforce tool.
  *
  * @author Joscha Behrmann
  */
-public class Perforce extends ReportScanningTool {
+public class Perforce extends AnalysisModelParser {
     private static final long serialVersionUID = 4203426682751724907L;
     private static final String ID = "perforce";
 
@@ -34,7 +34,7 @@ public class Perforce extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("perforce")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

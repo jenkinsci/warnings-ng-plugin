@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Taglist Maven Plugin.
  *
  * @author Ullrich Hafner
  */
-public class TagList extends ReportScanningTool {
+public class TagList extends AnalysisModelParser {
     private static final long serialVersionUID = 2696608544063390368L;
 
     private static final String ID = "taglist";
@@ -35,7 +35,7 @@ public class TagList extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("tagList")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

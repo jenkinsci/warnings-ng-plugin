@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for MyPy.
  *
  * @author Ullrich Hafner
  */
-public class MyPy extends ReportScanningTool {
+public class MyPy extends AnalysisModelParser {
     private static final long serialVersionUID = -1864782743893780307L;
     private static final String ID = "mypy";
 
@@ -34,7 +34,7 @@ public class MyPy extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("myPy")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

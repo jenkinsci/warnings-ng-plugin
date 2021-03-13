@@ -9,7 +9,7 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Jeroen Jans
  */
-public class PhpStan extends ReportScanningTool {
+public class PhpStan extends AnalysisModelParser {
     private static final long serialVersionUID = 2699509705079011738L;
 
     private static final String ID = "phpstan";
@@ -36,7 +36,7 @@ public class PhpStan extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("phpStan")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

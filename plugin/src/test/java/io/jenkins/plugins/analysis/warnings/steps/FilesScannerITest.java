@@ -12,9 +12,9 @@ import hudson.FilePath;
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.FilesScanner;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
@@ -209,7 +209,7 @@ public class FilesScannerITest extends IntegrationTestWithJenkinsPerSuite {
                 "-> PASSED - Total (any severity): 0 - Quality QualityGate: 6");
     }
 
-    private ReportScanningTool createTool(final ReportScanningTool tool, final String pattern,
+    private AnalysisModelParser createTool(final AnalysisModelParser tool, final String pattern,
             final boolean skipSymbolicLinks) {
         tool.setPattern(pattern);
         tool.setSkipSymbolicLinks(skipSymbolicLinks);

@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the PC-Lint Tool.
  *
  * @author Ullrich Hafner
  */
-public class PcLint extends ReportScanningTool {
+public class PcLint extends AnalysisModelParser {
     private static final long serialVersionUID = -6022797743536264094L;
     private static final String ID = "pclint";
 
@@ -34,7 +34,7 @@ public class PcLint extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("pcLint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

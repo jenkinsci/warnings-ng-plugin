@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for Klocwork.
  *
  * @author Ullrich Hafner
  */
-public class KlocWork extends ReportScanningTool {
+public class KlocWork extends AnalysisModelParser {
     private static final long serialVersionUID = -4352260844574399784L;
     private static final String ID = "klocwork";
 
@@ -34,7 +34,7 @@ public class KlocWork extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("klocWork")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

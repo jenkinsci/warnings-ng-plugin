@@ -9,7 +9,7 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Ullrich Hafner
  */
-public class Pmd extends ReportScanningTool {
+public class Pmd extends AnalysisModelParser {
     private static final long serialVersionUID = -7600332469176914690L;
     private static final String ID = "pmd";
 
@@ -36,7 +36,7 @@ public class Pmd extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("pmdParser")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

@@ -26,7 +26,7 @@ import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.datatables.TableColumn;
@@ -42,7 +42,7 @@ import static j2html.TagCreator.*;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("PMD.DataClass")
-public abstract class DuplicateCodeScanner extends ReportScanningTool {
+public abstract class DuplicateCodeScanner extends AnalysisModelParser {
     private static final long serialVersionUID = -8446643146836067375L;
 
     /** Validates the thresholds user input. */
@@ -152,7 +152,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
     }
 
     /** Descriptor for this static analysis tool. */
-    abstract static class DryDescriptor extends ReportScanningToolDescriptor {
+    abstract static class DryDescriptor extends AnalysisModelParserDescriptor {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 

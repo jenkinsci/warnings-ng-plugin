@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for {@code clair-scanner} json report.
  *
  * @author Andreas Mandel
  */
-public class Clair extends ReportScanningTool {
+public class Clair extends AnalysisModelParser {
     private static final long serialVersionUID = 42L;
     private static final String ID = "clair";
 
@@ -33,7 +33,7 @@ public class Clair extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("clair")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

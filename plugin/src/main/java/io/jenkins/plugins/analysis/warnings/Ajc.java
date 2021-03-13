@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the AspectJ (ajc) Compiler.
  *
  * @author Ullrich Hafner
  */
-public class Ajc extends ReportScanningTool {
+public class Ajc extends AnalysisModelParser {
     private static final long serialVersionUID = 207829559393914788L;
     private static final String ID = "aspectj";
 
@@ -34,7 +34,7 @@ public class Ajc extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("ajc")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

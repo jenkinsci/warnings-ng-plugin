@@ -9,7 +9,7 @@ import org.jenkinsci.Symbol;
 import hudson.Extension;
 
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Abhishek Dubey
  */
-public class OTDockerLint extends ReportScanningTool {
+public class OTDockerLint extends AnalysisModelParser {
     private static final long serialVersionUID = 42L;
     private static final String ID = "ot-docker-linter";
 
@@ -35,7 +35,7 @@ public class OTDockerLint extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("otDockerLint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

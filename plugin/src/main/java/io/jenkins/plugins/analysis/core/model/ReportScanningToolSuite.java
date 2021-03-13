@@ -10,12 +10,12 @@ import edu.hm.hafner.analysis.ReaderFactory;
 import edu.hm.hafner.analysis.Report;
 
 /**
- * A {@link ReportScanningTool} that is composed of several tools. Every parser of this suite will be called on the
+ * A {@link AnalysisModelParser} that is composed of several tools. Every parser of this suite will be called on the
  * input file, the results will be aggregated afterwards.
  *
  * @author Ullrich Hafner
  */
-public abstract class ReportScanningToolSuite extends ReportScanningTool {
+public abstract class ReportScanningToolSuite extends AnalysisModelParser {
     private static final long serialVersionUID = 6735084787002912588L;
 
     @Override

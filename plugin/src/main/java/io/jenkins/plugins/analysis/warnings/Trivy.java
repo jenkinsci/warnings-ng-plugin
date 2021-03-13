@@ -8,7 +8,7 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Aquasec Trivy is a container vulnerability scanner.
@@ -23,7 +23,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  * @author Thomas Fürer - tfuerer.javanet@gmail.com
  *
  */
-public class Trivy extends ReportScanningTool {
+public class Trivy extends AnalysisModelParser {
     private static final long serialVersionUID = 1L;
     private static final String ID = "trivy";
 
@@ -44,7 +44,7 @@ public class Trivy extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("trivy")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

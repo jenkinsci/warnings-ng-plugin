@@ -8,14 +8,14 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides  parser and customized messages for CMake.
  *
  * @author Ullrich Hafner
  */
-public class Cmake extends ReportScanningTool {
+public class Cmake extends AnalysisModelParser {
     private static final long serialVersionUID = -5981880343845273634L;
     private static final String ID = "cmake";
 
@@ -34,7 +34,7 @@ public class Cmake extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("cmake") // FIXME: change to cmakeParse, see https://plugins.jenkins.io/cmakebuilder/
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

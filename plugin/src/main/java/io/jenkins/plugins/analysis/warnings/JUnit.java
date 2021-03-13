@@ -8,8 +8,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +17,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Gyanesha Prajjwal
  */
-public class JUnit extends ReportScanningTool {
+public class JUnit extends AnalysisModelParser {
     private static final long serialVersionUID = -5341616371387604827L;
     private static final String ID = "junit";
 
@@ -36,7 +36,7 @@ public class JUnit extends ReportScanningTool {
     /** Descriptor for this static analysis tool. */
     @Symbol("junitParser")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
