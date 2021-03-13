@@ -26,11 +26,6 @@ public class StyleCop extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new StyleCopParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("styleCop")
     @Extension

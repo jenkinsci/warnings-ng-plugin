@@ -26,11 +26,6 @@ public class Robocopy extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new RobocopyParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("robocopy")
     @Extension

@@ -26,11 +26,6 @@ public class Buckminster extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new BuckminsterParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("buckminster")
     @Extension

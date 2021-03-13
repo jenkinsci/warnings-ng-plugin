@@ -1,24 +1,19 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.MetrowerksCwCompilerParser;
-import edu.hm.hafner.analysis.parser.MetrowerksCwLinkerParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Metrowerks CodeWarrior compiler and linker.
  *
  * @author Aykut Yilmaz
  */
-public class MetrowerksCodeWarrior extends ReportScanningToolSuite {
+public class MetrowerksCodeWarrior extends AnalysisModelParser {
     private static final long serialVersionUID = 4315389958099766339L;
     private static final String ID = "metrowerks";
 
@@ -27,11 +22,6 @@ public class MetrowerksCodeWarrior extends ReportScanningToolSuite {
     public MetrowerksCodeWarrior() {
         super();
         // empty constructor required for stapler
-    }
-
-    @Override
-    protected Collection<? extends IssueParser> getParsers() {
-        return asList(new MetrowerksCwCompilerParser(), new MetrowerksCwLinkerParser());
     }
 
     /** Descriptor for this static analysis tool. */

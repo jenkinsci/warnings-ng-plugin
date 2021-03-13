@@ -26,11 +26,6 @@ public class MentorGraphics extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new MentorParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("modelsim")
     @Extension

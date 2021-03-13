@@ -26,11 +26,6 @@ public class Gnat extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new GnatParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("gnat")
     @Extension

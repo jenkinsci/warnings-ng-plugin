@@ -26,11 +26,6 @@ public class AnsibleLint extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new AnsibleLintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("ansibleLint")
     @Extension

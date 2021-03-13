@@ -28,11 +28,6 @@ public class PhpStan extends AnalysisModelParser {
         super();
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CheckStyleParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("phpStan")
     @Extension

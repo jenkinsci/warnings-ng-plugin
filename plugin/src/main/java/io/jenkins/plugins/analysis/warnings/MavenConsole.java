@@ -26,11 +26,6 @@ public class MavenConsole extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new MavenConsoleParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("mavenConsole")
     @Extension

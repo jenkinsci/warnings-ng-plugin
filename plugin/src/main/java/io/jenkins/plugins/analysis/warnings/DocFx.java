@@ -26,11 +26,6 @@ public class DocFx extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new DocFxAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("docFx")
     @Extension

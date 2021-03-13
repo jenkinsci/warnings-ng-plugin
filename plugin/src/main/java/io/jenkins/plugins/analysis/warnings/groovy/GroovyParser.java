@@ -32,7 +32,6 @@ import hudson.util.FormValidation;
 import hudson.util.FormValidation.Kind;
 import jenkins.model.Jenkins;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -204,10 +203,6 @@ public class GroovyParser extends AbstractDescribableImpl<GroovyParser> implemen
         else {
             return new DynamicLineParser(regexp, script);
         }
-    }
-
-    AnalysisModelParser toStaticAnalysisTool() {
-        return new GroovyParserToolAdapter(this);
     }
 
     @VisibleForTesting

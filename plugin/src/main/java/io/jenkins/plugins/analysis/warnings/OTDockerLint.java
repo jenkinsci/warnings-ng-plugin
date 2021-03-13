@@ -27,11 +27,6 @@ public class OTDockerLint extends AnalysisModelParser {
         super();
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new OTDockerLintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("otDockerLint")
     @Extension

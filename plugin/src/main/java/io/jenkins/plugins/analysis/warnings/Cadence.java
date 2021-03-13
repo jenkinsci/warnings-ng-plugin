@@ -26,11 +26,6 @@ public class Cadence extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CadenceIncisiveParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("cadence")
     @Extension

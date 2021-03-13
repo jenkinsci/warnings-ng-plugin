@@ -28,11 +28,6 @@ public class AndroidLint extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new AndroidLintParserAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("androidLintParser")
     @Extension

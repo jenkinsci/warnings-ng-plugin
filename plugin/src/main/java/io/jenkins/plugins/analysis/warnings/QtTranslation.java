@@ -31,11 +31,6 @@ public class QtTranslation extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new QtTranslationParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("qtTranslation")
     @Extension

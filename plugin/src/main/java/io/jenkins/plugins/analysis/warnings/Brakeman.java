@@ -26,11 +26,6 @@ public class Brakeman extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new BrakemanParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("brakeman")
     @Extension

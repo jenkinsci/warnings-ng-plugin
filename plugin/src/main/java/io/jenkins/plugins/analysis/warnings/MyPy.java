@@ -26,11 +26,6 @@ public class MyPy extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new MyPyAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("myPy")
     @Extension

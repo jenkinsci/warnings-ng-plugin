@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.TnsdlParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -24,11 +22,6 @@ public class Tnsdl extends AnalysisModelParser {
     public Tnsdl() {
         super();
         // empty constructor required for stapler
-    }
-
-    @Override
-    public IssueParser createParser() {
-        return new TnsdlParser();
     }
 
     /** Descriptor for this static analysis tool. */

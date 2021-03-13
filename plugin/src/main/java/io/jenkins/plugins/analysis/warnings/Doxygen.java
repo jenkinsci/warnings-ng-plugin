@@ -26,11 +26,6 @@ public class Doxygen extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new DoxygenParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("doxygen")
     @Extension

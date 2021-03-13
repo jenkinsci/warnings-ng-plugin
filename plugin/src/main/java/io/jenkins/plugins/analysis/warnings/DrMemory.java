@@ -26,11 +26,6 @@ public class DrMemory extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new DrMemoryParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("drMemory")
     @Extension

@@ -26,11 +26,6 @@ public class CppLint extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CppLintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("cppLint")
     @Extension

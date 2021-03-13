@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.TrivyParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -34,11 +32,6 @@ public class Trivy extends AnalysisModelParser {
     public Trivy() {
         super();
         // empty constructor required for stapler
-    }
-
-    @Override
-    public IssueParser createParser() {
-        return new TrivyParser();
     }
 
     /** Descriptor for this static analysis tool. */

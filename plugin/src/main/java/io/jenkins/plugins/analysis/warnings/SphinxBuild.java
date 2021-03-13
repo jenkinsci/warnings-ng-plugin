@@ -26,11 +26,6 @@ public class SphinxBuild extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new SphinxBuildParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("sphinxBuild")
     @Extension

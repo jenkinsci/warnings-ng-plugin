@@ -26,11 +26,6 @@ public class Invalids extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new InvalidsParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("invalids")
     @Extension

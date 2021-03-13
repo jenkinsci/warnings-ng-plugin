@@ -26,11 +26,6 @@ public class Cmake extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CMakeParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("cmake") // FIXME: change to cmakeParse, see https://plugins.jenkins.io/cmakebuilder/
     @Extension

@@ -26,11 +26,6 @@ public class Fxcop extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new FxCopParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("fxcop")
     @Extension

@@ -28,11 +28,6 @@ public class IdeaInspection extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new IdeaInspectionParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("ideaInspection")
     @Extension

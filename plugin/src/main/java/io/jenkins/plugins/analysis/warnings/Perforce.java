@@ -26,11 +26,6 @@ public class Perforce extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new P4Parser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("perforce")
     @Extension

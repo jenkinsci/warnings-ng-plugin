@@ -26,11 +26,6 @@ public class PerlCritic extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new PerlCriticParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("perlCritic")
     @Extension

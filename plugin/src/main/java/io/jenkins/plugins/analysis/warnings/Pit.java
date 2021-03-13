@@ -28,11 +28,6 @@ public class Pit extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new PitAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("pit")
     @Extension

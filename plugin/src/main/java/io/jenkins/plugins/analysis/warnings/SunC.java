@@ -26,11 +26,6 @@ public class SunC extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new SunCParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("sunC")
     @Extension

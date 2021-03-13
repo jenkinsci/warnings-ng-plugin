@@ -26,11 +26,6 @@ public class TiCss extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new TiCcsParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("tiCss")
     @Extension

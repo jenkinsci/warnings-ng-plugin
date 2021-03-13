@@ -28,11 +28,6 @@ public class ResharperInspectCode extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new ResharperInspectCodeAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("resharperInspectCode")
     @Extension

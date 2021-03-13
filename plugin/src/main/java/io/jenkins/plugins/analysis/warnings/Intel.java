@@ -27,11 +27,6 @@ public class Intel extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new IntelParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("intel")
     @Extension

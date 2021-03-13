@@ -19,7 +19,6 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  */
 public class EsLint extends AnalysisModelParser {
     private static final long serialVersionUID = -3634797822059504099L;
-
     private static final String ID = "eslint";
 
     /** Creates a new instance of {@link EsLint}. */
@@ -27,11 +26,6 @@ public class EsLint extends AnalysisModelParser {
     public EsLint() {
         super();
         // empty constructor required for stapler
-    }
-
-    @Override
-    public IssueParser createParser() {
-        return new CheckStyleParser();
     }
 
     /** Descriptor for this static analysis tool. */

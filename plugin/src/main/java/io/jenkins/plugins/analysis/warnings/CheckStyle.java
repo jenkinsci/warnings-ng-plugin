@@ -28,11 +28,6 @@ public class CheckStyle extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CheckStyleParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("checkStyle")
     @Extension

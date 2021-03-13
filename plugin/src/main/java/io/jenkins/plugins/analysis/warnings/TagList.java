@@ -27,11 +27,6 @@ public class TagList extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new TaglistParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("tagList")
     @Extension

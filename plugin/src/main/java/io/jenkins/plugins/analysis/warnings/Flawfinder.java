@@ -27,11 +27,6 @@ public class Flawfinder extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new FlawfinderParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("flawfinder")
     @Extension

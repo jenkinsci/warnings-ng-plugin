@@ -27,11 +27,6 @@ public class Cargo extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CargoCheckParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("cargo")
     @Extension

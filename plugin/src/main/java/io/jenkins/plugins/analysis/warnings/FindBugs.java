@@ -50,11 +50,6 @@ public class FindBugs extends AnalysisModelParser {
         this.useRankAsPriority = useRankAsPriority;
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new FindBugsParser(useRankAsPriority ? RANK : CONFIDENCE);
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("findBugs")
     @Extension

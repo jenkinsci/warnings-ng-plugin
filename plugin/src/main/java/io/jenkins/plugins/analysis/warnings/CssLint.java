@@ -26,11 +26,6 @@ public class CssLint extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new LintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("cssLint")
     @Extension

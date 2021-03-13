@@ -26,11 +26,6 @@ public class FlexSdk extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new FlexSdkParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("flexSdk")
     @Extension

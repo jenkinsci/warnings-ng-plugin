@@ -26,11 +26,6 @@ public class AcuCobol extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new AcuCobolParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("acuCobol")
     @Extension

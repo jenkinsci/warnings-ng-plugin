@@ -26,11 +26,6 @@ public class GoVet extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new GoVetParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("goVet")
     @Extension

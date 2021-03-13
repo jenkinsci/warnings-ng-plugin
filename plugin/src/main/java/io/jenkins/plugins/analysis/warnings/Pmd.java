@@ -28,12 +28,7 @@ public class Pmd extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new PmdParser();
-    }
-
-    /** Descriptor for this static analysis tool. */
+   /** Descriptor for this static analysis tool. */
     @Symbol("pmdParser")
     @Extension
     public static class Descriptor extends AnalysisModelParserDescriptor {

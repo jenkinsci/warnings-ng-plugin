@@ -25,11 +25,6 @@ public class Clair extends AnalysisModelParser {
         super();
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new ClairParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("clair")
     @Extension

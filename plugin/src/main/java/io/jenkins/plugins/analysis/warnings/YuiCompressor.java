@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.YuiCompressorParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -24,11 +22,6 @@ public class YuiCompressor extends AnalysisModelParser {
     public YuiCompressor() {
         super();
         // empty constructor required for stapler
-    }
-
-    @Override
-    public IssueParser createParser() {
-        return new YuiCompressorParser();
     }
 
     /** Descriptor for this static analysis tool. */

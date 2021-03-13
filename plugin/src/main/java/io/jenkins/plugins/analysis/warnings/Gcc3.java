@@ -26,11 +26,6 @@ public class Gcc3 extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new GccParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("gcc3")
     @Extension

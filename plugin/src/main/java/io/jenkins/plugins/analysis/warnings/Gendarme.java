@@ -26,11 +26,6 @@ public class Gendarme extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new GendarmeParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("gendarme")
     @Extension

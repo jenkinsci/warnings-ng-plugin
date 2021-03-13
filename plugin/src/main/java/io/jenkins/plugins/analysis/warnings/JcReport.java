@@ -26,11 +26,6 @@ public class JcReport extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new JcReportParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("jcReport")
     @Extension

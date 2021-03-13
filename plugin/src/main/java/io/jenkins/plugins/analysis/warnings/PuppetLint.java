@@ -26,11 +26,6 @@ public class PuppetLint extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new PuppetLintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("puppetLint")
     @Extension

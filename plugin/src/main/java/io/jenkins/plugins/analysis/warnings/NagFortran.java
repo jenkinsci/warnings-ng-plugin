@@ -26,11 +26,6 @@ public class NagFortran extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new NagFortranParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("nagFortran")
     @Extension

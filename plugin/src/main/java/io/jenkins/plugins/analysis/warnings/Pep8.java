@@ -26,11 +26,6 @@ public class Pep8 extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new Pep8Parser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("pep8")
     @Extension

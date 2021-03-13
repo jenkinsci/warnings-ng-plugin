@@ -26,11 +26,6 @@ public class MsBuild extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new MsBuildParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("msBuild")
     @Extension

@@ -1,12 +1,14 @@
 package io.jenkins.plugins.analysis.warnings.axivion;
 
+import java.io.Serializable;
+
 import edu.hm.hafner.analysis.Issue;
 
 /**
  * Transformation function which converts Axivion-Dashboard violations to warnings-ng {@link Issue} ones.
  */
 @FunctionalInterface
-interface AxIssueTransformation {
+interface AxIssueTransformation extends Serializable {
     /**
      * Transforms raw json-based Axivion-Dashboard violations to {@link Issue}'s.
      *

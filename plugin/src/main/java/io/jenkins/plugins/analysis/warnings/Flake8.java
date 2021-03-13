@@ -26,11 +26,6 @@ public class Flake8 extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new Flake8Adapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("flake8")
     @Extension

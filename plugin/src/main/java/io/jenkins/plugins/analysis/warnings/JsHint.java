@@ -26,11 +26,6 @@ public class JsHint extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new JsHintAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("jsHint")
     @Extension

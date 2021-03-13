@@ -26,11 +26,6 @@ public class ClangAnalyzer extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new ClangAnalyzerPlistParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("clangAnalyzer")
     @Extension

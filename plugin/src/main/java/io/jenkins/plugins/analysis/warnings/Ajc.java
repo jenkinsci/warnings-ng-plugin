@@ -26,11 +26,6 @@ public class Ajc extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new AjcParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("ajc")
     @Extension

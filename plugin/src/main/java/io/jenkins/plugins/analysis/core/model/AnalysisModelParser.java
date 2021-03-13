@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import edu.hm.hafner.analysis.Issue;
+import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.registry.ParserDescriptor;
 import edu.hm.hafner.analysis.registry.ParserRegistry;
 
@@ -11,6 +12,16 @@ import edu.hm.hafner.analysis.registry.ParserRegistry;
  */
 public abstract class AnalysisModelParser extends ReportScanningTool {
     private static final long serialVersionUID = 3510579055771471269L;
+
+    @Override
+    public final IssueParser createParser() {
+        return getDescriptor().createParser();
+    }
+
+    @Override
+    public AnalysisModelParserDescriptor getDescriptor() {
+        return (AnalysisModelParserDescriptor)super.getDescriptor();
+    }
 
     /** Descriptor for {@link AnalysisModelParser}. **/
     public abstract static class AnalysisModelParserDescriptor extends ReportScanningToolDescriptor {
@@ -63,6 +74,15 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
             return descriptionProvider;
         }
 
+        /**
+         * Returns a new parser to scan a log file and return the issues reported in such a file.
+         *
+         * @return the parser to use
+         */
+        public IssueParser createParser() {
+            return analysisModelDescriptor.createParser();
+        }
+
         @Override
         public String getPattern() {
             return analysisModelDescriptor.getPattern();
@@ -86,9 +106,6 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
         private final ParserDescriptor parserDescriptor;
 
         RegistryIssueDescriptionProvider(final ParserDescriptor parserDescriptor) {
-            if (parserDescriptor == null) {
-                throw new NullPointerException();
-            }
             this.parserDescriptor = parserDescriptor;
         }
 

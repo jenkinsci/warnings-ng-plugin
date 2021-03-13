@@ -26,11 +26,6 @@ public class Php extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new PhpParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("php")
     @Extension

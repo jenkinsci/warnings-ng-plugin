@@ -27,11 +27,6 @@ public class HadoLint extends AnalysisModelParser {
         super();
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new HadoLintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("hadoLint")
     @Extension

@@ -26,11 +26,6 @@ public class CodeNarc extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CodeNarcAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("codeNarc")
     @Extension

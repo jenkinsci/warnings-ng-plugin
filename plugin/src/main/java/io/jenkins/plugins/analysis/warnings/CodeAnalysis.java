@@ -26,11 +26,6 @@ public class CodeAnalysis extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CodeAnalysisParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("codeAnalysis")
     @Extension

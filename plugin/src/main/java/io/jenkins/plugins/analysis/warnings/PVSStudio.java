@@ -29,11 +29,6 @@ public class PVSStudio extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new PVSStudioParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("PVSStudio")
     @Extension

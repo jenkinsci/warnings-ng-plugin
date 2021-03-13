@@ -26,11 +26,6 @@ public class Coolflux extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CoolfluxChessccParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("coolflux")
     @Extension

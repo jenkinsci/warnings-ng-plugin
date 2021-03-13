@@ -26,11 +26,6 @@ public class Ccm extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CcmParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("ccm")
     @Extension

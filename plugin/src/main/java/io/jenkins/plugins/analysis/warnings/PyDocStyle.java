@@ -26,11 +26,6 @@ public class PyDocStyle extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new PyDocStyleAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("pyDocStyle")
     @Extension

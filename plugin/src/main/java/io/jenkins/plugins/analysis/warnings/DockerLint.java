@@ -25,11 +25,6 @@ public class DockerLint extends AnalysisModelParser {
         super();
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new DockerLintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("dockerLint")
     @Extension

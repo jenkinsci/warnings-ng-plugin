@@ -26,11 +26,6 @@ public class KlocWork extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new KlocWorkAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("klocWork")
     @Extension

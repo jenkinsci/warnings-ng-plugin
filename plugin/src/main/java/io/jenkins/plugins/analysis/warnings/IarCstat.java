@@ -26,11 +26,6 @@ public class IarCstat extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new IarCstatParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("iarCstat")
     @Extension

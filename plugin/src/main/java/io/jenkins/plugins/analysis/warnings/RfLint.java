@@ -29,11 +29,6 @@ public class RfLint extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new RfLintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("rfLint")
     @Extension

@@ -28,11 +28,6 @@ public class PyLint extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new PyLintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("pyLint")
     @Extension

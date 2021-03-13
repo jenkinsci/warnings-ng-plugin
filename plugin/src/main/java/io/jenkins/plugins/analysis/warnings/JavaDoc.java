@@ -28,11 +28,6 @@ public class JavaDoc extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new JavaDocParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("javaDoc")
     @Extension

@@ -1,18 +1,12 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.JsonLogParser;
-import edu.hm.hafner.analysis.parser.JsonParser;
-import edu.hm.hafner.analysis.parser.XmlParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 import static j2html.TagCreator.*;
 
@@ -21,7 +15,7 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
-public class WarningsPlugin extends ReportScanningToolSuite {
+public class WarningsPlugin extends AnalysisModelParser {
     private static final long serialVersionUID = 8110398783405047555L;
     private static final String ID = "issues";
 
@@ -30,11 +24,6 @@ public class WarningsPlugin extends ReportScanningToolSuite {
     public WarningsPlugin() {
         super();
         // empty constructor required for stapler
-    }
-
-    @Override
-    protected Collection<? extends IssueParser> getParsers() {
-        return asList(new XmlParser("/report/issue"), new JsonLogParser(), new JsonParser());
     }
 
     /** Descriptor for this static analysis tool. */

@@ -6,12 +6,10 @@ import java.util.List;
 import org.junit.Test;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
-import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
-import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.util.JenkinsFacade;
 
-import static org.assertj.core.api.Assertions.*;
+import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
 
 /**
  * Tests the class {@link ParserConfiguration}.
@@ -19,6 +17,9 @@ import static org.assertj.core.api.Assertions.*;
  * @author Ullrich Hafner
  */
 public class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite {
+    private static final String ID = "id";
+    private static final String NAME = "name";
+
     /** Verifies that there is no parser defined and one factory. */
     @Test
     public void shouldHaveNoParsersAndOneProviderConfiguredWhenCreated() {
@@ -28,7 +29,7 @@ public class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite
 
         StaticAnalysisToolFactory provider = getToolProvider();
 
-        assertThat(provider.getTools()).isEmpty();
+        assertThat(provider.getLabelProvider(ID)).isEmpty();
     }
 
     /** Verifies that there is one parser defined and one factory. */
@@ -41,14 +42,12 @@ public class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite
 
         StaticAnalysisToolFactory provider = getToolProvider();
 
-        assertThat(provider.getTools()).hasSize(1);
-
-        Tool tool = provider.getTools().get(0);
-        assertThat(tool.getActualId()).isEqualTo("id");
-        assertThat(tool.getActualName()).isEqualTo("name");
-
-        assertThat(tool).isInstanceOf(AnalysisModelParser.class);
-        assertThat(((AnalysisModelParser)tool).createParser()).isInstanceOf(DynamicLineParser.class);
+        assertThat(provider.getLabelProvider(ID)).isNotEmpty().hasValueSatisfying(
+                labelProvider -> {
+                    assertThat(labelProvider.getId()).isEqualTo(ID);
+                    assertThat(labelProvider.getName()).isEqualTo(NAME);
+                }
+        );
     }
 
     private ParserConfiguration getConfiguration() {
@@ -63,7 +62,7 @@ public class ParserConfigurationITest extends IntegrationTestWithJenkinsPerSuite
     }
 
     private GroovyParser createParser() {
-        return new GroovyParser("id", "name", "regexp", "script", "example");
+        return new GroovyParser(ID, NAME, "regexp", "script", "example");
     }
 
 }

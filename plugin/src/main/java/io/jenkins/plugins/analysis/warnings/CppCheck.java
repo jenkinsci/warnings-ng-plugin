@@ -26,11 +26,6 @@ public class CppCheck extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CppCheckAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("cppCheck")
     @Extension

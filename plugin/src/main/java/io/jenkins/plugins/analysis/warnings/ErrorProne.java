@@ -1,18 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.ErrorProneParser;
-import edu.hm.hafner.analysis.parser.GradleErrorProneParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -20,7 +15,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Ullrich Hafner
  */
-public class ErrorProne extends ReportScanningToolSuite {
+public class ErrorProne extends AnalysisModelParser {
     private static final long serialVersionUID = -511511623854186032L;
     private static final String ID = "error-prone";
 
@@ -29,11 +24,6 @@ public class ErrorProne extends ReportScanningToolSuite {
     public ErrorProne() {
         super();
         // empty constructor required for stapler
-    }
-
-    @Override
-    protected Collection<? extends IssueParser> getParsers() {
-        return asList(new ErrorProneParser(), new GradleErrorProneParser());
     }
 
     /** Descriptor for this static analysis tool. */
@@ -54,11 +44,6 @@ public class ErrorProne extends ReportScanningToolSuite {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getDisplayName(), getId(), getDescriptionProvider(), "bug");
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://errorprone.info";
         }
     }
 }

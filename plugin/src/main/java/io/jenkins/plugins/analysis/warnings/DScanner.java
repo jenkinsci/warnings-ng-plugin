@@ -26,11 +26,6 @@ public class DScanner extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new DScannerParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("dscanner")
     @Extension

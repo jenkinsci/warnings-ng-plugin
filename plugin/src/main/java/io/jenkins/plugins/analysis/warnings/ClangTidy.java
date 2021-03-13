@@ -26,11 +26,6 @@ public class ClangTidy extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new ClangTidyParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("clangTidy")
     @Extension

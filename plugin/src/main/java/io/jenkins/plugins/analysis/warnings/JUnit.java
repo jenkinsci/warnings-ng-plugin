@@ -28,11 +28,6 @@ public class JUnit extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new JUnitAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("junitParser")
     @Extension

@@ -26,11 +26,6 @@ public class GnuFortran extends AnalysisModelParser {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new GnuFortranParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("gnuFortran")
     @Extension

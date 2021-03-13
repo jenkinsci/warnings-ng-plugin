@@ -26,11 +26,6 @@ public class Simian extends DuplicateCodeScanner {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new SimianParser(getHighThreshold(), getNormalThreshold());
-    }
-
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DryLabelProvider {
         LabelProvider() {
