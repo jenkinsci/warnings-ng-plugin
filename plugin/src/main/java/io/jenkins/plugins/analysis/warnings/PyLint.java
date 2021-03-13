@@ -45,7 +45,7 @@ public class PyLint extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(ID, Messages.Warnings_PyLint_ParserName(), createDescriptionProvider());
+            return new IconLabelProvider(ID, Messages.Warnings_PyLint_ParserName(), getDescriptionProvider());
         }
 
         @NonNull

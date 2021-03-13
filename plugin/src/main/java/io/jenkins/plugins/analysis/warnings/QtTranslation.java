@@ -58,7 +58,7 @@ public class QtTranslation extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getDisplayName(), getId(), createDescriptionProvider(), "qt");
+            return new IconLabelProvider(getDisplayName(), getId(), getDescriptionProvider(), "qt");
         }
     }
 }

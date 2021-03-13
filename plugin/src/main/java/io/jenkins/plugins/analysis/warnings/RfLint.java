@@ -51,7 +51,7 @@ public class RfLint extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getDisplayName(), getId(), createDescriptionProvider(), ICON_NAME);
+            return new IconLabelProvider(getDisplayName(), getId(), getDescriptionProvider(), ICON_NAME);
         }
 
     }

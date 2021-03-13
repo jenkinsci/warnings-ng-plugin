@@ -225,7 +225,7 @@ public abstract class ReportScanningTool extends Tool {
 
         private final ModelValidation model = new ModelValidation();
         private final RegistryIssueDescriptionProvider descriptionProvider;
-        private ParserDescriptor analysisModelDescriptor;
+        private final ParserDescriptor analysisModelDescriptor;
 
         /**
          * Creates a new instance of {@link ReportScanningToolDescriptor} with the given ID.
@@ -248,8 +248,8 @@ public abstract class ReportScanningTool extends Tool {
         protected ReportScanningToolDescriptor(final String id, final String descriptionId) {
             super(id);
 
-            descriptionProvider = createDescriptionProvider();
             analysisModelDescriptor = REGISTRY.get(descriptionId);
+            descriptionProvider = new RegistryIssueDescriptionProvider(analysisModelDescriptor);
         }
 
         /**
@@ -263,12 +263,12 @@ public abstract class ReportScanningTool extends Tool {
         }
 
         /**
-         * Creates a description provider to obtain detailed issue descriptions.
+         * Returns a description provider to obtain detailed issue descriptions.
          *
          * @return a description provider
          */
-        protected RegistryIssueDescriptionProvider createDescriptionProvider() {
-            return new RegistryIssueDescriptionProvider(analysisModelDescriptor);
+        protected RegistryIssueDescriptionProvider getDescriptionProvider() {
+            return descriptionProvider;
         }
 
         /**
@@ -365,6 +365,9 @@ public abstract class ReportScanningTool extends Tool {
         private final ParserDescriptor parserDescriptor;
 
         RegistryIssueDescriptionProvider(final ParserDescriptor parserDescriptor) {
+            if (parserDescriptor == null) {
+                throw new NullPointerException();
+            }
             this.parserDescriptor = parserDescriptor;
         }
 

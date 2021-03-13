@@ -55,7 +55,7 @@ public class CheckStyle extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(ID, Messages.Warnings_CheckStyle_ParserName(), createDescriptionProvider(
+            return new IconLabelProvider(ID, Messages.Warnings_CheckStyle_ParserName(), getDescriptionProvider(
             ));
         }
     }

@@ -51,7 +51,7 @@ public class RuboCop extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(ID, Messages.Warnings_RuboCop_ParserName(), createDescriptionProvider());
+            return new IconLabelProvider(ID, Messages.Warnings_RuboCop_ParserName(), getDescriptionProvider());
         }
     }
 }

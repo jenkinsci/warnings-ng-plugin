@@ -50,7 +50,7 @@ public class IdeaInspection extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName(), createDescriptionProvider());
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider());
         }
 
         @Override

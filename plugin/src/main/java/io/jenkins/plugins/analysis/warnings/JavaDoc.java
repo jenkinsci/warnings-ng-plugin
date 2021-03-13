@@ -50,7 +50,7 @@ public class JavaDoc extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getDisplayName(), getId(), createDescriptionProvider(), "java");
+            return new IconLabelProvider(getDisplayName(), getId(), getDescriptionProvider(), "java");
         }
     }
 }
