@@ -43,7 +43,7 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.DataClass")
+@SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveImports"})
 public abstract class DuplicateCodeScanner extends AnalysisModelParser {
     private static final long serialVersionUID = -8446643146836067375L;
 

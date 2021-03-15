@@ -5,12 +5,14 @@ import java.util.Optional;
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 
+import edu.hm.hafner.analysis.IssueParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
 import static io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProviderAssert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests the class {@link LabelProviderFactory}.
@@ -67,12 +69,17 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
      * Static analysis tool that that implements the extension point.
      */
     @SuppressWarnings("unused")
-    public static class TestTool extends AnalysisModelParser {
+    public static class TestTool extends ReportScanningTool {
         private static final long serialVersionUID = 8456938025794683739L;
 
         @Override
         public String getId() {
             return ANNOTATED_ID;
+        }
+
+        @Override
+        public IssueParser createParser() {
+            return mock(IssueParser.class);
         }
 
         /**

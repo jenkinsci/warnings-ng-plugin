@@ -23,6 +23,8 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
     /**
      * Returns optional options to configure the parser - these options may customize the new parser instance (if
      * supported by the selected).
+     *
+     * @return the options to use
      */
     protected Option[] configureOptions() {
         return new Option[0];
