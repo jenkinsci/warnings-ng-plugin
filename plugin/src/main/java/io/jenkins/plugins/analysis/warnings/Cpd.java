@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.dry.cpd.CpdParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -37,7 +35,7 @@ public class Cpd extends DuplicateCodeScanner {
     /** Descriptor for this static analysis tool. */
     @Symbol("cpd")
     @Extension
-    public static class Descriptor extends DryDescriptor {
+    public static class Descriptor extends DuplicateCodeDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);

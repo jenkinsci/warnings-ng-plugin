@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.findbugs.FindBugsParser;
+import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -9,11 +8,9 @@ import org.kohsuke.stapler.DataBoundSetter;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
-import static edu.hm.hafner.analysis.parser.findbugs.FindBugsParser.PriorityProperty.*;
 
 /**
  * Provides a parser and customized messages for FindBugs.
@@ -32,6 +29,14 @@ public class FindBugs extends AnalysisModelParser {
         super();
         // empty constructor required for stapler
     }
+
+    @Override
+    protected Option[] configureOptions() {
+        return new Option[] {
+                new Option(edu.hm.hafner.analysis.registry.FindBugsDescriptor.PRIORITY_OPTION_KEY,
+                        getUseRankAsPriority() ? "RANK" : "CONFIDENCE")};
+    }
+
 
     @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getUseRankAsPriority() {

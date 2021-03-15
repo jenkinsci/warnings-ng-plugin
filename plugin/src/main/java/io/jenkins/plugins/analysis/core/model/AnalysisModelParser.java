@@ -3,7 +3,9 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.registry.ParserDescriptor;
+import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
 import edu.hm.hafner.analysis.registry.ParserRegistry;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Describes a static analysis tool from the analysis-model library.
@@ -14,13 +16,22 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
     private static final long serialVersionUID = 3510579055771471269L;
 
     @Override
-    public final IssueParser createParser() {
-        return getDescriptor().createParser();
+    public IssueParser createParser() {
+        return getDescriptor().createParser(configureOptions());
+    }
+
+    /**
+     * Returns optional options to configure the parser - these options may customize the new parser instance (if
+     * supported by the selected).
+     */
+    protected Option[] configureOptions() {
+        return new Option[0];
     }
 
     @Override
+    @SuppressFBWarnings("BC")
     public AnalysisModelParserDescriptor getDescriptor() {
-        return (AnalysisModelParserDescriptor)super.getDescriptor();
+        return (AnalysisModelParserDescriptor) super.getDescriptor();
     }
 
     /** Descriptor for {@link AnalysisModelParser}. **/
@@ -77,10 +88,14 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
         /**
          * Returns a new parser to scan a log file and return the issues reported in such a file.
          *
+         * @param options
+         *         options to configure the parser - may customize the new parser instance (if supported by the selected
+         *         tool)
+         *
          * @return the parser to use
          */
-        public IssueParser createParser() {
-            return analysisModelDescriptor.createParser();
+        public IssueParser createParser(final Option... options) {
+            return analysisModelDescriptor.createParser(options);
         }
 
         @Override

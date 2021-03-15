@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -36,7 +34,7 @@ public class DupFinder extends DuplicateCodeScanner {
     /** Descriptor for this static analysis tool. */
     @Symbol("dupFinder")
     @Extension
-    public static class Descriptor extends DryDescriptor {
+    public static class Descriptor extends DuplicateCodeDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
