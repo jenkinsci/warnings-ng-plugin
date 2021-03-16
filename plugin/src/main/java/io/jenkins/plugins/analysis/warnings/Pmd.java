@@ -1,15 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.pmd.PmdParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -42,15 +38,9 @@ public class Pmd extends AnalysisModelParser {
             return false;
         }
 
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_PMD_ParserName();
-        }
-
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(ID, Messages.Warnings_PMD_ParserName(), getDescriptionProvider());
+            return new IconLabelProvider(ID, getDisplayName(), getDescriptionProvider());
         }
     }
 }

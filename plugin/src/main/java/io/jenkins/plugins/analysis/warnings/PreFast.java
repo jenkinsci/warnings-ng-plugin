@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.PreFastParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -33,12 +29,6 @@ public class PreFast extends AnalysisModelParser {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_PREfast_ParserName();
         }
     }
 }

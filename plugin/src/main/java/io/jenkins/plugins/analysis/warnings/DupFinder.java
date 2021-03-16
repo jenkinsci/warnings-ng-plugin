@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -26,8 +24,8 @@ public class DupFinder extends DuplicateCodeScanner {
 
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DryLabelProvider {
-        LabelProvider() {
-            super(ID, Messages.Warnings_DupFinder_ParserName());
+        LabelProvider(final String displayName) {
+            super(ID, displayName);
         }
     }
 
@@ -40,12 +38,6 @@ public class DupFinder extends DuplicateCodeScanner {
             super(ID);
         }
 
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_DupFinder_ParserName();
-        }
-
         @Override
         public boolean canScanConsoleLog() {
             return false;
@@ -53,7 +45,7 @@ public class DupFinder extends DuplicateCodeScanner {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new LabelProvider();
+            return new LabelProvider(getDisplayName());
         }
     }
 }

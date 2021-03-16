@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.fxcop.FxCopParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -38,12 +34,6 @@ public class Fxcop extends AnalysisModelParser {
         @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_FxCop_ParserName();
         }
     }
 }

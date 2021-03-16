@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -27,8 +25,8 @@ public class Cpd extends DuplicateCodeScanner {
 
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DryLabelProvider {
-        LabelProvider() {
-            super(ID, Messages.Warnings_CPD_ParserName());
+        LabelProvider(final String displayName) {
+            super(ID, displayName);
         }
     }
 
@@ -41,15 +39,9 @@ public class Cpd extends DuplicateCodeScanner {
             super(ID);
         }
 
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_CPD_ParserName();
-        }
-
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new LabelProvider();
+            return new LabelProvider(getDisplayName());
         }
     }
 }

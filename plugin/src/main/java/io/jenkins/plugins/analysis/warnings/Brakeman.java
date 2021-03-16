@@ -1,15 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.BrakemanParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -38,12 +34,6 @@ public class Brakeman extends AnalysisModelParser {
         @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return "Brakeman";
         }
 
         @Override

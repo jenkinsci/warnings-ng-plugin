@@ -32,8 +32,8 @@ import hudson.model.Run;
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
 
-import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
@@ -46,7 +46,6 @@ import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.JavaDoc;
 import io.jenkins.plugins.analysis.warnings.JcReport;
-import io.jenkins.plugins.analysis.warnings.Messages;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
@@ -687,7 +686,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         ResultAction action = getResultAction(run);
         assertThat(action.getId()).isEqualTo("java");
-        assertThat(action.getDisplayName()).contains(Messages.Warnings_JavaParser_ParserName());
+        assertThat(action.getDisplayName()).contains("Java");
 
         AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).isEmpty();

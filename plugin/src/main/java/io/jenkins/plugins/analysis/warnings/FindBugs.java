@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
@@ -72,12 +71,6 @@ public class FindBugs extends AnalysisModelParser {
          */
         public FindBugsDescriptor(final String id) {
             super(id);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_FindBugs_ParserName();
         }
 
         @Override

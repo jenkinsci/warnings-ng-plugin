@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -41,12 +39,6 @@ public class Trivy extends AnalysisModelParser {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_Trivy_ParserName();
         }
 
         @Override

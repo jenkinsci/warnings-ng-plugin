@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -37,12 +33,6 @@ public class CheckStyle extends AnalysisModelParser {
             super(ID);
         }
 
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_CheckStyle_ParserName();
-        }
-
         @Override
         public boolean canScanConsoleLog() {
             return false;
@@ -50,8 +40,7 @@ public class CheckStyle extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(ID, Messages.Warnings_CheckStyle_ParserName(), getDescriptionProvider(
-            ));
+            return new IconLabelProvider(ID, getDisplayName(), getDescriptionProvider());
         }
     }
 }

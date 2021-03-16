@@ -5,6 +5,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.registry.ParserDescriptor;
 import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
 import edu.hm.hafner.analysis.registry.ParserRegistry;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
@@ -113,6 +114,12 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
         @Override
         public String getUrl() {
             return analysisModelDescriptor.getUrl();
+        }
+
+        @NonNull
+        @Override
+        public final String getDisplayName() {
+            return analysisModelDescriptor.getName();
         }
     }
 

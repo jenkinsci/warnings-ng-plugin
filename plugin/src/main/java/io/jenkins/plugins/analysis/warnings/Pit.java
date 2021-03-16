@@ -1,15 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.violations.PitAdapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -37,12 +33,6 @@ public class Pit extends AnalysisModelParser {
             super(ID);
         }
 
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Violations_PIT();
-        }
-
         @Override
         public boolean canScanConsoleLog() {
             return false;
@@ -51,11 +41,6 @@ public class Pit extends AnalysisModelParser {
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
             return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider());
-        }
-
-        @Override
-        public String getUrl() {
-            return "http://pitest.org";
         }
     }
 }
