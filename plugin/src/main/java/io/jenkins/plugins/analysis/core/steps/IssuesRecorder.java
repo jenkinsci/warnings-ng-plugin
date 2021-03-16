@@ -1272,14 +1272,17 @@ public class IssuesRecorder extends Recorder {
         /**
          * Performs on-the-fly validation of the ID.
          *
+         * @param project
+         *         the project that is configured
          * @param id
          *         the ID of the tool
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@QueryParameter final String id) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String id) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
@@ -1289,11 +1292,13 @@ public class IssuesRecorder extends Recorder {
         /**
          * Returns a model with all available charsets.
          *
+         * @param project
+         *         the project that is configured
          * @return a model with all available charsets
          */
         @POST
-        public ComboBoxModel doFillSourceCodeEncodingItems() {
-            if (JENKINS.hasPermission(Item.CONFIGURE)) {
+        public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
+            if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return model.getAllCharsets();
             }
             return new ComboBoxModel();
@@ -1302,11 +1307,13 @@ public class IssuesRecorder extends Recorder {
         /**
          * Returns a model with all available severity filters.
          *
+         * @param project
+         *         the project that is configured
          * @return a model with all available severity filters
          */
         @POST
-        public ListBoxModel doFillMinimumSeverityItems() {
-            if (JENKINS.hasPermission(Item.CONFIGURE)) {
+        public ListBoxModel doFillMinimumSeverityItems(@AncestorInPath final AbstractProject<?, ?> project) {
+            if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return model.getAllSeverityFilters();
             }
             return new ListBoxModel();
@@ -1315,14 +1322,17 @@ public class IssuesRecorder extends Recorder {
         /**
          * Performs on-the-fly validation of the character encoding.
          *
+         * @param project
+         *         the project that is configured
          * @param reportEncoding
          *         the character encoding
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckReportEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String reportEncoding) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
@@ -1332,14 +1342,17 @@ public class IssuesRecorder extends Recorder {
         /**
          * Performs on-the-fly validation on the character encoding.
          *
+         * @param project
+         *         the project that is configured
          * @param sourceCodeEncoding
          *         the character encoding
          *
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckSourceCodeEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String sourceCodeEncoding) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 
@@ -1349,6 +1362,8 @@ public class IssuesRecorder extends Recorder {
         /**
          * Performs on-the-fly validation of the health report thresholds.
          *
+         * @param project
+         *         the project that is configured
          * @param healthy
          *         the healthy threshold
          * @param unhealthy
@@ -1357,8 +1372,9 @@ public class IssuesRecorder extends Recorder {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckHealthy(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return model.validateHealthy(healthy, unhealthy);
@@ -1367,6 +1383,8 @@ public class IssuesRecorder extends Recorder {
         /**
          * Performs on-the-fly validation of the health report thresholds.
          *
+         * @param project
+         *         the project that is configured
          * @param healthy
          *         the healthy threshold
          * @param unhealthy
@@ -1375,8 +1393,9 @@ public class IssuesRecorder extends Recorder {
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+        public FormValidation doCheckUnhealthy(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
             return model.validateUnhealthy(healthy, unhealthy);
@@ -1385,11 +1404,13 @@ public class IssuesRecorder extends Recorder {
         /**
          * Returns a model with all aggregation trend chart positions.
          *
+         * @param project
+         *         the project that is configured
          * @return a model with all  aggregation trend chart positions
          */
         @POST
-        public ListBoxModel doFillTrendChartTypeItems() {
-            if (JENKINS.hasPermission(Item.CONFIGURE)) {
+        public ListBoxModel doFillTrendChartTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
+            if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return model.getAllTrendChartTypes();
             }
             return new ListBoxModel();
@@ -1399,7 +1420,7 @@ public class IssuesRecorder extends Recorder {
          * Performs on-the-fly validation on the source code directory.
          *
          * @param project
-         *         the project
+         *         the project that is configured
          * @param sourceDirectory
          *         the file pattern
          *
@@ -1408,7 +1429,7 @@ public class IssuesRecorder extends Recorder {
         @POST
         public FormValidation doCheckSourceDirectory(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String sourceDirectory) {
-            if (!JENKINS.hasPermission(Item.CONFIGURE)) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 

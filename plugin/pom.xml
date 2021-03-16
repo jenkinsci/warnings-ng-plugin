@@ -21,15 +21,15 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.9.0</revision>
+    <revision>8.8.0.1</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>9.7.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
-    <forensics-api-plugin.version>0.9.3</forensics-api-plugin.version>
-    <plugin-util-api.version>1.6.1</plugin-util-api.version>
+    <forensics-api-plugin.version>0.10.0</forensics-api-plugin.version>
+    <plugin-util-api.version>1.7.0</plugin-util-api.version>
 
     <font-awesome-api.version>5.15.2-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-2</jquery3-api.version>
@@ -163,6 +163,10 @@
         <exclusion>
           <artifactId>asm</artifactId>
           <groupId>asm</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -388,6 +392,16 @@
       <artifactId>xmlunit-assertj</artifactId>
       <version>${xmlunit.version}</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>net.bytebuddy</groupId>
+          <artifactId>byte-buddy</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jakarta.xml.bind</groupId>
+          <artifactId>jakarta.xml.bind-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -522,6 +536,10 @@
         <exclusion>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-beanutils</groupId>
+          <artifactId>commons-beanutils</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -688,9 +706,9 @@
               </item>
               <item>
                 <regex>true</regex>
-                <code>java.method.removed</code>
+                <code>java.method.numberOfParametersChanged</code>
                 <methodName>do[A-Z].*</methodName>
-                <justification>Form validation methods are no API methods</justification>
+                <justification>Validation methods are internal API.</justification>
               </item>
             </revapi.ignore>
           </analysisConfiguration>

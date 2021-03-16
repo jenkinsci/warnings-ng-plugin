@@ -29,10 +29,10 @@ class ToolSelectionDescriptorTest {
     void shouldFillIDItems(final String ids) {
         String[] elements = ids.split(",", -1);
 
-        ComboBoxModel model = createDescriptor(elements, true).doFillIdItems();
+        ComboBoxModel model = createDescriptor(elements, true).doFillIdItems(null);
         assertThat(model).containsExactly(elements);
 
-        ComboBoxModel prohibited = createDescriptor(elements, false).doFillIdItems();
+        ComboBoxModel prohibited = createDescriptor(elements, false).doFillIdItems(null);
         assertThat(prohibited).isEmpty();
     }
 
@@ -40,10 +40,10 @@ class ToolSelectionDescriptorTest {
     void shouldReturnEmptyListIfNoPermission() {
         String[] elements = {"1", "3"};
 
-        ComboBoxModel model = createDescriptor(elements, true).doFillIdItems();
+        ComboBoxModel model = createDescriptor(elements, true).doFillIdItems(null);
         assertThat(model).containsExactly(elements);
 
-        ComboBoxModel prohibited = createDescriptor(elements, false).doFillIdItems();
+        ComboBoxModel prohibited = createDescriptor(elements, false).doFillIdItems(null);
         assertThat(prohibited).isEmpty();
     }
 
@@ -57,13 +57,13 @@ class ToolSelectionDescriptorTest {
             actions.add(jobAction);
         }
 
-        Job job = mock(Job.class);
+        Job<?, ?> job = mock(Job.class);
         when(job.getActions(JobAction.class)).thenReturn(actions);
 
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.getAllJobs()).thenReturn(Lists.list(job));
         ToolSelectionDescriptor.setJenkinsFacade(jenkinsFacade);
-        when(jenkinsFacade.hasPermission(Item.CONFIGURE)).thenReturn(hasPermission);
+        when(jenkinsFacade.hasPermission(Item.CONFIGURE, null)).thenReturn(hasPermission);
         return toolSelectionDescriptor;
     }
 }

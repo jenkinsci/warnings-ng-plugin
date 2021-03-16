@@ -43,6 +43,12 @@ class PluginArchitectureTest {
     static final ArchRule NO_PUBLIC_TEST_CLASSES = PluginArchitectureRules.NO_PUBLIC_TEST_CLASSES;
 
     @ArchTest
+    static final ArchRule NO_PUBLIC_TEST_METHODS = PluginArchitectureRules.NO_PUBLIC_TEST_METHODS;
+
+    @ArchTest
+    static final ArchRule NO_PUBLIC_ARCHITECTURE_TESTS = PluginArchitectureRules.NO_PUBLIC_ARCHITECTURE_TESTS;
+
+    @ArchTest
     static final ArchRule NO_FORBIDDEN_PACKAGE_ACCESSED = PluginArchitectureRules.NO_FORBIDDEN_PACKAGE_ACCESSED;
 
     @ArchTest
