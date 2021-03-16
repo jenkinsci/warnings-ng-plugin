@@ -205,7 +205,7 @@ public class ModelValidation {
      * @return the validation result
      */
     @SuppressWarnings("WeakerAccess")
-    public FormValidation validateThreshold(@QueryParameter final int threshold) {
+    public FormValidation validateThreshold(final int threshold) {
         if (threshold > 0) {
             return FormValidation.ok();
         }
@@ -270,14 +270,13 @@ public class ModelValidation {
      * Performs on-the-fly validation on the ant pattern for input files.
      *
      * @param project
-     *         the project
+     *         the project that is configured
      * @param pattern
      *         the file pattern
      *
      * @return the validation result
      */
-    public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
-            @QueryParameter final String pattern) {
+    public FormValidation doCheckPattern(final AbstractProject<?, ?> project, @QueryParameter final String pattern) {
         if (project != null) { // there is no workspace in pipelines
             try {
                 FilePath workspace = project.getSomeWorkspace();
@@ -293,8 +292,8 @@ public class ModelValidation {
         return FormValidation.ok();
     }
 
-    private FormValidation validatePatternInWorkspace(final @QueryParameter String pattern,
-            final FilePath workspace) throws IOException, InterruptedException {
+    private FormValidation validatePatternInWorkspace(final String pattern, final FilePath workspace)
+            throws IOException, InterruptedException {
         String result = workspace.validateAntFileMask(pattern, FilePath.VALIDATE_ANT_FILE_MASK_BOUND);
         if (result != null) {
             return FormValidation.error(result);
@@ -306,7 +305,7 @@ public class ModelValidation {
      * Performs on-the-fly validation on the source code directory.
      *
      * @param project
-     *         the project
+     *         the project that is configured
      * @param sourceDirectory
      *         the file pattern
      *

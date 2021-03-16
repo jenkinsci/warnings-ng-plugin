@@ -13,8 +13,12 @@ import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.UnescapedText;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
+import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
 
@@ -148,6 +152,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
     /** Descriptor for this static analysis tool. */
     abstract static class DryDescriptor extends ReportScanningToolDescriptor {
+        public static final JenkinsFacade JENKINS = new JenkinsFacade();
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 
         /**
@@ -163,6 +168,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         /**
          * Performs on-the-fly validation on threshold for high warnings.
          *
+         * @param project
+         *         the project that is configured
          * @param highThreshold
          *         the threshold for high warnings
          * @param normalThreshold
@@ -170,14 +177,21 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          *
          * @return the validation result
          */
-        public FormValidation doCheckHighThreshold(@QueryParameter("highThreshold") final int highThreshold,
+        @POST
+        public FormValidation doCheckHighThreshold(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
             return VALIDATION.validateHigh(highThreshold, normalThreshold);
         }
 
         /**
          * Performs on-the-fly validation on threshold for normal warnings.
          *
+         * @param project
+         *         the project that is configured
          * @param highThreshold
          *         the threshold for high warnings
          * @param normalThreshold
@@ -185,8 +199,13 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          *
          * @return the validation result
          */
-        public FormValidation doCheckNormalThreshold(@QueryParameter("highThreshold") final int highThreshold,
+        @POST
+        public FormValidation doCheckNormalThreshold(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter("highThreshold") final int highThreshold,
                 @QueryParameter("normalThreshold") final int normalThreshold) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
             return VALIDATION.validateNormal(highThreshold, normalThreshold);
         }
     }

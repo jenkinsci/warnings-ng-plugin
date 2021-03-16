@@ -10,12 +10,18 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.util.StringContainsUtils;
 import edu.hm.hafner.util.VisibleForTesting;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.AbstractDescribableImpl;
+import hudson.model.AbstractProject;
 import hudson.model.Descriptor;
+import hudson.model.Item;
 import hudson.util.ComboBoxModel;
+import hudson.util.FormValidation;
 
 import io.jenkins.plugins.util.JenkinsFacade;
 
@@ -103,17 +109,45 @@ public class ToolSelection extends AbstractDescribableImpl<ToolSelection> {
         /**
          * Returns a model that contains all static analysis tool IDs of all jobs.
          *
+         * @param project
+         *         the project that is configured
          * @return a model with all static analysis tool IDs of all jobs
          */
-        public ComboBoxModel doFillIdItems() {
+        @POST
+        public ComboBoxModel doFillIdItems(@AncestorInPath final AbstractProject<?, ?> project) {
             ComboBoxModel model = new ComboBoxModel();
-            Set<String> ids = jenkinsFacade.getAllJobs()
-                    .stream()
-                    .flatMap(job -> job.getActions(JobAction.class).stream())
-                    .map(JobAction::getId).collect(Collectors.toSet());
-            model.addAll(ids);
+            if (jenkinsFacade.hasPermission(Item.CONFIGURE, project)) {
+                model.addAll(collectAvailableIds());
+            }
             return model;
         }
 
+        private Set<String> collectAvailableIds() {
+            return jenkinsFacade.getAllJobs()
+                    .stream()
+                    .flatMap(job -> job.getActions(JobAction.class).stream())
+                    .map(JobAction::getId).collect(Collectors.toSet());
+        }
+
+        /**
+         * Performs on-the-fly validation of the ID.
+         *
+         * @param project
+         *         the project that is configured
+         * @param id
+         *         the ID of the tool
+         *
+         * @return the validation result
+         */
+        @POST
+        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String id) {
+            if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
+                 return FormValidation.ok();
+            }
+            if (collectAvailableIds().contains(id)) {
+                return FormValidation.ok();
+            }
+            return FormValidation.error("None of the selected jobs contains the tool " + id);
+        }
     }
 }

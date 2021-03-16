@@ -2,7 +2,7 @@
 <j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
 
   <f:entry title="${%title.threshold}" description="${%description.threshold}" field="threshold">
-    <f:number default="1"/>
+    <f:number default="1" checkMethod="post"/>
   </f:entry>
 
   <f:entry title="${%title.type}" description="${%description.type}" field="type">

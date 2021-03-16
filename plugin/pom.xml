@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.4.4</revision>
+    <revision>8.4.3.1</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
@@ -29,7 +29,7 @@
     <analysis-model-api.version>9.0.0</analysis-model-api.version>
     <analysis-model-tests.version>${analysis-model-api.version}</analysis-model-tests.version>
     <forensics-api-plugin.version>0.7.0</forensics-api-plugin.version>
-    <plugin-util-api.version>1.2.5</plugin-util-api.version>
+    <plugin-util-api.version>1.7.1</plugin-util-api.version>
 
     <font-awesome-api.version>5.14.0-1</font-awesome-api.version>
     <jquery3-api.version>3.5.1-1</jquery3-api.version>
@@ -121,7 +121,7 @@
       <dependency>
         <groupId>edu.hm.hafner</groupId>
         <artifactId>codingstyle</artifactId>
-        <version>1.5.0</version>
+        <version>1.6.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -442,12 +442,28 @@
       <artifactId>metrics-aggregation</artifactId>
       <version>0.2.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>warnings-ng</artifactId>
+          <groupId>io.jenkins.plugins</groupId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.jenkins.plugins</groupId>
+          <artifactId>code-coverage-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>autograding</artifactId>
       <version>2.0.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>io.jenkins.plugins</groupId>
+          <artifactId>warnings-ng</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- stage -->
@@ -578,6 +594,7 @@
         <groupId>org.revapi</groupId>
         <artifactId>revapi-maven-plugin</artifactId>
         <configuration>
+	  <skip>true</skip>
           <failBuildOnProblemsFound>true</failBuildOnProblemsFound>
           <!-- Including provided-scope dependencies like Jenkins core results in too many false positives -->
           <checkDependencies>false</checkDependencies>

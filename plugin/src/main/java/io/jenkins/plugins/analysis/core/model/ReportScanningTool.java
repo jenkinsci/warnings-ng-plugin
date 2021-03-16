@@ -15,8 +15,10 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
@@ -26,6 +28,7 @@ import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.util.EnvironmentResolver;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
 
@@ -214,6 +217,8 @@ public abstract class ReportScanningTool extends Tool {
 
     /** Descriptor for {@link ReportScanningTool}. **/
     public abstract static class ReportScanningToolDescriptor extends ToolDescriptor {
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
+
         private final ModelValidation model = new ModelValidation();
 
         /**
@@ -229,21 +234,34 @@ public abstract class ReportScanningTool extends Tool {
         /**
          * Returns a model with all available charsets.
          *
+         * @param project
+         *         the project that is configured
          * @return a model with all available charsets
          */
-        public ComboBoxModel doFillReportEncodingItems() {
-            return model.getAllCharsets();
+        @POST
+        public ComboBoxModel doFillReportEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
+            if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return model.getAllCharsets();
+            }
+            return new ComboBoxModel();
         }
 
         /**
          * Performs on-the-fly validation of the character encoding.
          *
+         * @param project
+         *         the project that is configured
          * @param reportEncoding
          *         the character encoding
          *
          * @return the validation result
          */
-        public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+        @POST
+        public FormValidation doCheckReportEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String reportEncoding) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
             return model.validateCharset(reportEncoding);
         }
 
@@ -251,14 +269,18 @@ public abstract class ReportScanningTool extends Tool {
          * Performs on-the-fly validation on the ant pattern for input files.
          *
          * @param project
-         *         the project
+         *         the project that is configured
          * @param pattern
          *         the file pattern
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckPattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String pattern) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
             return model.doCheckPattern(project, pattern);
         }
 

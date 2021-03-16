@@ -17,10 +17,12 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
 import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
 
@@ -32,6 +34,7 @@ import io.jenkins.plugins.analysis.core.util.ModelValidation;
 import io.jenkins.plugins.analysis.warnings.Messages;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.CaseMode;
 import io.jenkins.plugins.analysis.warnings.tasks.TaskScanner.MatcherMode;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Provides a files scanner that detects open tasks in source code files.
@@ -199,6 +202,7 @@ public class OpenTasks extends Tool {
     @Symbol("taskScanner")
     @Extension
     public static class Descriptor extends ToolDescriptor {
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
         private final ModelValidation model = new ModelValidation();
 
         /** Creates the descriptor instance. */
@@ -221,14 +225,18 @@ public class OpenTasks extends Tool {
          * Performs on-the-fly validation on the ant pattern for input files.
          *
          * @param project
-         *         the project
+         *         the project that is configured
          * @param includePattern
          *         the file pattern
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckIncludePattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String includePattern) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
             return model.doCheckPattern(project, includePattern);
         }
 
@@ -236,20 +244,26 @@ public class OpenTasks extends Tool {
          * Performs on-the-fly validation on the ant pattern for input files.
          *
          * @param project
-         *         the project
+         *         the project that is configured
          * @param excludePattern
          *         the file pattern
          *
          * @return the validation result
          */
+        @POST
         public FormValidation doCheckExcludePattern(@AncestorInPath final AbstractProject<?, ?> project,
                 @QueryParameter final String excludePattern) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
             return model.doCheckPattern(project, excludePattern);
         }
 
         /**
          * Validates the example text that will be scanned for open tasks.
          *
+         * @param project
+         *         the project that is configured
          * @param example
          *         the text to be scanned for open tasks
          * @param high
@@ -266,13 +280,15 @@ public class OpenTasks extends Tool {
          * @return validation result
          */
         @SuppressWarnings("PMD.AvoidLiteralsInIfCondition")
-        public FormValidation doCheckExample(@QueryParameter final String example,
+        @POST
+        public FormValidation doCheckExample(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String example,
                 @QueryParameter final String high,
                 @QueryParameter final String normal,
                 @QueryParameter final String low,
                 @QueryParameter final boolean ignoreCase,
                 @QueryParameter final boolean asRegexp) {
-            if (StringUtils.isEmpty(example)) {
+            if (StringUtils.isEmpty(example) || !JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
 

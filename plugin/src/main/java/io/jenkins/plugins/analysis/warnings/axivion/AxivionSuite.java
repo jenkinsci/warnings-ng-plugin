@@ -30,9 +30,11 @@ import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 import hudson.FilePath;
+import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.Run;
 import hudson.model.TaskListener;
@@ -159,6 +161,9 @@ public final class AxivionSuite extends Tool {
     @Extension
     public static class AxivionSuiteToolDescriptor extends ToolDescriptor {
 
+        private static final JenkinsFacade JENKINS = new JenkinsFacade();
+
+
         /** Creates the descriptor instance. */
         public AxivionSuiteToolDescriptor() {
             super(ID);
@@ -178,41 +183,55 @@ public final class AxivionSuite extends Tool {
         /**
          * Dashboard project url must be a valid url.
          *
+         * @param project
+         *         the project that is configured
          * @param projectUrl
          *         url to a project inside an Axivion dashboard
          *
          * @return {@link FormValidation#ok()} is a valid url
          */
-        public FormValidation doCheckProjectUrl(@QueryParameter final String projectUrl) {
+        @POST
+        public FormValidation doCheckProjectUrl(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String projectUrl) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
             try {
                 new URL(projectUrl).toURI();
+                return FormValidation.ok();
             }
             catch (URISyntaxException | MalformedURLException ex) {
                 return FormValidation.error("This is not a valid URL.");
             }
-            return FormValidation.ok();
         }
 
         /**
          * Checks whether the given path is a correct os path.
          *
+         * @param project
+         *         the project that is configured
          * @param basedir
          *         path to check
          *
          * @return {@link FormValidation#ok()} is a valid url
          */
         @SuppressFBWarnings("PATH_TRAVERSAL_IN")
-        public FormValidation doCheckBasedir(@QueryParameter final String basedir) {
+        @POST
+        public FormValidation doCheckBasedir(@AncestorInPath final AbstractProject<?, ?> project,
+                @QueryParameter final String basedir) {
+            if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+                return FormValidation.ok();
+            }
             try {
                 if (!basedir.contains("$")) {
                     // path with a variable cannot be checked at this point
                     Paths.get(basedir);
                 }
+                return FormValidation.ok();
             }
             catch (InvalidPathException e) {
                 return FormValidation.error("You have to provide a valid path.");
             }
-            return FormValidation.ok();
         }
 
         /**
@@ -225,13 +244,14 @@ public final class AxivionSuite extends Tool {
          *
          * @return {@link FormValidation#ok()} if credentials exist and are valid
          */
+        @POST
         public FormValidation doCheckCredentialsId(
                 @AncestorInPath final Item item, @QueryParameter final String credentialsId) {
             if (StringUtils.isBlank(credentialsId)) {
                 return FormValidation.error("You have to provide credentials.");
             }
             if (item == null) {
-                if (!new JenkinsFacade().hasPermission(Jenkins.ADMINISTER)) {
+                if (!JENKINS.hasPermission(Jenkins.ADMINISTER)) {
                     return FormValidation.ok();
                 }
             }
@@ -265,11 +285,12 @@ public final class AxivionSuite extends Tool {
          *
          * @return a list view of all credential ids
          */
+        @POST
         public ListBoxModel doFillCredentialsIdItems(
                 @AncestorInPath final Item item, @QueryParameter final String credentialsId) {
             StandardListBoxModel result = new StandardListBoxModel();
             if (item == null) {
-                if (!new JenkinsFacade().hasPermission(Jenkins.ADMINISTER)) {
+                if (!JENKINS.hasPermission(Jenkins.ADMINISTER)) {
                     return result.includeCurrentValue(credentialsId);
                 }
             }

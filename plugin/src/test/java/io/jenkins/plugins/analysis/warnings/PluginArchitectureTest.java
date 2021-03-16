@@ -6,7 +6,6 @@ import org.apache.commons.digester3.Digester;
 import org.apache.commons.digester3.binder.DigesterLoader;
 import org.xml.sax.XMLReader;
 
-import com.tngtech.archunit.core.domain.JavaModifier;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -26,27 +25,37 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.*;
  * @author Ullrich Hafner
  */
 @SuppressWarnings("hideutilityclassconstructor")
-@AnalyzeClasses(packages = "io.jenkins.plugins.analysis..")
+@AnalyzeClasses(packages = "io.jenkins.plugins.analysis")
 class PluginArchitectureTest {
     @ArchTest
     static final ArchRule NO_JENKINS_INSTANCE_CALL = PluginArchitectureRules.NO_JENKINS_INSTANCE_CALL;
 
     @ArchTest
-    static final ArchRule NO_PUBLIC_TEST_CLASSES =
-            noClasses().that().haveSimpleNameEndingWith("Test")
-                    .and().haveSimpleNameNotContaining("_jmh")
-                    .and().doNotHaveModifier(JavaModifier.ABSTRACT)
-                    .and().haveSimpleNameNotEndingWith("ITest")
-                    .should().bePublic();
+    static final ArchRule NO_PUBLIC_TEST_CLASSES = PluginArchitectureRules.NO_PUBLIC_TEST_CLASSES;
 
     @ArchTest
-    static final ArchRule NO_TEST_API_CALLED = ArchitectureRules.NO_TEST_API_CALLED;
+    static final ArchRule NO_PUBLIC_TEST_METHODS = PluginArchitectureRules.NO_PUBLIC_TEST_METHODS;
+
+    @ArchTest
+    static final ArchRule NO_PUBLIC_ARCHITECTURE_TESTS = PluginArchitectureRules.NO_PUBLIC_ARCHITECTURE_TESTS;
 
     @ArchTest
     static final ArchRule NO_FORBIDDEN_PACKAGE_ACCESSED = PluginArchitectureRules.NO_FORBIDDEN_PACKAGE_ACCESSED;
 
     @ArchTest
-    static final ArchRule NO_FORBIDDEN_CLASSES_CALLED = ArchitectureRules.NO_FORBIDDEN_CLASSES_CALLED;
+    static final ArchRule AJAX_PROXY_METHOD_MUST_BE_IN_PUBLIC_CLASS = PluginArchitectureRules.AJAX_PROXY_METHOD_MUST_BE_IN_PUBLIC_CLASS;
+
+    @ArchTest
+    static final ArchRule DATA_BOUND_CONSTRUCTOR_MUST_BE_IN_PUBLIC_CLASS = PluginArchitectureRules.DATA_BOUND_CONSTRUCTOR_MUST_BE_IN_PUBLIC_CLASS;
+
+    @ArchTest
+    static final ArchRule DATA_BOUND_SETTER_MUST_BE_IN_PUBLIC_CLASS = PluginArchitectureRules.DATA_BOUND_SETTER_MUST_BE_IN_PUBLIC_CLASS;
+
+    @ArchTest
+    static final ArchRule USE_POST_FOR_VALIDATION_END_POINTS = PluginArchitectureRules.USE_POST_FOR_VALIDATION_END_POINTS;
+
+    @ArchTest
+    static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = PluginArchitectureRules.USE_POST_FOR_LIST_AND_COMBOBOX_FILL;
 
     /** Digester must not be used directly, rather use a SecureDigester instance. */
     @ArchTest
@@ -66,4 +75,4 @@ class PluginArchitectureTest {
                             .or(have(simpleNameStartingWith("Integration")))
                             .or(have(simpleName("ToolsLister")))))
                     .should().dependOnClassesThat().resideInAnyPackage("org.junit");
-}
+    }

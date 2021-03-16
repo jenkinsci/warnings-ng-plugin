@@ -49,6 +49,7 @@
   <j:set var="default" value="${attrs.default ?: ''}"/>
   <j:set var="value" value="${attrs.value ?: instance[attrs.field] ?: default}"/>
   <j:set var="positiveValue" value="${value > 0? value : null}"/>
+  <j:set target="${attrs}" property="checkMethod" value="post"/>
   <m:input xmlns:m="jelly:hudson.util.jelly.MorphTagLibrary"
            class="setting-input ${attrs.checkUrl!=null?'validated':''} ${attrs.clazz}"
            name="${name}"

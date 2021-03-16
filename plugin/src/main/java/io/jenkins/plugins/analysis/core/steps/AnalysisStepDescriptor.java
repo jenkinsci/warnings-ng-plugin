@@ -1,12 +1,17 @@
 package io.jenkins.plugins.analysis.core.steps;
 
+import org.kohsuke.stapler.AncestorInPath;
 import org.kohsuke.stapler.QueryParameter;
+import org.kohsuke.stapler.verb.POST;
 import org.jenkinsci.plugins.workflow.steps.StepDescriptor;
+import hudson.model.AbstractProject;
+import hudson.model.Item;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
+import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * Descriptor base class for all analysis steps. Provides generic validation methods,
@@ -15,57 +20,90 @@ import io.jenkins.plugins.analysis.core.util.ModelValidation;
  * @author Ullrich Hafner
  */
 public abstract class AnalysisStepDescriptor extends StepDescriptor {
+    private static final JenkinsFacade JENKINS = new JenkinsFacade();
     private final ModelValidation model = new ModelValidation();
 
     /**
      * Returns a model with all available charsets.
      *
+     * @param project
+     *         the project that is configured
      * @return a model with all available charsets
      */
-    public ComboBoxModel doFillSourceCodeEncodingItems() {
-        return model.getAllCharsets();
+    @POST
+    public ComboBoxModel doFillSourceCodeEncodingItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return model.getAllCharsets();
+        }
+        return new ComboBoxModel();
     }
 
     /**
      * Performs on-the-fly validation of the character encoding.
      *
+     * @param project
+     *         the project that is configured
      * @param reportEncoding
      *         the character encoding
      *
      * @return the validation result
      */
-    public FormValidation doCheckReportEncoding(@QueryParameter final String reportEncoding) {
+    @POST
+    public FormValidation doCheckReportEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String reportEncoding) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return FormValidation.ok();
+        }
         return model.validateCharset(reportEncoding);
     }
 
     /**
      * Performs on-the-fly validation on the character encoding.
      *
+     * @param project
+     *         the project that is configured
      * @param sourceCodeEncoding
      *         the character encoding
      *
      * @return the validation result
      */
-    public FormValidation doCheckSourceCodeEncoding(@QueryParameter final String sourceCodeEncoding) {
+    @POST
+    public FormValidation doCheckSourceCodeEncoding(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String sourceCodeEncoding) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return FormValidation.ok();
+        }
         return model.validateCharset(sourceCodeEncoding);
     }
 
     /**
      * Returns a model with all available severity filters.
      *
+     * @param project
+     *         the project that is configured
      * @return a model with all available severity filters
      */
-    public ListBoxModel doFillMinimumSeverityItems() {
-        return model.getAllSeverityFilters();
+    @POST
+    public ListBoxModel doFillMinimumSeverityItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return model.getAllSeverityFilters();
+        }
+        return new ListBoxModel();
     }
 
     /**
      * Returns the model with the possible reference jobs.
      *
+     * @param project
+     *         the project that is configured
      * @return the model with the possible reference jobs
      */
-    public ComboBoxModel doFillReferenceJobNameItems() {
-        return model.getAllJobs();
+    @POST
+    public ComboBoxModel doFillReferenceJobNameItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return model.getAllJobs();
+        }
+        return new ComboBoxModel();
     }
 
     /**
@@ -76,13 +114,19 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
-    public FormValidation doCheckReferenceJobName(@QueryParameter final String referenceJobName) {
+    @POST
+    public FormValidation doCheckReferenceJobName(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String referenceJobName) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return FormValidation.ok();
+        }
         return model.validateJob(referenceJobName);
     }
 
     /**
      * Performs on-the-fly validation of the health report thresholds.
      *
+     * @param project
+     *         the project that is configured
      * @param healthy
      *         the healthy threshold
      * @param unhealthy
@@ -90,13 +134,20 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
-    public FormValidation doCheckHealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+    @POST
+    public FormValidation doCheckHealthy(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return FormValidation.ok();
+        }
         return model.validateHealthy(healthy, unhealthy);
     }
 
     /**
      * Performs on-the-fly validation of the health report thresholds.
      *
+     * @param project
+     *         the project that is configured
      * @param healthy
      *         the healthy threshold
      * @param unhealthy
@@ -104,28 +155,46 @@ public abstract class AnalysisStepDescriptor extends StepDescriptor {
      *
      * @return the validation result
      */
-    public FormValidation doCheckUnhealthy(@QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+    @POST
+    public FormValidation doCheckUnhealthy(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final int healthy, @QueryParameter final int unhealthy) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return FormValidation.ok();
+        }
         return model.validateUnhealthy(healthy, unhealthy);
     }
 
     /**
      * Returns a model with all aggregation trend chart positions.
      *
+     * @param project
+     *         the project that is configured
      * @return a model with all  aggregation trend chart positions
      */
-    public ListBoxModel doFillTrendChartTypeItems() {
-        return model.getAllTrendChartTypes();
+    @POST
+    public ListBoxModel doFillTrendChartTypeItems(@AncestorInPath final AbstractProject<?, ?> project) {
+        if (JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return model.getAllTrendChartTypes();
+        }
+        return new ListBoxModel();
     }
 
     /**
      * Performs on-the-fly validation of the ID.
      *
+     * @param project
+     *         the project that is configured
      * @param id
      *         the ID of the tool
      *
      * @return the validation result
      */
-    public FormValidation doCheckId(@QueryParameter final String id) {
+    @POST
+    public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project,
+            @QueryParameter final String id) {
+        if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
+            return FormValidation.ok();
+        }
         return model.validateId(id);
     }
 }
