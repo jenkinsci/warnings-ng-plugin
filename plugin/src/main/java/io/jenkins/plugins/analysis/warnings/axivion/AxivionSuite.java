@@ -44,6 +44,8 @@ import hudson.util.ListBoxModel;
 import hudson.util.Secret;
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.util.EnvironmentResolver;
@@ -157,6 +159,14 @@ public final class AxivionSuite extends Tool {
         return expandedBasedir;
     }
 
+    /** Provides the Axivion icons. */
+    private static class LabelProvider extends IconLabelProvider {
+
+        LabelProvider() {
+            super(ID, "Axivion Suite", EMPTY_DESCRIPTION, "axivion");
+        }
+    }
+
     /** Descriptor for {@link AxivionSuite}. * */
     @Symbol({"axivionSuite", "axivion"})
     @Extension
@@ -178,6 +188,11 @@ public final class AxivionSuite extends Tool {
         @Override
         public String getHelp() {
             return "For using Axivion Suite, set up your analysis project and the web service. Provide the URL and credentials.";
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new LabelProvider();
         }
 
         /**
