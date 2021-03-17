@@ -1,0 +1,6 @@
+{
+  "dashboardVersionNumber": "7.2.9999.6833",
+  "type": "DashboardUsageException",
+  "message": "Unknown named filter key for issue kind MV given: c_src2",
+  "localizedMessage": "Unknown named filter key for issue kind MV given: c_src2"
+}

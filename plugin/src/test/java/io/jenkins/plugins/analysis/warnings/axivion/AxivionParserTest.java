@@ -24,11 +24,11 @@ class AxivionParserTest {
 
         assertThat(issue.getType()).isEqualTo("MisraC++-7.1.1");
         assertThat(issue.getFileName()).isEqualTo("src/mainwindow.h");
-        assertThat(issue.getOrigin()).isEqualTo("");
+        assertThat(issue.getOrigin()).isEmpty();
         assertThat(issue.getBaseName()).isEqualTo("mainwindow.h");
         assertThat(issue.getCategory()).isEqualTo("SV");
         assertThat(issue.getFingerprint()).isEqualTo("SV1");
-        assertThat(issue.getReference()).isEqualTo("");
+        assertThat(issue.getReference()).isEmpty();
         assertThat(issue.getFolder()).isEqualTo("src");
         assertThat(issue.getPackageName()).isEqualTo("-");
         assertThat(issue.getModuleName()).isEqualTo("-");
@@ -45,11 +45,11 @@ class AxivionParserTest {
 
         assertThat(issue.getType()).isEqualTo("Maximum nesting");
         assertThat(issue.getFileName()).isEqualTo("src/mainwindow.cpp");
-        assertThat(issue.getOrigin()).isEqualTo("");
+        assertThat(issue.getOrigin()).isEmpty();
         assertThat(issue.getBaseName()).isEqualTo("mainwindow.cpp");
         assertThat(issue.getCategory()).isEqualTo("MV");
         assertThat(issue.getFingerprint()).isEqualTo("MV55");
-        assertThat(issue.getReference()).isEqualTo("");
+        assertThat(issue.getReference()).isEmpty();
         assertThat(issue.getFolder()).isEqualTo("src");
         assertThat(issue.getPackageName()).isEqualTo("-");
         assertThat(issue.getModuleName()).isEqualTo("-");
@@ -66,11 +66,11 @@ class AxivionParserTest {
 
         assertThat(issue.getType()).isEqualTo("Dead Entity");
         assertThat(issue.getFileName()).isEqualTo("src/pointmodel.cpp");
-        assertThat(issue.getOrigin()).isEqualTo("");
+        assertThat(issue.getOrigin()).isEmpty();
         assertThat(issue.getBaseName()).isEqualTo("pointmodel.cpp");
         assertThat(issue.getCategory()).isEqualTo("DE");
         assertThat(issue.getFingerprint()).isEqualTo("DE7");
-        assertThat(issue.getReference()).isEqualTo("");
+        assertThat(issue.getReference()).isEmpty();
         assertThat(issue.getFolder()).isEqualTo("src");
         assertThat(issue.getPackageName()).isEqualTo("-");
         assertThat(issue.getModuleName()).isEqualTo("-");
@@ -87,11 +87,11 @@ class AxivionParserTest {
 
         assertThat(issue.getType()).isEqualTo("Divergence");
         assertThat(issue.getFileName()).isEqualTo("projects/tools/gravis2/src/mainwindow.cpp");
-        assertThat(issue.getOrigin()).isEqualTo("");
+        assertThat(issue.getOrigin()).isEmpty();
         assertThat(issue.getBaseName()).isEqualTo("mainwindow.cpp");
         assertThat(issue.getCategory()).isEqualTo("AV");
         assertThat(issue.getFingerprint()).isEqualTo("AV26941");
-        assertThat(issue.getReference()).isEqualTo("");
+        assertThat(issue.getReference()).isEmpty();
         assertThat(issue.getFolder()).isEqualTo("projects/tools/gravis2/src");
         assertThat(issue.getPackageName()).isEqualTo("-");
         assertThat(issue.getModuleName()).isEqualTo("-");
@@ -108,11 +108,11 @@ class AxivionParserTest {
 
         assertThat(issue.getType()).isEqualTo("type 2");
         assertThat(issue.getFileName()).isEqualTo("projects/plugins/dg_scripting/generated/dg.cpp");
-        assertThat(issue.getOrigin()).isEqualTo("");
+        assertThat(issue.getOrigin()).isEmpty();
         assertThat(issue.getBaseName()).isEqualTo("dg.cpp");
         assertThat(issue.getCategory()).isEqualTo("CL");
         assertThat(issue.getFingerprint()).isEqualTo("CL476033");
-        assertThat(issue.getReference()).isEqualTo("");
+        assertThat(issue.getReference()).isEmpty();
         assertThat(issue.getFolder()).isEqualTo("projects/plugins/dg_scripting/generated");
         assertThat(issue.getPackageName()).isEqualTo("-");
         assertThat(issue.getModuleName()).isEqualTo("-");
@@ -129,11 +129,11 @@ class AxivionParserTest {
 
         assertThat(issue.getType()).isEqualTo("Cycle");
         assertThat(issue.getFileName()).isEqualTo("/usr/include/c++/4.9/bits/codecvt.h");
-        assertThat(issue.getOrigin()).isEqualTo("");
+        assertThat(issue.getOrigin()).isEmpty();
         assertThat(issue.getBaseName()).isEqualTo("codecvt.h");
         assertThat(issue.getCategory()).isEqualTo("CY");
         assertThat(issue.getFingerprint()).isEqualTo("CY1471");
-        assertThat(issue.getReference()).isEqualTo("");
+        assertThat(issue.getReference()).isEmpty();
         assertThat(issue.getFolder()).isEqualTo("usr/include/c++/4.9/bits");
         assertThat(issue.getPackageName()).isEqualTo("-");
         assertThat(issue.getModuleName()).isEqualTo("-");
@@ -161,4 +161,14 @@ class AxivionParserTest {
         assertThat(issue.getFileName()).isEqualTo("-");
     }
 
+    @Test
+    void parserIsAwareOfDashboardErrors() {
+        Report report = new Report();
+
+        parser.parse(report, AxIssueKind.SV, dashboard.getIssuesFrom(
+                "/io/jenkins/plugins/analysis/warnings/axivion/dashboard_error.json"));
+
+        assertThat(report.hasErrors()).isTrue();
+        assertThat(report.getSize()).isZero();
+    }
 }
