@@ -63,6 +63,7 @@ public final class AxivionSuite extends Tool {
     private String projectUrl = StringUtils.EMPTY;
     private String credentialsId = StringUtils.EMPTY;
     private String basedir = "$";
+    private String namedFilter = StringUtils.EMPTY;
 
     @VisibleForTesting
     AxivionSuite(final String projectUrl, final String credentialsId, final String basedir) {
@@ -125,16 +126,26 @@ public final class AxivionSuite extends Tool {
         this.credentialsId = credentialsId;
     }
 
+    public String getNamedFilter() {
+        return this.namedFilter;
+    }
+
+    @DataBoundSetter
+    public void setNamedFilter(final String namedFilter) {
+        this.namedFilter = namedFilter;
+    }
+
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) throws ParsingException, ParsingCanceledException {
 
-        AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials());
+        AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials(), namedFilter);
         AxivionParser parser = new AxivionParser(projectUrl, expandBaseDir(run, basedir));
 
         Report report = new Report(ID, NAME);
         report.logInfo("Axivion webservice: " + projectUrl);
         report.logInfo("Local basedir: " + basedir);
+        report.logInfo("Named Filter: " + namedFilter);
 
         for (AxIssueKind kind : AxIssueKind.values()) {
             final JsonObject payload = dashboard.getIssues(kind);
