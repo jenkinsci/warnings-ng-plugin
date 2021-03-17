@@ -30,5 +30,5 @@ public class DocFx extends AnalysisModelParser {
         public Descriptor() {
             super(ID);
         }
-   }
+    }
 }

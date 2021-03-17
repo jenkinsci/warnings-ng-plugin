@@ -35,7 +35,7 @@ abstract class UiTest extends AbstractJUnitTest {
     static final String MAVEN_ID = "maven-warnings";
     static final String ANALYSIS_ID = "analysis";
     static final String PEP8_ID = "pep8";
-    static final String PEP8_NAME = "Pep8";
+    static final String PEP8_NAME = "PEP8";
     static final String PEP8_FILE = "pep8Test.txt";
 
     private static final String CPD_SOURCE_NAME = "Main.java";
