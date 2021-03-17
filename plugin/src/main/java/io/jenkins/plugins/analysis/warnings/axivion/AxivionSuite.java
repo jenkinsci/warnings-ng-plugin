@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.utils.URIBuilder;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
@@ -90,9 +92,28 @@ public final class AxivionSuite extends Tool {
         return projectUrl;
     }
 
+    /**
+     * Stapler setter for the projectUrl field.
+     * Verifies the url and encodes the path part e.g. whitespaces in project names.
+     *
+     * @param projectUrl url to a Axivion dashboard project
+     */
     @DataBoundSetter
     public void setProjectUrl(final String projectUrl) {
-        this.projectUrl = projectUrl;
+        try {
+            final URL url = new URL(projectUrl);
+            this.projectUrl = new URIBuilder()
+                    .setCharset(StandardCharsets.UTF_8)
+                    .setHost(url.getHost())
+                    .setPort(url.getPort())
+                    .setPath(url.getPath())
+                    .setScheme(url.getProtocol())
+                    .build()
+                    .toString();
+        }
+        catch (URISyntaxException | MalformedURLException e) {
+            throw new IllegalArgumentException("Not a valid project url.", e);
+        }
     }
 
     public String getCredentialsId() {
