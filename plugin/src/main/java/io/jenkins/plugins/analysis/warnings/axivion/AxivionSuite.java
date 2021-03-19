@@ -143,9 +143,9 @@ public final class AxivionSuite extends Tool {
         AxivionParser parser = new AxivionParser(projectUrl, expandBaseDir(run, basedir));
 
         Report report = new Report(ID, NAME);
-        report.logInfo("Axivion webservice: " + projectUrl);
-        report.logInfo("Local basedir: " + basedir);
-        report.logInfo("Named Filter: " + namedFilter);
+        report.logInfo("Axivion webservice: %s", projectUrl);
+        report.logInfo("Local basedir: %s", basedir);
+        report.logInfo("Named Filter: %s", namedFilter);
 
         for (AxIssueKind kind : AxIssueKind.values()) {
             final JsonObject payload = dashboard.getIssues(kind);
