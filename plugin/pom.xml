@@ -78,7 +78,7 @@
     <form-element-path.version>1.10</form-element-path.version>
     <folder.version>6.15</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
-    <checks-api.version>1.6.0</checks-api.version>
+    <checks-api.version>1.6.1</checks-api.version>
     <credentials.version>2.3.14</credentials.version>
 
     <!-- Maven Surefire ArgLine -->
