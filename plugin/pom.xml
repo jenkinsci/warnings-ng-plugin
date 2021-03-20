@@ -28,7 +28,7 @@
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>10.0.0-rc391.4af24bb9cef1</analysis-model-api.version>
-    <analysis-model-tests.version>9.8.1</analysis-model-tests.version>
+    <analysis-model-tests.version>10.0.0-rc4023.4fca04c0d309</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.0.0</plugin-util-api.version>
