@@ -36,7 +36,7 @@ public class PVSStudio extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider("PVS-Studio", ID, getDescriptionProvider(), "pvs");
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "pvs");
         }
     }
 }

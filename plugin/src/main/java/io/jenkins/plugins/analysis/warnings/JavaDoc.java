@@ -35,7 +35,7 @@ public class JavaDoc extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getDisplayName(), getId(), getDescriptionProvider(), "java");
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "java");
         }
     }
 }

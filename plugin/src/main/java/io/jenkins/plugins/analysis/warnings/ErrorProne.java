@@ -35,7 +35,7 @@ public class ErrorProne extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getDisplayName(), getId(), getDescriptionProvider(), "bug");
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "bug");
         }
     }
 }

@@ -36,7 +36,7 @@ public class RfLint extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getDisplayName(), getId(), getDescriptionProvider(), ICON_NAME);
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), ICON_NAME);
         }
 
     }

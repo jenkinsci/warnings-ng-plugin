@@ -43,7 +43,7 @@ public class QtTranslation extends AnalysisModelParser {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getDisplayName(), getId(), getDescriptionProvider(), "qt");
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "qt");
         }
     }
 }
