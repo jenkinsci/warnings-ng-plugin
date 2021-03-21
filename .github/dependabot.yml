@@ -12,27 +12,15 @@ updates:
       - dependency-name: org.eclipse.collections:eclipse-collections-api
         versions:
           - ">= 10.a"
-      - dependency-name: org.jenkins-ci.plugins:jackson2-api
+      - dependency-name: org.jenkins-ci.plugins:git
         versions:
-          - "> 2.11.1"
-      - dependency-name: com.fasterxml.jackson.core:jackson-databind
+          - ">= 4.7.0"
+      - dependency-name: org.jenkins-ci.plugins:git-client
         versions:
-          - "> 2.11.1"
-      - dependency-name: org.jenkinsci.plugins:pipeline-model-definition
+          - ">= 3.7.0"
+      - dependency-name: org.jenkins-ci.main:maven-plugin
         versions:
-          - "> 1.2"
-      - dependency-name: org.jenkins-ci.plugins.workflow:workflow-basic-steps
-        versions:
-          - "> 2.3"
-      - dependency-name: org.jenkins-ci.plugins.workflow:workflow-durable-task-step
-        versions:
-          - "> 2.9"
-      - dependency-name: org.jenkins-ci.plugins:junit
-        versions:
-          - "> 1.37"
-      - dependency-name: org.ow2.asm:asm
-        versions:
-          - "> 5.0.4"
+          - "> 3.8"
       - dependency-name: org.webjars:popper.js
         versions:
           - ">= 2.0.0"
