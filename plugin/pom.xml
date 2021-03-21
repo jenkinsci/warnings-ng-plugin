@@ -62,7 +62,7 @@
     <matrix-project.version>1.18</matrix-project.version>
     <junit-plugin.version>1.35</junit-plugin.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
-    <dashboard-view.version>2.14</dashboard-view.version>
+    <dashboard-view.version>2.15</dashboard-view.version>
     <script-security.version>1.76</script-security.version>
     <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
     <configuration-as-code.version>1.46</configuration-as-code.version>
@@ -77,7 +77,7 @@
     <form-element-path.version>1.10</form-element-path.version>
     <folder.version>6.15</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
-    <checks-api.version>1.6.0</checks-api.version>
+    <checks-api.version>1.6.1</checks-api.version>
     <credentials.version>2.3.14</credentials.version>
 
     <!-- Maven Surefire ArgLine -->
