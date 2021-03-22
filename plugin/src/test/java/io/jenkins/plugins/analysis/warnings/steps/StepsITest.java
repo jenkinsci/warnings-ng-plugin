@@ -69,6 +69,26 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * Runs a pipeline and verifies the {@code scanForIssues} step has some whitelisted methods.
      */
     @Test
+    public void shouldParseCheckstyleUsingTheParserRegistry() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         recordIssues tool: analysisParser(id: 'checkstyle', pattern: '**/" + "checkstyle1" + "*')\n"
+                + "  }\n"
+                + "}", true));
+
+        AnalysisResult baseline = scheduleSuccessfulBuild(job);
+        assertThat(baseline).hasTotalSize(3);
+
+        ResultAction action = getResultAction(job.getLastBuild());
+        assertThat(action.getDisplayName()).isEqualTo("CheckStyle Warnings");
+    }
+
+    /**
+     * Runs a pipeline and verifies the {@code scanForIssues} step has some whitelisted methods.
+     */
+    @Test
     public void shouldWhitelistScannerApi() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
 

@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings.steps;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -23,7 +24,7 @@ import io.jenkins.plugins.analysis.core.filter.ExcludeFile;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
-import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -32,6 +33,7 @@ import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Pmd;
+import io.jenkins.plugins.analysis.warnings.RegisteredParser;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
@@ -46,11 +48,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
-    static final String DETAILS = "Details";
-    static final String AFFECTED_FILE = "File";
-    static final String SEVERITY = "Severity";
-    static final String AGE = "Age";
-
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
 
     /**
@@ -138,7 +135,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldCreateResultWithDifferentNameAndId() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse.txt");
-        AnalysisModelParser configuration = configurePattern(new Eclipse());
+        ReportScanningTool configuration = configurePattern(new Eclipse());
         String id = "new-id";
         configuration.setId(id);
         String name = "new-name";
@@ -275,8 +272,8 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldUseSameToolTwice() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle.xml", "checkstyle-twice.xml");
-        AnalysisModelParser first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
-        AnalysisModelParser second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
+        ReportScanningTool first = createTool(new CheckStyle(), "**/checkstyle-issues.txt");
+        ReportScanningTool second = createTool(new CheckStyle(), "**/checkstyle-twice-issues.txt");
         second.setId("second");
         enableWarnings(project, recorder -> recorder.setAggregatingResults(false), first, second);
 
@@ -375,7 +372,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     @Test
     public void shouldCreateNoFixedWarningsOrNewWarnings() {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("eclipse_8_Warnings.txt");
-        AnalysisModelParser eclipse = createEclipse("eclipse_8_Warnings-issues.txt");
+        ReportScanningTool eclipse = createEclipse("eclipse_8_Warnings-issues.txt");
         IssuesRecorder recorder = enableWarnings(project, eclipse);
 
         // First build: baseline
@@ -418,7 +415,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
 
-    private AnalysisModelParser createEclipse(final String pattern) {
+    private ReportScanningTool createEclipse(final String pattern) {
         return createTool(new Eclipse(), pattern);
     }
 
@@ -430,11 +427,16 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
     @Test
     public void shouldFindNewCheckStyleWarnings() {
+        shouldFindNewCheckStyleWarnings(() -> new RegisteredParser("checkstyle"));
+        shouldFindNewCheckStyleWarnings(CheckStyle::new);
+    }
+
+    private void shouldFindNewCheckStyleWarnings(final Supplier<ReportScanningTool> tool) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
 
         buildWithResult(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
 
-        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "**/checkstyle1*"));
+        IssuesRecorder recorder = enableWarnings(project, createTool(tool.get(), "**/checkstyle1*"));
 
         AnalysisResult baseline = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(baseline).hasTotalSize(3);
@@ -443,7 +445,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         verifyBaselineDetails(baseline);
 
-        recorder.setTools(createTool(new CheckStyle(), "**/checkstyle2*"));
+        recorder.setTools(createTool(tool.get(), "**/checkstyle2*"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(3);
@@ -451,6 +453,10 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasTotalSize(4);
 
         verifyDetails(result);
+
+        ResultAction resultAction = getResultAction(result.getOwner());
+        assertThat(resultAction.getDisplayName()).isEqualTo("CheckStyle Warnings");
+        assertThat(resultAction.getUrlName()).isEqualTo("checkstyle");
     }
 
     private void verifyDetails(final AnalysisResult result) {

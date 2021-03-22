@@ -81,6 +81,7 @@ import jenkins.security.s2m.AdminWhitelistRule;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -732,7 +733,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the created tool
      */
-    protected AnalysisModelParser createTool(final AnalysisModelParser tool, final String pattern) {
+    protected ReportScanningTool createTool(final ReportScanningTool tool, final String pattern) {
         tool.setPattern(pattern);
         return tool;
     }
@@ -755,7 +756,7 @@ public abstract class IntegrationTest extends ResourceTest {
     @CanIgnoreReturnValue
     protected IssuesRecorder enableWarnings(final AbstractProject<?, ?> job,
             final Consumer<IssuesRecorder> recorderConfiguration,
-            final AnalysisModelParser tool, final AnalysisModelParser... additionalTools) {
+            final ReportScanningTool tool, final ReportScanningTool... additionalTools) {
         IssuesRecorder recorder = enableWarnings(job, tool, additionalTools);
         recorderConfiguration.accept(recorder);
         return recorder;
@@ -776,7 +777,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     @CanIgnoreReturnValue
     protected IssuesRecorder enableGenericWarnings(final AbstractProject<?, ?> job,
-            final Consumer<IssuesRecorder> configuration, final AnalysisModelParser tool) {
+            final Consumer<IssuesRecorder> configuration, final ReportScanningTool tool) {
         configurePattern(tool);
 
         return enableWarnings(job, configuration, tool);
@@ -794,7 +795,7 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the created recorder
      */
     @CanIgnoreReturnValue
-    protected IssuesRecorder enableGenericWarnings(final AbstractProject<?, ?> job, final AnalysisModelParser tool) {
+    protected IssuesRecorder enableGenericWarnings(final AbstractProject<?, ?> job, final ReportScanningTool tool) {
         configurePattern(tool);
         return enableWarnings(job, tool);
     }
@@ -829,7 +830,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the changed tool
      */
-    protected AnalysisModelParser configurePattern(final AnalysisModelParser tool) {
+    protected ReportScanningTool configurePattern(final ReportScanningTool tool) {
         return createTool(tool, "**/*issues.txt");
     }
 

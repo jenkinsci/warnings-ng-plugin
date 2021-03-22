@@ -93,7 +93,7 @@ class IssuesScanner {
     public AnnotatedReport scan() throws IOException, InterruptedException {
         LogHandler logger = new LogHandler(listener, tool.getActualName());
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
-        report.setNameOfOrigin(tool.getActualId(), tool.getName());
+        report.setNameOfOrigin(tool.getActualId(), tool.getActualName());
 
         AnnotatedReport annotatedReport = postProcessReport(report);
 

@@ -13,7 +13,7 @@ import hudson.model.Run;
 import io.jenkins.plugins.analysis.core.model.AggregatedTrendAction;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.JobAction;
-import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
+import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
@@ -101,11 +101,11 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThatAggregationChartExists(project, true);
     }
 
-    private AnalysisModelParser createCheckStyle() {
+    private ReportScanningTool createCheckStyle() {
         return configurePattern(new CheckStyle());
     }
 
-    private AnalysisModelParser createEclipse() {
+    private ReportScanningTool createEclipse() {
         return configurePattern(new Eclipse());
     }
 

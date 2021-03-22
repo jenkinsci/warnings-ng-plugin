@@ -66,7 +66,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      * @see ToolDescriptor#getId()
      */
     public String getActualId() {
-        return StringUtils.defaultIfBlank(id, getDescriptor().getId());
+        return StringUtils.defaultIfBlank(getId(), getDescriptor().getId());
     }
 
     /**
@@ -95,7 +95,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      * @see ToolDescriptor#getName()
      */
     public String getActualName() {
-        return StringUtils.defaultIfBlank(name, getDescriptor().getDisplayName());
+        return StringUtils.defaultIfBlank(getName(), getDescriptor().getDisplayName());
     }
 
     /**
