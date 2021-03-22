@@ -12,6 +12,9 @@ updates:
       - dependency-name: org.eclipse.collections:eclipse-collections-api
         versions:
           - ">= 10.a"
+      - dependency-name: org.jenkins-ci.plugins.workflow:workflow-basic-steps
+        versions:
+          - ">= 2.23"
       - dependency-name: org.jenkins-ci.plugins:git
         versions:
           - ">= 4.7.0"
