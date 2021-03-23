@@ -5,8 +5,8 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.0.0</version>
-    <relativePath/>
+    <version>5.3.0</version>
+    <relativePath />
   </parent>
 
   <groupId>io.jenkins.plugins</groupId>
@@ -46,7 +46,7 @@
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
-    <json.version>20201115</json.version>
+    <json.version>20210307</json.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.8.2</xmlunit.version>
@@ -65,7 +65,7 @@
     <dashboard-view.version>2.15</dashboard-view.version>
     <script-security.version>1.76</script-security.version>
     <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
-    <configuration-as-code.version>1.46</configuration-as-code.version>
+    <configuration-as-code.version>1.47</configuration-as-code.version>
     <job-dsl.version>1.77</job-dsl.version>
     <envinject.version>2.3.0</envinject.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
@@ -78,7 +78,7 @@
     <folder.version>6.15</folder.version>
     <scm-api.version>2.6.3</scm-api.version>
     <checks-api.version>1.6.1</checks-api.version>
-    <credentials.version>2.3.14</credentials.version>
+    <credentials.version>2.3.15</credentials.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
