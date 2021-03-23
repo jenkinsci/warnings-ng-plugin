@@ -74,10 +74,10 @@
     <docker-fixtures.version>1.10</docker-fixtures.version>
     <jdk-tool.version>1.5</jdk-tool.version>
     <workflow-support.version>3.8</workflow-support.version>
-    <pipeline-model-definition.version>1.7.0</pipeline-model-definition.version>
+    <pipeline-model-definition.version>1.8.4</pipeline-model-definition.version>
     <form-element-path.version>1.10</form-element-path.version>
     <folder.version>6.15</folder.version>
-    <scm-api.version>2.6.3</scm-api.version>
+    <scm-api.version>2.6.4</scm-api.version>
     <checks-api.version>1.6.1</checks-api.version>
     <credentials.version>2.3.15</credentials.version>
 
