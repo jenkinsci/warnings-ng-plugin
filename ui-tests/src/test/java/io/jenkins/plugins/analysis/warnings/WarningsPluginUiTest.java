@@ -17,6 +17,7 @@ import org.jenkinsci.test.acceptance.po.DumbSlave;
 import org.jenkinsci.test.acceptance.po.Folder;
 import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.Slave;
+import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
 import io.jenkins.plugins.analysis.warnings.IssuesRecorder.QualityGateBuildResult;
@@ -63,6 +64,76 @@ public class WarningsPluginUiTest extends UiTest {
 
     @Inject
     private DockerContainerHolder<JavaGitContainer> dockerContainer;
+
+    /**
+     * Runs a pipeline with all tools two times. Verifies the analysis results in several views. Additionally, verifies
+     * the expansion of tokens with the token-macro plugin.
+     */
+    @Test
+    @WithPlugins({"token-macro@2.15", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
+    public void shouldRecordIssuesInPipelineAndExpandTokens() {
+        initGlobalSettingsForGroovyParser();
+        WorkflowJob job = jenkins.jobs.create(WorkflowJob.class);
+        job.sandbox.check();
+
+        createRecordIssuesStep(job, 1);
+
+        job.save();
+
+        Build referenceBuild = buildJob(job);
+
+        assertThat(referenceBuild.getConsole())
+                .contains("[total=4]")
+                .contains("[new=0]")
+                .contains("[fixed=0]")
+                .contains("[checkstyle=1]")
+                .contains("[pmd=3]")
+                .contains("[pep8=0]");
+
+        job.configure(() -> createRecordIssuesStep(job, 2));
+
+        Build build = buildJob(job);
+
+        assertThat(build.getConsole())
+                .contains("[total=33]")
+                .contains("[new=31]")
+                .contains("[fixed=2]")
+                .contains("[checkstyle=3]")
+                .contains("[pmd=2]")
+                .contains("[pep8=8]");
+    }
+
+    private void createRecordIssuesStep(final WorkflowJob job, final int buildNumber) {
+        job.script.set("node {\n"
+                + createReportFilesStep(job, buildNumber)
+                + "recordIssues tool: checkStyle(pattern: '**/checkstyle*')\n"
+                + "recordIssues tool: pmdParser(pattern: '**/pmd*')\n"
+                + "recordIssues tools: [cpd(pattern: '**/cpd*', highThreshold:8, normalThreshold:3), findBugs()], aggregatingResults: 'false' \n"
+                + "recordIssues tool: pep8(pattern: '**/" + PEP8_FILE + "')\n"
+                + "def total = tm('${ANALYSIS_ISSUES_COUNT}')\n"
+                + "echo '[total=' + total + ']' \n"
+                + "def checkstyle = tm('${ANALYSIS_ISSUES_COUNT, tool=\"checkstyle\"}')\n"
+                + "echo '[checkstyle=' + checkstyle + ']' \n"
+                + "def pmd = tm('${ANALYSIS_ISSUES_COUNT, tool=\"pmd\"}')\n"
+                + "echo '[pmd=' + pmd + ']' \n"
+                + "def pep8 = tm('${ANALYSIS_ISSUES_COUNT, tool=\"pep8\"}')\n"
+                + "echo '[pep8=' + pep8 + ']' \n"
+                + "def newSize = tm('${ANALYSIS_ISSUES_COUNT, type=\"NEW\"}')\n"
+                + "echo '[new=' + newSize + ']' \n"
+                + "def fixedSize = tm('${ANALYSIS_ISSUES_COUNT, type=\"FIXED\"}')\n"
+                + "echo '[fixed=' + fixedSize + ']' \n"
+                + "}");
+    }
+
+    private StringBuilder createReportFilesStep(final WorkflowJob job, final int build) {
+        String[] fileNames = {"checkstyle-result.xml", "pmd.xml", "findbugsXml.xml", "cpd.xml", "Main.java", "pep8Test.txt"};
+        StringBuilder resourceCopySteps = new StringBuilder();
+        for (String fileName : fileNames) {
+            resourceCopySteps.append(job.copyResourceStep(
+                    "/build_status_test/build_0" + build + "/" + fileName).replace("\\", "\\\\"));
+        }
+        return resourceCopySteps;
+    }
 
     @Test
     public void shouldRunInFolder() {

@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.warnings;
 
 import java.util.List;
-
 import java.util.Map;
 
 import org.junit.Test;
@@ -16,10 +15,9 @@ import org.jenkinsci.test.acceptance.po.FreeStyleJob;
 import org.jenkinsci.test.acceptance.po.WorkflowJob;
 
 import io.jenkins.plugins.analysis.warnings.AnalysisResult.Tab;
-
-import static io.jenkins.plugins.analysis.warnings.Assertions.assertThat;
-
 import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
+
+import static io.jenkins.plugins.analysis.warnings.Assertions.*;
 
 /**
  * Smoke tests for the Warnings Next Generation Plugin. These tests are invoked during the validation of pull requests
@@ -31,41 +29,22 @@ import io.jenkins.plugins.analysis.warnings.DashboardTable.DashboardTableEntry;
 @WithPlugins({"warnings-ng", "dashboard-view"})
 public class SmokeTests extends UiTest {
     /**
-     * Runs a pipeline with all tools two times. Verifies the analysis results in several views. Additionally, verifies
-     * the expansion of tokens with the token-macro plugin.
+     * Runs a pipeline with all tools two times. Verifies the analysis results in several views.
      */
     @Test
-    @WithPlugins({"token-macro", "pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
+    @WithPlugins({"pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
     public void shouldRecordIssuesInPipelineAndExpandTokens() {
         initGlobalSettingsForGroovyParser();
         WorkflowJob job = jenkins.jobs.create(WorkflowJob.class);
         job.sandbox.check();
 
         createRecordIssuesStep(job, 1);
-
         job.save();
 
-        Build referenceBuild = buildJob(job);
-
-        assertThat(referenceBuild.getConsole())
-                .contains("[total=4]")
-                .contains("[new=0]")
-                .contains("[fixed=0]")
-                .contains("[checkstyle=1]")
-                .contains("[pmd=3]")
-                .contains("[pep8=0]");
+        buildJob(job);
 
         job.configure(() -> createRecordIssuesStep(job, 2));
-
         Build build = buildJob(job);
-
-        assertThat(build.getConsole())
-                .contains("[total=33]")
-                .contains("[new=31]")
-                .contains("[fixed=2]")
-                .contains("[checkstyle=3]")
-                .contains("[pmd=2]")
-                .contains("[pep8=8]");
 
         verifyPmd(build);
         verifyFindBugs(build);
@@ -77,7 +56,6 @@ public class SmokeTests extends UiTest {
         jenkins.open();
         verifyIssuesColumnResults(build, job.name);
 
-        // Dashboard UI-Tests
         DashboardView dashboardView = createDashboardWithStaticAnalysisPortlet(false, true);
         DashboardTable dashboardTable = new DashboardTable(build, dashboardView.url);
 
