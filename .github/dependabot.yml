@@ -22,7 +22,7 @@ updates:
         versions:
           - ">= 3.7.0"
       - dependency-name: org.jenkins-ci.main:maven-plugin
-        versions:.
+        versions:
           - "> 3.8"
       - dependency-name: org.jenkins-ci.plugins:token-macro
         versions:
