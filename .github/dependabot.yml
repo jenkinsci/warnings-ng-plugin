@@ -22,8 +22,11 @@ updates:
         versions:
           - ">= 3.7.0"
       - dependency-name: org.jenkins-ci.main:maven-plugin
-        versions:
+        versions:.
           - "> 3.8"
+      - dependency-name: org.jenkins-ci.plugins:token-macro
+        versions:
+          - "> 2.13"
       - dependency-name: org.webjars:popper.js
         versions:
           - ">= 2.0.0"
