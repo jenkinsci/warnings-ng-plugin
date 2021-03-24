@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import hudson.model.AbstractProject;
 import hudson.model.Item;
 import hudson.model.Job;
 import hudson.util.ComboBoxModel;
@@ -63,7 +64,7 @@ class ToolSelectionDescriptorTest {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
         when(jenkinsFacade.getAllJobs()).thenReturn(Lists.list(job));
         ToolSelectionDescriptor.setJenkinsFacade(jenkinsFacade);
-        when(jenkinsFacade.hasPermission(Item.CONFIGURE, null)).thenReturn(hasPermission);
+        when(jenkinsFacade.hasPermission(Item.CONFIGURE, (AbstractProject<?, ?>) null)).thenReturn(hasPermission);
         return toolSelectionDescriptor;
     }
 }
