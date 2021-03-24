@@ -33,7 +33,7 @@ public class SmokeTests extends UiTest {
      */
     @Test
     @WithPlugins({"pipeline-stage-step", "workflow-durable-task-step", "workflow-basic-steps"})
-    public void shouldRecordIssuesInPipelineAndExpandTokens() {
+    public void shouldRecordIssuesInPipeline() {
         initGlobalSettingsForGroovyParser();
         WorkflowJob job = jenkins.jobs.create(WorkflowJob.class);
         job.sandbox.check();
