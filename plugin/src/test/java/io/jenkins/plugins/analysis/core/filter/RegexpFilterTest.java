@@ -7,6 +7,7 @@ import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Report.IssueFilterBuilder;
 
+import hudson.model.AbstractProject;
 import hudson.model.Item;
 
 import io.jenkins.plugins.analysis.core.filter.IncludeType.DescriptorImpl;
@@ -32,14 +33,14 @@ class RegexpFilterTest {
         report.add(ISSUE_BUILDER.setFileName("warning.txt").build());
         report.add(ISSUE_BUILDER.setFileName("_build.external/mercury/Testing/na/na_test.c").build());
         report.add(ISSUE_BUILDER.setFileName("@2/_build.external/pmix/src/mca/gds/gds.h").build());
-        
+
         RegexpFilter filter = new ExcludeFile(".*_build\\.external\\/.*");
 
         IssueFilterBuilder builder = new IssueFilterBuilder();
         filter.apply(builder);
-        
+
         Report filtered = report.filter(builder.build());
-        
+
         assertThat(filtered).hasSize(1);
         assertThat(report.get(0)).hasFileName("warning.txt");
     }
@@ -47,7 +48,7 @@ class RegexpFilterTest {
     @Test
     void shouldValidatePattern() {
         JenkinsFacade jenkinsFacade = mock(JenkinsFacade.class);
-        when(jenkinsFacade.hasPermission(Item.CONFIGURE, null)).thenReturn(true);
+        when(jenkinsFacade.hasPermission(Item.CONFIGURE, (AbstractProject<?, ?>) null)).thenReturn(true);
 
         RegexpFilterDescriptor descriptor = new DescriptorImpl(jenkinsFacade);
         assertThat(descriptor.doCheckPattern(null, null)).isOk().hasMessage(Messages.pattern_blank());
@@ -57,54 +58,54 @@ class RegexpFilterTest {
 
         assertThat(descriptor.doCheckPattern(null, "^.*[a-z]")).isOk();
     }
-    
+
     @Test
     void shouldCallIncludeCategoryMethod() {
         RegexpFilter filter = new IncludeCategory(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setIncludeCategoryFilter(PATTERN);
     }
-    
+
     @Test
     void shouldCallIncludeTypeMethod() {
         RegexpFilter filter = new IncludeType(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setIncludeTypeFilter(PATTERN);
     }
-    
+
     @Test
     void shouldCallIncludeFileMethod() {
         RegexpFilter filter = new IncludeFile(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setIncludeFileNameFilter(PATTERN);
     }
-    
+
     @Test
     void shouldCallIncludePackageMethod() {
         RegexpFilter filter = new IncludePackage(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setIncludePackageNameFilter(PATTERN);
     }
-    
+
     @Test
     void shouldCallIncludeModuleMethod() {
         RegexpFilter filter = new IncludeModule(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setIncludeModuleNameFilter(PATTERN);
     }
 
@@ -117,54 +118,54 @@ class RegexpFilterTest {
 
         verify(filterBuilder).setIncludeMessageFilter(PATTERN);
     }
-    
+
     @Test
     void shouldCallExcludeCategoryMethod() {
         RegexpFilter filter = new ExcludeCategory(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setExcludeCategoryFilter(PATTERN);
     }
-    
+
     @Test
     void shouldCallExcludeTypeMethod() {
         RegexpFilter filter = new ExcludeType(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setExcludeTypeFilter(PATTERN);
     }
-    
+
     @Test
     void shouldCallExcludeFileMethod() {
         RegexpFilter filter = new ExcludeFile(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setExcludeFileNameFilter(PATTERN);
     }
-    
+
     @Test
     void shouldCallExcludePackageMethod() {
         RegexpFilter filter = new ExcludePackage(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setExcludePackageNameFilter(PATTERN);
     }
-    
+
     @Test
     void shouldCallExcludeModuleMethod() {
         RegexpFilter filter = new ExcludeModule(PATTERN);
 
         IssueFilterBuilder filterBuilder = mock(IssueFilterBuilder.class);
         filter.apply(filterBuilder);
-        
+
         verify(filterBuilder).setExcludeModuleNameFilter(PATTERN);
     }
 
