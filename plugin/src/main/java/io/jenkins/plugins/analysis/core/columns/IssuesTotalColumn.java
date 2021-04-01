@@ -239,6 +239,11 @@ public class IssuesTotalColumn extends ListViewColumn {
             return Messages.IssuesTotalColumn_Name();
         }
 
+        @Override
+        public boolean shownByDefault() {
+        	return false;
+        }
+
         /**
          * Return the model for the select widget.
          *
