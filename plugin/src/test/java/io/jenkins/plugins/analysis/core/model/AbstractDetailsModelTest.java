@@ -46,15 +46,16 @@ public abstract class AbstractDetailsModelTest {
     }
 
     Issue createIssue(final int index) {
-        IssueBuilder builder = createBuilder();
-        builder.setFileName("/path/to/file-" + index)
-                .setPackageName("package-" + index)
-                .setCategory("category-" + index)
-                .setType("type-" + index)
-                .setLineStart(15)
-                .setSeverity(Severity.WARNING_HIGH)
-                .setReference("1");
-        return builder.build();
+        try (IssueBuilder builder = createBuilder()) {
+            builder.setFileName("/path/to/file-" + index)
+                    .setPackageName("package-" + index)
+                    .setCategory("category-" + index)
+                    .setType("type-" + index)
+                    .setLineStart(15)
+                    .setSeverity(Severity.WARNING_HIGH)
+                    .setReference("1");
+            return builder.build();
+        }
     }
 
     @BeforeAll

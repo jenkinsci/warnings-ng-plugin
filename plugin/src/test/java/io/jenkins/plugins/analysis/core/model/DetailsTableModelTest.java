@@ -15,14 +15,16 @@ import static org.assertj.core.api.Assertions.*;
  * @author Ullrich Hafner
  */
 class DetailsTableModelTest extends AbstractDetailsModelTest {
-    @Test @org.jvnet.hudson.test.Issue("JENKINS-64051")
+    @Test
+    @org.jvnet.hudson.test.Issue("JENKINS-64051")
     void shouldNotRemoveWhitespace() {
-        IssueBuilder builder = new IssueBuilder();
-        builder.setMessage("project: Defaults to NumberGroupSeparator on .NET Core except on Windows.");
-        TableRow model = createRow(builder.build());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            builder.setMessage("project: Defaults to NumberGroupSeparator on .NET Core except on Windows.");
+            TableRow model = createRow(builder.build());
 
-        String actualColumn = model.getDescription();
-        assertThat(actualColumn).contains("NumberGroupSeparator on .NET Core except");
+            String actualColumn = model.getDescription();
+            assertThat(actualColumn).contains("NumberGroupSeparator on .NET Core except");
+        }
     }
 
     @Test
@@ -35,6 +37,7 @@ class DetailsTableModelTest extends AbstractDetailsModelTest {
     }
 
     private TableRow createRow(final Issue issue) {
-        return new TableRow(createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue, createJenkinsFacade());
+        return new TableRow(createAgeBuilder(), createFileNameRenderer(), i -> DESCRIPTION, issue,
+                createJenkinsFacade());
     }
 }

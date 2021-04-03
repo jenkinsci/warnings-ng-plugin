@@ -30,47 +30,50 @@ class ReportLocationsTest {
 
     @Test
     void shouldConvertReportWithOneWarning() {
-        Report report = new Report();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report report = new Report();
 
-        IssueBuilder builder = new IssueBuilder();
-        builder.setDirectory(WORKSPACE);
-        report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
+            builder.setDirectory(WORKSPACE);
+            report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
 
-        FileLocations singleLine = new ReportLocations().toFileLocations(report);
+            FileLocations singleLine = new ReportLocations().toFileLocations(report);
 
-        assertThat(singleLine.getFiles()).containsExactly(absolute(TXT_FILE));
-        assertThat(singleLine.getLines(absolute(TXT_FILE))).containsExactly(1);
+            assertThat(singleLine.getFiles()).containsExactly(absolute(TXT_FILE));
+            assertThat(singleLine.getLines(absolute(TXT_FILE))).containsExactly(1);
+        }
     }
 
     @Test
     void shouldConvertReportWithTwoLinesInOneFile() {
-        Report report = new Report();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report report = new Report();
 
-        IssueBuilder builder = new IssueBuilder();
-        builder.setDirectory(WORKSPACE);
-        report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
-        report.add(builder.setFileName(TXT_FILE).setLineStart(5).build());
+            builder.setDirectory(WORKSPACE);
+            report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
+            report.add(builder.setFileName(TXT_FILE).setLineStart(5).build());
 
-        FileLocations twoLines = new ReportLocations().toFileLocations(report);
+            FileLocations twoLines = new ReportLocations().toFileLocations(report);
 
-        assertThat(twoLines.getFiles()).containsExactly(absolute(TXT_FILE));
-        assertThat(twoLines.getLines(absolute(TXT_FILE))).containsExactly(1, 5);
+            assertThat(twoLines.getFiles()).containsExactly(absolute(TXT_FILE));
+            assertThat(twoLines.getLines(absolute(TXT_FILE))).containsExactly(1, 5);
+        }
     }
 
     @Test
     void shouldConvertReport() {
-        Report report = new Report();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report report = new Report();
 
-        IssueBuilder builder = new IssueBuilder();
-        builder.setDirectory(WORKSPACE);
-        report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
-        report.add(builder.setFileName(JAVA_FILE).setLineStart(10).build());
+            builder.setDirectory(WORKSPACE);
+            report.add(builder.setFileName(TXT_FILE).setLineStart(1).build());
+            report.add(builder.setFileName(JAVA_FILE).setLineStart(10).build());
 
-        FileLocations twoFiles = new ReportLocations().toFileLocations(report);
+            FileLocations twoFiles = new ReportLocations().toFileLocations(report);
 
-        assertThat(twoFiles.getFiles()).containsExactlyInAnyOrder(absolute(TXT_FILE), absolute(JAVA_FILE));
-        assertThat(twoFiles.getLines(absolute(TXT_FILE))).containsExactly(1);
-        assertThat(twoFiles.getLines(absolute(JAVA_FILE))).containsExactly(10);
+            assertThat(twoFiles.getFiles()).containsExactlyInAnyOrder(absolute(TXT_FILE), absolute(JAVA_FILE));
+            assertThat(twoFiles.getLines(absolute(TXT_FILE))).containsExactly(1);
+            assertThat(twoFiles.getLines(absolute(JAVA_FILE))).containsExactly(10);
+        }
     }
 
     private String absolute(final String fileName) {

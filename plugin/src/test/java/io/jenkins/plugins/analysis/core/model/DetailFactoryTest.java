@@ -55,7 +55,7 @@ class DetailFactoryTest {
     void shouldThrowExceptionIfLinkIsNotFound() {
         assertThatExceptionOfType(NoSuchElementException.class)
                 .isThrownBy(() ->
-                        new DetailFactory().createTrendDetails("broken", RUN, createResult(), ALL_ISSUES, NEW_ISSUES, 
+                        new DetailFactory().createTrendDetails("broken", RUN, createResult(), ALL_ISSUES, NEW_ISSUES,
                                 OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent()));
     }
 
@@ -85,7 +85,7 @@ class DetailFactoryTest {
     void shouldReturnLabelProviderNameOnOrigin() {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         when(jenkins.getDescriptorsFor(Tool.class)).thenReturn(
-                DescriptorExtensionList.createDescriptorList((Jenkins)null, Tool.class));
+                DescriptorExtensionList.createDescriptorList((Jenkins) null, Tool.class));
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
         Object details = detailFactory.createTrendDetails("origin." + TOOL_ID.hashCode(), RUN,
@@ -166,19 +166,28 @@ class DetailFactoryTest {
         JenkinsFacade jenkins = mock(JenkinsFacade.class);
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.readConsoleLog(any())).thenReturn(createLines());
-        DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
-        Report report = new Report();
+        String fileName = ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID;
 
-        IssueBuilder issueBuilder = new IssueBuilder();
-        issueBuilder.setFileName(ConsoleLogHandler.JENKINS_CONSOLE_LOG_FILE_NAME_ID);
-        Issue issue = issueBuilder.build();
-
-        report.add(issue);
-
-        Object details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
-                RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
+        Object details = createDetails(jenkins, buildFolder, fileName);
         assertThat(details).isInstanceOf(ConsoleDetail.class);
         assertThat(((ConsoleDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
+    }
+
+    private Object createDetails(final JenkinsFacade jenkins, final BuildFolderFacade buildFolder,
+            final String fileName) {
+        try (IssueBuilder issueBuilder = new IssueBuilder()) {
+            DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
+
+            issueBuilder.setFileName(fileName);
+            Issue issue = issueBuilder.build();
+
+            Report report = new Report();
+            report.add(issue);
+
+            return detailFactory.createTrendDetails("source." + issue.getId().toString(),
+                    RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING,
+                    createParent());
+        }
     }
 
     /**
@@ -190,17 +199,8 @@ class DetailFactoryTest {
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.readFile(any(), anyString(), any())).thenThrow(new IOException("file error"));
 
-        DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
-        Report report = new Report();
+        Object details = createDetails(jenkins, buildFolder, "a-file");
 
-        IssueBuilder issueBuilder = new IssueBuilder();
-        issueBuilder.setFileName("a-file");
-        Issue issue = issueBuilder.build();
-
-        report.add(issue);
-
-        Object details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
-                RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
         assertThat(details).isInstanceOf(SourceDetail.class);
         assertThat(((SourceDetail) details).getSourceCode()).contains("IOException: file error");
     }
@@ -214,17 +214,8 @@ class DetailFactoryTest {
         BuildFolderFacade buildFolder = mock(BuildFolderFacade.class);
         when(buildFolder.readFile(any(), anyString(), any())).thenReturn(new StringReader(AFFECTED_FILE_CONTENT));
 
-        DetailFactory detailFactory = new DetailFactory(jenkins, buildFolder);
-        Report report = new Report();
+        Object details = createDetails(jenkins, buildFolder, "a-file");
 
-        IssueBuilder issueBuilder = new IssueBuilder();
-        issueBuilder.setFileName("a-file");
-        Issue issue = issueBuilder.build();
-
-        report.add(issue);
-
-        Object details = detailFactory.createTrendDetails("source." + issue.getId().toString(),
-                RUN, createResult(), report, NEW_ISSUES, OUTSTANDING_ISSUES, FIXED_ISSUES, ENCODING, createParent());
         assertThat(details).isInstanceOf(SourceDetail.class);
         assertThat(((SourceDetail) details).getSourceCode()).contains(AFFECTED_FILE_CONTENT);
     }
@@ -233,7 +224,6 @@ class DetailFactoryTest {
      * Checks that a link with a filter, that results to an non empty set, returns an IssueDetail-View that only
      * contains filtered issues.
      */
-    @SuppressWarnings("unchecked")
     @Test
     void shouldReturnIssueDetailFiltered() {
         DetailFactory detailFactory = new DetailFactory();
@@ -308,17 +298,27 @@ class DetailFactoryTest {
     }
 
     private static Report createReportWith(final int high, final int normal, final int low, final String link) {
-        IssueBuilder builder = new IssueBuilder().setOrigin(TOOL_ID);
-        Report issues = new Report();
-        for (int i = 0; i < high; i++) {
-            issues.add(builder.setSeverity(Severity.WARNING_HIGH).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());
+        try (IssueBuilder builder = new IssueBuilder().setOrigin(TOOL_ID)) {
+            Report issues = new Report();
+            for (int i = 0; i < high; i++) {
+                issues.add(builder.setSeverity(Severity.WARNING_HIGH)
+                        .setMessage(link + " - " + i)
+                        .setCategory("CATEGORY" + i)
+                        .build());
+            }
+            for (int i = 0; i < normal; i++) {
+                issues.add(builder.setSeverity(Severity.WARNING_NORMAL)
+                        .setMessage(link + " - " + i)
+                        .setCategory("CATEGORY" + i)
+                        .build());
+            }
+            for (int i = 0; i < low; i++) {
+                issues.add(builder.setSeverity(Severity.WARNING_LOW)
+                        .setMessage(link + " - " + i)
+                        .setCategory("CATEGORY" + i)
+                        .build());
+            }
+            return issues;
         }
-        for (int i = 0; i < normal; i++) {
-            issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());
-        }
-        for (int i = 0; i < low; i++) {
-            issues.add(builder.setSeverity(Severity.WARNING_LOW).setMessage(link + " - " + i).setCategory("CATEGORY" + i).build());
-        }
-        return issues;
     }
 }
