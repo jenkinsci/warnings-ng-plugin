@@ -25,13 +25,15 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnTotalNumber() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory("error").build());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory("error").build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        assertThat(statistics).hasTotal(issues.size());
+            assertThat(statistics).hasTotal(issues.size());
+        }
     }
 
     /**
@@ -39,14 +41,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnTotalNumberMoreIssues() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory("errorA").build());
-        issues.add(builder.setCategory("errorB").build());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory("errorA").build());
+            issues.add(builder.setCategory("errorB").build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        assertThat(statistics).hasTotal(2);
+            assertThat(statistics).hasTotal(2);
+        }
     }
 
     /**
@@ -103,13 +107,15 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnKeys() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory(KEY).build());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory(KEY).build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        assertThat(statistics).hasOnlyKeys(KEY);
+            assertThat(statistics).hasOnlyKeys(KEY);
+        }
     }
 
     /**
@@ -117,14 +123,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnAllKeys() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory("keyA").build());
-        issues.add(builder.setCategory("keyB").build());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory("keyA").build());
+            issues.add(builder.setCategory("keyB").build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        assertThat(statistics).hasOnlyKeys("keyA", "keyB");
+            assertThat(statistics).hasOnlyKeys("keyA", "keyB");
+        }
     }
 
     /**
@@ -132,13 +140,15 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnEmptyStringKeys() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory("").build());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory("").build());
 
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        assertThat(statistics).hasOnlyKeys("");
+            assertThat(statistics).hasOnlyKeys("");
+        }
     }
 
     /**
@@ -172,14 +182,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnMaxValue() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        int value = statistics.getMax();
+            int value = statistics.getMax();
 
-        assertThat(value).isEqualTo(1);
+            assertThat(value).isEqualTo(1);
+        }
     }
 
     /**
@@ -187,15 +199,17 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnMaxValueTwo() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory("ab").setPackageName("P1").build());
-        issues.add(builder.setCategory("ab").setPackageName("P2").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory("ab").setPackageName("P1").build());
+            issues.add(builder.setCategory("ab").setPackageName("P2").build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        int value = statistics.getMax();
+            int value = statistics.getMax();
 
-        assertThat(value).isEqualTo(2);
+            assertThat(value).isEqualTo(2);
+        }
     }
 
     /**
@@ -203,16 +217,18 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnMaxValueDifferentCategories() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory("ab").setPackageName("P1").build());
-        issues.add(builder.setCategory("ab").setPackageName("P2").build());
-        issues.add(builder.setCategory("abc").setPackageName("P2").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory("ab").setPackageName("P1").build());
+            issues.add(builder.setCategory("ab").setPackageName("P2").build());
+            issues.add(builder.setCategory("abc").setPackageName("P2").build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        int value = statistics.getMax();
+            int value = statistics.getMax();
 
-        assertThat(value).isEqualTo(2);
+            assertThat(value).isEqualTo(2);
+        }
     }
 
     /**
@@ -233,14 +249,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnCountOne() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory(KEY).build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getCount(KEY);
+            long value = statistics.getCount(KEY);
 
-        assertThat(value).isEqualTo(1);
+            assertThat(value).isEqualTo(1);
+        }
     }
 
     /**
@@ -248,17 +266,19 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnCountThree() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory(KEY).build());
-        issues.add(builder.setCategory(KEY).setPackageName("P1").build());
-        issues.add(builder.setCategory(KEY).setPackageName("P2").build());
-        issues.add(builder.setCategory("key1").setPackageName("P1").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory(KEY).build());
+            issues.add(builder.setCategory(KEY).setPackageName("P1").build());
+            issues.add(builder.setCategory(KEY).setPackageName("P2").build());
+            issues.add(builder.setCategory("key1").setPackageName("P1").build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getCount(KEY);
+            long value = statistics.getCount(KEY);
 
-        assertThat(value).isEqualTo(3);
+            assertThat(value).isEqualTo(3);
+        }
     }
 
     /**
@@ -266,14 +286,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnHighCountOne() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getHighCount(KEY);
+            long value = statistics.getHighCount(KEY);
 
-        assertThat(value).isEqualTo(1);
+            assertThat(value).isEqualTo(1);
+        }
     }
 
     /**
@@ -281,17 +303,19 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnHighCountTwo() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("A").build());
-        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("A").build());
+            issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
+            issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
+            issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getHighCount(KEY);
+            long value = statistics.getHighCount(KEY);
 
-        assertThat(value).isEqualTo(2);
+            assertThat(value).isEqualTo(2);
+        }
     }
 
     /**
@@ -299,14 +323,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnHighCountZero() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getHighCount(KEY);
+            long value = statistics.getHighCount(KEY);
 
-        assertThat(value).isEqualTo(0);
+            assertThat(value).isEqualTo(0);
+        }
     }
 
     /**
@@ -327,14 +353,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnNormalCountOne() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getNormalCount(KEY);
+            long value = statistics.getNormalCount(KEY);
 
-        assertThat(value).isEqualTo(1);
+            assertThat(value).isEqualTo(1);
+        }
     }
 
     /**
@@ -342,17 +370,19 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnNormalCountTwo() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("A").build());
-        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("A").build());
+            issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
+            issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
+            issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getNormalCount(KEY);
+            long value = statistics.getNormalCount(KEY);
 
-        assertThat(value).isEqualTo(2);
+            assertThat(value).isEqualTo(2);
+        }
     }
 
     /**
@@ -372,14 +402,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnNormalCountZero() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getNormalCount(KEY);
+            long value = statistics.getNormalCount(KEY);
 
-        assertThat(value).isEqualTo(0);
+            assertThat(value).isEqualTo(0);
+        }
     }
 
     /**
@@ -387,14 +419,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnLowCountOne() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getLowCount(KEY);
+            long value = statistics.getLowCount(KEY);
 
-        assertThat(value).isEqualTo(1);
+            assertThat(value).isEqualTo(1);
+        }
     }
 
     /**
@@ -414,17 +448,19 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnLowCountTwo() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("A").build());
-        issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
-        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("A").build());
+            issues.add(builder.setSeverity(Severity.WARNING_LOW).setCategory(KEY).setOrigin("B").build());
+            issues.add(builder.setSeverity(Severity.WARNING_NORMAL).setCategory(KEY).setOrigin("B").build());
+            issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).setOrigin("B").build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getLowCount(KEY);
+            long value = statistics.getLowCount(KEY);
 
-        assertThat(value).isEqualTo(2);
+            assertThat(value).isEqualTo(2);
+        }
     }
 
     /**
@@ -432,14 +468,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnLowCountZero() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setSeverity(Severity.WARNING_HIGH).setCategory(KEY).build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getLowCount(KEY);
+            long value = statistics.getLowCount(KEY);
 
-        assertThat(value).isEqualTo(0);
+            assertThat(value).isEqualTo(0);
+        }
     }
 
     /**
@@ -448,16 +486,17 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnZeroNewIssues() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory(KEY).setOrigin("A").build());
-        issues.add(builder.setCategory(KEY).setOrigin("B").build());
-        Report newIssues = new Report();
-        PropertyStatistics statistics = new PropertyStatistics(issues, newIssues, "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory(KEY).setOrigin("A").build());
+            issues.add(builder.setCategory(KEY).setOrigin("B").build());
+            Report newIssues = new Report();
+            PropertyStatistics statistics = new PropertyStatistics(issues, newIssues, "category", Function.identity());
 
-        int newAmount = statistics.getTotalNewIssues();
+            int newAmount = statistics.getTotalNewIssues();
 
-        assertThat(newAmount).isEqualTo(0);
+            assertThat(newAmount).isEqualTo(0);
+        }
     }
 
     /**
@@ -466,15 +505,16 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnTwoNewIssues() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory(KEY).setOrigin("A").build());
-        issues.add(builder.setCategory(KEY).setOrigin("B").build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, issues, "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory(KEY).setOrigin("A").build());
+            issues.add(builder.setCategory(KEY).setOrigin("B").build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, issues, "category", Function.identity());
 
-        int newIssues = statistics.getTotalNewIssues();
+            int newIssues = statistics.getTotalNewIssues();
 
-        assertThat(newIssues).isEqualTo(2);
+            assertThat(newIssues).isEqualTo(2);
+        }
     }
 
     /**
@@ -492,16 +532,17 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnNewCountOne() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory(KEY).build());
-        Report newIssues = new Report();
-        newIssues.add(builder.setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, newIssues, "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory(KEY).build());
+            Report newIssues = new Report();
+            newIssues.add(builder.setCategory(KEY).build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, newIssues, "category", Function.identity());
 
-        long value = statistics.getNewCount(KEY);
+            long value = statistics.getNewCount(KEY);
 
-        assertThat(value).isEqualTo(1);
+            assertThat(value).isEqualTo(1);
+        }
     }
 
     /**
@@ -509,13 +550,15 @@ class PropertyStatisticsTest {
      */
     @Test
     void shouldReturnNewCountZero() {
-        Report issues = new Report();
-        IssueBuilder builder = new IssueBuilder();
-        issues.add(builder.setCategory(KEY).build());
-        PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category", Function.identity());
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Report issues = new Report();
+            issues.add(builder.setCategory(KEY).build());
+            PropertyStatistics statistics = new PropertyStatistics(issues, new Report(), "category",
+                    Function.identity());
 
-        long value = statistics.getNewCount(KEY);
+            long value = statistics.getNewCount(KEY);
 
-        assertThat(value).isEqualTo(0);
+            assertThat(value).isEqualTo(0);
+        }
     }
 }
