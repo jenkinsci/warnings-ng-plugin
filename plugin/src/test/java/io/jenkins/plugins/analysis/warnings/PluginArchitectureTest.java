@@ -1,11 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import javax.xml.parsers.SAXParser;
-
-import org.apache.commons.digester3.Digester;
-import org.apache.commons.digester3.binder.DigesterLoader;
-import org.xml.sax.XMLReader;
-
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
@@ -65,15 +59,6 @@ class PluginArchitectureTest {
 
     @ArchTest
     static final ArchRule USE_POST_FOR_LIST_MODELS_RULE = PluginArchitectureRules.USE_POST_FOR_LIST_AND_COMBOBOX_FILL;
-
-    /** Digester must not be used directly, rather use a SecureDigester instance. */
-    @ArchTest
-    static final ArchRule NO_DIGESTER_CONSTRUCTOR_CALLED =
-            noClasses().that().doNotHaveSimpleName("SecureDigester")
-                    .should().callConstructor(Digester.class)
-                    .orShould().callConstructor(Digester.class, SAXParser.class)
-                    .orShould().callConstructor(Digester.class, XMLReader.class)
-                    .orShould().callMethod(DigesterLoader.class, "newDigester");
 
     /** Test classes should not use Junit 4. */
     // TODO: see https://github.com/TNG/ArchUnit/issues/136

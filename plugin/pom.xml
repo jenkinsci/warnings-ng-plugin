@@ -41,8 +41,6 @@
     <popper-api.version>1.16.1-2</popper-api.version>
     <error_prone_annotations.version>2.5.1</error_prone_annotations.version>
 
-    <commons.digester3.version>3.2</commons.digester3.version>
-
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
@@ -136,17 +134,6 @@
       <groupId>org.eclipse.collections</groupId>
       <artifactId>eclipse-collections</artifactId>
       <version>${eclipse-collections.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-digester3</artifactId>
-      <version>${commons.digester3.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>asm</artifactId>
-          <groupId>asm</groupId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>com.j2html</groupId>
