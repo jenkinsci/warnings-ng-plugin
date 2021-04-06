@@ -9,7 +9,7 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
 import edu.hm.hafner.analysis.Report;
 
-import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.entry;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -42,7 +42,7 @@ class AnnotatedReportTest {
 
         assertThat(sut.getId()).isEqualTo(ID);
         assertThat(sut.size()).isEqualTo(1);
-        assertThat(sut.getReport()).isEqualTo(REPORT1);
+        assertThat(sut.getReport()).contains(ISSUE1);
         assertThat(sut.getSizeOfOrigin()).containsExactly(entry(ID, 1));
     }
 
