@@ -126,6 +126,13 @@ public abstract class ReportScanningTool extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
+        Report report = scan(run, workspace, logger);
+        report.setId(getActualId());
+        report.setName(getActualName());
+        return report;
+    }
+
+    private Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
         String actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
             return scanInConsoleLog(workspace, run, logger);

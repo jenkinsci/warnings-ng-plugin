@@ -159,10 +159,14 @@ public class OpenTasks extends Tool {
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
         try {
-            return workspace.act(new AgentScanner(highTags, normalTags, lowTags,
+            Report openTasks = workspace.act(new AgentScanner(highTags, normalTags, lowTags,
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
                     includePattern, excludePattern, sourceCodeEncoding.name()));
+            openTasks.setId(getActualId());
+            openTasks.setName(getActualName());
+
+            return openTasks;
         }
         catch (IOException e) {
             Report report = new Report();

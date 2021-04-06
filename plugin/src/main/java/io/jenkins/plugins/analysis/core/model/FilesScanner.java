@@ -13,6 +13,7 @@ import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.ParsingCanceledException;
 import edu.hm.hafner.analysis.ParsingException;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.util.PathUtil;
 
 import hudson.remoting.VirtualChannel;
 import jenkins.MasterToSlaveFileCallable;
@@ -103,6 +104,8 @@ public class FilesScanner extends MasterToSlaveFileCallable<Report> {
     private void aggregateIssuesOfFile(final Path file, final Report aggregatedReport) {
         try {
             Report fileReport = parser.parse(new FileReaderFactory(file, new ModelValidation().getCharset(encoding)));
+            fileReport.setSourceFile(new PathUtil().getAbsolutePath(file.getFileName()));
+
             aggregatedReport.addAll(fileReport);
             aggregatedReport.addFileName(file.toString());
             aggregatedReport.logInfo("Successfully parsed file %s", file);
