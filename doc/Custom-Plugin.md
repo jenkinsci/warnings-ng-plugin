@@ -35,7 +35,7 @@ The plugin should depend on Jenkins plugin parent pom and on the Warnings Next G
   <repositories>
     <repository>
       <id>repo.jenkins-ci.org</id>
-      <url>http://repo.jenkins-ci.org/public/</url>
+      <url>https://repo.jenkins-ci.org/public/</url>
     </repository>
   </repositories>
 
