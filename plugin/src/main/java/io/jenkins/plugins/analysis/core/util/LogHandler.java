@@ -1,6 +1,6 @@
 package io.jenkins.plugins.analysis.core.util;
 
-import org.eclipse.collections.api.list.ImmutableList;
+import java.util.List;
 
 import com.google.errorprone.annotations.FormatMethod;
 
@@ -92,17 +92,17 @@ public class LogHandler {
     }
 
     private void logErrorMessages(final Report report) {
-        ImmutableList<String> errorMessages = report.getErrorMessages();
+        List<String> errorMessages = report.getErrorMessages();
         if (errorPosition < errorMessages.size()) {
-            errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()).castToList());
+            errorLogger.logEachLine(errorMessages.subList(errorPosition, errorMessages.size()));
             errorPosition = errorMessages.size();
         }
     }
 
     private void logInfoMessages(final Report report) {
-        ImmutableList<String> infoMessages = report.getInfoMessages();
+        List<String> infoMessages = report.getInfoMessages();
         if (infoPosition < infoMessages.size()) {
-            logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()).castToList());
+            logger.logEachLine(infoMessages.subList(infoPosition, infoMessages.size()));
             infoPosition = infoMessages.size();
         }
     }

@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.core.charts;
 
-import org.eclipse.collections.api.set.ImmutableSet;
-
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.PieChartModel;
@@ -26,8 +24,7 @@ public class SeverityPieChart {
     public PieChartModel create(final Report report) {
         PieChartModel model = new PieChartModel(Messages.Severities_Name());
 
-        ImmutableSet<Severity> predefinedSeverities = Severity.getPredefinedValues();
-        for (Severity severity : predefinedSeverities) {
+        for (Severity severity : Severity.getPredefinedValues()) {
             int total = report.getSizeOf(severity);
             if (total > 0 || !severity.equals(Severity.ERROR)) {
                 model.add(new PieData(LocalizedSeverity.getLocalizedString(severity), total),

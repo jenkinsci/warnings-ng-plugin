@@ -193,7 +193,7 @@ public abstract class ReportScanningTool extends Tool {
         report.logInfo("-> found %s (skipped %s)",
                 plural(report.getSize(), "issue"),
                 plural(report.getDuplicatesSize(), "duplicate"));
-        report.addFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
+        report.setOriginReportFile(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
 
         consoleReport.addAll(report);
 

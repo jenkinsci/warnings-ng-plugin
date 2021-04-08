@@ -93,7 +93,6 @@ class IssuesScanner {
     public AnnotatedReport scan() throws IOException, InterruptedException {
         LogHandler logger = new LogHandler(listener, tool.getActualName());
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
-        report.setNameOfOrigin(tool.getActualId(), tool.getActualName());
 
         AnnotatedReport annotatedReport = postProcessReport(report);
 
@@ -214,8 +213,6 @@ class IssuesScanner {
         else {
             filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
         }
-
-        filtered.stream().forEach(issue -> issue.setOrigin(id));
         return filtered;
     }
 

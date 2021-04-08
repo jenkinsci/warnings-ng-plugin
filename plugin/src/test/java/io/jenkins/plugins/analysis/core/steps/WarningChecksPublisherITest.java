@@ -11,6 +11,7 @@ import org.jvnet.hudson.test.TestExtension;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 
+import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import hudson.model.AbstractProject;
 import hudson.model.FreeStyleProject;
@@ -66,15 +67,16 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
      */
     @Test
     public void shouldCreateChecksDetailsWithNewIssuesAsAnnotations() {
-        FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT);
-        enableCheckStyleWarnings(project);
+        WorkflowJob project = createPipelineWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
+
+        configureScanner(project, "checkstyle", "");
 
         Run<?, ?> reference = buildSuccessfully(project);
         assertThat(getAnalysisResult(reference))
                 .hasTotalSize(4)
                 .hasNewSize(0);
 
-        copyMultipleFilesToWorkspaceWithSuffix(project, NEW_CHECKSTYLE_REPORT);
+        configureScanner(project, "checkstyle1", "");
         Run<?, ?> run = buildSuccessfully(project);
         assertThat(getAnalysisResult(run))
                 .hasTotalSize(6)
@@ -101,6 +103,16 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         assertThat(publisher.extractChecksDetails(AnnotationScope.PUBLISH_ALL_ISSUES).getOutput()).isPresent().get()
                 .satisfies(
                         output -> assertThat(output.getChecksAnnotations()).hasSize(6));
+    }
+
+    private void configureScanner(final WorkflowJob job, final String fileName, final String parameters) {
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         recordIssues tool: checkStyle(pattern: '**/" + fileName + "-*') "
+                + parameters
+                + "\n"
+                + "  }\n"
+                + "}", true));
     }
 
     /**
@@ -279,14 +291,14 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
     }
 
     private void buildCheckForNewAndOutstandingWarnings(final AnnotationScope scope, final int expectedSize) {
-        WorkflowJob project = createPipelineWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT);
-        project.setDefinition(asStage(String.format(
-                "recordIssues(tool: checkStyle(pattern: '**/*issues.txt', reportEncoding:'UTF-8'), publishAllIssues: '%s')",
-                scope == AnnotationScope.PUBLISH_ALL_ISSUES)));
+        WorkflowJob project = createPipelineWithWorkspaceFiles(OLD_CHECKSTYLE_REPORT, NEW_CHECKSTYLE_REPORT);
+        configureScanner(project, "checkstyle", ", publishAllIssues: "
+                + (scope == AnnotationScope.PUBLISH_ALL_ISSUES));
         buildSuccessfully(project);
         clearPublisher();
 
-        copyMultipleFilesToWorkspaceWithSuffix(project, NEW_CHECKSTYLE_REPORT);
+        configureScanner(project, "checkstyle1", ", publishAllIssues: "
+                + (scope == AnnotationScope.PUBLISH_ALL_ISSUES));
         buildSuccessfully(project);
 
         List<ChecksDetails> publishedChecks = PUBLISHER_FACTORY.getPublishedChecks();
