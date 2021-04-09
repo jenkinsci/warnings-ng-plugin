@@ -127,8 +127,7 @@ public abstract class ReportScanningTool extends Tool {
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
         Report report = scan(run, workspace, logger);
-        report.setId(getActualId());
-        report.setName(getActualName());
+        report.setOrigin(getActualId(), getActualName());
         return report;
     }
 

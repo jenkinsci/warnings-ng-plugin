@@ -971,6 +971,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
             assertThat(result.getIssues()).hasSize(expectedSizeOfIssues);
 
             Report report = result.getIssues();
+
             assertThat(report.filter(issue -> issue.getOrigin().equals(tool.getActualId())))
                     .hasSize(expectedSizeOfIssues);
 

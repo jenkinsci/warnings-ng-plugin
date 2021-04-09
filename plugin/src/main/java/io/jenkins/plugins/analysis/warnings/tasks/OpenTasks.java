@@ -163,8 +163,7 @@ public class OpenTasks extends Tool {
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
                     includePattern, excludePattern, sourceCodeEncoding.name()));
-            openTasks.setId(getActualId());
-            openTasks.setName(getActualName());
+            openTasks.setOrigin(getActualId(), getActualName());
 
             return openTasks;
         }
