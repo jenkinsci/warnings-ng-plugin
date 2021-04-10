@@ -123,7 +123,7 @@ class IssuesScanner {
         }
         else {
             report.logInfo("Skipping post processing");
-            return new AnnotatedReport(tool.getActualId(), filter(report, filters, tool.getActualId()));
+            return new AnnotatedReport(tool.getActualId(), filter(report, filters));
         }
     }
 
@@ -195,7 +195,7 @@ class IssuesScanner {
         return StringUtils.EMPTY;
     }
 
-    private static Report filter(final Report report, final List<RegexpFilter> filters, final String id) {
+    private static Report filter(final Report report, final List<RegexpFilter> filters) {
         int actualFilterSize = 0;
         IssueFilterBuilder builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
@@ -249,7 +249,7 @@ class IssuesScanner {
             resolveModuleNames(originalReport, workspace);
             resolvePackageNames(originalReport);
 
-            Report filtered = filter(originalReport, filters, id);
+            Report filtered = filter(originalReport, filters);
 
             createFingerprints(filtered);
 

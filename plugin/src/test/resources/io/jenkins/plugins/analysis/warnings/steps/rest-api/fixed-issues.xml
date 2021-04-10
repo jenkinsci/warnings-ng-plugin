@@ -18,6 +18,7 @@
     <message>Die Methode 'accepts' ist nicht für Vererbung entworfen - muss abstract, final oder leer sein.</message>
     <moduleName></moduleName>
     <origin>checkstyle</origin>
+    <originName>CheckStyle</originName>
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>
@@ -47,6 +48,7 @@
     <message>Zeile länger als 80 Zeichen</message>
     <moduleName></moduleName>
     <origin>checkstyle</origin>
+    <originName>CheckStyle</originName>
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>

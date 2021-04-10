@@ -117,6 +117,12 @@ public class IssueApi {
 
     @Exported
     @Whitelisted
+    public String getOriginName() {
+        return issue.getOriginName();
+    }
+
+    @Exported
+    @Whitelisted
     public String getReference() {
         return issue.getReference();
     }

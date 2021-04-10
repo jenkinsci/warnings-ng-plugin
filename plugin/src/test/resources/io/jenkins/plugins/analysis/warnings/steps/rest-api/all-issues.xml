@@ -18,6 +18,7 @@
     <message>Zeile länger als 80 Zeichen</message>
     <moduleName></moduleName>
     <origin>checkstyle</origin>
+    <originName>CheckStyle</originName>
     <packageName>-</packageName>
     <reference>2</reference>
     <severity>ERROR</severity>
@@ -46,6 +47,7 @@
     <message>'}' sollte in derselben Zeile stehen.</message>
     <moduleName></moduleName>
     <origin>checkstyle</origin>
+    <originName>CheckStyle</originName>
     <packageName>-</packageName>
     <reference>2</reference>
     <severity>ERROR</severity>
@@ -74,6 +76,7 @@
     <message>'}' sollte in derselben Zeile stehen.</message>
     <moduleName></moduleName>
     <origin>checkstyle</origin>
+    <originName>CheckStyle</originName>
     <packageName>-</packageName>
     <reference>2</reference>
     <severity>ERROR</severity>
@@ -103,6 +106,7 @@
     </message>
     <moduleName></moduleName>
     <origin>checkstyle</origin>
+    <originName>CheckStyle</originName>
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>

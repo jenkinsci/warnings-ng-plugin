@@ -19,6 +19,7 @@
     </message>
     <moduleName></moduleName>
     <origin>checkstyle</origin>
+    <originName>CheckStyle</originName>
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>
