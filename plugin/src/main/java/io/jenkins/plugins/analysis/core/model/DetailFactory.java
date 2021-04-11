@@ -146,7 +146,8 @@ public class DetailFactory {
                     labelProvider.getLinkName(), url, labelProvider, sourceEncoding);
         }
         if ("fixed".equalsIgnoreCase(link)) {
-            return new FixedWarningsDetail(owner, result, fixedIssues, url, labelProvider, sourceEncoding);
+            return new IssuesDetail(owner, result, fixedIssues, EMPTY, EMPTY,
+                    fixedIssues, Messages.Fixed_Warnings_Header(), url, labelProvider, sourceEncoding);
         }
         if ("new".equalsIgnoreCase(link)) {
             return new IssuesDetail(owner, result, newIssues, newIssues, EMPTY,
