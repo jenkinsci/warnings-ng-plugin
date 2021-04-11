@@ -79,13 +79,14 @@ import hudson.util.DescribableList;
 import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 import jenkins.security.s2m.AdminWhitelistRule;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assumptions.*;
@@ -554,7 +555,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline script
      */
-    protected CpsFlowDefinition createPipelineScriptWithScanAndPublishSteps(final ReportScanningTool tool) {
+    protected CpsFlowDefinition createPipelineScriptWithScanAndPublishSteps(final AnalysisModelParser tool) {
         return asStage(createScanForIssuesStep(tool), PUBLISH_ISSUES_STEP);
     }
 
@@ -566,7 +567,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline step
      */
-    protected String createScanForIssuesStep(final ReportScanningTool tool) {
+    protected String createScanForIssuesStep(final AnalysisModelParser tool) {
         return createScanForIssuesStep(tool, "issues");
     }
 
@@ -578,11 +579,11 @@ public abstract class IntegrationTest extends ResourceTest {
      * @param issuesName
      *         the name of the scanner result variable
      * @param arguments
-     *         additional parameters to the {@link ReportScanningTool}
+     *         additional parameters to the {@link AnalysisModelParser}
      *
      * @return the pipeline step
      */
-    protected String createScanForIssuesStep(final ReportScanningTool tool, final String issuesName,
+    protected String createScanForIssuesStep(final AnalysisModelParser tool, final String issuesName,
             final String... arguments) {
         return String.format(
                 "def %s = scanForIssues tool: %s(pattern:'**/*issues.txt', reportEncoding:'UTF-8')%s",
@@ -597,7 +598,7 @@ public abstract class IntegrationTest extends ResourceTest {
      *
      * @return the pipeline step
      */
-    protected String createRecordIssuesStep(final ReportScanningTool tool) {
+    protected String createRecordIssuesStep(final AnalysisModelParser tool) {
         return String.format("recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])", tool.getSymbolName());
     }
 

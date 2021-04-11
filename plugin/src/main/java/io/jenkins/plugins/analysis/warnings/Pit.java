@@ -1,15 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.violations.PitAdapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +13,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Ullrich Hafner
  */
-public class Pit extends ReportScanningTool {
+public class Pit extends AnalysisModelParser {
     private static final long serialVersionUID = -3769283356498049888L;
     private static final String ID = "pit";
 
@@ -28,24 +24,13 @@ public class Pit extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new PitAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("pit")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Violations_PIT();
         }
 
         @Override
@@ -55,12 +40,7 @@ public class Pit extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
-        }
-
-        @Override
-        public String getUrl() {
-            return "http://pitest.org";
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider());
         }
     }
 }

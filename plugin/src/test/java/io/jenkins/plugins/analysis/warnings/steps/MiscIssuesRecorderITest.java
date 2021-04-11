@@ -3,6 +3,7 @@ package io.jenkins.plugins.analysis.warnings.steps;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -13,7 +14,7 @@ import org.junit.Test;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
-import edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty;
+import edu.hm.hafner.analysis.parser.findbugs.FindBugsParser.PriorityProperty;
 
 import hudson.model.FreeStyleProject;
 import hudson.model.Result;
@@ -28,10 +29,11 @@ import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Pmd;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
+import io.jenkins.plugins.analysis.warnings.RegisteredParser;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
@@ -46,11 +48,6 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
  */
 @SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
-    static final String DETAILS = "Details";
-    static final String AFFECTED_FILE = "File";
-    static final String SEVERITY = "Severity";
-    static final String AGE = "Age";
-
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
 
     /**
@@ -329,15 +326,14 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         assertThat(baselineResult).hasNewSize(0);
         assertThat(baselineResult).hasFixedSize(0);
-        assertThat(baselineResult).hasTotalSize(8);
+        assertThat(baselineResult).hasTotalSize(13);
 
         // Second build: actual result
         recorder.setTools(createEclipse("eclipse_5_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(0);
-        assertThat(result).hasFixedSize(3);
-        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
+        assertThat(result).hasFixedSize(8);
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }
@@ -430,11 +426,16 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     // TODO: there should be also some tests that use the fingerprinting algorithm on existing source files
     @Test
     public void shouldFindNewCheckStyleWarnings() {
+        shouldFindNewCheckStyleWarnings(() -> new RegisteredParser("checkstyle"));
+        shouldFindNewCheckStyleWarnings(CheckStyle::new);
+    }
+
+    private void shouldFindNewCheckStyleWarnings(final Supplier<ReportScanningTool> tool) {
         FreeStyleProject project = createFreeStyleProjectWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
 
         buildWithResult(project, Result.SUCCESS); // dummy build to ensure that the first CheckStyle build starts at #2
 
-        IssuesRecorder recorder = enableWarnings(project, createTool(new CheckStyle(), "**/checkstyle1*"));
+        IssuesRecorder recorder = enableWarnings(project, createTool(tool.get(), "**/checkstyle1*"));
 
         AnalysisResult baseline = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
         assertThat(baseline).hasTotalSize(3);
@@ -443,7 +444,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         verifyBaselineDetails(baseline);
 
-        recorder.setTools(createTool(new CheckStyle(), "**/checkstyle2*"));
+        recorder.setTools(createTool(tool.get(), "**/checkstyle2*"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(3);
@@ -451,6 +452,10 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasTotalSize(4);
 
         verifyDetails(result);
+
+        ResultAction resultAction = getResultAction(result.getOwner());
+        assertThat(resultAction.getDisplayName()).isEqualTo("CheckStyle Warnings");
+        assertThat(resultAction.getUrlName()).isEqualTo("checkstyle");
     }
 
     private void verifyDetails(final AnalysisResult result) {

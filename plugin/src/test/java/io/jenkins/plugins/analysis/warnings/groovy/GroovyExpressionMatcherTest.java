@@ -3,14 +3,14 @@ package io.jenkins.plugins.analysis.warnings.groovy;
 import java.util.Optional;
 
 import org.codehaus.groovy.control.CompilationFailedException;
-import org.eclipse.jgit.util.io.AutoLFInputStream.IsBinaryException;
 import org.junit.jupiter.api.Test;
 
-import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.IssueBuilder;
+
 import groovy.lang.Script;
+
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Tests the class {@link GroovyExpressionMatcher}.
@@ -32,16 +32,18 @@ class GroovyExpressionMatcherTest {
 
     @Test
     void shouldReturnFalsePositiveIfWrongObjectTypeIsReturned() {
-        IssueBuilder builder = new IssueBuilder();
-        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(TRUE_SCRIPT);
-        assertThat(matcher.createIssue(null, builder, 0, FILE_NAME)).isEmpty();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(TRUE_SCRIPT);
+            assertThat(matcher.createIssue(null, builder, 0, FILE_NAME)).isEmpty();
+        }
     }
 
     @Test
     void shouldReturnFalsePositiveIfScriptIsNotValid() {
-        IssueBuilder builder = new IssueBuilder();
-        GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(ILLEGAL_PARSER_SCRIPT);
-        assertThat(matcher.createIssue(null, builder, 0, FILE_NAME)).isEmpty();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            GroovyExpressionMatcher matcher = new GroovyExpressionMatcher(ILLEGAL_PARSER_SCRIPT);
+            assertThat(matcher.createIssue(null, builder, 0, FILE_NAME)).isEmpty();
+        }
     }
 
     private Script createMatcher(final String sourceCode) {

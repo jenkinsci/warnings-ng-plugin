@@ -60,7 +60,7 @@ public class GroovyScript extends ReportScanningTool {
         return new StaticAnalysisLabelProvider(parserId, getTool().getName());
     }
 
-    private ReportScanningTool getTool() {
+    private GroovyParser getTool() {
         return ParserConfiguration.getInstance().getParser(parserId);
     }
 
@@ -71,7 +71,7 @@ public class GroovyScript extends ReportScanningTool {
 
     @Override
     public String getActualName() {
-        return StringUtils.defaultIfBlank(getName(), getTool().getActualName());
+        return StringUtils.defaultIfBlank(getName(), getTool().getName());
     }
 
     /** Descriptor for this static analysis tool. */

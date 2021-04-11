@@ -42,12 +42,15 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
     static final String ERROR_ICON = "exclamation-triangle";
     @VisibleForTesting
     static final String INFO_ICON = "info-circle";
+    /** Provides an empty description. */
+    protected static final DescriptionProvider EMPTY_DESCRIPTION = i -> StringUtils.EMPTY;
 
     private final String id;
     @CheckForNull
     private String rawName;
     @CheckForNull
     private String name;
+    private final DescriptionProvider descriptionProvider;
     private final JenkinsFacade jenkins;
 
     /**
@@ -56,8 +59,9 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      * @param id
      *         the ID
      */
-    public StaticAnalysisLabelProvider(final String id) {
-        this(id, StringUtils.EMPTY);
+    @VisibleForTesting
+    StaticAnalysisLabelProvider(final String id) {
+        this(id, StringUtils.EMPTY, EMPTY_DESCRIPTION);
     }
 
     /**
@@ -69,12 +73,29 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
      *         the name of the static analysis tool
      */
     public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name) {
-        this(id, name, new JenkinsFacade());
+        this(id, name, EMPTY_DESCRIPTION, new JenkinsFacade());
+    }
+
+    /**
+     * Creates a new {@link StaticAnalysisLabelProvider} with the specified ID.
+     *
+     * @param id
+     *         the ID
+     * @param name
+     *         the name of the static analysis tool
+     * @param descriptionProvider
+     *         provides additional descriptions for an issue
+     */
+    public StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
+            final DescriptionProvider descriptionProvider) {
+        this(id, name, descriptionProvider, new JenkinsFacade());
     }
 
     @VisibleForTesting
-    StaticAnalysisLabelProvider(final String id, @CheckForNull final String name, final JenkinsFacade jenkins) {
+    StaticAnalysisLabelProvider(final String id, @CheckForNull final String name,
+            final DescriptionProvider descriptionProvider, final JenkinsFacade jenkins) {
         this.id = id;
+        this.descriptionProvider = descriptionProvider;
         this.jenkins = jenkins;
 
         setNameAndRawName(name);
@@ -236,9 +257,10 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
         String icon = hasErrors ? ERROR_ICON : INFO_ICON;
         return span(join(getName() + ": ",
                 getWarningsCount(result),
-                a().withHref(getId() + "/info").with(
-                        new UnescapedText(new SvgTag(icon, jenkins).withClasses("info-page-decorator").render())))).withId(
-                id + "-title");
+                a().withHref(getId() + "/info")
+                        .with(new UnescapedText(new SvgTag(icon, jenkins)
+                                .withClasses("info-page-decorator")
+                                .render())))).withId(id + "-title");
     }
 
     /**
@@ -398,7 +420,7 @@ public class StaticAnalysisLabelProvider implements DescriptionProvider {
 
     @Override
     public String getDescription(final Issue issue) {
-        return issue.getDescription();
+        return descriptionProvider.getDescription(issue);
     }
 
     /**

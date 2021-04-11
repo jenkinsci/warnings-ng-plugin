@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.StyleCopParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for StyleCop.
  *
  * @author Ullrich Hafner
  */
-public class StyleCop extends ReportScanningTool {
+public class StyleCop extends AnalysisModelParser {
     private static final long serialVersionUID = 230834175319040103L;
     private static final String ID = "stylecop";
 
@@ -26,24 +22,13 @@ public class StyleCop extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new StyleCopParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("styleCop")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_StyleCop_ParserName();
         }
 
         @Override

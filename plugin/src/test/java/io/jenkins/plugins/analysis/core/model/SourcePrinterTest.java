@@ -29,37 +29,39 @@ class SourcePrinterTest extends ResourceTest {
 
     @Test
     void shouldCreateSourceWithoutLineNumber() {
-        SourcePrinter printer = new SourcePrinter();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            SourcePrinter printer = new SourcePrinter();
 
-        IssueBuilder builder = new IssueBuilder();
-        Issue issue = builder.build();
+            Issue issue = builder.build();
 
-        Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
-                NO_DESCRIPTION, ICON_URL));
-        String expectedFile = toString("format-java.txt");
+            Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
+                    NO_DESCRIPTION, ICON_URL));
+            String expectedFile = toString("format-java.txt");
 
-        assertThat(document.text()).isEqualToIgnoringWhitespace(expectedFile);
+            assertThat(document.text()).isEqualToIgnoringWhitespace(expectedFile);
 
-        Elements pre = document.getElementsByTag("pre");
-        assertThat(pre.text()).isEqualToIgnoringWhitespace(expectedFile);
+            Elements pre = document.getElementsByTag("pre");
+            assertThat(pre.text()).isEqualToIgnoringWhitespace(expectedFile);
+        }
     }
 
     @Test
     void shouldCreateSourceWithLineNumber() {
-        IssueBuilder builder = new IssueBuilder();
-        Issue issue = builder.setLineStart(7).setMessage(MESSAGE).build();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Issue issue = builder.setLineStart(7).setMessage(MESSAGE).build();
 
-        SourcePrinter printer = new SourcePrinter(createJenkinsFacade());
+            SourcePrinter printer = new SourcePrinter(createJenkinsFacade());
 
-        Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
-                DESCRIPTION, ICON_URL));
+            Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
+                    DESCRIPTION, ICON_URL));
 
-        assertThatCodeIsEqualToSourceText(document);
+            assertThatCodeIsEqualToSourceText(document);
 
-        assertThat(document.getElementsByClass("analysis-warning-title").text())
-                .isEqualTo(MESSAGE);
-        assertThat(document.getElementsByClass("analysis-detail").text())
-                .isEqualTo(DESCRIPTION);
+            assertThat(document.getElementsByClass("analysis-warning-title").text())
+                    .isEqualTo(MESSAGE);
+            assertThat(document.getElementsByClass("analysis-detail").text())
+                    .isEqualTo(DESCRIPTION);
+        }
     }
 
     private void assertThatCodeIsEqualToSourceText(final Document document) {
@@ -69,89 +71,97 @@ class SourcePrinterTest extends ResourceTest {
 
     @Test
     void shouldCreateSourceWithoutDescription() {
-        IssueBuilder builder = new IssueBuilder();
-        Issue issue = builder.setLineStart(7).setMessage("Hello Message").build();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Issue issue = builder.setLineStart(7).setMessage("Hello Message").build();
 
-        SourcePrinter printer = new SourcePrinter();
+            SourcePrinter printer = new SourcePrinter();
 
-        Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
-                NO_DESCRIPTION, ICON_URL));
+            Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
+                    NO_DESCRIPTION, ICON_URL));
 
-        assertThatCodeIsEqualToSourceText(document);
+            assertThatCodeIsEqualToSourceText(document);
 
-        assertThat(document.getElementsByClass("analysis-warning-title").text())
-                .isEqualTo(MESSAGE);
-        assertThat(document.getElementsByClass("analysis-detail")).isEmpty();
-        assertThat(document.getElementsByClass("collapse-panel")).isEmpty();
+            assertThat(document.getElementsByClass("analysis-warning-title").text())
+                    .isEqualTo(MESSAGE);
+            assertThat(document.getElementsByClass("analysis-detail")).isEmpty();
+            assertThat(document.getElementsByClass("collapse-panel")).isEmpty();
+        }
     }
 
     @Test
     void shouldFilterTagsInCode() {
-        IssueBuilder builder = new IssueBuilder();
-        Issue issue = builder.setLineStart(2).build();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Issue issue = builder.setLineStart(2).build();
 
-        SourcePrinter printer = new SourcePrinter();
+            SourcePrinter printer = new SourcePrinter();
 
-        Document document = Jsoup.parse(printer.render(asStream("format-jelly.txt"), issue,
-                NO_DESCRIPTION, ICON_URL));
-        assertThat(document.getElementsByTag("code").html())
-                .isEqualTo("&lt;l:main-panel&gt;Before&lt;script&gt;execute&lt;/script&gt; Text&lt;/l:main-panel&gt;\n"
-                        + "&lt;l:main-panel&gt;Warning&lt;script&gt;execute&lt;/script&gt; Text&lt;/l:main-panel&gt;\n"
-                        + "&lt;l:main-panel&gt;After&lt;script&gt;execute&lt;/script&gt; Text&lt;/l:main-panel&gt;");
+            Document document = Jsoup.parse(printer.render(asStream("format-jelly.txt"), issue,
+                    NO_DESCRIPTION, ICON_URL));
+            assertThat(document.getElementsByTag("code").html())
+                    .isEqualTo(
+                            "&lt;l:main-panel&gt;Before&lt;script&gt;execute&lt;/script&gt; Text&lt;/l:main-panel&gt;\n"
+                                    + "&lt;l:main-panel&gt;Warning&lt;script&gt;execute&lt;/script&gt; Text&lt;/l:main-panel&gt;\n"
+                                    + "&lt;l:main-panel&gt;After&lt;script&gt;execute&lt;/script&gt; Text&lt;/l:main-panel&gt;");
+        }
     }
 
     @Test
     void shouldFilterTagsInMessageAndDescription() {
-        IssueBuilder builder = new IssueBuilder();
-        Issue issue = builder.setLineStart(7).setMessage("Hello <b>Message</b> <script>execute</script>").build();
+        try (IssueBuilder builder = new IssueBuilder()) {
 
-        SourcePrinter printer = new SourcePrinter(createJenkinsFacade());
+            Issue issue = builder.setLineStart(7).setMessage("Hello <b>Message</b> <script>execute</script>").build();
 
-        Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
-                "Hello <b>Description</b> <script>execute</script>", ICON_URL));
+            SourcePrinter printer = new SourcePrinter(createJenkinsFacade());
 
-        assertThatCodeIsEqualToSourceText(document);
+            Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
+                    "Hello <b>Description</b> <script>execute</script>", ICON_URL));
 
-        assertThat(document.getElementsByClass("analysis-warning-title").html())
-                .isEqualToIgnoringWhitespace("Hello <b>Message</b>");
-        assertThat(document.getElementsByClass("analysis-detail").html())
-                .isEqualToIgnoringWhitespace("Hello <b>Description</b>");
+            assertThatCodeIsEqualToSourceText(document);
+
+            assertThat(document.getElementsByClass("analysis-warning-title").html())
+                    .isEqualToIgnoringWhitespace("Hello <b>Message</b>");
+            assertThat(document.getElementsByClass("analysis-detail").html())
+                    .isEqualToIgnoringWhitespace("Hello <b>Description</b>");
+        }
     }
 
     @Test
     void shouldAddBreakOnNewLine() {
-        IssueBuilder builder = new IssueBuilder();
-        Issue issue = builder.setLineStart(7).setMessage("Hello <b>MessageLine1\nLine2\nLine3</b>").build();
+        try (IssueBuilder builder = new IssueBuilder()) {
 
-        SourcePrinter printer = new SourcePrinter();
+            Issue issue = builder.setLineStart(7).setMessage("Hello <b>MessageLine1\nLine2\nLine3</b>").build();
 
-        Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
-                NO_DESCRIPTION, ICON_URL));
+            SourcePrinter printer = new SourcePrinter();
 
-        assertThatCodeIsEqualToSourceText(document);
+            Document document = Jsoup.parse(printer.render(asStream("format-java.txt"), issue,
+                    NO_DESCRIPTION, ICON_URL));
 
-        assertThat(document.getElementsByClass("analysis-warning-title").html())
-                .isEqualTo("Hello <b>MessageLine1<br>Line2<br>Line3</b>");
-        assertThat(document.getElementsByClass("analysis-detail")).isEmpty();
-        assertThat(document.getElementsByClass("collapse-panel")).isEmpty();
+            assertThatCodeIsEqualToSourceText(document);
+
+            assertThat(document.getElementsByClass("analysis-warning-title").html())
+                    .isEqualTo("Hello <b>MessageLine1<br>Line2<br>Line3</b>");
+            assertThat(document.getElementsByClass("analysis-detail")).isEmpty();
+            assertThat(document.getElementsByClass("collapse-panel")).isEmpty();
+        }
     }
 
     @Test
     @org.jvnet.hudson.test.Issue("JENKINS-55679")
     void shouldRenderXmlFiles() {
-        SourcePrinter printer = new SourcePrinter();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            SourcePrinter printer = new SourcePrinter();
 
-        IssueBuilder builder = new IssueBuilder();
-        Issue issue = builder.build();
+            Issue issue = builder.build();
 
-        Document document = Jsoup.parse(printer.render(asStream("format.xml"), issue,
-                NO_DESCRIPTION, ICON_URL));
-        String expectedFile = toString("format.xml");
+            Document document = Jsoup.parse(printer.render(asStream("format.xml"), issue,
+                    NO_DESCRIPTION, ICON_URL));
+            String expectedFile = toString("format.xml");
 
-        assertThat(document.text()).isEqualToIgnoringWhitespace(expectedFile);
+            assertThat(document.text()).isEqualToIgnoringWhitespace(expectedFile);
 
-        Elements pre = document.getElementsByTag("pre");
-        assertThat(pre.text()).isEqualToIgnoringWhitespace(expectedFile);
+            Elements pre = document.getElementsByTag("pre");
+            assertThat(pre.text()).isEqualToIgnoringWhitespace(expectedFile);
+        }
     }
 
     private JenkinsFacade createJenkinsFacade() {

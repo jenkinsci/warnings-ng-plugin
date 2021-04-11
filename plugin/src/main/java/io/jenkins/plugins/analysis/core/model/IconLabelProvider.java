@@ -7,7 +7,7 @@ package io.jenkins.plugins.analysis.core.model;
  */
 public class IconLabelProvider extends StaticAnalysisLabelProvider {
     private static final String ICONS_URL = "/plugin/warnings-ng/icons/";
-    
+
     private final String smallIconUrl;
     private final String largeIconUrl;
 
@@ -20,7 +20,7 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
      *         the name of the tool
      */
     public IconLabelProvider(final String id, final String name) {
-        this(id, name, id);
+        this(id, name, EMPTY_DESCRIPTION, id);
     }
 
     /**
@@ -30,17 +30,34 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
      *         the ID (i.e., URL)
      * @param name
      *         the name of the tool
+     * @param descriptionProvider
+     *         provides additional descriptions for an issue
+     */
+    public IconLabelProvider(final String id, final String name, final DescriptionProvider descriptionProvider) {
+        this(id, name, descriptionProvider, id);
+    }
+
+    /**
+     * Creates a new label provider with the specified ID and name.
+     *
+     * @param id
+     *         the ID (i.e., URL)
+     * @param name
+     *         the name of the tool
+     * @param descriptionProvider
+     *         provides additional descriptions for an issue
      * @param iconName
      *         the the unique name of the icon file
      */
-    public IconLabelProvider(final String id, final String name, final String iconName) {
-        super(id, name);
+    public IconLabelProvider(final String id, final String name, final DescriptionProvider descriptionProvider,
+            final String iconName) {
+        super(id, name, descriptionProvider);
 
         String prefix = ICONS_URL + iconName;
         smallIconUrl = prefix + "-24x24.png";
         largeIconUrl = prefix + "-48x48.png";
     }
-    
+
     @Override
     public String getSmallIconUrl() {
         return smallIconUrl;
@@ -50,4 +67,4 @@ public class IconLabelProvider extends StaticAnalysisLabelProvider {
     public String getLargeIconUrl() {
         return largeIconUrl;
     }
-} 
+}

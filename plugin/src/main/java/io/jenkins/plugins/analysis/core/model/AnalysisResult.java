@@ -238,10 +238,10 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
         Report fixedIssues = report.getFixedIssues();
         fixedIssuesReference = new WeakReference<>(fixedIssues);
 
-        List<String> aggregatedMessages = new ArrayList<>(allIssues.getInfoMessages().castToList());
+        List<String> aggregatedMessages = new ArrayList<>(allIssues.getInfoMessages());
 
         messages = new ArrayList<>(aggregatedMessages);
-        errors = new ArrayList<>(allIssues.getErrorMessages().castToList());
+        errors = new ArrayList<>(allIssues.getErrorMessages());
 
         this.qualityGateStatus = qualityGateStatus;
 

@@ -49,9 +49,10 @@ class FixedWarningsDetailTest {
     }
 
     private Issue createIssue(final String fileName) {
-        IssueBuilder builder = new IssueBuilder();
-        builder.setFileName(fileName);
-        return builder.build();
+        try (IssueBuilder builder = new IssueBuilder()) {
+            builder.setFileName(fileName);
+            return builder.build();
+        }
     }
 
     private Run<?, ?> createReferenceBuild() {

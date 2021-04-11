@@ -1,13 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.TrivyParser;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Aquasec Trivy is a container vulnerability scanner.
@@ -22,7 +19,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  * @author Thomas Fürer - tfuerer.javanet@gmail.com
  *
  */
-public class Trivy extends ReportScanningTool {
+public class Trivy extends AnalysisModelParser {
     private static final long serialVersionUID = 1L;
     private static final String ID = "trivy";
 
@@ -35,40 +32,18 @@ public class Trivy extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new TrivyParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("trivy")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
         }
 
         @Override
-        public String getDisplayName() {
-            return Messages.Warnings_Trivy_ParserName();
-        }
-
-        @Override
-        public String getHelp() {
-            return "Reads trivy json data. "
-                    + "Use commandline <code>trivy image -f json -o results.json 'image'</code>"
-                    + "See <a href='https://github.com/aquasecurity/trivy'>" + "tivy on Github</a> for usage details.";
-        }
-
-        @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/aquasecurity/trivy";
         }
 
         @Override

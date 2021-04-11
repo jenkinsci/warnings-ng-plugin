@@ -93,7 +93,6 @@ class IssuesScanner {
     public AnnotatedReport scan() throws IOException, InterruptedException {
         LogHandler logger = new LogHandler(listener, tool.getActualName());
         Report report = tool.scan(run, workspace, sourceCodeEncoding, logger);
-        report.setNameOfOrigin(tool.getActualId(), tool.getName());
 
         AnnotatedReport annotatedReport = postProcessReport(report);
 
@@ -124,7 +123,7 @@ class IssuesScanner {
         }
         else {
             report.logInfo("Skipping post processing");
-            return new AnnotatedReport(tool.getActualId(), filter(report, filters, tool.getActualId()));
+            return new AnnotatedReport(tool.getActualId(), filter(report, filters));
         }
     }
 
@@ -196,7 +195,7 @@ class IssuesScanner {
         return StringUtils.EMPTY;
     }
 
-    private static Report filter(final Report report, final List<RegexpFilter> filters, final String id) {
+    private static Report filter(final Report report, final List<RegexpFilter> filters) {
         int actualFilterSize = 0;
         IssueFilterBuilder builder = new IssueFilterBuilder();
         for (RegexpFilter filter : filters) {
@@ -214,8 +213,6 @@ class IssuesScanner {
         else {
             filtered.logInfo("No filter has been set, publishing all %d issues", filtered.size());
         }
-
-        filtered.stream().forEach(issue -> issue.setOrigin(id));
         return filtered;
     }
 
@@ -252,7 +249,7 @@ class IssuesScanner {
             resolveModuleNames(originalReport, workspace);
             resolvePackageNames(originalReport);
 
-            Report filtered = filter(originalReport, filters, id);
+            Report filtered = filter(originalReport, filters);
 
             createFingerprints(filtered);
 

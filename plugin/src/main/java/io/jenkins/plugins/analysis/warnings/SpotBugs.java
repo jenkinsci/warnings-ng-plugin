@@ -1,7 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -31,25 +29,9 @@ public class SpotBugs extends FindBugs {
             super(ID);
         }
 
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_SpotBugs_ParserName();
-        }
-
-        @Override
-        public String getPattern() {
-            return "**/spotbugsXml.xml";
-        }
-
         @Override
         public boolean canScanConsoleLog() {
             return false;
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://spotbugs.github.io";
         }
     }
 }

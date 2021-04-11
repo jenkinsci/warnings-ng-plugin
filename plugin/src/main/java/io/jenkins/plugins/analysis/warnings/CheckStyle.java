@@ -9,23 +9,23 @@ import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
- * Provides a parser and customized messages for Error Prone.
+ * Provides a parser and customized messages for CheckStyle.
  *
  * @author Ullrich Hafner
  */
-public class ErrorProne extends AnalysisModelParser {
-    private static final long serialVersionUID = -511511623854186032L;
-    private static final String ID = "error-prone";
+public class CheckStyle extends AnalysisModelParser {
+    private static final long serialVersionUID = -7944828406964963020L;
+    private static final String ID = "checkstyle";
 
-    /** Creates a new instance of {@link ErrorProne}. */
+    /** Creates a new instance of {@link CheckStyle}. */
     @DataBoundConstructor
-    public ErrorProne() {
+    public CheckStyle() {
         super();
         // empty constructor required for stapler
     }
 
     /** Descriptor for this static analysis tool. */
-    @Symbol("errorProne")
+    @Symbol("checkStyle")
     @Extension
     public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
@@ -34,8 +34,13 @@ public class ErrorProne extends AnalysisModelParser {
         }
 
         @Override
+        public boolean canScanConsoleLog() {
+            return false;
+        }
+
+        @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "bug");
+            return new IconLabelProvider(ID, getDisplayName(), getDescriptionProvider());
         }
     }
 }

@@ -29,10 +29,10 @@ import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
  * A tool that can produce a {@link Report report of issues} in some way. If your tool produces issues by scanning a
- * compiler log or static analysis report file, consider deriving from {@link ReportScanningTool}.
+ * compiler log or static analysis report file, consider deriving from {@link AnalysisModelParser}.
  *
  * @author Ullrich Hafner
- * @see ReportScanningTool
+ * @see AnalysisModelParser
  */
 public abstract class Tool extends AbstractDescribableImpl<Tool> implements Serializable {
     private static final long serialVersionUID = 3305739700153168629L;
@@ -66,7 +66,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      * @see ToolDescriptor#getId()
      */
     public String getActualId() {
-        return StringUtils.defaultIfBlank(id, getDescriptor().getId());
+        return StringUtils.defaultIfBlank(getId(), getDescriptor().getId());
     }
 
     /**
@@ -95,7 +95,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
      * @see ToolDescriptor#getName()
      */
     public String getActualName() {
-        return StringUtils.defaultIfBlank(name, getDescriptor().getDisplayName());
+        return StringUtils.defaultIfBlank(getName(), getDescriptor().getDisplayName());
     }
 
     /**
@@ -177,7 +177,7 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
          * @return the validation result
          */
         @POST
-        public FormValidation doCheckId(@AncestorInPath final AbstractProject project, @QueryParameter final String id) {
+        public FormValidation doCheckId(@AncestorInPath final AbstractProject<?, ?> project, @QueryParameter final String id) {
             if (!new JenkinsFacade().hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }

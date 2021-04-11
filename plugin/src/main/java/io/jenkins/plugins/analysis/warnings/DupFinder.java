@@ -1,9 +1,5 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.dry.dupfinder.DupFinderParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
@@ -26,31 +22,20 @@ public class DupFinder extends DuplicateCodeScanner {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new DupFinderParser();
-    }
-
     /** Provides the labels for the static analysis tool. */
     private static class LabelProvider extends DryLabelProvider {
-        LabelProvider() {
-            super(ID, Messages.Warnings_DupFinder_ParserName());
+        LabelProvider(final String displayName) {
+            super(ID, displayName);
         }
     }
 
     /** Descriptor for this static analysis tool. */
     @Symbol("dupFinder")
     @Extension
-    public static class Descriptor extends DryDescriptor {
+    public static class Descriptor extends DuplicateCodeDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_DupFinder_ParserName();
         }
 
         @Override
@@ -60,7 +45,7 @@ public class DupFinder extends DuplicateCodeScanner {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new LabelProvider();
+            return new LabelProvider(getDisplayName());
         }
     }
 }

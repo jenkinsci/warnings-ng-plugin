@@ -2,7 +2,7 @@ package io.jenkins.plugins.analysis.warnings.groovy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import edu.hm.hafner.util.NoSuchElementException;
 import edu.hm.hafner.util.VisibleForTesting;
@@ -14,10 +14,10 @@ import hudson.util.ListBoxModel;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory.StaticAnalysisToolFactory;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
-import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
 import io.jenkins.plugins.util.GlobalConfigurationItem;
 import io.jenkins.plugins.util.JenkinsFacade;
@@ -95,7 +95,7 @@ public class ParserConfiguration extends GlobalConfigurationItem {
     }
 
     /**
-     * Returns the parser (wrapped into a {@link ReportScanningTool} instance) with the specified ID.
+     * Returns the parser (wrapped into a {@link AnalysisModelParser} instance) with the specified ID.
      *
      * @param id
      *         the ID of the parser
@@ -104,10 +104,10 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      * @throws NoSuchElementException
      *         if there is no such parser with the given ID
      */
-    public ReportScanningTool getParser(final String id) {
+    public GroovyParser getParser(final String id) {
         for (GroovyParser parser : parsers) {
             if (parser.getId().equals(id)) {
-                return parser.toStaticAnalysisTool();
+                return parser;
             }
         }
         throw new NoSuchElementException("No Groovy parser with ID '%s' found.", id);
@@ -145,17 +145,18 @@ public class ParserConfiguration extends GlobalConfigurationItem {
     }
 
     /**
-     * Registers all Groovy parsers as static analysis tools in the {@link LabelProviderFactory}
-     * so that these parsers can be referenced in actions.
+     * Registers all Groovy parsers as static analysis tools in the {@link LabelProviderFactory} so that these parsers
+     * can be referenced in actions.
      */
     @Extension
     @SuppressWarnings("unused") // Picked up by Jenkins Extension Scanner
     public static class ParserFactory implements StaticAnalysisToolFactory {
         @Override
-        public List<Tool> getTools() {
+        public Optional<StaticAnalysisLabelProvider> getLabelProvider(final String id) {
             return getInstance().parsers.stream()
-                    .map(GroovyParser::toStaticAnalysisTool)
-                    .collect(Collectors.toList());
+                    .filter(p -> id.equals(p.getId()))
+                    .findAny()
+                    .map(p -> new StaticAnalysisLabelProvider(p.getId(), p.getName()));
         }
     }
 }

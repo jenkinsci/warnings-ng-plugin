@@ -24,6 +24,7 @@ import hudson.model.TaskListener;
 import hudson.util.ComboBoxModel;
 import hudson.util.FormValidation;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser.AnalysisModelParserDescriptor;
 import io.jenkins.plugins.analysis.core.util.ConsoleLogReaderFactory;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.analysis.core.util.ModelValidation;
@@ -39,19 +40,11 @@ import static io.jenkins.plugins.analysis.core.util.ConsoleLogHandler.*;
  * @author Ullrich Hafner
  */
 public abstract class ReportScanningTool extends Tool {
-    private static final long serialVersionUID = -1962476812276437235L;
-
+    private static final long serialVersionUID = 2250515287336975478L;
     private String pattern = StringUtils.EMPTY;
     private String reportEncoding = StringUtils.EMPTY;
     // Use negative case to allow defaulting to false and defaulting to existing behaviour.
     private boolean skipSymbolicLinks = false;
-
-    /**
-     * Returns a new parser to scan a log file and return the issues reported in such a file.
-     *
-     * @return the parser to use
-     */
-    public abstract IssueParser createParser();
 
     /**
      * Sets the Ant file-set pattern of files to work with. If the pattern is undefined then the console log is
@@ -69,6 +62,30 @@ public abstract class ReportScanningTool extends Tool {
     public String getPattern() {
         return pattern;
     }
+
+    /**
+     * Returns the actual pattern to work with. If no user defined pattern is given, then the default pattern is
+     * returned.
+     *
+     * @return the name
+     * @see #setPattern(String)
+     * @see AnalysisModelParserDescriptor#getPattern()
+     */
+    public String getActualPattern() {
+        return StringUtils.defaultIfBlank(pattern, getDescriptor().getPattern());
+    }
+
+    @Override
+    public ReportScanningToolDescriptor getDescriptor() {
+        return (ReportScanningToolDescriptor)super.getDescriptor();
+    }
+
+    /**
+     * Returns a new parser to scan a log file and return the issues reported in such a file.
+     *
+     * @return the parser to use
+     */
+    public abstract IssueParser createParser();
 
     /**
      * Specify if file scanning skip traversal of symbolic links.
@@ -91,18 +108,6 @@ public abstract class ReportScanningTool extends Tool {
     }
 
     /**
-     * Returns the actual pattern to work with. If no user defined pattern is given, then the default pattern is
-     * returned.
-     *
-     * @return the name
-     * @see #setPattern(String)
-     * @see ReportScanningToolDescriptor#getPattern()
-     */
-    public String getActualPattern() {
-        return StringUtils.defaultIfBlank(pattern, getDescriptor().getPattern());
-    }
-
-    /**
      * Sets the encoding to use to read the log files that contain the warnings.
      *
      * @param reportEncoding
@@ -121,6 +126,12 @@ public abstract class ReportScanningTool extends Tool {
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
+        Report report = scan(run, workspace, logger);
+        report.setOrigin(getActualId(), getActualName());
+        return report;
+    }
+
+    private Report scan(final Run<?, ?> run, final FilePath workspace, final LogHandler logger) {
         String actualPattern = getActualPattern();
         if (StringUtils.isBlank(actualPattern)) {
             return scanInConsoleLog(workspace, run, logger);
@@ -149,7 +160,8 @@ public abstract class ReportScanningTool extends Tool {
 
     private Report scanInWorkspace(final FilePath workspace, final String expandedPattern, final LogHandler logger) {
         try {
-            Report report = workspace.act(new FilesScanner(expandedPattern, this, reportEncoding, followSymlinks()));
+            Report report = workspace.act(
+                    new FilesScanner(expandedPattern, reportEncoding, followSymlinks(), createParser()));
 
             logger.log(report);
 
@@ -180,7 +192,7 @@ public abstract class ReportScanningTool extends Tool {
         report.logInfo("-> found %s (skipped %s)",
                 plural(report.getSize(), "issue"),
                 plural(report.getDuplicatesSize(), "duplicate"));
-        report.addFileName(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
+        report.setOriginReportFile(JENKINS_CONSOLE_LOG_FILE_NAME_ID);
 
         consoleReport.addAll(report);
 
@@ -210,13 +222,12 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
-    @Override
-    public ReportScanningToolDescriptor getDescriptor() {
-        return (ReportScanningToolDescriptor) super.getDescriptor();
-    }
-
-    /** Descriptor for {@link ReportScanningTool}. **/
-    public abstract static class ReportScanningToolDescriptor extends ToolDescriptor {
+    /**
+     * Descriptor for {@link ReportScanningTool}.
+     *
+     * @author Ullrich Hafner
+     */
+    public static class ReportScanningToolDescriptor extends ToolDescriptor {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
 
         private final ModelValidation model = new ModelValidation();
@@ -236,6 +247,7 @@ public abstract class ReportScanningTool extends Tool {
          *
          * @param project
          *         the project that is configured
+         *
          * @return a model with all available charsets
          */
         @POST
@@ -287,16 +299,6 @@ public abstract class ReportScanningTool extends Tool {
         }
 
         /**
-         * Returns the default filename pattern for this tool. Override if your typically works on a specific file.
-         * Note: if you provide a default pattern then it is not possible to scan Jenkins console log of a build.
-         *
-         * @return the default pattern
-         */
-        public String getPattern() {
-            return StringUtils.EMPTY;
-        }
-
-        /**
          * Returns whether this parser can scan the console log. Typically, only line based parsers can scan the console
          * log. XML parsers should always parse a given file only.
          *
@@ -304,6 +306,16 @@ public abstract class ReportScanningTool extends Tool {
          */
         public boolean canScanConsoleLog() {
             return true;
+        }
+
+        /**
+         * Returns the default filename pattern for this tool. Override if your typically works on a specific file.
+         * Note: if you provide a default pattern then it is not possible to scan Jenkins console log of a build.
+         *
+         * @return the default pattern
+         */
+        public String getPattern() {
+            return StringUtils.EMPTY;
         }
     }
 }

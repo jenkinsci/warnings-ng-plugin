@@ -33,7 +33,9 @@ class IconLabelProviderTest {
      */
     @Test
     void shouldParameterNameIfNotBlank() {
-        IconLabelProvider iconLabelProvider = new IconLabelProvider(ICON_ID, TOOL_NAME, ICON_NAME);
+        IconLabelProvider iconLabelProvider = new IconLabelProvider(ICON_ID, TOOL_NAME,
+                StaticAnalysisLabelProvider.EMPTY_DESCRIPTION, ICON_NAME
+        );
 
         assertThat(iconLabelProvider).hasId(ICON_ID).hasName(TOOL_NAME)
                 .hasSmallIconUrl("/plugin/warnings-ng/icons/icon-name-24x24.png")

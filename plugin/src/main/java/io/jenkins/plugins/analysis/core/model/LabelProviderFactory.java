@@ -1,6 +1,7 @@
 package io.jenkins.plugins.analysis.core.model;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -67,10 +68,9 @@ public class LabelProviderFactory {
 
         List<StaticAnalysisToolFactory> factories = jenkins.getExtensionsFor(StaticAnalysisToolFactory.class);
         for (StaticAnalysisToolFactory factory : factories) {
-            for (Tool tool : factory.getTools()) {
-                if (tool.getActualId().equals(id)) {
-                    return createNamedLabelProvider(tool.getLabelProvider(), name);
-                }
+            Optional<StaticAnalysisLabelProvider> labelProvider = factory.getLabelProvider(id);
+            if (labelProvider.isPresent()) {
+                return createNamedLabelProvider(labelProvider.get(), name);
             }
         }
 
@@ -84,14 +84,17 @@ public class LabelProviderFactory {
     }
 
     /**
-     * Provides additional {@link Tool static analysis tool} instances that are created dynamically.
+     * Provides additional {@link StaticAnalysisLabelProvider} instances that are created dynamically.
      */
     public interface StaticAnalysisToolFactory extends ExtensionPoint {
         /**
          * Returns the additional static analysis tools.
          *
-         * @return the tools
+         * @param id
+         *         the ID of the label provider
+         *
+         * @return the label provider with the given ID (if found)
          */
-        List<Tool> getTools();
+        Optional<StaticAnalysisLabelProvider> getLabelProvider(String id);
     }
 }

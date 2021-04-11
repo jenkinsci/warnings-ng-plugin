@@ -353,7 +353,7 @@ class SummaryTest {
         when(jenkins.getImagePath(contains(StaticAnalysisLabelProvider.ERROR_ICON))).thenReturn("/path/to/error");
         when(jenkins.getImagePath(contains(StaticAnalysisLabelProvider.INFO_ICON))).thenReturn("/path/to/info");
         when(jenkins.getAbsoluteUrl(any())).thenReturn("absoluteUrl");
-        return new StaticAnalysisLabelProvider(id, name, jenkins);
+        return new StaticAnalysisLabelProvider(id, name, StaticAnalysisLabelProvider.EMPTY_DESCRIPTION, jenkins);
     }
 
     private Pattern createWarningsLink(final String href) {

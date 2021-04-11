@@ -159,10 +159,13 @@ public class OpenTasks extends Tool {
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) {
         try {
-            return workspace.act(new AgentScanner(highTags, normalTags, lowTags,
+            Report openTasks = workspace.act(new AgentScanner(highTags, normalTags, lowTags,
                     ignoreCase ? CaseMode.IGNORE_CASE : CaseMode.CASE_SENSITIVE,
                     isRegularExpression ? MatcherMode.REGEXP_MATCH : MatcherMode.STRING_MATCH,
                     includePattern, excludePattern, sourceCodeEncoding.name()));
+            openTasks.setOrigin(getActualId(), getActualName());
+
+            return openTasks;
         }
         catch (IOException e) {
             Report report = new Report();
@@ -184,7 +187,7 @@ public class OpenTasks extends Tool {
     /** Label provider with customized messages. */
     private static class LabelProvider extends IconLabelProvider {
         LabelProvider() {
-            super(ID, Messages.Warnings_OpenTasks_Name());
+            super(ID, Messages.Warnings_OpenTasks_Name(), i -> StringUtils.EMPTY);
         }
 
         @Override

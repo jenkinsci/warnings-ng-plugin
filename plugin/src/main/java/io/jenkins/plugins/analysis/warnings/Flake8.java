@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.violations.Flake8Adapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for Flake8.
  *
  * @author Ullrich Hafner
  */
-public class Flake8 extends ReportScanningTool {
+public class Flake8 extends AnalysisModelParser {
     private static final long serialVersionUID = 2133173655608279071L;
     private static final String ID = "flake8";
 
@@ -26,29 +22,13 @@ public class Flake8 extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new Flake8Adapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("flake8")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Violations_Flake8();
-        }
-
-        @Override
-        public String getHelp() {
-            return "<p>Run flake8 as <code>flake8 --format=pylint</code></p>";
         }
     }
 }

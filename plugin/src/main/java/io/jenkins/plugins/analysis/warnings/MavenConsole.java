@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.MavenConsoleParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Maven console output.
  *
  * @author Aykut Yilmaz
  */
-public class MavenConsole extends ReportScanningTool {
+public class MavenConsole extends AnalysisModelParser {
     private static final long serialVersionUID = 4642573591598798109L;
     private static final String ID = "maven-warnings";
 
@@ -26,24 +22,13 @@ public class MavenConsole extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new MavenConsoleParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("mavenConsole")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_Maven_ParserName();
         }
 
         @Override

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -21,13 +22,13 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>8.10.2</revision>
+    <revision>9.0.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>9.8.1</analysis-model-api.version>
-    <analysis-model-tests.version>9.8.1</analysis-model-tests.version>
+    <analysis-model-api.version>10.0.0-rc412.b44250d40e97</analysis-model-api.version>
+    <analysis-model-tests.version>10.0.0</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.1.0</plugin-util-api.version>
@@ -40,14 +41,10 @@
     <popper-api.version>1.16.1-2</popper-api.version>
     <error_prone_annotations.version>2.6.0</error_prone_annotations.version>
 
-    <commons.digester3.version>3.2</commons.digester3.version>
-
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
 
     <json.version>20210307</json.version>
-
-    <pmd.version>6.32.0</pmd.version>
 
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.8.2</xmlunit.version>
@@ -122,6 +119,11 @@
         <artifactId>error_prone_annotations</artifactId>
         <version>${error_prone_annotations.version}</version>
       </dependency>
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+        <version>2.8.6</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -139,17 +141,6 @@
       <version>${eclipse-collections.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-digester3</artifactId>
-      <version>${commons.digester3.version}</version>
-      <exclusions>
-        <exclusion>
-          <artifactId>asm</artifactId>
-          <groupId>asm</groupId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
       <groupId>com.j2html</groupId>
       <artifactId>j2html</artifactId>
       <version>${j2html.version}</version>
@@ -163,58 +154,6 @@
       <groupId>org.jsoup</groupId>
       <artifactId>jsoup</artifactId>
       <version>${jsoup.version}</version>
-    </dependency>
-
-    <!-- PMD Messages -->
-    <dependency>
-      <groupId>net.sourceforge.pmd</groupId>
-      <artifactId>pmd-core</artifactId>
-      <version>${pmd.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.ibm.icu</groupId>
-          <artifactId>icu4j</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>net.sourceforge.saxon</groupId>
-          <artifactId>saxon</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>net.sourceforge.pmd</groupId>
-      <artifactId>pmd-java</artifactId>
-      <version>${pmd.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>net.sourceforge.saxon</groupId>
-          <artifactId>saxon</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.ow2.asm</groupId>
-          <artifactId>asm</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-io</groupId>
-          <artifactId>commons-io</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>commons-lang3</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- Required Jenkins Plug-in Dependencies -->
@@ -319,6 +258,13 @@
       <version>${token-macro.version}</version>
       <optional>true</optional>
     </dependency>
+    <!-- ASM is required by token-macro but does not declare its dependency -->
+    <dependency>
+      <groupId>org.ow2.asm</groupId>
+      <artifactId>asm</artifactId>
+      <version>8.0.1</version>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>forensics-api</artifactId>
@@ -365,12 +311,28 @@
       <scope>test</scope>
       <exclusions>
         <exclusion>
+          <groupId>edu.hm.hafner</groupId>
+          <artifactId>codingstyle</artifactId>
+        </exclusion>
+        <exclusion>
           <groupId>com.github.spotbugs</groupId>
           <artifactId>spotbugs-annotations</artifactId>
         </exclusion>
         <exclusion>
           <groupId>commons-io</groupId>
           <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.apache.commons</groupId>
+          <artifactId>commons-lang3</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen</artifactId>
+        </exclusion>
+        <exclusion>
+          <artifactId>*</artifactId>
+          <groupId>org.ow2.asm</groupId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -539,6 +501,10 @@
         <exclusion>
           <groupId>commons-beanutils</groupId>
           <artifactId>commons-beanutils</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>edu.hm.hafner</groupId>
+          <artifactId>codingstyle</artifactId>
         </exclusion>
       </exclusions>
     </dependency>

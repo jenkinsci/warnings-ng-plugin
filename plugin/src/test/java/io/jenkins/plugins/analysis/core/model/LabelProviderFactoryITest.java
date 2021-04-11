@@ -1,7 +1,6 @@
 package io.jenkins.plugins.analysis.core.model;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.Optional;
 
 import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
@@ -80,7 +79,7 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
 
         @Override
         public IssueParser createParser() {
-            return null;
+            return mock(IssueParser.class);
         }
 
         /**
@@ -110,17 +109,11 @@ public class LabelProviderFactoryITest extends IntegrationTestWithJenkinsPerSuit
     @SuppressWarnings("unused")
     public static class TestFactory implements StaticAnalysisToolFactory {
         @Override
-        public List<Tool> getTools() {
-            return Collections.singletonList(createTool(PROVIDER_ID));
+        public Optional<StaticAnalysisLabelProvider> getLabelProvider(final String id) {
+            if (PROVIDER_ID.equals(id)) {
+                return Optional.of(new StaticAnalysisLabelProvider(id, id));
+            }
+            return Optional.empty();
         }
-
-        private Tool createTool(final String id) {
-            Tool tool = mock(ReportScanningTool.class);
-            when(tool.getActualId()).thenReturn(id);
-            when(tool.getName()).thenReturn(id);
-            when(tool.getLabelProvider()).thenReturn(new StaticAnalysisLabelProvider(id, id));
-            return tool;
-        }
-
     }
 }

@@ -1,18 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import java.util.Collection;
-
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.JsonLogParser;
-import edu.hm.hafner.analysis.parser.JsonParser;
-import edu.hm.hafner.analysis.parser.XmlParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningToolSuite;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 import static j2html.TagCreator.*;
 
@@ -21,7 +13,7 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
-public class WarningsPlugin extends ReportScanningToolSuite {
+public class WarningsPlugin extends AnalysisModelParser {
     private static final long serialVersionUID = 8110398783405047555L;
     private static final String ID = "issues";
 
@@ -32,24 +24,13 @@ public class WarningsPlugin extends ReportScanningToolSuite {
         // empty constructor required for stapler
     }
 
-    @Override
-    protected Collection<? extends IssueParser> getParsers() {
-        return asList(new XmlParser("/report/issue"), new JsonLogParser(), new JsonParser());
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("issues")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
-            super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_WarningsPlugin_ParserName();
+            super(ID, "native");
         }
 
         @Override
@@ -62,11 +43,6 @@ public class WarningsPlugin extends ReportScanningToolSuite {
             return p().withText("Create an output file that contains issues in the native Warnings Plugin format, "
                     + "in either XML or JSON. The supported format is identical to the format of the remote API calls. "
                     + "The parser is even capable of reading individual lines of a log file that contains issues in JSON format.").render();
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://github.com/jenkinsci/warnings-ng-plugin/blob/master/doc/Documentation.md#export-your-issues-into-a-supported-format";
         }
     }
 }

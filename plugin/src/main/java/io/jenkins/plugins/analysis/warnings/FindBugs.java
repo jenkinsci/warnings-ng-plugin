@@ -1,28 +1,22 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.Issue;
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.FindBugsParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.jenkinsci.Symbol;
-import org.jvnet.localizer.LocaleProvider;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
-
-import static edu.hm.hafner.analysis.parser.FindBugsParser.PriorityProperty.*;
 
 /**
  * Provides a parser and customized messages for FindBugs.
  *
  * @author Ullrich Hafner
  */
-public class FindBugs extends ReportScanningTool {
+public class FindBugs extends AnalysisModelParser {
     private static final long serialVersionUID = 4692318309214830824L;
     private static final String ID = "findbugs";
 
@@ -34,6 +28,14 @@ public class FindBugs extends ReportScanningTool {
         super();
         // empty constructor required for stapler
     }
+
+    @Override
+    protected Option[] configureOptions() {
+        return new Option[] {
+                new Option(edu.hm.hafner.analysis.registry.FindBugsDescriptor.PRIORITY_OPTION_KEY,
+                        getUseRankAsPriority() ? "RANK" : "CONFIDENCE")};
+    }
+
 
     @SuppressWarnings("PMD.BooleanGetMethodName")
     public boolean getUseRankAsPriority() {
@@ -52,42 +54,10 @@ public class FindBugs extends ReportScanningTool {
         this.useRankAsPriority = useRankAsPriority;
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new FindBugsParser(useRankAsPriority ? RANK : CONFIDENCE);
-    }
-
-    /** Provides the labels for the static analysis tool. */
-    static class FindBugsLabelProvider extends IconLabelProvider {
-        private final FindBugsMessages messages;
-        /**
-         * Creates a new {@link FindBugsLabelProvider} with the specified ID.
-         *
-         * @param messages
-         *         the details messages
-         * @param id
-         *         the ID
-         * @param name
-         *         the name of the static analysis tool
-         */
-        FindBugsLabelProvider(final FindBugsMessages messages, final String id, final String name) {
-            super(id, name, id);
-
-            this.messages = messages;
-        }
-
-        @Override
-        public String getDescription(final Issue issue) {
-            return messages.getMessage(issue.getType(), LocaleProvider.getLocale());
-        }
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("findBugs")
     @Extension
-    public static class FindBugsDescriptor extends ReportScanningToolDescriptor {
-        private final FindBugsMessages messages = new FindBugsMessages();
-
+    public static class FindBugsDescriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public FindBugsDescriptor() {
             this(ID);
@@ -101,28 +71,11 @@ public class FindBugs extends ReportScanningTool {
          */
         public FindBugsDescriptor(final String id) {
             super(id);
-
-            messages.initialize();
-        }
-
-        protected FindBugsMessages getMessages() {
-            return messages;
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_FindBugs_ParserName();
         }
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new FindBugsLabelProvider(messages, getId(), getDisplayName());
-        }
-
-        @Override
-        public String getPattern() {
-            return "**/findbugsXml.xml";
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider());
         }
 
         @Override

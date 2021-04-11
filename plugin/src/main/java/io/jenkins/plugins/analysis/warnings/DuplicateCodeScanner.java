@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import edu.hm.hafner.analysis.DuplicationGroup;
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
+import edu.hm.hafner.analysis.registry.ParserDescriptor.Option;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import j2html.tags.UnescapedText;
@@ -22,17 +23,18 @@ import hudson.model.Item;
 import hudson.model.Run;
 import hudson.util.FormValidation;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.DescriptionProvider;
 import io.jenkins.plugins.analysis.core.model.DetailsTableModel;
 import io.jenkins.plugins.analysis.core.model.FileNameRenderer;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider.AgeBuilder;
 import io.jenkins.plugins.analysis.core.util.Sanitizer;
 import io.jenkins.plugins.datatables.TableColumn;
 import io.jenkins.plugins.datatables.TableColumn.ColumnCss;
 import io.jenkins.plugins.util.JenkinsFacade;
 
+import static edu.hm.hafner.analysis.registry.DryDescriptor.*;
 import static io.jenkins.plugins.analysis.warnings.DuplicateCodeScanner.DryLabelProvider.*;
 import static j2html.TagCreator.*;
 
@@ -41,8 +43,8 @@ import static j2html.TagCreator.*;
  *
  * @author Ullrich Hafner
  */
-@SuppressWarnings("PMD.DataClass")
-public abstract class DuplicateCodeScanner extends ReportScanningTool {
+@SuppressWarnings({"PMD.DataClass", "PMD.ExcessiveImports"})
+public abstract class DuplicateCodeScanner extends AnalysisModelParser {
     private static final long serialVersionUID = -8446643146836067375L;
 
     /** Validates the thresholds user input. */
@@ -50,6 +52,13 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
 
     private int highThreshold = 50;
     private int normalThreshold = 25;
+
+    @Override
+    protected Option[] configureOptions() {
+        return new Option[] {
+                new Option(HIGH_OPTION_KEY, String.valueOf(getHighThreshold())),
+                new Option(NORMAL_OPTION_KEY, String.valueOf(getNormalThreshold()))};
+    }
 
     /**
      * Returns the minimum number of duplicate lines for high severity warnings.
@@ -96,7 +105,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
         private static final Sanitizer SANITIZER = new Sanitizer();
 
         protected DryLabelProvider(final String id, final String name) {
-            super(id, name, "dry");
+            super(id, name, EMPTY_DESCRIPTION, "dry");
         }
 
         @Override
@@ -135,7 +144,8 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
                 List<Issue> duplications = ((DuplicationGroup) properties).getDuplications();
                 duplications.remove(issue); // do not show reference to this issue
 
-                return ul(each(duplications, link -> li(fileNameRenderer.createAffectedFileLink(link, prefix)))).render();
+                return ul(
+                        each(duplications, link -> li(fileNameRenderer.createAffectedFileLink(link, prefix)))).render();
             }
             return "-";
         }
@@ -152,7 +162,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
     }
 
     /** Descriptor for this static analysis tool. */
-    abstract static class DryDescriptor extends ReportScanningToolDescriptor {
+    abstract static class DuplicateCodeDescriptor extends AnalysisModelParserDescriptor {
         private static final JenkinsFacade JENKINS = new JenkinsFacade();
         private static final ThresholdValidation VALIDATION = new ThresholdValidation();
 
@@ -162,7 +172,7 @@ public abstract class DuplicateCodeScanner extends ReportScanningTool {
          * @param id
          *         ID of the tool
          */
-        DryDescriptor(final String id) {
+        DuplicateCodeDescriptor(final String id) {
             super(id);
         }
 

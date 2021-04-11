@@ -28,56 +28,57 @@ class DryTableModelTest extends AbstractDetailsModelTest {
     @Test
     @SuppressFBWarnings("DMI")
     void shouldConvertIssueToArrayOfColumns() {
-        Locale.setDefault(Locale.ENGLISH);
+        try (IssueBuilder builder = new IssueBuilder()) {
+            Locale.setDefault(Locale.ENGLISH);
 
-        IssueBuilder builder = new IssueBuilder();
-        builder.setReference("1");
-        DuplicationGroup group = new DuplicationGroup();
-        Issue issue = builder.setFileName("/path/to/file-1")
-                .setLineStart(10)
-                .setLineEnd(24)
-                .setAdditionalProperties(group)
-                .build();
-        Issue duplicate = builder.setFileName("/path/to/file-2")
-                .setLineStart(5)
-                .setLineEnd(19)
-                .setAdditionalProperties(group)
-                .build();
+            builder.setReference("1");
+            DuplicationGroup group = new DuplicationGroup();
+            Issue issue = builder.setFileName("/path/to/file-1")
+                    .setLineStart(10)
+                    .setLineEnd(24)
+                    .setAdditionalProperties(group)
+                    .build();
+            Issue duplicate = builder.setFileName("/path/to/file-2")
+                    .setLineStart(5)
+                    .setLineEnd(19)
+                    .setAdditionalProperties(group)
+                    .build();
 
-        group.add(issue);
-        group.add(duplicate);
+            group.add(issue);
+            group.add(duplicate);
 
-        Report report = new Report();
-        report.add(issue).add(duplicate);
+            Report report = new Report();
+            report.add(issue).add(duplicate);
 
-        DryModel model = createModel(report);
+            DryModel model = createModel(report);
 
-        String columnDefinitions = model.getColumnsDefinition();
-        assertThatJson(columnDefinitions).isArray().hasSize(6);
+            String columnDefinitions = model.getColumnsDefinition();
+            assertThatJson(columnDefinitions).isArray().hasSize(6);
 
-        String[] columns = {"description", "fileName", "severity", "linesCount", "duplicatedIn", "age"};
-        for (int column = 0; column < columns.length; column++) {
-            verifyColumnProperty(model, column, columns[column]);
+            String[] columns = {"description", "fileName", "severity", "linesCount", "duplicatedIn", "age"};
+            for (int column = 0; column < columns.length; column++) {
+                verifyColumnProperty(model, column, columns[column]);
+            }
+            verifyFileNameColumn(columnDefinitions);
+
+            assertThat(getLabels(model))
+                    .containsExactly("Details", "File", "Severity", "#Lines", "Duplicated In", "Age");
+            assertThat(getWidths(model))
+                    .containsExactly(1, 2, 1, 1, 3, 1);
+
+            DuplicationRow actualRow = model.getRow(issue);
+            assertThat(actualRow)
+                    .hasDescription("<div class=\"details-control\" data-description=\"" + DESCRIPTION + "\">"
+                            + DETAILS_ICON + "</div>")
+                    .hasAge("1");
+            assertThatDetailedColumnContains(actualRow.getFileName(),
+                    getFileNameFor(issue, 1), "/path/to/file-1:0000010");
+            assertThat(actualRow.getPackageName()).isEqualTo("<a href=\"packageName.45/\">-</a>");
+            assertThat(actualRow.getDuplicatedIn()).isEqualTo(
+                    String.format("<ul><li>%s</li></ul>", getFileNameFor(duplicate, 2)));
+            assertThat(actualRow.getLinesCount()).isEqualTo("15");
+            assertThat(actualRow.getSeverity()).isEqualTo("<a href=\"NORMAL\">Normal</a>");
         }
-        verifyFileNameColumn(columnDefinitions);
-
-        assertThat(getLabels(model))
-                .containsExactly("Details", "File", "Severity", "#Lines", "Duplicated In", "Age");
-        assertThat(getWidths(model))
-                .containsExactly(1, 2, 1, 1, 3, 1);
-
-        DuplicationRow actualRow = model.getRow(issue);
-        assertThat(actualRow)
-                .hasDescription("<div class=\"details-control\" data-description=\"" + DESCRIPTION + "\">"
-                        + DETAILS_ICON + "</div>")
-                .hasAge("1");
-        assertThatDetailedColumnContains(actualRow.getFileName(),
-                getFileNameFor(issue, 1), "/path/to/file-1:0000010");
-        assertThat(actualRow.getPackageName()).isEqualTo("<a href=\"packageName.45/\">-</a>");
-        assertThat(actualRow.getDuplicatedIn()).isEqualTo(
-                String.format("<ul><li>%s</li></ul>", getFileNameFor(duplicate, 2)));
-        assertThat(actualRow.getLinesCount()).isEqualTo("15");
-        assertThat(actualRow.getSeverity()).isEqualTo("<a href=\"NORMAL\">Normal</a>");
     }
 
     private String getFileNameFor(final Issue issue, final int index) {

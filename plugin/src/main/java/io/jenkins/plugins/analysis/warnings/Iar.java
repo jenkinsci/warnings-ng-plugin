@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.IarParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the IAR C/C++ compiler.
  *
  * @author Ullrich Hafner
  */
-public class Iar extends ReportScanningTool {
+public class Iar extends AnalysisModelParser {
     private static final long serialVersionUID = 6672928932731913714L;
     private static final String ID = "iar";
 
@@ -26,30 +22,13 @@ public class Iar extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new IarParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("iar")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_iar_ParserName();
-        }
-
-        @Override
-        public String getHelp() {
-            return "The IAR compilers need to be started with option <strong>--no_wrap_diagnostics</strong>. "
-                    + "Then the IAR compilers will create single-line warnings.";
         }
     }
 }

@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.DiabCParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the Diab C++ compiler.
  *
  * @author Ullrich Hafner
  */
-public class DiabC extends ReportScanningTool {
+public class DiabC extends AnalysisModelParser {
     private static final long serialVersionUID = 5776036181907740586L;
     private static final String ID = "diabc";
 
@@ -26,24 +22,13 @@ public class DiabC extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new DiabCParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("diabC")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_diabc_ParserName();
         }
     }
 }

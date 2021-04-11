@@ -244,7 +244,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
                 PACKAGE_WITH_FILES_CSHARP + "SampleClassWithoutNamespace.cs"
         );
 
-        assertThat(result.getIssues()).hasSize(10);
+        assertThat(result.getIssues()).hasSize(12);
         assertThat(result.getIssues().getPackages())
                 .containsExactly("edu.hm.hafner.analysis._123.int.naming.structure", "SampleClassWithNamespace",
                         "NestedNamespace", "SampleClassWithNestedAndNormalNamespace", "-");
@@ -255,7 +255,7 @@ public class PackageDetectorsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(totalByPackageName.get("SampleClassWithNamespace")).isEqualTo(1L);
         assertThat(totalByPackageName.get("NestedNamespace")).isEqualTo(1L);
         assertThat(totalByPackageName.get("SampleClassWithNestedAndNormalNamespace")).isEqualTo(1L);
-        assertThat(totalByPackageName.get("-")).isEqualTo(6L);
+        assertThat(totalByPackageName.get("-")).isEqualTo(8L);
 
         String logOutput = getConsoleLog(result);
         assertThat(logOutput).contains(DEFAULT_DEBUG_LOG_LINE);

@@ -1,14 +1,10 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.CargoCheckParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for {@code rustc} compiler messages emitted by {@code cargo check
@@ -16,7 +12,7 @@ import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
  *
  * @author Ullrich Hafner
  */
-public class Cargo extends ReportScanningTool {
+public class Cargo extends AnalysisModelParser {
     private static final long serialVersionUID = -3997235880208767455L;
     private static final String ID = "cargo";
 
@@ -27,29 +23,13 @@ public class Cargo extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CargoCheckParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("cargo")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_Cargo_ParserName();
-        }
-
-        @Override
-        public String getHelp() {
-            return "Use commandline <code>cargo check --message-format json</code>";
         }
     }
 }

@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.ProtoLintParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for ProtoLint.
  *
  * @author David Hart
  */
-public class ProtoLint extends ReportScanningTool {
+public class ProtoLint extends AnalysisModelParser {
     private static final long serialVersionUID = -5718503998068521571L;
 
     private static final String ID = "protolint";
@@ -27,24 +23,13 @@ public class ProtoLint extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new ProtoLintParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("protoLint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_ProtoLint_ParserName();
         }
 
         @Override

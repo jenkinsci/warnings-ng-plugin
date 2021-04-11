@@ -32,22 +32,21 @@ import hudson.model.Run;
 import hudson.model.UnprotectedRootAction;
 import hudson.util.HttpResponses;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
+import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
 import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.JavaDoc;
 import io.jenkins.plugins.analysis.warnings.JcReport;
-import io.jenkins.plugins.analysis.warnings.Messages;
 import io.jenkins.plugins.analysis.warnings.Pmd;
-import io.jenkins.plugins.analysis.warnings.checkstyle.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.groovy.GroovyParser;
 import io.jenkins.plugins.analysis.warnings.groovy.ParserConfiguration;
 import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable;
@@ -65,6 +64,26 @@ import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 @SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
+
+    /**
+     * Runs a pipeline and verifies the {@code scanForIssues} step has some whitelisted methods.
+     */
+    @Test
+    public void shouldParseCheckstyleUsingTheParserRegistry() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("checkstyle1.xml", "checkstyle2.xml");
+
+        job.setDefinition(new CpsFlowDefinition("node {\n"
+                + "  stage ('Integration Test') {\n"
+                + "         recordIssues tool: analysisParser(id: 'checkstyle', pattern: '**/" + "checkstyle1" + "*')\n"
+                + "  }\n"
+                + "}", true));
+
+        AnalysisResult baseline = scheduleSuccessfulBuild(job);
+        assertThat(baseline).hasTotalSize(3);
+
+        ResultAction action = getResultAction(job.getLastBuild());
+        assertThat(action.getDisplayName()).isEqualTo("CheckStyle Warnings");
+    }
 
     /**
      * Runs a pipeline and verifies the {@code scanForIssues} step has some whitelisted methods.
@@ -687,7 +706,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         ResultAction action = getResultAction(run);
         assertThat(action.getId()).isEqualTo("java");
-        assertThat(action.getDisplayName()).contains(Messages.Warnings_JavaParser_ParserName());
+        assertThat(action.getDisplayName()).contains("Java");
 
         AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).isEmpty();
@@ -968,8 +987,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         String adaptedXxeFileContent = xxeFileContent.replace("$OOB_LINK$", oobInUserContentLink);
         createFileInWorkspace(job, "xxe.xml", adaptedXxeFileContent);
 
-        List<ReportScanningTool> tools = Lists.mutable.of(new CheckStyle(), new Pmd(), new FindBugs(), new JcReport());
-        for (ReportScanningTool tool : tools) {
+        List<AnalysisModelParser> tools = Lists.mutable.of(new CheckStyle(), new Pmd(), new FindBugs(), new JcReport());
+        for (AnalysisModelParser tool : tools) {
             job.setDefinition(asStage(
                     String.format("def issues = scanForIssues tool: %s(pattern:'xxe.xml')",
                             tool.getSymbolName()),

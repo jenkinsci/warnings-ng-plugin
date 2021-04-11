@@ -54,6 +54,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 public final class AxivionSuite extends Tool {
     private static final long serialVersionUID = 967222727302169818L;
     private static final String ID = "axivion-suite";
+    private static final String NAME = "Axivion Suite";
 
     private String projectUrl = StringUtils.EMPTY;
     private String credentialsId = StringUtils.EMPTY;
@@ -108,7 +109,7 @@ public final class AxivionSuite extends Tool {
         AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials());
         AxivionParser parser = new AxivionParser(projectUrl, expandBaseDir(run, basedir));
 
-        Report report = new Report();
+        Report report = new Report(ID, NAME);
         report.logInfo("Axivion webservice: " + projectUrl);
         report.logInfo("Local basedir: " + basedir);
 
@@ -171,7 +172,7 @@ public final class AxivionSuite extends Tool {
         @NonNull
         @Override
         public String getDisplayName() {
-            return "Axivion Suite";
+            return NAME;
         }
 
         @Override

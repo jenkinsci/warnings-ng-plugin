@@ -1,15 +1,13 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
 import edu.hm.hafner.analysis.parser.checkstyle.CheckStyleParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
 
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +15,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  *
  * @author Ullrich Hafner
  */
-public class KtLint extends ReportScanningTool {
+public class KtLint extends AnalysisModelParser {
     private static final long serialVersionUID = 1897385505660427545L;
 
     private static final String ID = "ktlint";
@@ -29,24 +27,13 @@ public class KtLint extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new CheckStyleParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("ktLint")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_KtLint_Name();
         }
 
         @Override
@@ -55,18 +42,8 @@ public class KtLint extends ReportScanningTool {
         }
 
         @Override
-        public String getHelp() {
-            return "Use option --reporter=checkstyle.";
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://ktlint.github.io";
-        }
-
-        @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName());
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider());
         }
     }
 }

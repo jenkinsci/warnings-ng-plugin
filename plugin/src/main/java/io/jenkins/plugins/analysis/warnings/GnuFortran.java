@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.GnuFortranParser;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for the GhsFortran Compiler.
  *
  * @author Michael Schmid
  */
-public class GnuFortran extends ReportScanningTool {
+public class GnuFortran extends AnalysisModelParser {
     private static final long serialVersionUID = -578099209983706725L;
     private static final String ID = "fortran";
 
@@ -26,24 +22,13 @@ public class GnuFortran extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new GnuFortranParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("gnuFortran")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_GnuFortran_ParserName();
         }
     }
 }

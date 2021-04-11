@@ -1,21 +1,17 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.violations.DocFxAdapter;
-import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 
 /**
  * Provides a parser and customized messages for DocFX.
  *
  * @author Ullrich Hafner
  */
-public class DocFx extends ReportScanningTool {
+public class DocFx extends AnalysisModelParser {
     private static final long serialVersionUID = 268538556620830869L;
     private static final String ID = "docfx";
 
@@ -26,24 +22,13 @@ public class DocFx extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new DocFxAdapter();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("docFx")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @NonNull
-        @Override
-        public String getDisplayName() {
-            return Messages.Violations_DocFx();
         }
     }
 }

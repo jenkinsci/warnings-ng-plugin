@@ -1,14 +1,11 @@
 package io.jenkins.plugins.analysis.warnings;
 
-import edu.hm.hafner.analysis.IssueParser;
-import edu.hm.hafner.analysis.parser.QtTranslationParser;
-
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
 
+import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
-import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 
 /**
@@ -17,7 +14,7 @@ import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
  * @author Heiko Thiel
  *
  */
-public class QtTranslation extends ReportScanningTool {
+public class QtTranslation extends AnalysisModelParser {
     private static final long serialVersionUID = 1L;
     private static final String ID = "qt-translation";
 
@@ -30,28 +27,13 @@ public class QtTranslation extends ReportScanningTool {
         // empty constructor required for stapler
     }
 
-    @Override
-    public IssueParser createParser() {
-        return new QtTranslationParser();
-    }
-
     /** Descriptor for this static analysis tool. */
     @Symbol("qtTranslation")
     @Extension
-    public static class Descriptor extends ReportScanningToolDescriptor {
+    public static class Descriptor extends AnalysisModelParserDescriptor {
         /** Creates the descriptor instance. */
         public Descriptor() {
             super(ID);
-        }
-
-        @Override
-        public String getDisplayName() {
-            return Messages.Warnings_QtTranslation_ParserName();
-        }
-
-        @Override
-        public String getHelp() {
-            return "Reads translation files of Qt, which are created by \"lupdate\" or \"Linguist\".";
         }
 
         @Override
@@ -61,12 +43,7 @@ public class QtTranslation extends ReportScanningTool {
 
         @Override
         public StaticAnalysisLabelProvider getLabelProvider() {
-            return new IconLabelProvider(getId(), getDisplayName(), "qt");
-        }
-
-        @Override
-        public String getUrl() {
-            return "https://www.qt.io";
+            return new IconLabelProvider(getId(), getDisplayName(), getDescriptionProvider(), "qt");
         }
     }
 }
