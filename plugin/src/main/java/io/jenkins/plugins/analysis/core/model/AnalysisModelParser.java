@@ -84,7 +84,7 @@ public abstract class AnalysisModelParser extends ReportScanningTool {
          *
          * @return a description provider
          */
-        protected RegistryIssueDescriptionProvider getDescriptionProvider() {
+        protected DescriptionProvider getDescriptionProvider() {
             return descriptionProvider;
         }
 
