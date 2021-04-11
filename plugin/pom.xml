@@ -442,6 +442,12 @@
 
     <!-- Jenkins Plug-in Dependencies required for integration tests -->
     <dependency>
+      <groupId>com.parasoft</groupId>
+      <artifactId>parasoft-findings</artifactId>
+      <version>10.5.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>flexible-publish</artifactId>
       <version>${flexible-publish.version}</version>
@@ -777,6 +783,10 @@
     <repository>
       <id>repo.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+    <repository>
+      <id>repo.parasoft.com</id>
+      <url>https://github.com/jenkinsci/parasoft-findings-plugin/tree/master/repository</url>
     </repository>
     <repository>
       <id>incrementals.jenkins-ci.org</id>
