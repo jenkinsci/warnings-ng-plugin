@@ -1,4 +1,4 @@
-/* global jQuery3, view, echartsJenkinsApi */
+/* global jQuery3, view, echartsJenkinsApi, bootstrap5 */
 (function ($) {
     redrawTrendCharts();
     storeAndRestoreCarousel('trend-carousel');
@@ -23,19 +23,16 @@
      * Activate the tab that has been visited the last time. If there is no such tab, highlight the first one.
      * If the user selects the tab using an #anchor prefer this tab.
      */
-    const detailsTabs = $('#tab-details');
-    detailsTabs.find('li:first-child a').tab('show');
-
+    selectTab('li:first-child a');
     const url = document.location.toString();
     if (url.match('#')) {
         const tabName = url.split('#')[1];
-
-        detailsTabs.find('a[href="#' + tabName + '"]').tab('show');
+        selectTab('a[href="#' + tabName + '"]');
     }
     else {
         const activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
-            detailsTabs.find('a[href="' + activeTab + '"]').tab('show');
+            selectTab('a[href="' + activeTab + '"]');
         }
     }
 
@@ -53,14 +50,32 @@
      * Activate tooltips.
      */
     $(function () {
-        $('[data-toggle="tooltip"]').tooltip();
+        $('[data-bs-toggle="tooltip"]').each(function () {
+            const tooltip = new bootstrap5.Tooltip($(this)[0]);
+            tooltip.enable();
+        });
     });
+
+    /**
+     * Activates the specified tab.
+     *
+     * @param {String} selector - selector of the tab
+     */
+    function selectTab(selector) {
+        const detailsTabs = $('#tab-details');
+        const selectedTab = detailsTabs.find(selector);
+
+        if (selectedTab.length !== 0) {
+            const tab = new bootstrap5.Tab(selectedTab[0]);
+            tab.show();
+        }
+    }
 
     /**
      * Redraws the trend charts. Reads the last selected X-Axis type from the browser local storage and
      * redraws the trend charts.
      */
-    function redrawTrendCharts () {
+    function redrawTrendCharts() {
         const isBuildOnXAxis = !(localStorage.getItem('#trendBuildAxis') === 'date');
 
         /**
@@ -104,7 +119,7 @@
      *
      * @param {String} carouselId - ID of the carousel
      */
-    function storeAndRestoreCarousel (carouselId) {
+    function storeAndRestoreCarousel(carouselId) {
         const carousel = $('#' + carouselId);
         carousel.on('slid.bs.carousel', function (e) {
             localStorage.setItem(carouselId, e.to);
@@ -115,7 +130,8 @@
         });
         const activeCarousel = localStorage.getItem(carouselId);
         if (activeCarousel) {
-            carousel.carousel(parseInt(activeCarousel));
+            const carouselControl = new bootstrap5.Carousel(carousel[0])
+            carouselControl.to(parseInt(activeCarousel));
         }
     }
 })(jQuery3);

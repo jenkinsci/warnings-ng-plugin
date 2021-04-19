@@ -1,13 +1,13 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:issues="/issues" xmlns:dt="/data-tables" xmlns:c="/charts" xmlns:bs="/bootstrap">
+<j:jelly xmlns:j="jelly:core" xmlns:issues="/issues" xmlns:dt="/data-tables" xmlns:c="/charts" xmlns:bs="/bootstrap5">
 
   <div class="row py-3">
 
     <!-- A carousel with all pie charts on small screens -->
-    <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 d-none d-block d-lg-block d-xl-none d-xxl-none">
+    <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 d-none d-block d-sm-block d-xl-none d-xxl-none">
 
       <bs:card title="${%Overview}" fontAwesomeIcon="bell">
-        <div id="overview-carousel" class="carousel slide" data-interval="false">
+        <div id="overview-carousel" class="carousel slide carousel-dark" data-bs-interval="false">
           <div class="carousel-inner">
             <div class="carousel-item active">
               <c:pie-chart id="severities" model="${it.severityModel}" height="256" enableLinks="true" />
@@ -16,14 +16,14 @@
               <c:pie-chart id="trend" model="${it.trendModel}" height="256" enableLinks="true"/>
             </div>
           </div>
-          <a class="carousel-control-prev" data-target="#overview-carousel" role="button" data-slide="prev">
+          <button class="carousel-control-prev" type="button" data-bs-target="#overview-carousel" data-bs-slide="prev">
             <span class="carousel-control-prev-icon" aria-hidden="true"/>
-            <span class="sr-only">Previous</span>
-          </a>
-          <a class="carousel-control-next" data-target="#overview-carousel" role="button" data-slide="next">
+            <span class="visually-hidden">Previous</span>
+          </button>
+          <button class="carousel-control-next" type="button" data-bs-target="#overview-carousel" data-bs-slide="next">
             <span class="carousel-control-next-icon" aria-hidden="true"/>
-            <span class="sr-only">Next</span>
-          </a>
+            <span class="visually-hidden">Next</span>
+          </button>
         </div>
       </bs:card>
 
@@ -78,16 +78,16 @@
 
               <j:if test="${i.isNotEmpty()}">
                 <li class="nav-item">
-                  <a class="nav-link" role="tab" data-toggle="tab" href="#issuesContent">${l.issues}</a>
+                  <a class="nav-link" role="tab" data-bs-toggle="tab" href="#issuesContent">${l.issues}</a>
                 </li>
                 <j:if test="${it.isBlameVisible()}">
                   <li class="nav-item">
-                    <a class="nav-link" role="tab" data-toggle="tab" href="#blamesContent">${%SCM Blames}</a>
+                    <a class="nav-link" role="tab" data-bs-toggle="tab" href="#blamesContent">${%SCM Blames}</a>
                   </li>
                 </j:if>
                 <j:if test="${it.isForensicsVisible()}">
                   <li class="nav-item">
-                    <a class="nav-link" role="tab" data-toggle="tab" href="#forensicsContent">${%SCM Forensics}</a>
+                    <a class="nav-link" role="tab" data-bs-toggle="tab" href="#forensicsContent">${%SCM Forensics}</a>
                   </li>
                 </j:if>
               </j:if>

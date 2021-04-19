@@ -51,7 +51,7 @@
 
           </j:when>
           <j:otherwise>
-            <st:adjunct includes="io.jenkins.plugins.bootstrap4"/>
+            <st:adjunct includes="io.jenkins.plugins.bootstrap5"/>
 
             <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/custom-style.css"/>
 
