@@ -132,6 +132,7 @@
         if (activeCarousel) {
             const carouselControl = new bootstrap5.Carousel(carousel[0])
             carouselControl.to(parseInt(activeCarousel));
+            carouselControl.pause();
         }
     }
 })(jQuery3);

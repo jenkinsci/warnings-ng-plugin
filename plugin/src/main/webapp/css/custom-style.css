@@ -3,12 +3,12 @@
 /* ------------------------------------------------------------------------------------------------------------------- */
 
 .card-chart {
-    width: 90%;
+    width: 100%;
     min-height: 256px;
     min-width: 256px;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 
 .log-output {

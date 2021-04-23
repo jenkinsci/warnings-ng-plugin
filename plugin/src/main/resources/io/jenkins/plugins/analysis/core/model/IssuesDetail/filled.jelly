@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
 <j:jelly xmlns:j="jelly:core" xmlns:issues="/issues" xmlns:dt="/data-tables" xmlns:c="/charts" xmlns:bs="/bootstrap5">
 
-  <div class="row py-3">
+  <div class="row py-3 flex-nowrap">
 
     <!-- A carousel with all pie charts on small screens -->
     <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 d-none d-block d-sm-block d-xl-none d-xxl-none">
@@ -9,10 +9,10 @@
       <bs:card title="${%Overview}" fontAwesomeIcon="bell">
         <div id="overview-carousel" class="carousel slide carousel-dark" data-bs-interval="false">
           <div class="carousel-inner">
-            <div class="carousel-item active">
+            <div class="carousel-item active" data-bs-interval="false">
               <c:pie-chart id="severities" model="${it.severityModel}" height="256" enableLinks="true" />
             </div>
-            <div class="carousel-item">
+            <div class="carousel-item" data-bs-interval="false">
               <c:pie-chart id="trend" model="${it.trendModel}" height="256" enableLinks="true"/>
             </div>
           </div>

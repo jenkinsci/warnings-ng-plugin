@@ -20,7 +20,7 @@
         </div>
         <j:if test="${it.healthReportEnabled}">
           <div class="carousel-item">
-            <div id="health-trend-chart" class="graph-cursor-pointer card-chart d-block w-100"/>
+            <div id="health-trend-chart" class="graph-cursor-pointer card-chart"/>
           </div>
         </j:if>
       </div>
