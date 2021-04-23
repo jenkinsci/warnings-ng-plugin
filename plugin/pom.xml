@@ -35,7 +35,6 @@
     <data-tables-api.version>1.10.23-3</data-tables-api.version>
     <echarts-api.version>5.1.0-2</echarts-api.version>
     <font-awesome-api.version>5.15.2-2</font-awesome-api.version>
-    <jquery3-api.version>3.6.0-1</jquery3-api.version>
     <bootstrap5-api.version>5.0.0-beta3-1</bootstrap5-api.version>
     <error_prone_annotations.version>2.6.0</error_prone_annotations.version>
 
@@ -173,7 +172,6 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>jquery3-api</artifactId>
-      <version>${jquery3-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
