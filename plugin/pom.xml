@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.4.0</version>
+    <version>5.6.0</version>
     <relativePath />
   </parent>
 
@@ -33,11 +33,10 @@
     <plugin-util-api.version>2.1.0</plugin-util-api.version>
 
     <data-tables-api.version>1.10.23-3</data-tables-api.version>
-    <echarts-api.version>5.0.2-1</echarts-api.version>
+    <echarts-api.version>5.1.0-2</echarts-api.version>
     <font-awesome-api.version>5.15.2-2</font-awesome-api.version>
     <jquery3-api.version>3.6.0-1</jquery3-api.version>
-    <bootstrap5-api.version>5.0.0-beta3-1-SNAPSHOT</bootstrap5-api.version>
-    <popper-api.version>1.16.1-2</popper-api.version>
+    <bootstrap5-api.version>5.0.0-beta3-1</bootstrap5-api.version>
     <error_prone_annotations.version>2.6.0</error_prone_annotations.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
@@ -107,11 +106,6 @@
         <groupId>org.jenkins-ci.plugins</groupId>
         <artifactId>script-security</artifactId>
         <version>${script-security.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.jenkins.plugins</groupId>
-        <artifactId>popper-api</artifactId>
-        <version>${popper-api.version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.errorprone</groupId>
