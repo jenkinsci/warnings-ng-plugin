@@ -1,5 +1,9 @@
 /* global jQuery3, view, echartsJenkinsApi, bootstrap5 */
 (function ($) {
+    $('#trendConfiguration').on('hidden.bs.modal', function () {
+        redrawTrendCharts();
+    });
+
     redrawTrendCharts();
     storeAndRestoreCarousel('trend-carousel');
     storeAndRestoreCarousel('overview-carousel');
@@ -61,7 +65,7 @@
      *
      * @param {String} selector - selector of the tab
      */
-    function selectTab(selector) {
+    function selectTab (selector) {
         const detailsTabs = $('#tab-details');
         const selectedTab = detailsTabs.find(selector);
 
@@ -75,31 +79,32 @@
      * Redraws the trend charts. Reads the last selected X-Axis type from the browser local storage and
      * redraws the trend charts.
      */
-    function redrawTrendCharts() {
-        const isBuildOnXAxis = !(localStorage.getItem('#trendBuildAxis') === 'date');
+    function redrawTrendCharts () {
+        const configuration = localStorage.getItem('echarts#trendConfiguration');
+        const trendConfigurationDialogId = 'trendConfiguration';
 
         /**
          * Creates a build trend chart that shows the number of issues for a couple of builds.
          * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
          */
-        view.getBuildTrend(isBuildOnXAxis, function (lineModel) {
-            echartsJenkinsApi.renderZoomableTrendChart('severities-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+        view.getBuildTrend(configuration, function (lineModel) {
+            echartsJenkinsApi.renderZoomableTrendChart('severities-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
         });
 
         /**
          * Creates a build trend chart that shows the number of issues per tool.
          * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
          */
-        view.getToolsTrend(isBuildOnXAxis, function (lineModel) {
-            echartsJenkinsApi.renderZoomableTrendChart('tools-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+        view.getToolsTrend(configuration, function (lineModel) {
+            echartsJenkinsApi.renderZoomableTrendChart('tools-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
         });
 
         /**
          * Creates a build trend chart that shows the number of issues per tool.
          * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
          */
-        view.getNewVersusFixedTrend(isBuildOnXAxis, function (lineModel) {
-            echartsJenkinsApi.renderZoomableTrendChart('new-versus-fixed-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+        view.getNewVersusFixedTrend(configuration, function (lineModel) {
+            echartsJenkinsApi.renderZoomableTrendChart('new-versus-fixed-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
         });
 
         /**
@@ -107,8 +112,8 @@
          * Requires that a DOM <div> element exists with the ID '#health-trend-chart'.
          */
         if ($('#health-trend-chart').length) {
-            view.getHealthTrend(isBuildOnXAxis, function (lineModel) {
-                echartsJenkinsApi.renderZoomableTrendChart('health-trend-chart', lineModel.responseJSON, redrawTrendCharts);
+            view.getHealthTrend(configuration, function (lineModel) {
+                echartsJenkinsApi.renderZoomableTrendChart('health-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
             });
         }
     }
@@ -119,7 +124,7 @@
      *
      * @param {String} carouselId - ID of the carousel
      */
-    function storeAndRestoreCarousel(carouselId) {
+    function storeAndRestoreCarousel (carouselId) {
         const carousel = $('#' + carouselId);
         carousel.on('slid.bs.carousel', function (e) {
             localStorage.setItem(carouselId, e.to);
@@ -130,7 +135,7 @@
         });
         const activeCarousel = localStorage.getItem(carouselId);
         if (activeCarousel) {
-            const carouselControl = new bootstrap5.Carousel(carousel[0])
+            const carouselControl = new bootstrap5.Carousel(carousel[0]);
             carouselControl.to(parseInt(activeCarousel));
             carouselControl.pause();
         }

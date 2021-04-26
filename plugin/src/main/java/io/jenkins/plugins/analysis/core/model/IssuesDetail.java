@@ -16,7 +16,6 @@ import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
 import edu.hm.hafner.analysis.Severity;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
-import edu.hm.hafner.echarts.ChartModelConfiguration.AxisType;
 import edu.hm.hafner.echarts.JacksonFacade;
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -52,6 +51,7 @@ import io.jenkins.plugins.forensics.util.CommitDecoratorFactory;
 public class IssuesDetail extends DefaultAsyncTableContentProvider implements ModelObject {
     private static final ResetQualityGateCommand RESET_QUALITY_GATE_COMMAND = new ResetQualityGateCommand();
     private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
+    private static final String DEFAULT_CONFIGURATION = "{}";
 
     private final Run<?, ?> owner;
 
@@ -299,15 +299,25 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
      * @return the UI model as JSON
+     * @deprecated replaced by {@link #getBuildTrend(String)}
+     */
+    @Deprecated @SuppressWarnings("unused")
+    public String getBuildTrend(final boolean isBuildOnXAxis) {
+        return createTrendAsJson(new SeverityTrendChart(), DEFAULT_CONFIGURATION);
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues stacked by severity.
+     *
+     * @param configuration
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     *
+     * @return the UI model as JSON
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public String getBuildTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new SeverityTrendChart(), isBuildOnXAxis);
-    }
-
-    private ChartModelConfiguration createChartConfiguration(final boolean isBuildOnXAxis) {
-        return new ChartModelConfiguration(isBuildOnXAxis ? AxisType.BUILD : AxisType.DATE);
+    public String getBuildTrend(final String configuration) {
+        return createTrendAsJson(new SeverityTrendChart(), configuration);
     }
 
     /**
@@ -317,11 +327,25 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
      * @return the UI model as JSON
+     * @deprecated replaced by {@link #getToolsTrend(String)}
+     */
+    @Deprecated @SuppressWarnings("unused")
+    public String getToolsTrend(final boolean isBuildOnXAxis) {
+        return createTrendAsJson(new ToolsTrendChart(), DEFAULT_CONFIGURATION);
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     *
+     * @param configuration
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     *
+     * @return the UI model as JSON
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public String getToolsTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new ToolsTrendChart(), isBuildOnXAxis);
+    public String getToolsTrend(final String configuration) {
+        return createTrendAsJson(new ToolsTrendChart(), configuration);
     }
 
     /**
@@ -331,11 +355,25 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
      * @return the UI model as JSON
+     * @deprecated replaced by {@link #getNewVersusFixedTrend(String)}
+     */
+    @Deprecated @SuppressWarnings("unused")
+    public String getNewVersusFixedTrend(final boolean isBuildOnXAxis) {
+        return createTrendAsJson(new NewVersusFixedTrendChart(), DEFAULT_CONFIGURATION);
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the new and fixed issues.
+     *
+     * @param configuration
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     *
+     * @return the UI model as JSON
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public String getNewVersusFixedTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new NewVersusFixedTrendChart(), isBuildOnXAxis);
+    public String getNewVersusFixedTrend(final String configuration) {
+        return createTrendAsJson(new NewVersusFixedTrendChart(), configuration);
     }
 
     /**
@@ -345,11 +383,25 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
      *         determines whether the Jenkins build number should be used on the X-axis or the date
      *
      * @return the UI model as JSON
+     * @deprecated replaced by {@link #getHealthTrend(String)}
+     */
+    @Deprecated @SuppressWarnings("unused")
+    public String getHealthTrend(final boolean isBuildOnXAxis) {
+        return createTrendAsJson(new HealthTrendChart(healthDescriptor), DEFAULT_CONFIGURATION);
+    }
+
+    /**
+     * Returns the UI model for an ECharts line chart that shows the issues by tool.
+     *
+     * @param configuration
+     *         determines whether the Jenkins build number should be used on the X-axis or the date
+     *
+     * @return the UI model as JSON
      */
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
-    public String getHealthTrend(final boolean isBuildOnXAxis) {
-        return createTrendAsJson(new HealthTrendChart(healthDescriptor), isBuildOnXAxis);
+    public String getHealthTrend(final String configuration) {
+        return createTrendAsJson(new HealthTrendChart(healthDescriptor), configuration);
     }
 
     /**
@@ -362,10 +414,10 @@ public class IssuesDetail extends DefaultAsyncTableContentProvider implements Mo
         return healthDescriptor.isEnabled();
     }
 
-    private String createTrendAsJson(final TrendChart trendChart, final boolean isBuildOnXAxis) {
+    private String createTrendAsJson(final TrendChart trendChart, final String configuration) {
         History history = new AnalysisHistory(owner, new ByIdResultSelector(result.getId()));
 
-        return new JacksonFacade().toJson(trendChart.create(history, createChartConfiguration(isBuildOnXAxis)));
+        return new JacksonFacade().toJson(trendChart.create(history, ChartModelConfiguration.fromJson(configuration)));
     }
 
     /**
