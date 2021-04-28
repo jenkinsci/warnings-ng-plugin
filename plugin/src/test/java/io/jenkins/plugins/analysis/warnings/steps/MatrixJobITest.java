@@ -1,8 +1,10 @@
 package io.jenkins.plugins.analysis.warnings.steps;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.assertj.core.util.Strings;
 import org.junit.Test;
 
 import hudson.matrix.AxisList;
@@ -16,8 +18,9 @@ import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
+import io.jenkins.plugins.analysis.warnings.SpotBugs;
 
-import static edu.hm.hafner.analysis.assertions.Assertions.*;
+import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
 /**
  * Integration tests of the warnings plug-in in matrix jobs.
@@ -56,16 +59,72 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
         warningsPerAxis.put("two", 6);
         warningsPerAxis.put("three", 2);
 
-        MatrixBuild build = project.scheduleBuild2(0).get();
+        MatrixBuild build = buildSuccessfully(project);
         for (MatrixRun run : build.getRuns()) {
             getJenkins().assertBuildStatus(Result.SUCCESS, run);
 
             AnalysisResult result = getAnalysisResult(run);
 
-            String currentAxis = run.getBuildVariables().values().iterator().next();
+            String currentAxis = getAxisName(run);
             assertThat(result.getTotalSize()).as("Result of axis " + currentAxis).isEqualTo(warningsPerAxis.get(currentAxis));
         }
         AnalysisResult aggregation = getAnalysisResult(build);
         assertThat(aggregation.getTotalSize()).isEqualTo(12);
+    }
+
+    @Test
+    public void shouldReportNoNewWarningsForSameAxisResults() throws Exception {
+        MatrixProject project = createProject(MatrixProject.class);
+
+        copySingleFileToWorkspace(project, "spotbugsXml.xml", "user_axis/JDK8/spotbugs-issues.txt");
+        copySingleFileToWorkspace(project, "spotbugsXml.xml", "user_axis/JDK11/spotbugs-issues.txt");
+
+        enableGenericWarnings(project, new SpotBugs());
+
+        configureAxisLabels(project, "JDK8", "JDK11");
+
+        MatrixBuild build = buildSuccessfully(project);
+        verifyFirstBuild(build);
+
+        verifySecondBuild(buildSuccessfully(project));
+        verifySecondBuild(buildSuccessfully(project));
+    }
+
+    private void configureAxisLabels(final MatrixProject project, final String... axis) throws IOException {
+        project.setAxes(new AxisList(new TextAxis("user_axis", String.join(" ", axis))));
+    }
+
+    private MatrixBuild buildSuccessfully(final MatrixProject project) throws Exception {
+        MatrixBuild matrixBuild = project.scheduleBuild2(0).get();
+
+        getJenkins().assertBuildStatus(Result.SUCCESS, matrixBuild);
+
+        return matrixBuild;
+    }
+
+    private void verifyFirstBuild(final MatrixBuild build) throws Exception {
+        for (MatrixRun run : build.getRuns()) {
+            getJenkins().assertBuildStatus(Result.SUCCESS, run);
+
+            AnalysisResult result = getAnalysisResult(run);
+
+            String currentAxis = getAxisName(run);
+            assertThat(result.getTotalSize()).as("Result of axis " + currentAxis).isEqualTo(2);
+        }
+        AnalysisResult aggregation = getAnalysisResult(build);
+        assertThat(aggregation.getTotalSize()).isEqualTo(4);
+    }
+
+    private void verifySecondBuild(final MatrixBuild build) throws Exception {
+        for (MatrixRun run : build.getRuns()) {
+            getJenkins().assertBuildStatus(Result.SUCCESS, run);
+
+            assertThat(getAnalysisResult(run)).as("Result of axis %s", getAxisName(run)).hasTotalSize(2).hasNewSize(0);
+        }
+        assertThat(getAnalysisResult(build)).hasTotalSize(4).hasNewSize(0);
+    }
+
+    private String getAxisName(final MatrixRun run) {
+        return run.getBuildVariables().values().iterator().next();
     }
 }
