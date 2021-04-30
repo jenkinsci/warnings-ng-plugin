@@ -5,6 +5,7 @@ import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.utils.URIBuilder;
 
 import com.cloudbees.plugins.credentials.CredentialsMatchers;
 import com.cloudbees.plugins.credentials.CredentialsProvider;
@@ -44,6 +46,8 @@ import hudson.util.ListBoxModel;
 import hudson.util.Secret;
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugins.analysis.core.model.IconLabelProvider;
+import io.jenkins.plugins.analysis.core.model.StaticAnalysisLabelProvider;
 import io.jenkins.plugins.analysis.core.model.Tool;
 import io.jenkins.plugins.analysis.core.util.LogHandler;
 import io.jenkins.plugins.util.EnvironmentResolver;
@@ -59,6 +63,7 @@ public final class AxivionSuite extends Tool {
     private String projectUrl = StringUtils.EMPTY;
     private String credentialsId = StringUtils.EMPTY;
     private String basedir = "$";
+    private String namedFilter = StringUtils.EMPTY;
 
     @VisibleForTesting
     AxivionSuite(final String projectUrl, final String credentialsId, final String basedir) {
@@ -88,9 +93,28 @@ public final class AxivionSuite extends Tool {
         return projectUrl;
     }
 
+    /**
+     * Stapler setter for the projectUrl field.
+     * Verifies the url and encodes the path part e.g. whitespaces in project names.
+     *
+     * @param projectUrl url to a Axivion dashboard project
+     */
     @DataBoundSetter
     public void setProjectUrl(final String projectUrl) {
-        this.projectUrl = projectUrl;
+        try {
+            final URL url = new URL(projectUrl);
+            this.projectUrl = new URIBuilder()
+                    .setCharset(StandardCharsets.UTF_8)
+                    .setHost(url.getHost())
+                    .setPort(url.getPort())
+                    .setPath(url.getPath())
+                    .setScheme(url.getProtocol())
+                    .build()
+                    .toString();
+        }
+        catch (URISyntaxException | MalformedURLException e) {
+            throw new IllegalArgumentException("Not a valid project url.", e);
+        }
     }
 
     public String getCredentialsId() {
@@ -102,16 +126,26 @@ public final class AxivionSuite extends Tool {
         this.credentialsId = credentialsId;
     }
 
+    public String getNamedFilter() {
+        return this.namedFilter;
+    }
+
+    @DataBoundSetter
+    public void setNamedFilter(final String namedFilter) {
+        this.namedFilter = namedFilter;
+    }
+
     @Override
     public Report scan(final Run<?, ?> run, final FilePath workspace, final Charset sourceCodeEncoding,
             final LogHandler logger) throws ParsingException, ParsingCanceledException {
 
-        AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials());
+        AxivionDashboard dashboard = new RemoteAxivionDashboard(projectUrl, withValidCredentials(), namedFilter);
         AxivionParser parser = new AxivionParser(projectUrl, expandBaseDir(run, basedir));
 
         Report report = new Report(ID, NAME);
-        report.logInfo("Axivion webservice: " + projectUrl);
-        report.logInfo("Local basedir: " + basedir);
+        report.logInfo("Axivion webservice: %s", projectUrl);
+        report.logInfo("Local basedir: %s", basedir);
+        report.logInfo("Named Filter: %s", namedFilter);
 
         for (AxIssueKind kind : AxIssueKind.values()) {
             final JsonObject payload = dashboard.getIssues(kind);
@@ -157,6 +191,14 @@ public final class AxivionSuite extends Tool {
         return expandedBasedir;
     }
 
+    /** Provides the Axivion icons. */
+    private static class LabelProvider extends IconLabelProvider {
+
+        LabelProvider() {
+            super(ID, "Axivion Suite", EMPTY_DESCRIPTION, "axivion");
+        }
+    }
+
     /** Descriptor for {@link AxivionSuite}. * */
     @Symbol({"axivionSuite", "axivion"})
     @Extension
@@ -178,6 +220,11 @@ public final class AxivionSuite extends Tool {
         @Override
         public String getHelp() {
             return "For using Axivion Suite, set up your analysis project and the web service. Provide the URL and credentials.";
+        }
+
+        @Override
+        public StaticAnalysisLabelProvider getLabelProvider() {
+            return new LabelProvider();
         }
 
         /**
