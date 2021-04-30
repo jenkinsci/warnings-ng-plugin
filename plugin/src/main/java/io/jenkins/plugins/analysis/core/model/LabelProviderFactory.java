@@ -61,7 +61,7 @@ public class LabelProviderFactory {
     public StaticAnalysisLabelProvider create(final String id, @CheckForNull final String name) {
         DescriptorExtensionList<Tool, ToolDescriptor> extensions = jenkins.getDescriptorsFor(Tool.class);
         for (ToolDescriptor descriptor : extensions) {
-            if (descriptor.getId().equals(id)) {
+            if (descriptor.describes(id)) {
                 return createNamedLabelProvider(descriptor.getLabelProvider(), name);
             }
         }

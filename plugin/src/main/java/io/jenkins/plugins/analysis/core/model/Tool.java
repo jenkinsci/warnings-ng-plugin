@@ -254,5 +254,9 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         public boolean isPostProcessingEnabled() {
             return true;
         }
+
+        public boolean describes(String id) {
+            return getId().equals(id);
+        }
     }
 }
