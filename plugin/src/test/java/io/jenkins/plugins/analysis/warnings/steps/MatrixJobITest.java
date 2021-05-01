@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.assertj.core.util.Strings;
 import org.junit.Test;
 
 import hudson.matrix.AxisList;
@@ -72,6 +71,11 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(aggregation.getTotalSize()).isEqualTo(12);
     }
 
+    /**
+     * Verifies that in a matrix build that produces the same results for each axis no new warnings are shown.
+     *
+     * @throws Exception in case of an error
+     */
     @Test
     public void shouldReportNoNewWarningsForSameAxisResults() throws Exception {
         MatrixProject project = createProject(MatrixProject.class);
@@ -112,7 +116,7 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
             assertThat(result.getTotalSize()).as("Result of axis " + currentAxis).isEqualTo(2);
         }
         AnalysisResult aggregation = getAnalysisResult(build);
-        assertThat(aggregation.getTotalSize()).isEqualTo(4);
+        assertThat(aggregation.getTotalSize()).isEqualTo(2);
     }
 
     private void verifySecondBuild(final MatrixBuild build) throws Exception {
@@ -121,7 +125,7 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
 
             assertThat(getAnalysisResult(run)).as("Result of axis %s", getAxisName(run)).hasTotalSize(2).hasNewSize(0);
         }
-        assertThat(getAnalysisResult(build)).hasTotalSize(4).hasNewSize(0);
+        assertThat(getAnalysisResult(build)).hasTotalSize(2).hasNewSize(0);
     }
 
     private String getAxisName(final MatrixRun run) {
