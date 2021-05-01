@@ -14,7 +14,6 @@ import hudson.matrix.TextAxis;
 import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
-import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.warnings.Gcc4;
 import io.jenkins.plugins.analysis.warnings.SpotBugs;
@@ -39,19 +38,12 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldCreateIndividualAxisResults() throws Exception {
         MatrixProject project = createProject(MatrixProject.class);
-        copySingleFileToWorkspace(project, "matrix-warnings-one.txt", "user_axis/one/warnings.txt");
-        copySingleFileToWorkspace(project, "matrix-warnings-two.txt", "user_axis/two/warnings.txt");
-        copySingleFileToWorkspace(project, "matrix-warnings-three.txt", "user_axis/three/warnings.txt");
-        IssuesRecorder publisher = new IssuesRecorder();
-        Gcc4 tool = new Gcc4();
-        tool.setPattern("**/*.txt");
-        publisher.setTools(tool);
-        project.getPublishersList().add(publisher);
+        copySingleFileToWorkspace(project, "matrix-warnings-one.txt", "user_axis/one/issues.txt");
+        copySingleFileToWorkspace(project, "matrix-warnings-two.txt", "user_axis/two/issues.txt");
+        copySingleFileToWorkspace(project, "matrix-warnings-three.txt", "user_axis/three/issues.txt");
 
-        AxisList axis = new AxisList();
-        TextAxis userAxis = new TextAxis("user_axis", "one two three");
-        axis.add(userAxis);
-        project.setAxes(axis);
+        enableGenericWarnings(project, new Gcc4());
+        configureAxisLabels(project, "one", "two", "three");
 
         Map<String, Integer> warningsPerAxis = new HashMap<>();
         warningsPerAxis.put("one", 4);
@@ -60,11 +52,11 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
 
         MatrixBuild build = buildSuccessfully(project);
         for (MatrixRun run : build.getRuns()) {
-            getJenkins().assertBuildStatus(Result.SUCCESS, run);
+            assertSuccessfulBuild(run);
 
             AnalysisResult result = getAnalysisResult(run);
-
             String currentAxis = getAxisName(run);
+
             assertThat(result.getTotalSize()).as("Result of axis " + currentAxis).isEqualTo(warningsPerAxis.get(currentAxis));
         }
         AnalysisResult aggregation = getAnalysisResult(build);
@@ -75,6 +67,7 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
      * Verifies that in a matrix build that produces the same results for each axis no new warnings are shown.
      *
      * @throws Exception in case of an error
+     * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-65482">Issue 65482</a>
      */
     @Test
     public void shouldReportNoNewWarningsForSameAxisResults() throws Exception {
@@ -108,11 +101,11 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void verifyFirstBuild(final MatrixBuild build) throws Exception {
         for (MatrixRun run : build.getRuns()) {
-            getJenkins().assertBuildStatus(Result.SUCCESS, run);
+            assertSuccessfulBuild(run);
 
             AnalysisResult result = getAnalysisResult(run);
-
             String currentAxis = getAxisName(run);
+
             assertThat(result.getTotalSize()).as("Result of axis " + currentAxis).isEqualTo(2);
         }
         AnalysisResult aggregation = getAnalysisResult(build);
@@ -121,7 +114,7 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
 
     private void verifySecondBuild(final MatrixBuild build) throws Exception {
         for (MatrixRun run : build.getRuns()) {
-            getJenkins().assertBuildStatus(Result.SUCCESS, run);
+            assertSuccessfulBuild(run);
 
             assertThat(getAnalysisResult(run)).as("Result of axis %s", getAxisName(run)).hasTotalSize(2).hasNewSize(0);
         }
@@ -130,5 +123,9 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
 
     private String getAxisName(final MatrixRun run) {
         return run.getBuildVariables().values().iterator().next();
+    }
+
+    private void assertSuccessfulBuild(final MatrixRun run) throws Exception {
+        getJenkins().assertBuildStatus(Result.SUCCESS, run);
     }
 }
