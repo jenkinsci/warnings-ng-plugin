@@ -11,7 +11,6 @@ import hudson.matrix.MatrixBuild;
 import hudson.matrix.MatrixProject;
 import hudson.matrix.MatrixRun;
 import hudson.matrix.TextAxis;
-import hudson.model.Result;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -31,12 +30,10 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
      * with the same parser (GCC). After the successful build the total number of warnings at the root level should be
      * set to 12 (sum of all three configurations). Moreover, for each configuration the total number of warnings is
      * also verified (4, 6, and 2 warnings).
-     *
-     * @throws Exception in case of an error
      */
     @SuppressWarnings("PMD.SignatureDeclareThrowsException")
     @Test
-    public void shouldCreateIndividualAxisResults() throws Exception {
+    public void shouldCreateIndividualAxisResults() {
         MatrixProject project = createProject(MatrixProject.class);
         copySingleFileToWorkspace(project, "matrix-warnings-one.txt", "user_axis/one/issues.txt");
         copySingleFileToWorkspace(project, "matrix-warnings-two.txt", "user_axis/two/issues.txt");
@@ -57,7 +54,9 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
             AnalysisResult result = getAnalysisResult(run);
             String currentAxis = getAxisName(run);
 
-            assertThat(result.getTotalSize()).as("Result of axis " + currentAxis).isEqualTo(warningsPerAxis.get(currentAxis));
+            assertThat(result.getTotalSize())
+                    .as("Result of axis " + currentAxis)
+                    .isEqualTo(warningsPerAxis.get(currentAxis));
         }
         AnalysisResult aggregation = getAnalysisResult(build);
         assertThat(aggregation.getTotalSize()).isEqualTo(12);
@@ -66,11 +65,10 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
     /**
      * Verifies that in a matrix build that produces the same results for each axis no new warnings are shown.
      *
-     * @throws Exception in case of an error
      * @see <a href="https://issues.jenkins-ci.org/browse/JENKINS-65482">Issue 65482</a>
      */
     @Test
-    public void shouldReportNoNewWarningsForSameAxisResults() throws Exception {
+    public void shouldReportNoNewWarningsForSameAxisResults() {
         MatrixProject project = createProject(MatrixProject.class);
 
         copySingleFileToWorkspace(project, "spotbugsXml.xml", "user_axis/JDK8/spotbugs-issues.txt");
@@ -87,32 +85,31 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
         verifySecondBuild(buildSuccessfully(project));
     }
 
-    private void configureAxisLabels(final MatrixProject project, final String... axis) throws IOException {
-        project.setAxes(new AxisList(new TextAxis("user_axis", String.join(" ", axis))));
+    private void configureAxisLabels(final MatrixProject project, final String... axis) {
+        try {
+            project.setAxes(new AxisList(new TextAxis("user_axis", String.join(" ", axis))));
+        }
+        catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
     }
 
-    private MatrixBuild buildSuccessfully(final MatrixProject project) throws Exception {
-        MatrixBuild matrixBuild = project.scheduleBuild2(0).get();
-
-        getJenkins().assertBuildStatus(Result.SUCCESS, matrixBuild);
-
-        return matrixBuild;
-    }
-
-    private void verifyFirstBuild(final MatrixBuild build) throws Exception {
+    private void verifyFirstBuild(final MatrixBuild build) {
         for (MatrixRun run : build.getRuns()) {
             assertSuccessfulBuild(run);
 
             AnalysisResult result = getAnalysisResult(run);
             String currentAxis = getAxisName(run);
 
-            assertThat(result.getTotalSize()).as("Result of axis " + currentAxis).isEqualTo(2);
+            assertThat(result.getTotalSize())
+                    .as("Result of axis " + currentAxis)
+                    .isEqualTo(2);
         }
-        AnalysisResult aggregation = getAnalysisResult(build);
-        assertThat(aggregation.getTotalSize()).isEqualTo(2);
+
+        assertThat(getAnalysisResult(build).getTotalSize()).isEqualTo(2);
     }
 
-    private void verifySecondBuild(final MatrixBuild build) throws Exception {
+    private void verifySecondBuild(final MatrixBuild build) {
         for (MatrixRun run : build.getRuns()) {
             assertSuccessfulBuild(run);
 
@@ -123,9 +120,5 @@ public class MatrixJobITest extends IntegrationTestWithJenkinsPerSuite {
 
     private String getAxisName(final MatrixRun run) {
         return run.getBuildVariables().values().iterator().next();
-    }
-
-    private void assertSuccessfulBuild(final MatrixRun run) throws Exception {
-        getJenkins().assertBuildStatus(Result.SUCCESS, run);
     }
 }
