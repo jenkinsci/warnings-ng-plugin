@@ -286,6 +286,7 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
      *
      * @return {@code true} if the result is successful, {@code false} if the result has been set to {@link
      *         Result#UNSTABLE} or {@link Result#FAILURE}.
+     * @see QualityGateEvaluator
      */
     @Whitelisted
     public boolean isSuccessful() {

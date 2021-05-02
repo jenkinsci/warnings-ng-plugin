@@ -517,6 +517,7 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
      *
      * @return {@code true} if the static analysis result is successful, {@code false} if the static analysis result is
      *         {@link QualityGateStatus#WARNING} or {@link QualityGateStatus#FAILED}
+     * @see QualityGateEvaluator
      */
     public boolean isSuccessful() {
         return qualityGateStatus.isSuccessful();
