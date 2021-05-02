@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.4.0</version>
+    <version>5.6.0</version>
     <relativePath />
   </parent>
 
@@ -21,7 +21,7 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>9.0.2</revision>
+    <revision>9.1.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
@@ -33,7 +33,7 @@
     <plugin-util-api.version>2.1.0</plugin-util-api.version>
 
     <data-tables-api.version>1.10.23-3</data-tables-api.version>
-    <echarts-api.version>5.0.2-1</echarts-api.version>
+    <echarts-api.version>5.1.0-2</echarts-api.version>
     <font-awesome-api.version>5.15.2-2</font-awesome-api.version>
     <jquery3-api.version>3.6.0-1</jquery3-api.version>
     <bootstrap4-api.version>4.6.0-3</bootstrap4-api.version>
@@ -48,7 +48,7 @@
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.8.2</xmlunit.version>
     <jsoup.version>1.13.1</jsoup.version>
-    <json-smart.version>2.4.2</json-smart.version>
+    <json-smart.version>2.4.6</json-smart.version>
     <jmh.version>1.29</jmh.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
@@ -62,7 +62,7 @@
     <dashboard-view.version>2.15</dashboard-view.version>
     <script-security.version>1.76</script-security.version>
     <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
-    <configuration-as-code.version>1.47</configuration-as-code.version>
+    <configuration-as-code.version>1.48</configuration-as-code.version>
     <job-dsl.version>1.77</job-dsl.version>
     <envinject.version>2.3.0</envinject.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
@@ -75,7 +75,7 @@
     <folder.version>6.15</folder.version>
     <scm-api.version>2.6.4</scm-api.version>
     <checks-api.version>1.7.0</checks-api.version>
-    <credentials.version>2.3.17</credentials.version>
+    <credentials.version>2.3.18</credentials.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
