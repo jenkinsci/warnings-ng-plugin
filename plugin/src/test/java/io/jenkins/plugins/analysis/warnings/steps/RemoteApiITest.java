@@ -77,7 +77,7 @@ public class RemoteApiITest extends IntegrationTestWithJenkinsPerSuite {
                 .areIdentical();
     }
 
-    /**
+    /*
      * Tests the xpath navigation within the xml api.
      */
     @Test
