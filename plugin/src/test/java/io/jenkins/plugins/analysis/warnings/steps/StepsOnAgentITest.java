@@ -31,7 +31,7 @@ public class StepsOnAgentITest extends IntegrationTestWithJenkinsPerTest {
     private static final String JAVA_CONTENT = "public class Test {}";
 
     /**
-     * Verifies that affected source files are copied to Jenkins build folder, even if the master - agent security is
+     * Verifies that affected source files are copied to Jenkins build folder, even if the controller - agent security is
      * active, see JENKINS-56007 for details.
      */
     @Test

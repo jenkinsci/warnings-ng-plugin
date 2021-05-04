@@ -281,7 +281,7 @@ recordIssues sourceCodeEncoding: 'ISO-8859-1', sourceDirectory: '/path/to/source
 ```
 
 Note that the content of files outside of the workspace might be sensitive. In order 
-to prevent showing such files by accident you need to provide a whitelist of allowed source code directories 
+to prevent showing such files by accident you need to provide an allowlist of allowed source code directories 
 in Jenkins system configuration screen:
 
 ![source directory configuration](images/source-directories-white-list.png) 

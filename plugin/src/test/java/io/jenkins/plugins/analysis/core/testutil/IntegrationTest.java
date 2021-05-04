@@ -338,7 +338,7 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Creates an {@link DumbSlave agent} with the specified label. Master - agent security will be enabled.
+     * Creates an {@link DumbSlave agent} with the specified label. Controller - agent security will be enabled.
      *
      * @param label
      *         the label of the agent
