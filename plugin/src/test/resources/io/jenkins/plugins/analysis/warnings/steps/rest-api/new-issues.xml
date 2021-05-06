@@ -87,5 +87,5 @@
     <type>RightCurlyCheck</type>
   </issue>
   <size>3</size>
-  <toString>- (-): 3 issues (0 duplicates)</toString>
+  <toString>CheckStyle (checkstyle): 3 issues (0 duplicates)</toString>
 </reportApi>
