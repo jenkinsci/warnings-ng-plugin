@@ -326,14 +326,15 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
 
         assertThat(baselineResult).hasNewSize(0);
         assertThat(baselineResult).hasFixedSize(0);
-        assertThat(baselineResult).hasTotalSize(13);
+        assertThat(baselineResult).hasTotalSize(8);
 
         // Second build: actual result
         recorder.setTools(createEclipse("eclipse_5_Warnings-issues.txt"));
         AnalysisResult result = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
 
         assertThat(result).hasNewSize(0);
-        assertThat(result).hasFixedSize(8);
+        assertThat(result).hasFixedSize(3);
+        assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
     }

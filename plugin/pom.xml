@@ -26,8 +26,8 @@
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>10.0.0</analysis-model-api.version>
-    <analysis-model-tests.version>10.0.0</analysis-model-tests.version>
+    <analysis-model-api.version>10.2.4-rc427.557e40230f72</analysis-model-api.version>
+    <analysis-model-tests.version>10.2.4</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.1.0</plugin-util-api.version>
@@ -62,7 +62,7 @@
     <dashboard-view.version>2.15</dashboard-view.version>
     <script-security.version>1.76</script-security.version>
     <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
-    <configuration-as-code.version>1.49</configuration-as-code.version>
+    <configuration-as-code.version>1.47</configuration-as-code.version>
     <job-dsl.version>1.77</job-dsl.version>
     <envinject.version>2.3.0</envinject.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>

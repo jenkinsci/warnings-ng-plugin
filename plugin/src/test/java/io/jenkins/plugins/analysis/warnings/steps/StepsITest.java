@@ -739,6 +739,9 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).hasSize(8);
         assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
+
+        AnalysisResult second = scheduleSuccessfulBuild(job);
+        assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
     }
 
     /**
