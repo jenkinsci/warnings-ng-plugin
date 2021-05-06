@@ -118,5 +118,5 @@
     <type>DesignForExtensionCheck</type>
   </issue>
   <size>4</size>
-  <toString>CheckStyle (checkstyle): 4 issues (0 duplicates)</toString>
+  <toString>- (-): 4 issues (0 duplicates)</toString>
 </reportApi>

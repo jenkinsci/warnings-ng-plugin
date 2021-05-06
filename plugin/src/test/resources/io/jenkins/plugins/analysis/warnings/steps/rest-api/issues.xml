@@ -9,7 +9,9 @@
     <columnStart>5</columnStart>
     <commit>-</commit>
     <description></description>
-    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</fileName>
+    <fileName>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
+    </fileName>
     <fingerprint>FALLBACK-f5732527</fingerprint>
     <lineEnd>17</lineEnd>
     <lineStart>17</lineStart>
@@ -20,7 +22,11 @@
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>
-    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5): DesignForExtensionCheck: Design: Die Methode 'accepts' ist nicht für Vererbung entworfen - muss abstract, final oder leer sein.</toString>
+    <toString>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(17,5):
+      DesignForExtensionCheck: Design: Die Methode 'accepts' ist nicht für Vererbung entworfen - muss abstract, final
+      oder leer sein.
+    </toString>
     <type>DesignForExtensionCheck</type>
   </issue>
   <issue>
@@ -33,7 +39,9 @@
     <columnStart>0</columnStart>
     <commit>-</commit>
     <description></description>
-    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</fileName>
+    <fileName>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
+    </fileName>
     <fingerprint>FALLBACK-19b1fd7e</fingerprint>
     <lineEnd>42</lineEnd>
     <lineStart>42</lineStart>
@@ -44,7 +52,10 @@
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>
-    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(42,0): LineLengthCheck: Sizes: Zeile länger als 80 Zeichen</toString>
+    <toString>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(42,0):
+      LineLengthCheck: Sizes: Zeile länger als 80 Zeichen
+    </toString>
     <type>LineLengthCheck</type>
   </issue>
   <issue>
@@ -57,18 +68,25 @@
     <columnStart>5</columnStart>
     <commit>-</commit>
     <description></description>
-    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</fileName>
+    <fileName>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
+    </fileName>
     <fingerprint>FALLBACK-f573252c</fingerprint>
     <lineEnd>22</lineEnd>
     <lineStart>22</lineStart>
-    <message>Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein.</message>
+    <message>Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein.
+    </message>
     <moduleName></moduleName>
     <origin>checkstyle</origin>
     <originName>CheckStyle</originName>
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>
-    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5): DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract, final oder leer sein.</toString>
+    <toString>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(22,5):
+      DesignForExtensionCheck: Design: Die Methode 'detectPackageName' ist nicht fr Vererbung entworfen - muss abstract,
+      final oder leer sein.
+    </toString>
     <type>DesignForExtensionCheck</type>
   </issue>
   <issue>
@@ -81,7 +99,9 @@
     <columnStart>0</columnStart>
     <commit>-</commit>
     <description></description>
-    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</fileName>
+    <fileName>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
+    </fileName>
     <fingerprint>FALLBACK-19b1fd71</fingerprint>
     <lineEnd>29</lineEnd>
     <lineStart>29</lineStart>
@@ -92,7 +112,10 @@
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>
-    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(29,0): LineLengthCheck: Sizes: Zeile länger als 80 Zeichen</toString>
+    <toString>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(29,0):
+      LineLengthCheck: Sizes: Zeile länger als 80 Zeichen
+    </toString>
     <type>LineLengthCheck</type>
   </issue>
   <issue>
@@ -105,7 +128,9 @@
     <columnStart>21</columnStart>
     <commit>-</commit>
     <description></description>
-    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</fileName>
+    <fileName>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
+    </fileName>
     <fingerprint>FALLBACK-15af470f</fingerprint>
     <lineEnd>30</lineEnd>
     <lineStart>30</lineStart>
@@ -116,7 +141,10 @@
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>
-    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(30,21): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.</toString>
+    <toString>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(30,21):
+      RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.
+    </toString>
     <type>RightCurlyCheck</type>
   </issue>
   <issue>
@@ -129,7 +157,9 @@
     <columnStart>9</columnStart>
     <commit>-</commit>
     <description></description>
-    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java</fileName>
+    <fileName>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java
+    </fileName>
     <fingerprint>FALLBACK-15af4716</fingerprint>
     <lineEnd>37</lineEnd>
     <lineStart>37</lineStart>
@@ -140,7 +170,10 @@
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>
-    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(37,9): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.</toString>
+    <toString>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/parser/CsharpNamespaceDetector.java(37,9):
+      RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.
+    </toString>
     <type>RightCurlyCheck</type>
   </issue>
   <issue>
@@ -153,7 +186,9 @@
     <columnStart>9</columnStart>
     <commit>-</commit>
     <description></description>
-    <fileName>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/test/CategoryBuildResultGraph.java</fileName>
+    <fileName>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/test/CategoryBuildResultGraph.java
+    </fileName>
     <fingerprint>FALLBACK-c9aec941</fingerprint>
     <lineEnd>99</lineEnd>
     <lineStart>99</lineStart>
@@ -164,10 +199,12 @@
     <packageName>-</packageName>
     <reference>1</reference>
     <severity>ERROR</severity>
-    <toString>X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/test/CategoryBuildResultGraph.java(99,9): RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.</toString>
+    <toString>
+      X:/Build/Results/jobs/Maven/workspace/tasks/src/main/java/hudson/plugins/tasks/test/CategoryBuildResultGraph.java(99,9):
+      RightCurlyCheck: Blocks: '}' sollte in derselben Zeile stehen.
+    </toString>
     <type>RightCurlyCheck</type>
   </issue>
   <size>7</size>
-  <toString>CheckStyle (checkstyle): 7 issues (0 duplicates)</toString>
+  <toString>- (-): 7 issues (0 duplicates)</toString>
 </reportApi>
-
