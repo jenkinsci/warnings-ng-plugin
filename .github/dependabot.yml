@@ -30,8 +30,16 @@ updates:
       - dependency-name: org.webjars:popper.js
         versions:
           - ">= 2.0.0"
+      - dependency-name: org.webjars:bootstrap
+        versions:
+          - ">= 5.0.0"
 
   - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "daily"
