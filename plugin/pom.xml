@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.6.0</version>
+    <version>5.7.0</version>
     <relativePath />
   </parent>
 
@@ -21,13 +21,13 @@
   <url>https://github.com/jenkinsci/warnings-ng-plugin</url>
 
   <properties>
-    <revision>9.0.2</revision>
+    <revision>9.2.0</revision>
     <changelist>-SNAPSHOT</changelist>
 
     <module.name>${project.groupId}.warnings.ng</module.name>
 
-    <analysis-model-api.version>10.0.0</analysis-model-api.version>
-    <analysis-model-tests.version>10.0.0</analysis-model-tests.version>
+    <analysis-model-api.version>10.2.5</analysis-model-api.version>
+    <analysis-model-tests.version>10.2.5</analysis-model-tests.version>
 
     <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.1.0</plugin-util-api.version>
@@ -46,8 +46,8 @@
     <!-- Test Library Dependencies Versions -->
     <xmlunit.version>2.8.2</xmlunit.version>
     <jsoup.version>1.13.1</jsoup.version>
-    <json-smart.version>2.4.2</json-smart.version>
-    <jmh.version>1.29</jmh.version>
+    <json-smart.version>2.4.7</json-smart.version>
+    <jmh.version>1.30</jmh.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
@@ -73,7 +73,7 @@
     <folder.version>6.15</folder.version>
     <scm-api.version>2.6.4</scm-api.version>
     <checks-api.version>1.7.0</checks-api.version>
-    <credentials.version>2.3.17</credentials.version>
+    <credentials.version>2.3.18</credentials.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>

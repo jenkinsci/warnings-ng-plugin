@@ -56,6 +56,8 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 import org.jenkinsci.test.acceptance.docker.DockerContainer;
 import hudson.FilePath;
 import hudson.Functions;
+import hudson.matrix.MatrixBuild;
+import hudson.matrix.MatrixProject;
 import hudson.maven.MavenModuleSet;
 import hudson.model.AbstractProject;
 import hudson.model.Action;
@@ -338,7 +340,7 @@ public abstract class IntegrationTest extends ResourceTest {
     }
 
     /**
-     * Creates an {@link DumbSlave agent} with the specified label. Master - agent security will be enabled.
+     * Creates an {@link DumbSlave agent} with the specified label. Controller - agent security will be enabled.
      *
      * @param label
      *         the label of the agent
@@ -864,6 +866,44 @@ public abstract class IntegrationTest extends ResourceTest {
     protected Run<?, ?> buildSuccessfully(final ParameterizedJob<?, ?> job) {
         return buildWithResult(job, Result.SUCCESS);
     }
+
+    /**
+     * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the
+     * builds result is checked to be equals to {@link Result#SUCCESS}.
+     *
+     * @param project
+     *         the project to schedule
+     *
+     * @return the finished build with status {@link Result#SUCCESS}
+     */
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    protected MatrixBuild buildSuccessfully(final MatrixProject project) {
+        try {
+            MatrixBuild matrixBuild = project.scheduleBuild2(0).get();
+            getJenkins().assertBuildStatus(Result.SUCCESS, matrixBuild);
+            return matrixBuild;
+        }
+        catch (Exception exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
+    /**
+     * Asserts that the builds result is equal to {@link Result#SUCCESS}.
+     *
+     * @param run
+     *         the run to check
+     */
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    protected void assertSuccessfulBuild(final Run<?, ?> run) {
+        try {
+            getJenkins().assertBuildStatus(Result.SUCCESS, run);
+        }
+        catch (Exception exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
 
     /**
      * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the

@@ -12,6 +12,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateEvaluator;
  * order to restart the new issue computation.
  *
  * @author Ullrich Hafner
+ * @see QualityGateEvaluator
  */
 public class ResetReferenceAction implements Action {
     private final String id;

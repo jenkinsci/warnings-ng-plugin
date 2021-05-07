@@ -38,12 +38,19 @@ class RemoteAxivionDashboard implements AxivionDashboard {
     private final String projectUrl;
     private final UsernamePasswordCredentials credentials;
 
-    RemoteAxivionDashboard(final String projectUrl, final UsernamePasswordCredentials credentials) {
+    private final String namedFilter;
+
+    RemoteAxivionDashboard(
+            final String projectUrl,
+            final UsernamePasswordCredentials credentials,
+            final String namedFilter) {
         this.projectUrl = projectUrl;
         this.credentials = credentials;
+        this.namedFilter = namedFilter;
     }
 
-    @Override @SuppressFBWarnings("RCN")
+    @Override
+    @SuppressFBWarnings("RCN")
     public JsonObject getIssues(final AxIssueKind kind) {
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY, credentials);
@@ -53,6 +60,9 @@ class RemoteAxivionDashboard implements AxivionDashboard {
 
             URIBuilder uriBuilder = new URIBuilder(projectUrl + "/issues");
             uriBuilder.setParameter("kind", kind.toString());
+            if (!namedFilter.isEmpty()) {
+                uriBuilder.setParameter("namedFilter", namedFilter);
+            }
             HttpGet httpget = new HttpGet(uriBuilder.build());
             httpget.addHeader(new BasicHeader("Accept", "application/json"));
             BasicHeader userAgent = new BasicHeader(X_AXIVION_USER_AGENT, API_USER_AGENT);

@@ -66,7 +66,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
 
     /**
-     * Runs a pipeline and verifies the {@code scanForIssues} step has some whitelisted methods.
+     * Runs a pipeline and verifies the {@code scanForIssues} step has some allowlisted methods.
      */
     @Test
     public void shouldParseCheckstyleUsingTheParserRegistry() {
@@ -105,7 +105,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs a pipeline and verifies the {@code recordIssues} step has some whitelisted methods.
+     * Runs a pipeline and verifies the {@code recordIssues} step has some allowlisted methods.
      */
     @Test @org.jvnet.hudson.test.Issue("JENKINS-63109")
     public void shouldWhitelistRecorderApi() {
@@ -192,7 +192,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     * Runs a pipeline and verifies the {@code publishIssues} step has whitelisted methods.
+     * Runs a pipeline and verifies the {@code publishIssues} step has allowlisted methods.
      */
     @Test
     public void shouldWhitelistPublisherApi() {
@@ -739,6 +739,9 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         AnalysisResult result = action.getResult();
         assertThat(result.getIssues()).hasSize(8);
         assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
+
+        AnalysisResult second = scheduleSuccessfulBuild(job);
+        assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
     }
 
     /**
@@ -968,8 +971,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
     /**
      * Verifies that parsers based on Digester are not vulnerable to an XXE attack. Previous versions allowed any user
-     * with an ability to configure a job to read any file from the Jenkins Master (even on hardened systems where
-     * execution on master is disabled).
+     * with an ability to configure a job to read any file from the Jenkins Controller (even on hardened systems where
+     * execution on controller is disabled).
      *
      * @see <a href="https://jenkins.io/security/advisory/2018-01-22/">Jenkins Security Advisory 2018-01-22</a>
      */

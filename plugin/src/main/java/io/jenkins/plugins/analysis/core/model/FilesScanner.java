@@ -22,7 +22,7 @@ import io.jenkins.plugins.analysis.core.util.ModelValidation;
 
 /**
  * Scans files that match a specified Ant files pattern for issues and aggregates the found issues into a single {@link
- * Report issues} instance. This callable will be invoked on a slave agent so all fields and the returned issues need to
+ * Report issues} instance. This callable will be invoked on an agent so all fields and the returned issues need to
  * be {@link Serializable}.
  *
  * @author Ullrich Hafner
