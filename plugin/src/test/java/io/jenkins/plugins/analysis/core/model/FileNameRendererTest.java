@@ -41,7 +41,7 @@ class FileNameRendererTest {
 
         Issue issue = new IssueBuilder().setFileName("/path/to/affected/file.txt").setLineStart(20).build();
 
-        assertThat(renderer.renderAffectedFileLink(issue)).matches("<a href=\"source\\.[0-9a-f-]+/#20\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"/path/to/affected/file.txt\">file.txt:20</a>");
+        assertThat(renderer.renderAffectedFileLink(issue)).matches("<a href=\"source\\.[0-9a-f-]+/#20\" data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" title=\"/path/to/affected/file.txt\">file.txt:20</a>");
         assertThat(renderer.renderAffectedFileLink(issue)).contains(issue.getId().toString());
     }
 

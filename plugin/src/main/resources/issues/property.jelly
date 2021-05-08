@@ -41,7 +41,7 @@
               <tr>
                 <td>
                   <a href="${t.property}.${key.hashCode()}/"
-                     data-bs-toggle="tooltip" data-bs-placement="right" title="${t.getToolTip(key)}">
+                     data-bs-toggle="tooltip" data-bs-placement="left" title="${t.getToolTip(key)}">
                     ${t.getDisplayName(key)}</a>
                 </td>
                 <td class="text-right">${count}</td>

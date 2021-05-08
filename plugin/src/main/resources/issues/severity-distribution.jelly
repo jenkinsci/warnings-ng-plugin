@@ -23,19 +23,19 @@
     <div title="${container.toolTip}">
         <j:if test="${error > 0}">
             <span class="bar-graph severity-error severity-error--hover" style="width:${error / max * 100}%"
-                  data-bs-toggle="tooltip" data-bs-placement="bottom" title="${%error.tooltip(error)}">.</span>
+                  data-bs-toggle="tooltip" data-bs-placement="left" title="${%error.tooltip(error)}">.</span>
         </j:if>
         <j:if test="${high > 0}">
             <span class="bar-graph severity-high severity-high--hover" style="width:${high / max * 100}%"
-                  data-bs-toggle="tooltip" data-bs-placement="bottom" title="${%high.tooltip(high)}">.</span>
+                  data-bs-toggle="tooltip" data-bs-placement="left" title="${%high.tooltip(high)}">.</span>
         </j:if>
         <j:if test="${normal > 0}">
             <span class="bar-graph severity-normal severity-normal--hover" style="width:${normal / max * 100}%"
-                  data-bs-toggle="tooltip" data-bs-placement="bottom" title="${%normal.tooltip(normal)}">.</span>
+                  data-bs-toggle="tooltip" data-bs-placement="left" title="${%normal.tooltip(normal)}">.</span>
         </j:if>
         <j:if test="${low > 0}">
             <span class="bar-graph severity-low severity-low--hover" style="width:${low / max * 100}%"
-                  data-bs-toggle="tooltip" data-bs-placement="bottom" title="${%low.tooltip(low)}">.</span>
+                  data-bs-toggle="tooltip" data-bs-placement="left" title="${%low.tooltip(low)}">.</span>
         </j:if>
     </div>
 

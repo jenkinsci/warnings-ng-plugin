@@ -72,7 +72,7 @@ public abstract class AbstractDetailsModelTest {
      * @return the file name column
      */
     protected String createExpectedFileName(final Issue issue) {
-        return String.format("<a href=\"source.%s/#15\" data-toggle=\"tooltip\" data-placement=\"bottom\" title=\"/path/to/file-1\">file-1:15</a>", issue.getId().toString());
+        return String.format("<a href=\"source.%s/#15\" data-bs-toggle=\"tooltip\" data-bs-placement=\"left\" title=\"/path/to/file-1\">file-1:15</a>", issue.getId().toString());
     }
 
     /**
