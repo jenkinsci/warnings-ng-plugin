@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:issues="/issues" xmlns:dt="/data-tables" xmlns:c="/charts" xmlns:bs="/bootstrap5">
+<j:jelly xmlns:j="jelly:core" xmlns:issues="/issues" xmlns:dt="/data-tables" xmlns:c="/charts" xmlns:bs="/bootstrap5" xmlns:st="jelly:stapler" >
 
   <div class="row py-3 flex-nowrap">
 
@@ -134,6 +134,6 @@
 
   </div>
 
-  <c:chart-configuration/>
+  <st:adjunct includes="io.jenkins.plugins.echarts-trend-configuration-dialog"/>
 
 </j:jelly>

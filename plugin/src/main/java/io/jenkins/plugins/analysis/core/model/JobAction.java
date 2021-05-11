@@ -178,18 +178,38 @@ public class JobAction implements Action, AsyncTrendChart {
         return createBuildHistory().getBaselineAction();
     }
 
-    @JavaScriptMethod
+    /**
+     * Returns the trend chart model that renders the aggregated build results.
+     *
+     * @return the trend chart
+     * @deprecated replaced {@link #getConfigurableBuildTrendModel(String)}
+     */
+    @Deprecated
     @Override
     public String getBuildTrendModel() {
-        return new JacksonFacade().toJson(createChartModel());
+        return new JacksonFacade().toJson(createChartModel(new ChartModelConfiguration()));
     }
 
-    private LinesChartModel createChartModel() {
+    /**
+     * Returns the trend chart model that renders the build results for a specific action.
+     *
+     * @param configuration
+     *         JSON configuration of the chart (number of builds, etc.)
+     *
+     * @return the trend chart
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public String getConfigurableBuildTrendModel(final String configuration) {
+        return new JacksonFacade().toJson(createChartModel(ChartModelConfiguration.fromJson(configuration)));
+    }
+
+    private LinesChartModel createChartModel(final ChartModelConfiguration configuration) {
         if (numberOfTools > 1) {
-            return new ToolsTrendChart().create(createBuildHistory(), new ChartModelConfiguration());
+            return new ToolsTrendChart().create(createBuildHistory(), configuration);
         }
         else {
-            return new SeverityTrendChart().create(createBuildHistory(), new ChartModelConfiguration());
+            return new SeverityTrendChart().create(createBuildHistory(), configuration);
         }
     }
 

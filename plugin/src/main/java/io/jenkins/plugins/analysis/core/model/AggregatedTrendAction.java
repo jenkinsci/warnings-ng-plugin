@@ -75,10 +75,29 @@ public class AggregatedTrendAction implements Action, AsyncTrendChart {
         }
     }
 
-    @JavaScriptMethod
+    /**
+     * Returns the trend chart model that renders the aggregated build results.
+     *
+     * @return the trend chart
+     * @deprecated replaced {@link #getConfigurableBuildTrendModel(String)}
+     */
     @SuppressWarnings("unused") // Called by jelly view
     @Override
     public String getBuildTrendModel() {
+        return new JacksonFacade().toJson(createChartModel());
+    }
+
+    /**
+     * Returns the trend chart model that renders the aggregated build results.
+     *
+     * @param configuration
+     *         JSON configuration of the chart (number of builds, etc.)
+     *
+     * @return the trend chart
+     */
+    @JavaScriptMethod
+    @SuppressWarnings("unused") // Called by jelly view
+    public String getConfigurableBuildTrendModel(final String configuration) {
         return new JacksonFacade().toJson(createChartModel());
     }
 
@@ -87,7 +106,8 @@ public class AggregatedTrendAction implements Action, AsyncTrendChart {
         if (lastBuild == null) {
             return new LinesChartModel();
         }
-        return new ToolsTrendChart().create(new CompositeBuildResultsIterable(lastBuild), new ChartModelConfiguration());
+        return new ToolsTrendChart().create(new CompositeBuildResultsIterable(lastBuild),
+                new ChartModelConfiguration());
     }
 
     @Override
@@ -115,7 +135,8 @@ public class AggregatedTrendAction implements Action, AsyncTrendChart {
             this.lastBuild = lastBuild;
         }
 
-        @Override @NonNull
+        @Override
+        @NonNull
         public Iterator<BuildResult<AnalysisBuildResult>> iterator() {
             return new CompositeIterator(lastBuild);
         }

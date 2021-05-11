@@ -1,6 +1,6 @@
 /* global jQuery3, view, echartsJenkinsApi, bootstrap5 */
 (function ($) {
-    $('#trendConfiguration').on('hidden.bs.modal', function () {
+    $('#defaultTrendConfiguration').on('hidden.bs.modal', function () {
         redrawTrendCharts();
     });
 
@@ -80,15 +80,15 @@
      * redraws the trend charts.
      */
     function redrawTrendCharts () {
-        const configuration = localStorage.getItem('echarts#trendConfiguration');
-        const trendConfigurationDialogId = 'trendConfiguration';
+        const configuration = localStorage.getItem('echarts#trend#defaultTrendConfiguration');
+        const trendConfigurationDialogId = 'defaultTrendConfiguration';
 
         /**
          * Creates a build trend chart that shows the number of issues for a couple of builds.
          * Requires that a DOM <div> element exists with the ID '#severities-trend-chart'.
          */
         view.getBuildTrend(configuration, function (lineModel) {
-            echartsJenkinsApi.renderZoomableTrendChart('severities-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
+            echartsJenkinsApi.renderConfigurableTrendChart('severities-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
         });
 
         /**
@@ -96,7 +96,7 @@
          * Requires that a DOM <div> element exists with the ID '#tools-trend-chart'.
          */
         view.getToolsTrend(configuration, function (lineModel) {
-            echartsJenkinsApi.renderZoomableTrendChart('tools-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
+            echartsJenkinsApi.renderConfigurableTrendChart('tools-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
         });
 
         /**
@@ -104,7 +104,7 @@
          * Requires that a DOM <div> element exists with the ID '#new-versus-fixed-trend-chart'.
          */
         view.getNewVersusFixedTrend(configuration, function (lineModel) {
-            echartsJenkinsApi.renderZoomableTrendChart('new-versus-fixed-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
+            echartsJenkinsApi.renderConfigurableTrendChart('new-versus-fixed-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
         });
 
         /**
@@ -113,7 +113,7 @@
          */
         if ($('#health-trend-chart').length) {
             view.getHealthTrend(configuration, function (lineModel) {
-                echartsJenkinsApi.renderZoomableTrendChart('health-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
+                echartsJenkinsApi.renderConfigurableTrendChart('health-trend-chart', lineModel.responseJSON, redrawTrendCharts, trendConfigurationDialogId);
             });
         }
     }
@@ -134,7 +134,7 @@
             }
         });
         const activeCarousel = localStorage.getItem(carouselId);
-        if (activeCarousel) {
+        if (activeCarousel && carousel.is(':visible')) {
             const carouselControl = new bootstrap5.Carousel(carousel[0]);
             carouselControl.to(parseInt(activeCarousel));
             carouselControl.pause();
