@@ -10,6 +10,7 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -80,6 +81,24 @@ public final class AxivionSuite extends Tool {
         // empty constructor required for stapler
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        AxivionSuite that = (AxivionSuite) o;
+        return projectUrl.equals(that.projectUrl) && credentialsId.equals(that.credentialsId) && basedir.equals(
+                that.basedir) && namedFilter.equals(that.namedFilter);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(projectUrl, credentialsId, basedir, namedFilter);
+    }
+
     public String getBasedir() {
         return basedir;
     }
@@ -94,10 +113,11 @@ public final class AxivionSuite extends Tool {
     }
 
     /**
-     * Stapler setter for the projectUrl field.
-     * Verifies the url and encodes the path part e.g. whitespaces in project names.
+     * Stapler setter for the projectUrl field. Verifies the url and encodes the path part e.g. whitespaces in project
+     * names.
      *
-     * @param projectUrl url to a Axivion dashboard project
+     * @param projectUrl
+     *         url to a Axivion dashboard project
      */
     @DataBoundSetter
     public void setProjectUrl(final String projectUrl) {
@@ -133,6 +153,19 @@ public final class AxivionSuite extends Tool {
     @DataBoundSetter
     public void setNamedFilter(final String namedFilter) {
         this.namedFilter = namedFilter;
+    }
+
+    /**
+     * Called after de-serialization to retain backward compatibility.
+     *
+     * @return this
+     */
+    protected Object readResolve() {
+        // field was added in 9.1.0
+        if (namedFilter == null) {
+            namedFilter = StringUtils.EMPTY;
+        }
+        return this;
     }
 
     @Override
