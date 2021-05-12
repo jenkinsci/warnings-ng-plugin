@@ -59,7 +59,7 @@
     <matrix-project.version>1.18</matrix-project.version>
     <junit-plugin.version>1.35</junit-plugin.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
-    <dashboard-view.version>2.15</dashboard-view.version>
+    <dashboard-view.version>2.16</dashboard-view.version>
     <script-security.version>1.76</script-security.version>
     <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
     <configuration-as-code.version>1.47</configuration-as-code.version>
