@@ -82,6 +82,7 @@ public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChar
      * @return the trend chart
      * @deprecated replaced {@link #getConfigurableBuildTrendModel(String)}
      */
+    @Deprecated
     public String getBuildTrendModel() {
         return getConfigurableBuildTrendModel(EMPTY);
     }
