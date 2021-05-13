@@ -21,7 +21,7 @@ import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
-import io.jenkins.plugins.echarts.AsyncTrendChart;
+import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
@@ -29,7 +29,7 @@ import io.jenkins.plugins.echarts.AsyncTrendChart;
  *
  * @author Ullrich Hafner
  */
-public class JobAction implements Action, AsyncTrendChart {
+public class JobAction implements Action, AsyncConfigurableTrendChart {
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
     private final int numberOfTools;
@@ -185,7 +185,6 @@ public class JobAction implements Action, AsyncTrendChart {
      * @deprecated replaced {@link #getConfigurableBuildTrendModel(String)}
      */
     @Deprecated
-    @Override
     public String getBuildTrendModel() {
         return new JacksonFacade().toJson(createChartModel(new ChartModelConfiguration()));
     }
@@ -198,6 +197,7 @@ public class JobAction implements Action, AsyncTrendChart {
      *
      * @return the trend chart
      */
+    @Override
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getConfigurableBuildTrendModel(final String configuration) {

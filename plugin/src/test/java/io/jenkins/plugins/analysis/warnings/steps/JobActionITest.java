@@ -21,7 +21,7 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
-import io.jenkins.plugins.echarts.AsyncTrendChart;
+import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
 
@@ -196,11 +196,11 @@ public class JobActionITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(jobAction).isNotNull();
     }
 
-    private void assertThatTrendChartIsVisible(final AsyncTrendChart trendChart) {
+    private void assertThatTrendChartIsVisible(final AsyncConfigurableTrendChart trendChart) {
         assertThat(trendChart.isTrendVisible()).isTrue();
     }
 
-    private void assertThatTrendChartIsHidden(final AsyncTrendChart trendChart) {
+    private void assertThatTrendChartIsHidden(final AsyncConfigurableTrendChart trendChart) {
         assertThat(trendChart.isTrendVisible()).isFalse();
     }
 

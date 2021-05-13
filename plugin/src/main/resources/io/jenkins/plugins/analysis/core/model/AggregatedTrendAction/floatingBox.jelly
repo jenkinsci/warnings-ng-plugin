@@ -1,10 +1,8 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core">
+<j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
 
-  <j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
-
-    <c:trend-chart it="${from}" title="${%Aggregated Analysis Results}"/>
-
-  </j:jelly>
-
+  <j:if test="${!from.trendEmpty}">
+    <c:trend-chart it="${from}" title="${%Aggregated Analysis Results}" configurationId="defaultTrendConfiguration"/>
+  </j:if>
 </j:jelly>
+

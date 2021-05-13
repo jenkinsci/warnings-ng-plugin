@@ -33,7 +33,7 @@
     <plugin-util-api.version>2.1.0</plugin-util-api.version>
 
     <data-tables-api.version>1.10.23-3</data-tables-api.version>
-    <echarts-api.version>5.1.0-3-rc425.a563153f32e2</echarts-api.version>
+    <echarts-api.version>5.1.0-3-rc429.e97f248b5fec</echarts-api.version>
     <font-awesome-api.version>5.15.2-2</font-awesome-api.version>
     <bootstrap5-api.version>5.0.0-beta3-1</bootstrap5-api.version>
     <error_prone_annotations.version>2.6.0</error_prone_annotations.version>

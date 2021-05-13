@@ -22,15 +22,16 @@ import io.jenkins.plugins.analysis.core.charts.CompositeBuildResult;
 import io.jenkins.plugins.analysis.core.charts.JenkinsBuild;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
-import io.jenkins.plugins.echarts.AsyncTrendChart;
+import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 
 /**
  * Project action that renders a combined trend chart of all tools in the job.
  *
  * @author Ullrich Hafner
  */
-public class AggregatedTrendAction implements Action, AsyncTrendChart {
+public class AggregatedTrendAction implements Action, AsyncConfigurableTrendChart {
     private static final int MIN_TOOLS = 2;
+    private static final String EMPTY = "{}";
 
     private final Job<?, ?> owner;
 
@@ -81,10 +82,8 @@ public class AggregatedTrendAction implements Action, AsyncTrendChart {
      * @return the trend chart
      * @deprecated replaced {@link #getConfigurableBuildTrendModel(String)}
      */
-    @SuppressWarnings("unused") // Called by jelly view
-    @Override
     public String getBuildTrendModel() {
-        return new JacksonFacade().toJson(createChartModel());
+        return getConfigurableBuildTrendModel(EMPTY);
     }
 
     /**
@@ -95,19 +94,19 @@ public class AggregatedTrendAction implements Action, AsyncTrendChart {
      *
      * @return the trend chart
      */
+    @Override
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getConfigurableBuildTrendModel(final String configuration) {
-        return new JacksonFacade().toJson(createChartModel());
+        return new JacksonFacade().toJson(createChartModel(ChartModelConfiguration.fromJson(configuration)));
     }
 
-    private LinesChartModel createChartModel() {
+    private LinesChartModel createChartModel(final ChartModelConfiguration configuration) {
         Run<?, ?> lastBuild = owner.getLastBuild();
         if (lastBuild == null) {
             return new LinesChartModel();
         }
-        return new ToolsTrendChart().create(new CompositeBuildResultsIterable(lastBuild),
-                new ChartModelConfiguration());
+        return new ToolsTrendChart().create(new CompositeBuildResultsIterable(lastBuild), configuration);
     }
 
     @Override
