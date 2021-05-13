@@ -75,7 +75,7 @@
     <folder.version>6.15</folder.version>
     <scm-api.version>2.6.4</scm-api.version>
     <checks-api.version>1.7.0</checks-api.version>
-    <credentials.version>2.3.18</credentials.version>
+    <credentials.version>2.4.1</credentials.version>
 
     <!-- Maven Surefire ArgLine -->
     <argLine>-Djava.awt.headless=true -Xmx1024m -Djenkins.test.timeout=1000</argLine>
