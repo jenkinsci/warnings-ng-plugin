@@ -1,0 +1,27 @@
+<?jelly escape-by-default='true'?>
+
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
+
+  <st:adjunct includes="io.jenkins.plugins.echarts"/>
+
+  <j:choose>
+    <j:when test="${it.isEmpty()}">
+      <h1>${%zeroIssues.title}</h1>
+      <p>${%zeroIssues.description}</p>
+    </j:when>
+    <j:otherwise>
+      <div id="${it.id}" data="${it.getResultIssuesAsJsonModel()}"
+           style="width: ${it.preferredWidth}px; height: ${it.preferredHeight - 40}px;"/>
+
+      <j:if test="${it.hasQualityGate()}">
+        <p style="text-align: right; margin: 5px;">${%qualityGate.Name}
+          <img src="${it.getQualityGateResultIconUrl()}"/>
+          ${it.getQualityGateResultDescription()}</p>
+      </j:if>
+    </j:otherwise>
+  </j:choose>
+
+  <script>var portlet = <st:bind value="${it}"/></script>
+  <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-sunburst.js"/>
+
+</j:jelly>

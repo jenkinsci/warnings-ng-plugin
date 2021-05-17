@@ -14,6 +14,8 @@ import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
@@ -36,6 +38,7 @@ import io.jenkins.plugins.analysis.core.model.AnalysisModelParser;
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
 import io.jenkins.plugins.analysis.core.model.Tool;
+import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.PublishIssuesStep;
 import io.jenkins.plugins.analysis.core.steps.ScanForIssuesStep;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
@@ -53,6 +56,7 @@ import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable;
 import io.jenkins.plugins.analysis.warnings.steps.pageobj.PropertyTable.PropertyRow;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Integration tests of the warnings plug-in in pipelines.
@@ -1007,6 +1011,28 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                     .as("XXE detected for parser %s: URL has been triggered!", tool)
                     .isEqualTo(0);
         }
+    }
+
+    /**
+     * Verifies that the json model for the pull request monitoring portlet is generated properly.
+     */
+    @Test
+    public void shouldGenerateJsonDataModel() {
+        WorkflowJob job = createPipelineWithWorkspaceFiles("checkstyle1.xml");
+
+        configurePublisher(job, "checkstyle1", NO_QUALITY_GATE);
+        Run<?, ?> baseline = buildSuccessfully(job);
+
+        ResultAction action = baseline.getAction(ResultAction.class);
+        PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(action);
+
+        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("fixed").isEqualTo(0);
+        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("outstanding").isEqualTo(3);
+        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("total").isEqualTo(0);
+        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("low").isEqualTo(0);
+        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("normal").isEqualTo(0);
+        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("high").isEqualTo(0);
+        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("error").isEqualTo(0);
     }
 
     private void write(final String adaptedOobFileContent) {
