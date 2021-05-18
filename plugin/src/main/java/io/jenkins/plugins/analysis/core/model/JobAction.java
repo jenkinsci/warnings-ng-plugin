@@ -3,10 +3,15 @@ package io.jenkins.plugins.analysis.core.model;
 import java.io.IOException;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
-import edu.hm.hafner.echarts.LinesChartModel;
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 
 import org.kohsuke.stapler.StaplerRequest;
@@ -17,15 +22,18 @@ import hudson.model.Job;
 import hudson.model.Run;
 import jenkins.model.Jenkins;
 
+import io.jenkins.plugins.analysis.core.charts.HealthTrendChart;
+import io.jenkins.plugins.analysis.core.charts.NewVersusFixedTrendChart;
 import io.jenkins.plugins.analysis.core.charts.SeverityTrendChart;
 import io.jenkins.plugins.analysis.core.charts.ToolsTrendChart;
+import io.jenkins.plugins.analysis.core.charts.TrendChart;
 import io.jenkins.plugins.analysis.core.util.AnalysisBuildResult;
 import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
 
 /**
  * A job action displays a link on the side panel of a job. This action also is responsible to render the historical
- * trend via its associated 'floatingBox.jelly' view.
+ * trend via its associated 'charts.jelly' view.
  *
  * @author Ullrich Hafner
  */
@@ -42,6 +50,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      *         the job that owns this action
      * @param labelProvider
      *         the label provider
+     *
      * @deprecated use {@link #JobAction(Job, StaticAnalysisLabelProvider, int)}
      */
     @Deprecated
@@ -186,7 +195,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
      */
     @Deprecated
     public String getBuildTrendModel() {
-        return new JacksonFacade().toJson(createChartModel(new ChartModelConfiguration()));
+        return getConfigurableBuildTrendModel("{}");
     }
 
     /**
@@ -201,16 +210,57 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getConfigurableBuildTrendModel(final String configuration) {
-        return new JacksonFacade().toJson(createChartModel(ChartModelConfiguration.fromJson(configuration)));
+        String chartType = getString(configuration, "chartType", "severity");
+
+        return new JacksonFacade().toJson(selectChart(chartType).create(
+                createBuildHistory(), ChartModelConfiguration.fromJson(configuration)));
     }
 
-    private LinesChartModel createChartModel(final ChartModelConfiguration configuration) {
+    private TrendChart selectChart(final String chartType) {
+        if ("new".equals(chartType)) {
+            return new NewVersusFixedTrendChart();
+        }
+        if ("health".equals(chartType)) {
+            Optional<ResultAction> latestAction = getLatestAction();
+            if (latestAction.isPresent()) {
+                return new HealthTrendChart(latestAction.get().getHealthDescriptor());
+            }
+        }
         if (numberOfTools > 1) {
-            return new ToolsTrendChart().create(createBuildHistory(), configuration);
+            return new ToolsTrendChart();
         }
         else {
-            return new SeverityTrendChart().create(createBuildHistory(), configuration);
+            return new SeverityTrendChart();
         }
+    }
+
+    /**
+     * Returns the text value of the specified JSON property.
+     *
+     * @param json
+     *         the JSON object to extract the property value from
+     * @param property
+     *         the name of the propety
+     * @param defaultValue
+     *         the default value if the property is undefined or invalid
+     *
+     * @return the value of the property
+     */
+    public String getString(final String json, final String property, final String defaultValue) {
+        try {
+            ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+                    false);
+            ObjectNode node = mapper.readValue(json, ObjectNode.class);
+            JsonNode typeNode = node.get(property);
+            if (typeNode != null) {
+                return typeNode.asText(defaultValue);
+            }
+        }
+        catch (JsonProcessingException exception) {
+            // ignore
+        }
+
+        return defaultValue;
     }
 
     /**

@@ -1,8 +1,10 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
+<j:jelly xmlns:j="jelly:core" xmlns:c="/charts" xmlns:st="jelly:stapler">
+
+  <st:adjunct includes="io.jenkins.plugins.analysis.warnings.charts"/>
 
   <j:if test="${!from.trendEmpty}">
-    <c:trend-chart it="${from}" title="${from.trendName}" enableLinks="true" configurationId="default"/>
+    <c:trend-chart it="${from}" title="${from.trendName}" enableLinks="true" configurationId="warnings"/>
   </j:if>
 
 </j:jelly>
