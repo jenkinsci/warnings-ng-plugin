@@ -38,7 +38,7 @@
     <jquery3-api.version>3.6.0-1</jquery3-api.version>
     <bootstrap4-api.version>4.6.0-3</bootstrap4-api.version>
     <popper-api.version>1.16.1-2</popper-api.version>
-    <error_prone_annotations.version>2.6.0</error_prone_annotations.version>
+    <error_prone_annotations.version>2.7.1</error_prone_annotations.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
