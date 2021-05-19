@@ -1010,10 +1010,10 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     }
 
     /**
-     *  Verifies that a tool that have an ID that starts with the descriptor ID keeps the correct LabelProvider
+     *  Verifies that a tool that have an ID that starts with the descriptor ID keeps the correct LabelProvider.
      */
     @Test
-    public void keepLabelProviderUsingDifferentsIds(){
+    public void keepLabelProviderUsingDifferentsIds() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt");
         job.setDefinition(asStage(
                 "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')",
