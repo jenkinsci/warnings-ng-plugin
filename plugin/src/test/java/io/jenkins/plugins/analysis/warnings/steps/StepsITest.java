@@ -1009,6 +1009,22 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
+    /**
+     *  Verifies that a tool that have an ID that starts with the descriptor ID keeps the correct LabelProvider
+     */
+    @Test
+    public void keepLabelProviderUsingDifferentsIds(){
+        WorkflowJob job = createPipelineWithWorkspaceFiles("javadoc.txt");
+        job.setDefinition(asStage(
+                "recordIssues tool: javaDoc(pattern:'**/*issues.txt', reportEncoding:'UTF-8')",
+                        "recordIssues tool: javaDoc(id:'javadoc-warnings-1', pattern:'**/*issues.txt', reportEncoding:'UTF-8')"
+        ));
+        Run<?, ?> run = buildSuccessfully(job);
+        List<ResultAction> actions = run.getActions(ResultAction.class);
+        assertThat(actions.size()).isEqualTo(2);
+        assertThat(actions.get(0).getLabelProvider()).hasName(actions.get(1).getLabelProvider().getName());
+    }
+
     private void write(final String adaptedOobFileContent) {
         try {
             File userContentDir = new File(getJenkins().jenkins.getRootDir(), "userContent");
