@@ -3,12 +3,6 @@ package io.jenkins.plugins.analysis.core.model;
 import java.io.IOException;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import edu.hm.hafner.echarts.BuildResult;
 import edu.hm.hafner.echarts.ChartModelConfiguration;
 import edu.hm.hafner.echarts.JacksonFacade;
@@ -38,6 +32,7 @@ import io.jenkins.plugins.echarts.AsyncConfigurableTrendChart;
  * @author Ullrich Hafner
  */
 public class JobAction implements Action, AsyncConfigurableTrendChart {
+    private static final JacksonFacade JACKSON_FACADE = new JacksonFacade();
     private final Job<?, ?> owner;
     private final StaticAnalysisLabelProvider labelProvider;
     private final int numberOfTools;
@@ -210,7 +205,7 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
     @JavaScriptMethod
     @SuppressWarnings("unused") // Called by jelly view
     public String getConfigurableBuildTrendModel(final String configuration) {
-        String chartType = getString(configuration, "chartType", "severity");
+        String chartType = JACKSON_FACADE.getString(configuration, "chartType", "severity");
 
         return new JacksonFacade().toJson(selectChart(chartType).create(
                 createBuildHistory(), ChartModelConfiguration.fromJson(configuration)));
@@ -232,35 +227,6 @@ public class JobAction implements Action, AsyncConfigurableTrendChart {
         else {
             return new SeverityTrendChart();
         }
-    }
-
-    /**
-     * Returns the text value of the specified JSON property.
-     *
-     * @param json
-     *         the JSON object to extract the property value from
-     * @param property
-     *         the name of the propety
-     * @param defaultValue
-     *         the default value if the property is undefined or invalid
-     *
-     * @return the value of the property
-     */
-    public String getString(final String json, final String property, final String defaultValue) {
-        try {
-            ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-                    false);
-            ObjectNode node = mapper.readValue(json, ObjectNode.class);
-            JsonNode typeNode = node.get(property);
-            if (typeNode != null) {
-                return typeNode.asText(defaultValue);
-            }
-        }
-        catch (JsonProcessingException exception) {
-            // ignore
-        }
-
-        return defaultValue;
     }
 
     /**
