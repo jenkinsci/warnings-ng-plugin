@@ -59,18 +59,18 @@ public class LabelProviderFactory {
      *         provider is returned.
      */
     public StaticAnalysisLabelProvider create(final String id, @CheckForNull final String name) {
-        DescriptorExtensionList<Tool, ToolDescriptor> extensions = jenkins.getDescriptorsFor(Tool.class);
-        for (ToolDescriptor descriptor : extensions) {
-            if (descriptor.describes(id)) {
-                return createNamedLabelProvider(descriptor.getLabelProvider(), name);
-            }
-        }
-
         List<StaticAnalysisToolFactory> factories = jenkins.getExtensionsFor(StaticAnalysisToolFactory.class);
         for (StaticAnalysisToolFactory factory : factories) {
             Optional<StaticAnalysisLabelProvider> labelProvider = factory.getLabelProvider(id);
             if (labelProvider.isPresent()) {
                 return createNamedLabelProvider(labelProvider.get(), name);
+            }
+        }
+
+        DescriptorExtensionList<Tool, ToolDescriptor> extensions = jenkins.getDescriptorsFor(Tool.class);
+        for (ToolDescriptor descriptor : extensions) {
+            if (descriptor.describes(id)) {
+                return createNamedLabelProvider(descriptor.getLabelProvider(), name);
             }
         }
 
