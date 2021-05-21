@@ -80,7 +80,7 @@
      * redraws the trend charts.
      */
     function redrawTrendCharts () {
-        const configuration = localStorage.getItem('echarts#trend#defaultTrendConfiguration');
+        const configuration = echartsJenkinsApi.readConfiguration('jenkins-echarts-warnings-trend');
         const trendConfigurationDialogId = 'defaultTrendConfiguration';
 
         /**

@@ -2,15 +2,6 @@
 /* Size of charts in a card.                                                                                           */
 /* ------------------------------------------------------------------------------------------------------------------- */
 
-.card-chart {
-    width: 100%;
-    min-height: 256px;
-    min-width: 256px;
-    display: block;
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
 .log-output {
     font-size: var(--font-size-sm);
 }
