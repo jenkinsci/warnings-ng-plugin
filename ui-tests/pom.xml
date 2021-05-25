@@ -18,7 +18,7 @@
   <properties>
     <jenkins.version>2.263.3</jenkins.version>
     <json-smart.version>2.3</json-smart.version>
-    <json-unit-assertj.version>2.25.0</json-unit-assertj.version>
+    <json-unit-assertj.version>2.26.0</json-unit-assertj.version>
   </properties>
 
   <dependencies>
