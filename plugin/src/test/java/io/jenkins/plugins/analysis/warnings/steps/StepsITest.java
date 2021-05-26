@@ -14,8 +14,6 @@ import org.junit.Test;
 import org.jvnet.hudson.test.TestExtension;
 
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import edu.hm.hafner.analysis.Issue;
 import edu.hm.hafner.analysis.Report;
