@@ -254,5 +254,17 @@ public abstract class Tool extends AbstractDescribableImpl<Tool> implements Seri
         public boolean isPostProcessingEnabled() {
             return true;
         }
+
+        /**
+         *  Returns whether the descriptor describes a tool with a certain id specified as argument.
+         *  By default if the ID of the tool start with the descriptor ID the descriptor describes the tool.
+         *
+         * @param id
+         *         the ID of the tool
+         * @return {@code true} if the descriptor describes the tool with a certain ID, {@code false} otherwise
+         */
+        public boolean describes(final String id) {
+            return id.startsWith(getId());
+        }
     }
 }
