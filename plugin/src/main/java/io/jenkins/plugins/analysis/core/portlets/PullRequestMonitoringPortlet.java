@@ -28,7 +28,7 @@ import io.jenkins.plugins.monitoring.MonitorPortletFactory;
  *
  * @author Simon Symhoven
  */
-public class PullRequestMonitoringPortlet implements MonitorPortlet {
+public class PullRequestMonitoringPortlet extends MonitorPortlet {
 
     private final ResultAction action;
 
@@ -51,6 +51,11 @@ public class PullRequestMonitoringPortlet implements MonitorPortlet {
     @JavaScriptMethod
     public String getId() {
         return "warnings-ng-" + action.getResult().getId();
+    }
+
+    @Override
+    public boolean isDefault() {
+        return true;
     }
 
     @Override
@@ -140,7 +145,7 @@ public class PullRequestMonitoringPortlet implements MonitorPortlet {
      * The factory for the {@link PullRequestMonitoringPortlet}.
      */
     @Extension(optional = true)
-    public static class PortletFactory implements MonitorPortletFactory {
+    public static class PortletFactory extends MonitorPortletFactory {
 
         @Override
         public Collection<MonitorPortlet> getPortlets(final Run<?, ?> build) {
