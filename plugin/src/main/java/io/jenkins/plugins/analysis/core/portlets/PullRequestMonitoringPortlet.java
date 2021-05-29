@@ -39,6 +39,7 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      *              the corresponding {@link ResultAction}.
      */
     public PullRequestMonitoringPortlet(final ResultAction action) {
+        super();
         this.action = action;
     }
 
