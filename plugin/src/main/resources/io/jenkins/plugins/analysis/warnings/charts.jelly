@@ -34,15 +34,17 @@
   </c:trend-setup>
 
   <script>
-    function fillWarnings (trendConfiguration, jsonConfiguration) {
+    function fillWarnings(trendConfiguration, jsonConfiguration) {
       const type = jsonConfiguration['chartType'];
       if (type) {
         trendConfiguration.find('#' + type).prop('checked', true);
       }
     }
 
-    function saveWarnings (trendConfiguration, jsonConfiguration) {
-      jsonConfiguration['chartType'] = trendConfiguration.find('input[name=chartType]:checked').attr('id');
+    function saveWarnings(trendConfiguration) {
+      return {
+        'chartType': trendConfiguration.find('input[name=chartType]:checked').attr('id')
+      };
     }
 
     echartsJenkinsApi.configureTrend('warnings', fillWarnings, saveWarnings)

@@ -134,6 +134,6 @@
 
   </div>
 
-  <st:adjunct includes="io.jenkins.plugins.echarts-trend-configuration-dialog"/>
+  <st:adjunct includes="io.jenkins.plugins.echarts-trend-default-setup"/>
 
 </j:jelly>
