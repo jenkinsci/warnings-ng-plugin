@@ -1,5 +1,5 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:bs="/bootstrap5" xmlns:c="/charts">
 
   <st:documentation>
     Renders a chart with the build history in a bootstrap card.
@@ -35,5 +35,7 @@
     </div>
 
   </bs:card>
+
+  <c:chart-setup id="history"/>
 
 </j:jelly>

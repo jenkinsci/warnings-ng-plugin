@@ -1,5 +1,7 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
+<j:jelly xmlns:j="jelly:core" xmlns:c="/charts" xmlns:st="jelly:stapler">
+
+  <st:adjunct includes="io.jenkins.plugins.echarts"/>
 
   <!-- Trend chart configuration that adds a selection of the trend chart type. -->
   <c:trend-setup suffix="warnings">

@@ -1,6 +1,6 @@
 /* global jQuery3, view, echartsJenkinsApi, bootstrap5, trendDefaultStorageId */
 (function ($) {
-    const trendConfigurationDialogId = 'trend-configuration-default';
+    const trendConfigurationDialogId = 'chart-configuration-history';
 
     $('#' + trendConfigurationDialogId).on('hidden.bs.modal', function () {
         redrawTrendCharts();
@@ -82,7 +82,7 @@
      * redraws the trend charts.
      */
     function redrawTrendCharts () {
-        const configuration = JSON.stringify(echartsJenkinsApi.readConfiguration(trendDefaultStorageId));
+        const configuration = JSON.stringify(echartsJenkinsApi.readFromLocalStorage('jenkins-echarts-chart-configuration-history'));
 
         /**
          * Creates a build trend chart that shows the number of issues for a couple of builds.
