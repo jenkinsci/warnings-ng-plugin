@@ -36,6 +36,6 @@
 
   </bs:card>
 
-  <c:chart-setup id="history"/>
+  <c:chart-setup id="issues-history"/>
 
 </j:jelly>
