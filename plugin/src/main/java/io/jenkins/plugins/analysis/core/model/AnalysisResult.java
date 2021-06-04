@@ -417,6 +417,16 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
+     * Check if {@link AnalysisResult} issues are empty (including new, outstanding and fixed).
+     *
+     * @return
+     *          true if {@link AnalysisResult} issues are empty, else false.
+     */
+    public boolean isEmpty() {
+        return getTotals().getTotalSize() + getTotals().getFixedSize() == 0;
+    }
+
+    /**
      * Returns all outstanding issues of the associated static analysis run. I.e. all issues, that are part of the
      * current and previous report.
      *

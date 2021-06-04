@@ -39,6 +39,7 @@
     <bootstrap4-api.version>4.6.0-3</bootstrap4-api.version>
     <popper-api.version>1.16.1-2</popper-api.version>
     <error_prone_annotations.version>2.7.1</error_prone_annotations.version>
+    <pull-request-monitoring.version>1.7.1</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
@@ -257,6 +258,13 @@
       <version>${token-macro.version}</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>pull-request-monitoring</artifactId>
+      <version>${pull-request-monitoring.version}</version>
+      <optional>true</optional>
+    </dependency>
+
     <!-- ASM is required by token-macro but does not declare its dependency -->
     <dependency>
       <groupId>org.ow2.asm</groupId>
