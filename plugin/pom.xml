@@ -34,9 +34,12 @@
 
     <data-tables-api.version>1.10.23-3</data-tables-api.version>
     <font-awesome-api.version>5.15.3-2</font-awesome-api.version>
-    <echarts-api.version>5.1.0-3-rc454.dbbdd5633ce2</echarts-api.version>
-    <bootstrap5-api.version>5.0.0-beta3-1</bootstrap5-api.version>
-    <error_prone_annotations.version>2.6.0</error_prone_annotations.version>
+    <echarts-api.version>5.1.0-3-rc464.d7d9d5650d0a</echarts-api.version>
+    <jquery3-api.version>3.6.0-1</jquery3-api.version>
+    <bootstrap4-api.version>4.6.0-3</bootstrap4-api.version>
+    <popper-api.version>1.16.1-2</popper-api.version>
+    <error_prone_annotations.version>2.7.1</error_prone_annotations.version>
+    <pull-request-monitoring.version>1.7.1</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
@@ -47,7 +50,7 @@
     <xmlunit.version>2.8.2</xmlunit.version>
     <jsoup.version>1.13.1</jsoup.version>
     <json-smart.version>2.4.7</json-smart.version>
-    <jmh.version>1.31</jmh.version>
+    <jmh.version>1.32</jmh.version>
 
     <!-- Jenkins Plug-in Dependencies Versions -->
     <autograding.version>3.3.1</autograding.version>
@@ -58,7 +61,7 @@
     <junit-plugin.version>1.35</junit-plugin.version>
     <antisamy-markup-formatter.version>2.1</antisamy-markup-formatter.version>
     <dashboard-view.version>2.16</dashboard-view.version>
-    <script-security.version>1.76</script-security.version>
+    <script-security.version>1.77</script-security.version>
     <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
     <configuration-as-code.version>1.47</configuration-as-code.version>
     <job-dsl.version>1.77</job-dsl.version>
@@ -114,7 +117,7 @@
       <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
-        <version>2.8.6</version>
+        <version>2.8.7</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -249,6 +252,13 @@
       <version>${token-macro.version}</version>
       <optional>true</optional>
     </dependency>
+    <dependency>
+      <groupId>io.jenkins.plugins</groupId>
+      <artifactId>pull-request-monitoring</artifactId>
+      <version>${pull-request-monitoring.version}</version>
+      <optional>true</optional>
+    </dependency>
+
     <!-- ASM is required by token-macro but does not declare its dependency -->
     <dependency>
       <groupId>org.ow2.asm</groupId>
@@ -456,7 +466,7 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>ansicolor</artifactId>
-      <version>0.7.5</version>
+      <version>1.0.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

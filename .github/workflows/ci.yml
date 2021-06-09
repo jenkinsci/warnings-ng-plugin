@@ -25,7 +25,7 @@ jobs:
         java-version: '11'
         check-latest: true
     - name: Cache local Maven repository
-      uses: actions/cache@v2.1.5
+      uses: actions/cache@v2.1.6
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
