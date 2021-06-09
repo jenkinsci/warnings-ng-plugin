@@ -32,9 +32,9 @@
     <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
     <plugin-util-api.version>2.2.0</plugin-util-api.version>
 
-    <data-tables-api.version>1.10.25-1-rc455.e1e526c7d720</data-tables-api.version>
+    <data-tables-api.version>1.10.25-1</data-tables-api.version>
     <font-awesome-api.version>5.15.3-2</font-awesome-api.version>
-    <echarts-api.version>5.1.0-3-rc464.d7d9d5650d0a</echarts-api.version>
+    <echarts-api.version>5.1.2-1</echarts-api.version>
     <jquery3-api.version>3.6.0-1</jquery3-api.version>
     <bootstrap5-api.version>5.0.1-2</bootstrap5-api.version>
     <popper-api.version>1.16.1-2</popper-api.version>
