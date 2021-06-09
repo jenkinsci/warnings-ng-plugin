@@ -1,4 +1,4 @@
-/* global jQuery3, view, echartsJenkinsApi, bootstrap5, trendDefaultStorageId */
+/* global jQuery3, view, echartsJenkinsApi, bootstrap5 */
 (function ($) {
     const trendConfigurationDialogId = 'chart-configuration-issues-history';
 
