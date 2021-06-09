@@ -34,7 +34,7 @@
 
     <data-tables-api.version>1.10.23-3</data-tables-api.version>
     <echarts-api.version>5.1.0-2</echarts-api.version>
-    <font-awesome-api.version>5.15.3-2</font-awesome-api.version>
+    <font-awesome-api.version>5.15.3-3</font-awesome-api.version>
     <jquery3-api.version>3.6.0-1</jquery3-api.version>
     <bootstrap4-api.version>4.6.0-3</bootstrap4-api.version>
     <popper-api.version>1.16.1-2</popper-api.version>
