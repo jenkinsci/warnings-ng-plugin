@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.7.0</version>
+    <version>5.8.0</version>
     <relativePath />
   </parent>
 
@@ -23,7 +23,7 @@
   <properties>
     <revision>9.2.0</revision>
     <changelist>-SNAPSHOT</changelist>
-
+    <jenkins.version>${jenkins.baseline}.2</jenkins.version>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>10.2.5</analysis-model-api.version>
