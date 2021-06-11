@@ -45,7 +45,7 @@
     /**
      * Store the selected tab in browser's local storage.
      */
-    const tabToggleLink = $('a[data-toggle="tab"]');
+    const tabToggleLink = $('a[data-bs-toggle="tab"]');
     tabToggleLink.on('show.bs.tab', function (e) {
         window.location.hash = e.target.hash;
         const activeTab = $(e.target).attr('href');
