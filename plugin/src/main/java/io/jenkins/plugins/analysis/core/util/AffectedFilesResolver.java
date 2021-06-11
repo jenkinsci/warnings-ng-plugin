@@ -106,7 +106,7 @@ public class AffectedFilesResolver {
         copyAffectedFilesToBuildFolder(report, new RemoteFacade(buildFolder, affectedFilesFolder));
     }
 
-    @VisibleForTesting
+    @VisibleForTesting @SuppressWarnings("PMD.CognitiveComplexity")
     void copyAffectedFilesToBuildFolder(final Report report, final RemoteFacade remoteFacade)
             throws InterruptedException {
         int copied = 0;

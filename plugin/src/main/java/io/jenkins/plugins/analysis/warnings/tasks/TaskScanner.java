@@ -244,24 +244,29 @@ class TaskScanner {
 
             for (Severity severity : Severity.getPredefinedValues()) {
                 if (patterns.containsKey(severity)) {
-                    Matcher matcher = patterns.get(severity).matcher(line);
-                    if (matcher.matches() && matcher.groupCount() == 2) {
-                        String message = StringUtils.defaultString(matcher.group(2)).trim();
-                        builder.setMessage(StringUtils.removeStart(message, ":").trim());
-
-                        String tag = StringUtils.defaultString(matcher.group(1));
-                        if (isUppercase) {
-                            builder.setType(StringUtils.upperCase(tag));
-                        }
-                        else {
-                            builder.setType(tag);
-                        }
-                        report.add(builder.setSeverity(severity).setLineStart(lineNumber).build());
-                    }
+                    createTask(builder, report, lineNumber, line, severity);
                 }
             }
         }
         return report;
+    }
+
+    private void createTask(final IssueBuilder builder, final Report report, final int lineNumber, final String line,
+            final Severity severity) {
+        Matcher matcher = patterns.get(severity).matcher(line);
+        if (matcher.matches() && matcher.groupCount() == 2) {
+            String message = StringUtils.defaultString(matcher.group(2)).trim();
+            builder.setMessage(StringUtils.removeStart(message, ":").trim());
+
+            String tag = StringUtils.defaultString(matcher.group(1));
+            if (isUppercase) {
+                builder.setType(StringUtils.upperCase(tag));
+            }
+            else {
+                builder.setType(tag);
+            }
+            report.add(builder.setSeverity(severity).setLineStart(lineNumber).build());
+        }
     }
 
     private static class IgnoreSection {

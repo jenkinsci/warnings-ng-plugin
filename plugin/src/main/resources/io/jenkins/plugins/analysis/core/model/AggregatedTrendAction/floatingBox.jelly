@@ -1,10 +1,12 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core">
+<j:jelly xmlns:j="jelly:core" xmlns:c="/charts" xmlns:st="jelly:stapler">
 
-  <j:jelly xmlns:j="jelly:core" xmlns:c="/charts">
+  <j:if test="${!from.trendEmpty}">
 
-    <c:trend-chart it="${from}" title="${%Aggregated Analysis Results}"/>
+    <st:adjunct includes="io.jenkins.plugins.analysis.warnings.charts"/>
 
-  </j:jelly>
+    <c:trend-chart it="${from}" title="${%Aggregated Analysis Results}" configurationId="default"/>
+  </j:if>
 
 </j:jelly>
+

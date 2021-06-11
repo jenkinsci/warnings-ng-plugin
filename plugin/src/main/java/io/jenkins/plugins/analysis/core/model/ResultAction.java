@@ -195,6 +195,10 @@ public class ResultAction implements HealthReportingAction, LastBuildAction, Run
                 getResult().getSizePerSeverity());
     }
 
+    HealthDescriptor getHealthDescriptor() {
+        return healthDescriptor;
+    }
+
     @Override
     public Collection<? extends Action> getProjectActions() {
         return Collections.singleton(

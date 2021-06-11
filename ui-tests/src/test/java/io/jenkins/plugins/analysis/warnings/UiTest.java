@@ -338,13 +338,13 @@ abstract class UiTest extends AbstractJUnitTest {
                         "-> found 8 issues (skipped 0 duplicates)")
                 .hasErrorMessages("Can't create fingerprints for some files:");
 
-        if(referenceBuild > 0) {
+        if (referenceBuild > 0) {
             assertThat(openInfoView(build, PEP8_ID))
                     .hasInfoMessages("Issues delta (vs. reference build): outstanding: 0, new: 8, fixed: 0");
         }
     }
 
-    protected AnalysisResult verifyPep8Details (final AnalysisSummary pep8) {
+    protected AnalysisResult verifyPep8Details(final AnalysisSummary pep8) {
         AnalysisResult pep8Details = pep8.openOverallResult();
         assertThat(pep8Details).hasActiveTab(Tab.ISSUES)
                 .hasOnlyAvailableTabs(Tab.CATEGORIES, Tab.ISSUES);
@@ -359,13 +359,16 @@ abstract class UiTest extends AbstractJUnitTest {
         return job.startBuild().waitUntilFinished().shouldSucceed();
     }
 
-    protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs, final boolean showIcons) {
+    protected DashboardView createDashboardWithStaticAnalysisPortlet(final boolean hideCleanJobs,
+            final boolean showIcons) {
         return createDashboardWithStaticAnalysisPortlet(jenkins, hideCleanJobs, showIcons);
     }
 
-    protected DashboardView createDashboardWithStaticAnalysisPortlet(final Container container, final boolean hideCleanJobs, final boolean showIcons) {
+    protected DashboardView createDashboardWithStaticAnalysisPortlet(final Container container,
+            final boolean hideCleanJobs, final boolean showIcons) {
         DashboardView view = createDashboardView(container);
-        StaticAnalysisIssuesPerToolAndJobPortlet portlet = view.addTopPortlet(StaticAnalysisIssuesPerToolAndJobPortlet.class);
+        StaticAnalysisIssuesPerToolAndJobPortlet portlet = view.addTopPortlet(
+                StaticAnalysisIssuesPerToolAndJobPortlet.class);
         if (hideCleanJobs) {
             portlet.toggleHideCleanJobs();
         }

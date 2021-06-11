@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.jvnet.hudson.plugins</groupId>
     <artifactId>analysis-pom</artifactId>
-    <version>5.7.0</version>
+    <version>5.8.0</version>
     <relativePath />
   </parent>
 
@@ -23,23 +23,23 @@
   <properties>
     <revision>9.2.0</revision>
     <changelist>-SNAPSHOT</changelist>
-
+    <jenkins.baseline>2.263</jenkins.baseline>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>10.2.5</analysis-model-api.version>
     <analysis-model-tests.version>10.2.5</analysis-model-tests.version>
 
-    <forensics-api-plugin.version>1.0.0</forensics-api-plugin.version>
-    <plugin-util-api.version>2.2.0</plugin-util-api.version>
+    <forensics-api-plugin.version>1.1.0</forensics-api-plugin.version>
+    <plugin-util-api.version>2.3.0</plugin-util-api.version>
 
-    <data-tables-api.version>1.10.23-3</data-tables-api.version>
-    <echarts-api.version>5.1.0-2</echarts-api.version>
-    <font-awesome-api.version>5.15.3-2</font-awesome-api.version>
+    <data-tables-api.version>1.10.25-1</data-tables-api.version>
+    <font-awesome-api.version>5.15.3-3</font-awesome-api.version>
+    <echarts-api.version>5.1.2-1</echarts-api.version>
     <jquery3-api.version>3.6.0-1</jquery3-api.version>
-    <bootstrap4-api.version>4.6.0-3</bootstrap4-api.version>
+    <bootstrap5-api.version>5.0.1-2</bootstrap5-api.version>
     <popper-api.version>1.16.1-2</popper-api.version>
     <error_prone_annotations.version>2.7.1</error_prone_annotations.version>
-    <pull-request-monitoring.version>1.7.1</pull-request-monitoring.version>
+    <pull-request-monitoring.version>1.7.2</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
@@ -110,11 +110,6 @@
         <version>${script-security.version}</version>
       </dependency>
       <dependency>
-        <groupId>io.jenkins.plugins</groupId>
-        <artifactId>popper-api</artifactId>
-        <version>${popper-api.version}</version>
-      </dependency>
-      <dependency>
         <groupId>com.google.errorprone</groupId>
         <artifactId>error_prone_annotations</artifactId>
         <version>${error_prone_annotations.version}</version>
@@ -174,13 +169,12 @@
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
-      <artifactId>bootstrap4-api</artifactId>
-      <version>${bootstrap4-api.version}</version>
+      <artifactId>bootstrap5-api</artifactId>
+      <version>${bootstrap5-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>jquery3-api</artifactId>
-      <version>${jquery3-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>

@@ -92,8 +92,8 @@ public class FileNameRenderer {
         else if (facade.canAccessAffectedFileOf(build, issue)) {
             return a().withHref(prefix + getSourceCodeUrl(issue))
                     .withText(getFileNameAtLine(issue))
-                    .attr("data-toggle", "tooltip")
-                    .attr("data-placement", "bottom")
+                    .attr("data-bs-toggle", "tooltip")
+                    .attr("data-bs-placement", "left")
                     .withTitle(issue.getFileName());
         }
         else {
