@@ -21,10 +21,10 @@ import org.kohsuke.stapler.verb.POST;
 import hudson.Extension;
 import hudson.model.Job;
 import hudson.model.Run;
-import hudson.model.View;
 import hudson.util.ListBoxModel;
 import hudson.views.ListViewColumn;
 import hudson.views.ListViewColumnDescriptor;
+import jenkins.model.Jenkins;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.LabelProviderFactory;
@@ -248,7 +248,7 @@ public class IssuesTotalColumn extends ListViewColumn {
         public ListBoxModel doFillTypeItems() {
             ListBoxModel model = new ListBoxModel();
 
-            if (new JenkinsFacade().hasPermission(View.CONFIGURE)) {
+            if (new JenkinsFacade().hasPermission(Jenkins.READ)) {
                 for (StatisticProperties qualityGateType : StatisticProperties.values()) {
                     model.add(qualityGateType.getDisplayName(), qualityGateType.name());
                 }

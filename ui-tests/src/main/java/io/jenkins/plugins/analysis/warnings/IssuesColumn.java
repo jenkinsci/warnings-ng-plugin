@@ -12,40 +12,45 @@ import org.jenkinsci.test.acceptance.po.Build;
 import org.jenkinsci.test.acceptance.po.PageObject;
 
 /**
- * Page object to access column "# Issues" in ListView or Dashboard
+ * Page object to access column "# Issues" in ListView or Dashboard.
  *
  * @author Andreas Riepl
  * @author Oliver Scholz
  */
 public class IssuesColumn extends PageObject {
-
     private String jobName;
 
     /**
-     * Creates a new issue column page object
+     * Creates a new issue column page object.
      *
-     * @param injector injector
-     * @param url the URL of the view
+     * @param injector
+     *         injector
+     * @param url
+     *         the URL of the view
      */
     public IssuesColumn(final Injector injector, final URL url) {
         super(injector, url);
     }
 
     /**
-     * Creates a new issue column page object
+     * Creates a new issue column page object.
      *
-     * @param context context
-     * @param url the URL of the view
+     * @param context
+     *         context
+     * @param url
+     *         the URL of the view
      */
     protected IssuesColumn(final PageObject context, final URL url) {
         super(context, url);
     }
 
     /**
-     * Creates a new issue column page object
+     * Creates a new issue column page object.
      *
-     * @param parent the build that contains the static analysis results
-     * @param jobName the name of the jenkins job
+     * @param parent
+     *         the build that contains the static analysis results
+     * @param jobName
+     *         the name of the jenkins job
      */
     public IssuesColumn(final Build parent, final String jobName) {
         super(parent, parent.url(""));
@@ -54,7 +59,7 @@ public class IssuesColumn extends PageObject {
     }
 
     /**
-     * Retrieves the {@link WebElement} to access the issue count in the view column
+     * Retrieves the {@link WebElement} to access the issue count in the view column.
      *
      * @return Table Cell that contains the Issue Count as {@link WebElement}
      */
@@ -63,20 +68,22 @@ public class IssuesColumn extends PageObject {
     }
 
     /**
-     * Search for a a-Tag in table cell
+     * Search for a a-Tag in table cell.
+     *
      * @return {@code true} if table cell contains link; otherwise {@code false}
      */
     public boolean issuesCountFromTableHasLink() {
         try {
             getIssuesCountFromTable().findElement(by.xpath("//*[@id=\"job_" + jobName + "\"]/td[8]/a"));
             return true;
-        } catch (final NoSuchElementException e) {
+        }
+        catch (final NoSuchElementException e) {
             return false;
         }
     }
 
     /**
-     * Reads the count from the table as text
+     * Reads the count from the table as text.
      *
      * @return Displayed Issue Count as {@link String}
      */
@@ -85,27 +92,33 @@ public class IssuesColumn extends PageObject {
     }
 
     /**
-     * Reads the tool name from the table that is displayed when hovering the issue column
+     * Reads the tool name from the table that is displayed when hovering the issue column.
      *
-     * @param rowNumber number of the row in the displayed table
+     * @param rowNumber
+     *         number of the row in the displayed table
+     *
      * @return Name of the tool in the given row
      */
     public String getToolNameFromHover(final int rowNumber) {
-        return findIfNotVisible(by.xpath("//*[@id=\"job_" + jobName + "\"]/td[8]/div/table/tbody/tr[" + rowNumber + "]/td[2]")).getText();
+        return findIfNotVisible(by.xpath(
+                "//*[@id=\"job_" + jobName + "\"]/td[8]/div/table/tbody/tr[" + rowNumber + "]/td[2]")).getText();
     }
 
     /**
-     * Reads the issue count from the table that is displayed when hovering the issue column
+     * Reads the issue count from the table that is displayed when hovering the issue column.
      *
-     * @param rowNumber number of the row in the displayed table
+     * @param rowNumber
+     *         number of the row in the displayed table
+     *
      * @return issue count in the given row
      */
     public String getIssueCountFromHover(final int rowNumber) {
-        return findIfNotVisible(by.xpath("//*[@id=\"job_" + jobName + "\"]/td[8]/div/table/tbody/tr[" + rowNumber + "]/td[3]")).getText();
+        return findIfNotVisible(by.xpath(
+                "//*[@id=\"job_" + jobName + "\"]/td[8]/div/table/tbody/tr[" + rowNumber + "]/td[3]")).getText();
     }
 
     /**
-     * hovers over the issue count in list view column
+     * Hovers over the issue count in list view column.
      */
     public void hoverIssueCount() {
         WebElement we = getIssuesCountFromTable();
