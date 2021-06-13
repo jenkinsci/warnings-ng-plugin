@@ -1,12 +1,13 @@
 <?jelly escape-by-default='true'?>
 
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:fa="/font-awesome">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:fa="/font-awesome" xmlns:c="/charts">
 
   <st:adjunct includes="io.jenkins.plugins.echarts"/>
 
   <link rel="stylesheet" href="${resURL}/plugin/warnings-ng/css/pull-request-portlet.css"/>
 
   <j:choose>
+
     <j:when test="${it.isEmpty()}">
       <div class="no-issues-body" style="width: ${it.preferredWidth}px; height: ${it.preferredHeight - 40}px;">
         <h1>${%zeroIssues.title}</h1>
@@ -14,18 +15,28 @@
         <fa:svg-icon name="check-double" class="no-issues-banner"/>
       </div>
     </j:when>
+
+    <j:when test="${it.hasNoNewWarnings()}">
+      <div class="no-issues-body" style="width: ${it.preferredWidth}px; height: ${it.preferredHeight - 40}px;">
+        <h3>${%zeroNewIssues.title} <fa:svg-icon name="check-double" class="no-new-issues-banner"/></h3>
+        <p>${%zeroNewIssues.description}</p>
+
+        <c:pie-chart id="${it.id}" height="${it.preferredHeight - 200}" model="${it.getNoNewWarningsModel()}"/>
+      </div>
+    </j:when>
+
     <j:otherwise>
-      <div id="${it.id}" data="${it.getResultIssuesAsJsonModel()}"
+      <div id="${it.id}" data="${it.getWarningsModel()}"
            style="width: ${it.preferredWidth}px; height: ${it.preferredHeight - 40}px;"/>
     </j:otherwise>
 
-    <j:if test="${it.hasQualityGate()}">
-      <p class="portlet-quality-gate-label">${%qualityGate.Name}
-        <img src="${it.getQualityGateResultIconUrl()}"/>
-        ${it.getQualityGateResultDescription()}</p>
-    </j:if>
-
   </j:choose>
+
+  <j:if test="${it.hasQualityGate()}">
+    <p class="portlet-quality-gate-label">${%qualityGate.Name}
+      <img src="${it.getQualityGateResultIconUrl()}"/>
+      ${it.getQualityGateResultDescription()}</p>
+  </j:if>
 
   <script>var portlet = <st:bind value="${it}"/></script>
   <script type="text/javascript" src="${resURL}/plugin/warnings-ng/js/issues-sunburst.js"/>

@@ -9,6 +9,10 @@ import java.util.stream.Collectors;
 import com.google.gson.JsonObject;
 
 import edu.hm.hafner.analysis.Severity;
+import edu.hm.hafner.echarts.JacksonFacade;
+import edu.hm.hafner.echarts.Palette;
+import edu.hm.hafner.echarts.PieChartModel;
+import edu.hm.hafner.echarts.PieData;
 
 import org.kohsuke.stapler.bind.JavaScriptMethod;
 import hudson.Extension;
@@ -85,7 +89,7 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      * @return
      *          the data as json string.
      */
-    public String getResultIssuesAsJsonModel() {
+    public String getWarningsModel() {
         JsonObject sunburstData = new JsonObject();
         sunburstData.addProperty("fixed", action.getResult().getFixedIssues().getSize());
         sunburstData.addProperty("outstanding", action.getResult().getOutstandingIssues().getSize());
@@ -102,6 +106,13 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
         return sunburstData.toString();
     }
 
+    public String getNoNewWarningsModel() {
+        PieChartModel model = new PieChartModel();
+        model.add(new PieData("outstanding", action.getResult().getOutstandingIssues().getSize()), Palette.YELLOW);
+        model.add(new PieData("fixed", action.getResult().getFixedIssues().getSize()), Palette.GREEN);
+        return new JacksonFacade().toJson(model);
+    }
+
     /**
      * Check if {@link AnalysisResult} issues are empty.
      *
@@ -110,6 +121,16 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      */
     public boolean isEmpty() {
         return action.getResult().isEmpty();
+    }
+
+    /**
+     * Check if {@link AnalysisResult} issues have no new warnings.
+     *
+     * @return
+     *          true if {@link AnalysisResult} issues have now new warnings.
+     */
+    public boolean hasNoNewWarnings() {
+        return action.getResult().hasNoNewWarnings();
     }
 
     /**

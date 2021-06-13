@@ -1024,13 +1024,13 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         ResultAction action = baseline.getAction(ResultAction.class);
         PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(action);
 
-        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("fixed").isEqualTo(0);
-        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("outstanding").isEqualTo(3);
-        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("total").isEqualTo(0);
-        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("low").isEqualTo(0);
-        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("normal").isEqualTo(0);
-        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("high").isEqualTo(0);
-        assertThatJson(portlet.getResultIssuesAsJsonModel()).node("new").node("error").isEqualTo(0);
+        assertThatJson(portlet.getWarningsModel()).node("fixed").isEqualTo(0);
+        assertThatJson(portlet.getWarningsModel()).node("outstanding").isEqualTo(3);
+        assertThatJson(portlet.getWarningsModel()).node("new").node("total").isEqualTo(0);
+        assertThatJson(portlet.getWarningsModel()).node("new").node("low").isEqualTo(0);
+        assertThatJson(portlet.getWarningsModel()).node("new").node("normal").isEqualTo(0);
+        assertThatJson(portlet.getWarningsModel()).node("new").node("high").isEqualTo(0);
+        assertThatJson(portlet.getWarningsModel()).node("new").node("error").isEqualTo(0);
     }
 
     private void write(final String adaptedOobFileContent) {

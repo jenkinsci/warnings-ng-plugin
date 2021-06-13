@@ -8,6 +8,12 @@
     fill: #009688;
 }
 
+.no-new-issues-banner {
+    fill: #009688;
+    width: 30px;
+    height: 30px;
+}
+
 .no-issues-body {
     transform: translateY(10%);
 }
