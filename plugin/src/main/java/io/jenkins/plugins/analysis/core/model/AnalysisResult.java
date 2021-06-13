@@ -427,6 +427,16 @@ public class AnalysisResult implements Serializable, StaticAnalysisRun {
     }
 
     /**
+     * Check if {@link AnalysisResult} issues does not have any new warnings.
+     *
+     * @return
+     *          true if {@link AnalysisResult} issues has no new warnings.
+     */
+    public boolean hasNoNewWarnings() {
+        return getTotals().getNewSize() == 0;
+    }
+
+    /**
      * Returns all outstanding issues of the associated static analysis run. I.e. all issues, that are part of the
      * current and previous report.
      *
