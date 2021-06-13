@@ -33,8 +33,8 @@ import io.jenkins.plugins.monitoring.MonitorPortletFactory;
  * @author Simon Symhoven
  */
 public class PullRequestMonitoringPortlet extends MonitorPortlet {
-
     private final ResultAction action;
+    private final AnalysisResult result;
 
     /**
      * Creates a new {@link PullRequestMonitoringPortlet}.
@@ -44,7 +44,9 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      */
     public PullRequestMonitoringPortlet(final ResultAction action) {
         super();
+
         this.action = action;
+        result = action.getResult();
     }
 
     @Override
@@ -55,7 +57,7 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
     @Override
     @JavaScriptMethod
     public String getId() {
-        return "warnings-ng-" + action.getResult().getId();
+        return "warnings-ng-" + result.getId();
     }
 
     @Override
@@ -84,32 +86,39 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
     }
 
     /**
-     * Get the json data for the sunburst diagram. (used by jelly view)
+     * Get the json data for the hierarchical sunburst diagram (used by jelly view).
      *
      * @return
      *          the data as json string.
      */
     public String getWarningsModel() {
         JsonObject sunburstData = new JsonObject();
-        sunburstData.addProperty("fixed", action.getResult().getFixedIssues().getSize());
-        sunburstData.addProperty("outstanding", action.getResult().getOutstandingIssues().getSize());
+        sunburstData.addProperty("fixed", result.getFixedIssues().getSize());
+        sunburstData.addProperty("outstanding", result.getOutstandingIssues().getSize());
 
         JsonObject newIssues = new JsonObject();
-        newIssues.addProperty("total", action.getResult().getNewIssues().getSize());
-        newIssues.addProperty("low", action.getResult().getNewIssues().getSizeOf(Severity.WARNING_LOW));
-        newIssues.addProperty("normal", action.getResult().getNewIssues().getSizeOf(Severity.WARNING_NORMAL));
-        newIssues.addProperty("high", action.getResult().getNewIssues().getSizeOf(Severity.WARNING_HIGH));
-        newIssues.addProperty("error", action.getResult().getNewIssues().getSizeOf(Severity.ERROR));
+        newIssues.addProperty("total", result.getNewIssues().getSize());
+        newIssues.addProperty("low", result.getNewIssues().getSizeOf(Severity.WARNING_LOW));
+        newIssues.addProperty("normal", result.getNewIssues().getSizeOf(Severity.WARNING_NORMAL));
+        newIssues.addProperty("high", result.getNewIssues().getSizeOf(Severity.WARNING_HIGH));
+        newIssues.addProperty("error", result.getNewIssues().getSizeOf(Severity.ERROR));
 
         sunburstData.add("new", newIssues);
 
         return sunburstData.toString();
     }
 
+    /**
+     * Get the json data for the simplified sunburst diagram (used by jelly view).
+     *
+     * @return
+     *          the data as json string.
+     */
+    @SuppressWarnings("unused") // used by jelly view
     public String getNoNewWarningsModel() {
         PieChartModel model = new PieChartModel();
-        model.add(new PieData("outstanding", action.getResult().getOutstandingIssues().getSize()), Palette.YELLOW);
-        model.add(new PieData("fixed", action.getResult().getFixedIssues().getSize()), Palette.GREEN);
+        model.add(new PieData("outstanding", result.getOutstandingIssues().getSize()), Palette.YELLOW);
+        model.add(new PieData("fixed", result.getFixedIssues().getSize()), Palette.GREEN);
         return new JacksonFacade().toJson(model);
     }
 
@@ -120,7 +129,7 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      *          true if {@link AnalysisResult} issues are empty, else false.
      */
     public boolean isEmpty() {
-        return action.getResult().isEmpty();
+        return result.isEmpty();
     }
 
     /**
@@ -129,8 +138,9 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      * @return
      *          true if {@link AnalysisResult} issues have now new warnings.
      */
+    @SuppressWarnings("unused") // used by jelly view
     public boolean hasNoNewWarnings() {
-        return action.getResult().hasNoNewWarnings();
+        return result.hasNoNewWarnings();
     }
 
     /**
@@ -139,8 +149,9 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      * @return
      *          true if action has a quality gate, else false.
      */
+    @SuppressWarnings("unused") // used by jelly view
     public boolean hasQualityGate() {
-        return !action.getResult().getQualityGateStatus().equals(QualityGateStatus.INACTIVE);
+        return !result.getQualityGateStatus().equals(QualityGateStatus.INACTIVE);
     }
 
     /**
@@ -149,8 +160,9 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      * @return
      *          the image url of the icon.
      */
+    @SuppressWarnings("unused") // used by jelly view
     public String getQualityGateResultIconUrl() {
-        return action.getResult().getQualityGateStatus().getResult().color.getImageOf("16x16");
+        return result.getQualityGateStatus().getResult().color.getImageOf("16x16");
     }
 
     /**
@@ -159,8 +171,9 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      * @return
      *          the description.
      */
+    @SuppressWarnings("unused") // used by jelly view
     public String getQualityGateResultDescription() {
-        return action.getResult().getQualityGateStatus().getResult().color.getDescription();
+        return result.getQualityGateStatus().getResult().color.getDescription();
     }
 
     /**
@@ -168,7 +181,6 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      */
     @Extension(optional = true)
     public static class PortletFactory extends MonitorPortletFactory {
-
         @Override
         public Collection<MonitorPortlet> getPortlets(final Run<?, ?> build) {
             List<ResultAction> actions = build.getActions(ResultAction.class);
