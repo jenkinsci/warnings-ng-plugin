@@ -10,7 +10,7 @@
       </j:when>
       <j:otherwise>
         <f:block>
-          You have no permission to edit this section (required permission: RUN_SCRIPTS).
+          You have no permission to edit this section (required permission: ADMINISTER).
         </f:block>
       </j:otherwise>
     </j:choose>
