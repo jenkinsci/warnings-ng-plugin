@@ -294,6 +294,9 @@ public abstract class ReportScanningTool extends Tool {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
+            if ((pattern==null || pattern.trim().isEmpty()) && !canScanConsoleLog()) {
+                return FormValidation.error(Messages.ReportScanningTool_PatternIsEmptyAndConsoleParsingDisabled());
+            }
 
             return model.doCheckPattern(project, pattern);
         }
