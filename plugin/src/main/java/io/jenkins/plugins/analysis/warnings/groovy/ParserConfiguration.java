@@ -31,7 +31,7 @@ import io.jenkins.plugins.util.JenkinsFacade;
 @Symbol("warningsParsers")
 public class ParserConfiguration extends GlobalConfigurationItem {
     private List<GroovyParser> parsers = new ArrayList<>();
-    private boolean canScanConsoleLog = false;
+    private boolean consoleLogScanningPermitted = false;
 
     /**
      * Creates the Groovy parser configuration for the warnings plugins.
@@ -91,21 +91,21 @@ public class ParserConfiguration extends GlobalConfigurationItem {
      * @return true if groovy parsers can scan the console, false if they are
      *         limited to only scanning files on the build node.
      */
-    public boolean getCanScanConsoleLog() {
-        return canScanConsoleLog;
+    public boolean isConsoleLogScanningPermitted() {
+        return consoleLogScanningPermitted;
     }
 
     /**
      * Sets whether or not the admin has permitted groovy parsers to scan a build's
      * console log.
      *
-     * @param canScanConsoleLog true if groovy parsers can scan the console, false
-     *                          if they are limited to only scanning files on the
-     *                          build node.
+     * @param consoleLogScanningPermitted true if groovy parsers can scan the
+     *                                    console, false if they are limited to only
+     *                                    scanning files on the build node.
      */
     @DataBoundSetter
-    public void setCanScanConsoleLog(final boolean canScanConsoleLog) {
-        this.canScanConsoleLog = canScanConsoleLog;
+    public void setConsoleLogScanningPermitted(final boolean consoleLogScanningPermitted) {
+        this.consoleLogScanningPermitted = consoleLogScanningPermitted;
 
         save();
     }

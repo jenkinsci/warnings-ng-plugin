@@ -96,7 +96,7 @@ public class GroovyScript extends ReportScanningTool {
             // then it can be hard-coded as true and the configuration option removed.
             // Until then, we let the Jenkins admin decide.
             // See JENKINS-54832 for ongoing discussion.
-            return ParserConfiguration.getInstance().getCanScanConsoleLog();
+            return ParserConfiguration.getInstance().isConsoleLogScanningPermitted();
         }
 
         /**
