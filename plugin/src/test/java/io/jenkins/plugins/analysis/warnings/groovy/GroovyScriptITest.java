@@ -11,13 +11,15 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
  */
 public class GroovyScriptITest extends IntegrationTestWithJenkinsPerSuite {
 
+    /** Tests that the descriptor's canScanConsoleLog method returns the same as the configured permission ... for the "true" case */
     @Test
-    void descriptorMethodCanScanConsoleLogReturnsTrueIfConfigurationSaysConsoleLogScanningPermittedIsTrue() {
+    public void descriptorMethodCanScanConsoleLogReturnsTrueIfConfigurationSaysConsoleLogScanningPermittedIsTrue() {
         testDescriptorCanScanConsoleLog(true);
     }
 
+    /** Tests that the descriptor's canScanConsoleLog method returns the same as the configured permission ... for the "false" case */
     @Test
-    void descriptorMethodCanScanConsoleLogReturnsFalsefConfigurationSaysConsoleLogScanningPermittedIsFalse() {
+    public void descriptorMethodCanScanConsoleLogReturnsFalsefConfigurationSaysConsoleLogScanningPermittedIsFalse() {
         testDescriptorCanScanConsoleLog(false);
     }
 

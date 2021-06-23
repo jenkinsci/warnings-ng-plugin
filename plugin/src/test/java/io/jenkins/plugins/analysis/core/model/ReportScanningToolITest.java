@@ -11,32 +11,36 @@ import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSu
  */
 public class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
 
+    /** Tests that the descriptor's canScanConsoleLog() method returns true by default */
     @Test
-    void descriptorMethodCanScanConsoleLogReturnsTrue() {
+    public void descriptorMethodCanScanConsoleLogReturnsTrue() {
         final ReportScanningTool.ReportScanningToolDescriptor descriptor = new ReportScanningTool.ReportScanningToolDescriptor(
                 "someId");
 
         assertThat(descriptor.canScanConsoleLog()).isTrue();
     }
 
+    /** Tests that, when the descriptor's canScanConsoleLog() method returns false, a null pattern is treated as an error */
     @Test
-    void descriptorMethodDoCheckPatternWhenCalledWithNoPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
+    public void descriptorMethodDoCheckPatternWhenCalledWithNoPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
         final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(false);
         final String givenPattern = null;
 
         assertThat(descriptor.doCheckPattern(null, givenPattern)).isError();
     }
 
+    /** Tests that, when the descriptor's canScanConsoleLog() method returns false, an empty pattern is treated as an error */
     @Test
-    void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
+    public void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
         final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(false);
-        final String givenPattern = "";
+        final String givenPattern = " ";
 
         assertThat(descriptor.doCheckPattern(null, givenPattern)).isError();
     }
 
+    /** Tests that, when the descriptor's canScanConsoleLog() method returns true, an empty pattern is valid */
     @Test
-    void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsOkIfCanScanConsoleLogIsTrue() {
+    public void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsOkIfCanScanConsoleLogIsTrue() {
         final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(true);
         final String givenPattern = "";
 
