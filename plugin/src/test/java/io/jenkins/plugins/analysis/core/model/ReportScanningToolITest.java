@@ -6,10 +6,13 @@ import org.junit.Test;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
+/**
+ * Tests the class {@link ReportScanningTool}.
+ */
 public class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
-    public void descriptorMethodCanScanConsoleLogReturnsTrue() {
+    void descriptorMethodCanScanConsoleLogReturnsTrue() {
         final ReportScanningTool.ReportScanningToolDescriptor descriptor = new ReportScanningTool.ReportScanningToolDescriptor(
                 "someId");
 
@@ -17,7 +20,7 @@ public class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     @Test
-    public void descriptorMethodDoCheckPatternWhenCalledWithNoPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
+    void descriptorMethodDoCheckPatternWhenCalledWithNoPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
         final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(false);
         final String givenPattern = null;
 
@@ -25,7 +28,7 @@ public class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     @Test
-    public void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
+    void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsErrorIfCanScanConsoleLogIsFalse() {
         final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(false);
         final String givenPattern = "";
 
@@ -33,7 +36,7 @@ public class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     @Test
-    public void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsOkIfCanScanConsoleLogIsTrue() {
+    void descriptorMethodDoCheckPatternWhenCalledWithEmptyPatternReturnsOkIfCanScanConsoleLogIsTrue() {
         final ReportScanningTool.ReportScanningToolDescriptor descriptor = makeDescriptor(true);
         final String givenPattern = "";
 
@@ -41,8 +44,7 @@ public class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     private ReportScanningTool.ReportScanningToolDescriptor makeDescriptor(final boolean canScanConsoleLog) {
-        final ReportScanningTool.ReportScanningToolDescriptor descriptor = new ReportScanningToolStubForTesting.ReportScanningToolDescriptorStubForTesting(
-                "someId", canScanConsoleLog, "");
-        return descriptor;
+        return new ReportScanningToolStubForTesting.ReportScanningToolDescriptorStubForTesting("someId",
+                canScanConsoleLog, "");
     }
 }

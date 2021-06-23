@@ -1,28 +1,43 @@
 package io.jenkins.plugins.analysis.core.model;
 
-abstract class ReportScanningToolStubForTesting extends ReportScanningTool {
+import edu.hm.hafner.analysis.IssueParser;
+
+/**
+ * Stub class used for testing {@link ReportScanningTool} and its descriptor.
+ */
+public class ReportScanningToolStubForTesting extends ReportScanningTool {
     private static final long serialVersionUID = 3729285280522413163L;
+    private final IssueParser valueForCreateParser;
+
+    ReportScanningToolStubForTesting(IssueParser valueForCreateParser) {
+        this.valueForCreateParser = valueForCreateParser;
+    }
+
+    @Override
+    public IssueParser createParser() {
+        return valueForCreateParser;
+    }
 
     public static class ReportScanningToolDescriptorStubForTesting
             extends ReportScanningTool.ReportScanningToolDescriptor {
-        private final boolean canScanConsoleLog;
-        private final String getPattern;
+        private final boolean valueForCanScanConsoleLog;
+        private final String valueForGetPattern;
 
-        ReportScanningToolDescriptorStubForTesting(final String id, final boolean answerForCanScanConsoleLog,
-                final String answerForGetPattern) {
+        ReportScanningToolDescriptorStubForTesting(final String id, final boolean valueForCanScanConsoleLog,
+                final String valueForGetPattern) {
             super(id);
-            this.canScanConsoleLog = answerForCanScanConsoleLog;
-            this.getPattern = answerForGetPattern;
+            this.valueForCanScanConsoleLog = valueForCanScanConsoleLog;
+            this.valueForGetPattern = valueForGetPattern;
         }
 
         @Override
         public boolean canScanConsoleLog() {
-            return canScanConsoleLog;
+            return valueForCanScanConsoleLog;
         }
 
         @Override
         public String getPattern() {
-            return getPattern;
+            return valueForGetPattern;
         }
     }
 }

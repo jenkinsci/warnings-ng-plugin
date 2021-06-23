@@ -6,15 +6,18 @@ import org.junit.Test;
 
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 
+/**
+ * Tests the class {@link GroovyScript}.
+ */
 public class GroovyScriptITest extends IntegrationTestWithJenkinsPerSuite {
 
     @Test
-    public void descriptorMethodCanScanConsoleLogReturnsTrueIfConfigurationSaysConsoleLogScanningPermittedIsTrue() {
+    void descriptorMethodCanScanConsoleLogReturnsTrueIfConfigurationSaysConsoleLogScanningPermittedIsTrue() {
         testDescriptorCanScanConsoleLog(true);
     }
 
     @Test
-    public void descriptorMethodCanScanConsoleLogReturnsFalsefConfigurationSaysConsoleLogScanningPermittedIsFalse() {
+    void descriptorMethodCanScanConsoleLogReturnsFalsefConfigurationSaysConsoleLogScanningPermittedIsFalse() {
         testDescriptorCanScanConsoleLog(false);
     }
 
