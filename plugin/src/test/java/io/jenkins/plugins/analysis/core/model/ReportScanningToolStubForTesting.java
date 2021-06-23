@@ -3,13 +3,14 @@ package io.jenkins.plugins.analysis.core.model;
 import edu.hm.hafner.analysis.IssueParser;
 
 /**
- * Stub class used for testing {@link ReportScanningTool} and its descriptor.
+ * Stub class used for testing {@link ReportScanningTool}.
  */
 public class ReportScanningToolStubForTesting extends ReportScanningTool {
     private static final long serialVersionUID = 3729285280522413163L;
     private final IssueParser valueForCreateParser;
 
-    ReportScanningToolStubForTesting(IssueParser valueForCreateParser) {
+    ReportScanningToolStubForTesting(final IssueParser valueForCreateParser) {
+        super();
         this.valueForCreateParser = valueForCreateParser;
     }
 
@@ -18,6 +19,9 @@ public class ReportScanningToolStubForTesting extends ReportScanningTool {
         return valueForCreateParser;
     }
 
+    /**
+     * Stub class used for testing {@link ReportScanningTool.ReportScanningToolDescriptor}.
+     */
     public static class ReportScanningToolDescriptorStubForTesting
             extends ReportScanningTool.ReportScanningToolDescriptor {
         private final boolean valueForCanScanConsoleLog;
