@@ -41,26 +41,8 @@ public class ReportScanningToolITest extends IntegrationTestWithJenkinsPerSuite 
     }
 
     private ReportScanningTool.ReportScanningToolDescriptor makeDescriptor(final boolean canScanConsoleLog) {
-        final ReportScanningTool.ReportScanningToolDescriptor descriptor = new StubReportScanningTool.StubReportScanningToolDescriptor(
-                canScanConsoleLog);
+        final ReportScanningTool.ReportScanningToolDescriptor descriptor = new ReportScanningToolStubForTesting.ReportScanningToolDescriptorStubForTesting(
+                "someId", canScanConsoleLog, "");
         return descriptor;
-    }
-}
-
-abstract class StubReportScanningTool extends ReportScanningTool {
-    private static final long serialVersionUID = 3729285280522413163L;
-
-    public static class StubReportScanningToolDescriptor extends ReportScanningTool.ReportScanningToolDescriptor {
-        private final boolean canScanConsoleLog;
-
-        protected StubReportScanningToolDescriptor(boolean canScanConsoleLog) {
-            super("someId");
-            this.canScanConsoleLog = canScanConsoleLog;
-        }
-
-        @Override
-        public boolean canScanConsoleLog() {
-            return canScanConsoleLog;
-        }
     }
 }
