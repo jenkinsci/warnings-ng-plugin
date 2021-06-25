@@ -1,1 +1,6 @@
-// empty up to now, see https://www.archunit.org/userguide/html/000_Index.html#_ignoring_violations
+# see https://www.archunit.org/userguide/html/000_Index.html#_ignoring_violations
+
+# ParserConfiguration.doCheckConsoleLogScanningPermitted does not require @POST or a permission check.
+# As-implemented, it does not leak data, even if called illegally.
+.*ParserConfiguration\.doCheckConsoleLogScanningPermitted.*POST.*
+.*Permission.*ParserConfiguration\.doCheckConsoleLogScanningPermitted.*

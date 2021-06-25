@@ -112,6 +112,11 @@ public class ParserConfiguration extends GlobalConfigurationItem {
         save();
     }
 
+    // Maintenance note: This is NOT annotated with @POST because it does not leak secrets.
+    // Similarly, there's no need to permission-check either.
+    // If it is ever changed to do anything non-trivial that might leak secrets then
+    // it must be changed to @POST and checkMethod="post" be added to the checkbox.
+    // There is a matching entry in archunit_ignore_patterns.txt to permit this.
     public FormValidation doCheckConsoleLogScanningPermitted(@QueryParameter boolean value) {
         if( value ) {
             return FormValidation.warning(Messages.ParserConfiguration_consoleLogScanningPermitted());
