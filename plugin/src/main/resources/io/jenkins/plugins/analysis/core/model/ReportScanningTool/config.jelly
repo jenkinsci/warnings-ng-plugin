@@ -4,15 +4,24 @@
   <i:tool-help/>
 
   <j:choose>
-    <j:when test="${size(descriptor.pattern) > 0}">
+    <j:when test="${descriptor.hasDefaultPattern()}">
       <f:entry title="${%title.pattern}" field="pattern"
-               description="${%description.overridePattern(descriptor.pattern)}">
+               description="${%description.patternOrDefault('http://ant.apache.org/manual/Types/fileset.html', descriptor.pattern)}"
+               help="${descriptor.getHelpFile('patternOrDefault')}">
+        <c:safe-textbox/>
+      </f:entry>
+    </j:when>
+    <j:when test="${descriptor.canScanConsoleLog()}">
+      <f:entry title="${%title.pattern}" field="pattern"
+               description="${%description.patternOrConsole('http://ant.apache.org/manual/Types/fileset.html')}"
+               help="${descriptor.getHelpFile('patternOrConsole')}">
         <c:safe-textbox/>
       </f:entry>
     </j:when>
     <j:otherwise>
       <f:entry title="${%title.pattern}" field="pattern"
-               description="${%description.consoleOrPattern}">
+               description="${%description.patternRequired('http://ant.apache.org/manual/Types/fileset.html')}"
+               help="${descriptor.getHelpFile('patternRequired')}">
         <c:safe-textbox/>
       </f:entry>
     </j:otherwise>
