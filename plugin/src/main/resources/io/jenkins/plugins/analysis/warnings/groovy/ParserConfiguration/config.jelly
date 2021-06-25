@@ -7,7 +7,7 @@
         <f:entry title="${%Parsers}" description="${%title.description}">
           <i:repeatable field="parsers"/>
         </f:entry>
-        <f:entry field="consoleLogScanningPermitted" title="${%Permit Parsing of Console?}" description="${%consoleLogScanningPermitted.description}">
+        <f:entry field="consoleLogScanningPermitted" title="${%consoleLogScanningPermitted.title}" description="${%consoleLogScanningPermitted.description}">
           <f:checkbox/>
         </f:entry>
       </j:when>

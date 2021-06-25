@@ -1,14 +1,14 @@
 <div>
   <p>
-    Console Log parsing has to be processed directly on the Jenkins master
-    which means running the parser groovy code (configured here) directly on the master which <em>CAN BE UNSAFE</em> from a security point of view.
+    Console Log parsing has to be processed directly on the Jenkins controller
+    which means running the parser groovy code (configured here) directly on the controller which <em>CAN BE UNSAFE</em> from a security point of view.
   </p>
     e.g. if your groovy code is poorly written.
   <p>
     If you do not accept this risk then you should not enable this feature
     ...
     but if you do not enable this feature then the groovy parsers that you define will only be able to parse files in the build workspace
-    (safely processed on the nodes responsible for the builds rather than natively on the master)
+    (safely processed on the agents responsible for the builds rather than natively on the controller)
     rather than the build console log itself.
   </p>
 </div>

@@ -8,8 +8,10 @@ import edu.hm.hafner.util.NoSuchElementException;
 import edu.hm.hafner.util.VisibleForTesting;
 
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.QueryParameter;
 import org.jenkinsci.Symbol;
 import hudson.Extension;
+import hudson.util.FormValidation;
 import hudson.util.ListBoxModel;
 import jenkins.model.GlobalConfiguration;
 import jenkins.model.Jenkins;
@@ -108,6 +110,13 @@ public class ParserConfiguration extends GlobalConfigurationItem {
         this.consoleLogScanningPermitted = consoleLogScanningPermitted;
 
         save();
+    }
+
+    public FormValidation doCheckConsoleLogScanningPermitted(@QueryParameter boolean value) {
+        if( value ) {
+            return FormValidation.warning(Messages.ParserConfiguration_consoleLogScanningPermitted());
+        }
+        return FormValidation.ok();
     }
 
     /**
