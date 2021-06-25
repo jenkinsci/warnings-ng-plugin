@@ -311,7 +311,7 @@ public abstract class ReportScanningTool extends Tool {
          * 
          * @return true if {@link #getPattern()} returns a non-empty string.
          */
-        public final boolean hasDefaultPattern() {
+        public boolean hasDefaultPattern() {
             // Maintenance note: We must use the same "is this empty/blank" logic as used in the runtime code.
             final String defaultPattern = getPattern();
             return !StringUtils.isBlank(defaultPattern);
