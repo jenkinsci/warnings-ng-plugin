@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import hudson.util.FormValidation;
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
@@ -54,5 +55,17 @@ class ParserConfigurationTest {
 
         verify(facade).save();
         assertThat(configuration.isConsoleLogScanningPermitted()).isEqualTo(true);
+    }
+
+    @Test
+    void shouldWarnUserIfConsoleLogScanningPermittedIsSet() {
+        GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
+
+        ParserConfiguration configuration = new ParserConfiguration(facade);
+
+        final FormValidation actualFalse = configuration.doCheckConsoleLogScanningPermitted(false);
+        assertThat(actualFalse).isOk();
+        final FormValidation actualTrue = configuration.doCheckConsoleLogScanningPermitted(true);
+        assertThat(actualTrue.kind).isEqualTo(FormValidation.Kind.WARNING);
     }
 }

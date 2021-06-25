@@ -112,13 +112,20 @@ public class ParserConfiguration extends GlobalConfigurationItem {
         save();
     }
 
+    /**
+     * Called by jelly to validate the configured value that could be passed to
+     * {@link #setConsoleLogScanningPermitted(boolean)}.
+     * 
+     * @param value The current value.
+     * @return {@link FormValidation#ok()} if all is well, else a warning or error.
+     */
     // Maintenance note: This is NOT annotated with @POST because it does not leak secrets.
     // Similarly, there's no need to permission-check either.
     // If it is ever changed to do anything non-trivial that might leak secrets then
     // it must be changed to @POST and checkMethod="post" be added to the checkbox.
     // There is a matching entry in archunit_ignore_patterns.txt to permit this.
-    public FormValidation doCheckConsoleLogScanningPermitted(@QueryParameter boolean value) {
-        if( value ) {
+    public FormValidation doCheckConsoleLogScanningPermitted(@QueryParameter final boolean value) {
+        if (value) {
             return FormValidation.warning(Messages.ParserConfiguration_consoleLogScanningPermitted());
         }
         return FormValidation.ok();
