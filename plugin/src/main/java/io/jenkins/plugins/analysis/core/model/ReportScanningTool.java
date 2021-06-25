@@ -294,11 +294,27 @@ public abstract class ReportScanningTool extends Tool {
             if (!JENKINS.hasPermission(Item.CONFIGURE, project)) {
                 return FormValidation.ok();
             }
-            if ((pattern == null || pattern.trim().isEmpty()) && !canScanConsoleLog()) {
-                return FormValidation.error(Messages.ReportScanningTool_PatternIsEmptyAndConsoleParsingDisabled());
+            if (!hasDefaultPattern() && !canScanConsoleLog()) {
+                final boolean thereIsNoPatternConfigured = StringUtils.isBlank(pattern);
+                if (thereIsNoPatternConfigured) {
+                    return FormValidation.error(Messages.ReportScanningTool_PatternIsEmptyAndConsoleParsingDisabled());
+                }
             }
 
             return model.doCheckPattern(project, pattern);
+        }
+
+        /**
+         * Indicates whether or not this scanning tool has a default pattern. If it
+         * does, it means it can never scan the console, but also means that we don't
+         * require a user-specified pattern as we have a usable default.
+         * 
+         * @return true if {@link #getPattern()} returns a non-empty string.
+         */
+        public final boolean hasDefaultPattern() {
+            // Maintenance note: We must use the same "is this empty/blank" logic as used in the runtime code.
+            final String defaultPattern = getPattern();
+            return !StringUtils.isBlank(defaultPattern);
         }
 
         /**
