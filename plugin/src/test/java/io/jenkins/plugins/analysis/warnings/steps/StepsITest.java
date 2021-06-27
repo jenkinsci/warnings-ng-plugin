@@ -745,7 +745,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws IOException {
         WorkflowJob job = createPipeline();
-        ArrayList<String> stages = turnFileIntoEchoStepsThatCatItsContentToTheConsole("pep8Test.txt");
+        ArrayList<String> stages = new ArrayList<>();
+        catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
         stages.add("def groovy = scanForIssues "
                 + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
         stages.add("publishIssues issues:[groovy]");
@@ -772,7 +773,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     @Test
     public void shouldFailUsingGroovyParserToScanConsoleLogWhenThatIsForbidden() throws IOException {
         WorkflowJob job = createPipeline();
-        ArrayList<String> stages = turnFileIntoEchoStepsThatCatItsContentToTheConsole("pep8Test.txt");
+        ArrayList<String> stages = new ArrayList<>();
+        catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
         stages.add("def groovy = scanForIssues "
                 + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
         stages.add("publishIssues issues:[groovy]");
@@ -803,15 +805,13 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
     }
 
-    private ArrayList<String> turnFileIntoEchoStepsThatCatItsContentToTheConsole(final String nameOfReportFileToEcho) throws IOException {
+    private void catFileContentsByAddingEchosSteps(final List<String> stagesToAddTo, final String nameOfReportFileToEcho) throws IOException {
         Path reportFilePath = getResourceAsFile(nameOfReportFileToEcho);
         List<String> reportFileContents = Files.readAllLines(reportFilePath);
-        ArrayList<String> stages = new ArrayList<>();
         for (String reportFileLine : reportFileContents) {
             String stage = "echo '" + reportFileLine.replace("'", "\\'") + "'";
-            stages.add(stage);
+            stagesToAddTo.add(stage);
         }
-        return stages;
     }
 
     /**
