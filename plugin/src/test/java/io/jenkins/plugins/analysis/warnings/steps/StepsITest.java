@@ -65,7 +65,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.ExcessivePublicCount", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
 
@@ -734,39 +734,22 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
-        Run<?, ?> run = buildSuccessfully(job);
-
-        ResultAction action = getResultAction(run);
-        assertThat(action.getId()).isEqualTo(id);
-        assertThat(action.getDisplayName()).contains("Groovy Pep8");
-
-        AnalysisResult result = action.getResult();
-        assertThat(result.getIssues()).hasSize(8);
-        assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
-
-        AnalysisResult second = scheduleSuccessfulBuild(job);
-        assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
+        testGroovyPep8JobIsSuccessful(job, id);
     }
 
     /**
      * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on the console that's showing an
      * error log with 8 issues.
-     * @throws Exception if the test fails unexpectedly
+     * @throws IOException if the test fails unexpectedly
      */
     @Test
-    public void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws Exception {
+    public void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws IOException {
         WorkflowJob job = createPipeline();
-        Path reportFilePath = getResourceAsFile("pep8Test.txt");
-        List<String> reportFileContents = Files.readAllLines(reportFilePath);
-        ArrayList<String> stages = new ArrayList<>();
-        for(String reportFileLine : reportFileContents) {
-            String stage = "echo '" + reportFileLine.replace("'", "\\'") + "'";
-            stages.add(stage);
-        }
+        ArrayList<String> stages = turnFileIntoEchoStepsThatCatItsContentToTheConsole("pep8Test.txt");
         stages.add("def groovy = scanForIssues "
                 + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
         stages.add("publishIssues issues:[groovy]");
-        job.setDefinition(asStage(stages.toArray(new String[stages.size()])));
+        job.setDefinition(asStage(stages.toArray(new String[0])));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         configuration.setConsoleLogScanningPermitted(true);
@@ -775,18 +758,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
-        Run<?, ?> run = buildSuccessfully(job);
-
-        ResultAction action = getResultAction(run);
-        assertThat(action.getId()).isEqualTo(id);
-        assertThat(action.getDisplayName()).contains("Groovy Pep8");
-
-        AnalysisResult result = action.getResult();
-        assertThat(result.getIssues()).hasSize(8);
-        assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
-
-        AnalysisResult second = scheduleSuccessfulBuild(job);
-        assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
+        testGroovyPep8JobIsSuccessful(job, id);
     }
 
     /**
@@ -795,22 +767,16 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * with 8 issues ... but when we're configured not to allow groovy parsers to
      * scan the console at all so we expect it to fail.
      * 
-     * @throws Exception if the test fails unexpectedly
+     * @throws IOException if the test fails unexpectedly
      */
     @Test
-    public void shouldFailUsingGroovyParserToScanConsoleLogWhenThatIsForbidden() throws Exception {
+    public void shouldFailUsingGroovyParserToScanConsoleLogWhenThatIsForbidden() throws IOException {
         WorkflowJob job = createPipeline();
-        Path reportFilePath = getResourceAsFile("pep8Test.txt");
-        List<String> reportFileContents = Files.readAllLines(reportFilePath);
-        ArrayList<String> stages = new ArrayList<>();
-        for(String reportFileLine : reportFileContents) {
-            String stage = "echo '" + reportFileLine.replace("'", "\\'") + "'";
-            stages.add(stage);
-        }
+        ArrayList<String> stages = turnFileIntoEchoStepsThatCatItsContentToTheConsole("pep8Test.txt");
         stages.add("def groovy = scanForIssues "
                 + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
         stages.add("publishIssues issues:[groovy]");
-        job.setDefinition(asStage(stages.toArray(new String[stages.size()])));
+        job.setDefinition(asStage(stages.toArray(new String[0])));
 
         ParserConfiguration configuration = ParserConfiguration.getInstance();
         configuration.setConsoleLogScanningPermitted(false);
@@ -820,6 +786,32 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
         buildWithResult(job, Result.FAILURE);
+    }
+
+    private void testGroovyPep8JobIsSuccessful(final WorkflowJob job, final String id) {
+        Run<?, ?> run = buildSuccessfully(job);
+
+        ResultAction action = getResultAction(run);
+        assertThat(action.getId()).isEqualTo(id);
+        assertThat(action.getDisplayName()).contains("Groovy Pep8");
+
+        AnalysisResult result = action.getResult();
+        assertThat(result.getIssues()).hasSize(8);
+        assertThat(result.getIssues().getPropertyCount(Issue::getOrigin)).containsOnly(entry(id, 8));
+
+        AnalysisResult second = scheduleSuccessfulBuild(job);
+        assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
+    }
+
+    private ArrayList<String> turnFileIntoEchoStepsThatCatItsContentToTheConsole(final String nameOfReportFileToEcho) throws IOException {
+        Path reportFilePath = getResourceAsFile(nameOfReportFileToEcho);
+        List<String> reportFileContents = Files.readAllLines(reportFilePath);
+        ArrayList<String> stages = new ArrayList<>();
+        for (String reportFileLine : reportFileContents) {
+            String stage = "echo '" + reportFileLine.replace("'", "\\'") + "'";
+            stages.add(stage);
+        }
+        return stages;
     }
 
     /**
