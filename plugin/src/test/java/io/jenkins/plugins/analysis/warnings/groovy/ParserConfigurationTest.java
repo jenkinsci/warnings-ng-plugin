@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+import hudson.util.FormValidation;
 import io.jenkins.plugins.util.GlobalConfigurationFacade;
 
 import static io.jenkins.plugins.analysis.core.testutil.Assertions.*;
@@ -19,14 +20,14 @@ class ParserConfigurationTest {
     private static final List<GroovyParser> PARSERS = Collections.singletonList(mock(GroovyParser.class));
 
     @Test
-    void shouldHaveNoRootFoldersWhenCreated() {
+    void shouldHaveNoParsersWhenCreated() {
         ParserConfiguration configuration = new ParserConfiguration(mock(GlobalConfigurationFacade.class));
 
         assertThat(configuration.getParsers()).isEmpty();
     }
 
     @Test
-    void shouldSaveConfigurationIfFoldersAreAdded() {
+    void shouldSaveConfigurationIfParsersAreAdded() {
         GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
 
         ParserConfiguration configuration = new ParserConfiguration(facade);
@@ -34,5 +35,37 @@ class ParserConfigurationTest {
 
         verify(facade).save();
         assertThat(configuration.getParsers()).isEqualTo(PARSERS);
+    }
+
+    @Test
+    void shouldHaveConsoleLogScanningPermittedSetToFalseWhenCreated() {
+        GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
+
+        ParserConfiguration configuration = new ParserConfiguration(facade);
+
+        assertThat(configuration.isConsoleLogScanningPermitted()).isEqualTo(false);
+    }
+
+    @Test
+    void shouldSaveConfigurationIfConsoleLogScanningPermittedIsSet() {
+        GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
+
+        ParserConfiguration configuration = new ParserConfiguration(facade);
+        configuration.setConsoleLogScanningPermitted(true);
+
+        verify(facade).save();
+        assertThat(configuration.isConsoleLogScanningPermitted()).isEqualTo(true);
+    }
+
+    @Test
+    void shouldWarnUserIfConsoleLogScanningPermittedIsSet() {
+        GlobalConfigurationFacade facade = mock(GlobalConfigurationFacade.class);
+
+        ParserConfiguration configuration = new ParserConfiguration(facade);
+
+        final FormValidation actualFalse = configuration.doCheckConsoleLogScanningPermitted(false);
+        assertThat(actualFalse).isOk();
+        final FormValidation actualTrue = configuration.doCheckConsoleLogScanningPermitted(true);
+        assertThat(actualTrue.kind).isEqualTo(FormValidation.Kind.WARNING);
     }
 }

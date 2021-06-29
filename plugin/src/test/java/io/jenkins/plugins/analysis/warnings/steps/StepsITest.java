@@ -3,6 +3,8 @@ package io.jenkins.plugins.analysis.warnings.steps;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -63,7 +65,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * @see ScanForIssuesStep
  * @see PublishIssuesStep
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
+@SuppressWarnings({"PMD.ExcessiveImports", "PMD.ExcessiveClassLength", "PMD.ExcessivePublicCount", "PMD.GodClass", "checkstyle:ClassDataAbstractionCoupling", "checkstyle:ClassFanOutComplexity"})
 public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
     private static final String NO_QUALITY_GATE = "";
 
@@ -719,7 +721,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * error log with 8 issues.
      */
     @Test
-    public void shouldShowWarningsOfGroovyParser() {
+    public void shouldShowWarningsOfGroovyParserWhenScanningFileInWorkspace() {
         WorkflowJob job = createPipelineWithWorkspaceFiles("pep8Test.txt");
         job.setDefinition(asStage(
                 "def groovy = scanForIssues "
@@ -732,6 +734,63 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
                 new GroovyParser(id, "Groovy Pep8",
                         "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
                         toString("groovy/pep8.groovy"), "")));
+        testGroovyPep8JobIsSuccessful(job, id);
+    }
+
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global configuration and runs this parser on the console that's showing an
+     * error log with 8 issues.
+     * @throws IOException if the test fails unexpectedly
+     */
+    @Test
+    public void shouldShowWarningsOfGroovyParserWhenScanningConsoleLogWhenThatIsPermitted() throws IOException {
+        WorkflowJob job = createPipeline();
+        ArrayList<String> stages = new ArrayList<>();
+        catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
+        stages.add("def groovy = scanForIssues "
+                + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
+        stages.add("publishIssues issues:[groovy]");
+        job.setDefinition(asStage(stages.toArray(new String[0])));
+
+        ParserConfiguration configuration = ParserConfiguration.getInstance();
+        configuration.setConsoleLogScanningPermitted(true);
+        String id = "groovy-pep8";
+        configuration.setParsers(Collections.singletonList(
+                new GroovyParser(id, "Groovy Pep8",
+                        "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
+                        toString("groovy/pep8.groovy"), "")));
+        testGroovyPep8JobIsSuccessful(job, id);
+    }
+
+    /**
+     * Registers a new {@link GroovyParser} (a Pep8 parser) in Jenkins global
+     * configuration and runs this parser on the console that's showing an error log
+     * with 8 issues ... but when we're configured not to allow groovy parsers to
+     * scan the console at all so we expect it to fail.
+     * 
+     * @throws IOException if the test fails unexpectedly
+     */
+    @Test
+    public void shouldFailUsingGroovyParserToScanConsoleLogWhenThatIsForbidden() throws IOException {
+        WorkflowJob job = createPipeline();
+        ArrayList<String> stages = new ArrayList<>();
+        catFileContentsByAddingEchosSteps(stages, "pep8Test.txt");
+        stages.add("def groovy = scanForIssues "
+                + "tool: groovyScript(parserId: 'groovy-pep8', pattern:'', reportEncoding:'UTF-8')");
+        stages.add("publishIssues issues:[groovy]");
+        job.setDefinition(asStage(stages.toArray(new String[0])));
+
+        ParserConfiguration configuration = ParserConfiguration.getInstance();
+        configuration.setConsoleLogScanningPermitted(false);
+        String id = "groovy-pep8";
+        configuration.setParsers(Collections.singletonList(
+                new GroovyParser(id, "Groovy Pep8",
+                        "(.*):(\\d+):(\\d+): (\\D\\d*) (.*)",
+                        toString("groovy/pep8.groovy"), "")));
+        buildWithResult(job, Result.FAILURE);
+    }
+
+    private void testGroovyPep8JobIsSuccessful(final WorkflowJob job, final String id) {
         Run<?, ?> run = buildSuccessfully(job);
 
         ResultAction action = getResultAction(run);
@@ -744,6 +803,15 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult second = scheduleSuccessfulBuild(job);
         assertThat(second).hasFixedSize(0).hasTotalSize(8).hasNewSize(0);
+    }
+
+    private void catFileContentsByAddingEchosSteps(final List<String> stagesToAddTo, final String nameOfReportFileToEcho) throws IOException {
+        Path reportFilePath = getResourceAsFile(nameOfReportFileToEcho);
+        List<String> reportFileContents = Files.readAllLines(reportFilePath);
+        for (String reportFileLine : reportFileContents) {
+            String stage = "echo '" + reportFileLine.replace("'", "\\'") + "'";
+            stagesToAddTo.add(stage);
+        }
     }
 
     /**

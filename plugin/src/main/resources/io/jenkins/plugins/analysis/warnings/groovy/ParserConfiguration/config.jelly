@@ -7,10 +7,13 @@
         <f:entry title="${%Parsers}" description="${%title.description}">
           <i:repeatable field="parsers"/>
         </f:entry>
+        <f:entry field="consoleLogScanningPermitted" title="${%consoleLogScanningPermitted.title}" description="${%consoleLogScanningPermitted.description}">
+          <f:checkbox/>
+        </f:entry>
       </j:when>
       <j:otherwise>
         <f:block>
-          You have no permission to edit this section (required permission: RUN_SCRIPTS).
+          You have no permission to edit this section (required permission: ADMINISTER).
         </f:block>
       </j:otherwise>
     </j:choose>

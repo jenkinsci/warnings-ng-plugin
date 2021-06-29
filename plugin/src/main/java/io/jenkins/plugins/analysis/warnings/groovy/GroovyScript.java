@@ -91,7 +91,12 @@ public class GroovyScript extends ReportScanningTool {
 
         @Override
         public boolean canScanConsoleLog() {
-            return false; // due to security reasons (JENKINS-54832) running a groovy script on master is prohibited
+            // Maintenance note: This was previously hard-coded as false.
+            // If the code is enhanced to run the groovy code within a sandboxed environment
+            // then it can be hard-coded as true and the configuration option removed.
+            // Until then, we let the Jenkins admin decide.
+            // See JENKINS-54832 for ongoing discussion.
+            return ParserConfiguration.getInstance().isConsoleLogScanningPermitted();
         }
 
         /**
