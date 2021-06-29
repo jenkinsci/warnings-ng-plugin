@@ -314,7 +314,7 @@ public abstract class ReportScanningTool extends Tool {
         public boolean hasDefaultPattern() {
             // Maintenance note: We must use the same "is this empty/blank" logic as used in the runtime code.
             final String defaultPattern = getPattern();
-            return !StringUtils.isBlank(defaultPattern);
+            return StringUtils.isNotBlank(defaultPattern);
         }
 
         /**
