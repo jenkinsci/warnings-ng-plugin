@@ -27,7 +27,7 @@ import io.jenkins.plugins.analysis.core.util.TrendChartType;
 import io.jenkins.plugins.util.JenkinsFacade;
 
 /**
- * Controls the live cycle of the analysis results in a job. This action persists the results of a build and displays a
+ * Controls the life cycle of the analysis results in a job. This action persists the results of a build and displays a
  * summary on the build page. The actual visualization of the results is defined in the matching {@code
  * summary.jelly} file. This action also provides access to the static analysis details: these are rendered using a new
  * {@link IssuesDetail} instance.
