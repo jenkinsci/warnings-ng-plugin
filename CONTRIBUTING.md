@@ -1,6 +1,6 @@
 # Contributing to the Warnings Next Generation Plugin
 
-This page provides information about contributing code to Jenkins' Warnings Next Generation plug-in.
+This document provides information about contributing code to Jenkins' Warnings Next Generation plug-in.
 
 :exclamation: There's a lot more to the Jenkins project than just code. For information on contributing to the Jenkins'
 project overall, check out [Jenkins' contributing landing page](https://jenkins.io/participate/).
@@ -41,7 +41,7 @@ Moreover (since this project is about static code analysis :wink:) a configurati
 analysis tools is defined in the POM and the `etc` and `.idea` folders:
 - [Checkstyle](http://checkstyle.sourceforge.net/)
 - [PMD](https://pmd.github.io/)
-- [FindBugs](http://findbugs.sourceforge.net/) and [SpotBugs](https://spotbugs.github.io)
+- [SpotBugs](https://spotbugs.github.io)
 - [Error Prone](http://errorprone.info)
 - [IntelliJ](https://www.jetbrains.com/help/idea/code-inspection.html)
 
@@ -51,8 +51,8 @@ the inspection rules will be automatically picked up by IntelliJ.
 
 ## Proposing Changes
 
-The Jenkins project source code repositories are hosted on GitHub. All proposed changes are submitted and code reviewed 
-using the [GitHub Pull Request](https://help.github.com/articles/about-pull-requests/) process.
+All proposed changes are submitted and code reviewed using the 
+[GitHub Pull Request](https://help.github.com/articles/about-pull-requests/) process.
 
 To submit a pull request:
 
@@ -72,7 +72,7 @@ There is no additional action required from pull request authors at this point.
 
 ## Copyright
 
-Static Analysis Suite  is licensed under [MIT license](./LICENSE). We consider all contributions as MIT unless it's 
+The Static Analysis Suite is licensed under [MIT license](./LICENSE). We consider all contributions as MIT unless it's 
 explicitly stated otherwise. MIT-incompatible code contributions will be rejected.
 Contributions under MIT-compatible licenses may be also rejected if they are not ultimately necessary.
 
