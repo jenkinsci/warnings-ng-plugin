@@ -20,9 +20,8 @@ If you already have some experience with the plugin you can also fix one of the 
 
 If you are planning to provide your own parser, please also have a look at the project 
 [Static Analysis Model and Parsers](https://github.com/jenkinsci/analysis-model). Here, all parsers need to be 
-added first. The Jenkins Warnings Plug-in does not include the parsers anymore, it links the parsers using the 
-analysis-model library. You still need to add a reference to the new parser afterwards in order to get the parser
-represented in the UI. 
+added. The Jenkins Warnings Plug-in does not include the parsers anymore, it just links all parsers using the 
+analysis-model library. 
 
 ## Getting started
 
@@ -60,11 +59,11 @@ To submit a pull request:
 1. Commit changes and push them to your fork on GitHub.
 It is a good practice is to create branches instead of pushing to master.
 2. In GitHub Web UI click the **New Pull Request** button.
-3. Select `warnings-plugin` as **base fork** and `master` as **base**, then click **Create Pull Request**.
+3. Select `warnings-ng-plugin` as **base fork** and `master` as **base**, then click **Create Pull Request**.
 4. Fill in the Pull Request description. It should reflect the changes, the reason behind the changes, and if available a
 reference to the Jenkins ticket in our [issue tracker](https://issues.jenkins-ci.org/).
 5. Click **Create Pull Request**.
-6. Wait for CI results, reviews. 
+6. Wait for CI results and reviews. 
 7. Process the feedback (see previous step). If there are changes required, commit them in your local branch and push them
 again to GitHub. Your pull request will be updated automatically. Review comments for changed lines will become outdated.
 
@@ -85,12 +84,4 @@ as long as the code is licensed under MIT and merged by one of the contributors 
 
 The Jenkins project has a Continuous Integration server... powered by Jenkins, of course.
 The CI job for this project is located at [ci.jenkins.io](https://ci.jenkins.io/job/Plugins/job/warnings-plugin/).
-
-# Links
-
-* [Join the Gitter chat of the Warnings Plugin](https://gitter.im/jenkinsci/warnings-plugin)
-* [Jenkins Contribution Landing Page](https://jenkins.io/paricipate/)
-* [Jenkins IRC Channel](https://jenkins.io/chat/)
-* [Beginners Guide To Contributing](https://wiki.jenkins.io/display/JENKINS/Beginners+Guide+to+Contributing)
-* [List of newbie-friendly issues in the core](https://issues.jenkins-ci.org/issues/?jql=project%20%3D%20JENKINS%20AND%20status%20in%20(Open%2C%20%22In%20Progress%22%2C%20Reopened)%20AND%20component%20%3D%20core%20AND%20labels%20in%20(newbie-friendly))
 
