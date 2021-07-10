@@ -34,9 +34,29 @@ public enum QualityGateStatus {
      * Returns the associated {@link Result} color.
      *
      * @return Jenkins' {@link Result} color
+     * @deprecated
      */
+    @Deprecated
     public BallColor getColor() {
         return result.color;
+    }
+
+    /**
+     * Returns the associated {@link Result} color.
+     *
+     * @return Jenkins' {@link Result} color
+     */
+    public String getIconClass() {
+        if (result == Result.SUCCESS) {
+            return "icon-blue";
+        }
+        if (result == Result.FAILURE) {
+            return "icon-red";
+        }
+        if (result == Result.UNSTABLE) {
+            return "icon-yellow";
+        }
+        return "icon-grey";
     }
 
     /**

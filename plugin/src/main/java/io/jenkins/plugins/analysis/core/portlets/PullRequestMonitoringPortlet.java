@@ -155,14 +155,14 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
     }
 
     /**
-     * Get the icon of the quality gate.
+     * Get the icon class of the quality gate.
      *
      * @return
-     *          the image url of the icon.
+     *          the image class of the Jenkins status icon.
      */
     @SuppressWarnings("unused") // used by jelly view
-    public String getQualityGateResultIconUrl() {
-        return result.getQualityGateStatus().getResult().color.getImageOf("16x16");
+    public String getQualityGateResultClass() {
+        return result.getQualityGateStatus().getIconClass();
     }
 
     /**

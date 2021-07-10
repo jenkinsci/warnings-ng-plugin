@@ -767,7 +767,7 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
      * configuration and runs this parser on the console that's showing an error log
      * with 8 issues ... but when we're configured not to allow groovy parsers to
      * scan the console at all so we expect it to fail.
-     * 
+     *
      * @throws IOException if the test fails unexpectedly
      */
     @Test
@@ -987,10 +987,8 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
 
         AnalysisResult result = scheduleSuccessfulBuild(job);
 
-        assertThat(not(result.getReferenceBuild().isPresent()));
-
-        assertThat(result.getNewIssues()).hasSize(0);
-        assertThat(result.getOutstandingIssues()).hasSize(2);
+        assertThat(result.getReferenceBuild()).isEmpty();
+        assertThat(result).hasNewSize(0).hasTotalSize(2);
         assertThat(result.getErrorMessages()).contains(
                 "Reference job 'reference' does not contain configured build '1'");
     }
@@ -1092,13 +1090,16 @@ public class StepsITest extends IntegrationTestWithJenkinsPerSuite {
         ResultAction action = baseline.getAction(ResultAction.class);
         PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(action);
 
-        assertThatJson(portlet.getWarningsModel()).node("fixed").isEqualTo(0);
-        assertThatJson(portlet.getWarningsModel()).node("outstanding").isEqualTo(3);
-        assertThatJson(portlet.getWarningsModel()).node("new").node("total").isEqualTo(0);
-        assertThatJson(portlet.getWarningsModel()).node("new").node("low").isEqualTo(0);
-        assertThatJson(portlet.getWarningsModel()).node("new").node("normal").isEqualTo(0);
-        assertThatJson(portlet.getWarningsModel()).node("new").node("high").isEqualTo(0);
-        assertThatJson(portlet.getWarningsModel()).node("new").node("error").isEqualTo(0);
+        String model = portlet.getWarningsModel();
+        assertThatJson(model).node("fixed").isEqualTo(0);
+        assertThatJson(model).node("outstanding").isEqualTo(3);
+        assertThatJson(model).node("new").node("total").isEqualTo(0);
+        assertThatJson(model).node("new").node("low").isEqualTo(0);
+        assertThatJson(model).node("new").node("normal").isEqualTo(0);
+        assertThatJson(model).node("new").node("high").isEqualTo(0);
+        assertThatJson(model).node("new").node("error").isEqualTo(0);
+
+        assertThat(portlet.hasQualityGate()).isFalse();
     }
 
     private void write(final String adaptedOobFileContent) {

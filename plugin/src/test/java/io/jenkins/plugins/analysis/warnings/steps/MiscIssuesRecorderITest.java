@@ -26,6 +26,7 @@ import io.jenkins.plugins.analysis.core.model.IssuesDetail;
 import io.jenkins.plugins.analysis.core.model.IssuesModel.IssuesRow;
 import io.jenkins.plugins.analysis.core.model.ReportScanningTool;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
@@ -37,6 +38,7 @@ import io.jenkins.plugins.analysis.warnings.RegisteredParser;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
 
 import static io.jenkins.plugins.analysis.core.assertions.Assertions.*;
+import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
 
 /**
  * Integration tests of the warnings plug-in in freestyle jobs. Tests the new recorder {@link IssuesRecorder}.
@@ -337,6 +339,41 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet successPortlet = createPortlet(project);
+
+        String successfulModel = successPortlet.getWarningsModel();
+        assertThatJson(successfulModel).node("fixed").isEqualTo(3);
+        assertThatJson(successfulModel).node("outstanding").isEqualTo(5);
+        assertThatJson(successfulModel).node("new").node("total").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("low").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("normal").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
+
+        verifyNoNewWarningsPortletModel(successPortlet, 5, 3);
+    }
+
+    private void verifyNoNewWarningsPortletModel(final PullRequestMonitoringPortlet successPortlet,
+            final int expectedOutstandingWarnings, final int expectedFixedWarnings) {
+        String simpleModel = successPortlet.getNoNewWarningsModel();
+        assertThatJson(simpleModel).node("data").isArray().hasSize(2);
+        assertThatJson(simpleModel).node("data[0]").node("name").isEqualTo("outstanding");
+        assertThatJson(simpleModel).node("data[0]").node("value").isEqualTo(expectedOutstandingWarnings);
+        assertThatJson(simpleModel).node("data[1]").node("name").isEqualTo("fixed");
+        assertThatJson(simpleModel).node("data[1]").node("value").isEqualTo(expectedFixedWarnings);
+    }
+
+    private PullRequestMonitoringPortlet createPortlet(final FreeStyleProject project) {
+        PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(getResultAction(project));
+
+        assertThat(portlet.hasQualityGate()).isFalse();
+        assertThat(portlet.getId()).endsWith("eclipse");
+        assertThat(portlet.getTitle()).endsWith("Eclipse ECJ");
+        assertThat(portlet.getIconUrl()).contains("/plugin/warnings-ng/icons/analysis-24x24.png");
+        assertThat(portlet.getDetailViewUrl()).contains("eclipse");
+
+        return portlet;
     }
 
     /**
@@ -362,6 +399,17 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(5); // Outstanding
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet successPortlet = createPortlet(project);
+
+        String successfulModel = successPortlet.getWarningsModel();
+        assertThatJson(successfulModel).node("fixed").isEqualTo(0);
+        assertThatJson(successfulModel).node("outstanding").isEqualTo(5);
+        assertThatJson(successfulModel).node("new").node("total").isEqualTo(3);
+        assertThatJson(successfulModel).node("new").node("low").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("normal").isEqualTo(3);
+        assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
     }
 
     /**
@@ -387,6 +435,19 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(8); // Outstanding
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet successPortlet = createPortlet(project);
+
+        String successfulModel = successPortlet.getWarningsModel();
+        assertThatJson(successfulModel).node("fixed").isEqualTo(0);
+        assertThatJson(successfulModel).node("outstanding").isEqualTo(8);
+        assertThatJson(successfulModel).node("new").node("total").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("low").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("normal").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
+
+        verifyNoNewWarningsPortletModel(successPortlet, 8, 0);
     }
 
     /**
@@ -413,6 +474,19 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getTotalSize() - result.getNewSize()).isEqualTo(2); // Outstanding
         assertThat(result).hasTotalSize(4);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet successPortlet = createPortlet(project);
+
+        String successfulModel = successPortlet.getWarningsModel();
+        assertThatJson(successfulModel).node("fixed").isEqualTo(3);
+        assertThatJson(successfulModel).node("outstanding").isEqualTo(2);
+        assertThatJson(successfulModel).node("new").node("total").isEqualTo(2);
+        assertThatJson(successfulModel).node("new").node("low").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("normal").isEqualTo(2);
+        assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
+        assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
+
+        assertThat(successPortlet.hasQualityGate()).isFalse();
     }
 
     private ReportScanningTool createEclipse(final String pattern) {
