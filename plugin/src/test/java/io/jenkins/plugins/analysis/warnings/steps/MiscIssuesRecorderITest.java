@@ -234,6 +234,15 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result.getSizePerOrigin()).containsExactly(entry("checkstyle", 0), entry("pmd", 0));
         assertThat(result).hasId("analysis");
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
+
+        PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(getResultAction(project));
+
+        assertThat(portlet.hasQualityGate()).isFalse();
+        assertThat(portlet.isEmpty()).isTrue();
+        assertThat(portlet.getId()).endsWith("analysis");
+        assertThat(portlet.getTitle()).endsWith("Static Analysis");
+        assertThat(portlet.getIconUrl()).contains("/plugin/warnings-ng/icons/analysis-24x24.png");
+        assertThat(portlet.getDetailViewUrl()).contains("analysis");
     }
 
     /**
@@ -340,9 +349,9 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasTotalSize(5);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
-        PullRequestMonitoringPortlet successPortlet = createPortlet(project);
+        PullRequestMonitoringPortlet portlet = createPortlet(project);
 
-        String successfulModel = successPortlet.getWarningsModel();
+        String successfulModel = portlet.getWarningsModel();
         assertThatJson(successfulModel).node("fixed").isEqualTo(3);
         assertThatJson(successfulModel).node("outstanding").isEqualTo(5);
         assertThatJson(successfulModel).node("new").node("total").isEqualTo(0);
@@ -351,12 +360,14 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
         assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
 
-        verifyNoNewWarningsPortletModel(successPortlet, 5, 3);
+        verifyNoNewWarningsPortletModel(portlet, 5, 3);
     }
 
-    private void verifyNoNewWarningsPortletModel(final PullRequestMonitoringPortlet successPortlet,
+    private void verifyNoNewWarningsPortletModel(final PullRequestMonitoringPortlet portlet,
             final int expectedOutstandingWarnings, final int expectedFixedWarnings) {
-        String simpleModel = successPortlet.getNoNewWarningsModel();
+        assertThat(portlet.hasNoNewWarnings()).isTrue();
+
+        String simpleModel = portlet.getNoNewWarningsModel();
         assertThatJson(simpleModel).node("data").isArray().hasSize(2);
         assertThatJson(simpleModel).node("data[0]").node("name").isEqualTo("outstanding");
         assertThatJson(simpleModel).node("data[0]").node("value").isEqualTo(expectedOutstandingWarnings);
@@ -372,6 +383,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(portlet.getTitle()).endsWith("Eclipse ECJ");
         assertThat(portlet.getIconUrl()).contains("/plugin/warnings-ng/icons/analysis-24x24.png");
         assertThat(portlet.getDetailViewUrl()).contains("eclipse");
+        assertThat(portlet.isEmpty()).isFalse();
 
         return portlet;
     }
@@ -400,9 +412,10 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
-        PullRequestMonitoringPortlet successPortlet = createPortlet(project);
+        PullRequestMonitoringPortlet portlet = createPortlet(project);
+        assertThat(portlet.hasNoNewWarnings()).isFalse();
 
-        String successfulModel = successPortlet.getWarningsModel();
+        String successfulModel = portlet.getWarningsModel();
         assertThatJson(successfulModel).node("fixed").isEqualTo(0);
         assertThatJson(successfulModel).node("outstanding").isEqualTo(5);
         assertThatJson(successfulModel).node("new").node("total").isEqualTo(3);
@@ -436,9 +449,9 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThat(result).hasTotalSize(8);
         assertThat(result).hasQualityGateStatus(QualityGateStatus.INACTIVE);
 
-        PullRequestMonitoringPortlet successPortlet = createPortlet(project);
+        PullRequestMonitoringPortlet portlet = createPortlet(project);
 
-        String successfulModel = successPortlet.getWarningsModel();
+        String successfulModel = portlet.getWarningsModel();
         assertThatJson(successfulModel).node("fixed").isEqualTo(0);
         assertThatJson(successfulModel).node("outstanding").isEqualTo(8);
         assertThatJson(successfulModel).node("new").node("total").isEqualTo(0);
@@ -447,7 +460,7 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
         assertThatJson(successfulModel).node("new").node("high").isEqualTo(0);
         assertThatJson(successfulModel).node("new").node("error").isEqualTo(0);
 
-        verifyNoNewWarningsPortletModel(successPortlet, 8, 0);
+        verifyNoNewWarningsPortletModel(portlet, 8, 0);
     }
 
     /**
