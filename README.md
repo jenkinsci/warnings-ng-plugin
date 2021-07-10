@@ -50,7 +50,10 @@ please share it and provide pull requests for the
 the [Analysis Parsers Library](https://github.com/jenkinsci/analysis-model/pulls). 
 
 For more details please refer to the [documentation](doc/Documentation.md) or to an 
-[introductory video](https://www.youtube.com/watch?v=0GcEqML8nys).
+[introductory video](https://www.youtube.com/watch?v=0GcEqML8nys). Contributions are welcome, please 
+refer to the separate [CONTRIBUTING](CONTRIBUTING.md) document
+for details on how to proceed!
+
 
 All source code is licensed under the MIT license.
 
