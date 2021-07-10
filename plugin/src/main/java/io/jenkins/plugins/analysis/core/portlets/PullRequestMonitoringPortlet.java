@@ -155,6 +155,18 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
     }
 
     /**
+     * Get the icon of the quality gate.
+     *
+     * @return
+     *          the image url of the icon.
+     * @deprecated replaced by {@link #getQualityGateResultClass()}
+     */
+    @Deprecated
+    public String getQualityGateResultIconUrl() {
+        return result.getQualityGateStatus().getResult().color.getImageOf("16x16");
+    }
+
+    /**
      * Get the icon class of the quality gate.
      *
      * @return
