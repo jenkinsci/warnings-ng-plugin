@@ -40,6 +40,15 @@ public enum QualityGateStatus {
     }
 
     /**
+     * Returns the associated {@link Result} icon class to be used in the UI.
+     *
+     * @return Jenkins' {@link Result} icon class
+     */
+    public String getIconClass() {
+        return getColor().getIconClassName();
+    }
+
+    /**
      * Returns whether the quality gate has been passed (or has not been activated at all).
      *
      * @return {@code true} if the quality gate has been passed, {@code false}  otherwise

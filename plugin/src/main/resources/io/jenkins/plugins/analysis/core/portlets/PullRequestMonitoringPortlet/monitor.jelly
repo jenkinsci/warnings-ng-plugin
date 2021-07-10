@@ -1,6 +1,6 @@
 <?jelly escape-by-default='true'?>
 
-<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:fa="/font-awesome" xmlns:c="/charts">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:l="/lib/layout" xmlns:fa="/font-awesome" xmlns:c="/charts">
 
   <st:adjunct includes="io.jenkins.plugins.echarts"/>
 
@@ -34,7 +34,7 @@
 
   <j:if test="${it.hasQualityGate()}">
     <p class="portlet-quality-gate-label">${%qualityGate.Name}
-      <img src="${it.getQualityGateResultIconUrl()}"/>
+      <l:icon class="${it.getQualityGateResultClass()} icon-sm"/>
       ${it.getQualityGateResultDescription()}</p>
   </j:if>
 

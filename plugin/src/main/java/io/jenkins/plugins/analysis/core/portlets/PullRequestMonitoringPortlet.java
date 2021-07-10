@@ -159,10 +159,22 @@ public class PullRequestMonitoringPortlet extends MonitorPortlet {
      *
      * @return
      *          the image url of the icon.
+     * @deprecated replaced by {@link #getQualityGateResultClass()}
      */
-    @SuppressWarnings("unused") // used by jelly view
+    @Deprecated
     public String getQualityGateResultIconUrl() {
         return result.getQualityGateStatus().getResult().color.getImageOf("16x16");
+    }
+
+    /**
+     * Get the icon class of the quality gate.
+     *
+     * @return
+     *          the image class of the Jenkins status icon.
+     */
+    @SuppressWarnings("unused") // used by jelly view
+    public String getQualityGateResultClass() {
+        return result.getQualityGateStatus().getIconClass();
     }
 
     /**

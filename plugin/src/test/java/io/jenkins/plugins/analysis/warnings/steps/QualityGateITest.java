@@ -17,6 +17,7 @@ import hudson.model.Run;
 
 import io.jenkins.plugins.analysis.core.model.AnalysisResult;
 import io.jenkins.plugins.analysis.core.model.ResultAction;
+import io.jenkins.plugins.analysis.core.portlets.PullRequestMonitoringPortlet;
 import io.jenkins.plugins.analysis.core.steps.IssuesRecorder;
 import io.jenkins.plugins.analysis.core.testutil.IntegrationTestWithJenkinsPerSuite;
 import io.jenkins.plugins.analysis.core.util.QualityGate.QualityGateResult;
@@ -501,11 +502,15 @@ public class QualityGateITest extends IntegrationTestWithJenkinsPerSuite {
 
     @SuppressWarnings("illegalcatch")
     private void scheduleBuildAndAssertStatus(final AbstractProject<?, ?> job, final Result result,
-            final QualityGateStatus qualityGateStatus) {
+            final QualityGateStatus expectedQualityGateStatus) {
         try {
             Run<?, ?> build = getJenkins().assertBuildStatus(result, job.scheduleBuild2(0));
             ResultAction action = build.getAction(ResultAction.class);
-            assertThat(action.getResult()).hasQualityGateStatus(qualityGateStatus);
+            assertThat(action.getResult()).hasQualityGateStatus(expectedQualityGateStatus);
+
+            PullRequestMonitoringPortlet portlet = new PullRequestMonitoringPortlet(action);
+            assertThat(portlet.hasQualityGate()).isTrue();
+            assertThat(portlet.getQualityGateResultClass()).isEqualTo(expectedQualityGateStatus.getIconClass());
         }
         catch (Exception e) {
             throw new AssertionError(e);
