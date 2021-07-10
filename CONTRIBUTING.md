@@ -76,10 +76,6 @@ Static Analysis Suite  is licensed under [MIT license](./LICENSE). We consider a
 explicitly stated otherwise. MIT-incompatible code contributions will be rejected.
 Contributions under MIT-compatible licenses may be also rejected if they are not ultimately necessary.
 
-We **Do NOT** require pull request submitters to sign the 
-[contributor agreement](https://wiki.jenkins.io/display/JENKINS/Copyright+on+source+code)
-as long as the code is licensed under MIT and merged by one of the contributors with the signed agreement.
-
 ## Continuous Integration
 
 The Jenkins project has a Continuous Integration server... powered by Jenkins, of course.
