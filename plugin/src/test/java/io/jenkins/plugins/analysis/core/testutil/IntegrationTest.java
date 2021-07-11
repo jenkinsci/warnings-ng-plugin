@@ -64,6 +64,7 @@ import hudson.model.Action;
 import hudson.model.Descriptor;
 import hudson.model.FreeStyleProject;
 import hudson.model.Item;
+import hudson.model.Job;
 import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.Slave;
@@ -1013,6 +1014,25 @@ public abstract class IntegrationTest extends ResourceTest {
     protected ResultAction getResultAction(final Run<?, ?> build) {
         ResultAction action = build.getAction(ResultAction.class);
         assertThat(action).as("No ResultAction found in run %s", build).isNotNull();
+        return action;
+    }
+
+    /**
+     * Returns the {@link ResultAction} for the specified job. Note that this method does only return the first match,
+     * even if a test registered multiple actions.
+     *
+     * @param job
+     *         the job
+     *
+     * @return the action of the specified build
+     */
+    protected ResultAction getResultAction(final Job<?, ?> job) {
+        Run<?, ?> build = job.getLastCompletedBuild();
+        assertThat(build).as("No completed build found for job %s", job).isNotNull();
+
+        ResultAction action = build.getAction(ResultAction.class);
+        assertThat(action).as("No ResultAction found in run %s", build).isNotNull();
+
         return action;
     }
 
