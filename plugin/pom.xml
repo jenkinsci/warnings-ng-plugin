@@ -23,20 +23,19 @@
   <properties>
     <revision>9.4.0</revision>
     <changelist>-SNAPSHOT</changelist>
-    <jenkins.baseline>2.263</jenkins.baseline>
     <module.name>${project.groupId}.warnings.ng</module.name>
 
     <analysis-model-api.version>10.2.5</analysis-model-api.version>
     <analysis-model-tests.version>10.2.5</analysis-model-tests.version>
 
-    <forensics-api-plugin.version>1.2.0</forensics-api-plugin.version>
+    <forensics-api-plugin.version>1.2.1</forensics-api-plugin.version>
     <plugin-util-api.version>2.4.0</plugin-util-api.version>
 
-    <data-tables-api.version>1.10.25-1</data-tables-api.version>
-    <font-awesome-api.version>5.15.3-3</font-awesome-api.version>
-    <echarts-api.version>5.1.2-2</echarts-api.version>
-    <jquery3-api.version>3.6.0-1</jquery3-api.version>
-    <bootstrap5-api.version>5.0.1-2</bootstrap5-api.version>
+    <data-tables-api.version>1.10.25-2</data-tables-api.version>
+    <font-awesome-api.version>5.15.3-4</font-awesome-api.version>
+    <echarts-api.version>5.1.2-3</echarts-api.version>
+    <jquery3-api.version>3.6.0-2</jquery3-api.version>
+    <bootstrap5-api.version>5.0.2-1</bootstrap5-api.version>
     <popper-api.version>1.16.1-2</popper-api.version>
     <error_prone_annotations.version>2.7.1</error_prone_annotations.version>
     <pull-request-monitoring.version>1.7.3</pull-request-monitoring.version>
@@ -119,6 +118,11 @@
         <artifactId>gson</artifactId>
         <version>2.8.7</version>
       </dependency>
+      <dependency>
+        <groupId>-io.jenkins.plugins</groupId>
+        <artifactId>jquery3-api</artifactId>
+        <version>${jquery3-api.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -175,6 +179,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>jquery3-api</artifactId>
+      <version>${jquery3-api.version}</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -244,6 +249,12 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>matrix-project</artifactId>
       <version>${matrix-project.version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>junit</artifactId>
+          <groupId>org.jenkins-ci.plugins</groupId>
+        </exclusion>
+      </exclusions>
       <optional>true</optional>
     </dependency>
     <dependency>
