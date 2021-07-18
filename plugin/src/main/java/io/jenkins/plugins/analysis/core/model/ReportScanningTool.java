@@ -146,6 +146,7 @@ public abstract class ReportScanningTool extends Tool {
         }
     }
 
+    // FIXME: Pattern expansion will not work in pipelines since the run does not provide all available variables
     private String expandPattern(final Run<?, ?> run, final String actualPattern) {
         try {
             EnvironmentResolver environmentResolver = new EnvironmentResolver();
@@ -308,7 +309,7 @@ public abstract class ReportScanningTool extends Tool {
          * Indicates whether or not this scanning tool has a default pattern. If it
          * does, it means it can never scan the console, but also means that we don't
          * require a user-specified pattern as we have a usable default.
-         * 
+         *
          * @return true if {@link #getPattern()} returns a non-empty string.
          */
         public boolean hasDefaultPattern() {

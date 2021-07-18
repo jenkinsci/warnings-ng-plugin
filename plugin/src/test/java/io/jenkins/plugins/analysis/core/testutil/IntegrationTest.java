@@ -79,6 +79,7 @@ import hudson.tasks.Builder;
 import hudson.tasks.Publisher;
 import hudson.tasks.Shell;
 import hudson.util.DescribableList;
+import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 import jenkins.security.s2m.AdminWhitelistRule;
 
@@ -602,7 +603,8 @@ public abstract class IntegrationTest extends ResourceTest {
      * @return the pipeline step
      */
     protected String createRecordIssuesStep(final AnalysisModelParser tool) {
-        return String.format("recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])", tool.getSymbolName());
+        return String.format("recordIssues(tools: [%s(pattern: '**/*issues.txt', reportEncoding:'UTF-8')])",
+                tool.getSymbolName());
     }
 
     /**
@@ -904,7 +906,6 @@ public abstract class IntegrationTest extends ResourceTest {
             throw new AssertionError(exception);
         }
     }
-
 
     /**
      * Schedules a build for the specified job and waits for the job to finish. After the build has been finished the
@@ -1425,6 +1426,38 @@ public abstract class IntegrationTest extends ResourceTest {
         catch (IOException e) {
             throw new AssertionError(e);
         }
+    }
+
+    /**
+     * Sets the specified environment variables in Jenkins global configuration.
+     *
+     * @param vars
+     *         the variables to set
+     * @see #env(String, String)
+     */
+    protected void setEnvironmentVariables(final Entry... vars) {
+        try {
+            Objects.requireNonNull(Jenkins.getInstanceOrNull()).getNodeProperties().replaceBy(
+                    Collections.singleton(new EnvironmentVariablesNodeProperty(vars)));
+        }
+        catch (IOException exception) {
+            throw new AssertionError(exception);
+        }
+    }
+
+    /**
+     * Creates a new environment variable.
+     *
+     * @param key
+     *         the key
+     * @param value
+     *         the value
+     *
+     * @return the environment variable
+     * @see #setEnvironmentVariables(Entry...)
+     */
+    protected Entry env(final String key, final String value) {
+        return new Entry(key, value);
     }
 
     @SuppressWarnings({"PMD.AvoidPrintStackTrace", "PMD.SystemPrintln"})
