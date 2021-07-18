@@ -33,6 +33,7 @@ import io.jenkins.plugins.analysis.core.util.QualityGateStatus;
 import io.jenkins.plugins.analysis.warnings.CheckStyle;
 import io.jenkins.plugins.analysis.warnings.Eclipse;
 import io.jenkins.plugins.analysis.warnings.FindBugs;
+import io.jenkins.plugins.analysis.warnings.Java;
 import io.jenkins.plugins.analysis.warnings.Pmd;
 import io.jenkins.plugins.analysis.warnings.RegisteredParser;
 import io.jenkins.plugins.analysis.warnings.tasks.OpenTasks;
@@ -48,7 +49,7 @@ import static net.javacrumbs.jsonunit.assertj.JsonAssertions.*;
  * @author Martin Weibel
  * @author Ullrich Hafner
  */
-@SuppressWarnings({"PMD.ExcessiveImports", "ClassDataAbstractionCoupling"})
+@SuppressWarnings({"PMD.ExcessiveImports", "checkstyle:ClassFanOutComplexity"})
 public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite {
     private static final Pattern TAG_REGEX = Pattern.compile(">(.+?)</", Pattern.DOTALL);
 
@@ -646,6 +647,89 @@ public class MiscIssuesRecorderITest extends IntegrationTestWithJenkinsPerSuite 
     public void shouldParseCheckstyleIfIsEnabledForFailureAndResultIsSuccess() {
         assertThatFailureFlagIsNotUsed(true);
         assertThatFailureFlagIsNotUsed(false);
+    }
+
+    /**
+     * Make sure that a file pattern containing environment variables correctly matches the expected files.
+     */
+    @Test
+    public void shouldResolveEnvVariablesInPattern() {
+        FreeStyleProject project = createJavaWarningsFreestyleProject("**/*.${FILE_EXT}");
+
+        setEnvironmentVariables(env("FILE_EXT", "txt"));
+
+        createFileWithJavaWarnings("javac.txt", project, 1, 2, 3);
+        createFileWithJavaWarnings("javac.csv", project, 1, 2);
+
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(analysisResult).hasTotalSize(3);
+        assertThat(analysisResult.getInfoMessages()).contains(String.format(
+                "Searching for all files in '%s' that match the pattern '**/*.txt'", getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages()).contains("-> found 1 file");
+    }
+
+    /**
+     * Make sure that a file pattern containing environment variables which in turn contain environment variables again
+     * can be correctly resolved. The Environment variables should be injected with the EnvInject plugin.
+     */
+    @Test
+    public void shouldResolveNestedEnvVariablesInPattern() {
+        FreeStyleProject project = createJavaWarningsFreestyleProject("${FILE_PATTERN}");
+
+        setEnvironmentVariables(
+                env("FILE_PATTERN", "${FILE_NAME}.${FILE_EXT}"),
+                env("FILE_NAME", "*_javac"),
+                env("FILE_EXT", "txt"));
+
+        createFileWithJavaWarnings("A_javac.txt", project, 1, 2);
+        createFileWithJavaWarnings("B_javac.txt", project, 3, 4);
+        createFileWithJavaWarnings("C_javac.csv", project, 11, 12, 13);
+        createFileWithJavaWarnings("D_tmp.csv", project, 21, 22, 23);
+        createFileWithJavaWarnings("E_tmp.txt", project, 31, 32, 33);
+
+        AnalysisResult analysisResult = scheduleBuildAndAssertStatus(project, Result.SUCCESS);
+
+        assertThat(analysisResult).hasTotalSize(4);
+        assertThat(analysisResult.getInfoMessages()).contains(String.format(
+                "Searching for all files in '%s' that match the pattern '*_javac.txt'", getWorkspace(project)));
+        assertThat(analysisResult.getInfoMessages()).contains("-> found 2 files");
+    }
+
+    /**
+     * Create a Freestyle Project with enabled Java warnings.
+     *
+     * @param pattern
+     *         The pattern that is set for the warning files.
+     *
+     * @return The created Freestyle Project.
+     */
+    private FreeStyleProject createJavaWarningsFreestyleProject(final String pattern) {
+        FreeStyleProject project = createFreeStyleProject();
+        Java java = new Java();
+        java.setPattern(pattern);
+        enableWarnings(project, java);
+        return project;
+    }
+
+    /**
+     * Create a file with some java warnings in the workspace of the project.
+     *
+     * @param fileName
+     *         of the file to which the warnings will be written
+     * @param project
+     *         in which the file will be placed
+     * @param linesWithWarning
+     *         all lines in which a mocked warning should be placed
+     */
+    private void createFileWithJavaWarnings(final String fileName, final FreeStyleProject project,
+            final int... linesWithWarning) {
+        StringBuilder warningText = new StringBuilder();
+        for (int lineNumber : linesWithWarning) {
+            warningText.append(createJavaWarning("C:\\Path\\SourceFile.java", lineNumber)).append("\n");
+        }
+
+        createFileInWorkspace(project, fileName, warningText.toString());
     }
 
     private void assertThatFailureFlagIsNotUsed(final boolean isEnabledForFailure) {

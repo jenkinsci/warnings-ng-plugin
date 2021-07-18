@@ -64,7 +64,6 @@
     <httpcomponents-client.version>4.5.13-1.0</httpcomponents-client.version>
     <configuration-as-code.version>1.51</configuration-as-code.version>
     <job-dsl.version>1.77</job-dsl.version>
-    <envinject.version>2.3.0</envinject.version>
     <flexible-publish.version>0.15.2</flexible-publish.version>
     <pipeline-stage-step.version>2.5</pipeline-stage-step.version>
     <docker-fixtures.version>1.11</docker-fixtures.version>
@@ -419,12 +418,6 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>flexible-publish</artifactId>
       <version>${flexible-publish.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.jenkins-ci.plugins</groupId>
-      <artifactId>envinject</artifactId>
-      <version>${envinject.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
