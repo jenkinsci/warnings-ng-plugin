@@ -79,7 +79,6 @@ import hudson.tasks.Builder;
 import hudson.tasks.Publisher;
 import hudson.tasks.Shell;
 import hudson.util.DescribableList;
-import jenkins.model.Jenkins;
 import jenkins.model.ParameterizedJobMixIn.ParameterizedJob;
 import jenkins.security.s2m.AdminWhitelistRule;
 
@@ -1437,7 +1436,7 @@ public abstract class IntegrationTest extends ResourceTest {
      */
     protected void setEnvironmentVariables(final Entry... vars) {
         try {
-            Objects.requireNonNull(Jenkins.getInstanceOrNull()).getNodeProperties().replaceBy(
+            getJenkins().getInstance().getNodeProperties().replaceBy(
                     Collections.singleton(new EnvironmentVariablesNodeProperty(vars)));
         }
         catch (IOException exception) {
