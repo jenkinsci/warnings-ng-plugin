@@ -38,7 +38,7 @@
     <bootstrap5-api.version>5.0.2-1</bootstrap5-api.version>
     <popper-api.version>1.16.1-2</popper-api.version>
     <error_prone_annotations.version>2.7.1</error_prone_annotations.version>
-    <pull-request-monitoring.version>1.7.3</pull-request-monitoring.version>
+    <pull-request-monitoring.version>1.7.7</pull-request-monitoring.version>
 
     <eclipse-collections.version>9.2.0</eclipse-collections.version>
     <j2html.version>1.4.0</j2html.version>
