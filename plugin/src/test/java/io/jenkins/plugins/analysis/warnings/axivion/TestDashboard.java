@@ -28,7 +28,7 @@ class TestDashboard implements AxivionDashboard {
 
     JsonObject getIssuesFrom(final String resourcePath) {
         final URL testCase = this.getClass().getResource(resourcePath);
-        return new JsonParser().parse(new Resource(testCase).asReader()).getAsJsonObject();
+        return JsonParser.parseReader(new Resource(testCase).asReader()).getAsJsonObject();
     }
 
     private String resolveResourcePath(final AxIssueKind kind) {
