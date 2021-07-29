@@ -16,6 +16,7 @@ public class OELintAdv extends AnalysisModelParser {
     /** Creates a new instance of {@link OELintAdv}. */
     @DataBoundConstructor
     public OELintAdv() {
+        super();
     }
 
     /** Descriptor for this static analysis tool. */

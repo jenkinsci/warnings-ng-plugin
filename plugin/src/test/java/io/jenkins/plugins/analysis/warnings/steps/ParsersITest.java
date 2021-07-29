@@ -927,7 +927,7 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
 
     /** Runs the oelint-adv parser on an output file that contains 8 issues. */
     @Test
-    void shouldFindAllOELintAdvIssues() {
+    public void shouldFindAllOELintAdvIssues() {
         shouldFindIssuesOfTool(8, new OELintAdv(), "oelint-adv.txt");
     }
 
