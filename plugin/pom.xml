@@ -71,7 +71,7 @@
     <workflow-support.version>3.8</workflow-support.version>
     <pipeline-model-definition.version>1.8.5</pipeline-model-definition.version>
     <form-element-path.version>1.10</form-element-path.version>
-    <folder.version>6.15</folder.version>
+    <folder.version>6.16</folder.version>
     <scm-api.version>2.6.4</scm-api.version>
     <checks-api.version>1.7.0</checks-api.version>
     <credentials.version>2.5</credentials.version>
