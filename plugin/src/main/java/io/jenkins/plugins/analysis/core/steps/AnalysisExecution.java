@@ -43,7 +43,7 @@ abstract class AnalysisExecution<T> extends SynchronousNonBlockingStepExecution<
         Run<?, ?> run = getContext().get(Run.class);
 
         if (run == null) {
-            throw new IOException("Can't resolve Run for " + toString());
+            throw new IOException("Can't resolve Run for " + this);
         }
 
         return run;

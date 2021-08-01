@@ -164,7 +164,7 @@ public class WarningChecksPublisherITest extends IntegrationTestWithJenkinsPerSu
         ChecksDetails details = publisher.extractChecksDetails(AnnotationScope.PUBLISH_NEW_ISSUES);
 
         assertThat(details.getOutput().get().getChecksAnnotations())
-                .usingElementComparatorOnFields("message")
+                .usingRecursiveFieldByFieldElementComparatorOnFields("message")
                 .containsOnly(new ChecksAnnotationBuilder()
                         .withMessage("ERROR:\n"
                                 + "Some diagnostic messages may contain incorrect line number.\n"
