@@ -33,5 +33,5 @@ jobs:
           ${{ runner.os }}-maven-
     - name: Build with Maven
       env:
-        BROWSER: chrome-container
+        BROWSER: firefox-container
       run: mvn -V -ntp clean verify --file pom.xml '-Djenkins.test.timeout=5000' '-Dgpg.skip'

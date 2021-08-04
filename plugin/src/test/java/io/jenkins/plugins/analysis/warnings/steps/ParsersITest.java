@@ -112,31 +112,31 @@ public class ParsersITest extends IntegrationTestWithJenkinsPerSuite {
         }
     }
 
-    /** Runs the Iar parser on an output file that contains 8 issues. */
+    /** Runs the Cmake parser on an output file that contains 8 issues. */
     @Test
     public void shouldFindAllCmakeIssues() {
         shouldFindIssuesOfTool(8, new Cmake(), "cmake.txt");
     }
 
-    /** Runs the Iar parser on an output file that contains 2 issues. */
+    /** Runs the Cargo parser on an output file that contains 2 issues. */
     @Test
     public void shouldFindAllCargoIssues() {
         shouldFindIssuesOfTool(2, new Cargo(), "CargoCheck.json");
     }
 
-    /** Runs the Iar parser on an output file that contains 262 issues. */
+    /** Runs the Pmd parser on an output file that contains 262 issues. */
     @Test
     public void shouldFindAllIssuesForPmdAlias() {
         shouldFindIssuesOfTool(262, new Infer(), "pmd-6.xml");
     }
 
-    /** Runs the Iar parser on an output file that contains 262 issues. */
+    /** Runs the MSBuild parser on an output file that contains 262 issues. */
     @Test
     public void shouldFindAllIssuesForMsBuildAlias() {
         shouldFindIssuesOfTool(6, new PcLint(), "msbuild.txt");
     }
 
-    /** Runs the Iar parser on an output file that contains 4 issues. */
+    /** Runs the YamlLint parser on an output file that contains 4 issues. */
     @Test
     public void shouldFindAllYamlLintIssues() {
         shouldFindIssuesOfTool(4, new YamlLint(), "yamllint.txt");

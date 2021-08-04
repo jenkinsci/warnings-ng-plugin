@@ -92,7 +92,7 @@ class RemoteAxivionDashboard implements AxivionDashboard {
                 throw new ParsingException("Response without a json body");
             }
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
-                final JsonElement json = new JsonParser().parse(reader);
+                final JsonElement json = JsonParser.parseReader(reader);
                 if (!json.isJsonObject()) {
                     throw new ParsingException("Invalid response from dashboard. Json object expected.");
                 }

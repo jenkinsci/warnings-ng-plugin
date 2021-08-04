@@ -54,7 +54,7 @@ class TaskScannerTest extends ResourceTest {
         Report report = scanner.scan(pathToFile, StandardCharsets.UTF_8);
 
         assertThat(report.getErrorMessages()).isNotEmpty().contains("Can't read source file '"
-                + pathToFile.toString()
+                + pathToFile
                 + "', defined encoding 'UTF-8' seems to be wrong");
     }
 
